@@ -116,30 +116,25 @@
 				<div class="p-2 sidebar-head">
 					<div class="parent d-flex justify-content-center w-100">
 						<div class="parent-img">
-							<div *ngIf="!items.contact_profile" class="inti">{{intials}}</div>
-							<!-- <img *ngIf="!items.contact_profile" src="../../../../assets/img/teambox/no-dp.svg"> -->
-							<img *ngIf="items.contact_profile" id="profile-pic" src="{{items.contact_profile}}?{{randomNumber}}"/>
-							<!-- <div class="d-flex justify-content-center picture-crop-button-container">
-							<div class="text-center picture-crop-button">
-							 <input type="file" id="myFileInput" (change)="fileChangeEvent($event)" accept="image/jpeg, image/png" />
-							 <label for="myFileInput" class="m-0 fileLabel" ><img class="set-profile-pic" src="../../../../assets/img/profile/Fill 4.svg" /></label>
-							</div>
-						</div>		-->
+							<div *ngIf="!items?.contact_profile" class="inti">{{intials}}</div>
+
+							<img *ngIf="items?.contact_profile" id="profile-pic" src="{{items?.contact_profile}}?{{randomNumber}}"/>
+
 						</div>
 
 						<div class="child">
-							<h4 class="dialog-h4"><span class="text-capitalize">{{items.Name}}</span></h4>
+							<h4 class="dialog-h4"><span class="text-capitalize">{{items?.Name}}</span></h4>
 							<div class="child1 d-flex flex-column">
 								<h5>Customer Id:</h5>
-								<h6>{{items.customerId}}</h6>
+								<h6>{{items?.customerId}}</h6>
 							</div>
 							<div class="child1 d-flex flex-column">
 								<h5>Created Date:</h5>
-								<h6>{{settingsService?.getDateTimeFormate(items.created_at)}}</h6>
+								<h6>{{settingsService?.getDateTimeFormate(items?.created_at)}}</h6>
 							</div>
 							<div class="child1 d-flex flex-column">
 								<h5>Last Updated:</h5>
-								<h6>{{settingsService?.getDateTimeFormate(items.updated_at)}}</h6>
+								<h6>{{settingsService?.getDateTimeFormate(items?.updated_at)}}</h6>
 							</div>
 						</div>
 					</div>
@@ -149,21 +144,21 @@
 					<div class="parent d-flex justify-content-between px-2 flex-column">
 						<div class="child2 pb-3">
 							<h5>Email Id</h5>
-							<h6 class="mt-2">{{items.emailId}}</h6>
+							<h6 class="mt-2">{{items?.emailId}}</h6>
 						</div>
 						<div class="child3 pb-2">
 							<h5>Phone Number</h5>
-							<h6 class="mt-2">{{items.countryCode}} {{items.displayPhoneNumber}}</h6>
+							<h6 class="mt-2">{{items?.countryCode}} {{items?.displayPhoneNumber}}</h6>
 						</div>
 					</div>
 					<div class="parent d-flex justify-content-between p-2 flex-column">
 						<div class="child2 pb-3">
 							<h5>Message Opt-in</h5>
-							<h6 class="mt-2">{{items.OptInStatus}}</h6>
+							<h6 class="mt-2">{{items?.OptInStatus}}</h6>
 						</div>
 						<div class="child3 pb-1">
 							<h5>Contact Owner </h5>
-							<h6 class="mt-2">{{items.ContactOwner}}</h6>
+							<h6 class="mt-2">{{items?.ContactOwner}}</h6>
 						</div>
 					</div>
 					<div class="parent d-flex justify-content-between p-2">
@@ -188,47 +183,21 @@
 							<h6 class="mt-2" *ngIf="it?.type == 'Time'">{{settingsService?.convertTimeFormat(items[it?.ActuallName])}}</h6>
 						</div>
 					</div>
-					<!-- <div class="justify-content-between px-4 py-2 parent d-flex">
-					<div class="child2">
-						<h5>Gender</h5>
-						<h6 class="mt-2">{{items.sex}}</h6>
-					</div>
-					<div class="age-field child3">
-						<h5>Age</h5>
-						<h6 class="mt-2">{{items.age}}</h6>
-					</div>
-				</div>
-				<div class="parent d-flex justify-content-between px-4 py-2">
-					<div class="child2">
-						<h5>Country</h5>
-						<h6 class="mt-2">{{items.Country}}</h6>
-					</div>
-					<div class="child3">
-						<h5>Default Channel</h5>
-						<h6 class="mt-2">{{items.channel}}</h6>
-					</div>
-				</div>
-				<div class="px-4 py-2 child2">
-					<h5>Facebook Id</h5>
-					<h6 class="mt-2">{{items.facebookId}}</h6>
-				</div> -->
 				</div>
 			</div>
 			<div class="btn-footer mt-3" *ngFor="let items of customerData ">
 				<div class="button my-4 d-flex justify-content-center align-items-center">
-					<button class="btn6  btn-block " data-bs-toggle="modal" data-bs-target="#Delete" [disabled]="(settingsService.checkRoleExist('5') && (!settingsService.checkRoleExist('4') && checkContactOwner(items.ContactOwner)))">
+					<button class="btn6  btn-block " data-bs-toggle="modal" data-bs-target="#Delete" [disabled]="(settingsService.checkRoleExist('5') && (!settingsService.checkRoleExist('4') && checkContactOwner(items?.ContactOwner)))">
 						<img src="../../../../assets/img/profile/delete.svg">
 					</button>
-					<!-- && (!settingsService.checkRoleExist('4') && checkContactOwner(items.ContactOwner)) -->
+
 					<button class="btn6  btn-block " (click)="openedit(contactadd)" [disabled]="(settingsService.checkRoleExist('5') && (!settingsService.checkRoleExist('4') && checkContactOwner(items.ContactOwner)))">
 						<img src="../../../../assets/img/teambox/Edit.svg">
 					</button>
 					<button class="btn6  btn-block " data-bs-toggle="modal" data-bs-target="#Block" id="block-btn" [ngClass]="{'blocked':this.isBlocked==1}">{{this.isBlocked==1 ? 'Blocked' : 'Block'}}</button>
-					<!--<button class="btn7  btn-block "><img src="../../../../assets/img/settings.svg"> </button>-->
+
 				</div>
-				<!--<div class="bbox">
-				<h6>To add/edit any field according to your business from the settings</h6>
-			</div>-->
+
 			</div>
 
 
@@ -348,193 +317,6 @@
 		</div>
 	</ng-template>
 
-	<!-- <ng-template #column let-c="close" let-d="dismiss">
-		<div class="modal-header">
-			<h4 class="modal-title" id="modal-basic-title">Column Prefrences</h4>
-			<button type="button" class="btn-close" aria-label="Close" id="close-btn"
-				(click)="d('Cross click')">X</button>
-		</div>
-		<div class="modal-body">
-			<div class="form-group mt-3 d-flex">
-				<input type="checkbox" name="" (change)="onchange($event, 'id')" checked />
-				<div class="ff ml-2 d-flex">
-					<div class="fff ml-3">
-						<p><img src="assets/img/swipe-s.png" /></p>
-					</div>
-					<div class="fff ml-3">
-						<P>ID</P>
-					</div>
-				</div>
-			</div>
-
-			<div class="form-group mt-3 d-flex">
-				<input type="checkbox" name="" (change)="onchange($event, 'name')" checked />
-				<div class="ff ml-2 d-flex">
-					<div class="fff ml-3">
-						<p><img src="assets/img/swipe-s.png" /></p>
-					</div>
-					<div class="fff ml-3">
-						<P>Name</P>
-					</div>
-				</div>
-			</div>
-
-			<div class="form-group mt-3 d-flex">
-				<input type="checkbox" name="" (change)="onchange($event, 'phone')" checked />
-				<div class="ff ml-2 d-flex">
-					<div class="fff ml-3">
-						<p><img src="assets/img/swipe-s.png" /></p>
-					</div>
-					<div class="fff ml-3">
-						<P>Phone Number</P>
-					</div>
-				</div>
-			</div>
-			<div class="form-group mt-3 d-flex">
-				<input type="checkbox" name="" (change)="onchange($event, 'email')" checked />
-				<div class="ff ml-2 d-flex">
-					<div class="fff ml-3">
-						<p><img src="assets/img/swipe-s.png" /></p>
-					</div>
-					<div class="fff ml-3">
-						<P>Email</P>
-					</div>
-				</div>
-			</div>
-			<div class="form-group mt-3 d-flex">
-				<input type="checkbox" name="" (change)="onchange($event, 'age')" checked />
-				<div class="ff ml-2 d-flex">
-					<div class="fff ml-3">
-						<p><img src="assets/img/swipe-s.png" /></p>
-					</div>
-					<div class="fff ml-3">
-						<P>Age</P>
-					</div>
-				</div>
-			</div>
-			<div class="form-group mt-3 d-flex">
-				<input type="checkbox" name="" (change)="onchange($event, 'gender')" checked />
-				<div class="ff ml-2 d-flex">
-					<div class="fff ml-3">
-						<p><img src="assets/img/swipe-s.png" /></p>
-					</div>
-					<div class="fff ml-3">
-						<P>Gender</P>
-					</div>
-				</div>
-			</div>
-			<div class="form-group mt-3 d-flex">
-				<input type="checkbox" name="" (change)="onchange($event, 'tag')" checked />
-				<div class="ff ml-2 d-flex">
-					<div class="fff ml-3">
-						<p><img src="assets/img/swipe-s.png" /></p>
-					</div>
-					<div class="fff ml-3">
-						<P>Tag</P>
-					</div>
-				</div>
-			</div>
-		</div>
-		<div class="modal-footer popfooter row">
-			<div class="col-md-6 text-right">
-				<button type="button" class="btn btn-outline-dark" (click)="c('Save click')">
-					Cancel
-				</button>
-			</div>
-			<div class="col-md-2 text-right">
-				<button type="button" class="btn1 btn-outline-dark" (click)="c('Save click')">
-					Save
-				</button>
-			</div>
-		</div>
-	</ng-template> -->
-
-
-	<!-- <ng-template #contents let-c="close" let-d="dismiss">
-		<div class="modal-header">
-			<h4 class="modal-title" id="modal-basic-title">Filter</h4>
-			<button type="button" class="btn-close" aria-label="Close" id="close-btn"
-				(click)="d('Cross click')">X</button>
-		</div>
-		<div class="modal-body d-flex">
-			<div class="sq">
-				<label for="floatingSelectGrid">Filters</label>
-
-
-				<ng-multiselect-dropdown class="multi" [settings]="dropdownSettings" [data]="cities"
-					[placeholder]="'Search the Filter'" name="city" formControlName="city" [disabled]="disabled"
-					(onSelect)="onItemSelect($event)">
-				</ng-multiselect-dropdown>
-
-
-			</div>
-			<div class="sq">
-				<label for="floatingSelectGrid">Filter Phone No.</label>
-				<form [formGroup]="productForm" (ngSubmit)="onSubmit()">
-					<div class="form-floating">
-						<select class="control ">
-							<option>Starts With</option>
-							<option>Name</option>
-							<option>Email</option>
-							<option>Phone Number</option>
-							<option>Tags</option>
-							<option>Contact Created</option>
-							<option>Last Conversation with</option>
-							<option>Conversation Resolved</option>
-							<option>Last Message recieved</option>
-						</select>
-					</div>
-					<div class="jk" [formGroup]="filterForm">
-						<label for="floatingInputGrid">Value</label>
-						<div class="form-floating">
-							<input class="form-control" type="text" placeholder="+44" name="Phone_number"
-								id="Phone_number" formControlName="Phone_number" />
-						</div>
-					</div>
-					<tr class="tt">
-						<th><button type="button" (click)="addQuantity()" class="btn7 btn-primary">+ Add</button></th>
-					</tr>
-					<tr *ngFor="let quantity of quantities().controls; let i=index" [formGroupName]="i">
-						<div class="hd d-flex">
-
-							<button class="btn0 btn-primary" type="submit">And</button>
-							<button class="btn9 btn-primary" type="submit">Or</button>
-
-						</div>
-						<div class="form-floating">
-							<select class="control ">
-								<option>Starts With</option>
-								<option>Name</option>
-								<option>Email</option>
-								<option>Phone Number</option>
-								<option>Tags</option>
-								<option>Contact Created</option>
-								<option>Last Conversation with</option>
-								<option>Conversation Resolved</option>
-								<option>Last Message recieved</option>
-							</select>
-						</div>
-						<div class="jk">
-							<label for="floatingInputGrid">Value</label>
-							<div class="form-floating">
-								<input class="form-control" type="text" placeholder="+44" />
-							</div>
-							<td class="tt d-flex">
-								<button type="button" (click)="addQuantity()" class="btn7 btn-primary">+ Add</button>
-								<button (click)="removeQuantity(i)" class="btn6 btn-danger">-Remove</button>
-							</td>
-						</div>
-					</tr>
-
-				</form>
-			</div>
-		</div>
-		<div class="modal-footer popfooter">
-			<div class="col-md-0 text-right">
-				<button type="button" class="btn1 btn-outline-dark" (click)="c('Save click')">Apply</button>
-			</div>
-		</div>
-	</ng-template> -->
 
 	<ng-template #contactadd let-c="close" let-d="dismiss">
 		<div class="modal-header px-4 pb-0 align-items-center">
@@ -587,16 +369,6 @@
 									   name="displayPhoneNumber" placeholder="Enter Phone Number" (change)="formatPhoneNumber()" (input)="validatorsToggle()"
 									   [ngClass]="{'is-invalid' :productForm.controls.displayPhoneNumber.touched && productForm.controls.displayPhoneNumber.errors }">
 							</div>
-							<!-- <div *ngIf="productForm.controls.displayPhoneNumber.touched &&
-                               validatorsToggle() == true && ( productForm.controls.displayPhoneNumber.hasError('minlength') || productForm.controls.displayPhoneNumber.hasError('maxlength'))"
-								 class="text-danger">
-								Phone number must consist of exactly 10 digits.
-							</div>
-							<div *ngIf="productForm.controls.displayPhoneNumber.touched && validatorsToggle() === false &&
-						      (productForm.controls.displayPhoneNumber.hasError('minlength') || productForm.controls.displayPhoneNumber.hasError('maxlength'))"
-								 class="text-danger">
-								! Phone number must consist of 6 to 15 digits.
-							</div> -->
 							<div *ngIf="productForm.controls.displayPhoneNumber.touched && productForm.controls.displayPhoneNumber.hasError('required')"
 								 class="text-danger">
 								! Phone Number is required.
@@ -647,8 +419,8 @@
 							   name="Search" id="contactOwnerValue"
 							   (keyup)="filterContactOwners()" />
 						<div (click)="stopPropagation($event)">
-							<p *ngFor="let uL of filteredUserList" (click)="selectContactOwner(uL.name)">
-								<span>{{uL.name}} {{uL?.RoleName == 'Admin' ? '(Admin)' :''}}</span>
+							<p *ngFor="let uL of filteredUserList" (click)="selectContactOwner(uL?.name)">
+								<span>{{uL?.name}} {{uL?.RoleName == 'Admin' ? '(Admin)' :''}}</span>
 							</p>
 						</div>
 					</div>
@@ -672,27 +444,24 @@
 						<input type="datetime-local" class="form-control" [formControlName]="item.ActuallName" *ngIf="item.type == 'Date Time'">
 						<input type="time" class="form-control" [formControlName]="item.ActuallName" *ngIf="item.type == 'Time'">
 						<input type="date" class="form-control" [formControlName]="item.ActuallName" *ngIf="item.type == 'Date'">
-						<!-- <input type="checkbox" class="form-control"[formControlName]="item.ActuallName" *ngIf="item.type == 'Switch'"> -->
-						<!-- <div class="row_inline d-flex align-items-center py-2" *ngIf="item.type == 'Switch'">
-						<input class="form-control-checkbox" type="checkbox" id="Opted-ins" [formControlName]="item.ActuallName"/>
-						<span>{{item.displayName}}</span>
-					</div> -->
-						<select *ngIf="item.type == 'Select'" class="form-control" [formControlName]="item.ActuallName">
+
+
+					   <select *ngIf="item?.type == 'Select'" class="form-control" [formControlName]="item.ActuallName">
 							<option *ngFor="let opt of item?.options" [value]="opt?.id">{{opt?.optionName}}</option>
 						</select>
-						<select *ngIf="item.type == 'Switch'" class="form-control" [formControlName]="item.ActuallName">
-							<option value="" selected disabled>Select {{item.displayName}}</option>
+						<select *ngIf="item?.type == 'Switch'" class="form-control" [formControlName]="item.ActuallName">
+							<option value="" selected disabled>Select {{item?.displayName}}</option>
 							<option value="Yes">Yes</option>
 							<option value="No">No</option>
 						</select>
-						<ng-multiselect-dropdown *ngIf="item.type == 'Multi Select'" class="multiselect" [formControlName]="item.ActuallName"
+						<ng-multiselect-dropdown *ngIf="item?.type == 'Multi Select'" class="multiselect" [formControlName]="item?.ActuallName"
 												 [settings]="dynamicDropdownSettings" [data]="item?.options">
 						</ng-multiselect-dropdown>
-						<div *ngIf="productForm.get(item.ActuallName)?.touched && productForm.get(item.ActuallName)?.hasError('required')"
+						<div *ngIf="productForm.get(item?.ActuallName)?.touched && productForm.get(item?.ActuallName)?.hasError('required')"
 							 class="text-danger">
-							! {{item.displayName}} is required.
+							! {{item?.displayName}} is required.
 						</div>
-						<div *ngIf="productForm.get(item.ActuallName)?.touched && productForm.get(item.ActuallName)?.errors?.['invalidYear']" class="text-danger">
+						<div *ngIf="productForm.get(item?.ActuallName)?.touched && productForm.get(item?.ActuallName)?.errors?.['invalidYear']" class="text-danger">
 							Year must be a 4-digit number.
 						</div>
 
@@ -740,8 +509,6 @@
 						<div *ngFor="let tag of tagListData; let i = index">
 								<div class="py-2 px-0 form-check">
 									<label class="m-0 form-check-label" for="flexCheckDefault{{i}}">
-										<!-- [checked]="getFilterTags?.includes(tag.ID.toString())"
-										(ngModelChange)="updateTags(tag.ID, $event)" -->
 									<input class="form-check-input" type="checkbox" 									       
 									       id="flexCheckDefault{{i}}"
 										   [(ngModel)]="tag.isSelected">
@@ -813,7 +580,6 @@ style="background: rgb(240 252 255 / 40%); z-index: 9999;display: block;">
 	  style="font-size: 17px;border-radius: 15px 15px 0px 0px; font-weight: bolder;color: black;background-color:white;">
 	  <span class="modal-title" id="staticBackdropLabel">Column Preferences</span>
 	  <div (click)="isShowColumn = false" class="closestPopup" style="cursor: pointer">
-		<!-- <img height="18px" width="18px" style="margin: 2px;" src="/../../assets/images/icons8-cross-50.png" alt="" /> -->
 		X
 	  </div>
 	</div>
@@ -826,13 +592,7 @@ style="background: rgb(240 252 255 / 40%); z-index: 9999;display: block;">
 				[disabled]="checkHideFields() && item.hide"  (change)="showHideColumns(item.field,$event)">
 				<span class="checkmark"></span>
 			</label>
-			<!-- <div>
-		  <input type="checkbox" class="clm_input" [disabled]="checkHideFields() && item.hide"  (change)="showHideColumns(item.field,$event)"
-			 [(ngModel)]="item.hide">
-			 <span class="checkmark ml-2"></span>
-			</div> -->
 			<div class="clm_name">{{item?.headerName}}</div>
-			 <!-- [disabled]="checkHideFields() && !item.hide" -->
 		</div>
 	  </div>
 	</div>

@@ -1,8 +1,6 @@
 import { Component, EventEmitter, Input, OnInit, Output, TemplateRef, ViewChild } from '@angular/core';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { SettingsService } from 'Frontend/dashboard/services/settings.service';
-import { TeamboxService } from 'Frontend/dashboard/services/teambox.service';
-import { Subject } from 'rxjs';
 
 @Component({
   selector: 'sb-contact-filter',
@@ -42,7 +40,7 @@ export class ContactFilterComponent implements OnInit {
 	@Output() closeFilterPopup = new EventEmitter<string>();
 	@Output() contactFilterList = new EventEmitter<any>();
 	
-  constructor(private apiService: TeamboxService,private modalService: NgbModal,private _settingsService:SettingsService) {
+  constructor(private modalService: NgbModal,private _settingsService:SettingsService) {
 	
     }
 	ngOnInit(): void {
@@ -99,8 +97,6 @@ export class ContactFilterComponent implements OnInit {
 			option:[
 				{label:'True',checked:false,type:'switch'},
 				{label:'False',checked:false,type:'switch'},
-			//{label:'Is',checked:false,type:'select',options:['Active Subscribers','Inactive Subscribers','Active Contacts','Inactive Contacts']},
-			//{label:'Is not',checked:false,type:'select',options:['Active Subscribers','Inactive Subscribers','Active Contacts','Inactive Contacts']}
 			]},		
 			{value:'isBlocked',label:'Blocked',checked:false,addeFilter:[],
 			option:[
@@ -165,15 +161,15 @@ export class ContactFilterComponent implements OnInit {
 		this.getContactFilterBy();
 		this._settingsService.getNewCustomField(this.SPID).subscribe(response => {
 		  this.customFieldData = response.getfields;
-		  console.log(this.customFieldData);  
+
 		  const defaultFieldNames:any = ["Name", "Phone_number", "emailId", "ContactOwner", "OptInStatus","tag"];
 		  if(this.customFieldData){
 			 const filteredFields:any = this.customFieldData?.filter(
 				(field:any) => !defaultFieldNames.includes(field.ActuallName) && field.status ==1 );
-				console.log(filteredFields);  
+ 
 		filteredFields.forEach((item:any)=>{
 			let options:any;
-			console.log(item,'txt');  
+ 
 			switch(item?.type){
 				case 'Date':{
 					 options =[
@@ -246,7 +242,7 @@ export class ContactFilterComponent implements OnInit {
 				}
 			}			
 			this.contactFilterBy.push({value:item?.ActuallName,label:item?.displayName,checked:false,addeFilter:[],option:options});
-			console.log(this.contactFilterBy);
+
 		  })
 		}
 		})
@@ -284,34 +280,23 @@ export class ContactFilterComponent implements OnInit {
 		this.showContactFilter=!this.showContactFilter
 	  }
 	  selectContactFilter(index:any,filter:any){
-		// this.ContactListNewFilters=[]
-		console.log(filter,'filter');
-		// let addeFilter = filter.addeFilter
+
+
 		this.selectedcontactFilterBy = filter;
 		this.showContactFilter=false;
-		// if(addeFilter.length>0){
-		// for(var i=0;i<addeFilter.length;i++){
-		// 	this.ContactListNewFilters.push(addeFilter[i])
-		// }
-		// }
 		this.ContactListNewFilters[index]['filterPrefix'] = filter.value;
-		// let newFilter:any=[];
 		this.ContactListNewFilters[index]['filterBy'] = filter['option']['0'].label
 		this.ContactListNewFilters[index]['filterType'] = filter['option']['0'].type
 		this.ContactListNewFilters[index]['selectedOptions'] = filter['option']['0'].options
 		this.ContactListNewFilters[index]['filterPrefix'] = filter.value;
 		this.ContactListNewFilters[index]['filterValue']='';
-		// if(addeFilter.length>0){
-		// newFilter['filterOperator']='AND';
-		// }
-		// this.ContactListNewFilters.push(newFilter)
-		console.log(this.ContactListNewFilters)
+
 
 
 	  }
 
 	addNewFilters(filter:any){
-		console.log(filter);
+
 		if(this.ContactListNewFilters.length) return;
 		this.ContactListNewFilters=[];
 		this.selectedcontactFilterBy = filter[0];
@@ -342,7 +327,7 @@ export class ContactFilterComponent implements OnInit {
 		this.ContactListNewFilters[index]['selectedOptions'] = filter.options
 		this.ContactListNewFilters[index]['filterPrefix'] = selectedcontactFilterBy.value
 		this.ContactListNewFilters[index]['filterValue']='';
-		console.log(this.ContactListNewFilters)
+
 		
 	  }
 	  selectFilterValue(index:any,event:any){
@@ -380,7 +365,7 @@ export class ContactFilterComponent implements OnInit {
 		newFilter['filterOperator']='AND';
 		this.ContactListNewFilters.push(newFilter)
 		if(this.ContactListNewFilters[0]?.filterOperator) this.ContactListNewFilters[0].filterOperator = '';
-		console.log(this.ContactListNewFilters)
+
 	  }
 	  removeFilter(itemIndex:any){
 		this.ContactListNewFilters.splice(itemIndex, 1);
@@ -390,19 +375,17 @@ export class ContactFilterComponent implements OnInit {
 	  }
 	  addFilter(){
 		this.selectedcontactFilterBy['addeFilter']=this.ContactListNewFilters
-		//this.ContactListNewFilters=[]
-		//console.log(this.selectedcontactFilterBy)
+
 	  }
 
     
 	  createListFromFilters(){
       this.getFilterOnEndCustomer()
-      // this.closeAllModal()
-      // this.modalReference = this.modalService.open(applyList,{size: 'xl', windowClass:'white-bg'});
+
          
     }
     getContactFilterQuery(addeFilter:any){
-      console.log('///////////getContactFilterQuery',addeFilter)
+
       const groups = addeFilter.reduce((groups:any, filter:any) => {
         
         if (!groups[filter.filterPrefix]) {
@@ -419,19 +402,17 @@ export class ContactFilterComponent implements OnInit {
         items: groups[filterPrefix]
       };
       });
-      console.log('/////groupArrays/////')
-      console.log(addeFilter)
-      console.log(this.ContactListNewFilters)
-      console.log(groupArrays)
+
+
+
   
   
       let contactFilter ="SELECT EC.*, IFNULL(GROUP_CONCAT(ECTM.TagName ORDER BY FIND_IN_SET(ECTM.ID, REPLACE(EC.tag, ' ', ''))), '') AS tag_names,maxInteraction.maxInteractionId,Interaction.interaction_status,Message.*,user.uid,user.name,IM.latestCreatedAt AS lastAssistedAgent,IM.AgentId,IM.* FROM EndCustomer AS EC LEFT JOIN EndCustomerTagMaster AS ECTM ON FIND_IN_SET(ECTM.ID, REPLACE(EC.tag, ' ', '')) > 0 AND ECTM.isDeleted != 1 LEFT JOIN (SELECT customerId,MAX(InteractionId) AS maxInteractionId FROM Interaction WHERE is_deleted != 1 AND IsTemporary != 1 GROUP BY customerId) AS maxInteraction ON maxInteraction.customerId = EC.customerId LEFT JOIN Interaction AS Interaction ON maxInteraction.maxInteractionId = Interaction.InteractionId LEFT JOIN Message AS Message ON Message.interaction_id = Interaction.InteractionId AND Message.is_deleted != 1 LEFT JOIN user AS user ON EC.uid = user.uid LEFT JOIN (SELECT interactionId, MAX(created_at) AS latestCreatedAt,AgentId, lastAssistedAgent FROM InteractionMapping GROUP BY interactionId) AS IM ON IM.InteractionId = Interaction.InteractionId WHERE EC.SP_ID ="+this.SPID +" AND EC.isDeleted != 1 AND EC.IsTemporary != 1";
       if(groupArrays.length>0){
         
         groupArrays.map((filters:any,idx)=>{
-			console.log(idx);
+
           if(filters.items.length>0){
-         // filters.items[0]['filterOperator']='';	
           
 			let colName = filters.filterPrefix;
 		  if(colName =="Conversation Resolved"){
@@ -450,7 +431,6 @@ export class ContactFilterComponent implements OnInit {
 		  }else if(colName =="Last Message Sent At"){
 			contactFilter = contactFilter + `and (Message.message_direction ='IN' and Message.created_at=?) `;
 		  }else if(colName =="Creator"){
-			//let userId = this.userList.filter((item:any)=> item.name ==filters.items[0].filterValue)[0]?.uid;
 			contactFilter = contactFilter + `and  ((  user.name LIKE '%${filters.items[0].filterValue}%' ))`;
 		  } else{
 			let colName = 'EC.'+filters.filterPrefix;
@@ -462,7 +442,7 @@ export class ContactFilterComponent implements OnInit {
           contactFilter += idx == 0 ?' and ((' :  filters.items[0]['filterOperator'] == '' ? ' and ('  : filters.items[0]['filterOperator'] + ' (';
           filters.items.map((filter:any,index:any)=>{
   
-          //this.applylistFiltersWidth =parseInt(this.applylistFiltersWidth)+100	
+
           let filterOper = "='"+filter.filterValue+"'";
               let QueryOperator ='';
           QueryOperator = index == 0 ? '':filter.filterOperator?filter.filterOperator:''
@@ -474,11 +454,9 @@ export class ContactFilterComponent implements OnInit {
           }
           if(filter.filterBy=="Is equal to"){
             filterOper = '='+filter.filterValue;
-            //filterOper = "LIKE '%"+filter.filterValue+"%'";
           }
           if(filter.filterBy=="Is not equal to"){
             filterOper = '!='+filter.filterValue;
-           // filterOper = "NOT LIKE '"+filter.filterValue+"'";
           }
   
           if(filter.filterBy=="Contains"){
@@ -551,7 +529,7 @@ export class ContactFilterComponent implements OnInit {
         } else{
 			contactFilter += ' Group by EC.customerId';
 		}
-        console.log(contactFilter)
+
         return contactFilter;
     }
   
@@ -559,8 +537,7 @@ export class ContactFilterComponent implements OnInit {
   
       getFilterOnEndCustomer(){
       let addedNewFilters:any=[];
-	  console.log(this.contactFilterBy);
-	  console.log(this.ContactListNewFilters);
+
       this.contactFilterBy.map((item:any)=>{
         item.addeFilter.map((filter:any)=>{
           addedNewFilters.push({
@@ -572,30 +549,15 @@ export class ContactFilterComponent implements OnInit {
             })
         })
       })
-	  console.log(addedNewFilters);
+
       let contactFilter = this.getContactFilterQuery(addedNewFilters)
       var bodyData={
         Query:contactFilter
       }
-	  //this.contactFilterList.emit(this.ContactListNewFilters)
+
 	  this.closeFilter();
 	  this.query.emit(contactFilter);
-      console.log(bodyData)
-    //   this.apiService.applyFilterOnEndCustomer(bodyData).subscribe(allCustomer =>{
-    //     var allCustomerList:any=allCustomer
-    //     if(allCustomerList){
-    //     allCustomerList.forEach((item:any) => {
-    //       item['tags'] = this.getTagsList(item.tag)
-  
-    //     })
-    //   }
-          
-    //     this.filteredEndCustomer = allCustomerList
-    //     this.filteredEndCustomer['sortOrder']=false
-    //     this.filteredEndCustomerOrigional =this.filteredEndCustomer
-    //   //  this.totalpages = Math.ceil(this.filteredEndCustomer.length/this.pagesize)
-        
-    // })
+
   
     }
   
