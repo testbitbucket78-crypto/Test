@@ -293,7 +293,7 @@ const addCustomField = async (req, res) => {
         } else {
 
 
-            // Fetch all data for the given SP_ID
+         /*   // Fetch all data for the given SP_ID
             const allData = await db.excuteQuery(val.getColCount, [SP_ID]);
 
 
@@ -301,10 +301,10 @@ const addCustomField = async (req, res) => {
             const CustomColumn = "column" + (allData[0].columnCount + 1);
 
             // Prepare values for insertion
-            const insertionValues = [CustomColumn, ColumnName, SP_ID, Type, description, created_at,updated_at, JSON.stringify(values)];
+            const insertionValues = [CustomColumn, ColumnName, SP_ID, Type, description, created_at,updated_at, JSON.stringify(values)]; */
 
             // Insert the new custom field
-            const addFieldResult = await db.excuteQuery(val.addcolumn, [[insertionValues]]);
+            const addFieldResult =await insertCustomField(SP_ID, ColumnName, Type, description, created_at, updated_at, values)  //await db.excuteQuery(val.addcolumn, [[insertionValues]]);
             console.log("addFieldResult", addFieldResult)
             // Return 500 if insertion failed
             if (!addFieldResult.insertId) {
@@ -338,6 +338,36 @@ const addCustomField = async (req, res) => {
     }
 };
 
+
+async function insertCustomField(SP_ID, ColumnName, Type, description, created_at, updated_at, values) {
+    // Check for soft-deleted columns
+    const deletedColumn = await db.excuteQuery(val.checkDeletedColumn, [SP_ID]);
+
+    let CustomColumn;
+    
+    if (deletedColumn.length > 0) {
+        // Reuse the soft-deleted column
+        CustomColumn = deletedColumn[0].CustomColumn;
+    } else {
+        // Fetch all active data for the given SP_ID
+        const allData = await db.excuteQuery(val.getColCount, [SP_ID]);
+
+        // Generate a new custom column name (ensure it's within the limit)
+        if (allData[0].columnCount < 25) {
+            CustomColumn = "column" + (allData[0].columnCount + 1);
+        } else {
+            throw new Error("Maximum column limit reached. Reuse or delete existing columns.");
+        }
+    }
+
+    // Prepare values for insertion
+    const insertionValues = [CustomColumn, ColumnName, SP_ID, Type, description, created_at, updated_at, JSON.stringify(values)];
+
+    // Insert the new custom field
+    const addFieldResult = await db.excuteQuery(val.addcolumn, [[insertionValues]]);
+
+    return addFieldResult;
+}
 
 const editCustomField = async (req, res) => {
     try {
@@ -484,6 +514,13 @@ const deleteCustomField = async (req, res) => {
     try {
         let myUTCString = new Date().toUTCString();
         const created_at = moment.utc(myUTCString).format('YYYY-MM-DD HH:mm:ss');
+
+        let getColumnName = await db.excuteQuery(val.getCustomColumnById,[req.params.id,55]); //
+
+        let blankCustomFieldQuery = `UPDATE EndCustomer SET ${getColumnName[0]?.CustomColumn} =? WHERE SP_ID=? AND customerId >=1`;
+        console.log(blankCustomFieldQuery,"blankCustomFieldQuery",getColumnName[0]?.CustomColumn)
+        let updateEndCustomer = await db.excuteQuery(blankCustomFieldQuery,[null,55])
+
         let deletField = await db.excuteQuery(val.deletecolumn, [created_at, req.params.id]);
         res.send({
             status: 200,
