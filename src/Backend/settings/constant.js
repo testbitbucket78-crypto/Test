@@ -45,7 +45,7 @@ removeHoliday = `UPDATE holidays SET isDeleted=1,updated_at=? WHERE SP_ID=? AND 
 getSubRight = `select * from subRights where  isDeleted !=1 and visibilityStatus = 1`
 getRights = `select * from rights where isDeleted !=1 and visibilityStatus = 1`
 
-getAllUserQuery = `SELECT uid,name,IsActive FROM user WHERE isDeleted !=1 and SP_ID=?`
+getAllUserQuery = `SELECT * FROM user WHERE isDeleted !=1 and SP_ID=?`
 addRoleQuery = `INSERT INTO roles (RoleName,Privileges,IsActive,subPrivileges,created_at,SP_ID) values ?`
 updateRole = `UPDATE roles set RoleName=?,Privileges=?,IsActive=?,subPrivileges=?,updated_at=? where roleID=? AND SP_ID=?`
 getRoleQuery = `SELECT * from roles where roleID=? and SP_ID=? and isDeleted !=1`
@@ -222,6 +222,15 @@ tm.SP_ID = ?
 AND tm.isDeleted != 1;`
 
 
+// Query to check for any soft-deleted columns that can be reused
+var checkDeletedColumn = `
+    SELECT CustomColumn 
+    FROM SPIDCustomContactFields 
+    WHERE SP_ID=? 
+      AND isDeleted=1 
+    ORDER BY CustomColumn ASC 
+    LIMIT 1`;
+
  var getColCount=`SELECT count(*) AS columnCount FROM SPIDCustomContactFields WHERE SP_ID=?  AND isDeleted!=1 `
  var addcolumn=`INSERT INTO SPIDCustomContactFields (CustomColumn,ColumnName,SP_ID,Type,description,created_at,updated_at,dataTypeValues) values ?`
  
@@ -385,6 +394,7 @@ let deletecolumn=`UPDATE SPIDCustomContactFields SET isDeleted=1 , isDeletedOn=?
 let enableMandatory=`UPDATE SPIDCustomContactFields SET Mandatory=? , updated_at=? where id=?`
 let enablestatus=`UPDATE SPIDCustomContactFields SET Status=? , updated_at=? where id=?`
 let editfield=`UPDATE SPIDCustomContactFields SET ColumnName=?,Type=?,description=?,updated_at=? ,dataTypeValues =? where id=?`
+let getCustomColumnById = `SELECT * FROM SPIDCustomContactFields WHERE id=? AND isDeleted !=1 AND SP_ID=?`
 
 
 //________________________________________TEMPLATE SETTINGS__________________________//
@@ -432,5 +442,5 @@ module.exports = {
     addtag, updatetag, deletetag, selecttag, addTemplates, selectTemplate, updateTemplate, deleteTemplate, insertWhatsappdetails, updateWhatsappdetails, selectChannelCount,
     Whatsappdetails,addTokenQuery,updateTokenQuery,deleteTokenQuery,selectTokenQuery,isEnableQuery,baseURL,accessToken,deleteIPQuery,insertIPAddress,updateNotification,
     getColCount,addcolumn,getcolumn,deletecolumn,getcolumnid,enableMandatory,enablestatus,editfield ,selectApprovedTemplate ,addGallery ,getGallery,selectUserByIdQuery,
-    content_type,access_token,url,selectActiveQuery,getAllUserQuery
+    content_type,access_token,url,selectActiveQuery,getAllUserQuery,checkDeletedColumn,getCustomColumnById
 }

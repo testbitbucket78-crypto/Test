@@ -11,6 +11,7 @@ let fs = require('fs-extra');
 const moment = require('moment');
 const removeTags = require('../removeTagsFromRichTextEditor')
 const logger = require('../common/logger.log');
+const commonFun = require('../common/resuableFunctions.js')
 app.use(bodyParser.json());
 
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -109,6 +110,7 @@ const insertCustomers = async (req, res) => {
         let tempContactResult = await db.excuteQuery(checkTempContactQuery, [Phone_number, SP_ID]);
 
         if (tempContactResult.length > 0) {
+            let resetContactFields = await commonFun.resetContactFields(Phone_number, SP_ID)
             let updateTempContactQuery = `
                 UPDATE EndCustomer
                 SET Name = ?, channel = ?, OptInStatus = ?, countryCode = ?, displayPhoneNumber = ?, IsTemporary = 0, isDeleted = 0, created_at = NOW()

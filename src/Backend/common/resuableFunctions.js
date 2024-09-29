@@ -157,4 +157,45 @@ async function isStatusEmpty(InteractionId, spid,cusid) {
     }
   }
 
-  module.exports  ={isStatusEmpty,getDefaultAttribue,isHolidays,isWorkingTime}
+  async function resetContactFields(phoneNumber,spid) {
+    try{
+      const resetQuery = `
+      UPDATE EndCustomer
+    SET column1 = NULL,
+    column2 = NULL,
+    column3 = NULL,
+    column4 = NULL,
+    column5 = NULL,
+    column6 = NULL,
+    column7 = NULL,
+    column8 = NULL,
+    column9 = NULL,
+    column10 = NULL,
+    column11 = NULL,
+    column12 = NULL,
+    column13 = NULL,
+    column14 = NULL,
+    column15 = NULL,
+    column16 = NULL,
+    column17 = NULL,
+    column18 = NULL,
+    column19 = NULL,
+    column20 = NULL,
+    column21 = NULL,
+    column22 = NULL,
+    column23 = NULL,
+    column24 = NULL,
+    column25 = NULL,
+    ContactOwner = NULL,
+    defaultAction_PauseTime =NULL
+WHERE Phone_number = ? 
+AND SP_ID = ?;`;
+
+      let resetData = await db.excuteQuery(resetQuery,[phoneNumber,spid]);
+    }catch(err){
+      console.log("ERR updateContactData",err)
+    }
+  }
+
+
+  module.exports  ={isStatusEmpty,getDefaultAttribue,isHolidays,isWorkingTime,resetContactFields}

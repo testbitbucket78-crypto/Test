@@ -19,6 +19,7 @@ app.use(bodyParser.urlencoded({ limit: '100mb', extended: true }));
 const authenticateToken = require('../Authorize');
 const logger = require('../common/logger.log');
 const {formatterDateTime,formatterDate,formatterTime  }  = require('./utils.js');
+const commonFun = require('../common/resuableFunctions.js')
 
 app.get('/columns/:spid', authenticateToken, async (req, res) => {
   try {
@@ -138,6 +139,7 @@ app.post('/addCustomContact', async (req, res) => {
     if (existingContact.length > 0) {
       let contact = existingContact[0];
       if (contact.IsTemporary === 1) {
+        let resetContactFields = await commonFun.resetContactFields(phoneNumber, spId)
         // Update the temporary contact
         let updateQuery = 'UPDATE EndCustomer SET ';
         let updateValues = [];
@@ -161,6 +163,7 @@ app.post('/addCustomContact', async (req, res) => {
           status: 200
         });
       } else if (contact.isDeleted === 1) {
+        let resetContactFields = await commonFun.resetContactFields(phoneNumber, spId)
         // Update the temporary contact
         let updateQuery = 'UPDATE EndCustomer SET ';
         let updateValues = [];
@@ -614,6 +617,7 @@ async function addOnlynewContact(CSVdata, identifier, SP_ID) {
     `;
       const checkResult = await db.excuteQuery(checkDeletedQuery, [identifierValue, SP_ID]);
       if (checkResult && checkResult.length > 0) {
+        let resetContactFields = await commonFun.resetContactFields(identifierValue, SP_ID)
         const updateQuery = `
         UPDATE EndCustomer SET ${fieldNames.replace(/,/g, ' = ?, ')} = ?, isDeleted = 0, created_at = NOW() 
         WHERE ${identifier} = ? AND SP_ID = ?

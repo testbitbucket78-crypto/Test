@@ -45,7 +45,7 @@ function NotifyServer(display_phone_number,updatemessage,message,status,msg_stat
     if(updatemessage == true){           //For webhhok teambox msg update
     notificationMsg= {"displayPhoneNumber":display_phone_number, "updateMessage":true};
     }else if(message != undefined){    // notify message
-      notificationMsg= {"displayPhoneNumber":display_phone_number,"message":message,"status" : status ,"msg_status":msg_status,"msg_id":msg_id};
+      notificationMsg= {"displayPhoneNumber":display_phone_number,"message":message,"status" : status ,"msg_status":msg_status,"msg_id":msg_id}; //msg_status means IN and Out Types
     }
 
 
