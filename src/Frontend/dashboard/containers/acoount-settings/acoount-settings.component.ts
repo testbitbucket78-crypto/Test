@@ -264,6 +264,13 @@ openDiv() {
           this.getwhatsapp();
         },
         (error) => {
+          if(error.status === 409){
+            this.showToaster('Something went Wrong! Please try after some time', 'error');
+            setTimeout(() => {
+              $("#qrWhatsappModal").modal('hide');
+          }, 500);
+            return;
+          }
           if(error.status === 400) {
             this.showToaster('Bad Request!', 'error');
             this.channel_status = 0;
