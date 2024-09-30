@@ -515,11 +515,11 @@ const deleteCustomField = async (req, res) => {
         let myUTCString = new Date().toUTCString();
         const created_at = moment.utc(myUTCString).format('YYYY-MM-DD HH:mm:ss');
 
-        let getColumnName = await db.excuteQuery(val.getCustomColumnById,[req.params.id,55]); //
+        let getColumnName = await db.excuteQuery(val.getCustomColumnById,[req.params.id,req.params.spid]); //
 
         let blankCustomFieldQuery = `UPDATE EndCustomer SET ${getColumnName[0]?.CustomColumn} =? WHERE SP_ID=? AND customerId >=1`;
         console.log(blankCustomFieldQuery,"blankCustomFieldQuery",getColumnName[0]?.CustomColumn)
-        let updateEndCustomer = await db.excuteQuery(blankCustomFieldQuery,[null,55])
+        let updateEndCustomer = await db.excuteQuery(blankCustomFieldQuery,[null,req.params.spid])
 
         let deletField = await db.excuteQuery(val.deletecolumn, [created_at, req.params.id]);
         res.send({

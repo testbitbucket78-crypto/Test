@@ -112,7 +112,7 @@ router.post('/addCustomField',authenticateToken,campaignController.addCustomFiel
 router.post('/editCustomField',authenticateToken,campaignController.editCustomField)
 router.get('/getCustomField/:spid',authenticateToken,campaignController.getCustomField)
 router.get('/getCustomFieldById/:id',authenticateToken,campaignController.getCustomFieldById)
-router.post('/deleteCustomField/:id',authenticateToken,campaignController.deleteCustomField)
+router.post('/deleteCustomField/:id/:spid',authenticateToken,campaignController.deleteCustomField)
 router.post('/enableMandatory',authenticateToken,campaignController.enableMandatoryfield)
 router.post('/enableStatus',authenticateToken,campaignController.enableStatusfield)
 
