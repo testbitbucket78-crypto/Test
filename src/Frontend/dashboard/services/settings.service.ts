@@ -442,8 +442,8 @@ const headers = new HttpHeaders({
     return this.http.post<any>(`${this.API_URL}/enableMandatory`,mandatoryCustomField);
   }
 
-  deleteCustomField(id: number): Observable<any> {
-    return this.http.post<any>(`${this.API_URL}/deleteCustomField/${id}`,null);
+  deleteCustomField(id: number,spId:number): Observable<any> {
+    return this.http.post<any>(`${this.API_URL}/deleteCustomField/${id}/${spId}`,null);
   }  
 
   getManageStorageData(spid:any):Observable<any> {

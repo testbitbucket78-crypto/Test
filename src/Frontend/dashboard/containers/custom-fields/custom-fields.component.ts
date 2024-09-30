@@ -304,7 +304,7 @@ deleteCustomField() {
 
   let id = this.selectedCustomField?.id;
   console.log(id);
-  this.settingsService.deleteCustomField(id)
+  this.settingsService.deleteCustomField(id,this.spId)
   
   .subscribe(result =>{
     if(result){
