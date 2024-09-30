@@ -296,8 +296,9 @@ countryCodes = [
 onButtonClick(data:any, event: any) {
 
   const target = event.target;  
-
-    this.router.navigate(['/dashboard/teambox'], { queryParams: { isNewMessage: true,srchText: data?.Phone_number} });
+   // this.router.navigateByUrl(`Dashboard/teambox?isNewMessage=${true}`);
+   if(!this.settingsService.checkRoleExist(8))
+      this.router.navigate(['/dashboard/teambox'], { queryParams: { isNewMessage: true,srchText: data?.Phone_number} });
 }
     ngOnInit() {
       this.isLoadingOnInit = true;

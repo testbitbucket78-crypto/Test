@@ -3607,7 +3607,7 @@ sendMessage(isTemplate:boolean=false,templateTxt:string=''){
                 item.nameInitials = nameInitials;
             });
 			this.mentionAgentsList = this.agentsList.filter((item:any)=>item.uid != this.uid);
-			this.assigineeList = this.agentsList.filter((item:any)=>item.isActive == 1);
+			this.assigineeList = this.agentsList.filter((item:any)=>item.IsActive == 1);
 			  }
 			});
 		  }
