@@ -754,7 +754,7 @@ checkTemplateName(e:any){
         newTemplateForm.isCopied = 0;
         newTemplateForm.template_json = [];
         if(this.newTemplateForm.controls.Channel.value == 'WA API') {
-            let buttons =[];
+            let buttons:any[] =[];
             let headerAtt = this.getVariables(this.newTemplateForm.controls.Header.value, "{{", "}}", true);
              headerAtt = this.replaceVariable(headerAtt);
             let bodyAtt = this.getVariables(this.newTemplateForm.controls.BodyText.value, "{{", "}}",true);
@@ -766,10 +766,12 @@ checkTemplateName(e:any){
                 let i = 0;
                 for(let item of this.quickReplyButtons){
                     i++;
-                    buttons.push({type: "QUICK_REPLY",text: this.newTemplateForm.get(`quickreply${i}`)?.value})
+                    if(this.newTemplateForm.get(`quickreply${i}`)?.value)
+                        buttons.push({type: "QUICK_REPLY",text: this.newTemplateForm.get(`quickreply${i}`)?.value})
                 }
             }else{
                 console.log(this.newTemplateForm.controls.displayPhoneNumber.value)
+                if(this.newTemplateForm.controls.buttonText.value){
                 buttons =[{
                     type: 'PHONE_NUMBER',
                     text: this.newTemplateForm.controls.buttonText.value,
@@ -783,6 +785,7 @@ checkTemplateName(e:any){
                 //     url: this.newTemplateForm.controls.url?.value,
                 // }
             ]
+        }
             }
             let headerMedia ={};
             if(this.selectedType != 'text'){
@@ -805,33 +808,24 @@ checkTemplateName(e:any){
                 type: 'FOOTER',
                 text: this.newTemplateForm.controls.FooterText.value,
             },
-            {
-                //type: this.newTemplateForm.controls.buttonType.value,
-                type: 'BUTTONS',                       
-                buttons:buttons
-                // button: [
-                //     {
-                //         name1: this.newTemplateForm.controls.quickreply1.value,
-                //         name2: this.newTemplateForm.controls.quickreply2.value,
-                //         name3: this.newTemplateForm.controls.quickreply3.value,
-                       
-                //     },
-                // ],
-                // button:[
-                //     {type: "QUICK_REPLY",text: this.newTemplateForm.controls.quickreply1.value},
-                // //     this.newTemplateForm.controls.quickreply1.value,
-                // //     this.newTemplateForm.controls.quickreply2.value,
-                // //    this.newTemplateForm.controls.quickreply3.value,
-                // ]
-            },
+           
         ]
         if(headerAtt && headerAtt.length > 0){
             header_text ={ "header_text": headerAtt}
             comp[0]['example'] = header_text
         }
         if(bodyAtt && bodyAtt.length >0){
-            body_text ={ "body_text": bodyAtt}
+            body_text ={ "body_text": [bodyAtt]}
             comp[1]['example'] = body_text
+        }
+        if(!comp[2]['text']){
+            comp.splice(2,1);
+        }
+        if(buttons.length > 0){
+            comp.push( {
+                type: 'BUTTONS',                       
+                buttons:buttons                
+            });
         }
 
             newTemplateForm.template_json.push({
