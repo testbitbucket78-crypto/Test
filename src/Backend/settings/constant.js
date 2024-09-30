@@ -45,7 +45,10 @@ removeHoliday = `UPDATE holidays SET isDeleted=1,updated_at=? WHERE SP_ID=? AND 
 getSubRight = `select * from subRights where  isDeleted !=1 and visibilityStatus = 1`
 getRights = `select * from rights where isDeleted !=1 and visibilityStatus = 1`
 
-getAllUserQuery = `SELECT * FROM user WHERE isDeleted !=1 and SP_ID=?`
+getAllUserQuery = `SELECT   r.RoleName,  u.*
+FROM user u
+JOIN roles r ON u.UserType = r.roleID
+WHERE u.SP_ID =? AND u.isDeleted != 1 and u.IsActive < 2`
 addRoleQuery = `INSERT INTO roles (RoleName,Privileges,IsActive,subPrivileges,created_at,SP_ID) values ?`
 updateRole = `UPDATE roles set RoleName=?,Privileges=?,IsActive=?,subPrivileges=?,updated_at=? where roleID=? AND SP_ID=?`
 getRoleQuery = `SELECT * from roles where roleID=? and SP_ID=? and isDeleted !=1`
