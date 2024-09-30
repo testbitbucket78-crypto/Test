@@ -31,8 +31,12 @@ app.post('/craeteQRcode', async (req, res) => {
             return res.status(409).json({ value: 'QR Generation already in progress for this spId' });
           }
         let response = await web.createClientInstance(spid, phoneNo);
-        processSet.delete(spid);
-        console.log(`Deleted spid: ${spid}, current processSet:`, processSet);
+        if(response?.status){
+            processSet.delete(spid);
+            console.log(`Deleted spid: ${spid}, current processSet:`, processSet);
+        }
+     
+      
         logger.info(`response of create QR CODE  ${JSON.stringify(response.status)}`)
         res.send({
             status: response.status,
@@ -60,8 +64,8 @@ function processStart(spId) {
       const timeoutId = setTimeout(() => {
         processSet.delete(spId);
         console.log(`Process timed out for spId: ${spId}`);
-        processTimeouts.delete(spId); // if any case the try and catch block dont get triggered 
-    }, 15000); 
+       // processTimeouts.delete(spId); // if any case the try and catch block dont get triggered 
+    }, 30000); 
     return true;
   }
 
