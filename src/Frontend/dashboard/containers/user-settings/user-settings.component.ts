@@ -214,7 +214,7 @@ getPhoneNumberValidation(){
         });
     }
     getUserList() {
-        this._settingsService.getUserList(this.sp_Id).subscribe(result => {
+        this._settingsService.getActiveUserList(this.sp_Id).subscribe(result => {
             if (result) {
                 let userData = result?.getUser.filter((item:any)=> item.uid != this.login_uid);
                 this.userList =userData;
