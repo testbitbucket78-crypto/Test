@@ -33,19 +33,20 @@ async function fetchScheduledMessages() {
     var messagesData = await db.excuteQuery(`select * from Campaign where (status=1 or status=2) and is_deleted != 1`, [])
     var remaingMessage = [];
     //console.log(messagesData)
-
+    logger.info(`fetchScheduledMessages ${messagesData?.length}`)
     const currentDate = new Date();
 
     const currentDay = currentDate.getDay();
 
     let currentDateTime = new Date().toLocaleString(undefined, { timeZone: 'Asia/Kolkata' }); // UTC
-    console.log("messagesData", messagesData)
+   // console.log("messagesData", messagesData)
 
     // HAVE TO CHANGE THIS IN ASYNC FOR EACH SPID
     for (const message of messagesData) {
 
       //  let campaignTime = await getCampTime(message.sp_id)  // same as below loop
-      console.log(message.sp_id, "campaignTime", isWorkingTime(message), new Date(message.start_datetime) < new Date(currentDateTime), new Date(message.start_datetime), new Date(), new Date(currentDateTime))
+     // console.log(message.sp_id, "campaignTime", isWorkingTime(message), new Date(message.start_datetime) < new Date(currentDateTime), new Date(message.start_datetime), new Date(), new Date(currentDateTime))
+      logger.info(`fetchScheduledMessages isWorkingTime ${isWorkingTime(message)}  time ${new Date(message.start_datetime) <= new Date(currentDateTime)}`)
       if (isWorkingTime(message)) {
 
         if (new Date(message.start_datetime) <= new Date(currentDateTime)) {
@@ -58,7 +59,8 @@ async function fetchScheduledMessages() {
       }
 
     }
-    console.log("remaingMessage", remaingMessage)
+    //console.log("remaingMessage", remaingMessage)
+    logger.info(`remaingMessage ${remaingMessage?.length}`)
     for (const message of remaingMessage) {
 
       console.log("remaingMessage loop", message.sp_id)
@@ -706,7 +708,7 @@ async function insertInteractionAndRetrieveId(phoneNo, sid, channel) {
 
       let countryCodeObj;
       if (phoneNo) {
-        countryCodeObj = mapCountryCode(phoneNo); //Country Code abstraction `countryCode` = '91', `country` = 'IN', `localNumber` = '8130818921'
+        countryCodeObj = mapCountryCode.mapCountryCode(phoneNo); //Country Code abstraction `countryCode` = '91', `country` = 'IN', `localNumber` = '8130818921'
       }
       let countryCode = countryCodeObj.country + " +" + countryCodeObj.countryCode
       let displayPhoneNumber = countryCodeObj.localNumber
