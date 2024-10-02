@@ -238,14 +238,14 @@ async function getSmartReplies(message_text, phone_number_id, contactname, from,
 
     var replymessage = await matchSmartReplies(message_text, sid, channelType)
    
-    let defultOutOfOfficeMsg = await workingHoursDetails(sid, phone_number_id, from, msg_id, newId, channelType, agid,custid);
+    let defultOutOfOfficeMsg = await workingHoursDetails(sid, phone_number_id, from, msg_id, newId, channelType, agid,custid,replymessage);
     console.log("defultOutOfOfficeMsg",defultOutOfOfficeMsg)
     if (replymessage?.length > 0) {
 
       let isSReply = await iterateSmartReplies(replymessage, phone_number_id, from, sid, custid, agid, newId, channelType,display_phone_number);
       console.log("iterateSmartReplies replymessage.length", isSReply)
       return isSReply;
-    } else if (defultOutOfOfficeMsg === false) {
+    } else if (defultOutOfOfficeMsg === false && replymessage?.length <= 0) {
       let getOutOfOfficeResult = await getOutOfOfficeMsg(sid, phone_number_id, from, msg_id, newId, channelType, agid,custid);
       console.log("getOutOfOfficeResult", defultOutOfOfficeMsg, "getOutOfOfficeResult", getOutOfOfficeResult)
       return 'false' // getOutOfOfficeResult;  comment this is because routing rules only disable for smartreply or flow
@@ -693,7 +693,7 @@ async function getOutOfOfficeMsg(sid, phone_number_id, from, msg_id, newId, chan
     if (outOfOfficeMessage.length > 0 && outOfOfficeMessage[0].Is_disable == 1) {
       console.log("outOfOfficeMessage Is_disable")
       let messageInterval = await db.excuteQuery(msgBetweenOneHourQuery, [newId, 2])
-      console.log(messageInterval[0]?.updated_at >= messageInterval[0]?.updateTime,messageInterval[0]?.updated_at ,messageInterval[0]?.updateTime)
+      console.log(messageInterval.length,"messageInterval.length",messageInterval[0]?.updated_at >= messageInterval[0]?.updateTime,messageInterval[0]?.updated_at ,messageInterval[0]?.updateTime)
       let resolvedInteraction = await db.excuteQuery(checkResolve,[newId,sid]);
     // if(resolvedInteraction[0]?.interaction_status != 'Resolved'){
       if (messageInterval.length <= 0 || !(messageInterval[0].updated_at >= messageInterval[0].updateTime)) {
@@ -717,7 +717,7 @@ async function getOutOfOfficeMsg(sid, phone_number_id, from, msg_id, newId, chan
 }
 
 
-async function workingHoursDetails(sid, phone_number_id, from, msg_id, newId, channelType, agid,custid) {
+async function workingHoursDetails(sid, phone_number_id, from, msg_id, newId, channelType, agid,custid,smartReplyTrigger) {
   const currentTime = new Date();
   let workingHourQuery = `select * from WorkingTimeDetails where SP_ID=? and isDeleted !=1`;
   var workingData = await db.excuteQuery(workingHourQuery, [sid]);
@@ -725,7 +725,7 @@ async function workingHoursDetails(sid, phone_number_id, from, msg_id, newId, ch
   let isWorkingHour = isWorkingTime(workingData, currentTime)
   let isTodayHoliday = await isHolidays(sid);
  // console.log(isTodayHoliday,"(isWorkingTime(workingData, currentTime)) && isTodayHoliday == true",(isWorkingTime(workingData, currentTime)) && isTodayHoliday == true)
-  if ((isWorkingTime(workingData, currentTime))) {
+  if ((isWorkingTime(workingData, currentTime)) && smartReplyTrigger?.length <=0 && isTodayHoliday == false) {
     let agentofflinestatus = await AllAgentsOffline(sid, phone_number_id, from, msg_id, newId, channelType, agid,custid);
     console.log('It is currently  within working hours.' + msg_id);
     if (agentofflinestatus == true) {
@@ -733,7 +733,7 @@ async function workingHoursDetails(sid, phone_number_id, from, msg_id, newId, ch
     }
     //return true;
   } 
-  if ((isWorkingTime(workingData, currentTime)) && isTodayHoliday == true){
+  if ((isWorkingTime(workingData, currentTime)) && isTodayHoliday == true && smartReplyTrigger?.length <=0){
     console.log("else ******* ",)
     let getOutOfOfficeResult = await getOutOfOfficeMsg(sid, phone_number_id, from, msg_id, newId, channelType, agid,custid);
     return 'working hour and holidays';

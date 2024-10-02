@@ -106,7 +106,7 @@ function ClientInstance(spid, authStr, phoneNo) {
         puppeteer: {
           headless: true,
          executablePath: "/usr/bin/google-chrome-stable",
-       // executablePath: "C:/Program Files/Google/Chrome/Application/chrome.exe",
+        //executablePath: "C:/Program Files/Google/Chrome/Application/chrome.exe",
        // executablePath: "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome",
 
           args: [
@@ -1143,9 +1143,11 @@ async function getDetatilsOfSavedMessage(saveMessage, message_text, phone_number
         updateInteraction = await db.excuteQuery('UPDATE Interaction SET interaction_status=?,updated_at=? WHERE InteractionId=?', ['Open', updated_at, newId])
       }
       if (updateInteraction?.affectedRows > 0) {
+        logger.info(`Status changed notify gone *********************`)
         notify.NotifyServer(display_phone_number, false, newId, 0, 'IN', 'Status changed')
       }
       let RoutingRulesVaues = await Routing.AssignToContactOwner(sid, newId, agid, custid)  //CALL Default Routing Rules
+      logger.info(`RoutingRulesVaues ________________ ${RoutingRulesVaues}`)
       if (RoutingRulesVaues == 'broadcast' || RoutingRulesVaues == true) {
         notify.NotifyServer(display_phone_number, false, newId, 0, 'IN', 'Assign Agent')
 
