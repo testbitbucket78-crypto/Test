@@ -14,7 +14,7 @@
                <label class="custom-control-label" for="contactowner"><span class="sub-heading">Assign to Contact Owner</span></label>
             </div>
             <div class="sub-contents">
-                <p>If this is selected, override all other rules and always assign the chat to its Contact Owner. If the Contact Owner is not available then the below routing rules will apply if enabled.</p>           
+                <p>If this rule is selected override all other rules and always assign the conversation to its Contact Owner. If the Contact Owner is not defined or In-active then below routing rules will apply as defined.</p>           
             </div>
         </div>
         <div class="pl-2 pr-5 pb-3">
@@ -23,13 +23,13 @@
                <label class="custom-control-label" for="assignagent"><span class="sub-heading">Assign to Last Assisted Agent</span></label> 
             </div>
             <div class="sub-contents">
-                <p>If this is selected, override all other rules and always assign the chat to its last assigned agent. If there is no Last Assigned Agent or unavailable then default routing rule will apply.</p>           
+                <p>If this rule is selected override all other rules and always assign the conversation to its last assigned agent. If there is no Last Assigned Agent or In-active then below rules will apply as defined.</p>           
             </div>
         </div>
         <div>
             <span class="sub-heading">Default Assignment Rules</span>    
             <div class="sub-contents pl-0 py-2">
-                <p>A new conversation will be assigned based on the routing rule chosen here if no other automation is applicable.</p>           
+                <p>A conversation when Opened will be assigned based on the Routing rule chosen here if no other automation is applicable.</p>           
             </div>
         </div>
         <div class="pl-2 pr-5 pb-3">
@@ -37,7 +37,7 @@
                 <input type="radio" id="assign-rule-bc" name="assign-rule" [checked]="broadcast" (change)="defaultAssignmentRules('broadcast')" [value]="broadcast"><label class="m-0" for="assign-rule-bc">Broadcast</label>
             </div>
             <div class="sub-contents">
-                <p>Notify all the online agents when a new chat comes. All new chats will be placed in the unassigned tab where anyone can assign it to themselves to start chatting with the customers.</p>           
+                <p>Conversation will be placed in the Unassigned tab of Teambox where anyone can assign it to themselves to start chatting with the customers.</p>           
             </div>
         </div>
         <div class="pl-2 pr-5 pb-3">
@@ -45,7 +45,7 @@
                 <input type="radio" id="assign-rule-rr" name="assign-rule" [checked]="roundrobin" (change)="defaultAssignmentRules('roundrobin')" [value]="roundrobin"><label class="m-0" for="assign-rule-rr">Round Robin</label>
             </div>
             <div class="sub-contents">
-                <p>Assign incoming chats to all the available agents one after another ensuring chats are getting distributed equally among them.</p>           
+                <p>Assign new incoming conversation to all the active agents one after another ensuring these are getting distributed equally among them.</p>           
                 <div class="select-heading py-2">Max. No. of Open Conversation Allowed</div>
                 <select class="input-form" [disabled]="defaultAssignRule!=='roundrobin'" [(ngModel)]="conversationallowed"
                 [ngClass]="{'error-outline': conversationallowed === '' && defaultAssignRule === 'roundrobin'}" >
@@ -73,7 +73,7 @@
                 <input type="radio" id="assign-rule-ma" name="assign-rule" [checked]="manualassign" (change)="defaultAssignmentRules('manualassign')" [value]="manualassign"><label class="m-0" for="assign-rule-ma">Manual Assign</label>
             </div>
             <div class="sub-contents">
-                <p>All the chats are first assigned to a selected user (usually manager). Further this user assigns agents or teams to each of these chats. If this selected manager is not available, then chats will be assigned according to the rules defined under “Missed Chat”.</p>           
+                <p>All the conversations are assigned to a user as defined here (usually a manager who further assigns agents to each of these conversation). If this selected user is In-Active at the time of allocation, then conversation will be assigned according to the rules defined under “Missed Chat”.</p>           
                 <div class="select-heading py-2">Assign a User</div>
                 <select class="input-form" [disabled]="defaultAssignRule!=='manualassign'" [(ngModel)]="assignuser" 
                 [ngClass]="{'error-outline': assignuser === '' && defaultAssignRule==='manualassign'}">
@@ -82,9 +82,12 @@
             </div>
         </div>
         <div>
-            <span class="sub-heading">Manage Missed Chat</span>            
-            <div class="sub-contents pl-0">
-                <p>Fallback assignment rule if the chat could not be assigned as per selected rule within the allowed time as configured here.</p>           
+            <div class="d-flex align-items-center custom-control custom-checkbox ml-1 mt-1">
+                <input type="checkbox" id="manageMissedChat" class="custom-control-input" (change)="manageMissedChatChange('manageMissedChat', $event.target.checked)" [(ngModel)]="manageMissedChat">
+               <label class="custom-control-label" for="manageMissedChat"><span class="select-heading">Manage Missed Chat</span></label>
+            </div>
+            <div class="sub-contents p-sub-heading">
+                <p>A fallback assignment rule if the conversation could not be assigned even once after being marked Open as per the above defined rules within the allowed time as configured here.</p>           
             </div>
             <div class="sub-contents">
             <div class="select-heading pt-3 pb-2">
@@ -93,31 +96,33 @@
             <form #myForm="ngForm">
             <div class="d-flex align-items-baseline select-content">
                 <input class="form-control" name="chatAssignTimeout" type="text" 
+                    [disabled]="isManageMissedChat"
                     onKeyPress="if(this.value.length==4) return false; return /^[0-9]$/.test(event.key)"
                     [pattern]="chatAssignTimeoutPattern"
                     [(ngModel)]="timeoutperiod"
                     placeholder="Enter chat timeout (1-1440 minutes)"
                     [ngClass]="{'is-invalid error-outline':myForm.controls['chatAssignTimeout']?.dirty && (myForm.controls['chatAssignTimeout']?.hasError('pattern') 
-                    || errorOnchatAssignTimeout())}">
+                    || (errorOnchatAssignTimeout()  && checkIfValid))}">
             </div>
             </form>
             <div class="d-flex py-2">
                 <div class="sel-type-btns">
-                    <input type="radio" id="chat-assign-co" name="chat-assign" [checked]="isMissChatAssigContactOwner" (change)="missedChatOptionsChange('isMissChatAssigContactOwner')" [value]="isMissChatAssigContactOwner">
+                    <input type="radio" [disabled]="isManageMissedChat" id="chat-assign-co" name="chat-assign" [checked]="isMissChatAssigContactOwner" (change)="missedChatOptionsChange('isMissChatAssigContactOwner')" [value]="isMissChatAssigContactOwner">
                     <label class="m-0" for="chat-assign-co">Contact Owner</label>
                 </div>
                 <div class="pl-4 sel-type-btns">
-                    <input type="radio" id="chat-assign-admin" name="chat-assign" [checked]="isadmin" (change)="missedChatOptionsChange('isadmin')" [value]="isadmin" >
+                    <input type="radio" [disabled]="isManageMissedChat" id="chat-assign-admin" name="chat-assign" [checked]="isadmin" (change)="missedChatOptionsChange('isadmin')" [value]="isadmin" >
                     <label class="m-0" for="chat-assign-admin">Admin</label>
                 </div>
                 <div class="pl-4 sel-type-btns">
-                    <input type="radio" id="chat-assign-su" name="chat-assign" [checked]="assignspecificuser" (change)="missedChatOptionsChange('assignspecificuser')"[value]="assignspecificuser">
+                    <input type="radio" [disabled]="isManageMissedChat" id="chat-assign-su" name="chat-assign" [checked]="assignspecificuser" (change)="missedChatOptionsChange('assignspecificuser')"[value]="assignspecificuser">
                     <label class="m-0" for="chat-assign-su">Assign a Specific User</label>
                 </div>
             </div>
             <div class="select-heading py-2">Assign a Specific User</div>
             <select [disabled]="missedChatOption!=='assignspecificuser'" class="input-form pointerCursor" [(ngModel)]="selectuser" 
-            [ngClass]="{'is-invalid error-outline': errorOnMissedChatOption()}">
+            [disabled]="isManageMissedChat"
+            [ngClass]="{'is-invalid error-outline': errorOnMissedChatOption() && checkIfValid}">
                 <option *ngFor="let name of usernames" [ngValue]="name"><span class="text-capitalize" >{{ name }}</span></option>
             </select>
             <p>If the contact owner is not defined or there are multiple admins, then the chat is assigned to default Admin.</p>

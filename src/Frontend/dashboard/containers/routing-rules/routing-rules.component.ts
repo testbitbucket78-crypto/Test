@@ -20,6 +20,8 @@ export class RoutingRulesComponent implements OnInit {
   roundrobin = 0;
   conversationallowed = "";
   manualassign = 0;
+  manageMissedChat = 0;
+  isManageMissedChat!:boolean;
   enableAdmin=0;
   assignuser= "";
   timeoutperiod= "";
@@ -91,6 +93,20 @@ export class RoutingRulesComponent implements OnInit {
     this.conversationallowed = '';
   }
 
+  manageMissedChatChange(action: string,checked: boolean){
+    if (action === 'manageMissedChat') {
+      this.manageMissedChat = checked ? 1 : 0;
+      this.isManageMissedChat = checked ? false : true;
+      if(this.manageMissedChat == 0){
+         this.resetMissedChat();
+      }
+    }
+  }
+  resetMissedChat(){
+    this.timeoutperiod = '';
+    this.selectuser = '';
+
+  }
   missedChatOptionsChange(option: string) {
     if (option === 'isMissChatAssigContactOwner') {
       this.missedChatOption = 'isMissChatAssigContactOwner';
@@ -120,7 +136,13 @@ errorOnMissedChatOption(): boolean {
 }
 
 get checkIfValid(): boolean {
-  // to check if every input field is valid and do not consist "" empty 
+  // to check if every input field is valid and do not consist "" empty
+  if(this.isManageMissedChat) {
+    const isConversationAllowedValid = !(this.conversationallowed === '' && this.defaultAssignRule === 'roundrobin');
+    const isAssignUserValid = !(this.assignuser === '' && this.defaultAssignRule === 'manualassign');
+    this.isValid = isConversationAllowedValid && isAssignUserValid ;
+    return !this.isValid; 
+  }
   const isConversationAllowedValid = !(this.conversationallowed === '' && this.defaultAssignRule === 'roundrobin');
   const isAssignUserValid = !(this.assignuser === '' && this.defaultAssignRule === 'manualassign');
   const isTimeoutValid = !this.errorOnchatAssignTimeout();
@@ -209,6 +231,7 @@ assignUUID(manualassign: string, assignspecificuser: string){
     this.routingRulesData.SP_ID = this.spId;
     this.routingRulesData.contactowner  = this.contactowner;
     this.routingRulesData.assignagent = this.assignagent;
+    this.routingRulesData.isMissedChat = this.manageMissedChat;
     if(this.defaultAssignRule) {
       this.routingRulesData.broadcast = Number(this.defaultAssignRule === 'broadcast' ? '1' : '0');
       this.routingRulesData.roundrobin = Number(this.defaultAssignRule === 'roundrobin' ? '1' : '0');
@@ -227,7 +250,7 @@ assignUUID(manualassign: string, assignspecificuser: string){
     };
    this.assignUUID( this.routingRulesData.assignuser ,  this.routingRulesData.selectuser);
 
-    if(this.myForm.valid) {
+    if( this.myForm.controls['chatAssignTimeout'].disabled || this.myForm.valid) {
       this.apiService.saveRoutingRulesData(this.routingRulesData).subscribe(response=>{
         if(response.status === 200) {
           this.showToaster("Routing Rules Updated Successfully", "success");

@@ -46,12 +46,12 @@ export class DefaultMessageSettingsComponent implements OnInit {
     {
     id:0,
     title:'Welcome Greeting',
-    description:'A default welcome message will be sent to the customer in case a chat is initiated but no keyword is matched.'
+    description:'A default welcome message will be sent to the customers when they message for the very first time.'
     },
     {
       id:1,
       title:'No Agent Reply',
-      description:'Configure a reply message to be sent during working hours if customer waits more than the defined minutes here.'
+      description:'Configure a reply message to be sent during working hours if customer waits more than the defined time while the conversation is still open (Applicable only once in the same conversation).'
     },
     {
       id:2,
@@ -61,7 +61,7 @@ export class DefaultMessageSettingsComponent implements OnInit {
     {
       id:3,
       title:'No Customer Reply Reminder',
-      description:'Configure a reminder message if the chat is still open and it’s 23 hours since last message from the customer while a reply is awaited from him'
+      description:'Configure a reminder message if the conversation is still open and it’s 23 hours since last message from the customer while a reply is awaited from him.'
     },
     {
       id:4,
@@ -71,7 +71,7 @@ export class DefaultMessageSettingsComponent implements OnInit {
     {
       id:5,
       title:'No Customer Reply Timeout',
-      description:'Configure a message to be sent to the customer if no reply is received for the defined minutes here before the chat is marked closed'
+      description:'Configure a message to be sent if the conversation is still open and no reply is received from the customer for the defined time before it is marked resolved.'
     }
   ];
 
