@@ -149,7 +149,7 @@
 							<a [href]="selectedCampaign?.message_media"><img src="../../../../assets/img/settings/doc.svg" /></a>
 							</div>
 							<video *ngIf="getMediaType(selectedCampaign?.media_type,'video')" muted id="video-background" [src]="selectedCampaign?.message_media"></video>
-							<img *ngIf="getMediaType(selectedCampaign?.media_type,'image')" class="template_img" src="{{selectedCampaign?/.message_media}}">
+							<img *ngIf="getMediaType(selectedCampaign?.media_type,'image')" class="template_img" src="{{selectedCampaign?.message_media}}">
 						<!-- <div *ngIf="selectedCampaign.message_media" class="template_img">
 							<img src="{{selectedCampaign.message_media}}">
 						</div> -->
@@ -1482,13 +1482,13 @@
 		
 			<img src="../../../../assets/img/campaign/Send-o.svg">
 			<p>Test Campaign</p>
-			<div *ngIf="testNumbers.length>0">
+			<div *ngIf="testNumbers?.length>0">
 			<p><span>This Campaign message will be sent on your configured test number 9876824564 and 9922556734.</span></p>
 			<p>Note: You will be charged as per your monthly plan and usage limits</p>
 		    <p><button type="button" class="submit-btn mt-3" aria-label="Close" (click)="ConfirmTest(addNewCampaign)">Confirm & Test</button></p>
 		    </div>
 
-			<div *ngIf="testNumbers.length<1">
+			<div *ngIf="testNumbers?.length<1">
 				<p><span>No number is configured for campaign testing.</span></p>
 				<p>Please configure maximum of 2 numbers from the campaign settings.</p>
 				<p><button type="button" class="submit-btn mt-3" aria-label="Close" (click)="ConfirmClose(addNewCampaign)">Close</button></p>
