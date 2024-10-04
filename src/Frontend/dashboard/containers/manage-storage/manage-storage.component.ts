@@ -116,7 +116,7 @@ export class ManageStorageComponent implements OnInit {
         optionControl?.setValue(null, { emitEvent: false });
       }else{
         radioControl?.setValue('', { emitEvent: false });
-        //radioControl?.disable({emitEvent:false});
+      
       }
       }
       else {
@@ -127,7 +127,7 @@ export class ManageStorageComponent implements OnInit {
     radioControl?.valueChanges.subscribe(value => {
       if (value) {
         optionControl?.setValue(null, { emitEvent: false });
-        //optionControl?.disable({emitEvent:false});
+
       }
       else {
         optionControl?.enable({emitEvent:false});
@@ -142,22 +142,22 @@ export class ManageStorageComponent implements OnInit {
     const formValues = this.editAutoDeletionForm.value;
     editAutoDeletion.spid = this.spid;
   
-    if (formValues.optionradio1 == '1') {
+    if (formValues?.optionradio1 == '1') {
       editAutoDeletion.autodeletion_message = '-1';
     } else {
-      editAutoDeletion.autodeletion_message = formValues.autodeletion_message;
+      editAutoDeletion.autodeletion_message = formValues?.autodeletion_message;
     }
   
-    if (formValues.optionradio2 == '1') {
+    if (formValues?.optionradio2 == '1') {
       editAutoDeletion.autodeletion_media = '-1';
     } else {
-      editAutoDeletion.autodeletion_media = formValues.autodeletion_media;
+      editAutoDeletion.autodeletion_media = formValues?.autodeletion_media;
     }
   
-    if (formValues.optionradio3 == '1') {
+    if (formValues?.optionradio3 == '1') {
       editAutoDeletion.autodeletion_contacts = '-1'; 
     } else {
-      editAutoDeletion.autodeletion_contacts = formValues.autodeletion_contacts;
+      editAutoDeletion.autodeletion_contacts = formValues?.autodeletion_contacts;
     }
 
     console.log(editAutoDeletion,'AUTO DELETEION')
@@ -270,28 +270,24 @@ export class ManageStorageComponent implements OnInit {
      else {
       this.apiService.getmanualDelation(showdeletedata).subscribe(response => {
         this.showMessages = true;
-        // text message data //
 
         if(this.manually_deletion_days && this.textChecked) {
-          this.messageData = response.textSize[0];
+          if(response?.textSize?.length) this.messageData = response.textSize[0];
           this.message_count = this.messageData?.message_count;
           let message_size = this.messageData?.message_size;
           this.message_size = parseFloat((message_size / (1024 * 1024)).toFixed(2));
         };
         
       
-  
-        // media message data //
 
         if(this.manually_deletion_days && this.mediaChecked) {
-          this.mediaData = response.mediaSize;
+          this.mediaData = response?.mediaSize;
           this.mediaCount = this.mediaData?.mediaCount;
           let totalSize = this.mediaData?.totalSize;
           this.totalSize = parseFloat((totalSize / (1024 * 1024)).toFixed(2));
         };
        
 
-        // combined data //
         if(this.message_type == 'Both') {
           this.combinedSize = Number(this.message_size + this.totalSize);
           this.combinedCount = Number(this.message_count + this.mediaCount);

@@ -146,7 +146,6 @@ export class UserSettingsComponent implements OnInit {
         this.getUserList();
         this.getRolesList(); 
         this.getPhoneNumberValidation(); 
-        console.log(this.uid);
         let formattedDate = this.datepipe.transform(new Date(), `dd-MM-YY hh:mm a`);
     }
 
@@ -158,12 +157,11 @@ getPhoneNumberValidation(){
         this.phoneValidator.phoneNumberValidator(this.userDetailForm.get('country_code'))
       ]);
       this.userDetailForm.get('display_mobile_number')?.updateValueAndValidity();
-      console.log(this.userDetailForm);
   //  });
   }
 
     rowClicked = (event: any) => {
-        console.log(event);
+
     
         if (this.showSideBar && this.userData && this.uid) {
             this.userData = null;
@@ -174,7 +172,6 @@ getPhoneNumberValidation(){
         } else {
             this.showSideBar = true;
             this.uid = event.data?.uid;
-            console.log(this.uid);
             this.isActive = event.data.IsActive == 2 ? true : false ;
             this.getUserById();
         }
@@ -255,8 +252,6 @@ getPhoneNumberValidation(){
        if(isNullOrUndefined(this.selectedUserData)) {
             this._settingsService.saveUserData(userData).pipe(
                 catchError((error) => {
-                    console.log('abcd');
-                    console.log(error?.msg);
                     this.showToaster('error',error?.error?.msg);
                     return of(null);  
                 })
@@ -276,8 +271,6 @@ getPhoneNumberValidation(){
         else {
             this._settingsService.editUserData(userData).pipe(
                 catchError((error) => {
-                    console.log('abcd');
-                    console.log(error);
                     this.showToaster('error',error?.error?.msg);
                     return of(null);  
                 })
@@ -317,7 +310,6 @@ getPhoneNumberValidation(){
     patchFormValue() {
         const data = this.userData;
         this.selectedUserData =data;
-        console.log(this.userData)
         for (let prop in data) {
             let value = data[prop as keyof typeof data];
             if (this.userDetailForm.get(prop)) this.userDetailForm.get(prop)?.setValue(value);

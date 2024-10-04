@@ -134,13 +134,8 @@ get checkIfValid(): boolean {
     this.apiService.getUserList(this.spId,1).subscribe((result:any) =>{
       if(result){
         this.userList =result?.getUser;     
-        console.log('userList:', this.userList);
         this.usernames = this.userList.map((getUser:any) => getUser.name);
         this.userId = this.userList.map((getUser:any) => getUser.uid);
-
-      console.log(this.usernames);
-      console.log(this.userId);
-  
       }
   
     })
@@ -150,7 +145,6 @@ get checkIfValid(): boolean {
   getRoutingRules() {
     this.apiService.getRoutingRulesData(this.spId).subscribe(response =>{
           const data:routingRulesData = response.autoaddition[0];
-          console.log(data);
 
           this.contactowner = data.contactowner;
           this.assignagent = data.assignagent;
@@ -186,7 +180,6 @@ get checkIfValid(): boolean {
           }
           this.isLoading = false;
     });
-console.log(this.defaultAssignRule)
   }
 assignUUID(manualassign: string, assignspecificuser: string){
   const manualAssignUser = this.userList.find((user: any) => user.name === manualassign);
