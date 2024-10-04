@@ -25,7 +25,7 @@
 					    <span>Filter</span>
 					</div>
 				</div>
-				<button class="new-message-btn" (click)="openAddNew(addNewCampaign)" [disabled]="settingsService.checkRoleExist('21')"><img class="icon" src="/assets/img/teambox/add.svg" /> New Campaign</button>		
+				<button class="new-message-btn" (click)="openAddNew(addNewCampaign)" [disabled]="settingsService?.checkRoleExist('21')"><img class="icon" src="/assets/img/teambox/add.svg" /> New Campaign</button>		
 					
 			</div>
 			
@@ -44,16 +44,16 @@
 				 <!-- <div *ngIf="ShowContactOwner" class=" ContactOption" (click)="stopPropagation($event)">
 				<p><span>Messaging limit:</span>WhatsApp enforces a policy limiting business to 1,000 messages per 24-hour period to prevent spam and maintain a quality user experience. However there is no cap on receiving messages from users.</p>
 				</div> -->
-			<div *ngIf="allCampaign.length>0" class="campaigns_section_items" >
-				<div *ngFor="let campaign of allCampaign ;let i = index" class="campaigns_section_item {{campaign.status_label}}" (click)="toggleCampaign(campaign)">
+			<div *ngIf="allCampaign?.length>0" class="campaigns_section_items" >
+				<div *ngFor="let campaign of allCampaign ;let i = index" class="campaigns_section_item {{campaign?.status_label}}" (click)="toggleCampaign(campaign)">
 					<div class="campaigns_section_item_header">
-						<label>{{campaign.status_label}}</label>
-						<span>id: {{campaign.Id}}</span>
+						<label>{{campaign?.status_label}}</label>
+						<span>id: {{campaign?.Id}}</span>
 						
 					</div>
-					<p class="title ellipsis">{{campaign.title}}</p>
-					<p class="start_time">Start time <span>{{settingsService?.getDateTimeFormate(campaign.start_datetime_formated)}}</span></p>
-					<p><img *ngIf="campaign.channel_id==1" class="icon" src="/assets/img/teambox/whatsapp-icon-l.svg" />{{campaign.channel_label}}</p>
+					<p class="title ellipsis">{{campaign?.title}}</p>
+					<p class="start_time">Start time <span>{{settingsService?.getDateTimeFormate(campaign?.start_datetime_formated)}}</span></p>
+					<p><img *ngIf="campaign?.channel_id==1" class="icon" src="/assets/img/teambox/whatsapp-icon-l.svg" />{{campaign?.channel_label}}</p>
 					<div class="campaigns_section_item_statics">
 						<div>
 							<p>{{campaign.AllContactsLength}}</p>
@@ -75,14 +75,14 @@
 					</div>
 				</div>
 
-				<div class="campaigns_section_item campaign_scroll {{selectedCampaign.status_label}}"  >
+				<div class="campaigns_section_item campaign_scroll {{selectedCampaign?.status_label}}"  >
 					<div class="campaigns_section_item_header">
-						<label>{{selectedCampaign.status_label}}</label>
-						<span>id: {{selectedCampaign.Id}}</span>
+						<label>{{selectedCampaign?.status_label}}</label>
+						<span>id: {{selectedCampaign?.Id}}</span>
 					</div>
-					<p class="start_time">Created on <span>{{settingsService?.getDateTimeFormate(selectedCampaign.created_datetime_formated)}}</span> Start time <span>{{settingsService?.getDateTimeFormate(selectedCampaign.start_datetime_formated)}}</span></p>
-					<p class="title" ><img *ngIf="selectedCampaign.status==0 || selectedCampaign.status==1" (click)="editCampaign(addNewCampaign,1)" class="icon_sm" src="/assets/img/teambox/edit-icon.svg"> {{selectedCampaign.title}}</p>
-					<p><img class="icon" src="/assets/img/teambox/whatsapp-icon-l.svg" />{{selectedCampaign.channel_label}}</p>
+					<p class="start_time">Created on <span>{{settingsService?.getDateTimeFormate(selectedCampaign?.created_datetime_formated)}}</span> Start time <span>{{settingsService?.getDateTimeFormate(selectedCampaign?.start_datetime_formated)}}</span></p>
+					<p class="title" ><img *ngIf="selectedCampaign?.status==0 || selectedCampaign?.status==1" (click)="editCampaign(addNewCampaign,1)" class="icon_sm" src="/assets/img/teambox/edit-icon.svg"> {{selectedCampaign?.title}}</p>
+					<p><img class="icon" src="/assets/img/teambox/whatsapp-icon-l.svg" />{{selectedCampaign?.channel_label}}</p>
 					<!--If running start-->
 					<div *ngIf="selectedCampaign.status>1">
 					<p class="sub_title_sm blackcolor mb-1">Reports</p>
@@ -90,14 +90,14 @@
 						<div class="running_section_row">
 							<img class="icon" src="/assets/img/teambox/sent.svg" />
 							<div>
-								<p>{{selectedCampaign.Sent}}</p>
+								<p>{{selectedCampaign?.Sent}}</p>
 								<p><span>Sent</span></p>
 							</div>
 						</div>
 						<div class="running_section_row">
 							<img class="icon" src="/assets/img/teambox/failed-camp-1.svg" />
 							<div>
-								<p>{{selectedCampaign.Failed}}</p>
+								<p>{{selectedCampaign?.Failed}}</p>
 								<p><span>Failed</span></p>
 							</div>
 						</div>
@@ -107,14 +107,14 @@
 						<div class="running_section_row">
 							<img class="icon" src="/assets/img/teambox/delivered.svg" />
 							<div>
-								<p>{{selectedCampaign.Delivered}}</p>
+								<p>{{selectedCampaign?.Delivered}}</p>
 								<p><span>Delivered</span></p>
 							</div>
 						</div>
 						<div class="running_section_row">
 							<img class="icon" src="/assets/img/teambox/seen.svg" />
 							<div>
-								<p>{{selectedCampaign.Seen}}</p>
+								<p>{{selectedCampaign?.Seen}}</p>
 								<p><span>Seen</span></p>
 							</div>
 						</div>
@@ -126,7 +126,7 @@
 								<img class="m-0 icon" src="../../../../assets/img/campaign/quick-replies.svg" />
 							</div>
 							<div>
-								<p>{{selectedCampaign.Replied}}</p>
+								<p>{{selectedCampaign?.Replied}}</p>
 								<p><span>Replied</span></p>
 							</div>
 						</div>
@@ -140,22 +140,22 @@
 					<!--If running end-->
 					
 					<p class="sub_title_sm mb-1" ><img *ngIf="selectedCampaign.status==1 || selectedCampaign.status==0" (click)="editCampaign(addNewCampaign,2)" class="icon_sm" src="../../../../assets/img/teambox/edit-icon.svg"> Traget Audience</p>
-					<p>{{selectedCampaign.AllContactsLength}} <span>( {{selectedCampaign.AudienceType}})</span></p>
-					<p class="sub_title_sm" ><img *ngIf="selectedCampaign.status==1 || selectedCampaign.status==0" (click)="editCampaign(addNewCampaign,3.1)" class="icon_sm" src="../../../../assets/img/teambox/edit-icon.svg"> Message</p>
+					<p>{{selectedCampaign?.AllContactsLength}} <span>( {{selectedCampaign?.AudienceType}})</span></p>
+					<p class="sub_title_sm" ><img *ngIf="selectedCampaign?.status==1 || selectedCampaign.status==0" (click)="editCampaign(addNewCampaign,3.1)" class="icon_sm" src="../../../../assets/img/teambox/edit-icon.svg"> Message</p>
 					<p class="sub_title_sm blackcolor mb-1">Category</p>
-					<p>{{selectedCampaign.category_label}}</p>
+					<p>{{selectedCampaign?.category_label}}</p>
 					<div class="template">
-						<div class="doc-preview"*ngIf="selectedCampaign.media_type=='document'" width="100%" height="150px">
-							<a [href]="selectedCampaign.message_media"><img src="../../../../assets/img/settings/doc.svg" /></a>
+						<div class="doc-preview"*ngIf="selectedCampaign?.media_type=='document'" width="100%" height="150px">
+							<a [href]="selectedCampaign?.message_media"><img src="../../../../assets/img/settings/doc.svg" /></a>
 							</div>
-							<video *ngIf="getMediaType(selectedCampaign.media_type,'video')" muted id="video-background" [src]="selectedCampaign.message_media"></video>
-							<img *ngIf="getMediaType(selectedCampaign.media_type,'image')" class="template_img" src="{{selectedCampaign.message_media}}">
+							<video *ngIf="getMediaType(selectedCampaign?.media_type,'video')" muted id="video-background" [src]="selectedCampaign?.message_media"></video>
+							<img *ngIf="getMediaType(selectedCampaign?.media_type,'image')" class="template_img" src="{{selectedCampaign?/.message_media}}">
 						<!-- <div *ngIf="selectedCampaign.message_media" class="template_img">
 							<img src="{{selectedCampaign.message_media}}">
 						</div> -->
 					<div class="template_text">
-						<p [innerHTML]="selectedCampaign.message_heading" class="name"></p>
-						<p class="description" [innerHTML]="selectedCampaign.message_content |sanitizeHtml"></p>
+						<p [innerHTML]="selectedCampaign?.message_heading" class="name"></p>
+						<p class="description" [innerHTML]="selectedCampaign?.message_content |sanitizeHtml"></p>
 						<!-- <p class="footer" [innerHTML]="selectedCampaign.message_footer" ></p> -->
 					</div>
 
@@ -170,7 +170,7 @@
 					<p class="sub_title_lg blackcolor dropdown" (click)="toggleshowAdvance()">Advance Options<img *ngIf="!showAdvance" class="icon" src="/assets/img/teambox/down-aarow.svg"><img *ngIf="showAdvance" class="icon" src="/assets/img/teambox/up-aarow.svg"></p>
 					<div *ngIf="showAdvance">
 						<p class="sub_title_sm blackcolor">Variable Values</p>
-						<div class="btn_group" *ngFor='let variable of selectedCampaign.allVariables ;let i = index' >
+						<div class="btn_group" *ngFor='let variable of selectedCampaign?.allVariables ;let i = index' >
 							<input type="text" value={{variable.label}} /> {{variable.value}}
 						</div>
 <!-- 
@@ -184,17 +184,17 @@
 					
 				</div>
 				<div class="action_section">
-					<button type="button" class="btn" (click)="copyCampaign()" [disabled]="settingsService.checkRoleExist('21')"><img src="/assets/img/teambox/copy.svg" ></button>
-					<button type="button" *ngIf="selectedCampaign.status == 0 || selectedCampaign.status == 1" class="btn" (click)="editCampaign(addNewCampaign,1)"  [disabled]="settingsService.checkRoleExist('21')"><img src="../../../../assets/img/teambox/Edit.svg"></button>
+					<button type="button" class="btn" (click)="copyCampaign()" [disabled]="settingsService?.checkRoleExist('21')"><img src="/assets/img/teambox/copy.svg" ></button>
+					<button type="button" *ngIf="selectedCampaign?.status == 0 || selectedCampaign.status == 1" class="btn" (click)="editCampaign(addNewCampaign,1)"  [disabled]="settingsService?.checkRoleExist('21')"><img src="../../../../assets/img/teambox/Edit.svg"></button>
 					<button type="button" class="btn" (click)="deleteCampaign(openalertmessage)" [disabled]="settingsService.checkRoleExist('21')"><img src="/assets/img/teambox/delete.svg"></button>
 				</div>
 			</div>
-			<div *ngIf="allCampaign.length<1 && searchKey == ''" class="campaigns_section_items no-campaign">
+			<div *ngIf="allCampaign?.length<1 && searchKey == ''" class="campaigns_section_items no-campaign">
 				<img src="assets/img/teambox/no-campaign@2x.png">
 				<p>No Campaigns to Show!</p>
 				<p><span>Click "+ New Campaign" to start creating Campaigns</span></p>
 			</div>
-			<div *ngIf="allCampaign.length<1 && searchKey != ''" class="campaigns_section_items no-campaign">
+			<div *ngIf="allCampaign?.length<1 && searchKey != ''" class="campaigns_section_items no-campaign">
 				<img src="assets/img/teambox/no-campaign@2x.png">
 				<p>No Matching Campaigns to Show!</p>
 				<p><span>Click "+ New Campaign" to start creating Campaigns</span></p>
@@ -407,25 +407,25 @@
 					<div class="template_list">
 						<div class="template_box" *ngFor='let template of allTemplates ;let i = index'>
 							<label class="container" (click)="selectTemplate(template)">
-								<input type="radio" name="selectedTemplate" [checked]="template.BodyText == selectedCampaign.message_content">
+								<input type="radio" name="selectedTemplate" [checked]="template?.BodyText == selectedCampaign?.message_content">
 								<span class="checkmark radio"></span>
 								<div class="template_body">
-									<p>{{template.TemplateName}}</p>
-								<p><span>{{template.created_at | date:'dd-MM-yyyy'}}</span></p>
+									<p>{{template?.TemplateName}}</p>
+								<p><span>{{template?.created_at | date:'dd-MM-yyyy'}}</span></p>
 								</div>
 							</label>
 							
 							<div class="inner_box">
-							 <div class="doc-preview"*ngIf="template.media_type=='document'" width="100%" height="150px">
-								<a [href]="template.Links"><img src="../../../../assets/img/settings/doc.svg" /></a>
+							 <div class="doc-preview"*ngIf="template?.media_type=='document'" width="100%" height="150px">
+								<a [href]="template?.Links"><img src="../../../../assets/img/settings/doc.svg" /></a>
 								</div>
 								<video *ngIf="template.media_type=='video'" muted id="video-background" [src]="template.Links"></video>
 								<img *ngIf="template.media_type=='image'" class="template_img" src="{{template.Links}}">
 								<div *ngIf="!template.media_type" class="template_img_placeholder"></div>
 								<div class="template_text">
-									<p *ngIf="template.Header" [innerHTML]="template.Header | sanitizeHtml" class="m-0 font-weight-bold"></p>
+									<p *ngIf="template?.Header" [innerHTML]="template?.Header | sanitizeHtml" class="m-0 font-weight-bold"></p>
 									<div [innerHTML]="template.BodyText | sanitizeHtml"> </div>
-									<p *ngIf="template.FooterText" [innerHTML]="template.FooterText | sanitizeHtml" class="footer"></p>
+									<p *ngIf="template?.FooterText" [innerHTML]="template?.FooterText | sanitizeHtml" class="footer"></p>
 								  </div>
 							</div>
 
@@ -443,21 +443,21 @@
 				<div *ngIf="activeStep==3.1" class="full_width_row">
 					<div class="template_details_section">
 						<div class="template_details_section_left">
-							<p>{{selectedTemplate.TemplateName}}</p>
+							<p>{{selectedTemplate?.TemplateName}}</p>
 							<div class="template">
 								<div class="template_img">									
-									<p *ngIf="selectedTemplate.media_type!='text'" class="close-box" (click)="editTemplateMedia()"><img class="replace-img" height="10px" src="/assets/img/campaign/edit.svg"></p>
-									<div class="doc-preview"*ngIf="selectedTemplate.media_type=='document'">
-										<a [href]="selectedTemplate.Links"><img src="../../../../assets/img/settings/doc.svg" /></a>
+									<p *ngIf="selectedTemplate?.media_type!='text'" class="close-box" (click)="editTemplateMedia()"><img class="replace-img" height="10px" src="/assets/img/campaign/edit.svg"></p>
+									<div class="doc-preview"*ngIf="selectedTemplate?.media_type=='document'">
+										<a [href]="selectedTemplate?.Links"><img src="../../../../assets/img/settings/doc.svg" /></a>
 									  </div>
-									<video *ngIf="selectedTemplate.media_type=='video'" autoplay muted id="video-background" [src]="selectedTemplate.Links"></video>
-									<img *ngIf="selectedTemplate.media_type=='image'" class="template_img" src="{{selectedTemplate.Links}}">
-						            <div *ngIf="!selectedTemplate.media_type" class="template_img_placeholder"></div>
+									<video *ngIf="selectedTemplate?.media_type=='video'" autoplay muted id="video-background" [src]="selectedTemplate.Links"></video>
+									<img *ngIf="selectedTemplate?.media_type=='image'" class="template_img" src="{{selectedTemplate.Links}}">
+						            <div *ngIf="!selectedTemplate?.media_type" class="template_img_placeholder"></div>
 								</div>
 								<div class="template_text">
-									<p *ngIf="selectedTemplate.Header" [innerHTML]="selectedTemplate.Header | sanitizeHtml" class="name"></p>
-									<p [innerHTML]="selectedTemplate.BodyText | sanitizeHtml" class="description"></p>
-									<p *ngIf="selectedTemplate.FooterText" [innerHTML]="selectedTemplate.FooterText | sanitizeHtml" class="footer"></p>
+									<p *ngIf="selectedTemplate?.Header" [innerHTML]="selectedTemplate?.Header | sanitizeHtml" class="name"></p>
+									<p [innerHTML]="selectedTemplate?.BodyText | sanitizeHtml" class="description"></p>
+									<p *ngIf="selectedTemplate?.FooterText" [innerHTML]="selectedTemplate?.FooterText | sanitizeHtml" class="footer"></p>
 								</div>
 		
 							</div>
@@ -478,30 +478,30 @@
 								<div *ngIf="vartip" class="overlay" (click)="closeUtility()"></div>
 							  </div>
 							
-							<div class="form_row" *ngFor='let variable of selectedTemplate.allVariables ;let i = index'>
+							<div class="form_row" *ngFor='let variable of selectedTemplate?.allVariables ;let i = index'>
 								<label>{{variable.label}}</label>
 								<div>
-									<p class="form-control" *ngIf="segmentsContactList.length>0">
+									<p class="form-control" *ngIf="segmentsContactList?.length>0">
 										<input *ngIf="variable.label == '{{Phone_number}}'" type="text" class="form-control inner" value={{variable.value}} (keyup)="checkNumber($event);updateAttributeValue($event,variable)" placeholder="Input value or add attribute" [ngClass]="{'input-custom-color': variable.isAttribute}">
 										<input *ngIf="variable.label != '{{Phone_number}}'" type="text" class="form-control inner" value={{variable.value}} (keyup)="updateAttributeValue($event,variable)" placeholder="Input value or add attribute" [ngClass]="{'input-custom-color': variable.isAttribute}">
 										<span class="toggle_attribute" (click)="openAttributeOption(variable,AttributeOption)"></span>
 									</p>
-									<p class="form-control" *ngIf="csvContactList.length>0">
+									<p class="form-control" *ngIf="csvContactList?.length>0">
 										<input type="text" class="form-control inner" value={{variable.value}} (keyup)="updateAttributeValue($event,variable)" placeholder="Input value or map">
 										<span class="map_attribute" (click)="openMapOption(variable,i)">Map</span>
 									</p>
 									<div *ngIf="variable?.fallback" class="fallbackContainer">
 										<span class="fallbackValue">Fallback Value : {{variable?.fallback}}</span>
 									</div>
-									<div *ngIf="csvContactList.length>0 && selecetdVariable.label== variable.label && selecetdVariable.selected && selecetdVariable.index==i" class="popup-dialog">
+									<div *ngIf="csvContactList?.length>0 && selecetdVariable?.label== variable.label && selecetdVariable?.selected && selecetdVariable?.index==i" class="popup-dialog">
 										<p class="label">Map the column</p>
 										<p *ngFor="let map of csvContactColmuns ;let i = index" (click)="updatedCSVAttributeOption(map)"><span>{{map}}</span></p>
 									</div>
 								</div>
 							</div>
-							<div *ngIf="selectedTemplate.allVariables?.length ==0">No variable available in this message</div>
+							<div *ngIf="selectedTemplate?.allVariables?.length ==0">No variable available in this message</div>
 							
-							<div *ngIf="this.newCampaignDetail.get('channel_id').value ==1 && (selectedTemplate?.buttons.length>1 || selectedTemplate?.buttons.length ==1)">
+							<div *ngIf="this.newCampaignDetail.get('channel_id').value ==1 && (selectedTemplate?.buttons?.length>1 || selectedTemplate?.buttons?.length ==1)">
 							
 							<p class="mt-2">Button Payload <span>(Optional)</span><img class="icon sm" src="/assets/img/campaign/Info.svg"></p>
 							<div class="form_row" *ngIf="selectedTemplate?.buttons.length>1 || selectedTemplate?.buttons.length ==1">
@@ -527,18 +527,18 @@
 							<div class="template">
 								<div class="template_img">
 									<p class="close-box" (click)="editTemplateMedia()"><img src="/assets/img/campaign/edit.svg"></p>
-									<img *ngIf="selectedTemplate.media_type=='image'" class="template_img" src="{{selectedTemplate.Links}}">
-									<video *ngIf="selectedTemplate.media_type=='video'" muted id="video-background" [src]="selectedTemplate.Links"></video>
-									<div class="doc-preview"*ngIf="selectedTemplate.media_type=='document'" width="100%" height="150px">
-										<a [href]="selectedTemplate.Links"><img src="../../../../assets/img/settings/doc.svg" /></a>
+									<img *ngIf="selectedTemplate?.media_type=='image'" class="template_img" src="{{selectedTemplate.Links}}">
+									<video *ngIf="selectedTemplate?.media_type=='video'" muted id="video-background" [src]="selectedTemplate.Links"></video>
+									<div class="doc-preview"*ngIf="selectedTemplate?.media_type=='document'" width="100%" height="150px">
+										<a [href]="selectedTemplate?.Links"><img src="../../../../assets/img/settings/doc.svg" /></a>
 									  </div>
-						            <div *ngIf="!selectedTemplate.media_type" class="template_img_placeholder"></div>
+						            <div *ngIf="!selectedTemplate?.media_type" class="template_img_placeholder"></div>
 								</div>
 								<!-- <div><img src="/assets/img/teambox/edit-icon.svg"></div> -->
 								<div class="template_text">
-									<p *ngIf="selectedTemplate.TemplateName" [innerHTML]="selectedTemplate.TemplateName |sanitizeHtml" class="name"></p>
-									<p [innerHTML]="selectedTemplate.BodyText |sanitizeHtml" class="description"></p>
-									<p *ngIf="selectedTemplate.FooterText" [innerHTML]="selectedTemplate.FooterText |sanitizeHtml" class="footer"></p>
+									<p *ngIf="selectedTemplate?.TemplateName" [innerHTML]="selectedTemplate?.TemplateName |sanitizeHtml" class="name"></p>
+									<p [innerHTML]="selectedTemplate?.BodyText |sanitizeHtml" class="description"></p>
+									<p *ngIf="selectedTemplate?.FooterText" [innerHTML]="selectedTemplate?.FooterText |sanitizeHtml" class="footer"></p>
 								</div>
 		
 							</div>
@@ -557,24 +557,24 @@
 						<p class="heading">{{newCampaignDetail.value.title}}</p>
 						<p><img  class="icon" src="/assets/img/teambox/whatsapp-icon-l.svg" />{{newCampaignDetail.value.channel_label}}</p>
 						<p class="label mt-3">Traget Audience</p>
-						<p *ngIf="segmentsContactList.length > 0" class="value">{{segmentsContactList.length}} <span>( Segment Audience)</span></p>
-						<p *ngIf="csvContactList.length > 0" class="value">{{csvContactList.length}} <span>( Imported Contacts)</span></p>
+						<p *ngIf="segmentsContactList.length > 0" class="value">{{segmentsContactList?.length}} <span>( Segment Audience)</span></p>
+						<p *ngIf="csvContactList.length > 0" class="value">{{csvContactList?.length}} <span>( Imported Contacts)</span></p>
 						<p class="label mt-3">Message</p>
 						<p class=" mt-3">Category</p>
-						<p class="value">{{selectedTemplate.Category}}</p>
+						<p class="value">{{selectedTemplate?.Category}}</p>
 						<div class="template mt-2">
 							<div class="template_img">
-								<div class="doc-preview"*ngIf="selectedTemplate.media_type=='document'" width="100%" height="150px">
-									<a [href]="selectedTemplate.Links"><img src="../../../../assets/img/settings/doc.svg" /></a>
+								<div class="doc-preview"*ngIf="selectedTemplate?.media_type=='document'" width="100%" height="150px">
+									<a [href]="selectedTemplate?.Links"><img src="../../../../assets/img/settings/doc.svg" /></a>
 								  </div>
-								<video *ngIf="selectedTemplate.media_type=='video'" muted id="video-background" [src]="selectedTemplate.Links"></video>
-								<img *ngIf="selectedTemplate.media_type=='image'" class="template_img" src="{{selectedTemplate.Links}}">
-								<div *ngIf="!selectedTemplate.media_type" class="template_img_placeholder"></div>
+								<video *ngIf="selectedTemplate?.media_type=='video'" muted id="video-background" [src]="selectedTemplate?.Links"></video>
+								<img *ngIf="selectedTemplate?.media_type=='image'" class="template_img" src="{{selectedTemplate?.Links}}">
+								<div *ngIf="!selectedTemplate?.media_type" class="template_img_placeholder"></div>
 							</div>
 							<div class="template_text">
-								<p *ngIf="selectedTemplate.TemplateName" [innerHTML]="selectedTemplate.TemplateName |sanitizeHtml" class="name"></p>
-								<p [innerHTML]="selectedTemplate.BodyText |sanitizeHtml" class="description"></p>
-								<p *ngIf="selectedTemplate.FooterText" [innerHTML]="selectedTemplate.FooterText |sanitizeHtml" class="footer"></p>
+								<p *ngIf="selectedTemplate?.TemplateName" [innerHTML]="selectedTemplate?.TemplateName |sanitizeHtml" class="name"></p>
+								<p [innerHTML]="selectedTemplate?.BodyText |sanitizeHtml" class="description"></p>
+								<p *ngIf="selectedTemplate?.FooterText" [innerHTML]="selectedTemplate?.FooterText |sanitizeHtml" class="footer"></p>
 							</div>
 	
 						</div>
@@ -586,14 +586,14 @@
 						<p class="sub_title_lg blackcolor dropdown mb-2" (click)="toggleshowAdvance()">Advance Options<img *ngIf="!showAdvance" class="icon" src="/assets/img/teambox/down-aarow.svg"><img *ngIf="showAdvance" class="icon" src="/assets/img/teambox/up-aarow.svg"></p>
 							<div *ngIf="showAdvance">
 							<p class="sub_title_sm blackcolor">Variable Values</p>
-							<div class="btn_group" *ngFor='let variable of selectedTemplate.allVariables ;let i = index' >
+							<div class="btn_group" *ngFor='let variable of selectedTemplate?.allVariables ;let i = index' >
 								<input type="text" value={{variable.label}} /> {{variable.value}}
 							</div>
 							<div *ngIf="this.newCampaignDetail.get('channel_id').value ==1 && (selectedTemplate?.buttons?.length>1 || selectedTemplate?.buttons?.length ==1)">
 							<p class="sub_title_sm blackcolor mt-2 mb-2">Button Payload</p>
-							<div class="btn_group"><input type="text" value="YES" /> {{selectedTemplate.button_yes}}</div>
-							<div class="btn_group"><input type="text" value="No" /> {{selectedTemplate.button_no}}</div>
-							<div class="btn_group"><input type="text" value="EXPLORE" /> {{selectedTemplate.button_exp}}</div>
+							<div class="btn_group"><input type="text" value="YES" /> {{selectedTemplate?.button_yes}}</div>
+							<div class="btn_group"><input type="text" value="No" /> {{selectedTemplate?.button_no}}</div>
+							<div class="btn_group"><input type="text" value="EXPLORE" /> {{selectedTemplate?.button_exp}}</div>
 						</div>
 							</div>
 
@@ -1062,9 +1062,9 @@
 				     <p (click)="selectItem(i)">
 						{{list.addedfilters?list.addedfilters.length:0}} Filter Applied<img src="/assets/img/teambox/dropdown.svg"> 
 					</p>
-					<div *ngIf="list.addedfilters!=0" [ngClass]="slectedItem ==i ? 'applied_filter_popup active' : 'applied_filter_popup'">
-						<div class="item" *ngFor='let filter of list.addedfilters;let i = index'>
-							<span *ngIf="filter.filterOperator">{{filter.filterOperator}}</span><p >{{filter.filterPrefix}} {{filter.filterBy}} {{filter.filterValue}}</p>
+					<div *ngIf="list?.addedfilters!=0" [ngClass]="slectedItem ==i ? 'applied_filter_popup active' : 'applied_filter_popup'">
+						<div class="item" *ngFor='let filter of list?.addedfilters;let i = index'>
+							<span *ngIf="filter?.filterOperator">{{filter?.filterOperator}}</span><p >{{filter?.filterPrefix}} {{filter?.filterBy}} {{filter?.filterValue}}</p>
 						</div>
 						
 					</div>
@@ -1075,7 +1075,7 @@
 							<p><span>No. of Audience</span></p>
 						</div> -->
 						<div>
-							<div *ngIf="list.owner" class="default_avtar"><p class="campaign-profile">{{settingsService.getInitials(list.owner)}}</p> {{list.owner}}</div>
+							<div *ngIf="list?.owner" class="default_avtar"><p class="campaign-profile">{{settingsService.getInitials(list.owner)}}</p> {{list.owner}}</div>
 							<p><span>Created By</span></p>
 						</div>
 					</div>
@@ -1124,21 +1124,21 @@
 						<div *ngFor="let addedF of ContactListNewFilters; let i=index;let last = last;">
 							<div *ngIf="i<ContactListNewFilters.length-1">
 
-								<div *ngIf="addedF.filterOperator && i != 0" class="addnewitem_content_inner">
+								<div *ngIf="addedF?.filterOperator && i != 0" class="addnewitem_content_inner">
 									<div class="switchbtn">
-										<p [ngClass]="addedF.filterOperator=='AND' ? 'left active' : 'left'">AND</p>
-										<p [ngClass]="addedF.filterOperator=='OR' ? 'right active' : 'right'">Or</p>
+										<p [ngClass]="addedF?.filterOperator=='AND' ? 'left active' : 'left'">AND</p>
+										<p [ngClass]="addedF?.filterOperator=='OR' ? 'right active' : 'right'">Or</p>
 									</div>
 								</div>
 								<div class="d-flex">
 									<div class="formrow w-100">
 										<p class="form-control">
-											{{addedF.filterPrefix}}
+											{{addedF?.filterPrefix}}
 										</p>
 									</div>
 									<div class="formrow w-100">
 										<p class="form-control">
-											{{addedF.filterBy}}
+											{{addedF?.filterBy}}
 										</p>
 									</div>
 								</div>
@@ -1146,18 +1146,18 @@
 								<div class="addnewitem_content_inner">
 									<p><span>Value</span></p>
 									<div class="formrow">
-										<input type="text" class="form-control" value={{addedF.filterValue}} >
+										<input type="text" class="form-control" value={{addedF?.filterValue}} >
 									</div>
 								</div>
 
 							</div>
 
-							<div *ngIf="i==ContactListNewFilters.length-1">
+							<div *ngIf="i==ContactListNewFilters?.length-1">
 
-								<div *ngIf="ContactListNewFilters.length>1 " class="addnewitem_content_inner">
+								<div *ngIf="ContactListNewFilters?.length>1 " class="addnewitem_content_inner">
 									<div class="switchbtn">
-										<p [ngClass]="addedF.filterOperator=='AND' ? 'left active' : 'left'" (click)="selectFilterOperator(i,'AND')">AND</p>
-										<p [ngClass]="addedF.filterOperator=='OR' ? 'right active' : 'right'"  (click)="selectFilterOperator(i,'OR')">Or</p>
+										<p [ngClass]="addedF?.filterOperator=='AND' ? 'left active' : 'left'" (click)="selectFilterOperator(i,'AND')">AND</p>
+										<p [ngClass]="addedF?.filterOperator=='OR' ? 'right active' : 'right'"  (click)="selectFilterOperator(i,'OR')">Or</p>
 									</div>
 								</div>
 								<div class="d-flex">
@@ -1169,7 +1169,7 @@
 										<div *ngIf="showContactFilter" class="popup-dialog">
 											<p class="label">Select Column</p>
 											<p *ngFor="let filterItem of contactFilterBy" (click)="selectContactFilter(i,filterItem)">
-												<span>{{filterItem.label}}</span>
+												<span>{{filterItem?.label}}</span>
 											</p>
 										</div>
 
@@ -1177,7 +1177,7 @@
 
 									<div class="formrow w-100">
 										<p (click)="toggleFilterByOption()"  class="form-control select_box btn">
-											{{addedF.filterBy}}
+											{{addedF?.filterBy}}
 										</p>
 										<div *ngIf="showFilterByOption" class="popup-dialog">
 											<p *ngFor="let option of selectedcontactFilterBy.option ;let k = index" (click)="selectFilterBy(i,selectedcontactFilterBy,option)">
@@ -1188,58 +1188,58 @@
 									</div>
 								</div>
 
-								<div class="addnewitem_content_inner" *ngIf="addedF.filterType !='switch' &&  addedF.filterType != 'none'" >
-									<p><span>Value {{addedF.filterType}}</span></p>
+								<div class="addnewitem_content_inner" *ngIf="addedF?.filterType !='switch' &&  addedF?.filterType != 'none'" >
+									<p><span>Value {{addedF?.filterType}}</span></p>
 									
-									<div *ngIf="addedF.filterType =='text' " class="formrow">
-										<input type="text" class="form-control" value={{addedF.filterValue}}  (change)="selectFilterValue(i,$event)">
+									<div *ngIf="addedF?.filterType =='text' " class="formrow">
+										<input type="text" class="form-control" value={{addedF?.filterValue}}  (change)="selectFilterValue(i,$event)">
 									</div>
 	
-									<div *ngIf="addedF.filterType =='number' " class="formrow">
-										<input type="number" class="form-control" value={{addedF.filterValue}} (change)="selectFilterValue(i,$event)">
+									<div *ngIf="addedF?.filterType =='number' " class="formrow">
+										<input type="number" class="form-control" value={{addedF?.filterValue}} (change)="selectFilterValue(i,$event)">
 									</div>
 	
 	
-									<div *ngIf="addedF.filterType =='date'" class="formrow dateview">
+									<div *ngIf="addedF?.filterType =='date'" class="formrow dateview">
 										<input type="date" class="form-control" name="start_date"  (change)="selectFilterDates(i,$event)">
 									</div>
 	
-									<div *ngIf="addedF.filterType =='d_date'" class="formrow dateview">
+									<div *ngIf="addedF?.filterType =='d_date'" class="formrow dateview">
 										<input type="date" class="form-control" name="start_date"  (change)="selectFilterDates(i,$event)">
 										<input type="date" class="form-control" name="end_date"  (change)="selectFilterDates(i,$event)">
 									</div>
 	
-									<div *ngIf="addedF.filterType =='time'" class="formrow dateview">
+									<div *ngIf="addedF?.filterType =='time'" class="formrow dateview">
 										<input type="time" class="form-control" name="start_date"  (change)="selectFilterDates(i,$event)">
 									</div>
 	
-									<div *ngIf="addedF.filterType =='d_time'" class="formrow dateview">
+									<div *ngIf="addedF?.filterType =='d_time'" class="formrow dateview">
 										<input type="time" class="form-control" name="start_date"  (change)="selectFilterDates(i,$event)">
 										<input type="time" class="form-control" name="end_date"  (change)="selectFilterDates(i,$event)">
 									</div>
 	
-									<div *ngIf="addedF.filterType =='datetime'" class="formrow dateview">
+									<div *ngIf="addedF?.filterType =='datetime'" class="formrow dateview">
 										<input type="datetime-local" class="form-control" name="start_date"  (change)="selectFilterDates(i,$event)">
 										<input type="datetime-local" class="form-control" name="end_date"  (change)="selectFilterDates(i,$event)">
 									</div>
-									<div *ngIf="addedF.filterType =='d_datetime'" class="formrow dateview">
+									<div *ngIf="addedF?.filterType =='d_datetime'" class="formrow dateview">
 										<input type="datetime-local" class="form-control" name="start_date"  (change)="selectFilterDates(i,$event)">
 									</div>
 	
 	
-									<div *ngIf="addedF.filterType =='select'" class="formrow">
+									<div *ngIf="addedF?.filterType =='select'" class="formrow">
 										<p (click)="toggleFilterTagOption()"  class="form-control select_box btn">
-											{{addedF.filterValue}}
+											{{addedF?.filterValue}}
 										</p>
 										<div *ngIf="showFilterTagOption" class="popup-dialog">
-											<p *ngFor="let option of addedF.selectedOptions ;let l = index" (click)="selectFilterOption(i,option)">
+											<p *ngFor="let option of addedF?.selectedOptions ;let l = index" (click)="selectFilterOption(i,option)">
 												<span>{{option}}</span>
 											</p>
 										</div>
 									</div>
-									<div *ngIf="addedF.filterType =='user'" class="formrow">
+									<div *ngIf="addedF?.filterType =='user'" class="formrow">
 										<p (click)="toggleFilterTagOption()"  class="form-control select_box btn">
-											{{addedF.filterValue}}
+											{{addedF?.filterValue}}
 										</p>
 										<div *ngIf="showFilterTagOption" class="popup-dialog">
 											<p *ngFor="let option of userList ;let l = index" (click)="selectFilterOption(i,option?.name)">
@@ -1247,12 +1247,12 @@
 											</p>
 										</div>
 									</div>
-									<div *ngIf="addedF.filterType =='select_opt'" class="formrow">
+									<div *ngIf="addedF?.filterType =='select_opt'" class="formrow">
 										<p (click)="toggleFilterTagOption()"  class="form-control select_box btn">
-											{{addedF.filterValue}}
+											{{addedF?.filterValue}}
 										</p>
 										<div *ngIf="showFilterTagOption" class="popup-dialog">
-											<p *ngFor="let option of addedF.selectedOptions ;let l = index" (click)="selectFilterOption(i,option?.optionName)">
+											<p *ngFor="let option of addedF?.selectedOptions ;let l = index" (click)="selectFilterOption(i,option?.optionName)">
 												<span>{{option?.optionName}}</span>
 											</p>
 										</div>
@@ -1282,9 +1282,9 @@
 
 
 					<div class="applied_filter_popup">
-						<div class="item" *ngFor="let filter of selectedcontactFilterBy.addeFilter; let i=index;let last = last;" title="Click to remove">
+						<div class="item" *ngFor="let filter of selectedcontactFilterBy?.addeFilter; let i=index;let last = last;" title="Click to remove">
 							<div class="d-flex">
-								<span *ngIf="filter.filterOperator">{{filter.filterOperator}}</span>
+								<span *ngIf="filter?.filterOperator">{{filter.filterOperator}}</span>
 								<p>{{filter.filterPrefix}} {{filter.filterBy}} {{filter.filterValue}}</p>
 							</div>
 							<div  (click)="removeFilter(i)"><img src="../../../../assets/img/settings/remove.svg" /></div>
@@ -1317,9 +1317,9 @@
 		           <button type="button" class="submit-btn red-bg" (click)="removeAllAddedFilter()">Clear All</button>
 		    <div class="applylist_filters"  [ngStyle]="{width:applylistFiltersWidth+'px'}">
 					<div *ngFor='let item of contactFilterBy ;let j = index' >
-						<div class="item" *ngFor='let item of item.addeFilter ;let k = index' (click)="removeAddedFilter(j,k)">
-							<span *ngIf="item.filterOperator">{{item.filterOperator}}</span>
-							<p>{{item.filterPrefix}} {{item.filterBy}} {{item.filterValue}}</p>
+						<div class="item" *ngFor='let item of item?.addeFilter ;let k = index' (click)="removeAddedFilter(j,k)">
+							<span *ngIf="item?.filterOperator">{{item?.filterOperator}}</span>
+							<p>{{item?.filterPrefix}} {{item?.filterBy}} {{item?.filterValue}}</p>
 						</div>
 					</div>
 
@@ -1345,12 +1345,12 @@
 					</thead>
 					<tbody class="applylist_contnet_body">
 						<tr *ngFor='let item of filteredEndCustomer | slice: (page-1)*pagesize : page*  pagesize; index as i;' >
-							    <td>{{item.customerId}}</td>
-								<td>{{item.Name}}</td>
-								<td>{{item.Phone_number}}</td>
-								<td>{{item.emailId}}</td>
-								<td>{{item.OptInStatus}}</td>
-								<td>{{item.ContactOwner}}</td>
+							    <td>{{item?.customerId}}</td>
+								<td>{{item?.Name}}</td>
+								<td>{{item?.Phone_number}}</td>
+								<td>{{item?.emailId}}</td>
+								<td>{{item?.OptInStatus}}</td>
+								<td>{{item?.ContactOwner}}</td>
 								<td>{{item?.tag_names}}</td>
 						</tr>
 					</tbody>
@@ -1444,7 +1444,7 @@
 							<div *ngIf="scheduled==0 && !isCampaignTiming">
 								<p><img src="../../../../assets/img/campaign/Send-o.svg"></p>
 								<p>You are about to send</p>
-								<p><span>To send your campaign </span> <span class="camp-heading">{{newCampaignDetail.value.title}}</span><span>, please confirm it.</span></p>
+								<p><span>To send your campaign </span> <span class="camp-heading">{{newCampaignDetail?.value?.title}}</span><span>, please confirm it.</span></p>
 								<p><button type="button" class="submit-btn mt-3" aria-label="Close" (click)="ConfirmScheduleClose('confirm')">Send</button></p>
 							
 							</div>
@@ -1452,7 +1452,7 @@
 							<div *ngIf="scheduled==1 && !isCampaignTiming">
 								<p><img src="../../../../assets/img/campaign/sch-o.svg"></p>
 								<p>You are about to schedule</p>
-								<p><span>Please confirm the <b class="title-value camp-heading">{{newCampaignDetail.value.title}}</b> campaign will take place on <b  class="title-value camp-heading">{{settingsService?.getDateTimeFormate(selecteScheduleDate,true)}} at {{settingsService?.convertTimeFormat(selectedScheduleTime)}}.</b></span></p>
+								<p><span>Please confirm the <b class="title-value camp-heading">{{newCampaignDetail?.value?.title}}</b> campaign will take place on <b  class="title-value camp-heading">{{settingsService?.getDateTimeFormate(selecteScheduleDate,true)}} at {{settingsService?.convertTimeFormat(selectedScheduleTime)}}.</b></span></p>
 								<p><button type="button" class="submit-btn mt-3" aria-label="Close" (click)="ConfirmScheduleClose('confirm')">Confirm</button>
 								</p>
 							</div>

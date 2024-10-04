@@ -105,13 +105,13 @@ export class ContactFilterComponent implements OnInit {
 			]},
 			{value:'created_at',label:'Created At',checked:false,addeFilter:[],
 			option:[
-				{label:'Is empty',checked:false,type:'none'},
-				{label:'Is not empty',checked:false,type:'none'},
-				{label:'Between',checked:false,type:'d_date'},
-				{label:'After',checked:false,type:'date'},
-				{label:'Before',checked:false,type:'date'},
-				{label:'Is equal to',checked:false,type:'date'},
-				{label:'Is not equal to',checked:false,type:'date'},
+				{label:'Is empty',checked:false,type:'none',filterPrefixType:'date'},
+						{label:'Is not empty',checked:false,type:'none',filterPrefixType:'date'},
+						{label:'Between',checked:false,type:'d_date',filterPrefixType:'date'},
+						{label:'After',checked:false,type:'date',filterPrefixType:'date'},
+						{label:'Before',checked:false,type:'date',filterPrefixType:'date'},
+						{label:'Is equal to',checked:false,type:'date',filterPrefixType:'date'},
+						{label:'Is not equal to',checked:false,type:'date',filterPrefixType:'date'},
 			]},
 			{value:'Last Conversation With',label:'Last Conversation With',checked:false,addeFilter:[],
 			option:[
@@ -136,23 +136,23 @@ export class ContactFilterComponent implements OnInit {
 			]},
 			{value:'Last Message Received At',label:'Last Message Received At',checked:false,addeFilter:[],
 			option:[
-				{label:'Is empty',checked:false,type:'none'},
-				{label:'Is not empty',checked:false,type:'none'},
-				{label:'Between',checked:false,type:'d_date'},
-				{label:'After',checked:false,type:'date'},
-				{label:'Before',checked:false,type:'date'},
-				{label:'Is equal to',checked:false,type:'date'},
-				{label:'Is not equal to',checked:false,type:'date'},
+				{label:'Is empty',checked:false,type:'none',filterPrefixType:'date'},
+						{label:'Is not empty',checked:false,type:'none',filterPrefixType:'date'},
+						{label:'Between',checked:false,type:'d_date',filterPrefixType:'date'},
+						{label:'After',checked:false,type:'date',filterPrefixType:'date'},
+						{label:'Before',checked:false,type:'date',filterPrefixType:'date'},
+						{label:'Is equal to',checked:false,type:'date',filterPrefixType:'date'},
+						{label:'Is not equal to',checked:false,type:'date',filterPrefixType:'date'},
 			]},
 			{value:'Last Message Sent At',label:'Last Message Sent At',checked:false,addeFilter:[],
 			option:[
-				{label:'Is empty',checked:false,type:'none'},
-				{label:'Is not empty',checked:false,type:'none'},
-				{label:'Between',checked:false,type:'d_date'},
-				{label:'After',checked:false,type:'date'},
-				{label:'Before',checked:false,type:'date'},
-				{label:'Is equal to',checked:false,type:'date'},
-				{label:'Is not equal to',checked:false,type:'date'},
+				{label:'Is empty',checked:false,type:'none',filterPrefixType:'date'},
+						{label:'Is not empty',checked:false,type:'none',filterPrefixType:'date'},
+						{label:'Between',checked:false,type:'d_date',filterPrefixType:'date'},
+						{label:'After',checked:false,type:'date',filterPrefixType:'date'},
+						{label:'Before',checked:false,type:'date',filterPrefixType:'date'},
+						{label:'Is equal to',checked:false,type:'date',filterPrefixType:'date'},
+						{label:'Is not equal to',checked:false,type:'date',filterPrefixType:'date'},
 			]},
 			
 		];
@@ -173,13 +173,13 @@ export class ContactFilterComponent implements OnInit {
 			switch(item?.type){
 				case 'Date':{
 					 options =[
-						{label:'Is empty',checked:false,type:'none'},
-						{label:'Is not empty',checked:false,type:'none'},
-						{label:'Between',checked:false,type:'d_date'},
-						{label:'After',checked:false,type:'date'},
-						{label:'Before',checked:false,type:'date'},
-						{label:'Is equal to',checked:false,type:'date'},
-						{label:'Is not equal to',checked:false,type:'date'},
+						{label:'Is empty',checked:false,type:'none',filterPrefixType:'date'},
+						{label:'Is not empty',checked:false,type:'none',filterPrefixType:'date'},
+						{label:'Between',checked:false,type:'d_date',filterPrefixType:'date'},
+						{label:'After',checked:false,type:'date',filterPrefixType:'date'},
+						{label:'Before',checked:false,type:'date',filterPrefixType:'date'},
+						{label:'Is equal to',checked:false,type:'date',filterPrefixType:'date'},
+						{label:'Is not equal to',checked:false,type:'date',filterPrefixType:'date'},
 						];
 						break;
 				}
@@ -290,6 +290,8 @@ export class ContactFilterComponent implements OnInit {
 		this.ContactListNewFilters[index]['selectedOptions'] = filter['option']['0'].options
 		this.ContactListNewFilters[index]['filterPrefix'] = filter.value;
 		this.ContactListNewFilters[index]['filterValue']='';
+		if(filter['filterPrefixType'])
+			this.ContactListNewFilters[index]['filterValue']=filter['filterPrefixType'];
 
 
 
@@ -327,6 +329,8 @@ export class ContactFilterComponent implements OnInit {
 		this.ContactListNewFilters[index]['selectedOptions'] = filter.options
 		this.ContactListNewFilters[index]['filterPrefix'] = selectedcontactFilterBy.value
 		this.ContactListNewFilters[index]['filterValue']='';
+		if(filter['filterPrefixType'])
+			this.ContactListNewFilters[index]['filterValue']=filter['filterPrefixType'];
 
 		
 	  }
@@ -363,6 +367,8 @@ export class ContactFilterComponent implements OnInit {
 		newFilter['filterPrefix'] = this.selectedcontactFilterBy.value
 		newFilter['filterValue']='';
 		newFilter['filterOperator']='AND';
+		if(this.selectedcontactFilterBy['option']['0']['filterPrefixType'])
+		newFilter['filterPrefixType']=this.selectedcontactFilterBy['option']['0']['filterPrefixType'];
 		this.ContactListNewFilters.push(newFilter)
 		if(this.ContactListNewFilters[0]?.filterOperator) this.ContactListNewFilters[0].filterOperator = '';
 
@@ -401,11 +407,7 @@ export class ContactFilterComponent implements OnInit {
         filterPrefix,
         items: groups[filterPrefix]
       };
-      });
-
-
-
-  
+      });  
   
       let contactFilter ="SELECT EC.*, IFNULL(GROUP_CONCAT(ECTM.TagName ORDER BY FIND_IN_SET(ECTM.ID, REPLACE(EC.tag, ' ', ''))), '') AS tag_names,maxInteraction.maxInteractionId,Interaction.interaction_status,Message.*,user.uid,user.name,IM.latestCreatedAt AS lastAssistedAgent,IM.AgentId,IM.* FROM EndCustomer AS EC LEFT JOIN EndCustomerTagMaster AS ECTM ON FIND_IN_SET(ECTM.ID, REPLACE(EC.tag, ' ', '')) > 0 AND ECTM.isDeleted != 1 LEFT JOIN (SELECT customerId,MAX(InteractionId) AS maxInteractionId FROM Interaction WHERE is_deleted != 1 AND IsTemporary != 1 GROUP BY customerId) AS maxInteraction ON maxInteraction.customerId = EC.customerId LEFT JOIN Interaction AS Interaction ON maxInteraction.maxInteractionId = Interaction.InteractionId LEFT JOIN Message AS Message ON Message.interaction_id = Interaction.InteractionId AND Message.is_deleted != 1 LEFT JOIN user AS user ON EC.uid = user.uid LEFT JOIN (SELECT interactionId, MAX(created_at) AS latestCreatedAt,AgentId, lastAssistedAgent FROM InteractionMapping GROUP BY interactionId) AS IM ON IM.InteractionId = Interaction.InteractionId WHERE EC.SP_ID ="+this.SPID +" AND EC.isDeleted != 1 AND EC.IsTemporary != 1";
       if(groupArrays.length>0){
@@ -517,6 +519,9 @@ export class ContactFilterComponent implements OnInit {
           if(filter.filterBy=="Exclude extension"){
             filterOper = "NOT LIKE '."+filter.filterValue+"'";
           }
+		  if(filter?.filterPrefixType =="Date"){
+			filterOper = this.applyDateCondition(filter);
+		  }
           
           contactFilter += ' '+QueryOperator +' '+colName+' '+filterOper
             })
@@ -532,6 +537,27 @@ export class ContactFilterComponent implements OnInit {
 
         return contactFilter;
     }
+
+	applyDateCondition(filter:any):string{
+		let filterOper='';
+		if(filter.filterBy=="Before" || filter.filterBy =="Less than"){
+			filterOper = `(CASE WHEN STR_TO_DATE(${filter.filterPrefix}, '%Y-%m-%d') IS NOT NULL THEN STR_TO_DATE(${filter.filterPrefix}, '%Y-%m-%d') WHEN STR_TO_DATE(${filter.filterPrefix}, '%b %d, %Y') IS NOT NULL THEN STR_TO_DATE(${filter.filterPrefix}, '%b %d, %Y') WHEN STR_TO_DATE(${filter.filterPrefix}, '%M %d, %Y') IS NOT NULL THEN STR_TO_DATE(${filter.filterPrefix}, '%M %d, %Y') ELSE NULL END > CAST(${filter.filterValue} AS DATE))`;
+		}
+		if(filter.filterBy=="After" || filter.filterBy =="Greater than"){
+			filterOper = `(CASE WHEN STR_TO_DATE(${filter.filterPrefix}, '%Y-%m-%d') IS NOT NULL THEN STR_TO_DATE(${filter.filterPrefix}, '%Y-%m-%d') WHEN STR_TO_DATE(${filter.filterPrefix}, '%b %d, %Y') IS NOT NULL THEN STR_TO_DATE(${filter.filterPrefix}, '%b %d, %Y') WHEN STR_TO_DATE(${filter.filterPrefix}, '%M %d, %Y') IS NOT NULL THEN STR_TO_DATE(${filter.filterPrefix}, '%M %d, %Y') ELSE NULL END > CAST(${filter.filterValue} AS DATE))`;
+		}
+		if(filter.filterBy=="Between"){
+			filterOper = `(CASE WHEN STR_TO_DATE(${filter.filterPrefix}, '%Y-%m-%d') IS NOT NULL THEN STR_TO_DATE(${filter.filterPrefix}, '%Y-%m-%d') WHEN STR_TO_DATE(${filter.filterPrefix}, '%b %d, %Y') IS NOT NULL THEN STR_TO_DATE(${filter.filterPrefix}, '%b %d, %Y') WHEN STR_TO_DATE(${filter.filterPrefix}, '%M %d, %Y') IS NOT NULL THEN STR_TO_DATE(${filter.filterPrefix}, '%M %d, %Y') ELSE NULL END > CAST(${filter.filterValue} AS DATE))`;
+		}
+		if(filter.filterBy=="Is equal to"){
+			filterOper = `(CASE WHEN STR_TO_DATE(${filter.filterPrefix}, '%Y-%m-%d') IS NOT NULL THEN STR_TO_DATE(${filter.filterPrefix}, '%Y-%m-%d') WHEN STR_TO_DATE(${filter.filterPrefix}, '%b %d, %Y') IS NOT NULL THEN STR_TO_DATE(${filter.filterPrefix}, '%b %d, %Y') WHEN STR_TO_DATE(${filter.filterPrefix}, '%M %d, %Y') IS NOT NULL THEN STR_TO_DATE(${filter.filterPrefix}, '%M %d, %Y') ELSE NULL END = CAST(${filter.filterValue} AS DATE))`;
+		}
+		if(filter.filterBy=="Is not equal to"){
+			filterOper = `(CASE WHEN STR_TO_DATE(${filter.filterPrefix}, '%Y-%m-%d') IS NOT NULL THEN STR_TO_DATE(${filter.filterPrefix}, '%Y-%m-%d') WHEN STR_TO_DATE(${filter.filterPrefix}, '%b %d, %Y') IS NOT NULL THEN STR_TO_DATE(${filter.filterPrefix}, '%b %d, %Y') WHEN STR_TO_DATE(${filter.filterPrefix}, '%M %d, %Y') IS NOT NULL THEN STR_TO_DATE(${filter.filterPrefix}, '%M %d, %Y') ELSE NULL END != CAST(${filter.filterValue} AS DATE))`;
+		}
+
+		  return filterOper;
+	}
   
 	
   

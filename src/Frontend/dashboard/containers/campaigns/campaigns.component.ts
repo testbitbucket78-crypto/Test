@@ -182,9 +182,39 @@ constructor(config: NgbModalConfig, private modalService: NgbModal,private datep
 		config.backdrop = 'static';
 		config.keyboard = false;
 		this.newCampaignDetail= this.prepareCampaingForm();
+	}
 
-		  
-
+	ngOnInit() {
+		this.isLoading = true;
+		this.getCampaignTimingList();
+		switch(this.loginAs) {
+			case 1:
+				this.loginAs='Admin'
+				break;
+			case 2:
+				this.loginAs='Manager'
+				break;
+			case 3:
+				this.loginAs='Agent'
+				break;
+			case 4:
+				this.loginAs='Helper'
+				break;
+			default:
+				this.loginAs='Agent'
+		}
+		this.profilePicture = (JSON.parse(sessionStorage.getItem('loginDetails')!)).profile_img;
+		this.routerGuard()
+		this.getAllCampaigns()
+		this.getContactList('')
+		this.getAttributeList()
+		//this.getAdditiionalAttributes();
+		this.processData();
+		this.getCustomFieldsData();
+		this.getTagData()
+		this.getWhatsAppDetails();
+		this.getContactFilterBy();
+		this.getUserList();
 	}
 
 	@HostListener('document:scroll', ['$event'])
@@ -233,51 +263,17 @@ constructor(config: NgbModalConfig, private modalService: NgbModal,private datep
 		this.errorMessage='';
 		this.warningMessage='';
 	}
-
-	ngOnInit() {
-		this.isLoading = true;
-		this.getCampaignTimingList();
-		switch(this.loginAs) {
-			case 1:
-				this.loginAs='Admin'
-				break;
-			case 2:
-				this.loginAs='Manager'
-				break;
-			case 3:
-				this.loginAs='Agent'
-				break;
-			case 4:
-				this.loginAs='Helper'
-				break;
-			default:
-				this.loginAs='Agent'
-		}
-		this.profilePicture = (JSON.parse(sessionStorage.getItem('loginDetails')!)).profile_img;
-		this.routerGuard()
-		this.getAllCampaigns()
-		this.getContactList('')
-		this.getAttributeList()
-		//this.getAdditiionalAttributes();
-		this.processData();
-		this.getCustomFieldsData();
-		this.getTagData()
-		this.getWhatsAppDetails();
-		this.getContactFilterBy();
-		this.getUserList();
-	}
-
 	
 	getWhatsAppDetails() {
 		this._settingsService.getWhatsAppDetails(this.SPID)
 		.subscribe((response:any) =>{
 		 if(response){
-			 if (response && response.whatsAppDetails) {
-				this.channelOption = response.whatsAppDetails.map((item : any)=> ({
-				  value: item.id,
-				  label: item.channel_id,
-				  connected_id: item.connected_id,
-				  channel_status: item.channel_status
+			 if (response && response?.whatsAppDetails) {
+				this.channelOption = response?.whatsAppDetails.map((item : any)=> ({
+				  value: item?.id,
+				  label: item?.channel_id,
+				  connected_id: item?.connected_id,
+				  channel_status: item?.channel_status
 				}));
 			  }
 		 }
@@ -477,15 +473,15 @@ constructor(config: NgbModalConfig, private modalService: NgbModal,private datep
 
 	  getTagData() {
 		this._settingsService.getTagData(this.SPID).subscribe(result => {
-		  if (result) {
-			  let tagListData = result.taglist;
-			  this.tag = tagListData.map((tag:any,index:number) => ({
-				  id: tag.ID, 
-				  optionName: tag.TagName
+		  if (result && result?.taglist) {
+			  let tagListData = result?.taglist;
+			  this.tag = tagListData.map((tag:any) => ({
+				  id: tag?.ID, 
+				  optionName: tag?.TagName
 			  }));
 			  let idx = this.contactFilterBy.findIndex((item:any)=> item.value =='tag');
 			  if(idx !=-1){
-				this.contactFilterBy[idx].option.forEach((item:any)=>{
+				this.contactFilterBy[idx]?.option?.forEach((item:any)=>{
 					item.options= this.tag;
 				})
 			  }
@@ -497,7 +493,7 @@ constructor(config: NgbModalConfig, private modalService: NgbModal,private datep
 			var allAttributesList:any=allAttributes
 			let attributes:any=[]
 			allAttributesList.map((attribute:any)=>{
-				attributes.push('{{'+attribute.attribute_name+'}}')
+				attributes.push('{{'+attribute?.attribute_name+'}}')
 			})
 			this.attributesoption=attributes;
 			this.attributesoptionFilters=attributes;
@@ -507,16 +503,16 @@ constructor(config: NgbModalConfig, private modalService: NgbModal,private datep
 	getAttributeList() {
 		this.apiService.getAttributeList(this.SPID)
 		.subscribe((response:any) =>{
-		 if(response){
+		 if(response && response?.result){
 			 let attributeListData = response?.result;
-			 this.attributesoption = attributeListData.map((attrList:any) => attrList.displayName);
+			 this.attributesoption = attributeListData.map((attrList:any) => attrList?.displayName);
 			 console.log(this.attributesoption);
 		 }
 	   })
 	}
 
 	SearchCampaign(event:any){
-		if(event.target.value.length>2){
+		if(event?.target?.value?.length>2){
 		this.searchKey =event.target.value
 		}else{
 			this.searchKey='';
@@ -536,9 +532,7 @@ constructor(config: NgbModalConfig, private modalService: NgbModal,private datep
 		
 	}
 	updateFilterDates(event:any){
-		console.log(event.target.name+'::'+event.target.value)
-		this.datesFilter[event.target.name]=event.target.value
-		console.log(this.datesFilter)
+		this.datesFilter[event?.target?.name]=event?.target?.value;
 	}
 
 	applyFilterOnCampaign(){
@@ -548,17 +542,17 @@ constructor(config: NgbModalConfig, private modalService: NgbModal,private datep
 		let channelIn=[]
 		let statusIn=[]
 		let categoryIn=[]
-		for(var i=0;i<this.campaignStatusOption.length;i++){
+		for(var i=0;i<this.campaignStatusOption?.length;i++){
 			if(this.campaignStatusOption[i]['checked']){
 				statusIn.push(this.campaignStatusOption[i]['value'])
 			}
 		}
-		for(var i=0;i<this.categoriesOption.length;i++){
+		for(var i=0;i<this.categoriesOption?.length;i++){
 			if(this.categoriesOption[i]['checked']){
 				categoryIn.push(this.categoriesOption[i]['value'])
 			}
 		}
-		for(var i=0;i<this.channelOption.length;i++){
+		for(var i=0;i<this.channelOption?.length;i++){
 			if(this.channelOption[i]['checked']){
 				channelIn.push(this.channelOption[i]['value'])
 			}
@@ -566,17 +560,16 @@ constructor(config: NgbModalConfig, private modalService: NgbModal,private datep
 
 		let BodyData={
 			SPID:this.SPID,
-			start_date: this.datesFilter.start_date?this.datesFilter.start_date:'',
-			end_date: this.datesFilter.end_date?this.datesFilter.end_date:'',
+			start_date: this.datesFilter?.start_date?this.datesFilter?.start_date:'',
+			end_date: this.datesFilter?.end_date?this.datesFilter?.end_date:'',
 			channelIn:channelIn,
 			categoryIn:categoryIn,
 			statusIn:statusIn,
 			key:this.searchKey
 		}
 
-		console.log(BodyData)
 		this.apiService.getFilteredCampaign(BodyData).subscribe(allCampaign =>{
-			var allCampaignList:any=allCampaign
+			let allCampaignList:any=allCampaign
 			this.mapCampaignData(allCampaignList)
 		})
 	}
@@ -585,14 +578,13 @@ constructor(config: NgbModalConfig, private modalService: NgbModal,private datep
 		this.isLoading = true;
 		this.selectedCampaign=[]
 		this.showCampaignDetail =!this.showCampaignDetail 
-		if(this.showCampaignDetail && campaign.Id){
-		  this.getCampaignDetail(campaign.Id)
+		if(this.showCampaignDetail && campaign?.Id){
+		  this.getCampaignDetail(campaign?.Id)
 		} else this.isLoading = false;
 	}
 
     async getCampaignDetail(CampaignID:any){
         await this.apiService.getCampaignDetail(CampaignID).subscribe(campaign =>{
-			console.log(campaign)
 			let campaigns:any=campaign
 				let item = campaigns[0]
 				if(item.status==0){
@@ -610,8 +602,8 @@ constructor(config: NgbModalConfig, private modalService: NgbModal,private datep
 				else{
 					item['status_label'] ='draft'
 				}
-				item['start_datetime_formated']=this.formateDate(item.start_datetime)
-				item['created_datetime_formated']=this.formattedDate(item.created_at)
+				item['start_datetime_formated']=this.formateDate(item?.start_datetime)
+				item['created_datetime_formated']=this.formattedDate(item?.created_at)
 
 				if(item.channel_id==1){
 					item['channel_label'] ='WA API'
@@ -634,32 +626,30 @@ constructor(config: NgbModalConfig, private modalService: NgbModal,private datep
 
 				
 				if(item.segments_contacts){
-				item['AllContactsLength'] =item.segments_contacts?JSON.parse(item.segments_contacts).length:JSON.parse(item.csv_contacts).length
+				item['AllContactsLength'] =item.segments_contacts?JSON.parse(item?.segments_contacts).length:JSON.parse(item?.csv_contacts)?.length
 				item['AudienceType']='Segment Audience'
-			    }else if(item.csv_contacts){
-					item['AllContactsLength'] =item.csv_contacts?JSON.parse(item.csv_contacts).length:0
+			    }else if(item?.csv_contacts){
+					item['AllContactsLength'] =item?.csv_contacts?JSON.parse(item?.csv_contacts)?.length:0
 					item['AudienceType']='CSV Imported'
 					
 				}else{
 					item['AudienceType']=''
 					item['AllContactsLength'] =0	
 				}
-				item.report_sent = item.report_sent + item.report_delivered + item.report_seen + item.report_replied;
-				item.report_delivered = item.report_delivered + item.report_seen + item.report_replied;
-				item.report_seen = item.report_seen + item.report_replied;
-				item['allVariables']=item.message_variables?JSON.parse(item.message_variables):[]
-				item['reportSentLength'] =item.report_sent?JSON.parse(item.report_sent).length:0
-				item['reportFailedLength'] =item.report_failed?JSON.parse(item.report_failed).length:0
-				item['reportDeliveredLength'] =item.report_delivered?JSON.parse(item.report_delivered).length:0
-				item['reportSeenLength'] =item.report_seen?JSON.parse(item.report_seen).length:0
-				item['reportRepliedLength'] =item.report_replied?JSON.parse(item.report_replied).length:0
-				console.log(item)
+				item.report_sent = item?.report_sent + item?.report_delivered + item?.report_seen + item?.report_replied;
+				item.report_delivered = item?.report_delivered + item?.report_seen + item?.report_replied;
+				item.report_seen = item?.report_seen + item?.report_replied;
+				item['allVariables']=item?.message_variables?JSON.parse(item?.message_variables):[]
+				item['reportSentLength'] =item?.report_sent?JSON.parse(item?.report_sent)?.length:0
+				item['reportFailedLength'] =item?.report_failed?JSON.parse(item?.report_failed)?.length:0
+				item['reportDeliveredLength'] =item?.report_delivered?JSON.parse(item?.report_delivered)?.length:0
+				item['reportSeenLength'] =item?.report_seen?JSON.parse(item?.report_seen)?.length:0
+				item['reportRepliedLength'] =item?.report_replied?JSON.parse(item?.report_replied)?.length:0
                 this.statusUpdate(CampaignID, item.status_label);
-				this.selectedCampaign = item
-				console.log("item**")
+				this.selectedCampaign = item;
 				this.isLoading = false;
-				if(item.status>1){
-					this.getCampaignMessages(item.Id)
+				if(item?.status>1){
+					this.getCampaignMessages(item?.Id)
 				}
 			
 		})
@@ -677,30 +667,12 @@ constructor(config: NgbModalConfig, private modalService: NgbModal,private datep
 	}
 	async getCampaignMessages(CampaignId:any){
 		await this.apiService.getCampaignMessages(CampaignId).subscribe((responseData:any )=>{
-			let allMessage:any= responseData
 			let Sent:any=0
 			let Failed:any=0
 			let Delivered:any=0
 			let Seen:any=0
 			let Replied:any=0
-			// allMessage.map((item:any)=>{
-			// 	if(item.status==0){
-			// 		Failed=Failed+1
-			// 	}
-			// 	if(item.status==1){
-			// 		Sent=Sent+1
-			// 	}
-			// 	if(item.status==2){
-			// 		Delivered=Delivered+1
-			// 	}
-			// 	if(item.status==3){
-			// 		Seen=Seen+1
-			// 	}
-			// 	if(item.status==4){
-			// 		Replied=Replied+1
-			// 	}
-				
-			// })
+			
 			responseData?.report.forEach((item:any)=>{
 				if(item.status==0){
 					Failed=item?.status_count;
@@ -723,14 +695,13 @@ constructor(config: NgbModalConfig, private modalService: NgbModal,private datep
 			this.selectedCampaign['Delivered'] =Delivered;
 			this.selectedCampaign['Sent'] =Sent;
 			this.selectedCampaign['Failed'] =Failed;
-			console.log(this.selectedCampaign)
 		})
 
 	}
 	deleteCampaignConfirmed(){
 		this.isLoading = true;
 		this.closeAllModal()
-		let CampaignID = this.selectedCampaign.Id
+		let CampaignID = this.selectedCampaign?.Id
 		this.apiService.deleteCampaignDetail(CampaignID).subscribe(campaignDelete =>{
 			this.getAllCampaigns()
 			this.selectedCampaign=[]
@@ -743,55 +714,55 @@ constructor(config: NgbModalConfig, private modalService: NgbModal,private datep
 		try {
 			allCampaignList.forEach((item:any) => {
 				
-				if(item.status==0){
+				if(item?.status==0){
 					item['status_label'] ='draft'
 				}else
-				if(item.status==1){
+				if(item?.status==1){
 					item['status_label'] ='scheduled'
 				}else
-				if(item.status==2){
+				if(item?.status==2){
 					item['status_label'] ='running'
 				}else
-				if(item.status==3){
+				if(item?.status==3){
 					item['status_label'] ='completed'
 				}else{
 					item['status_label'] ='draft'
 				}
-				item['start_datetime_formated']=this.formateDate(item.start_datetime)
-				item['created_datetime_formated']=this.formateDate(item.created_at)
+				item['start_datetime_formated']=this.formateDate(item?.start_datetime)
+				item['created_datetime_formated']=this.formateDate(item?.created_at)
 
-				if(item.channel_id==1){
+				if(item?.channel_id==1){
 					item['channel_label'] ='WA API'
 				}else{
 					item['channel_label'] ='WA Web'
 				}
 
 
-				if(item.category_id==1){
+				if(item?.category_id==1){
 					item['category_label'] ='Marketing'
 				}else
-				if(item.category_id==2){
+				if(item?.category_id==2){
 					item['category_label'] ='Utility'
 				}else
-				if(item.category_id==3){
+				if(item?.category_id==3){
 					item['category_label'] ='Authentication'
 				}else{
-					item['category_label'] =item.Category
+					item['category_label'] =item?.Category
 				}
-				if(item.segments_contacts){
-					item['AllContactsLength'] = item.segments_contacts ? (() => {
+				if(item?.segments_contacts){
+					item['AllContactsLength'] = item?.segments_contacts ? (() => {
 						try {
-							return JSON.parse(item.segments_contacts).length;
+							return JSON.parse(item?.segments_contacts).length;
 						} catch (error) {
 							console.error(error);
 							return 0;
 						}
 					})() : 0;
 					
-				}else if(item.csv_contacts){
-					item['AllContactsLength'] = item.csv_contacts ? (() => {
+				}else if(item?.csv_contacts){
+					item['AllContactsLength'] = item?.csv_contacts ? (() => {
 						try {
-							return JSON.parse(item.csv_contacts).length;
+							return JSON.parse(item?.csv_contacts)?.length;
 						} catch (error) {
 							console.error(error);
 							return 0;
@@ -818,11 +789,9 @@ constructor(config: NgbModalConfig, private modalService: NgbModal,private datep
 			SPID:this.SPID,
 			key:this.searchKey
 		}
-		console.log(bodyData)
 		this.apiService.getCampaign(bodyData).subscribe(allCampaign =>{
 			this.isLoading = false;
-			var allCampaignList:any=allCampaign
-			console.log(allCampaignList)
+			var allCampaignList:any=allCampaign;
 			if(allCampaignList){
 			this.mapCampaignData(allCampaignList)
 			}
@@ -832,6 +801,9 @@ constructor(config: NgbModalConfig, private modalService: NgbModal,private datep
 	}
 
 formateDate(dateTime:string){
+	if (!dateTime || typeof dateTime !== 'string') {
+		return 'N/A';
+	  }
 	let date = dateTime.split('Z').join('').trim();
 	if(new Date(date) && new Date(date).toString() != 'Invalid Date'){
 	return this.datepipe.transform(new Date(date), 'dd MMMM YY, hh:mm a') ;
