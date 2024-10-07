@@ -79,7 +79,6 @@ export class GeneralSettingsComponent implements OnInit {
      this.pauseAutoReplyTime = a?.pauseAutoReplyTime;
      this.defaultAdminUid = a?.defaultAdminUid;
      this.isLoading = false;
-    //  console.log(a);
 
     })
   }
@@ -91,7 +90,6 @@ export class GeneralSettingsComponent implements OnInit {
     this.apiService.getUserList(this.spId,1).subscribe((result:any) =>{
       if(result){
         this.userList =result?.getUser;     
-        console.log('userList:', this.userList);
         this.initUserList = this.userList.filter((item)=> item.RoleName == 'Admin');
       }
     })
@@ -162,7 +160,6 @@ export class GeneralSettingsComponent implements OnInit {
     this.defaultActionData.pauseAgentActiveTime = this.pauseAgentActiveTime;
     this.defaultActionData.pauseAutoReplyTime = this.pauseAutoReplyTime;
     this.defaultActionData.defaultAdminUid = this.defaultAdminUid;
-    console.log(this.defaultAdminUid)
 
     this.apiService.saveDefaultAction(this.defaultActionData).subscribe
     ((resopnse :any) => {

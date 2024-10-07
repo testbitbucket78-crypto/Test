@@ -744,12 +744,12 @@ popupWidth='250px' popupHeight='200px'>
 						<div class="horizental_line mt-4">
 						</div>
 						<div class="custom_row edit-block-section">
-							<button class="small-gradient-btn"><img class="icon" src="/assets/img/teambox/Edit.svg"
+							<button class="small-gradient-btn" *ngIf="!settingsService.checkRoleExist('19')"><img class="icon" src="/assets/img/teambox/Edit.svg"
 									(click)="triggerEditCustomer(updatecustomer)" /></button>
 
-							<button *ngIf="selectedInteraction.isBlocked!=1" class="small-gradient-btn red-color"
+							<button *ngIf="selectedInteraction.isBlocked!=1 && !settingsService.checkRoleExist('19')" class="small-gradient-btn red-color"
 								(click)="triggerBlockCustomer('Block',openBlockAlertmMessage)">Block</button>
-							<button *ngIf="selectedInteraction.isBlocked==1" class="small-gradient-btn blocked-btn"
+							<button *ngIf="selectedInteraction.isBlocked==1  && !settingsService.checkRoleExist('19')" class="small-gradient-btn blocked-btn"
 								(click)="triggerBlockCustomer('Unblocked',openBlockAlertmMessage)">Blocked</button>
 						</div>
 

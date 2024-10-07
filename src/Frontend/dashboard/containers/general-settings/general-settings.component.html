@@ -29,8 +29,8 @@
                     <span class="sub-heading">Agent Inactive Timeout</span></label>
             </div>
             <div class="sub-contents">
-                <p>Configure the inactivity timeout duration for agents. If chat is assigned but no reply by agent,
-                    their status is changed to Offline.</p>
+                <p>Configure the 'Agent Inactivity Timeout' duration if a conversation is assigned to an agent but no reply by him, 
+                    then his status is changed to Offline (timeout is applicable only for the first reply in the same conversation).</p>
                 <div class="select-heading pt-4 pb-2">
                     <label class="form-label" for="agentActiveTime">Set Timeout Period</label>
                 </div>
@@ -96,27 +96,16 @@
             </div>
         </div>
 
-        <!-- <div class="pl-2 pr-5 pt-3">
-            <div class="d-flex align-items-center custom-control custom-checkbox">
-                <input class="custom-control-input" type="checkbox" name="isContactAdd" id="isContactAdd"
-                  (change)="defaultActionState('contactAdd',$event.target.checked)"
-                   [(ngModel)]="isContactAdd" >
-                <label class="custom-control-label" for="isContactAdd"><span class="sub-heading">Contact Auto Addition</span></label>
-            </div>
-            <div class="sub-contents">
-                <p>You can enable the auto addition of contacts when a user sends a message to your business for the
-                    first time or if it does not exist currently in your business’s contact database.</p>
-            </div>
-        </div> -->
         <div class="margin-heading px-2">
             <div class="sub-heading mt-3 ml-4">Assign a Default Admin </div>
             <div class="sub-contents py-2">
-                <p class="margin-content">Select a Default Admin that will be assigned as Contact Owner in case no other Contact Owner is defined at the time of contact creation. Missed Chat will also be assigned to a Default Admin in case an Admin is configured for the same under Routing Rules.</p>
+                <p class="margin-content">Select a Default Admin that will be assigned a Missed Chat for these cases - when Contact Owner is not defined for any Contact and Contact Owner is the default option for all Missed Chats, 
+                    or if there are multiple users with Admin role and Admin is configured as the default option for Missed Chats.</p>
             </div>
             <select class="input-form" [(ngModel)]="defaultAdminUid" [ngModelOptions]="{standalone: true}">
                 <option *ngFor="let item of initUserList" [value]="item.uid"><span class="text-capitalize">{{ item?.name }}</span></option>
             </select>
-            <!-- <p>If the contact owner is not defined, chat is assigned to Admin</p> -->
+
         </div>
         <div class="default-footer">
             <button type="submit" [disabled]="defaultActionForm.invalid || pauseAgentActiveTime===''|| pauseAutoReplyTime===''" [class.disabled]="defaultActionForm.invalid || pauseAgentActiveTime===''|| pauseAutoReplyTime===''" class="account-btn">Save</button>

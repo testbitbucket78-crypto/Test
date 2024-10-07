@@ -1142,15 +1142,23 @@ async function isDataInCorrectFormat(columnDataType, actuallName, displayName, u
           return { isError: !convertedValue, reason: `${fieldDisplayName} does not exist in the list` };
         }
         break;
-      case 'Time':
-        if (displayName) {
-          const timeRegex = /^(?:[01]\d|2[0-3]):[0-5]\d:[0-5]\d$/;
+      // case 'Time':
+      //   if (displayName) {
+      //     const timeRegex = /^(?:[01]\d|2[0-3]):[0-5]\d:[0-5]\d$/;
 
-          if (!timeRegex.test(displayName)) {
-            return { isError: true, reason: `${fieldDisplayName} is invalid` };
+      //     if (!timeRegex.test(displayName)) {
+      //       return { isError: true, reason: `${fieldDisplayName} is invalid` };
+      //     }
+      //   }
+      //   break;
+
+        case 'Time':
+          if (displayName) {
+              const time = moment(displayName, ['h:mm A', 'HH:mm', 'HH:mm:ss'], true);
+              if (!time.isValid()) {
+                  return { isError: true, reason: `${fieldDisplayName} is invalid` };
+              }
           }
-        }
-
         break;
 
         case 'Date':
