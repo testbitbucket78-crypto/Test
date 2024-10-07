@@ -1065,7 +1065,7 @@ popupWidth='250px' popupHeight='200px'>
 
 									<div class="px-2 inner_box">
 										<img *ngIf="selectedTemplate.media_type === 'image'" class="template_img" src="{{selectedTemplate.Links}}">
-										<video *ngIf="selectedTemplate.media_type === 'video'" autoplay muted id="video-background" [src]="selectedTemplate.Links"></video>
+										<video *ngIf="selectedTemplate.media_type === 'video'" muted id="video-background" [src]="selectedTemplate.Links"></video>
 										<div class="doc-preview"*ngIf="selectedTemplate.media_type === 'document'">
 										  <a [href]="selectedTemplate.Links"><img src="../../../../assets/img/settings/doc.svg" /></a>
 										  </div>
@@ -1328,7 +1328,7 @@ popupWidth='250px' popupHeight='200px'>
 				<h4 class="modal-title" id="modal-basic-title">Preview</h4>
 			</div>
 			<div class="modal-header-right">
-				<p class="close-box" aria-label="Close" (click)="closeAllModal()"><img
+				<p class="close-box" aria-label="Close" (click)="closeAllModal(); closeTemplatePopup()"><img
 					(click)="isAttachmentMedia = false"
 						src="assets/img/teambox/icon-close.svg"></p>
 			</div>
@@ -1344,7 +1344,7 @@ popupWidth='250px' popupHeight='200px'>
 
 					<div class="px-2 inner_box">
 						<img *ngIf="selectedTemplate.media_type === 'image'" class="template_img" src="{{selectedTemplate.Links}}">
-						<video *ngIf="selectedTemplate.media_type === 'video'" autoplay muted id="video-background" [src]="selectedTemplate.Links"></video>
+						<video *ngIf="selectedTemplate.media_type === 'video'" muted id="video-background" [src]="selectedTemplate.Links"></video>
 						<div class="doc-preview"*ngIf="selectedTemplate.media_type === 'document'">
 						  <a [href]="selectedTemplate.Links"><img src="../../../../assets/img/settings/doc.svg" /></a>
 						  </div>

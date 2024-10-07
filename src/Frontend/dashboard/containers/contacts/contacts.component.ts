@@ -881,14 +881,14 @@ deletContactByID(data: any) {
 
   blockContactByID(data: any) {
     this.deleteBloackContactLoader = true;
-    if(data.isBlocked==1) {
+    if(data?.isBlocked==1) {
       this.isBlocked = 0;
     }
     else {
       this.isBlocked = 1;
     }
    let Body =  {
-      customerId:data.customerId,
+      customerId:data?.customerId,
       isBlocked:this.isBlocked
     }
     var SP_ID = sessionStorage.getItem('SP_ID')
@@ -991,6 +991,7 @@ deletContactByID(data: any) {
         this.productForm.get(prop)?.setValue(val);
       } else if( idx>-1 &&  this.filteredCustomFields[idx] && this.filteredCustomFields[idx].type == 'Time'){
         let val =this.settingsService.convertTimeFormat(value,true);
+        console.log(val);
         this.productForm.get(prop)?.setValue(val)
       }
       else if(idx>-1 &&  this.filteredCustomFields[idx] && (this.filteredCustomFields[idx].type == 'Multi Select')){

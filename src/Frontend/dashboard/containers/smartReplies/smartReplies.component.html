@@ -11,7 +11,7 @@
 	
 				<img src="assets/img/search.png">
 			</div>
-			<button class="btn btn-block add-smartrep-btn" (click)="showAddSmartRepliesModal()" [disabled]="settingsService.checkRoleExist('27')">
+			<button class="btn btn-block add-smartrep-btn" (click)="showAddSmartRepliesModal()" [disabled]="settingsService?.checkRoleExist('27')">
 				<img src="../../../../assets/img/teambox/add.svg" alt="error" />
 				Add Smart Reply
 			</button>
@@ -19,7 +19,7 @@
 	
 	
 	
-		<div *ngIf="replies.length==0" class="smartreplies-empty-state">
+		<div *ngIf="replies?.length==0" class="smartreplies-empty-state">
 			<div class="d-flex justify-content-center align-items-center container-empty-state">
 				<div class="text-center py-5 body-empty-state">
 					<img src="../../../../assets/img/no-sr.png" />
@@ -30,29 +30,29 @@
 		</div>
 	
 
-		<div *ngIf="replies.length>0" class="smartreplies-filled-state">
+		<div *ngIf="replies?.length>0" class="smartreplies-filled-state">
 			<div class="m-0 px-2 col-12 d-flex flex-wrap sm-card">
 				<div *ngFor="let reply of replies  | searchfilter:searchText" class="card col-3 d-flex"
 					 (click)="getRepliesByID(reply)">
 					<div class="card-body gy-2">
-						<h6 class="id">Id:{{ reply.ID }}</h6>
-						<h5 class="card-title ellipsis">{{reply.Title}}</h5>
+						<h6 class="id">Id:{{ reply?.ID }}</h6>
+						<h5 class="card-title ellipsis">{{reply?.Title}}</h5>
 
-						<p [innerHTML]="reply.Description" class="card-text ellipsis">
+						<p [innerHTML]="reply?.Description" class="card-text ellipsis">
 						</p>
 						<p class="text-dark mb-1" style="font-size: 11px;">
 						  <img src="../../../../assets/img/teambox/whatsapp-icon-l.svg" class="channel-selected"/>
-							{{reply.Channel}}
+							{{reply?.Channel}}
 						</p>
 						
-						<h6 class="card-subtitle mb-2 text-muted">{{reply.MatchingCriteria}}</h6>
+						<h6 class="card-subtitle mb-2 text-muted">{{reply?.MatchingCriteria}}</h6>
 						<div class="card1 d-flex">
 							<div class="card-text1">
-								<p>{{reply.KeywordCount}}</p>
+								<p>{{reply?.KeywordCount}}</p>
 								<h6>Total Keywords</h6>
 							</div>
 							<div class="card-text2">
-								<p>{{reply.ActionCount}}</p>
+								<p>{{reply?.ActionCount}}</p>
 								<h6>Reply Action</h6>
 							</div>
 						</div>
@@ -420,7 +420,7 @@
 								  <div class="conversation_inout_area">
 					  
 									<div class="input-area">
-									  <ejs-richtexteditor id='defaultRTE' #chatEditor [toolbarSettings]='tools' [width]='0' placeholder="Type Reply..." [pasteCleanupSettings]="pasteCleanupSettings"> </ejs-richtexteditor>
+									  <ejs-richtexteditor id='defaultRTE' #chatEditor [toolbarSettings]='tools' [width]='0' placeholder="Type Reply?..." [pasteCleanupSettings]="pasteCleanupSettings"> </ejs-richtexteditor>
 									  <button class="submit_btn" (click)="addMessage()">Add</button>
 									</div>
 								  </div>

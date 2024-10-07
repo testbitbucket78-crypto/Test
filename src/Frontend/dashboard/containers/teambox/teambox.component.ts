@@ -7,7 +7,7 @@ import { DashboardService, TeamboxService } from './../../services';
 import { SettingsService } from 'Frontend/dashboard/services/settings.service';
 import { WebsocketService } from '../../services/websocket.service';
 import { WebSocketSubject } from 'rxjs/webSocket';
-import { BehaviorSubject, forkJoin, fromEvent, Observable } from "rxjs";
+import { fromEvent } from "rxjs";
 import { parsePhoneNumberFromString } from 'libphonenumber-js';
 import { ToolbarService,NodeSelection, LinkService, ImageService, EmojiPickerService } from '@syncfusion/ej2-angular-richtexteditor';
 import { RichTextEditorComponent, HtmlEditorService } from '@syncfusion/ej2-angular-richtexteditor';
@@ -36,22 +36,7 @@ routerGuard = () => {
 		this.router.navigate(['login']);
 	}
 }
-public data: { [key: string]: Object }[] = [
-	{ Name: "Selma Rose", Status: "active", Eimg: "2", EmailId: "selma@gmail.com" },
-	{ Name: "Maria", Status: "active", Eimg: "1", EmailId: "maria@gmail.com" },
-	{ Name: "Russo Kay", Status: "busy", Eimg: "8", EmailId: "russo@gmail.com" },
-	{ Name: "Camden Kate", Status: "active", Eimg: "9", EmailId: "camden@gmail.com" },
-	{ Name: "Robert", Status: "busy", Eimg: "dp", EmailId: "robert@gmail.com" },
-	{ Name: "Garth", Status: "active", Eimg: "7", EmailId: "garth@gmail.com" },
-	{ Name: "Andrew James", Status: "away", Eimg: "pic04", EmailId: "noah@gmail.com" },
-	{ Name: "Olivia", Status: "busy", Eimg: "5", EmailId: "olivia@gmail.com" },
-	{ Name: "Sophia", Status: "away", Eimg: "6", EmailId: "sophia@gmail.com" },
-	{ Name: "Margaret", Status: "active", Eimg: "3", EmailId: "margaret@gmail.com" },
-	{ Name: "Ursula Ann", Status: "active", Eimg: "dp", EmailId: "ursula@gmail.com" },
-	{ Name: "Laura Grace", Status: "away", Eimg: "4", EmailId: "laura@gmail.com" },
-	{ Name: "Albert", Status: "active", Eimg: "pic03", EmailId: "albert@gmail.com" },
-	{ Name: "William", Status: "away", Eimg: "10", EmailId: "william@gmail.com" }
-  ];
+
 public  fieldsData: { [key: string]: string } = { text: 'name' };
 @ViewChild('mention') mentionObj!: Mention;
 	@ViewChild('notesSection') notesSection: ElementRef | any; 
@@ -139,8 +124,6 @@ public  fieldsData: { [key: string]: string } = { text: 'name' };
 			'YE +967', 'YT +262', 'ZA +27', 'ZM +260', 'ZW +263'
 			];
 
-	// custommesage='<p>Your message...</p>'
-	// customenotes='<p>Type...</p>'
 	templateChecked: boolean = false;
 	showInfoIcon:boolean = false;
 	showQuickResponse:any=false;
@@ -271,9 +254,6 @@ public  fieldsData: { [key: string]: string } = { text: 'name' };
 	  };
 	  allVariables: string = '';
 	isFallback: any[] = [];
-	// isNewInteraction:boolean=false;
-	// Interaction_ID:number = 0;
-	// template_json:any;
 	currentPage:number= 0;
 	contactCurrentPage:number= 0;
 	pageSize:number= 10;
@@ -304,7 +284,6 @@ public  fieldsData: { [key: string]: string } = { text: 'name' };
 		private dashboardService: DashboardService,
 		private route: ActivatedRoute) {
 		
-		// customize default values of modals used by this component tree
 
 		config.backdrop = 'static';
 		config.keyboard = false;
@@ -442,8 +421,8 @@ public  fieldsData: { [key: string]: string } = { text: 'name' };
 	}
 		this.showChatNotes=optionvalue
 		setTimeout(() => {
-			this.chatSection?.nativeElement.scroll({top:this.chatSection?.nativeElement.scrollHeight})
-			this.notesSection?.nativeElement.scroll({top:this.notesSection?.nativeElement.scrollHeight})
+			this.chatSection?.nativeElement.scroll({top:this.chatSection?.nativeElement?.scrollHeight})
+			this.notesSection?.nativeElement.scroll({top:this.notesSection?.nativeElement?.scrollHeight})
 		}, 100);
 	}
 
@@ -534,7 +513,7 @@ public  fieldsData: { [key: string]: string } = { text: 'name' };
 	}
 	showTemplatePreview() {
 		console.log(this.variableValues,'VARIBALE VALUES');
-		if (this.variableValues.length!==0 && this.allVariablesList.length!==0) {
+		if (this.variableValues?.length!==0 && this.allVariablesList?.length!==0) {
 			this.addVariable();
 			this.replaceVariableInTemplate();
 			$("#editTemplate").modal('hide'); 
@@ -588,21 +567,21 @@ public  fieldsData: { [key: string]: string } = { text: 'name' };
 		let val:any =[];
 		this.allVariablesList.forEach((placeholder, index) => {
 			const regex = new RegExp(placeholder.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'g');
-			if(this.selectedTemplate.media_type == 'text') {
-				this.selectedTemplate.Header = this.selectedTemplate.Header.replace(regex, '{{' + index + '}}');
+			if(this.selectedTemplate?.media_type == 'text') {
+				this.selectedTemplate.Header = this.selectedTemplate?.Header?.replace(regex, '{{' + index + '}}');
 			}
 			val.push({idx:'{{' + index + '}}',value:this.variableValues[index]});
-			this.selectedTemplate.BodyText = this.selectedTemplate.BodyText.replace(regex, (match: any) => {
+			this.selectedTemplate.BodyText = this.selectedTemplate?.BodyText?.replace(regex, (match: any) => {
 				return '{{' + index++ + '}}';
 			});
 		});
 		
 		val.forEach((placeholder:any) => {
 			const regex = new RegExp(placeholder?.idx?.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'g');
-			if(this.selectedTemplate.media_type == 'text') {
-				this.selectedTemplate.Header = this.selectedTemplate.Header.replace(regex, placeholder?.value);
+			if(this.selectedTemplate?.media_type == 'text') {
+				this.selectedTemplate.Header = this.selectedTemplate?.Header.replace(regex, placeholder?.value);
 			}
-			this.selectedTemplate.BodyText = this.selectedTemplate.BodyText.replace(regex, placeholder?.value);
+			this.selectedTemplate.BodyText = this.selectedTemplate?.BodyText.replace(regex, placeholder?.value);
 		});
 	}
 
@@ -658,7 +637,7 @@ public  fieldsData: { [key: string]: string } = { text: 'name' };
 		this.closeAllModal()
 		let mediaContent;
 		let mediaName;
-		const fileNameWithPrefix = item.Links.substring(item.Links.lastIndexOf('/') + 1);
+		const fileNameWithPrefix = item?.Links.substring(item.Links.lastIndexOf('/') + 1);
 		let originalName;
 		if (item.media_type === 'video') {
 			originalName = fileNameWithPrefix.substring(0, fileNameWithPrefix.lastIndexOf('-'));
@@ -666,37 +645,37 @@ public  fieldsData: { [key: string]: string } = { text: 'name' };
 		} else {
 			originalName = fileNameWithPrefix.substring(fileNameWithPrefix.indexOf('-') + 1);
 		}
-		if(item.media_type === 'image') {
-		  mediaContent ='<p><img style="width:100%; height:100%" src="'+item.Links+'"></p>';
+		if(item?.media_type === 'image') {
+		  mediaContent ='<p><img style="width:100%; height:100%" src="'+item?.Links+'"></p>';
 		  mediaName = '<p class="custom-class-attachmentType"><img src="/assets/img/teambox/photo-icon.svg" alt="icon"> '+originalName+'</p>'
 		}
-		else if(item.media_type === 'video') {
-			mediaContent ='<p><video controls style="width:100%; height:100%" src="'+item.Links+'"></video></p>';
+		else if(item?.media_type === 'video') {
+			mediaContent ='<p><video controls style="width:100%; height:100%" src="'+item?.Links+'"></video></p>';
 			mediaName = '<p class="custom-class-attachmentType"><img src="/assets/img/teambox/video-icon.svg" alt="icon"> '+originalName+'</p>'
 		}
-		else if(item.media_type === 'document') {
-			mediaContent ='<p><a href="'+item.Links+'"><img src="../../../../assets/img/settings/doc.svg" /></a></p>';
+		else if(item?.media_type === 'document') {
+			mediaContent ='<p><a href="'+item?.Links+'"><img src="../../../../assets/img/settings/doc.svg" /></a></p>';
 			mediaName ='<p class="custom-class-attachmentType"><img src="/assets/img/teambox/document-icon.svg" alt="icon"/>'+originalName+'</p>'
 		}
 		
 		let htmlcontent = '';
-		if (item.Header && item.media_type == 'text') {
-			htmlcontent += '<p><strong>'+item.Header+'</strong></p><br>';
+		if (item?.Header && item?.media_type == 'text') {
+			htmlcontent += '<p><strong>'+item?.Header+'</strong></p><br>';
 		}
 
-		if(mediaContent && item.media_type!== 'text') {
+		if(mediaContent && item?.media_type!== 'text') {
 			htmlcontent += mediaName
 		}
 	
-		htmlcontent +='<p>'+ item.BodyText+'</p>'+'<br>';
-		if (item.FooterText) {
-			htmlcontent+='<p>'+item.FooterText+'</p>';
+		htmlcontent +='<p>'+ item?.BodyText+'</p>'+'<br>';
+		if (item?.FooterText) {
+			htmlcontent+='<p>'+item?.FooterText+'</p>';
 		}
 		//this.chatEditor.value =htmlcontent
 		this.isAttachmentMedia = false;
 		this.isTemplate = true;
-		this.mediaType = item.media_type;
-		this.messageMeidaFile = item.Links;
+		this.mediaType = item?.media_type;
+		this.messageMeidaFile = item?.Links;
 		this.addingStylingToMedia(item);
 		console.log(htmlcontent);
 		this.sendMessage(true,htmlcontent);
@@ -736,7 +715,7 @@ public  fieldsData: { [key: string]: string } = { text: 'name' };
 				.split(';')
 				.map((style: any)=> style.trim())
 				.filter((style: any) => allowedStyles.includes(style));
-			return filteredStyles.length > 0 ? ` style="${filteredStyles.join('; ')}"` : '';
+			return filteredStyles?.length > 0 ? ` style="${filteredStyles.join('; ')}"` : '';
 		});
 		updatedHtml = updatedHtml.replace(/<button[^>]*>✖<\/button>/gi, '');
 		return updatedHtml;
@@ -774,7 +753,7 @@ ToggleShowMentionOption(){
 InsertMentionOption(user:any){
 	let content:any = this.chatEditor.value || '';
 	content = content.replace(/<p[^>]*>/g, '').replace(/<\/p>/g, '');
-	content = content+'<span contenteditable="false" class="e-mention-chip"><a _ngcontent-yyb-c67="" href="mailto:" title="">@'+user.name+'</a></span>'
+	content = content+'<span contenteditable="false" class="e-mention-chip"><a _ngcontent-yyb-c67="" href="mailto:" title="">@'+user?.name+'</a></span>'
 	this.chatEditor.value = content;
 	// content = content+'<span> </span>'
 	// this.chatEditor.value = content;
@@ -786,22 +765,17 @@ InsertMentionOption(user:any){
 }
 
 attachMentionHandlers() {
-	console.log(document.getElementById('defaultRTE'));
     const mentions = document.getElementById('defaultRTE')?.querySelectorAll('.mention');
-	console.log(mentions);
     mentions?.forEach((mention: HTMLElement | any) => {
       mention.addEventListener('click', this.moveCursorToEndOfMention);
     });
   }
 
   moveCursorToEndOfMention(event: MouseEvent) {
-	console.log(event)
     const mention = event.target as HTMLElement;
     if (mention && mention.nextSibling) {
       const range = document.createRange();
       const selection = window.getSelection();
-	  console.log(range)
-	  console.log(selection)
       range.setStartAfter(mention);
       range.collapse(true);
       selection?.removeAllRanges();
@@ -817,14 +791,12 @@ ToggleInsertTemplateOption(){
 		//}
 		this.fallbackvalue = [];
 		this.allTemplates = JSON.parse(JSON.stringify(this.allTemplatesMain));
-		console.log(this.allTemplatesMain, 'allTemplatesMain');
-		console.log(this.allTemplates, 'allTemplates');
 	}
 	}
 
 ToggleAttributesOption(){
 	if(this.selectedInteraction?.assignTo?.AgentId == this.uid || this.showChatNotes=='notes' ){
-		if((this.showChatNotes=='text' && this.selectedInteraction.channel=='WA API' && this.selectedInteraction?.progressbar?.progressbarValue >0) ||(this.showChatNotes=='text' && this.selectedInteraction.channel=='WA Web') || this.showChatNotes=='notes' )
+		if((this.showChatNotes=='text' && this.selectedInteraction?.channel=='WA API' && this.selectedInteraction?.progressbar?.progressbarValue >0) ||(this.showChatNotes=='text' && this.selectedInteraction.channel=='WA Web') || this.showChatNotes=='notes' )
 		{
 	this.closeAllModal()
 	$("#atrributemodal").modal('show'); 
@@ -835,12 +807,12 @@ ToggleAttributesOption(){
 
 showToolTip(event: MouseEvent) {
 	const target = event.target as HTMLElement;
-	if (target.classList.contains('fallback-tooltip')) {
+	if (target?.classList?.contains('fallback-tooltip')) {
 		this.showInfo = true;
 	}
 }
 UpdateVariable(event: any, index: number) {
-	let currentValue = event.target.value;
+	let currentValue = event?.target?.value;
 		const forbiddenKeys = ['{', '}'];
 		if (forbiddenKeys.some(key => currentValue.includes(key))) {
 			currentValue = currentValue.replace(/[{}]/g, '');
@@ -857,14 +829,11 @@ UpdateVariable(event: any, index: number) {
 	    if(!this.isFallback[index]){
 			this.fallbackvalue[index] = "";
 		}
-	console.log(this.selectedTemplate)
 }
 selectAttributes(item:any) {
 	 this.closeAllModal();
 	const selectedValue = item;
 	let content:any = this.chatEditor.value || '';
-	//content = content.replace(/<p[^>]*>/g, '').replace(/<\/p>/g, '');
-	//content = content+'<span>{{'+selectedValue+'}}</span>'
 	content = content+'<span contenteditable="false" class="e-mention-chip"><a _ngcontent-yyb-c67="" href="mailto:" title="">{{'+selectedValue+'}}</a></span>'
 	this.chatEditor.value = content;
 }
@@ -888,7 +857,7 @@ isCustomValue(value: string): boolean {
 ToggleQuickReplies(){
 	
 	if(this.selectedInteraction?.assignTo?.AgentId == this.uid || this.showChatNotes=='notes' ){
-		if((this.showChatNotes=='text' && this.selectedInteraction.channel=='WA API' && this.selectedInteraction?.progressbar?.progressbarValue >0) ||(this.showChatNotes=='text' && this.selectedInteraction.channel=='WA Web') || this.showChatNotes=='notes' )
+		if((this.showChatNotes=='text' && this.selectedInteraction?.channel=='WA API' && this.selectedInteraction?.progressbar?.progressbarValue >0) ||(this.showChatNotes=='text' && this.selectedInteraction.channel=='WA Web') || this.showChatNotes=='notes' )
 		{
 	this.closeAllModal()
 	this.getQuickResponse();
@@ -902,35 +871,35 @@ selectQuickReplies(item:any){
 	this.closeAllModal()
 	let mediaContent
 	let mediaName
-    const fileNameWithPrefix = item.Links.substring(item.Links.lastIndexOf('/') + 1);
+    const fileNameWithPrefix = item?.Links.substring(item?.Links.lastIndexOf('/') + 1);
 	let originalName;
-	if (item.media_type === 'video') {
+	if (item?.media_type === 'video') {
 		originalName = fileNameWithPrefix.substring(0, fileNameWithPrefix.lastIndexOf('-'));
 		originalName = originalName + fileNameWithPrefix.substring(fileNameWithPrefix.lastIndexOf('.'));
 	} else {
 		originalName = fileNameWithPrefix.substring(fileNameWithPrefix.indexOf('-') + 1);
 	}
 
-	if(item.media_type === 'image') {
-	  mediaContent ='<p><img style="width:100%; height:100%" src="'+item.Links+'"></p>'
+	if(item?.media_type === 'image') {
+	  mediaContent ='<p><img style="width:100%; height:100%" src="'+item?.Links+'"></p>'
 	  mediaName = '<p class="custom-class-attachmentType"><img src="/assets/img/teambox/photo-icon.svg" alt="icon"> '+originalName+'</p>'
 	}
-	else if(item.media_type === 'video') {
-		mediaContent ='<p><video controls style="width:100%; height:100%" src="'+item.Links+'"></video></p>'
+	else if(item?.media_type === 'video') {
+		mediaContent ='<p><video controls style="width:100%; height:100%" src="'+item?.Links+'"></video></p>'
 		mediaName = '<p class="custom-class-attachmentType"><img src="/assets/img/teambox/video-icon.svg" alt="icon"> '+originalName+'</p>'
 	}
 	else {
-		mediaContent ='<p style="text-align: center;><a href="'+item.Links+'"><img src="../../../../assets/img/settings/doc.svg" /></a></p>'
+		mediaContent ='<p style="text-align: center;><a href="'+item?.Links+'"><img src="../../../../assets/img/settings/doc.svg" /></a></p>'
 		mediaName ='<p class="custom-class-attachmentType"><img src="/assets/img/teambox/document-icon.svg" alt="icon"/>'+originalName+'</p>'
 	}
-	var htmlcontent = mediaName+item.BodyText;
+	var htmlcontent = mediaName+item?.BodyText;
 	this.chatEditor.value = htmlcontent
-	this.mediaType = item.media_type
-	this.messageMediaFile = item.Links;
+	this.mediaType = item?.media_type
+	this.messageMediaFile = item?.Links;
 	this.addingStylingToMedia(item);
 }
 addingStylingToMedia(item: any){
-	if (item.media_type === 'image' || item.media_type === 'video' || item.media_type === 'document') {
+	if (item?.media_type === 'image' || item?.media_type === 'video' || item?.media_type === 'document') {
 		setTimeout(() => {
 		  const editorContent = this.chatEditor.element.querySelector('.e-content');
 		  const mediaElements = editorContent?.querySelectorAll('img, video');
@@ -988,12 +957,12 @@ addingStylingToMedia(item: any){
 	  }
 }
 searchQuickReply(event:any){
-	let searchKey = event.target.value
+	let searchKey = event.target.value || '';
 	if(searchKey.length>2){
 	var allList = this.QuickReplyListMain
 	let FilteredArray = [];
 	for(var i=0;i<allList.length;i++){
-		var content = allList[i].title.toLowerCase()
+		var content = allList[i]?.title?.toLowerCase()
 			if(content.indexOf(searchKey.toLowerCase()) !== -1){
 				FilteredArray.push(allList[i])
 			}
@@ -1005,12 +974,12 @@ searchQuickReply(event:any){
 }
 
 searchTemplate(event:any){
-	let searchKey = event.target.value
+	let searchKey = event.target.value || '';
 	if(searchKey.length>2){
 	var allList = this.allTemplatesMain
 	let FilteredArray: any[] = [];
 	for(var i=0;i<allList.length;i++){
-		var content = allList[i].TemplateName.toLowerCase()
+		var content = allList[i]?.TemplateName.toLowerCase()
 			if(content.indexOf(searchKey.toLowerCase()) !== -1){
 				FilteredArray.push(allList[i])
 			}
@@ -3975,6 +3944,12 @@ sendMessage(isTemplate:boolean=false,templateTxt:string=''){
 
   changeRoutes(){
 	this.router.navigate(['/dashboard/teambox']);
+  }
+
+  closeTemplatePopup(){
+	this.messageMeidaFile = '';
+	this.messageMediaFile ='';
+
   }
 
 }
