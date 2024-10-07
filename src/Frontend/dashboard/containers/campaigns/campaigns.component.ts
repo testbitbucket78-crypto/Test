@@ -182,9 +182,37 @@ constructor(config: NgbModalConfig, private modalService: NgbModal,private datep
 		config.backdrop = 'static';
 		config.keyboard = false;
 		this.newCampaignDetail= this.prepareCampaingForm();
+	}
 
-		  
-
+	ngOnInit() {
+		this.isLoading = true;
+		this.getCampaignTimingList();
+		switch(this.loginAs) {
+			case 1:
+				this.loginAs='Admin'
+				break;
+			case 2:
+				this.loginAs='Manager'
+				break;
+			case 3:
+				this.loginAs='Agent'
+				break;
+			case 4:
+				this.loginAs='Helper'
+				break;
+			default:
+				this.loginAs='Agent'
+		}
+		this.profilePicture = (JSON.parse(sessionStorage.getItem('loginDetails')!)).profile_img;
+		this.routerGuard()
+		this.getAllCampaigns()
+		this.getContactList('')
+		this.getAttributeList()
+		this.getCustomFieldsData();
+		this.getTagData()
+		this.getWhatsAppDetails();
+		this.getContactFilterBy();
+		this.getUserList();
 	}
 
 	@HostListener('document:scroll', ['$event'])
@@ -233,51 +261,17 @@ constructor(config: NgbModalConfig, private modalService: NgbModal,private datep
 		this.errorMessage='';
 		this.warningMessage='';
 	}
-
-	ngOnInit() {
-		this.isLoading = true;
-		this.getCampaignTimingList();
-		switch(this.loginAs) {
-			case 1:
-				this.loginAs='Admin'
-				break;
-			case 2:
-				this.loginAs='Manager'
-				break;
-			case 3:
-				this.loginAs='Agent'
-				break;
-			case 4:
-				this.loginAs='Helper'
-				break;
-			default:
-				this.loginAs='Agent'
-		}
-		this.profilePicture = (JSON.parse(sessionStorage.getItem('loginDetails')!)).profile_img;
-		this.routerGuard()
-		this.getAllCampaigns()
-		this.getContactList('')
-		this.getAttributeList()
-		//this.getAdditiionalAttributes();
-		this.processData();
-		this.getCustomFieldsData();
-		this.getTagData()
-		this.getWhatsAppDetails();
-		this.getContactFilterBy();
-		this.getUserList();
-	}
-
 	
 	getWhatsAppDetails() {
 		this._settingsService.getWhatsAppDetails(this.SPID)
 		.subscribe((response:any) =>{
 		 if(response){
-			 if (response && response.whatsAppDetails) {
-				this.channelOption = response.whatsAppDetails.map((item : any)=> ({
-				  value: item.id,
-				  label: item.channel_id,
-				  connected_id: item.connected_id,
-				  channel_status: item.channel_status
+			 if (response && response?.whatsAppDetails) {
+				this.channelOption = response?.whatsAppDetails.map((item : any)=> ({
+				  value: item?.id,
+				  label: item?.channel_id,
+				  connected_id: item?.connected_id,
+				  channel_status: item?.channel_status
 				}));
 			  }
 		 }
@@ -477,15 +471,15 @@ constructor(config: NgbModalConfig, private modalService: NgbModal,private datep
 
 	  getTagData() {
 		this._settingsService.getTagData(this.SPID).subscribe(result => {
-		  if (result) {
-			  let tagListData = result.taglist;
-			  this.tag = tagListData.map((tag:any,index:number) => ({
-				  id: tag.ID, 
-				  optionName: tag.TagName
+		  if (result && result?.taglist) {
+			  let tagListData = result?.taglist;
+			  this.tag = tagListData.map((tag:any) => ({
+				  id: tag?.ID, 
+				  optionName: tag?.TagName
 			  }));
 			  let idx = this.contactFilterBy.findIndex((item:any)=> item.value =='tag');
 			  if(idx !=-1){
-				this.contactFilterBy[idx].option.forEach((item:any)=>{
+				this.contactFilterBy[idx]?.option?.forEach((item:any)=>{
 					item.options= this.tag;
 				})
 			  }
@@ -497,7 +491,7 @@ constructor(config: NgbModalConfig, private modalService: NgbModal,private datep
 			var allAttributesList:any=allAttributes
 			let attributes:any=[]
 			allAttributesList.map((attribute:any)=>{
-				attributes.push('{{'+attribute.attribute_name+'}}')
+				attributes.push('{{'+attribute?.attribute_name+'}}')
 			})
 			this.attributesoption=attributes;
 			this.attributesoptionFilters=attributes;
@@ -507,16 +501,16 @@ constructor(config: NgbModalConfig, private modalService: NgbModal,private datep
 	getAttributeList() {
 		this.apiService.getAttributeList(this.SPID)
 		.subscribe((response:any) =>{
-		 if(response){
+		 if(response && response?.result){
 			 let attributeListData = response?.result;
-			 this.attributesoption = attributeListData.map((attrList:any) => attrList.displayName);
+			 this.attributesoption = attributeListData.map((attrList:any) => attrList?.displayName);
 			 console.log(this.attributesoption);
 		 }
 	   })
 	}
 
 	SearchCampaign(event:any){
-		if(event.target.value.length>2){
+		if(event?.target?.value?.length>2){
 		this.searchKey =event.target.value
 		}else{
 			this.searchKey='';
@@ -536,9 +530,7 @@ constructor(config: NgbModalConfig, private modalService: NgbModal,private datep
 		
 	}
 	updateFilterDates(event:any){
-		console.log(event.target.name+'::'+event.target.value)
-		this.datesFilter[event.target.name]=event.target.value
-		console.log(this.datesFilter)
+		this.datesFilter[event?.target?.name]=event?.target?.value;
 	}
 
 	applyFilterOnCampaign(){
@@ -548,17 +540,17 @@ constructor(config: NgbModalConfig, private modalService: NgbModal,private datep
 		let channelIn=[]
 		let statusIn=[]
 		let categoryIn=[]
-		for(var i=0;i<this.campaignStatusOption.length;i++){
+		for(var i=0;i<this.campaignStatusOption?.length;i++){
 			if(this.campaignStatusOption[i]['checked']){
 				statusIn.push(this.campaignStatusOption[i]['value'])
 			}
 		}
-		for(var i=0;i<this.categoriesOption.length;i++){
+		for(var i=0;i<this.categoriesOption?.length;i++){
 			if(this.categoriesOption[i]['checked']){
 				categoryIn.push(this.categoriesOption[i]['value'])
 			}
 		}
-		for(var i=0;i<this.channelOption.length;i++){
+		for(var i=0;i<this.channelOption?.length;i++){
 			if(this.channelOption[i]['checked']){
 				channelIn.push(this.channelOption[i]['value'])
 			}
@@ -566,17 +558,16 @@ constructor(config: NgbModalConfig, private modalService: NgbModal,private datep
 
 		let BodyData={
 			SPID:this.SPID,
-			start_date: this.datesFilter.start_date?this.datesFilter.start_date:'',
-			end_date: this.datesFilter.end_date?this.datesFilter.end_date:'',
+			start_date: this.datesFilter?.start_date?this.datesFilter?.start_date:'',
+			end_date: this.datesFilter?.end_date?this.datesFilter?.end_date:'',
 			channelIn:channelIn,
 			categoryIn:categoryIn,
 			statusIn:statusIn,
 			key:this.searchKey
 		}
 
-		console.log(BodyData)
 		this.apiService.getFilteredCampaign(BodyData).subscribe(allCampaign =>{
-			var allCampaignList:any=allCampaign
+			let allCampaignList:any=allCampaign
 			this.mapCampaignData(allCampaignList)
 		})
 	}
@@ -585,14 +576,13 @@ constructor(config: NgbModalConfig, private modalService: NgbModal,private datep
 		this.isLoading = true;
 		this.selectedCampaign=[]
 		this.showCampaignDetail =!this.showCampaignDetail 
-		if(this.showCampaignDetail && campaign.Id){
-		  this.getCampaignDetail(campaign.Id)
+		if(this.showCampaignDetail && campaign?.Id){
+		  this.getCampaignDetail(campaign?.Id)
 		} else this.isLoading = false;
 	}
 
     async getCampaignDetail(CampaignID:any){
         await this.apiService.getCampaignDetail(CampaignID).subscribe(campaign =>{
-			console.log(campaign)
 			let campaigns:any=campaign
 				let item = campaigns[0]
 				if(item.status==0){
@@ -610,8 +600,8 @@ constructor(config: NgbModalConfig, private modalService: NgbModal,private datep
 				else{
 					item['status_label'] ='draft'
 				}
-				item['start_datetime_formated']=this.formateDate(item.start_datetime)
-				item['created_datetime_formated']=this.formattedDate(item.created_at)
+				item['start_datetime_formated']=this.formateDate(item?.start_datetime)
+				item['created_datetime_formated']=this.formattedDate(item?.created_at)
 
 				if(item.channel_id==1){
 					item['channel_label'] ='WA API'
@@ -634,32 +624,30 @@ constructor(config: NgbModalConfig, private modalService: NgbModal,private datep
 
 				
 				if(item.segments_contacts){
-				item['AllContactsLength'] =item.segments_contacts?JSON.parse(item.segments_contacts).length:JSON.parse(item.csv_contacts).length
+				item['AllContactsLength'] =item.segments_contacts?JSON.parse(item?.segments_contacts).length:JSON.parse(item?.csv_contacts)?.length
 				item['AudienceType']='Segment Audience'
-			    }else if(item.csv_contacts){
-					item['AllContactsLength'] =item.csv_contacts?JSON.parse(item.csv_contacts).length:0
+			    }else if(item?.csv_contacts){
+					item['AllContactsLength'] =item?.csv_contacts?JSON.parse(item?.csv_contacts)?.length:0
 					item['AudienceType']='CSV Imported'
 					
 				}else{
 					item['AudienceType']=''
 					item['AllContactsLength'] =0	
 				}
-				item.report_sent = item.report_sent + item.report_delivered + item.report_seen + item.report_replied;
-				item.report_delivered = item.report_delivered + item.report_seen + item.report_replied;
-				item.report_seen = item.report_seen + item.report_replied;
-				item['allVariables']=item.message_variables?JSON.parse(item.message_variables):[]
-				item['reportSentLength'] =item.report_sent?JSON.parse(item.report_sent).length:0
-				item['reportFailedLength'] =item.report_failed?JSON.parse(item.report_failed).length:0
-				item['reportDeliveredLength'] =item.report_delivered?JSON.parse(item.report_delivered).length:0
-				item['reportSeenLength'] =item.report_seen?JSON.parse(item.report_seen).length:0
-				item['reportRepliedLength'] =item.report_replied?JSON.parse(item.report_replied).length:0
-				console.log(item)
+				item.report_sent = item?.report_sent + item?.report_delivered + item?.report_seen + item?.report_replied;
+				item.report_delivered = item?.report_delivered + item?.report_seen + item?.report_replied;
+				item.report_seen = item?.report_seen + item?.report_replied;
+				item['allVariables']=item?.message_variables?JSON.parse(item?.message_variables):[]
+				item['reportSentLength'] =item?.report_sent?JSON.parse(item?.report_sent)?.length:0
+				item['reportFailedLength'] =item?.report_failed?JSON.parse(item?.report_failed)?.length:0
+				item['reportDeliveredLength'] =item?.report_delivered?JSON.parse(item?.report_delivered)?.length:0
+				item['reportSeenLength'] =item?.report_seen?JSON.parse(item?.report_seen)?.length:0
+				item['reportRepliedLength'] =item?.report_replied?JSON.parse(item?.report_replied)?.length:0
                 this.statusUpdate(CampaignID, item.status_label);
-				this.selectedCampaign = item
-				console.log("item**")
+				this.selectedCampaign = item;
 				this.isLoading = false;
-				if(item.status>1){
-					this.getCampaignMessages(item.Id)
+				if(item?.status>1){
+					this.getCampaignMessages(item?.Id)
 				}
 			
 		})
@@ -677,30 +665,12 @@ constructor(config: NgbModalConfig, private modalService: NgbModal,private datep
 	}
 	async getCampaignMessages(CampaignId:any){
 		await this.apiService.getCampaignMessages(CampaignId).subscribe((responseData:any )=>{
-			let allMessage:any= responseData
 			let Sent:any=0
 			let Failed:any=0
 			let Delivered:any=0
 			let Seen:any=0
 			let Replied:any=0
-			// allMessage.map((item:any)=>{
-			// 	if(item.status==0){
-			// 		Failed=Failed+1
-			// 	}
-			// 	if(item.status==1){
-			// 		Sent=Sent+1
-			// 	}
-			// 	if(item.status==2){
-			// 		Delivered=Delivered+1
-			// 	}
-			// 	if(item.status==3){
-			// 		Seen=Seen+1
-			// 	}
-			// 	if(item.status==4){
-			// 		Replied=Replied+1
-			// 	}
-				
-			// })
+			
 			responseData?.report.forEach((item:any)=>{
 				if(item.status==0){
 					Failed=item?.status_count;
@@ -723,14 +693,13 @@ constructor(config: NgbModalConfig, private modalService: NgbModal,private datep
 			this.selectedCampaign['Delivered'] =Delivered;
 			this.selectedCampaign['Sent'] =Sent;
 			this.selectedCampaign['Failed'] =Failed;
-			console.log(this.selectedCampaign)
 		})
 
 	}
 	deleteCampaignConfirmed(){
 		this.isLoading = true;
 		this.closeAllModal()
-		let CampaignID = this.selectedCampaign.Id
+		let CampaignID = this.selectedCampaign?.Id
 		this.apiService.deleteCampaignDetail(CampaignID).subscribe(campaignDelete =>{
 			this.getAllCampaigns()
 			this.selectedCampaign=[]
@@ -743,55 +712,55 @@ constructor(config: NgbModalConfig, private modalService: NgbModal,private datep
 		try {
 			allCampaignList.forEach((item:any) => {
 				
-				if(item.status==0){
+				if(item?.status==0){
 					item['status_label'] ='draft'
 				}else
-				if(item.status==1){
+				if(item?.status==1){
 					item['status_label'] ='scheduled'
 				}else
-				if(item.status==2){
+				if(item?.status==2){
 					item['status_label'] ='running'
 				}else
-				if(item.status==3){
+				if(item?.status==3){
 					item['status_label'] ='completed'
 				}else{
 					item['status_label'] ='draft'
 				}
-				item['start_datetime_formated']=this.formateDate(item.start_datetime)
-				item['created_datetime_formated']=this.formateDate(item.created_at)
+				item['start_datetime_formated']=this.formateDate(item?.start_datetime)
+				item['created_datetime_formated']=this.formateDate(item?.created_at)
 
-				if(item.channel_id==1){
+				if(item?.channel_id==1){
 					item['channel_label'] ='WA API'
 				}else{
 					item['channel_label'] ='WA Web'
 				}
 
 
-				if(item.category_id==1){
+				if(item?.category_id==1){
 					item['category_label'] ='Marketing'
 				}else
-				if(item.category_id==2){
+				if(item?.category_id==2){
 					item['category_label'] ='Utility'
 				}else
-				if(item.category_id==3){
+				if(item?.category_id==3){
 					item['category_label'] ='Authentication'
 				}else{
-					item['category_label'] =item.Category
+					item['category_label'] =item?.Category
 				}
-				if(item.segments_contacts){
-					item['AllContactsLength'] = item.segments_contacts ? (() => {
+				if(item?.segments_contacts){
+					item['AllContactsLength'] = item?.segments_contacts ? (() => {
 						try {
-							return JSON.parse(item.segments_contacts).length;
+							return JSON.parse(item?.segments_contacts).length;
 						} catch (error) {
 							console.error(error);
 							return 0;
 						}
 					})() : 0;
 					
-				}else if(item.csv_contacts){
-					item['AllContactsLength'] = item.csv_contacts ? (() => {
+				}else if(item?.csv_contacts){
+					item['AllContactsLength'] = item?.csv_contacts ? (() => {
 						try {
-							return JSON.parse(item.csv_contacts).length;
+							return JSON.parse(item?.csv_contacts)?.length;
 						} catch (error) {
 							console.error(error);
 							return 0;
@@ -818,11 +787,9 @@ constructor(config: NgbModalConfig, private modalService: NgbModal,private datep
 			SPID:this.SPID,
 			key:this.searchKey
 		}
-		console.log(bodyData)
 		this.apiService.getCampaign(bodyData).subscribe(allCampaign =>{
 			this.isLoading = false;
-			var allCampaignList:any=allCampaign
-			console.log(allCampaignList)
+			var allCampaignList:any=allCampaign;
 			if(allCampaignList){
 			this.mapCampaignData(allCampaignList)
 			}
@@ -832,6 +799,9 @@ constructor(config: NgbModalConfig, private modalService: NgbModal,private datep
 	}
 
 formateDate(dateTime:string){
+	if (!dateTime || typeof dateTime !== 'string') {
+		return 'N/A';
+	  }
 	let date = dateTime.split('Z').join('').trim();
 	if(new Date(date) && new Date(date).toString() != 'Invalid Date'){
 	return this.datepipe.transform(new Date(date), 'dd MMMM YY, hh:mm a') ;
@@ -869,31 +839,27 @@ formateDate(dateTime:string){
 		// 	this.ContactListNewFilters.push(addeFilter[i])
 		// }
 		// }
-		this.ContactListNewFilters[index]['filterPrefix'] = filter.label;
+		this.ContactListNewFilters[index]['filterPrefix'] = filter?.label;
 		// let newFilter:any=[];
-		this.ContactListNewFilters[index]['filterBy'] = filter['option']['0'].label
-		this.ContactListNewFilters[index]['filterType'] = filter['option']['0'].type
-		this.ContactListNewFilters[index]['selectedOptions'] = filter['option']['0'].options
-		this.ContactListNewFilters[index]['filterPrefix'] = filter.label
+		this.ContactListNewFilters[index]['filterBy'] = filter['option']['0']?.label
+		this.ContactListNewFilters[index]['filterType'] = filter['option']['0']?.type
+		this.ContactListNewFilters[index]['selectedOptions'] = filter['option']['0']?.options
+		this.ContactListNewFilters[index]['filterPrefix'] = filter?.label
 		this.ContactListNewFilters[index]['filterValue']='';
 		// if(addeFilter.length>0){
 		// newFilter['filterOperator']='AND';
 		// }
 		// this.ContactListNewFilters.push(newFilter)
-		console.log(this.ContactListNewFilters)
-
-
 	  }
 
 	addNewFilters(filter:any){
-		console.log(filter);
 		this.ContactListNewFilters=[];
 		this.selectedcontactFilterBy = filter[0];
 		filter.forEach((item:any)=>{
-		let addeFilter = item.addeFilter;
+		let addeFilter = item?.addeFilter;
 		this.showContactFilter=false;
 		if(addeFilter.length>0){
-		for(var i=0;i<addeFilter.length;i++){
+		for(var i=0;i<addeFilter?.length;i++){
 			this.selectedcontactFilterBy = item;
 			this.ContactListNewFilters.push(addeFilter[i])
 		}
@@ -911,13 +877,11 @@ formateDate(dateTime:string){
 	  }
 	  selectFilterBy(index:any,selectedcontactFilterBy:any,filter:any){
 		this.showFilterByOption=false
-		this.ContactListNewFilters[index]['filterBy'] = filter.label
-		this.ContactListNewFilters[index]['filterType'] = filter.type
-		this.ContactListNewFilters[index]['selectedOptions'] = filter.options
-		this.ContactListNewFilters[index]['filterPrefix'] = selectedcontactFilterBy.label
-		this.ContactListNewFilters[index]['filterValue']='';
-		console.log(this.ContactListNewFilters)
-		
+		this.ContactListNewFilters[index]['filterBy'] = filter?.label
+		this.ContactListNewFilters[index]['filterType'] = filter?.type
+		this.ContactListNewFilters[index]['selectedOptions'] = filter?.options
+		this.ContactListNewFilters[index]['filterPrefix'] = selectedcontactFilterBy?.label
+		this.ContactListNewFilters[index]['filterValue']='';		
 	  }
 	  selectFilterValue(index:any,event:any){
 		this.ContactListNewFilters[index]['filterValue'] = event.target.value
@@ -929,9 +893,9 @@ formateDate(dateTime:string){
 
 	  selectFilterDates(index:any,event:any){
 		if(event.target.name =='start_date'){
-			this.ContactListNewFilters[index]['filterValue'] =event.target.value
+			this.ContactListNewFilters[index]['filterValue'] =event?.target?.value
 		}else{
-			this.ContactListNewFilters[index]['filterValue'] =this.ContactListNewFilters[index]['filterValue']+' / '+event.target.value
+			this.ContactListNewFilters[index]['filterValue'] =this.ContactListNewFilters[index]['filterValue']+' / '+event?.target?.value
 		}
 	  }
 
@@ -940,9 +904,9 @@ formateDate(dateTime:string){
 	  }
       addNewFilter(){
 		let newFilter:any=[];
-		newFilter['filterBy'] = this.selectedcontactFilterBy['option']['0'].label
-		newFilter['filterType'] = this.selectedcontactFilterBy['option']['0'].type
-		newFilter['selectedOptions'] = this.selectedcontactFilterBy['option']['0'].options
+		newFilter['filterBy'] = this.selectedcontactFilterBy['option']['0']?.label
+		newFilter['filterType'] = this.selectedcontactFilterBy['option']['0']?.type
+		newFilter['selectedOptions'] = this.selectedcontactFilterBy['option']['0']?.options
 		newFilter['filterPrefix'] = this.selectedcontactFilterBy.label
 		newFilter['filterValue']='';
 		newFilter['filterOperator']='AND';
@@ -953,9 +917,9 @@ formateDate(dateTime:string){
 	  removeFilter(itemIndex:any){
 		
 		this.ContactListNewFilters.splice(itemIndex, 1);
-		if(this.ContactListNewFilters.length != 0) this.ContactListNewFilters[0]['filterOperator']='';
+		if(this.ContactListNewFilters?.length != 0) this.ContactListNewFilters[0]['filterOperator']='';
 		this.selectedcontactFilterBy['addeFilter']=this.ContactListNewFilters;
-		if(this.ContactListNewFilters.length == 0) this.addNewFilter();
+		if(this.ContactListNewFilters?.length == 0) this.addNewFilter();
 	  }
 	  addFilter(){
 		this.selectedcontactFilterBy['addeFilter']=this.ContactListNewFilters
@@ -974,7 +938,7 @@ formateDate(dateTime:string){
 		console.log('///////////getContactFilterQuery',addeFilter)
 		const groups = addeFilter.reduce((groups:any, filter:any) => {
 		  
-		  if (!groups[filter.filterPrefix]) {
+		  if (!groups[filter?.filterPrefix]) {
 			groups[filter.filterPrefix] = [];
 		  }
 	
@@ -1099,15 +1063,14 @@ formateDate(dateTime:string){
     getFilterOnEndCustomer(){
 		this.applylistFiltersWidth=400;
 		let addedNewFilters:any=[];
-		console.log(this.contactFilterBy,'this.contactFilterBy');
 		this.contactFilterBy.map((item:any)=>{
 			item.addeFilter.map((filter:any)=>{
 				addedNewFilters.push({
-					filterBy: filter.filterBy?filter.filterBy:'', 
-					filterType: filter.filterType?filter.filterType:'', 
-					filterOperator:filter.filterOperator?filter.filterOperator:'', 
-					filterPrefix: filter.filterPrefix?filter.filterPrefix:'', 
-					filterValue: filter.filterValue?filter.filterValue:''
+					filterBy: filter?.filterBy?filter?.filterBy:'', 
+					filterType: filter?.filterType?filter?.filterType:'', 
+					filterOperator:filter?.filterOperator?filter?.filterOperator:'', 
+					filterPrefix: filter?.filterPrefix?filter?.filterPrefix:'', 
+					filterValue: filter?.filterValue?filter?.filterValue:''
 					})
 			})
 		})
@@ -1128,7 +1091,7 @@ formateDate(dateTime:string){
 			this.filteredEndCustomer = allCustomerList
 			this.filteredEndCustomer['sortOrder']=false
 			this.filteredEndCustomerOrigional =this.filteredEndCustomer
-			this.totalpages = Math.ceil(this.filteredEndCustomer.length/this.pagesize);
+			this.totalpages = Math.ceil(this.filteredEndCustomer?.length/this.pagesize);
 			this.page =1;
 			
 	})
@@ -1144,7 +1107,7 @@ formateDate(dateTime:string){
 	}
 	removeAddedFilter(mainIndex:any,filterIndex:any){
 		this.contactFilterBy[mainIndex]['addeFilter'].splice(filterIndex, 1)
-		if(this.contactFilterBy[mainIndex]['addeFilter'].length>0){
+		if(this.contactFilterBy[mainIndex]['addeFilter']?.length>0){
 			this.contactFilterBy[mainIndex]['addeFilter'][0]['filterOperator']='';
 		}
 		this.getFilterOnEndCustomer()
@@ -1214,30 +1177,24 @@ formateDate(dateTime:string){
 			console.log(searchKey)
 			this.filteredEndCustomer.map((item:any)=>{
 
-				if(item.Name && (item.Name.toLowerCase().indexOf(searchKey.toLowerCase()) !== -1)){
+				if(item?.Name && (item?.Name.toLowerCase().indexOf(searchKey.toLowerCase()) !== -1)){
 					searchData.push(item)
-				}else if(item.phoneNumber && (item.phoneNumber.indexOf(searchKey)!== -1)){
-					console.log('found phoneNumber '+item.customerId)
-					searchData.push(item)
-					
-				}else if(item.customerId && (item.customerId.toString().indexOf(searchKey)!== -1)){
-					console.log('found customerId '+item.customerId)
+				}else if(item?.phoneNumber && (item?.phoneNumber.indexOf(searchKey)!== -1)){
 					searchData.push(item)
 					
-				}else if(item.emailId && (item.emailId.toLowerCase().indexOf(searchKey.toLowerCase()) !== -1)){
-					console.log('found emailId '+item.customerId)
+				}else if(item?.customerId && (item?.customerId.toString().indexOf(searchKey)!== -1)){
 					searchData.push(item)
 					
-				}else if(item.age && (item.age.toLowerCase().indexOf(searchKey.toLowerCase()) !== -1)){
-					console.log('found age '+item.customerId)
+				}else if(item?.emailId && (item?.emailId.toLowerCase().indexOf(searchKey.toLowerCase()) !== -1)){
 					searchData.push(item)
 					
-				}else if(item.sex && (item.sex.toLowerCase().indexOf(searchKey.toLowerCase()) !== -1)){
-					console.log('found sex '+item.customerId)
+				}else if(item?.age && (item?.age.toLowerCase().indexOf(searchKey.toLowerCase()) !== -1)){
 					searchData.push(item)
 					
-				}else if(item.tag && (item.tag.toLowerCase().indexOf(searchKey.toLowerCase()) !== -1)){
-					console.log('found tag '+item.customerId)
+				}else if(item?.sex && (item?.sex.toLowerCase().indexOf(searchKey.toLowerCase()) !== -1)){
+					searchData.push(item)
+					
+				}else if(item?.tag && (item?.tag.toLowerCase().indexOf(searchKey.toLowerCase()) !== -1)){
 					searchData.push(item)
 				}else{
 					console.log('found nothing ')
@@ -1250,7 +1207,7 @@ formateDate(dateTime:string){
 			this.filteredEndCustomer = this.filteredEndCustomerOrigional
 		}
 		
-		this.totalpages = Math.ceil(this.filteredEndCustomer.length/this.pagesize);
+		this.totalpages = Math.ceil(this.filteredEndCustomer?.length/this.pagesize);
 		this.page =1;
 		
 		//this.filteredEndCustomerOrigional
@@ -1281,33 +1238,19 @@ formateDate(dateTime:string){
 
 	  
 	  selectScheduleDate(event: any) {
-	// 	const selectedDate = new Date(event.target.value);
-	// 	const currentDate = new Date();
 	  
-	// 	// if (selectedDate < currentDate) {
-	// 	//   this.showErrorMessage = true;
-	  
-	// 	//   this.selecteScheduleDate = currentDate.toISOString().split('T')[0];
-	// 	// } else {
-	// 	//   this.showErrorMessage = false;
-	  
-		   this.selecteScheduleDate = event.target.value;
+		   this.selecteScheduleDate = event?.target?.value;
 		   this.selScheduleDate = new Date(new Date(this.selecteScheduleDate).toDateString());
 		   this.currDate = new Date(new Date().toDateString());
-		   console.log(this.selecteScheduleDate)
 		 }
-	//   }
-	  
 
 	selectScheduleTime(event: any) {
 		this.selecteScheduleTime= event;
-		//this.selectedScheduleTime= new Date(event.target.valueAsDate).toLocaleTimeString()
 		this.selectedScheduleTime = this.datepipe.transform(new Date(new Date(new Date().setHours(event.split(':')[0],event.split(':')[1])).setSeconds(0)),'hh:mm a');
 		this.checkScheduleTiming(event);
 	  }
 
 	checkScheduleTiming(e:any){
-		console.log(this.selectedScheduleTime);
 		let hr =  new Date().getHours();
 		let min =  new Date().getMinutes();
 		if(Number(e.split(':')[0])<hr ||(Number(e.split(':')[0])==hr && Number(e.split(':')[1]) < min)){
@@ -1315,11 +1258,7 @@ formateDate(dateTime:string){
 		}else{
 			this.isTimingPast = false
 		}
-		console.log(this.selScheduleDate)
-		console.log(this.currDate)
 	}
-
-    
 
 	counter(i: number) {
 		return new Array(i);
@@ -1343,11 +1282,10 @@ formateDate(dateTime:string){
 		}
 		this.newCampaignDetail.get('channel_id').setValue(channel.value);
 		this.newCampaignDetail.get('channel_label').setValue(channel.label);
-		this.selectedChannel = channel.label;
+		this.selectedChannel = channel?.label;
 		this.ShowChannelOption=false
-		console.log(this.allTemplates)
-		this.allTemplates = this.allTemplatesMain.filter((item:any) => item.Channel == channel.label);
-		this.initallTemplates =JSON.parse(JSON.stringify(this.allTemplatesMain.filter((item:any) => item.Channel == channel.label)));
+		this.allTemplates = this.allTemplatesMain.filter((item:any) => item?.Channel == channel.label);
+		this.initallTemplates =JSON.parse(JSON.stringify(this.allTemplatesMain.filter((item:any) => item?.Channel == channel?.label)));
 	}
    
 	channelId(channel: string): number{
@@ -1388,8 +1326,6 @@ formateDate(dateTime:string){
 		if(step2Option ==option && this.step2Option ==='ImportContacts'){
 			this.closeAllModal()
 			this.openImportantContact(modalname)
-			
-	
 		}
 		if(step2Option ==option && this.step2Option ==='AddSegmentAudience'){
 			this.closeAllModal()
@@ -1405,7 +1341,7 @@ formateDate(dateTime:string){
 
 	resetSelectedContactList() {
 		this.newCampaignDetail = this.prepareCampaingForm();
-		if (this.allContactList.length !== 0) {
+		if (this.allContactList?.length !== 0) {
 			this.allContactList.forEach((x: any) => {
 				x.selected = false;
 			});
@@ -1427,31 +1363,29 @@ formateDate(dateTime:string){
 	editCampaign(addNewCampaign:any,step:any){
 		this.newCampaignDetail.Id = this.selectedCampaign.Id;
 		this.isEditCampaign = true;
-		console.log(this.selectedCampaign)
 		this.activeStep=step
-		this.newCampaignDetail.get('channel_id').setValue(this.selectedCampaign.channel_id);
-		this.newCampaignDetail.get('channel_label').setValue(this.selectedCampaign.channel_label);
-		this.newCampaignDetail.get('title').setValue(this.selectedCampaign.title);
+		this.newCampaignDetail.get('channel_id')?.setValue(this.selectedCampaign.channel_id);
+		this.newCampaignDetail.get('channel_label')?.setValue(this.selectedCampaign.channel_label);
+		this.newCampaignDetail.get('title')?.setValue(this.selectedCampaign.title);
 		this.newListName = '';
 		this.importedContacts = '';
 		this.segmentsContactList =[];
 		this.csvContactList =[];
-		if(this.selectedCampaign.segments_contacts.length>0){
-		this.segmentsContactList = 	JSON.parse(this.selectedCampaign.segments_contacts)
+		if(this.selectedCampaign?.segments_contacts?.length>0){
+		this.segmentsContactList = 	JSON.parse(this.selectedCampaign?.segments_contacts)
 		this.step2Option='AddSegmentAudience'
-		this.newListName=JSON.parse(this.selectedCampaign.segments_contacts).length+' unique contacts selected';
-		}else if(this.selectedCampaign.csv_contacts.length>0){
+		this.newListName=JSON.parse(this.selectedCampaign?.segments_contacts)?.length+' unique contacts selected';
+		}else if(this.selectedCampaign?.csv_contacts.length>0){
 			this.step2Option='ImportContacts'
-			this.csvContactList = 	JSON.parse(this.selectedCampaign.csv_contacts)
-			this.importedContacts=JSON.parse(this.selectedCampaign.csv_contacts).length+' unique contacts selected';
+			this.csvContactList = 	JSON.parse(this.selectedCampaign?.csv_contacts)
+			this.importedContacts=JSON.parse(this.selectedCampaign?.csv_contacts)?.length+' unique contacts selected';
 		}
 		this.selectedTemplate = this.selectedCampaign
-		this.selectedTemplate['Header']=this.selectedCampaign.message_heading
-		this.selectedTemplate['BodyText']=this.selectedCampaign.message_content
-		this.selectedTemplate['Links']=this.selectedCampaign.message_media
+		this.selectedTemplate['Header']=this.selectedCampaign?.message_heading
+		this.selectedTemplate['BodyText']=this.selectedCampaign?.message_content
+		this.selectedTemplate['Links']=this.selectedCampaign?.message_media
 
-		this.selectedTemplate['allVariables'] =this.selectedCampaign.allVariables
-		console.log(this.selectedTemplate)
+		this.selectedTemplate['allVariables'] =this.selectedCampaign?.allVariables
 		this.closeAllModal()
 		this.modalReference = this.modalService.open(addNewCampaign,{size: 'xl', windowClass:'white-bg'});
 	}
@@ -1462,26 +1396,23 @@ formateDate(dateTime:string){
 			optInStatus:this.optInStatus,
 			title:this.newCampaignDetail.value.title,
 			channel_id:this.newCampaignDetail.value.channel_id,
-			message_heading:this.selectedTemplate.Header,
-			message_content:this.selectedTemplate.BodyText,
-			message_media:this.selectedTemplate.Links,
-			message_variables:this.selectedTemplate.allVariables.length>0?JSON.stringify(this.selectedTemplate.allVariables):[],
-			button_yes:this.selectedTemplate.button_yes,
-			button_no:this.selectedTemplate.button_no,
-			button_exp:this.selectedTemplate.button_exp,
-			category:this.selectedTemplate.Category,
-			category_id:this.selectedTemplate.category_id,
+			message_heading:this.selectedTemplate?.Header,
+			message_content:this.selectedTemplate?.BodyText,
+			message_media:this.selectedTemplate?.Links,
+			message_variables:this.selectedTemplate?.allVariables.length>0?JSON.stringify(this.selectedTemplate?.allVariables):[],
+			button_yes:this.selectedTemplate?.button_yes,
+			button_no:this.selectedTemplate?.button_no,
+			button_exp:this.selectedTemplate?.button_exp,
+			category:this.selectedTemplate?.Category,
+			category_id:this.selectedTemplate?.category_id,
 			time_zone:this.selecteTimeZone,
 			end_datetime:'',
-			csv_contacts:this.csvContactList.length>0?JSON.stringify(this.csvContactList):[],
-			segments_contacts:this.segmentsContactList.length>0?JSON.stringify(this.segmentsContactList):[]
+			csv_contacts:this.csvContactList?.length>0?JSON.stringify(this.csvContactList):[],
+			segments_contacts:this.segmentsContactList?.length>0?JSON.stringify(this.segmentsContactList):[]
 		}
 		this.apiService.testCampaign(BodyData).subscribe(responseData =>{
-			console.log(responseData);
-			//this.closeAllModal()
 			this.testNumbers=[];
-			this.showToaster('Test campaign Sent','success')
-			//this.modalReference = this.modalService.open(TestCampaignModal,{size: 'sm', windowClass:'pink-bg-sm'});
+			this.showToaster('Test campaign Sent','success');
 		})
 	
 	}
@@ -1521,8 +1452,8 @@ formateDate(dateTime:string){
 	}
 	constructMessageContent(BodyText: string): string {
 		let content = BodyText;
-		if (this.selectedTemplate.FooterText && this.selectedTemplate.FooterText.trim() !== '') {
-		  content += this.selectedTemplate.FooterText;
+		if (this.selectedTemplate?.FooterText && this.selectedTemplate?.FooterText.trim() !== '') {
+		  content += this.selectedTemplate?.FooterText;
 		}
 		return content;
 	  }
@@ -1543,42 +1474,40 @@ formateDate(dateTime:string){
 		}		
 		let daysList=['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
 		let day =  daysList[new Date(sratdatetime).getDay()];
-		console.log(this.selectedTemplate.allVariables)
-		console.log(this.csvContactList)
 		let start_Time = '';
 		let end_Time = '';
 			this.workingData.forEach((item:any)=>{
-				if(item.day.includes(day)){
+				if(item?.day.includes(day)){
 					start_Time = item.start_time;
 					end_Time = item.end_time;
 				}
 			});
-		this.processMediaType(this.selectedTemplate.media_type, this.selectedTemplate.Links)
+		this.processMediaType(this.selectedTemplate?.media_type, this.selectedTemplate?.Links)
 		let BodyData:any={
 			Id:this.newCampaignDetail.Id?this.newCampaignDetail.Id:'',
 			SP_ID:this.SPID,
 			optInStatus:this.optInStatus,
 			title:this.newCampaignDetail.value.title,
 			channel_id:this.channelId(this.selectedChannel),
-			message_heading:this.selectedTemplate.Header,
-			message_content: this.constructMessageContent(this.selectedTemplate.BodyText),
-			message_footer: this.selectedTemplate.FooterText,
-			message_media:this.selectedTemplate.Links,
-			media_type:this.selectedTemplate.media_type,
-			message_variables:this.selectedTemplate.allVariables.length>0?JSON.stringify(this.selectedTemplate.allVariables):[],
-			button_yes:this.selectedTemplate.button_yes,
-			button_no:this.selectedTemplate.button_no,
-			button_exp:this.selectedTemplate.button_exp,
-			category:this.selectedTemplate.Category,
-			category_id:this.selectedTemplate.category_id,
+			message_heading:this.selectedTemplate?.Header,
+			message_content: this.constructMessageContent(this.selectedTemplate?.BodyText),
+			message_footer: this.selectedTemplate?.FooterText,
+			message_media:this.selectedTemplate?.Links,
+			media_type:this.selectedTemplate?.media_type,
+			message_variables:this.selectedTemplate?.allVariables.length>0?JSON.stringify(this.selectedTemplate?.allVariables):[],
+			button_yes:this.selectedTemplate?.button_yes,
+			button_no:this.selectedTemplate?.button_no,
+			button_exp:this.selectedTemplate?.button_exp,
+			category:this.selectedTemplate?.Category,
+			category_id:this.selectedTemplate?.category_id,
 			time_zone:this.selecteTimeZone,
 			start_datetime:sratdatetime,
 			end_datetime:'',
 			start_time: start_Time,
 			end_time: end_Time,
 			day: day,
-			csv_contacts:this.csvContactList.length>0?JSON.stringify(this.csvContactList):[],
-			segments_contacts:this.segmentsContactList.length>0?JSON.stringify(this.segmentsContactList):[]
+			csv_contacts:this.csvContactList?.length>0?JSON.stringify(this.csvContactList):[],
+			segments_contacts:this.segmentsContactList?.length>0?JSON.stringify(this.segmentsContactList):[]
 		}
 		if(action=='save'){
 			BodyData['status']=2;
@@ -1598,8 +1527,8 @@ formateDate(dateTime:string){
 		await this.apiService.addCampaign(BodyData).subscribe((responseData:any) =>{
 			let newCampaign:any = responseData?.addcampaign;
 			console.log(newCampaign)
-			if(newCampaign.insertId > 0){
-				CampaignId= newCampaign.insertId;
+			if(newCampaign?.insertId > 0){
+				CampaignId= newCampaign?.insertId;
 			}
 			//todo
 			// if(this.scheduled !=1){
@@ -1613,7 +1542,7 @@ formateDate(dateTime:string){
 	
 	processMediaType(mediaType: any,message_media:any){
 		if (message_media) {
-			const extension = message_media.split('.').pop()?.toLowerCase();
+			const extension = message_media?.split('.').pop()?.toLowerCase();
 			const mimeTypeMap: Record<string, string> = {
 				'jpg': 'jpeg', 'jpeg': 'jpeg', 'png': 'png', 'gif': 'gif',
 				'mp4': 'mp4', 'mov': 'quicktime', 'avi': 'x-msvideo', 'wmv': 'x-ms-wmv',
@@ -1633,178 +1562,8 @@ formateDate(dateTime:string){
 			}
 		}
 	}
-	async runCampaign(CampaignId:any,BodyData:any){
 
-		if(this.csvContactList.length>0){
-			let ix =0;
-			console.log(this.csvContactList,'---csvContactList');
-			//await this.csvContactList.map(async (item:any)=>{
-				for (const item of this.csvContactList) {
-				if(item.Contacts_Column && item.Contacts_Column.length > 9){
-				console.log(item)
-				ix = ix+1;
-				let MessageBodyData:any={
-					SP_ID:this.SPID,
-					optInStatus:this.optInStatus,
-					customerId:this.AgentId,
-					//contactId
-					//phone Number
-					phone_number:item.Contacts_Column,
-					button_yes:this.selectedTemplate.button_yes,
-					button_no:this.selectedTemplate.button_no,
-					button_exp:this.selectedTemplate.button_exp,
-					message_media:this.selectedTemplate.Links,
-					media_type:this.selectedTemplate.media_type,
-					message_content:this.selectedTemplate.BodyText,
-					message_variables:this.selectedTemplate.allVariables.length>0?JSON.stringify(this.selectedTemplate.allVariables):[],
-					CampaignId:CampaignId,
-					isFinished:ix == this.csvContactList.length ? true :false,
-					category_id:this.selectedTemplate.category_id,
-					channel_id:!this.newCampaignDetail.value.channel_id,
-					channel_label:this.newCampaignDetail.value.channel_label,
-					category:this.selectedTemplate.Category,
-					title:this.newCampaignDetail.value.title,
-					schedule_datetime:BodyData.start_datetime,
-					status:ix == this.csvContactList.length ? 3 :this.scheduled,
-					csv_contacts:this.csvContactList.length>0?JSON.stringify(this.csvContactList):[],
-					segments_contacts:this.segmentsContactList.length>0?JSON.stringify(this.segmentsContactList):[]
-					}
-					if(this.selectedChannel) MessageBodyData.channel_id = this.channelId(this.selectedChannel);
-				let allVariables:any = this.selectedTemplate.allVariables
-				console.log(allVariables)
-				let message_heading =this.selectedTemplate.Header
-				let message_content= this.selectedTemplate.BodyText
-				await allVariables.map(async (variable:any)=>{
-					let varValue = variable.value
-					varValue = item[varValue]?item[varValue]:varValue;
-					message_heading = message_heading.replaceAll(variable.label,varValue)
-					message_content = message_content.replaceAll(variable.label,varValue)
-					MessageBodyData['message_heading']=message_heading;
-					MessageBodyData['message_content']=message_content;					
-				})
-				await this.apiService.sendCampinMessage(MessageBodyData).subscribe(async(responseData) =>{
-					let messageStatus:any = responseData;
-					console.log(responseData);
-					if(messageStatus?.status == 401 || messageStatus?.error){
-						MessageBodyData['status_message']=messageStatus?.error ? messageStatus?.error?.error_data.details: '';
-					MessageBodyData['status']=0;
-					}else{
-					MessageBodyData['status_message']='Message Sent';
-					MessageBodyData['status']=1;
-					}
-
-					await this.apiService.saveCampaignMessages(MessageBodyData).subscribe(responseData =>{
-						this.closeAllModal()
-						this.getAllCampaigns()
-					})
-					
-				})
-				
-				await this.delay(2000);
-			}
-
-			//})
-		}
-
-		}
-		if(this.segmentsContactList.length>0){
-			
-			let idx =0;
-			for (const customerId of this.segmentsContactList) {
-			//await this.segmentsContactList.map(async (customerId:any)=>{
-				let SIPattribute:any=[]
-				await this.apiService.getContactAttributesByCustomer(customerId).subscribe(response =>{
-					let attributes:any = response;
-					SIPattribute=attributes[0];
-				})
-				idx = idx+1;
-				await this.apiService.getEndCustomerDetail(customerId).subscribe(async (customerResponse) =>{
-					let customerResponseList:any=customerResponse
-					let customerDetail = customerResponseList[0]
-					if(customerDetail && customerDetail.Phone_number){
-						let MessageBodyData:any={
-							SP_ID:this.SPID,
-							optInStatus:this.optInStatus,
-							customerId:customerDetail.customerId,
-							phone_number:customerDetail.Phone_number,
-							button_yes:this.selectedTemplate.button_yes,
-							button_no:this.selectedTemplate.button_no,
-							button_exp:this.selectedTemplate.button_exp,
-							message_media:this.selectedTemplate.Links,
-							message_content:this.selectedTemplate.BodyText,
-							message_variables:this.selectedTemplate.allVariables.length>0?JSON.stringify(this.selectedTemplate.allVariables):[],
-							category_id:this.selectedTemplate.category_id,
-							media_type:this.selectedTemplate.media_type,
-							CampaignId:CampaignId,
-							isFinished:idx == this.segmentsContactList.length ? true :false,
-							channel_id:!this.newCampaignDetail.value.channel_id,
-							channel_label:this.newCampaignDetail.value.channel_label,
-							category:this.selectedTemplate.Category,
-							title:this.newCampaignDetail.value.title,
-							schedule_datetime:BodyData.start_datetime,
-							status:idx == this.segmentsContactList.length ? 3 :this.scheduled,
-							csv_contacts:this.csvContactList.length>0?JSON.stringify(this.csvContactList):[],
-							segments_contacts:this.segmentsContactList.length>0?JSON.stringify(this.segmentsContactList):[]
-						}
-						if(this.selectedChannel) MessageBodyData.channel_id = this.channelId(this.selectedChannel);
-						let allVariables:any = this.selectedTemplate.allVariables
-						let message_heading =this.selectedTemplate.Header
-						let message_content= this.selectedTemplate.BodyText
-
-						await allVariables.map(async (item:any)=>{
-							let varValue = item.value
-							// if(varValue.indexOf('{{') !== -1){
-							// 	let attributeName = varValue.replaceAll('{{','')
-							// 	attributeName = attributeName.replaceAll('}}','')
-							// 	varValue = SIPattribute && SIPattribute[attributeName]?SIPattribute[attributeName]:'NULL';
-							// }
-							message_heading = message_heading.replaceAll(item.label,varValue)
-							message_content = message_content.replaceAll(item.label,varValue)
-							MessageBodyData['message_heading']=message_heading
-							MessageBodyData['message_content']=message_content
-							
-						})
-						await this.apiService.sendCampinMessage(MessageBodyData).subscribe(async(responseData) =>{
-							let messageStatus:any = responseData
-							console.log(responseData);
-							if(messageStatus?.status == 401  || messageStatus?.error){
-							MessageBodyData['status_message']=messageStatus?.error ? messageStatus?.error?.error_data.details: '';
-							MessageBodyData['status']=0
-							}else{
-							MessageBodyData['status_message']='Message Sent';
-							MessageBodyData['status']=1
-							}
-
-							await this.apiService.saveCampaignMessages(MessageBodyData).subscribe(responseData =>{
-								this.closeAllModal()
-								this.getAllCampaigns();
-							})
-							
-						})
-
-					}
-					
-				})
-				await this.delay(2000);
-				console.log('100000');
-			//})
-			}
-		}
-	}
-
-	async  processData() {
-		const data = [1, 2, 3, 4, 5]; // Example data array
 	
-		for (const item of data) {
-			console.log(item); // Process each item
-	
-			await this.delay(10000); // 1 second delay
-		}
-	}
-
-	delay(ms: number) {
-		return new Promise(resolve => setTimeout(resolve, ms));
-	}
 	openSegmentAudience(importantContact:any){
 		this.closeAllModal()
 		this.modalReference = this.modalService.open(importantContact,{size: 'xl', windowClass:'white-bg addsegmentaudience-modal'});
@@ -1812,7 +1571,6 @@ formateDate(dateTime:string){
 	}
 	openAddNewItem(addNewItem:any){
 		this.closeAllModal();
-		console.log(this.contactFilterBy)
 		this.addNewFilters(this.contactFilterBy);
 		this.modalReference = this.modalService.open(addNewItem,{size: 'xl', windowClass:'white-bg'});
 	}
@@ -1862,7 +1620,7 @@ formateDate(dateTime:string){
 				//delete obj[item];
 		});
 
-	   this.CsvContactCol = item.replaceAll(' ','');
+	   this.CsvContactCol = item?.replaceAll(' ','');
 	   this.mapCsvContact= false
 	}else{
 		this.showToaster('Column should only have numeric values','error');
@@ -1872,8 +1630,6 @@ formateDate(dateTime:string){
 	validateCsv(e:string): boolean {
 		// Split the text into lines
 		const lines = this.csvText.split('\n');
-		console.log(lines);
-		console.log(this.csvText);
 		let val = lines[0].split(',');
 		let columnIndex = val.findIndex((id)=>id == e);
 		let i =0;
@@ -1916,7 +1672,7 @@ formateDate(dateTime:string){
 					let str = item['Contacts_Column']
 					
 					if (str.startsWith(prefix)) {
-						str= str.slice(prefix.length)
+						str= str.slice(prefix?.length)
 					} 
 					item['Contacts_Column'] =str;
 				}
@@ -1942,35 +1698,30 @@ formateDate(dateTime:string){
 		this.TemplateMediaSource =source
 	}
 	updateMediaSource(event:any){
-			this.selectedTemplate['tempimageurl'] =event.target.value
+			this.selectedTemplate['tempimageurl'] =event?.target?.value;
 	}
 
-	closeTemplateMedia(action:any){
-		
-		console.log(action +'::'+this.TemplateMediaSource)
-		console.log(this.selectedTemplate)
-		
-		if(action=='done'){
-			
+	closeTemplateMedia(action:any){		
+		if(action=='done'){			
 			if(this.TemplateMediaSource==0){
-				if(this.selectedTemplate.tempimage && this.selectedTemplate.tempimage !=''){
-					this.selectedTemplate.image =this.selectedTemplate.tempimage
+				if(this.selectedTemplate?.tempimage && this.selectedTemplate?.tempimage !=''){
+					this.selectedTemplate.image =this.selectedTemplate?.tempimage
 					this.selectedTemplate['tempimage']='';
 					this.showEditTemplateMedia=false
 				}else{
 					this.showToaster('Please Uplaod Image file...','error')
 				}
 			}else if(this.TemplateMediaSource==1){
-				if(this.selectedTemplate.tempimageurl && this.selectedTemplate.tempimageurl !=''){
-					this.selectedTemplate.image =this.selectedTemplate.tempimageurl
+				if(this.selectedTemplate?.tempimageurl && this.selectedTemplate?.tempimageurl !=''){
+					this.selectedTemplate.image =this.selectedTemplate?.tempimageurl
 					this.selectedTemplate['tempimageurl']='';
 					this.showEditTemplateMedia=false
 				}else{
 					this.showToaster('Please Uplaod Image file...','error')
 				}
 			}else if(this.TemplateMediaSource==2){
-				if(this.selectedTemplate.tempimageurl && this.selectedTemplate.tempimageurl !=''){
-					this.selectedTemplate.image =this.selectedTemplate.tempimageurl
+				if(this.selectedTemplate?.tempimageurl && this.selectedTemplate?.tempimageurl !=''){
+					this.selectedTemplate.image =this.selectedTemplate?.tempimageurl
 					this.selectedTemplate['tempimageurl']='';
 					this.showEditTemplateMedia=false
 				}else{
@@ -1999,7 +1750,7 @@ testinfo(){
 	}
 
 	copyCampaign() {
-		let CampaignID = this.selectedCampaign.Id
+		let CampaignID = this.selectedCampaign?.Id
 		this.apiService.copyCampaign(CampaignID,this.SPID).subscribe(campaignDelete =>{
 			this.getAllCampaigns();
 			this.showToaster('Campaign Copied', 'success');
@@ -2052,16 +1803,16 @@ testinfo(){
 		
 		
 		}else if(this.activeStep == 2){
-			if(this.segmentsContactList.length>0 || this.csvContactList.length>0){
+			if(this.segmentsContactList?.length>0 || this.csvContactList?.length>0){
 				this.activeStep = this.activeStep+1
 			}else{
 				this.showToaster('Please Add Audience','error')
 			}
 		}else if(this.activeStep ==3){
 			
-			if(this.selectedTemplate && this.selectedTemplate.TemplateName!=''){
-			let content_heading_preview:any=this.selectedTemplate.Header
-			let content_preview:any=this.selectedTemplate.BodyText;
+			if(this.selectedTemplate && this.selectedTemplate?.TemplateName!=''){
+			let content_heading_preview:any=this.selectedTemplate?.Header
+			let content_preview:any=this.selectedTemplate?.BodyText;
 
 			this.selectedTemplate['content_heading_preview']=content_heading_preview
 			this.selectedTemplate['content_preview']=content_preview
@@ -2099,32 +1850,19 @@ testinfo(){
 			console.log('checkVariableValue',this.checkVariableValue())
 			if(this.checkVariableValue()){
 				this.activeStep=4;
-				console.log('if run')
 			}else{
-				console.log('else run')
 				this.showToaster('Variable value should not be empty','error')
 			}
 
-		}else{
-		
-		console.log(this.selectedTemplate)
-		console.log(this.newCampaignDetail)
-		console.log(this.selecteTimeZone)
-		console.log(this.selecteScheduleDate)
-		console.log(this.selecteScheduleTime)
-			
-			
-		
-	    }
+		}
 	}
-	setStep(newStep:any){
-		
+	setStep(newStep:any){		
 		this.activeStep = newStep
 		if(newStep ==3){
 			this.getTemplates()
-		}
-		
+		}		
 	}
+
 	filterCampaign(filtercampaign: any) {
 		this.closeAllModal()
 		this.modalReference = this.modalService.open(filtercampaign,{size: 'sm', windowClass:'white-pink'});
@@ -2134,8 +1872,6 @@ testinfo(){
 			this.showToaster('Please Select csv file and check the checkbox...', 'error');
 			return;
 		}
-		
-
 		this.closeAllModal()
 			this.importantContact=false;
 			this.modalReference = this.modalService.open(mpcampaign,{size: 'ml', windowClass:'pink-bg'});
@@ -2168,7 +1904,7 @@ testinfo(){
 		if(searchKey.length>2){
 		var allList = this.attributesoption;
 		let FilteredArray = [];
-		for(var i=0;i<allList.length;i++){
+		for(var i=0;i<allList?.length;i++){
 			var content = allList[i].toLowerCase()
 				if(content.indexOf(searchKey.toLowerCase()) !== -1){
 					FilteredArray.push(allList[i])
@@ -2189,7 +1925,7 @@ testinfo(){
 			this.modalReference = this.modalService.open(AttributeOption,{size: 'ml', windowClass:'pink-bg'});
 	}
 	updateAttributeValue(event:any,variable:any){
-		let currentValue = event.target.value;
+		let currentValue = event?.target?.value;
 		const forbiddenKeys = ['{', '}'];
 
 		if (forbiddenKeys.some(key => currentValue.includes(key))) {
@@ -2216,9 +1952,9 @@ testinfo(){
 	  }
 
 	checkVariableValue(){
-		console.log(this.selectedTemplate.allVariables);
+		console.log(this.selectedTemplate?.allVariables);
 		let flag = true;
-		this.selectedTemplate.allVariables.forEach((item:any)=>{
+		this.selectedTemplate?.allVariables.forEach((item:any)=>{
 		if(item.value=='' || item.value==null)	{
 			console.log('false');
 			flag = false;
@@ -2227,19 +1963,14 @@ testinfo(){
 		return flag;
 	}
 	updateFallbackAttributeValue(event:any){
-		this.selectedFallback = event.target.value
-		console.log(this.selectedTemplate)
+		this.selectedFallback = event?.target?.value
 	}
 
 	updateButtonsValue(event:any,variable:any){
-		this.selectedTemplate[variable]=event.target.value
-		console.log(this.selectedTemplate)
+		this.selectedTemplate[variable]=event?.target?.value
 	}
 
-
-
 	updatedAttributeOption(attribute: any, addNewCampaign: any) {
-		console.log(attribute)
 		this.selectedAttribute = attribute;
 		this.selectedAddNewCampaign = addNewCampaign;
 	}
@@ -2250,7 +1981,7 @@ testinfo(){
 		else {
 			this.selecetdVariable['value'] = '{{'+this.selectedAttribute +'}}';
 			this.selecetdVariable['fallback'] = this.selectedFallback;
-			this.selecetdVariable['isAttribute'] = this.isCustomValue(this.selecetdVariable.value);
+			this.selecetdVariable['isAttribute'] = this.isCustomValue(this.selecetdVariable?.value);
 		}
 		this.resetAttributeSelection();
 		this.activeStep=3.1
@@ -2309,8 +2040,8 @@ testinfo(){
 			let name='campaign'
 			this.apiService.uploadfile(data,spid,name).subscribe(uploadStatus =>{
 				let responseData:any = uploadStatus
-				if(responseData.filename){
-					this.selectedTemplate['tempimage'] = responseData.filename
+				if(responseData?.filename){
+					this.selectedTemplate['tempimage'] = responseData?.filename
 				}
 			})
 		  }
@@ -2330,7 +2061,7 @@ testinfo(){
 		this.CSVPrefix['label'] = option
 	}
 	updateCSVPRefix(event:any){
-		this.CSVPrefix['value'] =event.target.value
+		this.CSVPrefix['value'] =event?.target?.value
 	}
 	
 	saveFiles(files: FileList) {
@@ -2372,11 +2103,10 @@ testinfo(){
 					let contactsData:any=[]
 					tabalRows.map((rowbh:any)=>{
 						let row:any={}
-						for(var k=0;k<tabalHeader.length;k++){
+						for(var k=0;k<tabalHeader?.length;k++){
 						let keyName:any = tabalHeader[k].replace('\r','');
 						keyName=keyName.replaceAll(' ','')
 						let value:any= rowbh[k];
-						console.log(keyName)
 						row[keyName]=value!='\r'?value:'null'	
 						}
 						contactsData.push(row)
@@ -2422,7 +2152,6 @@ testinfo(){
 					}
 					contactsData.push(row);
 				});
-				console.log(contactsData);
 				this.csvContactList = contactsData;
 				this.selecetdCSV = file.name;
 			};
@@ -2440,7 +2169,6 @@ testinfo(){
 		this.ShowContactOwner =!this.ShowContactOwner;
 	  }
 	  getContactList(event:any){
-		console.log('getContactList')
 		let searchKey ='';
 		if(event && event.target.value.length>2){
 			searchKey = event.target.value
