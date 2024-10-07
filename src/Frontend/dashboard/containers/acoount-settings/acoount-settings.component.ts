@@ -80,8 +80,8 @@ export class AcoountSettingsComponent implements OnInit {
   ngOnInit(): void {
     this.isLoading = true;
     this.spid = Number(sessionStorage.getItem('SP_ID'));
-    this.phoneNumber = (JSON.parse(sessionStorage.getItem('loginDetails')!)).mobile_number;
-    this.email = (JSON.parse(sessionStorage.getItem('loginDetails')!)).email_id;
+    this.phoneNumber = (JSON.parse(sessionStorage.getItem('loginDetails')!))?.mobile_number;
+    this.email = (JSON.parse(sessionStorage.getItem('loginDetails')!))?.email_id;
     this.SPPhonenumber = (JSON.parse(sessionStorage.getItem('SPPhonenumber')!));
     this.getwhatsapp();
     this.subscribeToNotifications();
@@ -113,9 +113,8 @@ export class AcoountSettingsComponent implements OnInit {
 getwhatsapp() { 
   this.apiService.getWhatsAppDetails(this.spid).subscribe(response => {
     this.isLoading = false
-    this.whatsAppDetails=response.whatsAppDetails;
-    this.numberCount = response.channelCounts[0]?.count_of_channel_id;
-    console.log(this.numberCount);
+    this.whatsAppDetails=response?.whatsAppDetails;
+    this.numberCount = response?.channelCounts[0]?.count_of_channel_id;
     this.selectedId = [];
     this.whatsAppDetails.forEach(detail => {
     this.selectedId.push(detail.id);
@@ -132,24 +131,22 @@ getwhatsapp() {
 getaccountByID(data:any) {
   this.repliesaccountData=data;
   const fetchdata=data;
-  this.QueueLimit=fetchdata.QueueLimit;
-  this.delay_Time=fetchdata.delay_Time;
-  this.DisconnAlertEmail=fetchdata.DisconnAlertEmail;
-  console.log(fetchdata);
+  this.QueueLimit=fetchdata?.QueueLimit;
+  this.delay_Time=fetchdata?.delay_Time;
+  this.DisconnAlertEmail=fetchdata?.DisconnAlertEmail;
 }
 
 populateModal() {
   this.selectedWhatsappData = this.whatsAppDetails;
-  console.log(this.selectedWhatsappData);
 }
 
 
 getDetailById(id: number) {
-  return this.whatsAppDetails.find(detail => detail.id === id);
+  return this.whatsAppDetails.find(detail => detail?.id === id);
 }
 
 setChannelId(id: string) {
-  const matchingDetail = this.whatsAppDetails.filter(detail => detail.channel_id === id);
+  const matchingDetail = this.whatsAppDetails.filter(detail => detail?.channel_id === id);
   if (matchingDetail) {
     this.whatsAppDetailsDisplay = matchingDetail;
   } else {
@@ -185,8 +182,6 @@ saveWhatsappWebDetails(id:number) {
   this.apiService.addWhatsAppDetails(this.whatAppDetails).subscribe
   ((resopnse :any) => {
     if(resopnse.status === 200) {
-      console.log(this.whatAppDetails)
-      console.log(resopnse)
       this.showToaster('Your Session Details Updated Succesfully','success');
       this.whatsAppDataUpdated = true;
       this.getwhatsapp();
@@ -208,7 +203,7 @@ saveWhatsappWebDetails(id:number) {
   this.accoountsetting.OutMessageStatus = this.OutMessageStatus[this.id - 1] ? 1 : 0;
   this.accoountsetting.serviceMonetringTool = this.serviceMonetringTool[this.id - 1] ? 1 : 0;
   this.accoountsetting.syncContact = this.syncContact[this.id - 1] ? 1 : 0;
-  console.log(this.OutMessageStatus);
+
 
   this.apiService.addWhatsAppDetails(this.accoountsetting).subscribe((response) => {
       console.log(response + JSON.stringify(this.accoountsetting));
@@ -306,7 +301,7 @@ openDiv() {
 
 async subscribeToNotifications() {
   let notificationIdentifier = {
-    "UniqueSPPhonenumber": (JSON.parse(sessionStorage.getItem('loginDetails')!)).mobile_number,
+    "UniqueSPPhonenumber": (JSON.parse(sessionStorage.getItem('loginDetails')!))?.mobile_number,
     "spPhoneNumber": JSON.parse(sessionStorage.getItem('SPPhonenumber')!)
   };
   this.websocketService.connect(notificationIdentifier);
@@ -353,7 +348,7 @@ async subscribeToNotifications() {
 
  close(){
   let notificationIdentifier = {
-    "UniqueSPPhonenumber": (JSON.parse(sessionStorage.getItem('loginDetails')!)).mobile_number,
+    "UniqueSPPhonenumber": (JSON.parse(sessionStorage.getItem('loginDetails')!))?.mobile_number,
     "spPhoneNumber": JSON.parse(sessionStorage.getItem('SPPhonenumber')!),
     "isClose":true
   };

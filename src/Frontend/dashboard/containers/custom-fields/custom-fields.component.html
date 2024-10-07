@@ -50,10 +50,10 @@
                      {{df.ActuallName}}   
                     </div> -->
                     <div [style.color]="defaultFields" class="font-weight-bold body-col">
-                    {{df.displayName}}
+                    {{df?.displayName}}
                     </div>
                     <div class="body-col">
-                        {{df.type}}
+                        {{df?.type}}
                     </div>
                     <div class="body-col">
                         <div class="active-toggle">
@@ -90,10 +90,10 @@
 
                         </div> -->
                         <div (click)="toggleSideBar(dynamic)" class="font-weight-bold body-col">
-                            {{dynamic.displayName}}
+                            {{dynamic?.displayName}}
                         </div>
                         <div class="body-col">
-                            {{dynamic.type}}
+                            {{dynamic?.type}}
                         </div>
                         <div class="body-col">
                             <div class="active-toggle">
@@ -109,7 +109,7 @@
                             <div class="active-toggle"  >
                                 <label class="m-0 switch">
                                     <input type="checkbox" class="m-0 form-control-checkbox"
-                                    (click)="toggleActiveState($event.target.checked, dynamic.id)" 
+                                    (click)="toggleActiveState($event.target.checked, dynamic?.id)" 
                                     [(ngModel)]="dynamic.status">
                                     <span class="slider"></span>
                                 </label>
