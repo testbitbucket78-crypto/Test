@@ -59,7 +59,7 @@ async function AssignToContactOwner(sid, newId, agid, custid, isMissedChat) {
       let isActiveStaus = await isAgentActive(sid, contactOwnerUid);
       if (contactOwnerUid != undefined && contactOwnerUid != null && RoutingRules[0].contactowner == '1' && isActiveStaus == true) {
         let updateInteractionMapQuery = `INSERT INTO InteractionMapping (InteractionId, AgentId, MappedBy, is_active) VALUES ?`;
-        let values = [[newId, (contactOwnerUid ? contactOwnerUid : agid), agid, 1]]; // 2nd agid is MappedBy values in teambox uid is used here also
+        let values = [[newId, contactOwnerUid, agid, 1]]; // 2nd agid is MappedBy values in teambox uid is used here also
         let updateInteractionMap = await db.excuteQuery(updateInteractionMapQuery, [values]);
         console.log("AssignToContactOwner --- contact owner assign", updateInteractionMap);
         if (updateInteractionMap?.affectedRows > 0) {
@@ -97,9 +97,9 @@ async function assignToLastAssistedAgent(sid, newId, agid, custid) {
     console.log(RoutingRules[0]?.broadcast == '1', LastAssistedAgent.length, new Date(), RoutingRules[0]?.broadcast == 1);
 
     if (LastAssistedAgent.length > 0 && RoutingRules[0]?.assignagent == '1') {
-      
+
       let isActiveStaus = await isAgentActive(sid, LastAssistedAgent[0].AgentId);
-      console.log("if ----- LastAssistedAgent and isActiveStaus",isActiveStaus);
+      console.log("if ----- LastAssistedAgent and isActiveStaus", isActiveStaus);
       if (isActiveStaus == true) {
         let assignAgentQuery = `INSERT INTO InteractionMapping (InteractionId, AgentId, MappedBy, is_active) VALUES ?`;
         let assignAgent = await db.excuteQuery(assignAgentQuery, [[[newId, LastAssistedAgent[0].AgentId, '-1', 1]]]);
@@ -180,7 +180,10 @@ async function RoundRobin(sid, newId, agid, custid) {
     let isHoliday = await commonFun.isHolidays(sid)
 
     if (isWorkingHours == true && isHoliday == false) {
-      let activeAgentQuery = "select *from user where IsActive=1 and SP_ID=? and ParentId is not null and isDeleted !=1 ";
+      let activeAgentQuery = `SELECT   r.RoleName,  u.*
+FROM user u
+JOIN roles r ON u.UserType = r.roleID
+WHERE u.SP_ID =? AND u.isDeleted != 1 and u.IsActive =1 and r.RoleName != 'Admin'`//"select *from user where IsActive=1 and SP_ID=? and ParentId is not null and isDeleted !=1 ";
 
 
       let RoutingRulesQuery = `SELECT * FROM routingrules WHERE SP_ID=?`;
@@ -266,56 +269,60 @@ async function ManualAssign(newId, sid, agid, custid) {
 async function ManagemissedChat(sid, newId, agid, custid, RoutingRules) {
   try {
     console.log("ManagemissedChat", new Date());
-    let checkAssignInteraction = await db.excuteQuery(settingVal.checkAssignInteraction, [newId]);
-    console.log("checkAssignInteraction.length", checkAssignInteraction.length);
+    let RoutingRulesQuery = `SELECT * FROM routingrules WHERE SP_ID=?`;
+    let RoutingRules = await db.excuteQuery(RoutingRulesQuery, [sid]);
+    if (RoutingRules?.length > 0 && RoutingRules[0]?.isMissedChat == 1) {
+      let checkAssignInteraction = await db.excuteQuery(settingVal.checkAssignInteraction, [newId]);
+      console.log("checkAssignInteraction.length", checkAssignInteraction.length);
 
-    if ((checkAssignInteraction.length <= 0) || (checkAssignInteraction.length > 0 && checkAssignInteraction[0]?.AgentId == -1) && checkAssignInteraction[0]?.isAgentInactiveTimeOut != 1) {
-      console.log("missed -------------------");
+      if ((checkAssignInteraction.length <= 0) || (checkAssignInteraction.length > 0 && checkAssignInteraction[0]?.AgentId == -1) && checkAssignInteraction[0]?.isAgentInactiveTimeOut != 1) {
+        console.log("missed -------------------");
 
-      let time = parseInt((RoutingRules[0].timeoutperiod).replace(/\s*(Min|hour)/g, '')); // Get timeout period as a number
-      console.log("missed chat time", time);
+        let time = parseInt((RoutingRules[0].timeoutperiod).replace(/\s*(Min|hour)/g, '')); // Get timeout period as a number
+        console.log("missed chat time", time);
 
-      let performOperation =
-        RoutingRules[0].isMissChatAssigContactOwner === 1
-          ? async () => await AssignMissedToContactOwner(sid, newId, agid, custid)
-          : RoutingRules[0].assignspecificuser === 1
-            ? async () => await AssignSpecificUser(sid, newId, agid, custid)
-            : RoutingRules[0].isadmin === 1
-              ? async () => await AssignAdmin(newId, sid, agid, custid)
-              : async () => await AssignAdmin(newId, sid, agid, custid);
+        let performOperation =
+          RoutingRules[0].isMissChatAssigContactOwner === 1
+            ? async () => await AssignMissedToContactOwner(sid, newId, agid, custid)
+            : RoutingRules[0].assignspecificuser === 1
+              ? async () => await AssignSpecificUser(sid, newId, agid, custid)
+              : RoutingRules[0].isadmin === 1
+                ? async () => await AssignAdmin(newId, sid, agid, custid)
+                : async () => await AssignAdmin(newId, sid, agid, custid);
 
-      // Get created_at timestamp from checkAssignInteraction
-      let createdAt = new Date(checkAssignInteraction[0]?.created_at);
-      let currentTime = new Date();
+        // Get created_at timestamp from checkAssignInteraction
+        let createdAt = new Date(checkAssignInteraction[0]?.created_at);
+        let currentTime = new Date();
 
-      // Convert time to milliseconds (e.g., time in minutes to milliseconds)
-      let timeoutMillis = time * 60 * 1000;
+        // Convert time to milliseconds (e.g., time in minutes to milliseconds)
+        let timeoutMillis = time * 60 * 1000;
 
-      // Check if created_at is older than the current time minus timeout period
-      if (currentTime - createdAt >= timeoutMillis) {
-        // Execute immediately if condition met
-        console.log("Immediate execution of performOperation due to timeout condition");
-        let result = await performOperation();
-        if (result === true) {
-          console.log("Operation successful");
-        } else {
-          console.log("Operation failed", result);
-        }
-      } else {
-        // Set timeout to perform the operation after the remaining time
-        let remainingTime = timeoutMillis - (currentTime - createdAt);
-        console.log(`Scheduling operation in ${remainingTime / 1000 / 60} minutes`);
-        setTimeout(async () => {
+        // Check if created_at is older than the current time minus timeout period
+        if (currentTime - createdAt >= timeoutMillis) {
+          // Execute immediately if condition met
+          console.log("Immediate execution of performOperation due to timeout condition");
           let result = await performOperation();
           if (result === true) {
             console.log("Operation successful");
           } else {
             console.log("Operation failed", result);
           }
-        }, remainingTime); // Use the remaining time for the timeout
-      }
+        } else {
+          // Set timeout to perform the operation after the remaining time
+          let remainingTime = timeoutMillis - (currentTime - createdAt);
+          console.log(`Scheduling operation in ${remainingTime / 1000 / 60} minutes`);
+          setTimeout(async () => {
+            let result = await performOperation();
+            if (result === true) {
+              console.log("Operation successful");
+            } else {
+              console.log("Operation failed", result);
+            }
+          }, remainingTime); // Use the remaining time for the timeout
+        }
 
-      return true;
+        return true;
+      }
     }
   } catch (err) {
     console.log("ERR _ _ _ ManagemissedChat", err);

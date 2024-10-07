@@ -299,12 +299,13 @@ const rotingsave = async (req, res) => {
         adminName = req.body?.adminName
         adminUid = req.body?.adminUid
         enableAdmin = req.body?.enableAdmin
+        isMissedChat = req.body?.isMissedChat
         var select = await db.excuteQuery(val.routingrule, [SP_ID])
        // console.log("select")
         if (select.length != 0) {
            // console.log(req.body.SpecificUserUid ," select.length != 0 "    ,req.body.manualAssignUid)
 
-            var routingValues = [req.body.contactowner, req.body.assignagent, req.body.broadcast, req.body.roundrobin, req.body.conversationallowed, req.body.manualassign, req.body.assignuser, req.body.timeoutperiod, req.body.isadmin, req.body.assignspecificuser, req.body.selectuser, req.body.isMissChatAssigContactOwner, created_at, manualAssignUid, SpecificUserUid,adminName,adminUid,enableAdmin, req.body.SP_ID]
+            var routingValues = [req.body.contactowner, req.body.assignagent, req.body.broadcast, req.body.roundrobin, req.body.conversationallowed, req.body.manualassign, req.body.assignuser, req.body.timeoutperiod, req.body.isadmin, req.body.assignspecificuser, req.body.selectuser, req.body.isMissChatAssigContactOwner, created_at, manualAssignUid, SpecificUserUid,adminName,adminUid,enableAdmin,isMissedChat, req.body.SP_ID]
             //console.log(routingValues)
 
             var updatedroutingtData = await db.excuteQuery(val.routingdetails, routingValues)
@@ -315,7 +316,7 @@ const rotingsave = async (req, res) => {
                 status: 200
             });
         } else {
-            var routinginsert = [SP_ID, contactowner, assignagent, broadcast, roundrobin, conversationallowed, manualassign, assignuser, timeoutperiod, isadmin, assignspecificuser, selectuser, isMissChatAssigContactOwner, created_at, manualAssignUid, SpecificUserUid,adminName,adminUid,enableAdmin]
+            var routinginsert = [SP_ID, contactowner, assignagent, broadcast, roundrobin, conversationallowed, manualassign, assignuser, timeoutperiod, isadmin, assignspecificuser, selectuser, isMissChatAssigContactOwner, created_at, manualAssignUid, SpecificUserUid,adminName,adminUid,enableAdmin,isMissedChat]
             var insertedRoutes = await db.excuteQuery(val.insertRouteQuery, [[routinginsert]])
 
             res.status(200).send({
@@ -446,12 +447,12 @@ const manualDelation = async (req, res) => {
         } else if (message_type == 'Media') {
             // console.log(Media)
             let deletedData = await awsHelper.deleteObjectFromBucket(manually_deletion_days, SPID);
-            mediaDeleted = await db.excuteQuery(val.deleteMedia, [created_at, SPID, result])
+            mediaDeleted = await db.excuteQuery(val.deleteMedia, [created_at, SPID,'text', result])
         }
         else if (message_type == 'Both') {
             textDeleted = await db.excuteQuery(val.deleteText, [created_at, SPID, result])
             let deletedData = await awsHelper.deleteObjectFromBucket(manually_deletion_days, SPID);
-            mediaDeleted = await db.excuteQuery(val.deleteMedia, [created_at, SPID, result])
+            mediaDeleted = await db.excuteQuery(val.deleteMedia, [created_at, SPID,'text', result])
 
         }
 

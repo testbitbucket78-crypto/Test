@@ -28,8 +28,8 @@ addDefaultMsg='INSERT INTO defaultmessages (SP_ID,title,description,message_type
 
 // routing rules
 routingrule = 'select * from routingrules where SP_ID=?'
-routingdetails = 'UPDATE routingrules SET  contactowner=?,assignagent=?,broadcast=?,roundrobin=?,conversationallowed=?,manualassign=?,assignuser=?,timeoutperiod=?,isadmin=?,assignspecificuser=?,selectuser=?,isMissChatAssigContactOwner=?,updated_at=?,manualAssignUid=?,SpecificUserUid=?,adminName=?,adminUid=?,enableAdmin=? Where SP_ID=?'
-insertRouteQuery=`INSERT INTO routingrules (SP_ID,contactowner,assignagent,broadcast,roundrobin,conversationallowed,manualassign,assignuser,timeoutperiod,isadmin,assignspecificuser,selectuser,isMissChatAssigContactOwner,created_at,manualAssignUid,SpecificUserUid,adminName,adminUid,enableAdmin) VALUES ?`
+routingdetails = 'UPDATE routingrules SET  contactowner=?,assignagent=?,broadcast=?,roundrobin=?,conversationallowed=?,manualassign=?,assignuser=?,timeoutperiod=?,isadmin=?,assignspecificuser=?,selectuser=?,isMissChatAssigContactOwner=?,updated_at=?,manualAssignUid=?,SpecificUserUid=?,adminName=?,adminUid=?,enableAdmin=?,isMissedChat=? Where SP_ID=?'
+insertRouteQuery=`INSERT INTO routingrules (SP_ID,contactowner,assignagent,broadcast,roundrobin,conversationallowed,manualassign,assignuser,timeoutperiod,isadmin,assignspecificuser,selectuser,isMissChatAssigContactOwner,created_at,manualAssignUid,SpecificUserUid,adminName,adminUid,enableAdmin,isMissedChat) VALUES ?`
 
 // manage storage
 selectmanage = 'select * from managestorage where SP_ID=? AND  isDeleted !=1'
@@ -73,7 +73,7 @@ ic.InteractionId,
 ic.customerId,
 ic.updated_at  as updateTime,
 
-m.interaction_id, m.SPID, m.Agent_id, MAX(m.Message_id) as MaxMessageId, Max(m.updated_at) as updated_at,
+m.interaction_id, m.SPID, m.Agent_id, MAX(m.Message_id) as MaxMessageId, Max(m.updated_at) as updated_at,latestMsg.latestMessageDate,
 ec.channel,
 ec.phone_number AS customer_phone_number,
 ec.defaultAction_PauseTime
@@ -86,8 +86,7 @@ SELECT
 FROM Message
 WHERE message_direction = 'out' 
 AND (system_message_type_id IS NULL OR system_message_type_id IN (1, 2,3,4,6))  
-AND updated_at <= DATE_SUB(NOW(), INTERVAL 23 HOUR)
-GROUP BY interaction_id
+GROUP BY interaction_id HAVING latestMessageDate <= DATE_SUB(NOW(), INTERVAL 23 HOUR)
 ) latestMsg ON ic.interactionId = latestMsg.interaction_id
 JOIN Message m ON latestMsg.interaction_id = m.interaction_id AND latestMsg.latestMessageDate = m.updated_at
 LEFT JOIN Message m_in ON ic.InteractionId = m_in.interaction_id
@@ -99,7 +98,7 @@ WHERE
 AND ic.SP_ID IN (SELECT SP_ID FROM defaultmessages WHERE Is_disable = 1 and title='No Customer Reply Reminder')
 AND  (m.msg_status != 9 AND m.msg_status != 10) 
 AND m_in.interaction_id IS NULL
-group by latestMsg.interaction_id, ic.customerId `
+group by latestMsg.interaction_id, ic.customerId  `
 
 
 
@@ -186,22 +185,22 @@ WHERE
  SPID= ? AND is_deleted !=1 and !(message_media is null OR message_media="") 
 AND   DATE(created_at) <= ?;`
 
-deleteText=`UPDATE Message set is_deleted=1,updated_at=? where SPID=? and (media_type is null OR media_type="")  AND DATE(created_at) <=  ? `
-deleteMedia=`UPDATE Message set is_deleted=1,updated_at=? where SPID=? and  ( media_type !="")   AND DATE(created_at) <=  ? `
+deleteText=`UPDATE Message set is_deleted=1,updated_at=? where SPID=? and message_media=?  AND DATE(created_at) <=  ? `
+deleteMedia=`UPDATE Message set is_deleted=1,updated_at=? where SPID=? and  message_media != ?   AND DATE(created_at) <=  ? `
 
 // default sms query
 
 let isNoReplySent = `select * from Message where interaction_id =? and system_message_type_id=4`
 let getInteractionbyId =`select * from Interaction WHERE InteractionId=? and interaction_status=?  and is_deleted !=1`
-let getLatestMsgbyInteraction = ` SELECT M.interaction_id, I.customerId, M.SPID, M.Agent_id, MAX(M.Message_id) as MaxMessageId, Max(ms.updated_at) as updated_at, I.updated_at as updateTime
+let getLatestMsgbyInteraction = `SELECT M.interaction_id, I.customerId,max(M.updated_at) as nonSystemUpdatedMsgTime, M.SPID, M.Agent_id, MAX(M.Message_id) as MaxMessageId, Max(ms.updated_at) as updated_at, I.updated_at as updateTime
  ,dm.autoreply, dm.value, dm.message_type, dm.Is_disable, dm.link, ec.channel, ec.Phone_number as customer_phone_number,ec.defaultAction_PauseTime, interaction_status, ms.Message_id as SystemReplyMessageId, ms.system_message_type_id
     FROM (SELECT MAX(InteractionId) AS InteractionId, customerId, interaction_status, Max(updated_at) as updated_at FROM Interaction where interaction_status = 'Open' group by customerId) AS I
-     left Join  Message M on I.InteractionId = M.interaction_id 
+     left Join  Message M on I.InteractionId = M.interaction_id and (M.system_message_type_id IS NULL  OR M.system_message_type_id != 4 )
      Left join EndCustomer ec on I.customerId = ec.customerId
      left join Message ms on I.InteractionId = ms.interaction_id and ms.system_message_type_id = 4
      left join defaultmessages dm on dm.SP_ID = M.SPID and title='No Agent Reply' and dm.isDeleted !=1
     WHERE (M.msg_status != 9 AND M.msg_status != 10) 
-      AND M.is_deleted != 1 and I.interaction_status = 'Open'       
+      AND M.is_deleted != 1 and I.interaction_status = 'Open'      
     GROUP BY M.interaction_id, I.customerId order by M.updated_at desc;`
 
 let defaultMessageQuery = `SELECT * FROM defaultmessages where SP_ID=? AND title=? and isDeleted !=1` 

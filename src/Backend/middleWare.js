@@ -26,7 +26,7 @@ function postDataToAPI(spid, phoneNo, type, text, link,interaction_id, msg_id,sp
            //console.log(response)
             resolve(response.data); // Resolve with the response data
         } catch (error) {
-            console.error('Error:', error.message);
+            //console.error('Error:', error.message);
             reject(error.message); // Reject with the error
         }
     });
