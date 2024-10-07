@@ -305,12 +305,12 @@ const addCustomField = async (req, res) => {
 
             // Insert the new custom field
             const addFieldResult =await insertCustomField(SP_ID, ColumnName, Type, description, created_at, updated_at, values)  //await db.excuteQuery(val.addcolumn, [[insertionValues]]);
-            console.log("addFieldResult", addFieldResult)
+           // console.log("addFieldResult", addFieldResult)
             // Return 500 if insertion failed
             if (!addFieldResult.insertId) {
                 res.status(500).send({
                     status: 500,
-                    message: 'Failed to insert custom field'
+                    message: addFieldResult
                 });
                 return;
             } else {
@@ -348,6 +348,9 @@ async function insertCustomField(SP_ID, ColumnName, Type, description, created_a
     if (deletedColumn.length > 0) {
         // Reuse the soft-deleted column
         CustomColumn = deletedColumn[0].CustomColumn;
+
+        // Ensure that all previous instances of this column are permanently deleted or marked as active
+        await db.excuteQuery(val.permanentDeleteColumn, [SP_ID, CustomColumn]);
     } else {
         // Fetch all active data for the given SP_ID
         const allData = await db.excuteQuery(val.getColCount, [SP_ID]);
@@ -356,7 +359,7 @@ async function insertCustomField(SP_ID, ColumnName, Type, description, created_a
         if (allData[0].columnCount < 25) {
             CustomColumn = "column" + (allData[0].columnCount + 1);
         } else {
-            throw new Error("Maximum column limit reached. Reuse or delete existing columns.");
+           return "Maximum column limit reached. Reuse or delete existing columns";
         }
     }
 

@@ -473,11 +473,11 @@ const modifiedString = modifyString(originalString);
 
 
 async function removeTagsFromMessages(originalString) {
-  console.log(originalString , "originalString")
+  //console.log(originalString , "originalString")
   const modifiedString = modifyString(originalString);
    //console.log("modifiedString",modifiedString);
   let convertedMessageText = convertHTML(removeEmptyTags(originalString))
-  console.log(convertedMessageText,'modifying string');
+//  console.log(convertedMessageText,'modifying string');
   //let val = fixBoldItalicSpacing(convertedMessageText)
   //console.log("convertHTML(removeEmptyTags(modifiedString))",convertedMessageText);
   return convertedMessageText;

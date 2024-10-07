@@ -23,7 +23,7 @@ async function isStatusEmpty(InteractionId, spid,cusid) {
     try {
       // Check if message_variables is a string and parse it
       if (typeof message_variables === 'string') {
-        console.log("string", message_variables);
+       // console.log("string", message_variables);
         try {
           message_variables = JSON.parse(message_variables);
         } catch (err) {
@@ -56,7 +56,7 @@ async function isStatusEmpty(InteractionId, spid,cusid) {
       // Iterate over each message variable
       for (let i = 0; i < message_variables.length; i++) {
         const message_variable = message_variables[i];
-        console.log(`Processing message variable ${i}:`, message_variable);
+       // console.log(`Processing message variable ${i}:`, message_variable);
   
         let result = {};
   
@@ -64,7 +64,7 @@ async function isStatusEmpty(InteractionId, spid,cusid) {
         if (endCustomerColumns.includes(message_variable)) {
           const endCustomerQuery = `SELECT ${message_variable} FROM EndCustomer WHERE customerId=? AND isDeleted != 1 AND SP_ID=?`;
           let endCustomerResult = await db.excuteQuery(endCustomerQuery, [customerId, spid]);
-          console.log(endCustomerResult);
+         // console.log(endCustomerResult);
           if (endCustomerResult.length > 0 && endCustomerResult[0][message_variable]) {
             result[message_variable] = endCustomerResult[0][message_variable];
           }
@@ -99,6 +99,24 @@ async function isStatusEmpty(InteractionId, spid,cusid) {
     }
   }
 
+  function determineMediaFromLink(link) {
+    try{
+    const fileExtension = link.split('.').pop().toLowerCase();
+  
+      if (['jpg', 'jpeg', 'png', 'gif', 'bmp', 'webp'].includes(fileExtension)) {
+          return 'image';
+      } else if (['mp4', 'avi', 'mov', 'wmv', 'flv', 'mkv', 'webm'].includes(fileExtension)) {
+          return 'video';
+      } else if (['pdf', 'doc', 'docx', 'xls', 'xlsx', 'ppt', 'pptx', 'txt'].includes(fileExtension)) {
+          return 'document';
+      } else {
+          return 'unknown'; 
+      }
+    } catch(error){
+         console.error('Error while extracting media type from link:', error.message);
+         return 'unknown'; 
+      }
+  }
 
   async function isWorkingTime(sid) {
     //console.log(data)
@@ -198,4 +216,4 @@ AND SP_ID = ?;`;
   }
 
 
-  module.exports  ={isStatusEmpty,getDefaultAttribue,isHolidays,isWorkingTime,resetContactFields}
+  module.exports  ={isStatusEmpty,getDefaultAttribue,isHolidays,isWorkingTime,resetContactFields,determineMediaFromLink}
