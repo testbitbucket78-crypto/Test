@@ -209,6 +209,7 @@ export interface routingRulesData {
     selectuser:string;
     SpecificUserUid: number;
     manualAssignUid: number;
+    isMissedChat: number;
 }
 
 export interface templateMessageData {
