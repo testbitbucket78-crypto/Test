@@ -96,18 +96,6 @@
             </div>
         </div>
 
-        <!-- <div class="pl-2 pr-5 pt-3">
-            <div class="d-flex align-items-center custom-control custom-checkbox">
-                <input class="custom-control-input" type="checkbox" name="isContactAdd" id="isContactAdd"
-                  (change)="defaultActionState('contactAdd',$event.target.checked)"
-                   [(ngModel)]="isContactAdd" >
-                <label class="custom-control-label" for="isContactAdd"><span class="sub-heading">Contact Auto Addition</span></label>
-            </div>
-            <div class="sub-contents">
-                <p>You can enable the auto addition of contacts when a user sends a message to your business for the
-                    first time or if it does not exist currently in your business’s contact database.</p>
-            </div>
-        </div> -->
         <div class="margin-heading px-2">
             <div class="sub-heading mt-3 ml-4">Assign a Default Admin </div>
             <div class="sub-contents py-2">
@@ -117,7 +105,7 @@
             <select class="input-form" [(ngModel)]="defaultAdminUid" [ngModelOptions]="{standalone: true}">
                 <option *ngFor="let item of initUserList" [value]="item.uid"><span class="text-capitalize">{{ item?.name }}</span></option>
             </select>
-            <!-- <p>If the contact owner is not defined, chat is assigned to Admin</p> -->
+
         </div>
         <div class="default-footer">
             <button type="submit" [disabled]="defaultActionForm.invalid || pauseAgentActiveTime===''|| pauseAutoReplyTime===''" [class.disabled]="defaultActionForm.invalid || pauseAgentActiveTime===''|| pauseAutoReplyTime===''" class="account-btn">Save</button>

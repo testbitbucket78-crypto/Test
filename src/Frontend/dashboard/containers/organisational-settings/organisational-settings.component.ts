@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormGroup, FormControl, FormBuilder, Validators} from '@angular/forms';
 import { SettingsService } from '../../services/settings.service';
 import { billingDetail, companyDetail, localeDetail,profilesettingPicData } from '../../models/settings.model';
-// import { SearchCountryField, CountryISO, PhoneNumberFormat } from 'ngx-intl-tel-input';
+
 import { ImageCroppedEvent, base64ToFile  } from 'ngx-image-cropper';
 import { parsePhoneNumberFromString } from 'libphonenumber-js';
 import { TeamboxService } from 'Frontend/dashboard/services/teambox.service';
@@ -71,10 +71,7 @@ export class OrganisationalSettingsComponent implements OnInit {
 
   form: FormGroup;
   zipCodePattern = '^[0-9]{1,6}$';
-  // SearchCountryField = SearchCountryField;
-	// CountryISO = CountryISO;
-  // PhoneNumberFormat = PhoneNumberFormat;
-	// preferredCountries: CountryISO[] =[];
+
   
 countryCodes = [
   'AD +376', 'AE +971', 'AF +93', 'AG +1268', 'AI +1264', 'AL +355', 'AM +374', 'AO +244', 'AR +54', 'AS +1684',
@@ -213,7 +210,6 @@ countryCodes = [
       this.isLoading = true;
     this.User = (JSON.parse(sessionStorage.getItem('loginDetails')!)).user ;
     this.profilePicture = (JSON.parse(sessionStorage.getItem('loginDetails')!)).profile_img;
-    console.log(JSON.stringify(this.profilePicture));
     this.companyDetailForm = this.prepareCompanyForm();
     this.billingForm = this.preparebillingForm();
     this.localeForm = this.preparelocaleForm();
@@ -229,7 +225,6 @@ countryCodes = [
 
 
 
-  //  image cropping function for popup
 
  fileChangeEvent(event: any): void {
   $("#pictureCropModal").modal('show');
@@ -239,13 +234,11 @@ countryCodes = [
     this.fileName = this.truncateFileName(File.name, 25);
   }
   imageCropped(event: ImageCroppedEvent) {
-    console.log(event);
       this.croppedImage = event.base64;
    
  }
 
 
- //API call to save the cropped image
 
  savesettingprofileimage() {
   this.profilesettingPicData.spid = this.sp_Id,
@@ -277,7 +270,7 @@ this.showToaster('Error saving image ','error' + error.message);
 saveVideoAndDocument() {
   if (this.croppedImage) {
       let File = base64ToFile(this.croppedImage);
-      console.log(File);
+
       let spid = this.sp_Id;
       let mediaType = 'image';
       const data = new FormData();
@@ -288,7 +281,7 @@ saveVideoAndDocument() {
           let responseData: any = uploadStatus;
           if (responseData.filename) {
               this.companyimage = responseData.filename.toString();
-              console.log(this.companyimage);
+
               this.showToaster('Image saved successfully','success');
             $("#pictureCropModal").modal('hide');
             this.profilePicture;
@@ -326,7 +319,6 @@ hideToaster(){
   this.warningMessage='';
 }
 
-//  image cropping function for popup
 
 
   prepareCompanyForm(){
@@ -405,7 +397,7 @@ hideToaster(){
     this.companyData.Employees_count = this.companyDetailForm.controls.Employees_count.value;
     this.companyData.Industry = this.companyDetailForm.controls.Industry.value;
     this.companyData.Phone_Number = this.companyDetailForm.controls.Phone_Number.value;
-    console.log(this.companyDetailForm.get('country_code')?.value);
+
     this.companyData.country_code = this.companyDetailForm.get('country_code')?.value;
   }  
 
@@ -437,12 +429,12 @@ hideToaster(){
     this._settingsService.getCompanyDetailData(this.sp_Id)
     .subscribe(result =>{
       if(result){
+        if (result?.companyDetail?.length){
         this.companyData = result?.companyDetail[0];
         this.companyimage=result?.companyDetail[0].profile_img;
+        }
         this.intials = this.settingsService.getInitials(this.companyData?.Company_Name)
       }
-      console.log(this.companyimage);
-      console.log(this.companyData);
 
     })
   }
@@ -462,7 +454,6 @@ hideToaster(){
     .subscribe(result =>{
       if(result){
         this.country = result;
-          console.log(this.country); 
           this.isLoading = false;
       }
 
@@ -547,7 +538,6 @@ hideToaster(){
     })
   }
   hangeEditContactInuts(item:any){
-    console.log(this.companyDetailForm)
     this.companyDetailForm.controls.Phone_Number.markAsTouched();
     this.companyDetailForm.controls.Phone_Number.markAsDirty();
     this.companyDetailForm.controls.Phone_Number.setValue(item.target.value)
@@ -558,10 +548,10 @@ hideToaster(){
       this.EditContactForm[item.target.name] = item.target.value
     }
     this.formatPhoneNumber();
-    //this.ShowChannelOption=false
+
   
   }
-  // Function to format the phone number using libphonenumber-js
+
 formatPhoneNumber() {
   const phoneNumber = this.companyDetailForm.get('Phone_Number')?.value;
   const countryCode = this.companyDetailForm.get('country_code')?.value;
@@ -579,7 +569,6 @@ formatPhoneNumber() {
     if (formattedPhoneNumber) {
     this.companyDetailForm.get('Phone_number')?.setValue(formattedPhoneNumber.formatInternational().replace(/[\s+]/g, ''));
     const phoneNumberValue = this.companyDetailForm.get('Phone_number')?.value;
-    console.log(phoneNumberValue);
   
     }
   }

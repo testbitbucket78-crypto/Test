@@ -175,7 +175,7 @@
                                 <span>Country<span class="aestric">*</span></span>
                                 <select class="company input-form" formControlName="Country" required (change)="getStateList($event)">
                                     <option value="" selected>Select country</option>
-                                    <option *ngFor="let item of country" [value]="item.name">{{item.name}}</option>
+                                    <option *ngFor="let item of country" [value]="item.name">{{item?.name}}</option>
                                 </select>
                                 <div *ngIf="companyDetailForm.get('Country')?.invalid && (companyDetailForm.get('Country')?.touched || companyDetailForm.get('Country')?.dirty)" class="invalid-feedback">
                                     <div *ngIf="companyDetailForm.get('Country')?.hasError('required')">
@@ -314,7 +314,7 @@
                             <div class="billing-right-col">
                             <select style="cursor: pointer;" class="billing input-form" formControlName="Country" required (change)="getStateList($event.target.value)">
                                 <option value="">Select country</option>
-                                <option *ngFor="let item of country" [value]="item.name">{{item.name}}</option>
+                                <option *ngFor="let item of country" [value]="item.name">{{item?.name}}</option>
                             </select>
                             <div *ngIf="billingForm.get('Country')?.invalid && (billingForm.get('Country')?.touched || billingForm.get('Country')?.dirty)
                             " class="invalid-feedback">

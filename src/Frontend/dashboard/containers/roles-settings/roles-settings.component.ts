@@ -117,7 +117,6 @@ export class RolesSettingsComponent implements OnInit {
       }
 
     rowClicked = (event: any) => {
-        console.log(event);
         this.roleData = event.data;
         this.subPrivileges = this.roleData?.subPrivileges?.split(',');
         this.showSideBar = true;
@@ -156,8 +155,7 @@ export class RolesSettingsComponent implements OnInit {
         if (isNaN(date.getTime())) {
             return 'N/A';
         }
-        console.log(date);
-        console.log(this._settingsService?.dateFormat);
+
         const formattedDate = this.datePipe.transform(date, this._settingsService.dateFormat);
         return formattedDate ? formattedDate : '';
     }
@@ -180,7 +178,6 @@ export class RolesSettingsComponent implements OnInit {
             if (result) {
                 this.rights = result?.Rights;
                 this.Rights = this.rights?.length;
-                console.log(this.Rights);
                 setTimeout(()=>{this.setRightsAccSubRights();},30)
                 
             }
@@ -191,7 +188,6 @@ export class RolesSettingsComponent implements OnInit {
         this._settingsService.getSubRightsList().subscribe(result => {
             if (result) {
                 this.subRightRes = result?.subRightRes
-                console.log(this.subRightRes);
             }
         });
     }
@@ -230,7 +226,6 @@ export class RolesSettingsComponent implements OnInit {
                 }
             });
         }
-        console.log(this.totalRights,'tR');
     }
 
     saveRolesDetails() {
@@ -247,7 +242,7 @@ export class RolesSettingsComponent implements OnInit {
 					async (error) => {
 					  if (error.status === 409) {
 						this.showToaster('error','Role name already exist. Please Try another name');
-						//this.OptedIn = 'No';
+
 					  }
                     }
         );
@@ -342,15 +337,13 @@ export class RolesSettingsComponent implements OnInit {
     }
 
     getSubRights(){
-     //   this.subRightRes
      this.selectedSubRights = [];
         this.subPrivileges.forEach((idx:any)=>{
            let val = this.subRightRes.filter((item:any)=> item.id == Number(idx));
-           console.log(val);
+
            if(val[0])
            this.selectedSubRights.push(val[0]);
         });
-        console.log(this.selectedSubRights);
     }
 
     onToggleSubRights(isShown: boolean) {
@@ -396,7 +389,6 @@ export class RolesSettingsComponent implements OnInit {
 
 
     checkRole(){
-        console.log(this.roleData?.RoleName);
         if(this.roleData?.RoleName == 'Admin' || this.roleData?.RoleName == 'Agent'){
             this.showToaster('error','You cannot edit/delete these default roles');
         }
@@ -440,7 +432,6 @@ export class RolesSettingsComponent implements OnInit {
       }
 
       setFirstRight(index:any,event:any){
-        console.log(event);
         if(event.target.checked){
             let idx = this.totalRights[index].subRights.findIndex((item:any)=> item.accessRight == 1);
             if(idx >-1)

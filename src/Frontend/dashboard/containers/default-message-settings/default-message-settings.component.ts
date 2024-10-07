@@ -37,6 +37,8 @@ export class DefaultMessageSettingsComponent implements OnInit {
   attributesList:any=[];
   attributesearch:string='';
   loadingVideo: boolean = false;
+  mediaType: string = 'text';
+  isLoading!:boolean;
 
   errorMessage='';
 	successMessage='';
@@ -103,13 +105,12 @@ export class DefaultMessageSettingsComponent implements OnInit {
       autoreply: ['']
     });
   }
-  isLoading!:boolean;
+
   ngOnInit(): void {
     this.isLoading = true;
     this.spId = Number(sessionStorage.getItem('SP_ID'));
     this.defaultMessageForm =this.prepareUserForm();
     this.value = this.defaultMessageForm.get('value')?.value;
-    // console.log(this.selectedMessageData)
     this.getAttributeList();
     this.getDefaultMessages();
     this.defaultMessageForm.get('value')?.setValidators([Validators.required]);
@@ -135,14 +136,6 @@ export class DefaultMessageSettingsComponent implements OnInit {
 		this.warningMessage='';
 	}
 
-  // onEditorChange(value: any) {
-  //   this.defaultMessageForm.get('value')?.setValue(value);
-  // }
-
-	// closeAllModal(){
-	// 	$('body').removeClass('modal-open');
-	// 	$('.modal-backdrop').remove();
-	// }	
 
   closeAtrrModal() {
     this.attributesearch ='';
@@ -162,9 +155,6 @@ selectAttributes(item:any){
   this.closeAtrrModal();
   const selectedValue = item;
   let content:any = this.chatEditor.value || '';
-  //content = content.replace(/<p[^>]*>/g, '').replace(/<\/p>/g, '');
-  //content = content+ '<span style="color:#000">{{'+selectedValue+'}}</span>'
-  //this.chatEditor.value = content;
   const container = document.createElement('div');
   container.innerHTML = this.chatEditor?.value;
   const text = container.innerText;
@@ -174,16 +164,12 @@ selectAttributes(item:any){
   }else{
   this.insertAtCursor(selectedValue);
   }
-  // setTimeout(() => {
-  //   this.onContentChange();
-  // }, 100); 
 }
 
 insertAtCursor(selectedValue:any) {
   const editorElement = this.chatEditor.element.querySelector('.e-content');
   const newNode = document.createElement('span');
   newNode.innerHTML =  '<span contenteditable="false" class="e-mention-chip"><a _ngcontent-yyb-c67="" href="mailto:" title="">{{'+selectedValue+'}}</a></span>';;
-  // newNode.style.color = '#000';
   this.lastCursorPosition?.insertNode(newNode);
 }
 
@@ -273,10 +259,9 @@ showMessageType(type: string) {
           this.loadingVideo = true;
           this._teamboxService.uploadfile(data,spid,name).subscribe(uploadStatus => {
               let responseData: any = uploadStatus;
-              if (responseData.filename) {
-                  this.selectedPreview = responseData.filename.toString();
+              if (responseData?.filename) {
+                  this.selectedPreview = responseData?.filename.toString();
                   this.defaultMessageForm.get('link')?.setValue(this.selectedPreview);
-                  // console.log(this.selectedPreview);
               }
               this.loadingVideo = false;
           },
@@ -321,7 +306,6 @@ removeMedia() {
     this.selectedType='text';
     this.selectedMessageData=<defaultMessagesData>{};
     this.defaultMessageForm.clearAsyncValidators();
-    // this.defaultMessageForm.clearValidators();
     this.defaultMessageForm.reset();
 }
 
@@ -329,9 +313,7 @@ removeMedia() {
     this.apiService.getDefaultMessages(this.spId).subscribe(response => {
       this.isLoading = false;
         this.defaultMessages = response.defaultaction
-        // console.log(response.defaultaction);
         
-        // combine data coming from api into defaultMessageData array //
         this.defaultMessageDataInit = this.defaultMessageData.map(defaultMessage => {
           const matchedData = this.defaultMessages.find(Item => Item.title === defaultMessage.title);
           if (matchedData) {
@@ -340,10 +322,9 @@ removeMedia() {
             return defaultMessage;
           }
         });
-        // console.log(this.defaultMessageDataInit);
     })
   }
-mediaType: string = 'text';
+
   addEditDefaultMessageData() {
     const Link = this.defaultMessageForm.get('link')?.value
     this.mediaType = 'text'
@@ -363,9 +344,11 @@ mediaType: string = 'text';
      }
 
      else {      
-    this.defaultMessageForm.get('autoreply')?.clearValidators();
-    this.defaultMessageForm.get('autoreply')?.setErrors({'firstError': null});
-    this.defaultMessageForm.get('autoreply')?.updateValueAndValidity();
+      if(this.defaultMessageForm.get('autoreply')){
+        this.defaultMessageForm.get('autoreply')?.clearValidators();
+        this.defaultMessageForm.get('autoreply')?.setErrors({'firstError': null});
+        this.defaultMessageForm.get('autoreply')?.updateValueAndValidity();
+      } 
       if (this.defaultMessageForm.valid) {
         if(this.defaultMessageForm.controls.autoreply.value ||(this.selectedCategory != 5 && this.selectedCategory != 1 )){
         const defaultMessagesData = this.copyDefaultMesssageData();
@@ -442,13 +425,14 @@ mediaType: string = 'text';
       this.defaultMessageForm.get('value')?.setValidators([Validators.required]);
       this.defaultMessageForm.get('link')?.clearValidators();
       this.patchFormValue();
-      console.log(data);
   }
 
   populateData(data:any) {
-    this.defaultMessagesData = data;
-    this.selectedTitle = data.title;
-    this.selectedDescription = data.description;
+    if(data){
+      this.defaultMessagesData = data;
+      this.selectedTitle = data.title;
+      this.selectedDescription = data.description;
+    }
   }
 
   copyDefaultMesssageData() {
@@ -469,7 +453,6 @@ mediaType: string = 'text';
     defaultMessagesData.override = this.defaultMessageForm.controls.override.value;
     defaultMessagesData.autoreply = this.defaultMessageForm.controls.autoreply.value;
     defaultMessagesData.Is_disable = this.Isdisable;
-    // console.log(defaultMessagesData);
     return defaultMessagesData;
   }
 
@@ -522,15 +505,15 @@ mediaType: string = 'text';
 	}
 
   IsOverride(event:any) {
-    this.isOverride = event.target.checked;
-    let override = this.isOverride ? 1 : 0;
-    this.defaultMessageForm.patchValue({ override: override });
+    if(event && event.target){
+      this.isOverride = event.target.checked;
+      let override = this.isOverride ? 1 : 0;
+      this.defaultMessageForm.patchValue({ override: override });
+    }
 }
 
     
 onContentChange() {
-  //const text = this.chatEditor?.value;
-  console.log('test');
   const container = document.createElement('div');
   container.innerHTML = this.chatEditor?.value;
   const text = container.innerText;

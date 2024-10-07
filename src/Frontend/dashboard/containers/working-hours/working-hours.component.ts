@@ -17,7 +17,7 @@ declare var $:any;
 export class WorkingHoursComponent implements OnInit {
   daysList=['Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday'];
 
-  //daysList=[{day:'Monday',isDisabled: false},{day:'Tuesday',isDisabled: false},{day:'Wednesday',isDisabled: false},{day:'thursday',isDisabled: false},{day:'Friday',isDisabled: false},{day:'Saturday',isDisabled: false},{day:'Saturday',isDisabled: false}];
+
   dropdownSettings = {
     singleSelection: false,
     idField: 'day',
@@ -66,7 +66,6 @@ isLoading!: boolean;
   }
 
   addWorkingHours(){
-    console.log(this.workingData);
     this.workingFormData.push({day:[],startTime:'',endTime:'', selectedPeriod: ''})
   }
 
@@ -79,7 +78,6 @@ isLoading!: boolean;
     .subscribe(result =>{
       if(result){
         this.workingData = result?.result;
-        console.log(result);
         this.isLoading = false;
       }
 
@@ -111,11 +109,8 @@ isLoading!: boolean;
         this.monthsStateRefreshed();
         HolidayList.forEach((item:any)=>{
           let month  = new Date(item.holiday_date).getMonth();
-          console.log(item.holiday_date);
-          console.log(month);
           this.totalmonths[month].values.push(item?.holiday_date);
         })
-        console.log(this.totalmonths);
         
       }
 
@@ -127,10 +122,9 @@ isLoading!: boolean;
     this._settingsService.saveWorkingData(workingResponse)
     .subscribe(result =>{
       if(result){
-        console.log(result);
         this.getWorkingDetails();
         $("#workingHourModal").modal('hide');
-        //this.workingData = result?.result;
+
       }
     })
   }
@@ -165,7 +159,6 @@ isLoading!: boolean;
 
   ValidateWorkingDetails(){
     let val =this.checkForOverlappingTimes(this.copyFormValues()["days"]);
-    console.log(val);
     if(!val.isOverlap){
     let newData = this.copyFormValues()["days"];
     let oldData = this.workingData;
@@ -177,7 +170,6 @@ isLoading!: boolean;
       }));
     const filteredOlderData = mapData(oldData);
     const filteredNewData = mapData(newData, true);
-    console.log(newData,'newData');
     const isSame = this.haveCommonObjects(
       filteredOlderData,
       filteredNewData
@@ -203,7 +195,6 @@ isLoading!: boolean;
     this._settingsService.saveHolidayData(holidayResponse)
     .subscribe(result =>{
       if(result){
-          console.log(result);
          this.totalmonths.forEach(month => month.values = []);
         this.getHolidayDetails();
         $("#holidayModal").modal('hide');
@@ -394,7 +385,6 @@ isLoading!: boolean;
           );
     
           if (isOverlap) {
-            console.log('true', 'last');
             return {isOverlap: true, isNone:false};
           }
     
@@ -402,7 +392,6 @@ isLoading!: boolean;
         }
       }
     
-      console.log('false', 'last');
       return {isOverlap: false, isNone:false};
     }
     

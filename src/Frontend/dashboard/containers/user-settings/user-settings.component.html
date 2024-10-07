@@ -125,20 +125,6 @@
 								 class="invalid-feedback">
 								! Invalid phone number length for the selected country.
 							</div>
-                        <!-- <input type="text" class="input-form" formControlName="mobile_number"
-                            placeholder="Enter Phone Number" minlength="6" maxlength="15">
-                         <div *ngIf="userDetailForm.get('mobile_number')?.invalid && (userDetailForm.get('mobile_number')?.touched || userDetailForm.get('mobile_number')?.dirty)
-                        " class="invalid-feedback">
-                        <div *ngIf="userDetailForm.get('mobile_number')?.hasError('required')">
-                          Phone number is required.
-                        </div>
-                        <div *ngIf="userDetailForm.get('mobile_number')?.hasError('pattern')">
-                          Phone number should contain only digits.
-                        </div>
-                        <div *ngIf="userDetailForm.get('mobile_number')?.hasError('minlength')">
-                            Phone number must consist of 6 to 15 digits.
-                        </div>
-                      </div> -->
                     </div>
 
                     <div class="pt-2">
@@ -218,10 +204,6 @@
                 <span class="sub-heading">Roles Assigned</span><br>
                 <p class="black">{{ userData?.RoleName }}</p>
             </div>
-            <!-- <div class="w-45">
-                <span class="sub-heading">Team Associated</span><br>
-                <p class="black">{{ userData?.team_name }}</p>
-            </div> -->
         </div>
     </div>
     <div class="sideBar-footer">
@@ -243,23 +225,6 @@
                 </div>
             </div>
         </button>
-        <!-- <div class="c ol-sm-5 d-flex justify-content-center align-items-center active-toggle">
-
-            <div class="px-2 switch-text">
-              <p class="m-0">Active</p>
-            
-            </div>
-  
-            <div class="px-2 switch-toggle">
-              <label class="m-0 switch">
-                <input type="checkbox" class="m-0 form-control-checkbox" 
-                  (change)="toggleActiveState($event.target.checked)" 
-                  [(ngModel)]="isActive">
-                <span class="slider"></span>
-              </label>
-            </div>
-           
-          </div> -->
     </div>
 </div>
 
