@@ -9,7 +9,7 @@ const moment = require('moment');
 const logger = require('./common/logger.log')
 
 async function autoDeletion() {
-    let getDataQuery = `select * from managestorage where  isDeleted !=1 and SP_ID=40`;
+    let getDataQuery = `select * from managestorage where  isDeleted !=1`;
     let storageData = await db.excuteQuery(getDataQuery, []);
     if (storageData?.length > 0) {
         for (let data of storageData) {
