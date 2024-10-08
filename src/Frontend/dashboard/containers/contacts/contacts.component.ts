@@ -650,10 +650,14 @@ onChangePage(pageOfItems: any) {
     this.gridOptions.api.deselectAll();
 
     setTimeout(()=>{this.isShowSidebar=true;
-      document.getElementById('import-btn')!.style.display = 'block';
-      document.getElementById('add-contact')!.style.display = 'block';
-      document.getElementById('export-btn')!.style.display = 'block';
-      document.getElementById('delete-btn')!.style.display = 'none';
+      if( document.getElementById('import-btn'))
+        document.getElementById('import-btn')!.style.display = 'block';        
+      if( document.getElementById('add-contact'))
+        document.getElementById('add-contact')!.style.display = 'block';       
+      if( document.getElementById('export-btn'))
+        document.getElementById('export-btn')!.style.display = 'block';       
+      if( document.getElementById('delete-btn'))
+        document.getElementById('delete-btn')!.style.display = 'none';
     },50);
   };
   

@@ -895,6 +895,11 @@ async function savelostChats(message, spPhone, spid, currentIndex, lastIndex) {
     }
     let ackStatus = message.ack;
     let from = (message.from).replace(/@c\.us$/, '')   //phoneNo
+    let countryCodeObj;
+    if (from) {
+     countryCodeObj = mapCountryCode.mapCountryCode(from); //Country Code abstraction `countryCode` = '91', `country` = 'IN', `localNumber` = '8130818921'
+    }
+    let countryCode = countryCodeObj?.country + " +" + countryCodeObj?.countryCode;
     let phone_number_id = message.id.id
     let display_phone_number = (message.to).replace(/@c\.us$/, '')
     let message_direction = 'IN'
@@ -948,10 +953,10 @@ async function savelostChats(message, spPhone, spid, currentIndex, lastIndex) {
 
 
       if (from != 'status@broadcast') {
-        console.log("endCustomer", endCustomer, "Type", Type, "message_text", message_text, "****************", currentIndex, lastIndex, message.timestamp)
-        //  console.log("lost messages time", d)
-        let saveMessage = await saveIncommingMessages(message_direction, from, message_text, phone_number_id, display_phone_number, endCustomer, message_text, message_media, "Message_template_id", "Quick_reply_id", Type, "ExternalMessageId", contactName, ackStatus, message_time);
-        //console.log(saveMessage)
+        console.log("endCustomer",endCustomer,"Type",Type,"message_text",message_text,"****************",currentIndex , lastIndex,message.timestamp)
+      //  console.log("lost messages time", d)
+        let saveMessage = await saveIncommingMessages(message_direction, from, message_text, phone_number_id, display_phone_number, endCustomer, message_text, message_media, "Message_template_id", "Quick_reply_id", Type, "ExternalMessageId", contactName, ackStatus, message_time, countryCode);
+ //console.log(saveMessage)
         if (currentIndex == lastIndex) {
           console.log(message_text, "mett indec=======================", currentIndex, lastIndex)
 

@@ -2377,7 +2377,14 @@ updateCustomer(){
 	// };
 	//console.log(bodyData)
 	let contactData = this.copyContactFormData();
-		
+	const contactOwner = contactData.result.find((item:any) => item.ActuallName === 'ContactOwner');
+	if(contactOwner) {
+	  const uidFound = this.userList.find((item:any) => item?.name == contactOwner.displayName);
+	  if (uidFound) contactData.result.push({
+		displayName: uidFound?.uid,
+		ActuallName: 'uid'
+	  })
+	}
 	 if(this.editContact.valid) {
 		  this.dashboardService.editContact(contactData, this.contactId, this.SPID).subscribe(
 			(response: any) => {

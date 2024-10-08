@@ -257,6 +257,7 @@ openDiv() {
             this.channel_status = 1;      
             $("#qrWhatsappModal").modal('hide');
             this.showToaster('! User is already authenticated', 'success');   
+            this.hideModal();
             setTimeout(()=> {
               this.saveWhatsappWebDetails(id);
             },2000); 
@@ -265,10 +266,8 @@ openDiv() {
         },
         (error) => {
           if(error.status === 409){
-            this.showToaster('Something went Wrong! Please try after some time', 'error');
-            setTimeout(() => {
-              $("#qrWhatsappModal").modal('hide');
-          }, 500);
+            this.showToaster(error?.error?.value, 'error');
+            this.hideModal();
             return;
           }
           if(error.status === 400) {
@@ -291,7 +290,11 @@ openDiv() {
     }
     
   }
-
+   hideModal(){
+    setTimeout(() => {
+      $("#qrWhatsappModal").modal('hide');
+  }, 500);
+   }
   removeIP(index:number){
     this.ipAddress.splice(index,1); 
   }
