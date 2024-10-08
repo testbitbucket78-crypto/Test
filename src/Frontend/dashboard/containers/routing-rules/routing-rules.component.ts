@@ -181,7 +181,8 @@ get checkIfValid(): boolean {
           this.isadmin = data.isadmin;
           this.assignspecificuser = data.assignspecificuser;
           this.selectuser = data.selectuser;
-    
+          let isMissedChat: boolean = !!(data?.isMissedChat === 1);
+          this.manageMissedChatChange('manageMissedChat',isMissedChat)
           if(this.broadcast==1) {
             this.defaultAssignRule = 'broadcast';
           };
