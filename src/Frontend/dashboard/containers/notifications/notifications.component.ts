@@ -20,7 +20,7 @@ export class NotificationsComponent implements OnInit {
 
   ngOnInit(): void {
     this.spId = Number(sessionStorage.getItem('SP_ID'));
-    this.uid = (JSON.parse(sessionStorage.getItem('loginDetails')!)).uid;
+    this.uid = (JSON.parse(sessionStorage.getItem('loginDetails')!))?.uid;
     this.getNotificationData();
     this.getPaging();
    
@@ -28,7 +28,7 @@ export class NotificationsComponent implements OnInit {
 
   getNotificationData() {
     this.apiservice.getNotifications(this.spId,this.uid).subscribe((response=> {
-      this.notificationData = response.notifications;
+      this.notificationData = response?.notifications;
       this.notificationData.reverse();
       this.getPaging(); 
     }));
