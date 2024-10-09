@@ -28,7 +28,7 @@ app.post('/craeteQRcode', async (req, res) => {
         let isProcessing = processStart(spid); // To check Process for SPID 
         console.log(`current: ${spid}, current processSet:`, processSet);
         if(!isProcessing){
-            return res.status(409).json({ value: 'QR Generation already in progress for this spId' });
+            return res.status(409).json({ value: 'Please wait for 60 seconds as the previous request is closing down' });
           }
         let response = await web.createClientInstance(spid, phoneNo);
         if(response?.status != 200){
