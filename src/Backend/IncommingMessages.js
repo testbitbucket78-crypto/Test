@@ -500,6 +500,8 @@ function determineMediaType(mediaType) {
     case 'application/pdf':
       return 'document';
     case 'image/jpeg':
+    case 'image/jpg':
+    case 'image/png':
       return 'image';
     case '':
       return 'text';

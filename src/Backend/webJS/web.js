@@ -1156,7 +1156,23 @@ async function saveImageFromReceivedMessage(from, message, phone_number_id, disp
 }
 
 
+async function currentlyAssigned(interactionId) {
+  const query = `SELECT InteractionMapping.MappedBy 
+                 FROM InteractionMapping 
+                 JOIN user ON user.uid = InteractionMapping.AgentId 
+                 WHERE is_active = 1 
+                 AND InteractionMapping.InteractionId = ? 
+                 ORDER BY InteractionMapping.MappingId DESC 
+                 LIMIT 1`;
 
+  try {
+      let result = await db.excuteQuery(query, [interactionId]);
+      return result.length > 0 ? result[0].MappedBy : null;
+  } catch (error) {
+      console.error('Error executing query:', error);
+      throw error; 
+  }
+}
 
 
 
@@ -1192,7 +1208,8 @@ async function getDetatilsOfSavedMessage(saveMessage, message_text, phone_number
 
     let myUTCString = new Date().toUTCString();
     const utcTimestamp = moment.utc(myUTCString).format('YYYY-MM-DD HH:mm:ss');
-    let notifyvalues = [[sid, 'New Message in your Chat', 'You have a new message in you current Open Chat', agid, 'WA Web', agid, utcTimestamp]];
+    const currentAssignedUser = await currentlyAssigned(newId);
+    let notifyvalues = [[sid, 'New Message in your Chat', 'You have a new message in you current Open Chat', agid, 'WA Web', currentAssignedUser, utcTimestamp]];
     let mentionRes = await db.excuteQuery(`INSERT INTO Notification(sp_id,subject,message,sent_to,module_name,uid,created_at) values ?`, [notifyvalues]);
     let contactDefaultPauseTime = await db.excuteQuery('select * from EndCustomer where customerId=? and SP_ID=?', [custid, sid])
     let defaultQuery = 'select * from defaultActions where spid=?';

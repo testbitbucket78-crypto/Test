@@ -237,6 +237,24 @@ async function saveIncommingMessages(from, firstMessage, phone_number_id, displa
   return saveMessage;
 }
 
+async function currentlyAssigned(interactionId) {
+  const query = `SELECT InteractionMapping.MappedBy 
+                 FROM InteractionMapping 
+                 JOIN user ON user.uid = InteractionMapping.AgentId 
+                 WHERE is_active = 1 
+                 AND InteractionMapping.InteractionId = ? 
+                 ORDER BY InteractionMapping.MappingId DESC 
+                 LIMIT 1`;
+
+  try {
+      let result = await db.excuteQuery(query, [interactionId]);
+      return result.length > 0 ? result[0].MappedBy : null;
+  } catch (error) {
+      console.error('Error executing query:', error);
+      throw error; 
+  }
+}
+
 async function getDetatilsOfSavedMessage(saveMessage, message_text, phone_number_id, contactName, from, display_phone_number) {
   if (saveMessage?.length > 0) {
     console.log(display_phone_number + " .." + message_text)
@@ -268,7 +286,8 @@ async function getDetatilsOfSavedMessage(saveMessage, message_text, phone_number
 
     let myUTCString = new Date().toUTCString();
     const utcTimestamp = moment.utc(myUTCString).format('YYYY-MM-DD HH:mm:ss');
-    let notifyvalues = [[sid, 'New Message in your Chat', 'You have a new message in you current Open Chat', agid, 'WA Web', agid, utcTimestamp]];
+    const currentAssignedUser = await currentlyAssigned(newId); //todo need to check after deploy out of scope to test
+    let notifyvalues = [[sid, 'New Message in your Chat', 'You have a new message in you current Open Chat', agid, 'WA Web', currentAssignedUser, utcTimestamp]];
     let mentionRes = await db.excuteQuery(`INSERT INTO Notification(sp_id,subject,message,sent_to,module_name,uid,created_at) values ?`, [notifyvalues]);
 
 
