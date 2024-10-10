@@ -3297,6 +3297,38 @@ checkAuthentication(){
 	})
 }
 
+getUserListFromMessage(value: string): string[] {
+    const tempDiv = document.createElement('div');
+    tempDiv.innerHTML = value;
+    
+    const mentionElements = tempDiv.querySelectorAll('a'); 
+
+    const userList: string[] = [];
+    
+    mentionElements.forEach((el) => {
+        let username = el.textContent?.trim();
+        
+        if (username && username.startsWith('@')) {
+            username = username.substring(1);
+            userList.push(username);
+        }
+    });
+
+    return userList;
+}
+getUIDsFromNames(Names: any): number[] {
+    const uids: number[] = [];
+    const extractedNames = Names;
+    extractedNames.forEach((name: string) => {
+        const matchedUser = this.userList.find((user: any) => user.name === name);
+
+        if (matchedUser) {
+            uids.push(matchedUser.uid);
+        }
+    });
+
+    return uids;
+}
 sendMessage(isTemplate:boolean=false,templateTxt:string=''){
 	var tempDivElement = document.createElement("div");   
 
@@ -3333,6 +3365,13 @@ sendMessage(isTemplate:boolean=false,templateTxt:string=''){
 		}
 		console.log(value);
 	let agentName = this.userList.filter((items:any) => items.uid == this.uid)[0]?.name;
+	let uidMentioned: number[] = [];
+	   if(value){ 
+		const userMentioned = this.getUserListFromMessage(value);
+		if(userMentioned && userMentioned.length) { 
+			 uidMentioned = this.getUIDsFromNames(userMentioned);
+		}
+	   }
 		var bodyData = {
 			InteractionId: this.selectedInteraction.InteractionId,
 			CustomerId: this.selectedInteraction.customerId,
@@ -3355,6 +3394,7 @@ sendMessage(isTemplate:boolean=false,templateTxt:string=''){
 			action:'edited by ' + agentName,
 			action_at:new Date(),
 			action_by:name,
+			uidMentioned: uidMentioned
 		}
 		console.log(bodyData,'Bodydata')
 		let input = {
