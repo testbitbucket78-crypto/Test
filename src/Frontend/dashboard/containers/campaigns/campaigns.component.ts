@@ -1451,9 +1451,10 @@ formateDate(dateTime:string){
 		this.modalReference2.close();
 	}
 	constructMessageContent(BodyText: string): string {
-		let content = BodyText;
+	
+		let content ='<p>'+ BodyText+'</p>';
 		if (this.selectedTemplate?.FooterText && this.selectedTemplate?.FooterText.trim() !== '') {
-		  content += this.selectedTemplate?.FooterText;
+		  content += '<p>'+this.selectedTemplate?.FooterText+'</p>';
 		}
 		return content;
 	  }
@@ -1500,6 +1501,7 @@ formateDate(dateTime:string){
 			button_exp:this.selectedTemplate?.button_exp,
 			category:this.selectedTemplate?.Category,
 			category_id:this.selectedTemplate?.category_id,
+			templateId:this.selectedTemplate?.ID,
 			time_zone:this.selecteTimeZone,
 			start_datetime:sratdatetime,
 			end_datetime:'',
@@ -2099,7 +2101,8 @@ testinfo(){
 						i++
 						}
 					})
-					this.csvContactColmuns = tabalHeader
+					this.csvContactColmuns = tabalHeader;
+					console.log(this.csvContactColmuns,'this.csvContactColmuns');
 					let contactsData:any=[]
 					tabalRows.map((rowbh:any)=>{
 						let row:any={}

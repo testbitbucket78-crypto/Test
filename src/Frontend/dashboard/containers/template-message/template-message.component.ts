@@ -678,6 +678,8 @@ checkTemplateName(e:any){
     }
 
     copyTemplate() {
+        let nameExist = this.filteredTemplatesData.filter((item:any)=>item.TemplateName == this.templatesMessageDataById.TemplateName +' copy');
+        if(nameExist.length >0){
         const copyTemplateForm: newTemplateFormData = <newTemplateFormData>{};
         copyTemplateForm.ID = 0;
         copyTemplateForm.spid = this.templatesMessageDataById.spid;
@@ -703,10 +705,10 @@ checkTemplateName(e:any){
         // else {
         //     copyTemplateForm.template_json = [];
         // }
-        let nameExist = this.filteredTemplatesData.filter((item:any)=>item.TemplateName == this.templatesMessageDataById.TemplateName +' copy');
-        if(nameExist.length >0){
-            copyTemplateForm.TemplateName = this.templatesMessageDataById.TemplateName +' copy' + Math.random();
-        }
+        // let nameExist = this.filteredTemplatesData.filter((item:any)=>item.TemplateName == this.templatesMessageDataById.TemplateName +' copy');
+        // if(nameExist.length >0){
+        //     copyTemplateForm.TemplateName = this.templatesMessageDataById.TemplateName +' copy' + Math.random();
+        // }
        
             this.apiService.saveNewTemplateData(copyTemplateForm, this.selectedPreview)
             .subscribe(response => {
@@ -717,7 +719,10 @@ checkTemplateName(e:any){
                     console.log('Template saved successfully', response);
                 }
             });
+         }else{            
+            this.showToaster('Quick response already exist with this name !','error');
          }
+        }
 
          replaceVariable(val:string[]){
             let replacedVariables:any[] =[];
@@ -880,6 +885,16 @@ checkTemplateName(e:any){
         $('#newTemplateMessageFirst').modal('show');
         this.patchFormValue();
     }
+    // copyCampaign() {
+    //     this.editQuickResponse();
+    //     this.ID = 0;
+    //     this.usertemplateForm.controls.Header.setValue('Copied ' + this.repliestemplateData.Header);
+    //     let nameExist = this.initTemplates.filter((item:any)=>item.TemplateName == ('Copied ' + this.repliestemplateData.Header));
+    //           if(nameExist.length >0){
+    //             this.usertemplateForm.controls.Header.setValue((`Copied_${Math.random()} ` + this.repliestemplateData.Header));
+    //           }
+    //     this.saveTemplate();
+    //   }
     copyGalleryData() {
         $('#newTemplateMessageFirst').modal('show');
         this.patchGalleryFormValue();

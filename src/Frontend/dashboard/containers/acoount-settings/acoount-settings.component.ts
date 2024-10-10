@@ -187,7 +187,7 @@ saveWhatsappWebDetails(id:number) {
     if(resopnse.status === 200) {
       console.log(this.whatAppDetails)
       console.log(resopnse)
-      this.showToaster('Your Session Details Updated Succesfully','success');
+     // this.showToaster('Your Session Details Updated Succesfully','success');
       this.whatsAppDataUpdated = true;
       this.getwhatsapp();
     }

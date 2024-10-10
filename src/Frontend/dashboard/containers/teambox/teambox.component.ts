@@ -667,7 +667,7 @@ public  fieldsData: { [key: string]: string } = { text: 'name' };
 			htmlcontent += mediaName
 		}
 	
-		htmlcontent +='<p>'+ item?.BodyText+'</p>'+'<br>';
+		htmlcontent +='<p>'+ item?.BodyText+'</p>';
 		if (item?.FooterText) {
 			htmlcontent+='<p>'+item?.FooterText+'</p>';
 		}
@@ -761,7 +761,7 @@ InsertMentionOption(user:any){
 		this.attachMentionHandlers();
 	  }, 10);
 	this.showMention = false;
-	this.selectInteraction(this.selectedInteraction)
+	//this.selectInteraction(this.selectedInteraction)
 }
 
 attachMentionHandlers() {
