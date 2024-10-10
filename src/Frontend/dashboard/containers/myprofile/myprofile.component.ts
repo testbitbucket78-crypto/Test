@@ -7,7 +7,6 @@ import { SettingsService } from 'Frontend/dashboard/services/settings.service';
 import { NotificationService } from 'Frontend/dashboard/services/notification.service';
 import { addFundsData, profilePicData, teamboxNotifications } from 'Frontend/dashboard/models/profile.model';
 import { isNullOrUndefined } from 'is-what';
-import { interval } from 'rxjs';
 declare var $:any;
 
 @Component({
@@ -92,10 +91,10 @@ export class MyprofileComponent implements OnInit,OnDestroy {
   }
 
   ngOnInit(): void {
-    this.Name = (JSON.parse(sessionStorage.getItem('loginDetails')!)).name;
-    this.EmailId = (JSON.parse(sessionStorage.getItem('loginDetails')!)).email_id;
-    this.PhoneNumber = (JSON.parse(sessionStorage.getItem('loginDetails')!)).mobile_number;
-    this.uid = (JSON.parse(sessionStorage.getItem('loginDetails')!)).uid
+    this.Name = (JSON.parse(sessionStorage.getItem('loginDetails')!))?.name;
+    this.EmailId = (JSON.parse(sessionStorage.getItem('loginDetails')!))?.email_id;
+    this.PhoneNumber = (JSON.parse(sessionStorage.getItem('loginDetails')!))?.mobile_number;
+    this.uid = (JSON.parse(sessionStorage.getItem('loginDetails')!))?.uid
     const nameParts = this.Name.split(' ');
     const firstName = nameParts[0] || '';
     const lastName = nameParts[1] || '';
@@ -169,9 +168,9 @@ export class MyprofileComponent implements OnInit,OnDestroy {
     const confirmPasswordControl = this.changepassword?.get('confirmPass');
 
     if (passwordControl && confirmPasswordControl) {
-        if (confirmPasswordControl.value && passwordControl.value) {
-            const password = passwordControl.value;
-            const confirmPassword = confirmPasswordControl.value;
+        if (confirmPasswordControl.value && passwordControl?.value) {
+            const password = passwordControl?.value;
+            const confirmPassword = confirmPasswordControl?.value;
 
             if (password !== confirmPassword && password !== '') {
                 return { 'mismatch': true };
@@ -192,13 +191,13 @@ export class MyprofileComponent implements OnInit,OnDestroy {
 
   getTeamName() {
     this.apiService.teamName(this.uid).subscribe((response) => {
-      this.teamName = response.teamRes[0].team_name;  
+      this.teamName = response?.teamRes[0]?.team_name;  
       });
   }
 
   getRoleName() { 
     this.apiService.roleName(this.uid).subscribe((response) => {
-     this.roleName = response.roleRes[0].RoleName;
+     this.roleName = response?.roleRes[0]?.RoleName;
     });
 }
 
@@ -272,7 +271,6 @@ getTeamboxNotificaions() {
                 return notifyData;
             }
         });
-        console.log(this.NotificationDataInit);
     }
   });
 }
@@ -286,7 +284,7 @@ getUserList() {
         for (let i = 0; i<this.userList.length;i++) {
           if(this.userList[i].uid === this.uid) {
             this.currentUserDetails = this.userList[i];
-            this.isActive = this.currentUserDetails.IsActive;
+            this.isActive = this.currentUserDetails?.IsActive;
             this.randomNumber = Math.random();
             this.profilePicture = this.currentUserDetails.profile_img;
             this.apiService.setProfilePicture(this.profilePicture);
@@ -337,10 +335,10 @@ toggleActiveState(checked: boolean) {
       return
     }
     this.body = {
-      uid: this.changePasswordValue.uid,
-      oldPass: this.changePasswordValue.oldPass,
-      newPass: this.changePasswordValue.newPass,
-      confirmPass: this.changePasswordValue.confirmPass,
+      uid: this.changePasswordValue?.uid,
+      oldPass: this.changePasswordValue?.oldPass,
+      newPass: this.changePasswordValue?.newPass,
+      confirmPass: this.changePasswordValue?.confirmPass,
       name: this.Name,
       email_id: this.EmailId,
       mobile_number: this.PhoneNumber
@@ -365,7 +363,7 @@ toggleActiveState(checked: boolean) {
     }
   }
   validatePassword(passwords: any) {
-      if(passwords.oldPass == passwords.newPass){
+      if(passwords?.oldPass == passwords?.newPass){
          return false;
       }
       return true;
@@ -480,7 +478,7 @@ addFunds(addFundsSuccess: any) {
   getAvailableAmount() {
     
     this.apiService.showAvailableAmount(this.spId).subscribe(response => {
-        let amountAvilable = response.AvailableAmout;
+        let amountAvilable = response?.AvailableAmout;
         this.availableAmount = amountAvilable.toFixed(2);
   });
 }

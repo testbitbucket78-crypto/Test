@@ -105,7 +105,15 @@ export class RoutingRulesComponent implements OnInit {
   resetMissedChat(){
     this.timeoutperiod = '';
     this.selectuser = '';
-
+    this.isMissChatAssigContactOwner = 0;
+    this.isadmin = 0;
+    this.assignspecificuser = 0;
+    const coRadio = document.getElementById('chat-assign-co') as HTMLInputElement;
+    const adminRadio = document.getElementById('chat-assign-admin') as HTMLInputElement;
+    const suRadio = document.getElementById('chat-assign-su') as HTMLInputElement;
+    if (coRadio) coRadio.checked = false;
+    if (adminRadio) adminRadio.checked = false;
+    if (suRadio) suRadio.checked = false;
   }
   missedChatOptionsChange(option: string) {
     if (option === 'isMissChatAssigContactOwner') {
@@ -167,7 +175,7 @@ get checkIfValid(): boolean {
   getRoutingRules() {
     this.apiService.getRoutingRulesData(this.spId).subscribe(response =>{
           const data:routingRulesData = response.autoaddition[0];
-
+          if(data){
           this.contactowner = data.contactowner;
           this.assignagent = data.assignagent;
           this.broadcast = data.broadcast;
@@ -183,6 +191,7 @@ get checkIfValid(): boolean {
           this.selectuser = data.selectuser;
           let isMissedChat: boolean = !!(data?.isMissedChat === 1);
           this.manageMissedChatChange('manageMissedChat',isMissedChat)
+        }
           if(this.broadcast==1) {
             this.defaultAssignRule = 'broadcast';
           };

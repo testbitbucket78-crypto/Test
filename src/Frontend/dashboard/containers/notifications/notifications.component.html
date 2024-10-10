@@ -52,12 +52,12 @@
                       class="row justify-content-center notification-content">
                         <div class="col-sm-11 d-flex p-2 px-3">
                             <div class="col-sm-6 ml-4 text-left data">
-                                <h6 class="m-0" [innerHTML]="notification.subject"></h6>
-                                 <p class="m-0" [innerHTML]="notification.message"></p>
+                                <h6 class="m-0" [innerHTML]="notification?.subject"></h6>
+                                 <p class="m-0" [innerHTML]="notification?.message"></p>
                             </div>
     
                             <div class="col-sm-6 d-flex ml-n5 justify-content-end align-items-center date">
-                                <span id="date">{{ notification.created_at  | date: 'd MMM y, h:mm a' }}</span>
+                                <span id="date">{{ notification?.created_at  | date: 'd MMM y, h:mm a' }}</span>
                             </div>
                         </div>
                     </div>

@@ -1,7 +1,6 @@
 <sb-layout-dashboard>
     <sb-top-nav title="My Profile"></sb-top-nav>
 
-    <!-- ****main profile page **** -->
 
     <div class="toaster" (click)="hideToaster()">
         <p *ngIf="errorMessage" class="error">{{errorMessage}}</p>
@@ -30,8 +29,8 @@
                         <div class="col-sm-12 d-flex teambox-notificaiton-row">
                             <div class="col-sm-1"></div>
                             <div class="col-sm-6 px-2 text-left teambox-notificaiton-content">
-                                <h6 class="m-0 pb-2" >{{notifyData.title}}</h6>
-                                <p class="m-0 pb-2">{{notifyData.description}}</p>
+                                <h6 class="m-0 pb-2" >{{notifyData?.title}}</h6>
+                                <p class="m-0 pb-2">{{notifyData?.description}}</p>
                             </div>
                             
                             <div class="col-sm-2 d-flex justify-content-center align-items-center">
@@ -39,7 +38,7 @@
                                     <label class="m-0 switch">
                                       <input type="checkbox" class="m-0 form-control-checkbox" 
                                       [(ngModel)]="notifyData.PushNotificationValue" 
-                                      (change)="togglePushNotification($event.target.checked,notifyData.notificationId,notifyData.ID,ith)">
+                                      (change)="togglePushNotification($event.target.checked,notifyData?.notificationId,notifyData?.ID,ith)">
                                       <span class="slider"></span>
                                     </label>
                                   </div>
@@ -49,7 +48,7 @@
                                     <label class="m-0 switch">
                                       <input type="checkbox" class="m-0 form-control-checkbox" [disabled]="!notifyData?.PushNotificationValue"
                                       [(ngModel)]="notifyData.SoundNotificationValue" 
-                                      (change)="toggleSoundNotification($event.target.checked,notifyData.notificationId,notifyData.ID,ith)">
+                                      (change)="toggleSoundNotification($event.target.checked,notifyData?.notificationId,notifyData?.ID,ith)">
                                       <span class="slider"></span>
                                     </label>
                                   </div>
@@ -299,16 +298,6 @@
                     <p>+{{PhoneNumber}}</p>   
                   </div>
                   
-                    <!-- <div  class="mx-5 sidebar-team">
-                        <div class="p-2 heading">
-                           <p class="m-0">Team</p>
-                        </div>
-                        <div  class="d-flex align-items-center team">
-                            <img class="p-2" src="assets/img/profile/team.svg">
-                            <p *ngIf="teamName != null" class="m-0 p-1">{{teamName}}</p>
-                            <p *ngIf="teamName == null" class="m-0 p-1">No data available</p>
-                        </div>
-                    </div> -->
                     <div class="mx-5 sidebar-role">
                         <div class="p-2 heading">
                             <p class="m-0">Role</p>
@@ -423,19 +412,16 @@
         </div>
 
 
-     <!-- **** wallet usage page**** -->
      <div *ngIf="selectedTab == 1" class="">
 
         <sb-walletusage (selectab)="selectedTab=$event"></sb-walletusage>
 
     </div>
 
-     <!-- **** billing history  page**** -->
      <div  *ngIf="selectedTab == 2" class="">
         <sb-billinghistory (selectab)="selectedTab=$event"></sb-billinghistory>
     </div>
 
-       <!-- **** manageplan page**** -->
        <div *ngIf="selectedTab == 3"class="">
         <sb-manageplan (selectab)="selectedTab=$event"></sb-manageplan>
     </div>
