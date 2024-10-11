@@ -694,10 +694,15 @@ const insertMessage = async (req, res) => {
                 const utcTimestamp = moment.utc(myUTCString).format('YYYY-MM-DD HH:mm:ss');
                 await Promise.all(
                     uidMentioned.map(async (element) => {
-                        let notifyvalues = [
-                            [SPID, '@Mention in the Notes', 'A new Chat has been Assigned to you', element, 'teambox', element, utcTimestamp]
-                        ];
-                        let mentionRes = await db.excuteQuery(val.addNotification, [notifyvalues]);
+                        const check = await commonFun.notifiactionsToBeSent(element,4);
+                        if (check) {
+                            let notifyvalues = [
+                                [SPID, '@Mention in the Notes', 'A new Chat has been Assigned to you', element, 'teambox', element, utcTimestamp]
+                            ];
+                            let mentionRes = await db.excuteQuery(val.addNotification, [notifyvalues]);
+                        } else {
+                            console.log(`Notification disabled for UID: ${element}`);
+                        }
                     })
                 );
             }
@@ -935,9 +940,12 @@ const updateInteractionMapping = async (req, res) => {
 
             const myUTCString = new Date().toUTCString();
             const utcTimestamp = moment.utc(myUTCString).format('YYYY-MM-DD HH:mm:ss');
+            const check = await commonFun.notifiactionsToBeSent(AgentId,2);
+            if(check){
             const notifyvalues = [[nameData[0].SP_ID, 'New Chat Assigned to You', 'A new Chat has been Assigned to you', AgentId, 'teambox', AgentId, utcTimestamp]];
             const notifyRes = await db.excuteQuery(val.addNotification, [notifyvalues]);
             logger.debug('Notification Result:', notifyRes);
+            }
         }
 
         const myUTCString = new Date().toUTCString();

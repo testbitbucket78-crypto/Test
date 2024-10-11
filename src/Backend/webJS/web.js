@@ -1055,8 +1055,12 @@ async function actionsOflatestLostMessage(message_text, phone_number_id, from, d
 
           let myUTCString = new Date().toUTCString();
           const utcTimestamp = moment.utc(myUTCString).format('YYYY-MM-DD HH:mm:ss');
-          let notifyvalues = [[sid, 'New Chat Assigned to You', 'A new Chat has been Assigned to you', agid, 'Routing rules', agid, utcTimestamp]];
+          const currentAssignedUser = await currentlyAssigned(newId);
+          const check = await commonFun.notifiactionsToBeSent(currentAssignedUser,2);
+          if(check){
+          let notifyvalues = [[sid, 'New Chat Assigned to You', 'A new Chat has been Assigned to you', agid, 'Routing rules', currentAssignedUser, utcTimestamp]];
           let mentionRes = await db.excuteQuery(`INSERT INTO Notification(sp_id,subject,message,sent_to,module_name,uid,created_at) values ?`, [notifyvalues]);
+          }
         }
       }
     }
@@ -1157,7 +1161,7 @@ async function saveImageFromReceivedMessage(from, message, phone_number_id, disp
 
 
 async function currentlyAssigned(interactionId) {
-  const query = `SELECT InteractionMapping.MappedBy 
+  const query = `SELECT user.uid 
                  FROM InteractionMapping 
                  JOIN user ON user.uid = InteractionMapping.AgentId 
                  WHERE is_active = 1 
@@ -1167,7 +1171,7 @@ async function currentlyAssigned(interactionId) {
 
   try {
       let result = await db.excuteQuery(query, [interactionId]);
-      return result.length > 0 ? result[0].MappedBy : null;
+      return result.length > 0 ? result[0].uid : null;
   } catch (error) {
       console.error('Error executing query:', error);
       throw error; 
@@ -1209,8 +1213,11 @@ async function getDetatilsOfSavedMessage(saveMessage, message_text, phone_number
     let myUTCString = new Date().toUTCString();
     const utcTimestamp = moment.utc(myUTCString).format('YYYY-MM-DD HH:mm:ss');
     const currentAssignedUser = await currentlyAssigned(newId);
-    let notifyvalues = [[sid, 'New Message in your Chat', 'You have a new message in you current Open Chat', agid, 'WA Web', currentAssignedUser, utcTimestamp]];
-    let mentionRes = await db.excuteQuery(`INSERT INTO Notification(sp_id,subject,message,sent_to,module_name,uid,created_at) values ?`, [notifyvalues]);
+    const check = await commonFun.notifiactionsToBeSent(currentAssignedUser,3);
+    if(check){
+      let notifyvalues = [[sid, 'New Message in your Chat', 'You have a new message in you current Open Chat', agid, 'WA Web', currentAssignedUser, utcTimestamp]];
+      let mentionRes = await db.excuteQuery(`INSERT INTO Notification(sp_id,subject,message,sent_to,module_name,uid,created_at) values ?`, [notifyvalues]);
+    }
     let contactDefaultPauseTime = await db.excuteQuery('select * from EndCustomer where customerId=? and SP_ID=?', [custid, sid])
     let defaultQuery = 'select * from defaultActions where spid=?';
     let defaultAction = await db.excuteQuery(defaultQuery, [sid]);
@@ -1286,8 +1293,12 @@ async function getDetatilsOfSavedMessage(saveMessage, message_text, phone_number
 
         let myUTCString = new Date().toUTCString();
         const utcTimestamp = moment.utc(myUTCString).format('YYYY-MM-DD HH:mm:ss');
-        let notifyvalues = [[sid, 'New Chat Assigned to You', 'A new Chat has been Assigned to you', agid, 'Routing rules', agid, utcTimestamp]];
+        const currentAssignedUser = await currentlyAssigned(newId);
+        const check = await commonFun.notifiactionsToBeSent(currentAssignedUser,2);
+        if(check){
+        let notifyvalues = [[sid, 'New Chat Assigned to You', 'A new Chat has been Assigned to you', agid, 'Routing rules', currentAssignedUser, utcTimestamp]];
         let mentionRes = await db.excuteQuery(`INSERT INTO Notification(sp_id,subject,message,sent_to,module_name,uid,created_at) values ?`, [notifyvalues]);
+        }
       }
       //Here i have to check if any routing rules addded then send websocket
     }
