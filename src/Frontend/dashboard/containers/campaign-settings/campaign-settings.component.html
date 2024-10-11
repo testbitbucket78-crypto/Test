@@ -102,7 +102,7 @@
                 <img src="../../../../assets/img/settings/img-7.png">
                 <div class="pl-3">
                     <span class="sub-heading">{{item?.name}}</span>
-                    <p>{{item.mobile_number}}</p>
+                    <p>{{item?.mobile_number}}</p>
                     <p>{{item?.email_id}}</p>
                 </div>
             </div>
@@ -189,21 +189,21 @@
                         <div *ngFor="let item of selectedUser" class="user-dropdown pb-3 d-flex">
                             <div class=" manage-user col-6">
                                 <label class="container"  let i = "index">
-                                    <div class="img" *ngIf="!item.profile_img">{{_settingsService.getInitials(item.name)}}</div>
-                                    <!-- <img src="../../../../assets/img/profile/Richie_3.png" class="user-img mx-2">-->{{item.name}}         
-                                    <div (click)="showCountWarning(!item.isSelected)" >          
-                                    <input type="checkbox" name="status" class="user-checkbox" [disabled]="getCheckedCount() && !item.isSelected"  [(ngModel)]="item.isSelected" value={{item.value}}>   
+                                    <div class="img" *ngIf="!item.profile_img">{{_settingsService.getInitials(item?.name)}}</div>
+                                    <!-- <img src="../../../../assets/img/profile/Richie_3.png" class="user-img mx-2">-->{{item?.name}}         
+                                    <div (click)="showCountWarning(!item?.isSelected)" >          
+                                    <input type="checkbox" name="status" class="user-checkbox" [disabled]="getCheckedCount() && !item?.isSelected"  [(ngModel)]="item.isSelected" value={{item.value}}>   
                                       <span class="checkmark ml-2"></span>
                                     </div>  
                                 </label>
                             </div>
-                            <div class="copy col-6" *ngIf="item.isSelected == true" >
+                            <div class="copy col-6" *ngIf="item?.isSelected == true" >
                                 <div class="d-flex align-item-center">
                                     <div class="align-items-center d-flex">
                                         <div class="img" *ngIf="!item.profile_img">{{_settingsService.getInitials(item.name)}}</div>
                                 <!-- <img src="../../../../assets/img/profile/Richie_3.png"  class="user-img-2 "> -->
                             </div>
-                                <span class="ml-2"  >{{item.name}}</span>
+                                <span class="ml-2"  >{{item?.name}}</span>
                             </div>
                             <button type="button" class="btclose"  (click)="item.isSelected = false" >
                                 <img src="../../../../assets/img/settings/remove.svg" >

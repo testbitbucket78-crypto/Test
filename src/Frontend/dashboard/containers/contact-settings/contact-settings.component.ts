@@ -63,8 +63,7 @@ export class ContactSettingsComponent implements OnInit {
     .subscribe(result =>{
       this.isLoading = false;
       if(result){
-       this.tagListData = result.taglist;
-       console.log(this.tagListData);
+       this.tagListData = result?.taglist;
        this.getPaging();
       }
     });
@@ -76,12 +75,12 @@ export class ContactSettingsComponent implements OnInit {
              && this.tagColor && this.tagColor.trim()!== '');
     } else {
       return !(
-        this.selectedtagListData.TagName &&
-        this.selectedtagListData.TagName.trim() !== '' &&
+        this.selectedtagListData?.TagName &&
+        this.selectedtagListData?.TagName.trim() !== '' &&
         //&& this.tagName.match(/^[a-zA-Z0-9][a-zA-Z0-9\s]*[a-zA-Z0-9]$/)
        // this.selectedtagListData.TagName.match(/^[a-zA-Z0-9][a-zA-Z0-9\s]*[a-zA-Z0-9]$/) &&
-        this.selectedtagListData.TagColour &&
-        this.selectedtagListData.TagColour.trim() !== '');
+        this.selectedtagListData?.TagColour &&
+        this.selectedtagListData?.TagColour.trim() !== '');
     }
   }
 

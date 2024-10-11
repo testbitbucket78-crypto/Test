@@ -43,11 +43,7 @@
 							
 						  </div>
 						</div>
-						  <!-- <div *ngFor="let channel of channelOptions" class="form-check  pb-4" class="py-2 custom-control custom-checkbox user-dropdown">
-							<input type="checkbox" class="custom-control-input" [(ngModel)]="isWhatsappOfficial" id="radio1" name="optradio"  value="option1" checked>
-							<img class="user-img ml-2">
-							<label class="custom-control-label" for="radio1"><span class="ml-2" [ngClass]="isWhatsappOfficial ? 'filter-selected':'filter-Unselected'" >{{channel.label}}</span></label>
-						  </div> -->
+
 				    </div>
 					<div class="modal-footer filterchannelsfooter">					  
 							<button type="button" class="submit-btn" aria-label="Close" (click)="filterQuickRes(); d('Cross click')">Apply</button>						  
@@ -265,16 +261,16 @@
 							<div class="campaigns_section_item_header">
 								<div>
 
-							<p class="title ellipsis">{{temp.Header}}</p>
-							<p class="start_time">Created On: <span>{{settingsService?.getDateTimeFormate(temp.created_at)}}</span></p>
-							<p class="start_time" *ngIf="repliestemplateData?.updated_at">Modified On: <span>{{settingsService?.getDateTimeFormate(temp.updated_at)}}</span></p>
-							<p><img  class="icon" src="../../../../assets/img/teambox/whatsapp-icon-l.svg" />{{temp.Channel}}</p>
+							<p class="title ellipsis">{{temp?.Header}}</p>
+							<p class="start_time">Created On: <span>{{settingsService?.getDateTimeFormate(temp?.created_at)}}</span></p>
+							<p class="start_time" *ngIf="repliestemplateData?.updated_at">Modified On: <span>{{settingsService?.getDateTimeFormate(temp?.updated_at)}}</span></p>
+							<p><img  class="icon" src="../../../../assets/img/teambox/whatsapp-icon-l.svg" />{{temp?.Channel}}</p>
 							<div class="campaigns_section_item_statics">
 								<div>
 									<div class="d-flex user-img align-items-center">
 									<img [src]="profilePicture" *ngIf="profilePicture"/>
-									<div class="img" *ngIf="!profilePicture">{{apiService.getInitials(temp.created_By)}}</div>
-									<p class="ellipsis w-170">{{temp.created_By}}</p></div>
+									<div class="img" *ngIf="!profilePicture">{{apiService.getInitials(temp?.created_By)}}</div>
+									<p class="ellipsis w-170">{{temp?.created_By}}</p></div>
 									<p><span>Created By</span></p>
 								</div>
 							</div>

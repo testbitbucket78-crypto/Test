@@ -1,5 +1,4 @@
 import { Component, OnInit } from '@angular/core';
-import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
 import { addCustomFieldsData, customFieldFormData } from 'Frontend/dashboard/models/settings.model';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { SettingsService } from 'Frontend/dashboard/services/settings.service';
@@ -42,16 +41,14 @@ export class CustomFieldsComponent implements OnInit {
 
 
 
-  // Drop(event: CdkDragDrop<string[]>) {
-  //     moveItemInArray(this.dynamicFieldData, event.previousIndex, event.currentIndex);
-  //   } 
+
 
     ngOnInit(): void {
         this.isLoading = true;
         this.spId = Number(sessionStorage.getItem('SP_ID'));
         this.getCustomFieldsData();
         this.addCustomFieldsOption();
-        //setTimeout(()=>{this.getPaging()},2000);
+
     }
     private searchFilterPipe = new SearchfilterPipe(); 
     constructor(private formBuilder:FormBuilder,public settingsService:SettingsService,) {
@@ -67,10 +64,10 @@ export class CustomFieldsComponent implements OnInit {
 
 toggleActiveState(checked: boolean, ID:number) {
    let isStatus = checked ? 1 : 0;
-   console.log(isStatus,'Checked!')
+
    let statusData = <any>{};
    let id = ID;
-   console.log(id ,'ID')
+
    statusData.id = id;
    statusData.Status = isStatus;
    if(!checked)
@@ -101,28 +98,10 @@ toggleActiveState(checked: boolean, ID:number) {
  toggleSideBar(data:any){
   this.selectedCustomField = data
   this.showSideBar =!this.showSideBar;
-  // let id = data?.id
-  //   if(id!=0){
-  //     this.showSideBar =!this.showSideBar;
-  //   }
+
  }
 
-// searchCustomField(event:any){
-//   let searchKey = event.target.value
-//   if(searchKey.length>2){
-//   let allList:any = this.customFieldData
-//   let FilteredArray:any = [];
-//   for(let i=0;i<allList.length;i++){
-//     let content = allList[i].displayName.toLowerCase()
-//       if(content.indexOf(searchKey.toLowerCase()) !== -1){
-//         FilteredArray.push(allList[i])
-//       }
-//   }    this.dynamicFieldData = FilteredArray
-//     } 
-//       else {
-//         this.dynamicFieldData = this.customFieldData
-//       }
-// }
+
 
 addCustomFieldsOption(){
   this.addCustomField.push({
@@ -164,7 +143,6 @@ getCustomFieldsData() {
   this.settingsService.getNewCustomField(this.spId).subscribe(response => {
     this.isLoading = false;
     this.customFieldData = response.getfields;
-    console.log(this.customFieldData);  
     this.getDefaulltFieldData();
     this.getDynamicFieldData();
     this.getPaging();
@@ -184,7 +162,7 @@ getDefaulltFieldData() {
      const filteredFields:any = this.customFieldData.filter(
         (field:any) => defaultFieldNames.includes(field.ActuallName));
         this.defaultFieldsData = filteredFields;
-        console.log(this.defaultFieldsData)
+
 }
 
 
@@ -192,7 +170,7 @@ getDynamicFieldData() {
   const defaultFieldNames =["Name", "Phone_number", "emailId", "ContactOwner", "OptInStatus","tag"];
        this.dynamicFieldData = this.customFieldData.filter(
        (field:any) => !defaultFieldNames.includes(field.ActuallName));
-       console.log(this.dynamicFieldData)
+
 }
 
 saveNewCustomField() {
@@ -260,15 +238,12 @@ let CustomFieldData:addCustomFieldsData = <addCustomFieldsData>{};
 
 patchFormDataValue() {
   const data = this.selectedCustomField;
-  console.log(data);
   let id = data.id;
   for(let prop in data){
     let value = data[prop as keyof typeof data];
     if(this.customFieldForm.get(prop))
     this.customFieldForm.get(prop)?.setValue(value);
-    console.log(this.customFieldForm.get('type')?.value)
     this.ID=id;
-    console.log(this.ID);
   }  
   let options= JSON.parse(data?.dataTypeValues);
   this.addCustomField = [];
@@ -303,7 +278,6 @@ toggleDeletePopup() {
 deleteCustomField() {
 
   let id = this.selectedCustomField?.id;
-  console.log(id);
   this.settingsService.deleteCustomField(id,this.spId)
   
   .subscribe(result =>{

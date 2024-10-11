@@ -59,16 +59,14 @@
                             <div class="card-desc">Configured Number : {{ detail?.connected_id}}</div>
                             <div class="d-flex align-items-center p-1">
                                 <!-- <div class="card-desc">Channel Id: {{ detail.id}}</div> -->
-                                <div *ngIf="!detail.channel_status" class="card-desc">
+                                <div *ngIf="!detail?.channel_status" class="card-desc">
                                   <img src="../../../../assets/img/settings/not-connected.svg" alt="error" />Disconnected</div>
-                                <div *ngIf="detail.channel_status" class="card-desc">
+                                <div *ngIf="detail?.channel_status" class="card-desc">
                                   <img src="../../../../assets/img/settings/connected.svg" alt="error" />Connected</div>
-                                  <button [ngClass]="{'disableBtn': detail.channel_status}" class="account-btn h-33" [disabled]="detail.channel_status"  (click)="openDiv()">Connect</button>
+                                  <button [ngClass]="{'disableBtn': detail?.channel_status}" class="account-btn h-33" [disabled]="detail?.channel_status"  (click)="openDiv()">Connect</button>
                             </div>
                         </div>
-                        <!-- <div  >
-                        <img src="../../../../assets/img/Setting.png" >
-                    </div> -->
+
                     </div>
                 </div>
                 </div>

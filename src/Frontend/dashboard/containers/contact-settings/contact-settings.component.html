@@ -90,9 +90,9 @@
                   class="row justify-content-center  notification-content" (click)="toggleSideBar(taglist)">
                     <div class="col-sm-12 d-flex py-3 text-center border-bottom" role="button">
 
-                        <div class="header-col text-center"><p [ngClass]="{'color-dots': true}" [style.background]="taglist.TagColour"></p></div>
-                        <div class="header-col font-weight-bolder">{{ taglist.TagName }}</div>
-                        <div class="header-col">{{ taglist.tag_count}}</div>
+                        <div class="header-col text-center"><p [ngClass]="{'color-dots': true}" [style.background]="taglist?.TagColour"></p></div>
+                        <div class="header-col font-weight-bolder">{{ taglist?.TagName }}</div>
+                        <div class="header-col">{{ taglist?.tag_count}}</div>
                    </div>
                 </div>
             </ng-template>

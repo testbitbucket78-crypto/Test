@@ -50,7 +50,7 @@ export class DashboardComponent implements OnInit {
         this.getdashboardAgents();
         this.getRecentConversation();
         this.getAvailableAmount();
-        this.Name = (JSON.parse(sessionStorage.getItem('loginDetails')!)).name;
+        this.Name = (JSON.parse(sessionStorage.getItem('loginDetails')!))?.name;
         this.SPID = Number(sessionStorage.getItem('SP_ID'));
         this.clientAuthentication();
        
@@ -80,19 +80,19 @@ export class DashboardComponent implements OnInit {
         }
      }
      clientAuthentication(){
-        const navigation = history.state
+        const navigation = history?.state
         if (navigation?.message == 'Logged In') {
             let input = {
                 spid: this.SPID
             };
             setTimeout(() => {
             this.settingsService.clientAuthenticated(input).subscribe(response => {
-                if (response.status === 200) {
-                    console.log(response.message);
+                if (response?.status === 200) {
+                    console.log(response?.message);
                 }
-                if (response.status === 404) {
-                    console.log(response.message);
-                    this.whatsAppDisplay = response.result
+                if (response?.status === 404) {
+                    console.log(response?.message);
+                    this.whatsAppDisplay = response?.result
                     this.showToaster('Channel not connected', 'error');
                 }
             });
@@ -105,14 +105,14 @@ export class DashboardComponent implements OnInit {
         this.apiService.dashboardSubscribers(sPid).subscribe(data => {
             this.dashboard = data;
             for (var i = 0; i < this.dashboard.length; i++) {
-                if (this.dashboard[i].OptInStatus === 'Total Contacts') {
-                    this.totalContacts = this.dashboard[i].count;
+                if (this.dashboard[i]?.OptInStatus === 'Total Contacts') {
+                    this.totalContacts = this.dashboard[i]?.count;
                 }
-                if (this.dashboard[i].OptInStatus === 'Yes') {
-                    this.activeContacts = this.dashboard[i].count;
+                if (this.dashboard[i]?.OptInStatus === 'Yes') {
+                    this.activeContacts = this.dashboard[i]?.count;
                 }
-                if (this.dashboard[i].OptInStatus === 'No') {
-                    this.inactiveContacts = this.dashboard[i].count;
+                if (this.dashboard[i]?.OptInStatus === 'No') {
+                    this.inactiveContacts = this.dashboard[i]?.count;
                 }
             }
             
@@ -123,14 +123,14 @@ export class DashboardComponent implements OnInit {
         this.apiService.dashboardInteractions(sPid).subscribe(data => {
             this.interactions = data;
             for (var i = 0; i < this.interactions.length; i++) {
-                if (this.interactions[i].interaction_status === 'Resolved') {
-                    this.closedInteractions = this.interactions[i].count;
+                if (this.interactions[i]?.interaction_status === 'Resolved') {
+                    this.closedInteractions = this.interactions[i]?.count;
                 }
-                if (this.interactions[i].interaction_status === 'Open') {
-                    this.openInteractions = this.interactions[i].count;
+                if (this.interactions[i]?.interaction_status === 'Open') {
+                    this.openInteractions = this.interactions[i]?.count;
                 }
-                if (this.interactions[i].interaction_status === 'Total Interactions') {
-                    this.totalInteractions = this.interactions[i].count;
+                if (this.interactions[i]?.interaction_status === 'Total Interactions') {
+                    this.totalInteractions = this.interactions[i]?.count;
                 }
             }
         });
@@ -141,17 +141,17 @@ export class DashboardComponent implements OnInit {
 
             this.campaigns = data;
             for (var i = 0; i < this.campaigns.length; i++) {
-                if (this.campaigns[i].STATUS == '1') {
-                    this.scheduledCampaign = this.campaigns[i].COUNT
+                if (this.campaigns[i]?.STATUS == '1') {
+                    this.scheduledCampaign = this.campaigns[i]?.COUNT
                 }
-                if (this.campaigns[i].STATUS == '3') {
-                    this.completedCampaign = this.campaigns[i].COUNT
+                if (this.campaigns[i]?.STATUS == '3') {
+                    this.completedCampaign = this.campaigns[i]?.COUNT
                 }
-                if (this.campaigns[i].STATUS == '2') {
-                    this.runningCampaign = this.campaigns[i].COUNT
+                if (this.campaigns[i]?.STATUS == '2') {
+                    this.runningCampaign = this.campaigns[i]?.COUNT
                 }
-                if (this.campaigns[i].STATUS == '0') {
-                    this.draftCampaign = this.campaigns[i].COUNT
+                if (this.campaigns[i]?.STATUS == '0') {
+                    this.draftCampaign = this.campaigns[i]?.COUNT
                 }
             }
 
@@ -164,14 +164,14 @@ export class DashboardComponent implements OnInit {
             
             this.agents = data;
             for (var i = 0; i < this.agents.length; i++) {
-                if (this.agents[i].IsActive === 'Total Agents') {
-                    this.totalAgents = this.agents[i].count;
+                if (this.agents[i]?.IsActive === 'Total Agents') {
+                    this.totalAgents = this.agents[i]?.count;
                 }
-                if (this.agents[i].IsActive === '1') {
-                    this.activeAgents = this.agents[i].count;
+                if (this.agents[i]?.IsActive === '1') {
+                    this.activeAgents = this.agents[i]?.count;
                 }
-                if (this.agents[i].IsActive === '0') {
-                    this.inactiveAgents = this.agents[i].count;
+                if (this.agents[i]?.IsActive === '0') {
+                    this.inactiveAgents = this.agents[i]?.count;
                 }
             }
 
@@ -193,7 +193,6 @@ export class DashboardComponent implements OnInit {
                 item.nameInitials = nameInitials;
             });
         
-            console.log(this.recentConversation);
         });
         
     
@@ -216,7 +215,6 @@ export class DashboardComponent implements OnInit {
             this.isLoading = false;
             let amountAvilable = response?.AvailableAmout;
             this.availableAmount = amountAvilable?.toFixed(2);
-            console.log(this.availableAmount)
       });
     }
 

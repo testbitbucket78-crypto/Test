@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { campaignAlertUser,RolesData, campaignDataResponsePost, campaignFormData, workingData, workingDataResponsePost, workingFormData } from '../../models/settings.model';
 import { isNullOrUndefined } from 'is-what';
 import { SettingsService } from '../../services/settings.service';
-import { FormControl, FormGroup } from '@angular/forms';
+import { FormGroup } from '@angular/forms';
 declare var $:any;
 @Component({
   selector: 'sb-campaign-settings',
@@ -13,7 +13,7 @@ export class CampaignSettingsComponent implements OnInit {
   selectedTab:number = 1;
   daysList=['Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday'];
 
-  //daysList=[{day:'Monday',isDisabled: false},{day:'Tuesday',isDisabled: false},{day:'Wednesday',isDisabled: false},{day:'thursday',isDisabled: false},{day:'Friday',isDisabled: false},{day:'Saturday',isDisabled: false},{day:'Saturday',isDisabled: false}];
+
   dropdownSettings = {
     singleSelection: false,
     idField: 'day',
@@ -107,7 +107,7 @@ campaignTestData:any;
     .subscribe((result:any) =>{
       if(result){
         this.campaignAlertData = result?.getCampaignAlerts;  
-        console.log(result);
+
       }
   
     })
@@ -119,7 +119,7 @@ campaignTestData:any;
       this.isLoading = false;
       if(result){
         this.campaignTestData = result?.getCampaignTest; 
-        console.log(result);
+
       }
   
     })
@@ -137,7 +137,7 @@ campaignTestData:any;
         timingData.forEach((data:any)=>{
           let flag = false;
           this.workingData.forEach(item=>{
-            if(data.start_time ==item.start_time && data.end_time ==item.end_time){
+            if(data.start_time ==item?.start_time && data?.end_time ==item?.end_time){
               item.day.push(data.day);
               flag =  true;
             }
@@ -145,10 +145,10 @@ campaignTestData:any;
           if(flag == false){
             let dayArr:string[] =[];
             dayArr.push(data.day);
-            this.workingData.push({day:dayArr,start_time:data.start_time,end_time:data.end_time})
+            this.workingData.push({day:dayArr,start_time:data?.start_time,end_time:data?.end_time})
           }
         })
-        console.log(this.workingData);
+
       }
   
     })
@@ -162,10 +162,9 @@ campaignTestData:any;
     this._settingsService.saveCampaignTiming(campaignResponse)
     .subscribe(result =>{
       if(result){
-        console.log(result);
         this.getCampaignTimingList();
         $("#workingHourModal").modal('hide');
-        //this.workingData = result?.result;
+
       }
     })
   }
@@ -175,11 +174,10 @@ campaignTestData:any;
     this._settingsService.updateCampaignData(campaignAlertData)
     .subscribe(result =>{
       if(result){
-        console.log(result);
         this.getCampaignAlertData();
         this.selectedUser = [];
         $("#teamsModal").modal('hide');
-        //this.workingData = result?.result;
+
       }
     })
   }
@@ -189,11 +187,10 @@ campaignTestData:any;
     this._settingsService.updateCampaignTestData(campaignAlertData)
     .subscribe(result =>{
       if(result){
-        console.log(result);
         this.getCampaignTestData();
         this.selectedUser = [];
         $("#teamsModal").modal('hide');
-        //this.workingData = result?.result;
+
       }
     })
   }
@@ -212,8 +209,6 @@ campaignTestData:any;
   copyCampaignTimingFormValues(){
     let campaignResponse:campaignDataResponsePost = <campaignDataResponsePost>{};
     campaignResponse.sp_id = this.sp_Id; 
-    // campaignResponse.days = this.workingFormData;  
-    // console.log(this.workingFormData);
     campaignResponse.days = [];
     this.workingFormData.forEach(item=>{
       if(item.day?.length >0){
@@ -240,14 +235,9 @@ campaignTestData:any;
 
   searchData(srchText:string){
     this.alertUsers =[];
-    // this.rolesListinit.forEach((item:any) =>{
-    //   if(item.RoleName.includes(srchText))
-    //   this.rolesList.push(item);
-    // })
   }
 
   rowClicked = (event: any) => {
-    console.log(event);
     this.roleData = event.data;
     this.roleName = this.roleData?.RoleName;
   };  
@@ -270,10 +260,8 @@ campaignTestData:any;
   
   }
   getSelectedRoles(): any[] {
-    // Assuming userDetailForm.controls.UserType.value contains the selected role ID
     const selectedRoleID = this.userDetailForm.controls.UserType.value;
   
-    // Filter rolesList to get the selected role
     const selectedRoles = this.rolesList.filter((item:any) => item.roleID === selectedRoleID);
   
     return selectedRoles;
