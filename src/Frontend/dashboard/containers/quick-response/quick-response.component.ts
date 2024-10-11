@@ -23,7 +23,7 @@ export class QuickResponseComponent implements OnInit {
   spid!:number;
   getTemplate:any;
   searchText:string='';
-  // templates!:any[];
+
   ID:number=0;
   data: any;
   repliestemplateData!:repliestemplateList;
@@ -36,7 +36,7 @@ export class QuickResponseComponent implements OnInit {
   selectedType: string = 'text';
   numberCount: number = 0;
   rolesList:any;
-  // templatesdata:any;
+
   Links:any;
   TemplateName:any;
   BodyText:any;
@@ -44,7 +44,7 @@ export class QuickResponseComponent implements OnInit {
   result:any;
   Header:any;
   isTemplate:any;
-  // templatesMessageData:any;
+
   ischannel='';
   isWhatsappWeb:boolean = false;
   isWhatsappOfficial:boolean = false;
@@ -91,8 +91,8 @@ export class QuickResponseComponent implements OnInit {
   ngOnInit(): void {
     this.isLoading = true;
     this.spid = Number(sessionStorage.getItem('SP_ID'));
-    this.created_By = (JSON.parse(sessionStorage.getItem('loginDetails')!)).name;
-    this.profilePicture = JSON.parse(sessionStorage.getItem('loginDetails')!).profile_img;
+    this.created_By = (JSON.parse(sessionStorage.getItem('loginDetails')!))?.name;
+    this.profilePicture = JSON.parse(sessionStorage.getItem('loginDetails')!)?.profile_img;
     this.Template();
     this.usertemplateForm=this.prepareUserForm();
     this.getformvalue();
@@ -106,10 +106,10 @@ export class QuickResponseComponent implements OnInit {
 		 if(response){
 			 if (response && response.whatsAppDetails) {
 				this.channelOption = response.whatsAppDetails.map((item : any)=> ({
-				  value: item.id,
-				  label: item.channel_id,
-				  connected_id: item.connected_id,
-          channel_status: item.channel_status
+				  value: item?.id,
+				  label: item?.channel_id,
+				  connected_id: item?.connected_id,
+          channel_status: item?.channel_status
 				}));
 			  }
 		 }
@@ -119,8 +119,8 @@ export class QuickResponseComponent implements OnInit {
         event.stopPropagation();
       }
       selectChannel(channel:any){
-      this.usertemplateForm.get('channel_id')?.setValue(channel.value);
-      this.usertemplateForm.get('Channel')?.setValue(channel.label);
+      this.usertemplateForm.get('channel_id')?.setValue(channel?.value);
+      this.usertemplateForm.get('Channel')?.setValue(channel?.label);
       this.ShowChannelOption=false
 	  }
 
@@ -213,7 +213,7 @@ $('#welcomGreeting').modal('hide');
   .subscribe((response:any) =>{
   if(response){
   let attributeListData = response?.result;
-  this.attributesList = attributeListData.map((attrList:any) => attrList.displayName);
+  this.attributesList = attributeListData.map((attrList:any) => attrList?.displayName);
   }
   });
   }
@@ -222,17 +222,14 @@ onEditorChange(value: string | null): void {
     this.usertemplateForm.get('BodyText')?.setValue(value);
 }
 
-onValueChange(val:any){
-console.log(val);
-}
 
 filterQuickRes(){
   if(this.isWhatsappWeb && this.isWhatsappOfficial)
     this.templates = this.initTemplates
   else if(!this.isWhatsappWeb && this.isWhatsappOfficial)
-    this.templates = this.initTemplates.filter(item=> item.Channel == 'WA API')
+    this.templates = this.initTemplates.filter(item=> item?.Channel == 'WA API')
   else if(this.isWhatsappWeb && !this.isWhatsappOfficial)
-    this.templates = this.initTemplates.filter(item=> item.Channel == 'WA Web')
+    this.templates = this.initTemplates.filter(item=> item?.Channel == 'WA Web')
   else
     this.templates = this.initTemplates;
 
@@ -242,9 +239,8 @@ filterQuickRes(){
   Template(){
     this.apiService.getTemplateData(this.spid,0).subscribe(response => {
       this.isLoading = false;
-      this.templates=response.templates;
-      this.initTemplates=response.templates;
-      console.log(this.templates);
+      this.templates=response?.templates;
+      this.initTemplates=response?.templates;
     });    
   }
   
@@ -261,7 +257,7 @@ filterQuickRes(){
 
   saveTemplate(){
     let val = this.usertemplateForm.controls.Header.value;
-    let temp = this.templates.filter(item => item.Header == val)[0];
+    let temp = this.templates.filter(item => item?.Header == val)[0];
     if(temp && this.ID != temp?.ID)
     this.showToaster('Quick response already exist with this name !','error');
     else{
@@ -289,7 +285,6 @@ filterQuickRes(){
     userData.spid=this.spid;
     userData.ID=this.ID;
     userData.created_By=this.created_By;
-    console.log(this.created_By);
     userData.Links=this.usertemplateForm.controls.Links.value;
     userData.Links = this.selectedPreview;
     userData.TemplateName=this.usertemplateForm.controls.TemplateName.value;
@@ -314,10 +309,8 @@ filterQuickRes(){
 
   gettemplateByID(data:any) {
     this.repliestemplateData=data;
-    console.log(this.repliestemplateData);
     const a= this.repliestemplateData.Links;
     this.messagemedia=a;
-    // console.log(templatesdata);
 }
 
 
@@ -365,7 +358,7 @@ removeValue() {
 
 
 onFileChange(event: any) {
-  let files: FileList = event.target.files;
+  let files: FileList = event?.target?.files;
   this.saveVideoAndDocument(files);
 }
 
@@ -401,7 +394,6 @@ saveVideoAndDocument(files: FileList) {
             let responseData: any = uploadStatus;
             if (responseData.filename) {
                 this.selectedPreview = responseData.filename.toString();
-                console.log(this.selectedPreview);
             }
             this.loadingVideo = false;
         },
@@ -423,7 +415,6 @@ truncateFileName(fileName: string, maxLength: number): string {
 }
 
 editQuickResponse(){
-  console.log(this.repliestemplateData);
  this.ID = this.repliestemplateData.ID;
  this.usertemplateForm.controls.Links.setValue(this.repliestemplateData.Links);
  this.usertemplateForm.controls.TemplateName.setValue(this.repliestemplateData.TemplateName);
@@ -433,7 +424,6 @@ editQuickResponse(){
  this.BodyText = this.repliestemplateData.BodyText;
  this.selectedPreview = this.repliestemplateData.Links;
  this.selectedType = this.repliestemplateData?.media_type;
- console.log(this.usertemplateForm);
 }
 
 getCharacterCount(val:string) {
@@ -442,8 +432,7 @@ getCharacterCount(val:string) {
 
 checkQuickResponseName(e:any){
 let val = e.target.value;
-let temp = this.templates.filter(item => item.Header == val)[0];
-console.log(temp)
+let temp = this.templates.filter(item => item?.Header == val)[0];
 if(temp && this.ID != temp.ID)
 this.showToaster('Quick response already exist with this name !','error');
 

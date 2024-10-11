@@ -177,13 +177,18 @@ async function extractDataFromMessage(body) {
     let smsId = body.entry[0].changes[0].value.statuses[0].id
     let smsTime = body.entry[0].changes[0].value.statuses[0].timestamp
     var d = new Date(smsTime * 1000).toUTCString();
-
+    
     const message_time = moment.utc(d).format('YYYY-MM-DD HH:mm:ss');
     let displayPhoneNumber = body.entry[0].changes[0].value.metadata.display_phone_number
     let customerPhoneNumber = body.entry[0].changes[0].value.statuses[0].recipient_id
+    let failedMessageReason ='';
+    if(body.entry[0].changes[0].value.statuses[0].errors?.length >0){
+      failedMessageReason = body.entry[0].changes[0].value.statuses[0]?.errors[0].error_data.details
+    }
+   
     //console.log("messageStatus ,displayPhoneNumber ,customerPhoneNumber " )
     // console.log(messageStatus ,displayPhoneNumber ,customerPhoneNumber)
-    let updatedStatus = await saveSendedMessageStatus(messageStatus, displayPhoneNumber, customerPhoneNumber, smsId, message_time)
+    let updatedStatus = await saveSendedMessageStatus(messageStatus, displayPhoneNumber, customerPhoneNumber, smsId, message_time,failedMessageReason)
   }
 
 }
@@ -397,7 +402,7 @@ async function saveImageFromReceivedMessage(from, message, phone_number_id, disp
   })
 }
 
-async function saveSendedMessageStatus(messageStatus, displayPhoneNumber, customerPhoneNumber, smsId, createdTime) {
+async function saveSendedMessageStatus(messageStatus, displayPhoneNumber, customerPhoneNumber, smsId, createdTime,failedMessageReason) {
 
   // let getMessageId = await db.excuteQuery(process.env.messageIdQuery, []);
   // console.log(getMessageId)
@@ -458,5 +463,15 @@ WHERE customerId IN (SELECT customerId FROM EndCustomer WHERE Phone_number =? an
     // notify.NotifyServer(displayPhoneNumber, true)
     let ack3InId = await db.excuteQuery(notifyInteraction, [customerPhoneNumber, spid])
     notify.NotifyServer(displayPhoneNumber, false, ack3InId[0]?.InteractionId, 'Out', 3, 0)
+  }else if (messageStatus == 'failed'){
+    let campaignReadQuery = 'UPDATE CampaignMessages set status=3 where phone_number =? and status = 0  and messageTemptateId =?';
+    let campaignRead = await db.excuteQuery(campaignReadQuery, [customerPhoneNumber, smsId])
+    const smsupdate = `UPDATE Message SET msg_status = 9 ,failedMessageReason=? where Message_template_id =? and SPID=?`
+    //  console.log(smsupdate)
+    let resd = await db.excuteQuery(smsupdate, [failedMessageReason,smsId, spid])
+    //   console.log("read", resd?.affectedRows)
+    // notify.NotifyServer(displayPhoneNumber, true)
+    let ack3InId = await db.excuteQuery(notifyInteraction, [customerPhoneNumber, spid])
+    notify.NotifyServer(displayPhoneNumber, false, ack3InId[0]?.InteractionId, 'Out', 9, 0)
   }
 }

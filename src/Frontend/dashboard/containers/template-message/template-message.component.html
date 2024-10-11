@@ -39,19 +39,19 @@
                     <div  *ngFor="let item of filteredTemplatesData  | searchfilter:searchText" class="campaigns_section_item" (click)="toggleTemplatesData(item)">
                         <div class="campaigns_section_item_header">
                             <label [style.background]="statusColors[item.status]">{{item.status}}</label>
-                            <span>id: {{item.ID}}</span>
+                            <span>id: {{item?.ID}}</span>
                         </div>
-                        <p class="pb-2 title ellipsis">{{getLimitedMessageText(item.TemplateName)}}</p>
-                        <p class="start_time">Created On: <span>{{settingsService?.getDateTimeFormate(item.created_at )}}</span></p>
-                        <p class="start_time">Modified On: <span>{{ item.updated_at ? (settingsService?.getDateTimeFormate(item.updated_at)) : 'NA' }}</span></p>
-                        <p class="pt-2"><img  class="icon" src="../../../../assets/img/teambox/whatsapp-icon-l.svg" />{{item.Channel}}</p>
+                        <p class="pb-2 title ellipsis">{{getLimitedMessageText(item?.TemplateName)}}</p>
+                        <p class="start_time">Created On: <span>{{settingsService?.getDateTimeFormate(item?.created_at )}}</span></p>
+                        <p class="start_time">Modified On: <span>{{ item?.updated_at ? (settingsService?.getDateTimeFormate(item?.updated_at)) : 'NA' }}</span></p>
+                        <p class="pt-2"><img  class="icon" src="../../../../assets/img/teambox/whatsapp-icon-l.svg" />{{item?.Channel}}</p>
                         <div class="campaigns_section_item_statics">
-                            <div><p>{{item.Category}}</p><p><span>Category</span></p></div>
+                            <div><p>{{item?.Category}}</p><p><span>Category</span></p></div>
                             <div>
                                 <div class="d-flex user-img align-items-center">
                                 <img  *ngIf="profilePicture" [src]="profilePicture"/>
-                                <div class="img" *ngIf="!profilePicture">{{apiService.getInitials(item.created_By)}}</div>
-                                <p class="ellipsis w-110">{{item.created_By}}</p>
+                                <div class="img" *ngIf="!profilePicture">{{apiService.getInitials(item?.created_By)}}</div>
+                                <p class="ellipsis w-110">{{item?.created_By}}</p>
                               </div>
                               <p><span>Created By</span></p>
                             </div>
@@ -184,18 +184,18 @@
             <div *ngIf="galleryData.length>0">
             <div *ngFor="let gallerydata of filteredGalleryData  | searchfilter:searchTextGallery" class="px-4 campaigns_section_item" (click)="toggleGalleryData(gallerydata)">
                 <div class="gallery_section_item_header">
-                    <label>{{gallerydata.topic}}</label>
+                    <label>{{gallerydata?.topic}}</label>
                 </div>
-                <p class="py-2 text-capitalize title">{{gallerydata.TemplateName}}</p>
+                <p class="py-2 text-capitalize title">{{gallerydata?.TemplateName}}</p>
              
                 <div class="campaigns_section_item_statics">
-                    <div class="py-2"><p>{{gallerydata.Language}}</p><p><span>Language</span></p></div>
-                    <div class="py-2"><p>{{gallerydata.Category}}</p><p><span>Category</span></p></div>         
+                    <div class="py-2"><p>{{gallerydata?.Language}}</p><p><span>Language</span></p></div>
+                    <div class="py-2"><p>{{gallerydata?.Category}}</p><p><span>Category</span></p></div>         
                 </div>
                 
               
                     <div class="d-flex py-1">
-                    <p>{{gallerydata.industry}}</p>
+                    <p>{{gallerydata?.industry}}</p>
                   </div>
                   <p><span>Industry</span></p>
             </div>
@@ -321,7 +321,7 @@
                         <input type="checkbox" [(ngModel)]="Topic.checked" class="custom-control-input" value={{Topic.value}} (click)="updateFilter($event,Topic)"
                           id="Topic{{i}}" >
                         <img class="user-img ml-2">
-                        <label class="custom-control-label" for="Topic{{i}}"> <span class="ml-2">{{Topic.label}}</span></label>
+                        <label class="custom-control-label" for="Topic{{i}}"> <span class="ml-2">{{Topic?.label}}</span></label>
                        
                       </div>
                     </div>
@@ -330,7 +330,7 @@
                           <input type="checkbox" [(ngModel)]="Status.checked" class="custom-control-input" value={{Status.value}} (click)="updateFilter($event,Status)"
                             id="Status{{i}}" >
                           <img class="user-img ml-2">
-                          <label class="custom-control-label" for="Status{{i}}"> <span class="ml-2">{{Status.label}}</span></label>
+                          <label class="custom-control-label" for="Status{{i}}"> <span class="ml-2">{{Status?.label}}</span></label>
                          
                         </div>
                       </div>
@@ -360,7 +360,7 @@
                         <input type="checkbox" class="custom-control-input" [(ngModel)]="Category.checked" value="{{Category.value}}" (click)="updateFilter($event,Category)"
                         id="Category{{i}}" >
                         <img class="user-img ml-2">
-                        <label class="custom-control-label" for="Category{{i}}"><span class="ml-2">{{Category.label}}</span></label>
+                        <label class="custom-control-label" for="Category{{i}}"><span class="ml-2">{{Category?.label}}</span></label>
                       </div>
                     </div>
                     <div *ngIf="selectedCategory == 3">
@@ -368,7 +368,7 @@
                         <input type="checkbox" class="custom-control-input" [(ngModel)]="Language.checked" value="{{Language.value}}" (click)="updateFilter($event,Language)"
                         id="Language{{i}}">
                         <img class="user-img ml-2">
-                        <label class="custom-control-label" for="Language{{i}}"><span class="ml-2">{{Language.label}}</span></label>
+                        <label class="custom-control-label" for="Language{{i}}"><span class="ml-2">{{Language?.label}}</span></label>
                       </div>
                     </div>
                   </div>
@@ -431,14 +431,14 @@
                     <h6 class="pt-1 pb-2">Category <span class="text-danger font-weight-bold">*</span></h6>
                     <select class="sel input-form" formControlName="Category" (change)="onCategoryChange($event)">
                         <option [disabled]="true" [selected]="true" [hidden]="true" [value]="null">Select category</option>
-                        <option *ngFor="let item of filterListCategory">{{item.label}}</option>
+                        <option *ngFor="let item of filterListCategory">{{item?.label}}</option>
                     </select>
                 </div>
                 <div class="p-1 msg-head">
                     <h6 class="pt-1 pb-2">Language <span class="text-danger font-weight-bold">*</span></h6>
                     <select class="sel input-form" formControlName="Language">
                         <option [disabled]="true" [selected]="true" [hidden]="true" [value]="null">Select language</option>
-                        <option *ngFor="let item of filterListLanguage">{{item.label}}</option>     
+                        <option *ngFor="let item of filterListLanguage">{{item?.label}}</option>     
                     </select>
                 </div>
             </div>

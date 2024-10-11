@@ -6,7 +6,6 @@ import { Router } from '@angular/router';
 import { AuthService } from './../../services';
 import { SettingsService } from 'Frontend/dashboard/services/settings.service';
 import { Validators } from '@angular/forms';
-import { isNullOrUndefined } from 'is-what';
 @Component({
     selector: 'sb-login',
     changeDetection: ChangeDetectionStrategy.OnPush,
@@ -27,6 +26,8 @@ export class LoginComponent implements OnInit {
     submitted = false;
     parentId = 0;
     isLoading!: boolean;
+    visible: boolean = true;
+    changetype: boolean = true;
 
     constructor(private apiService: AuthService, private router: Router, private formBuilder: FormBuilder, private settingsService:SettingsService,private cdr: ChangeDetectorRef) {
 
@@ -50,14 +51,12 @@ export class LoginComponent implements OnInit {
         this.apiService.login(this.loginformValue).subscribe(
             result => {
                 this.isLoading = false;
-                if (result.status === 200) {
-                    this.parentId = result.user.ParentId;
-                    sessionStorage.setItem('loginDetails', JSON.stringify(result.user));
-                    sessionStorage.setItem('SP_ID', result.user.SP_ID);
-                    localStorage.setItem('bearerToken',result.token);
-                    sessionStorage.setItem('SPPhonenumber',result.spPhoneNumber);
-                    console.log(result, '-------token');
-                    console.log(localStorage.getItem('bearerToken'));
+                if (result?.status === 200) {
+                    this.parentId = result?.user?.ParentId;
+                    sessionStorage.setItem('loginDetails', JSON.stringify(result?.user));
+                    sessionStorage.setItem('SP_ID', result?.user?.SP_ID);
+                    localStorage.setItem('bearerToken',result?.token);
+                    sessionStorage.setItem('SPPhonenumber',result?.spPhoneNumber);
 
                     var spid = Number(sessionStorage.getItem('SP_ID'));
 
@@ -71,18 +70,17 @@ export class LoginComponent implements OnInit {
 
                             this.settingsService.subprivilages = response.getRoles[0]?.subPrivileges?.split(',');
                             this.router.navigate(['dashboard'], { state: { message: 'Logged In' } });
-                            console.log(response.getRoles[0]?.subPrivileges);
                         }
-                        if (response.status === 404) {
-                            console.log(response.message);
+                        if (response?.status === 404) {
+                            console.log(response?.message);
                         }
                     });
                     this.settingsService.clientAuthenticated(input).subscribe(response => {
-                        if (response.status === 200) {
-                            console.log(response.message);
+                        if (response?.status === 200) {
+                            console.log(response?.message);
                         }
-                        if (response.status === 404) {
-                            console.log(response.message);
+                        if (response?.status === 404) {
+                            console.log(response?.message);
                         }
                     });
                     
@@ -90,9 +88,9 @@ export class LoginComponent implements OnInit {
                         response => {
                             if ((Array.isArray(response) && response.length > 0) || (!Array.isArray(response) && response)) {
                                 if (this.parentId == 0 || this.parentId == null) {
-                                    sessionStorage.setItem('SPPhonenumber',result.user.mobile_number);
+                                    sessionStorage.setItem('SPPhonenumber',result?.user?.mobile_number);
                                 } else {
-                                    sessionStorage.setItem('SPPhonenumber',response[0].mobile_number);
+                                    sessionStorage.setItem('SPPhonenumber',response[0]?.mobile_number);
                                 }
                             }
                         });
@@ -133,12 +131,9 @@ export class LoginComponent implements OnInit {
         );
     }
     onVerification() {
-        console.log(this.loginForm.value);
         this.submitted = true;
     }
 
-    visible: boolean = true;
-    changetype: boolean = true;
 
     viewpass() {
         this.visible = !this.visible;

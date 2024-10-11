@@ -28,10 +28,10 @@ app.post('/craeteQRcode', async (req, res) => {
         let isProcessing = processStart(spid); // To check Process for SPID 
         console.log(`current: ${spid}, current processSet:`, processSet);
         if(!isProcessing){
-            return res.status(409).json({ value: 'QR Generation already in progress for this spId' });
+            return res.status(409).json({ value: 'Please wait for 60 seconds as the previous request is closing down' });
           }
         let response = await web.createClientInstance(spid, phoneNo);
-        if(response?.status){
+        if(response?.status != 200){
             processSet.delete(spid);
             console.log(`Deleted spid: ${spid}, current processSet:`, processSet);
         }
@@ -65,7 +65,7 @@ function processStart(spId) {
         processSet.delete(spId);
         console.log(`Process timed out for spId: ${spId}`);
        // processTimeouts.delete(spId); // if any case the try and catch block dont get triggered 
-    }, 30000); 
+    }, 60000); 
     return true;
   }
 
@@ -76,8 +76,8 @@ app.post('/sendMessage', async (req, res) => {
         link = req.body.link
         text = req.body.text
         phoneNo = req.body.phoneNo
-        interaction_id = req.body.interaction_id,
-            msg_id = req.body.msg_id
+        interaction_id = req.body?.interaction_id,
+        msg_id = req.body?.msg_id
         spNumber = req.body?.spNumber
         let response = await web.sendMessages(spid, phoneNo, type, text, link, interaction_id, msg_id, spNumber);
         logger.info(`Response of webjs sendMessage API ${response,spid, phoneNo, type, text, link}`)

@@ -4,9 +4,9 @@ import { newTemplateFormData, quickReplyButtons, templateMessageData,} from 'Fro
 import { SettingsService } from 'Frontend/dashboard/services/settings.service';
 import { TeamboxService } from 'Frontend/dashboard/services';
 import { parsePhoneNumberFromString } from 'libphonenumber-js';
-import { ToolbarService, NodeSelection, LinkService, ImageService, EmojiPickerService, CountService} from '@syncfusion/ej2-angular-richtexteditor';
+import { ToolbarService, LinkService, ImageService, EmojiPickerService, CountService} from '@syncfusion/ej2-angular-richtexteditor';
 import { RichTextEditorComponent, HtmlEditorService } from '@syncfusion/ej2-angular-richtexteditor';
-import { isNullOrUndefined } from 'is-what';
+
 declare var $: any;
 @Component({
     selector: 'sb-template-message',
@@ -189,7 +189,6 @@ export class TemplateMessageComponent implements OnInit {
         const selection = window.getSelection();
         this.lastCursorPosition = selection?.getRangeAt(0) || null;
         $('#atrributemodal').modal('show');
-        //this.insertAtCursor();
         $('#newTemplateMessage').modal('hide');
     }
 
@@ -271,16 +270,15 @@ export class TemplateMessageComponent implements OnInit {
         this.showGalleryDetail = false;
     }
 
-    // selected category for filterTemplate
+
 
     setSelectedCategory(index: number) {
         this.selectedCategory = index;
     }
 
-    // selected Message for New Template Message Form
+
     showMessageType(type: string) {
         this.selectedType = type;
-        console.log(this.selectedType);
         this.newTemplateForm.get('Links')?.setValue(null);
         this.newTemplateForm.get('Header')?.setValue('');
         this.selectedPreview = '';
@@ -366,7 +364,6 @@ export class TemplateMessageComponent implements OnInit {
         this.clearFilters();
     }
 
-    // calculate the character count in input fields
 
     updateCharacterCount(event: Event, idx: number) {
         const inputElement = event.target as HTMLInputElement;
@@ -426,7 +423,6 @@ export class TemplateMessageComponent implements OnInit {
                         this.selectedPreview = responseData.awsUploadedId.toString();
                         this.metaUploadedId = responseData.metaUploadedId['h'];
                         this.newTemplateForm.get('Links')?.setValue(this.selectedPreview);
-                        console.log(this.selectedPreview);
                     }
                     this.loadingVideo = false;
             },
@@ -456,7 +452,6 @@ export class TemplateMessageComponent implements OnInit {
         return fileName;
       }
 
-    // remove form values
     removeValue() {
         this.selectedPreview = '';
         this.fileName='';
@@ -492,7 +487,7 @@ export class TemplateMessageComponent implements OnInit {
             this.BodyText = this.galleryMessageData.BodyText;
             this.selectedType = this.galleryMessageData.media_type;
             this.selectedPreview = this.galleryMessageData.Links;
-            // this.galleryMessageData.ID = 0;
+
         }
         else {
           this.galleryMessageData=<templateMessageData>{};
@@ -513,7 +508,6 @@ export class TemplateMessageComponent implements OnInit {
             this.selectedType= this.templatesMessageData.media_type;
             this.selectedPreview = this.templatesMessageData.Links;
             this.templatesMessageDataById = data;
-            console.log(this.templatesMessageDataById);
         } else {
             this.templatesMessageDataById = null;
             this.status= 'saved';
@@ -522,22 +516,18 @@ export class TemplateMessageComponent implements OnInit {
             this.selectedPreview='';
             this.newTemplateForm.reset();
             this.newTemplateForm.clearValidators();
-            console.log(this.templatesMessageDataById);
         }
     }
 
     getTemplatesData() {
-        // get templates data
         this.apiService.getTemplateData(this.spid, 1).subscribe(response => {
             this.isLoading = false;
             this.templatesData = response.templates;
             this.filteredTemplatesData = this.templatesData;
         });
 
-        //get gallery data
         this.apiService.getTemplateData(0, 2).subscribe(response => {
             this.galleryData = response.templates;
-            console.log(this.galleryData)
             this.filteredGalleryData = this.galleryData;
         });
     }
@@ -546,18 +536,14 @@ export class TemplateMessageComponent implements OnInit {
         if (event.target.checked) {
             filter['checked'] = true;
             let isChecked = filter.label
-            console.log(isChecked,'Currently Checked!')
-            console.log(filter.label + ' :: ' + event.target.value);
         } else {
             filter['checked'] = false;
-            console.log(filter.label + ' :: ' + event.target.value);
         }
     }
 
     onCategoryChange(event: any) {
         const selectedCategory = this.newTemplateForm.get('Category')?.value;
         this.Category = selectedCategory;
-        console.log(this.Category)
         if(selectedCategory=='Authentication') {
             this.category_id = 3
         }
@@ -581,10 +567,8 @@ export class TemplateMessageComponent implements OnInit {
     }
     saveTemplateNextStep() {
         let val = this.newTemplateForm.get('TemplateName')?.value;
-        //this.settingValue()
         
     let temp:any = this.templatesData.filter((item:any) => item.TemplateName == val)[0];
-    console.log(temp)
     if(temp && this.id != temp?.ID){
     this.showToaster('Template already exist with this name !','error');
     }else{
@@ -608,7 +592,6 @@ export class TemplateMessageComponent implements OnInit {
 checkTemplateName(e:any){
     let val = e.target.value;
     let temp:any = this.templatesData.filter((item:any) => item.TemplateName == val)[0];
-    console.log(temp)
     if(temp && this.id != temp?.ID)
     this.showToaster('Template already exist with this name !','error');
     
@@ -621,7 +604,7 @@ checkTemplateName(e:any){
                 this.apiService
                     .saveNewTemplateData(newTemplateFormData, this.selectedPreview)
                     .subscribe(response => {
-                        // add new template
+
                         if (response.status != 400) {
                             this.newTemplateForm.reset();
                             this.newTemplateForm.clearValidators();
@@ -642,7 +625,7 @@ checkTemplateName(e:any){
                 this.apiService
                     .saveNewTemplateData(newTemplateFormData, this.selectedPreview)
                     .subscribe(response => {
-                        // edit existing template
+                        
                         if (response.status != 400) {
                             this.newTemplateForm.reset();
                             this.newTemplateForm.clearValidators();
@@ -727,11 +710,10 @@ checkTemplateName(e:any){
        
             this.apiService.saveNewTemplateData(copyTemplateForm, this.selectedPreview)
             .subscribe(response => {
-                // copy existing template
+               
                 if (response) {
                     this.showCampaignDetail=false;
                     this.getTemplatesData();
-                    console.log('Template saved successfully', response);
                 }
             });
          }else{            
@@ -790,7 +772,6 @@ checkTemplateName(e:any){
                         buttons.push({type: "QUICK_REPLY",text: this.newTemplateForm.get(`quickreply${i}`)?.value})
                 }
             }else{
-                console.log(this.newTemplateForm.controls.displayPhoneNumber.value)
                 if(this.newTemplateForm.controls.buttonText.value){
                 buttons =[{
                     type: 'PHONE_NUMBER',
@@ -865,17 +846,15 @@ checkTemplateName(e:any){
           return `{{${counter++}}}`; 
         });
       }
-    // for template form
+    
     patchFormValue() {
         const data = this.templatesMessageData;
-        console.log(data,'data');
         const databyid = this.templatesMessageDataById;
         let ID = databyid.ID;
         for (let prop in data) {
             let value = data[prop as keyof typeof data];
             if (this.newTemplateForm.get(prop)){
                 if(prop == 'FooterText')
-                    console.log(value);
              this.newTemplateForm.get(prop)?.setValue(value);
             }
             this.id = ID;
@@ -929,7 +908,7 @@ checkTemplateName(e:any){
         });
     }
 
-    // Function to format the phone number using libphonenumber-js
+    
     formatPhoneNumber() {
         const phoneNumber = this.newTemplateForm.get('displayPhoneNumber')?.value;
         const countryCode = this.newTemplateForm.get('country_code')?.value;
@@ -960,7 +939,7 @@ checkTemplateName(e:any){
             content = this.chatEditor.value || '';
         }
 
-        //content = content.replace(/<p[^>]*>/g, '').replace(/<\/p>/g, '');
+       
         if(this.isHeaderAttribute){
             const regex = /\{\{[^{}]+\}\}/;
             if(regex.test(content)){
@@ -1039,14 +1018,13 @@ insertAtCursor(selectedValue: any) {
 
 		if (isVariableValue) {
 		  this.allVariablesList = this.getVariables(isVariableValue, "{{", "}}");
-		  console.log(this.allVariablesList);
           $('#newTemplateMessage').modal('hide');
           $('#newTemplateMessagePreview').modal('show');
       };
 
     }
 
-    /* GET ATTRIBUTE LIST  */
+    
     getAttributeList() {
         this._teamboxService.getAttributeList(this.spid).subscribe((response: any) => {
             if (response) {
@@ -1076,7 +1054,7 @@ insertAtCursor(selectedValue: any) {
 
     
 onContentChange() {
-    //const text = this.chatEditor?.value;
+   
     const container = document.createElement('div');
     container.innerHTML = this.chatEditor?.value;
     const text = container.innerText;
