@@ -185,14 +185,24 @@ $('#welcomGreeting').modal('hide');
 
   }
 
-  insertAtCursor(selectedValue:any) {
-  const editorElement = this.chatEditor.element.querySelector('.e-content');
-  const newNode = '<span contenteditable="false" class="e-mention-chip"><a _ngcontent-yyb-c67="" href="mailto:" title="">{{'+selectedValue+'}}</a></span>'
-  //const newNode = document.createElement('span');
-  //newNode.innerHTML =  '<span contenteditable="false" class="e-mention-chip"><a _ngcontent-yyb-c67="" href="mailto:" title="">{{'+selectedValue+'}}</a></span>';;
-  console.log("newNode data " +newNode);
-  const fragement =  this.lastCursorPosition?.createContextualFragment(newNode);
-  if(fragement) this.lastCursorPosition?.insertNode(fragement);
+
+  insertAtCursor(selectedValue: any) {
+    const spaceNode = document.createElement('span');
+    spaceNode.innerHTML = '&nbsp;'; 
+    spaceNode.setAttribute('contenteditable', 'true');
+      this.lastCursorPosition?.insertNode(spaceNode);
+      setTimeout(() => {
+          const range = document.createRange();
+          const selection = window.getSelection();
+          range.setStartAfter(spaceNode);  
+          range.setEndAfter(spaceNode); 
+  
+          selection?.removeAllRanges();
+          selection?.addRange(range);
+      }, 100);
+    const newNode = document.createElement('span');
+    newNode.innerHTML =  '<span contenteditable="false" class="e-mention-chip"><a _ngcontent-yyb-c67="" title="">{{'+selectedValue+'}}</a></span>';
+    this.lastCursorPosition?.insertNode(newNode);
   }
 
 

@@ -403,7 +403,7 @@
                 </div>
                 <div class="sel-type-text">
                     <textarea name="text-editor" formControlName="TemplateName" maxlength="512"rows="8"
-                    (change)="checkTemplateName($event)" placeholder="Enter template name in max 512 characters"></textarea>
+                    (change)="checkTemplateName($event)" (input)="onInputChange($event)" placeholder="Enter template name in max 512 characters. Only alphabets, numbers and underscore is allowed to enter."></textarea>
                 </div>
 
                 <div class="p-1 msg-head">
@@ -566,6 +566,7 @@
                    </ejs-richtexteditor>
                    <!-- (change)="onContentChange($event)" -->
                 </div>
+                <div><a href="https://developers.facebook.com/docs/whatsapp/message-templates/guidelines#common-rejection-reasons">Learn more about formatting in Message Template Guidelines</a></div>
               
                 <div class="d-flex justify-content-between align-items-center pt-3 pb-2 msg-head">
                     <h6>Footer Text<span>(Optional)</span></h6><div> <span class="characters-count">{{ getCharacterCount(5) }}</span><span>/60 Characters</span></div>
@@ -771,7 +772,7 @@
                 <h2>You are About to Submit</h2>
                 <p>Please confirm before submitting<br/> Template message<span class="px-1">{{getLimitedMessageText(this.TemplateName)}}</span></p>
                 <div class="d-flex justify-content-center confirm-modal delete_group_button">
-                    <button type="button" class="cancel-btn" aria-label="Close" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="cancel-btn" (click)="cancelSave()">Cancel</button>
                     <button type="button" class="delete-btn" aria-label="Close" (click)="saveNewTemplate()">Confirm</button>
                 </div>
             </div>

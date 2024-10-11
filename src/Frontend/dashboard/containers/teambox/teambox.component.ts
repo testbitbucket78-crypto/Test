@@ -278,7 +278,8 @@ public  fieldsData: { [key: string]: string } = { text: 'name' };
 		height: '50px'
 	  };
 	  isLoadingOnScroll!: boolean;
-	event='teamBox';
+	event='teamBox';	
+    lastCursorPosition: Range | null = null;
 	constructor(private http: HttpClient,private apiService: TeamboxService ,public settingService: SettingsService,public settingsService: SettingsService, config: NgbModalConfig, private modalService: NgbModal,private fb: FormBuilder,private elementRef: ElementRef,private renderer: Renderer2, private router: Router,private websocketService: WebsocketService,
 		public phoneValidator:PhoneValidationService, private datePipe:DatePipe,
 		private dashboardService: DashboardService,
@@ -797,9 +798,11 @@ ToggleInsertTemplateOption(){
 ToggleAttributesOption(){
 	if(this.selectedInteraction?.assignTo?.AgentId == this.uid || this.showChatNotes=='notes' ){
 		if((this.showChatNotes=='text' && this.selectedInteraction?.channel=='WA API' && this.selectedInteraction?.progressbar?.progressbarValue >0) ||(this.showChatNotes=='text' && this.selectedInteraction.channel=='WA Web') || this.showChatNotes=='notes' )
-		{
-	this.closeAllModal()
-	$("#atrributemodal").modal('show'); 
+		{			
+			const selection = window.getSelection();
+			this.lastCursorPosition = selection?.getRangeAt(0) || null;
+			this.closeAllModal()
+			$("#atrributemodal").modal('show'); 
 		}
 	}
 
@@ -830,13 +833,37 @@ UpdateVariable(event: any, index: number) {
 			this.fallbackvalue[index] = "";
 		}
 }
+
+
 selectAttributes(item:any) {
-	 this.closeAllModal();
 	const selectedValue = item;
-	let content:any = this.chatEditor.value || '';
-	content = content+'<span contenteditable="false" class="e-mention-chip"><a _ngcontent-yyb-c67="" href="mailto:" title="">{{'+selectedValue+'}}</a></span>'
-	this.chatEditor.value = content;
+	let content:any ='';	
+		content = this.chatEditor.value || '';	
+		const container = document.createElement('div');
+		container.innerHTML = this.chatEditor?.value;
+		this.insertAtCursor(selectedValue);
+		this.closeAllModal();
 }
+
+insertAtCursor(selectedValue: any) {
+  const spaceNode = document.createElement('span');
+  spaceNode.innerHTML = '&nbsp;'; 
+  spaceNode.setAttribute('contenteditable', 'true');
+    this.lastCursorPosition?.insertNode(spaceNode);
+    setTimeout(() => {
+        const range = document.createRange();
+        const selection = window.getSelection();
+        range.setStartAfter(spaceNode);  
+        range.setEndAfter(spaceNode); 
+
+        selection?.removeAllRanges();
+        selection?.addRange(range);
+    }, 100);
+	const newNode = document.createElement('span');
+	newNode.innerHTML =  '<span contenteditable="false" class="e-mention-chip"><a _ngcontent-yyb-c67="" title="">{{'+selectedValue+'}}</a></span>';
+	this.lastCursorPosition?.insertNode(newNode);
+}
+
 isCustomValue(value: string): boolean {
 	if(value){
 		let isMatched = false
