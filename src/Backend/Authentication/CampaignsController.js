@@ -806,9 +806,9 @@ const copyCampaign = async (req, res) => {
     let Query = "SELECT * from Campaign  where Id = " + req.params.CampaignId
     let existCampaign = await db.excuteQuery(Query,[])
     //console.log("existCampaign",'Copy of '+existCampaign[0].title)
-    let randomName = Math.floor(100000 + Math.random() * 900000);
+    let randomName = Math.floor(10000 + Math.random() * 90000);
     let CopyQuery;
-    let campaignTitle = await db.excuteQuery("SELECT * from Campaign  where title=? and is_deleted !=1 and sp_id=?", ['Copy of '+existCampaign[0].title, req.params.spid])
+    let campaignTitle = await db.excuteQuery("SELECT * from Campaign  where title=? and is_deleted !=1 and sp_id=?", ['copy of '+existCampaign[0].title, req.params.spid])
     if (campaignTitle?.length == 0) {
          CopyQuery = "INSERT INTO Campaign (sp_id,title,channel_id,message_heading,message_content,message_media,message_variables,button_yes,button_no,button_exp,category,time_zone,start_datetime,end_datetime,csv_contacts,segments_contacts,media_type) SELECT sp_id, CONCAT('Copy of ',title),channel_id,message_heading,message_content,message_media,message_variables,button_yes,button_no,button_exp,category,time_zone,' ',' ',csv_contacts,segments_contacts,media_type FROM Campaign WHERE Id = " + req.params.CampaignId
 

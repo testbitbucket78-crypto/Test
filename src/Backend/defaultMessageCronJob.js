@@ -11,6 +11,7 @@ const middleWare = require('./middleWare')
 const moment = require('moment');
 const removeTags = require('./removeTagsFromRichTextEditor')
 const commonFun = require('./common/resuableFunctions')
+const logger = require('./common/logger.log');
 const lostMessageTimeGap = 6;
 app.use(bodyParser.json());
 app.use(cors());
@@ -19,56 +20,77 @@ app.use(bodyParser.urlencoded({ extended: true }));
 var insertMessageQuery = "INSERT INTO Message (SPID,Type,ExternalMessageId, interaction_id, Agent_id, message_direction,message_text,message_media,media_type,Message_template_id,Quick_reply_id,created_at,updated_at,system_message_type_id,assignAgent,msg_status) VALUES ?"
 let metaPhoneNumberID = 211544555367892
 const batchSize = 10; // Number of users to send in each batch
-const delayBetweenBatches = 1000; // 10 seconds in milliseconds
+const delayBetweenBatches = 5000; // 5 seconds in milliseconds
 
 
 async function NoCustomerReplyReminder() {
   try {
     let defaultMessage = await db.excuteQuery(settingVal.CustomerReplyReminder, [lostMessageTimeGap]);
-    console.log("NoCustomerReplyReminder", defaultMessage?.length);
-
+   
+    logger.info(`NoCustomerReplyReminder, ${defaultMessage?.length , new Date()}`)
     if (defaultMessage?.length > 0) {
+      // Caches to avoid redundant calculations for the same SP_ID
+      const replyPauseCache = new Map();
+      const extractedMessageCache = new Map();
+
       for (let i = 0; i < defaultMessage.length; i += batchSize) {
-        // Process messages in batches
         const batch = defaultMessage.slice(i, i + batchSize);
-        console.log(`NoCustomerReplyReminder Processing batch ${(i / batchSize) + 1} with ${batch.length} messages`);
-         
-        // Process each message in the current batch
+     
+         logger.info(`NoCustomerReplyReminder Processing batch ${(i / batchSize) + 1} with ${batch.length} messages ${new Date()}`)
         for (const message of batch) {
           try {
-            let isReplyPause = await isAutoReplyPause(message.SP_ID, message.InteractionId, message.defaultAction_PauseTime);
+            let isReplyPause, message_text;
 
+            // --------- one SPID one time ------------//
+
+            // Check if replyPauseCache already has the result for this SP_ID
+            if (!replyPauseCache.has(message.SP_ID)) {
+              isReplyPause = await isReplySent(message.isAutoReply, message.defaultAction_PauseTime, message.isAutoReplyDisable, message.AgentId, message.interaction_status);
+              replyPauseCache.set(message.SP_ID, isReplyPause); // Cache the result
+            } else {
+              isReplyPause = replyPauseCache.get(message.SP_ID);
+            }
+            logger.info(`isReplyPause NoCustomerReplyReminder , SPID, phone_number, ${isReplyPause} , ${new Date()} , ${message.SPID} , ${message.customer_phone_number }`)
             if (isReplyPause) {
-              let data = await db.excuteQuery(`SELECT * FROM defaultmessages WHERE Is_disable = 1 and title=? and SP_ID=?`, ['No Customer Reply Reminder', message.SPID]);
+              // Check if extractedMessageCache already has the result for this SP_ID
+              if (!extractedMessageCache.has(message.SP_ID)) {
+               // message_text = await getExtraxtedMessage(message.message_value, message.SP_ID, message.customerId);
+               if(message.message_text != null){
+                message_text = await removeTags.removeTagsFromMessages(message.message_text); // Clean up message
+               }
+                
+                extractedMessageCache.set(message.SP_ID, message_text); // Cache the result
+              } else {
+                message_text = extractedMessageCache.get(message.SP_ID);
+              }
+             
+              logger.info(`send no NoCustomerReplyReminder start  ${new Date()}   ,  ${message.SPID},  ${message.customer_phone_number}`)
+              // Send the message via the selected channel
+              let response = await messageThroughselectedchannel(
+                message.SPID,
+                message.customer_phone_number,
+                message.message_type,
+                message_text,
+                message.link,
+                metaPhoneNumberID,
+                message.channel,
+                message.message_type
+              );
+              logger.info(`ssend no NoCustomerReplyReminder succes----  ${new Date()}   ,  ${message.SPID},  ${message.customer_phone_number} ,${response?.status}`)
+              if (response?.status == 200) {
+                let myUTCString = new Date().toUTCString();
+                const currenttime = moment.utc(myUTCString).format('YYYY-MM-DD HH:mm:ss');
 
-              if (data.length > 0) {
-                let message_text = await getExtraxtedMessage(data[0].value, message.SP_ID, message.customerId);
-                let response = await messageThroughselectedchannel(
-                  message.SPID,
-                  message.customer_phone_number,
-                  data[0].message_type,
-                  message_text,
-                  data[0].link,
-                  metaPhoneNumberID,
-                  message.channel,
-                  data[0].message_type
-                );
-
-                if (response?.status == 200) {
-                  let myUTCString = new Date().toUTCString();
-                  const currenttime = moment.utc(myUTCString).format('YYYY-MM-DD HH:mm:ss');
-                  
-                  // Update message status and insert new message
-                  await db.excuteQuery(settingVal.systemMsgQuery, [5, currenttime, message.MaxMessageId]);
-                  let messageValu = [
-                    [message.SPID, 'text', metaPhoneNumberID, message.interaction_id, message.Agent_id, 'out', data[0].value, (message.link ? message.link : 'text'), data[0].message_type, "", "", currenttime, currenttime, 5, -2, 1]
-                  ];
-                  await db.excuteQuery(insertMessageQuery, [messageValu]);
-                }
+                // Update message status and insert new message
+                await db.excuteQuery(settingVal.systemMsgQuery, [5, currenttime, message.MaxMessageId]);
+                let messageValu = [
+                  [message.SPID, 'text', metaPhoneNumberID, message.interaction_id, message.Agent_id, 'out', message.message_value, (message.link ? message.link : 'text'), message.message_type, "", "", currenttime, currenttime, 5, -2, 1]
+                ];
+                await db.excuteQuery(insertMessageQuery, [messageValu]);
               }
             }
           } catch (error) {
-            console.error(`Error sending message to ${message}.`, error.message);
+            logger.error(`inner Error processing NoCustomerReplyReminder phone_number: ${error.message} ${message.customer_phone_number}`);
           }
         }
 
@@ -76,105 +98,107 @@ async function NoCustomerReplyReminder() {
         if (i + batchSize < defaultMessage.length) {
           await new Promise(resolve => setTimeout(resolve, delayBetweenBatches));
         }
+
+        logger.info(`============================================================`)
+
+
+
+
+        logger.info(` ${i} Second batch of NoCustomerReplyReminder  ${new Date()}`)
       }
     }
   } catch (error) {
-    console.error("Error processing NoCustomerReplyReminder:", error.message);
+    logger.error(`Error processing NoCustomerReplyReminder: ${error.message}`);
   }
 }
 
-let systemMsgQuery = `SELECT
-ic.interaction_status,
-ic.InteractionId,
-ic.customerId,
-ic.updated_at as updateTime,
-ec.channel,
-ec.phone_number AS customer_phone_number,
-ec.defaultAction_PauseTime,
-dm.*,
-latestmsg.*
-FROM
-Interaction ic
-JOIN EndCustomer ec ON ic.customerId = ec.customerId
-JOIN defaultmessages dm ON dm.SP_ID = ic.SP_ID
-JOIN (
-SELECT 
-    m1.*
-FROM 
-    Message m1
-INNER JOIN (
-    SELECT
-        interaction_id,
-        MAX(updated_at) AS latestMessageDate
-    FROM
-        Message
-    WHERE 
-        (system_message_type_id IS NULL OR system_message_type_id IN (1, 2,3,4,5))
-    GROUP BY 
-        interaction_id
-) m2 ON m1.interaction_id = m2.interaction_id AND m1.updated_at = m2.latestMessageDate
-WHERE 
-    m1.message_direction = 'out'
-) latestmsg ON ic.InteractionId = latestmsg.interaction_id
-WHERE 
-(ic.interaction_status = 'open' OR ic.interaction_status = 'Open Interactions')
-AND ic.is_deleted = 0
-AND dm.title = 'No Customer Reply Timeout'
-AND dm.Is_disable = 1 
-and (latestmsg.msg_status != 9 AND latestmsg.msg_status != 10) 
-AND latestmsg.updated_at <= DATE_SUB(NOW(), INTERVAL dm.autoreply MINUTE)
-group by latestmsg.interaction_id ,ic.customerId
-`
 
 
 async function NoCustomerReplyTimeout() {
   try {
-    // Fetch customer reply timeout data
-    let CustomerReplyTimeout = await db.excuteQuery(systemMsgQuery, [lostMessageTimeGap]);
-    console.log(CustomerReplyTimeout?.length, "NoCustomerReplyTimeout");
-
+    let CustomerReplyTimeout = await db.excuteQuery(settingVal.systemMsgQuery, [lostMessageTimeGap]);
+   
+    logger.info(`NoCustomerReplyTimeout, ${CustomerReplyTimeout?.length}, ${new Date()}`);
+    
     if (CustomerReplyTimeout?.length > 0) {
+      // Caches for isAutoReplyPause and getExtractedMessage results
+      const replyPauseCache = new Map();
+      const extractedMessageCache = new Map();
+
       for (let i = 0; i < CustomerReplyTimeout.length; i += batchSize) {
-        // Process messages in batches
         const batch = CustomerReplyTimeout.slice(i, i + batchSize);
-        console.log(`NoCustomerReplyTimeout Processing batch ${(i / batchSize) + 1} with ${batch.length} messages`);
-
-        // Process each message in the current batch
+        logger.info(`NoCustomerReplyTimeout Processing batch ${(i / batchSize) + 1} with ${batch.length} messages, ${new Date()}`);
+        
         for (const msg of batch) {
-          let isReplyPause = await isAutoReplyPause(msg.SP_ID, msg.InteractionId, msg.defaultAction_PauseTime);
+          try {
+            let isReplyPause;
+            let message_text;
 
-          // Check conditions for customer reply timeout and send the message
-          if (isReplyPause && msg.Is_disable != 0 && !(msg.updated_at >= msg.updateTime)) {
-            let message_text = await getExtraxtedMessage(msg.value, msg.SP_ID, msg.customerId);
-            let response = await messageThroughselectedchannel(
-              msg.SPID,
-              msg.customer_phone_number,
-              msg.message_type,
-              message_text,
-              msg.link,
-              metaPhoneNumberID,
-              msg.channel,
-              msg.message_type
-            );
+            // --------- one SPID one time ------------//
 
-            if (response?.status == 200) {
-              let myUTCString = new Date().toUTCString();
-              const currenttime = moment.utc(myUTCString).format('YYYY-MM-DD HH:mm:ss');
+            // Check if replyPauseCache already has the result for this SP_ID
+            if (!replyPauseCache.has(msg.SP_ID)) {
+              isReplyPause = await isReplySent(msg.isAutoReply, msg.defaultAction_PauseTime, msg.isAutoReplyDisable, msg.AgentId, msg.interaction_status);
+              replyPauseCache.set(msg.SP_ID, isReplyPause); // Cache the result
+            } else {
+              isReplyPause = replyPauseCache.get(msg.SP_ID);
+            }
+            let currentTime = new Date(); // Server time for comparison
+            let autoReplyVal = new Date(msg.nonSystemUpdatedMsgTime.getTime() + msg.autoreply * 60000); // Clone the UTC time
+            logger.info(`isReplyPause NoCustomerReplyTimeout, SPID, phone_number, msg.updated_at , interaction updateTime ,autoReplyVal ${isReplyPause}, ${new Date()}, ${msg.SPID}, ${msg.customer_phone_number},${msg.updated_at}, ${msg.updateTime}, ${autoReplyVal}`);
+
+           
+
+            // If isReplyPause is true and conditions are met, proceed
+            if (isReplyPause && msg.Is_disable != 0 && (!(msg.updated_at >= msg.updateTime) || msg.updated_at == null) && currentTime >= autoReplyVal) {
+              // Check if extractedMessageCache already has the result for this SP_ID
+              if (!extractedMessageCache.has(msg.SP_ID)) {
+                if (msg.value != null) {
+                  message_text = await removeTags.removeTagsFromMessages(msg.value);
+                }
+                extractedMessageCache.set(msg.SP_ID, message_text); // Cache the result
+              } else {
+                message_text = extractedMessageCache.get(msg.SP_ID);
+              }
+
+              logger.info(`send no NoCustomerReplyTimeout start, ${new Date()}, ${msg.SPID}, ${msg.customer_phone_number}`);
               
-              // Update message status and insert system message
-              await db.excuteQuery(settingVal.systemMsgQuery, [6, currenttime, msg.Message_id]);
-              let messageValu = [
-                [msg.SPID, 'text', metaPhoneNumberID, msg.interaction_id, msg.Agent_id, 'out', msg.value, (msg.link ? msg.link : 'text'), msg.message_type, "", "", currenttime, currenttime, 6, -2, 1]
-              ];
-              let insertedMessage = await db.excuteQuery(insertMessageQuery, [messageValu]);
-              console.log("NoCustomerReplyTimeout msg", insertedMessage);
+              // Send the message via the selected channel
+              let response = await messageThroughselectedchannel(
+                msg.SPID,
+                msg.customer_phone_number,
+                msg.message_type,
+                message_text,
+                msg.link,
+                metaPhoneNumberID,
+                msg.channel,
+                msg.message_type
+              );
 
-              // Close interaction if applicable
-              let closeInteraction = await db.excuteQuery(`UPDATE Interaction SET interaction_status='Resolved' WHERE InteractionId=${msg.InteractionId}`, []);
-              if (closeInteraction.affectedRows > 0) {
-                await db.excuteQuery(`UPDATE InteractionMapping SET AgentId='-1' WHERE InteractionId = ?`, [msg.interaction_id]);
+              logger.info(`send NoCustomerReplyTimeout success, ${new Date()}, ${msg.SPID}, ${msg.customer_phone_number}, response?.status`);
+
+              if (response?.status == 200) {
+                let myUTCString = new Date().toUTCString();
+                const currenttime = moment.utc(myUTCString).format('YYYY-MM-DD HH:mm:ss');
+
+                // Update message status and insert system message
+                await db.excuteQuery(settingVal.systemMsgQuery, [6, currenttime, msg.Message_id]);
+
+                let messageValu = [
+                  [msg.SPID, 'text', metaPhoneNumberID, msg.interaction_id, msg.Agent_id, 'out', msg.value, (msg.link ? msg.link : 'text'), msg.message_type, "", "", currenttime, currenttime, 6, -2, 1]
+                ];
+                let insertedMessage = await db.excuteQuery(insertMessageQuery, [messageValu]);
+                logger.info(`NoCustomerReplyTimeout msg, ${insertedMessage}, ${new Date()}`);
+
+                // Close interaction if applicable
+                let closeInteraction = await db.excuteQuery(`UPDATE Interaction SET interaction_status='Resolved' WHERE InteractionId=${msg.InteractionId}`, []);
+                if (closeInteraction.affectedRows > 0) {
+                  await db.excuteQuery(`UPDATE InteractionMapping SET AgentId='-1' WHERE InteractionId = ?`, [msg.interaction_id]);
+                }
               }
             }
+          } catch (error) {
+            logger.error(`inner try Error sending message to ${msg.customer_phone_number}, ${error.message}, ${new Date()}`);
           }
         }
 
@@ -182,12 +206,18 @@ async function NoCustomerReplyTimeout() {
         if (i + batchSize < CustomerReplyTimeout.length) {
           await new Promise(resolve => setTimeout(resolve, delayBetweenBatches));
         }
+        logger.info(`******************************************************`)
+
+
+
+        logger.info(` ${i} Second batch of NoCustomerReplyTimeout, ${new Date()}`);
       }
     }
   } catch (error) {
-    console.error(`Error processing NoCustomerReplyTimeout: `, error);
+    logger.error(`Outer try Error processing NoCustomerReplyTimeout: ${error.message}, ${new Date()}`);
   }
 }
+
 
 
 
@@ -195,47 +225,85 @@ async function NoAgentReplyTimeOut() {
   try {
     // Fetch messages that need processing
     let noAgentReplydata = await db.excuteQuery(settingVal.getLatestMsgbyInteraction, [lostMessageTimeGap]);
-    console.log(noAgentReplydata?.length, "NoAgentReplyTimeOut");
+    logger.info(`${noAgentReplydata?.length} messages fetched for NoAgentReplyTimeOut`, { timestamp: new Date() });
 
     if (noAgentReplydata?.length > 0) {
+      // Caches for isAutoReplyPause and workingHoursDetails results
+      const replyPauseCache = new Map();
+      const workingHoursCache = new Map();
+      const extractedMessageCache = new Map();
+
       for (let i = 0; i < noAgentReplydata.length; i += batchSize) {
         const batch = noAgentReplydata.slice(i, i + batchSize); // Process in batches
-
-        console.log(`NoAgentReplyTimeOut Processing batch ${(i / batchSize) + 1} with ${batch.length} messages`);
+        logger.info(`Processing batch ${(i / batchSize) + 1} with ${batch.length} messages`, { timestamp: new Date() });
 
         // Process each message in the current batch
         for (const msg of batch) {
-          let isReplyPause = await isAutoReplyPause(msg.SPID, msg.interaction_id, msg.defaultAction_PauseTime);
-          let currentTime = new Date(); // Server time for comparison
+          let isReplyPause;
+          let isWorkingHour;
+          let message_text;
 
+          // Check if replyPauseCache already has the result for this SPID
+          if (!replyPauseCache.has(msg.SPID)) {
+            isReplyPause = await isReplySent(msg.isAutoReply, msg.defaultAction_PauseTime, msg.isAutoReplyDisable, msg.AgentId, msg.interaction_status);
+            replyPauseCache.set(msg.SPID, isReplyPause);
+            logger.info(`isReplyPause calculated for SPID: ${msg.SPID}`, { isReplyPause });
+          } else {
+            isReplyPause = replyPauseCache.get(msg.SPID);
+          }
+
+          // Check if workingHoursCache already has the result for this SPID
+          if (!workingHoursCache.has(msg.SPID)) {
+            isWorkingHour = isWorkingTime(msg.start_time, msg.end_time, msg.working_days);
+            workingHoursCache.set(msg.SPID, isWorkingHour);
+            logger.info(`isWorkingHour calculated for SPID: ${msg.SPID}`, { isWorkingHour });
+          } else {
+            isWorkingHour = workingHoursCache.get(msg.SPID);
+          }
+
+          // Check if extractedMessageCache already has the result for this SPID
+          if (!extractedMessageCache.has(msg.SPID)) {
+            if (msg.value != null) {
+              message_text = await removeTags.removeTagsFromMessages(msg.value);
+            }
+            extractedMessageCache.set(msg.SPID, message_text);
+            logger.info(`Message extracted for SPID: ${msg.SPID}`, { message_text });
+          } else {
+            message_text = extractedMessageCache.get(msg.SPID);
+          }
+
+          let currentTime = new Date(); // Server time for comparison
           let autoReplyVal = new Date(msg.nonSystemUpdatedMsgTime.getTime() + msg.autoreply * 60000); // Clone the UTC time
 
-          // Check conditions to send a reply
-          if (isReplyPause && msg.Is_disable != 0 && (!(msg.updated_at >= msg.updateTime) || msg.updated_at == null) && msg.nonSystemUpdatedMsgTime <= autoReplyVal) {
-            let isWorkingTime = await workingHoursDetails(msg.SPID);
+          // Log conditions before checking if a reply should be sent
+          logger.info(`Checking conditions for SPID, phone_number, msg.updated_at , interaction updateTime ,autoReplyVal : ${isReplyPause}, ${new Date()}, ${msg.SPID}, ${msg.customer_phone_number},${msg.updated_at}, ${msg.updateTime}, ${autoReplyVal}`)    
 
-            if (isWorkingTime === true) {
-              let message_text = await getExtraxtedMessage(msg.value, msg.SPID, msg.customerId);
+          // Check conditions to send a reply
+          if (isReplyPause && msg.Is_disable != 0 && (!(msg.updated_at >= msg.updateTime) || msg.updated_at == null) && currentTime >= autoReplyVal) {
+            if (isWorkingHour === true) {
+              logger.info(`Sending message for SPID: ${msg.SPID}`, { timestamp: new Date() });
               let response = await messageThroughselectedchannel(
-                msg.SPID, 
-                msg.customer_phone_number, 
-                msg.message_type, 
-                message_text, 
-                msg.link, 
-                metaPhoneNumberID, 
-                msg.channel, 
+                msg.SPID,
+                msg.customer_phone_number,
+                msg.message_type,
+                message_text,
+                msg.link,
+                metaPhoneNumberID,
+                msg.channel,
                 msg.message_type
               );
 
-              let myUTCString = new Date().toUTCString();
-              const currenttime = moment.utc(myUTCString).format('YYYY-MM-DD HH:mm:ss');
+              logger.info(`Message sent successfully for SPID: ${msg.SPID}`, { timestamp: new Date() });
 
               if (response?.status === 200) {
+                let myUTCString = new Date().toUTCString();
+                const currenttime = moment.utc(myUTCString).format('YYYY-MM-DD HH:mm:ss');
                 let messageValu = [
                   [msg.SPID, 'text', metaPhoneNumberID, msg.interaction_id, msg.Agent_id, 'out', msg.value, (msg.link ? msg.link : 'text'), msg.message_type, "", "", currenttime, currenttime, 4, -2, 1]
                 ];
                 let insertedMessage = await db.excuteQuery(insertMessageQuery, [messageValu]);
-               // console.log("no agent reply ", insertedMessage);
+
+                logger.info(`Message inserted into DB for SPID: ${msg.SPID}`, { messageValu });
               }
             }
           }
@@ -245,12 +313,23 @@ async function NoAgentReplyTimeOut() {
         if (i + batchSize < noAgentReplydata.length) {
           await new Promise(resolve => setTimeout(resolve, delayBetweenBatches));
         }
+
+        logger.info(`-------------------------------------------------------------`)
+
+
+
+
+
+
+        logger.info(`${i} NoAgentReplyTimeOut another batch ${new Date()}`)
+
       }
     }
   } catch (error) {
-    console.error(`Error sending message: `, error);
+    logger.error(`Error in NoAgentReplyTimeOut: ${error.message}`, { error });
   }
 }
+
 
 
 
@@ -311,12 +390,12 @@ async function isReplySent(isAutoReply, autoReplyTime, isAutoReplyDisable, assig
       autoReplyVal.setMinutes(autoReplyVal.getMinutes() + autoReplyTime);
     }
     //const autoReplyVal = new Date(currentTime)   // autoReplyTime when auto reply start
-    //  console.log("currentTime,autoReplyVal ,autoReplyTime", currentTime, autoReplyVal, autoReplyTime)
+     // console.log("isAutoReply, autoReplyTime, isAutoReplyDisable, assignAgent, interactionStatus",isAutoReply, autoReplyTime, isAutoReplyDisable, assignAgent, interactionStatus)
     if (autoReplyTime != null && (autoReplyVal <= currentTime) && autoReplyTime != undefined && autoReplyTime != 0) {
 
       return true;
     }
-    else if (isAutoReplyDisable == 1 && (assignAgent?.length == 0 || (assignAgent?.length != 0 && interactionStatus[0]?.interaction_status == 'Resolved'))) {
+    else if (isAutoReplyDisable == 1 && (( interactionStatus[0]?.interaction_status == 'Resolved') || (assignAgent == -1 && interactionStatus[0]?.interaction_status == 'Open'))) {
       return true;
     }
     return false;
@@ -325,34 +404,41 @@ async function isReplySent(isAutoReply, autoReplyTime, isAutoReplyDisable, assig
 }
 
 async function messageThroughselectedchannel(spid, from, type, text, media, phone_number_id, channelType, media_type) {
- // console.log("spid, from, type, text, media, phone_number_id, channelType")
   let getMediaType = determineMediaType(media_type);
-  if(getMediaType === 'unknown' && media) getMediaType = commonFun.determineMediaFromLink(media);
-  //console.log(spid, from, getMediaType, phone_number_id, channelType)
+  if (getMediaType === 'unknown' && media) getMediaType = commonFun.determineMediaFromLink(media);
+
+  // Log initial input parameters
+  logger.info(`Starting messageThroughselectedchannel process ${spid } ,${from}, ${getMediaType}`);
+
   try {
     if (channelType == 'WhatsApp Official' || channelType == 1 || channelType == 'WA API') {
-
-      let respose = await middleWare.sendDefultMsg(media, text, getMediaType, phone_number_id, from);
-      return respose;
-    } if (channelType == 'WhatsApp Web' || channelType == 2 || channelType == 'WA Web') {
+      logger.info(`WhatsApp Official send process start`, { spid, from, timestamp: new Date() });
+      
+      let response ='' //= await middleWare.sendDefultMsg(media, text, getMediaType, phone_number_id, from);
+      
+      logger.info(`WhatsApp Official send process end`, { spid, from, timestamp: new Date(), responseStatus: response?.status });
+      return response;
+      
+    } else if (channelType == 'WhatsApp Web' || channelType == 2 || channelType == 'WA Web') {
       let clientReady = await isClientActive(spid);
 
       if (clientReady.status) {
-        let response = await middleWare.postDataToAPI(spid, from, getMediaType, text, media);
-        console.log("response", JSON.stringify(response.status));
+        logger.info(`WhatsApp Web send process start`, { spid, from, timestamp: new Date() });
+        
+        let response ='' //await middleWare.postDataToAPI(spid, from, getMediaType, text, media);
+        logger.info(`WhatsApp Web send process end`, { spid, from, responseStatus: response?.status, timestamp: new Date() });
+        
         return response;
-      }
-
-      else {
-        console.log("isActiveSpidClient returned false for WhatsApp Web");
+      } else {
+        logger.warn(`Client is not active for WhatsApp Web`, { spid, timestamp: new Date() });
         return { status: 404 };
       }
-
     }
   } catch (err) {
-    //console.log(" err middleware -----", err)
+    logger.error(`Error in messageThroughselectedchannel ${err}`);
   }
 }
+
 
 
 function determineMediaType(mediaType) {
@@ -409,29 +495,29 @@ async function getExtraxtedMessage(message_text, SPID, customerId) {
 
 
 
-function isWorkingTime(data, currentTime) {
+function isWorkingTime(starthour, endhour , workDays) {
 
   const currentDay = new Date().toLocaleDateString('en-US', { weekday: 'long' });
   let datetime = new Date().toLocaleString(undefined, { timeZone: 'Asia/Kolkata' });
 
-  for (const item of data) {
-    const workingDays = item.working_days.split(',');
+  // for (const item of data) {
+    const workingDays = workDays.split(',');
     const date = new Date(datetime).getHours();
     const getMin = new Date(datetime).getMinutes();
 
-    const start_time = (item.start_time).replace(/\s*(AM|PM)/, "");
-    const end_time = (item.end_time).replace(/\s*(AM|PM)/, "");
+    const start_time = (starthour).replace(/\s*(AM|PM)/, "");
+    const end_time = (endhour).replace(/\s*(AM|PM)/, "");
     const startTime = start_time.split(':');
     const endTime = end_time.split(':');
-
+//console.log("starthour, endhour , workDays",starthour, endhour , workDays)
     if (workingDays.includes(currentDay) && (((startTime[0] < date) || (date === startTime[0] && startTime[1] <= getMin)) && ((endTime[0] > date) || ((endTime[1] === getMin) && (endTime[1] >= getMin))))) {
-      //console.log("data===========")
+      console.log("data===========")
       return true;
     }
 
 
 
-  }
+  //}
 
   return false;
 }

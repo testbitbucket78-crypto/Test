@@ -307,7 +307,7 @@ const createInteraction = async (req, res) => {
 };
 
 const updateInteraction = async (req, res) => {
-    logger.info('Received request for updateInteraction', { body: req.body });
+    logger.info(`Received request for updateInteraction ${ req.body }`);
     try {
         let updateQuery;
         if (req.body?.IsTemporary && req.body?.IsTemporary != '') {
@@ -320,6 +320,10 @@ const updateInteraction = async (req, res) => {
 
             await db.excuteQuery(actionQuery, [req.body.InteractionId, req.body?.action, req.body?.action_at, req.body?.action_by, utcTimestamp, req.body?.SP_ID, 'text']);
             updateQuery = "UPDATE Interaction SET interaction_status ='" + req.body.Status + "' ,updated_at ='" + utcTimestamp + "' WHERE InteractionId =" + req.body.InteractionId;
+            if(req.body.Status == 'Open'){
+                let ResolveOpenChat = await db.excuteQuery('UPDATE Interaction SET interaction_status =? WHERE InteractionId !=? and customerId=?',['Resolved',req.body.InteractionId,req.body?.customerId]) ;
+                logger.info(`ResolveOpenChat if previous is open already ${req.body?.customerId}`)
+            }
         }
         if (req.body.AutoReply && req.body.AutoReply != '') {
             updateQuery = "UPDATE Interaction SET AutoReplyStatus ='" + req.body.AutoReply + "',paused_till ='" + req.body.paused_till + "' , AutoReplyUpdatedAt ='" + req.body.updated_at + "'  WHERE InteractionId =" + req.body.InteractionId;

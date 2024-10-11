@@ -446,7 +446,30 @@ LIMIT ?, ?;
 `
 getMediaMessage = `(
     SELECT 
-        Message.*,
+        Message.Message_id,
+        Message.message_direction,
+        Message.SPID,
+        Message.Agent_id,
+        Message.message_text,
+        Message.interaction_id,
+        Message.message_media,
+        Message.media_type,
+        Message.Message_template_id,
+        Message.Quick_reply_id,
+        Message.Type,
+        Message.ExternalMessageId,
+        Message.is_read,
+        Message.is_deleted,
+        Message.deleted_by,
+        Message.deleted_at,
+        Message.created_at,
+        Message.updated_at,
+        Message.components,
+        Message.template_type,
+        Message.msg_status,
+        Message.system_message_type_id,
+        Message.mediaSize,
+        Message.assignAgent,
         NULL AS action,
         NULL AS action_at,
         NULL AS action_by
@@ -466,14 +489,15 @@ getMediaMessage = `(
         AND is_deleted != 1 
         AND (msg_status IS NULL OR msg_status != 10)
         AND Message.SPID = ?
-        order by Message_id desc
+    ORDER BY 
+        Message_id DESC
 )
 UNION
 (
     SELECT 
         NULL AS Message_id,
         NULL AS message_direction,
-         InteractionEvents.SP_ID AS SPID,
+        InteractionEvents.SP_ID AS SPID,
         NULL AS Agent_id,
         NULL AS message_text,
         NULL AS interaction_id,
@@ -495,7 +519,7 @@ UNION
         NULL AS system_message_type_id,
         NULL AS mediaSize,
         NULL AS assignAgent,
-         InteractionEvents.action,
+        InteractionEvents.action,
         InteractionEvents.action_at,
         InteractionEvents.action_by
     FROM 
@@ -503,14 +527,14 @@ UNION
     WHERE 
         InteractionEvents.interactionId = ?
         AND InteractionEvents.SP_ID = ?
-         AND InteractionEvents.Type = ?
-         ORDER BY 
-    created_at DESC
+        AND InteractionEvents.Type = ?
+    ORDER BY 
+        created_at DESC
 )
 ORDER BY 
     created_at DESC,
-    Message_id desc
-    LIMIT ?, ?;`
+    Message_id DESC
+LIMIT ?, ?;`
 
 
 
