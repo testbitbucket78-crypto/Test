@@ -182,7 +182,9 @@ saveWhatsappWebDetails(id:number) {
   this.apiService.addWhatsAppDetails(this.whatAppDetails).subscribe
   ((resopnse :any) => {
     if(resopnse.status === 200) {
-      this.showToaster('Your Session Details Updated Succesfully','success');
+      console.log(this.whatAppDetails)
+      console.log(resopnse)
+     // this.showToaster('Your Session Details Updated Succesfully','success');
       this.whatsAppDataUpdated = true;
       this.getwhatsapp();
     }
