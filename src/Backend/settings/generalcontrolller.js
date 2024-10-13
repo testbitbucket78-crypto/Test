@@ -442,7 +442,7 @@ const manualDelation = async (req, res) => {
         let mediaDeleted = '';
         let textDeleted = '';
         if (message_type == 'Text') {
-            textDeleted = await db.excuteQuery(val.deleteText, [created_at, SPID, result])
+            textDeleted = await db.excuteQuery(val.deleteText, [created_at, SPID,'text', result])
 
         } else if (message_type == 'Media') {
             // console.log(Media)
@@ -450,7 +450,7 @@ const manualDelation = async (req, res) => {
             mediaDeleted = await db.excuteQuery(val.deleteMedia, [created_at, SPID,'text', result])
         }
         else if (message_type == 'Both') {
-            textDeleted = await db.excuteQuery(val.deleteText, [created_at, SPID, result])
+            textDeleted = await db.excuteQuery(val.deleteText, [created_at, SPID,'text', result])
             let deletedData = await awsHelper.deleteObjectFromBucket(manually_deletion_days, SPID);
             mediaDeleted = await db.excuteQuery(val.deleteMedia, [created_at, SPID,'text', result])
 

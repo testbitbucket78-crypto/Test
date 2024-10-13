@@ -311,7 +311,8 @@ async function getDetatilsOfSavedMessage(saveMessage, message_text, phone_number
           //check if assignment trigger and chat is ressolve then open 
           if (defaultReplyAction >= 0) {
             let isEmptyInteraction = await   commonFun.isStatusEmpty(newId, sid,custid)
-
+            let ResolveOpenChat = await db.excuteQuery('UPDATE Interaction SET interaction_status =? WHERE InteractionId !=? and customerId=?',['Resolved',newId,custid]) ;
+            console.log("ResolveOpenChat *********",ResolveOpenChat)
             let updateInteraction = await db.excuteQuery('UPDATE Interaction SET interaction_status=? ,interaction_open_datetime=? WHERE InteractionId=?', ['Open',updated_at, newId])
             if(isEmptyInteraction == 1){
               updateInteraction = await db.excuteQuery('UPDATE Interaction SET interaction_status=?,updated_at=? ,interaction_open_datetime=? WHERE InteractionId=?', ['Open', updated_at,updated_at, newId])
@@ -337,7 +338,10 @@ async function getDetatilsOfSavedMessage(saveMessage, message_text, phone_number
         let myUTCString = new Date().toUTCString();
         const updated_at = moment.utc(myUTCString).format('YYYY-MM-DD HH:mm:ss');
         let isEmptyInteraction = await   commonFun.isStatusEmpty(newId, sid,custid)
-
+       
+          let ResolveOpenChat = await db.excuteQuery('UPDATE Interaction SET interaction_status =? WHERE InteractionId !=? and customerId=?',['Resolved',newId,custid]) ;
+          console.log("ResolveOpenChat -----",ResolveOpenChat)
+      
         let updateInteraction = await db.excuteQuery('UPDATE Interaction SET interaction_status=? WHERE InteractionId=?', ['Open', newId])
         if(isEmptyInteraction == 1){
           updateInteraction = await db.excuteQuery('UPDATE Interaction SET interaction_status=?,updated_at=? WHERE InteractionId=?', ['Open', updated_at, newId])

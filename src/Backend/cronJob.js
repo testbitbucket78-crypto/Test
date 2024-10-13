@@ -12,7 +12,7 @@ app.use(cors());
 app.use(bodyParser.urlencoded({ extended: true }));
 const middleWare = require('./middleWare')
 const batchSize = 10; // Number of users to send in each batch
-const delayBetweenBatches = 1000; // 10 seconds in milliseconds
+const delayBetweenBatches = 10000; // 10 seconds in milliseconds
 const web = require('./webJS/web')
 const removeTags = require('./removeTagsFromRichTextEditor')
 const logger = require('./common/logger.log');
@@ -167,8 +167,9 @@ async function parseMessage(testMessage, custid, sid, msgVar) {
   return content;
 }
 
-async function parseMessageForCSV(content, contact, messageVariable) {
+async function parseMessageForCSV(message_content, contact, messageVariable) {
   // Replace placeholders in the content with values from message_variables
+  let content = await removeTags.removeTagsFromMessages(testMessage);
   let message_variables = messageVariable && messageVariable.length > 0 ? JSON.parse(messageVariable) : undefined;
   if (message_variables) {
     message_variables.forEach(variable => {
@@ -261,8 +262,8 @@ async function mapPhoneNumberfomCSV(message) {
     let myUTCString = new Date().toUTCString();
     const currenttime = moment.utc(myUTCString).format('YYYY-MM-DD HH:mm:ss');
     let updatedStatus = await db.excuteQuery(updateQuery, [currenttime, message.Id])
-    let content = await removeTags.removeTagsFromMessages(message.message_content);
-    batchofScheduledCampaign(contacts, message.sp_id, type, content, message.message_media, message.phone_number_id, message.channel_id, message, 'csv') //channelType[0].connected_id
+    //let content = await removeTags.removeTagsFromMessages(message.message_content);
+    batchofScheduledCampaign(contacts, message.sp_id, type, message.message_content, message.message_media, message.phone_number_id, message.channel_id, message, 'csv') //channelType[0].connected_id
   } catch (err) {
     console.log(err)
   }
@@ -296,8 +297,8 @@ async function mapPhoneNumberfomList(message) {
   let myUTCString = new Date().toUTCString();
   const currenttime = moment.utc(myUTCString).format('YYYY-MM-DD HH:mm:ss');
   let updatedStatus = await db.excuteQuery(updateQuery, [currenttime, message.Id])
-  let content = await removeTags.removeTagsFromMessages(message.message_content);
-  batchofScheduledCampaign(phoneNo, message.sp_id, message.media_type, content, message.message_media, message.phone_number_id, message.channel_id, message, 'List')
+  //let content = await removeTags.removeTagsFromMessages(message.message_content);
+  batchofScheduledCampaign(phoneNo, message.sp_id, message.media_type, message.message_content, message.message_media, message.phone_number_id, message.channel_id, message, 'List')
   // }
 
 }
@@ -339,7 +340,7 @@ async function campaignCompletedAlert(message) {
 }
 
 async function sendScheduledCampaign(batch, sp_id, type, message_content, message_media, phone_number_id, channel_id, message, list) {
-  console.log("sendScheduledCampaign", "channel_id", sp_id, type, message_content, message_media, phone_number_id, channel_id)
+  console.log("sendScheduledCampaign", "channel_id", sp_id, type,  message_media, phone_number_id, channel_id)
   for (var i = 0; i < batch.length; i++) {
     let Phone_number = batch[i].Phone_number
     //Attributes for contact_list
@@ -594,7 +595,7 @@ async function messageThroughselectedchannel(spid, from, type, text, media, phon
 
     if (response?.status) {
       //interaction_id,message_direction,message_text,message_media,Type,SPID,media_type,Agent_id,assignAgent,Message_template_id
-      let saveSendedMessage = await saveMessage(from, spid, response?.message?.messages[0]?.id, message_content, media, type, type, 'WA API');
+      let saveSendedMessage = await saveMessage(from, spid, response?.message?.messages[0]?.id, message_content, media, type, type, 'WA API',"Official campaign message");
       let saveInCampaignMessage = await sendMessages(from, text, campaignId, message, response.status, text, response.message?.messages[0]?.id)
     } else {
       let saveInCampaignMessage = await sendMessages(from, text, campaignId, message, response.status, text, response.message?.messages[0]?.id)
@@ -606,9 +607,9 @@ async function messageThroughselectedchannel(spid, from, type, text, media, phon
     let clientReady = await isClientActive(spid);
     //console.log("clientReady",clientReady)
     if (clientReady?.status) {
-      let saveSendedMessage = await saveMessage(from, spid, '', message_content, media, type, type, 'WA Web')
+      let saveSendedMessage = await saveMessage(from, spid, '', message_content, media, type, type, 'WA Web',"Web campaign message")
       let response = await middleWare.postDataToAPI(spid, from, getMediaType, text, media, '', saveSendedMessage);
-      console.log(" web response", JSON.stringify(response?.status), response.msgId);
+      console.log(spid," web response", JSON.stringify(response?.status), response.msgId);
 
       let saveInCampaignMessage = await sendMessages(from, text, campaignId, message, response.status, text, response.msgId)
       return response;
@@ -647,16 +648,16 @@ async function campaignAlertsThroughselectedchannel(spid, from, type, text, medi
     let respose = await middleWare.sendDefultMsg(media, text, getMediaType, metaPhoneNumberID, from);
     console.log("campaignAlerts", media, text, type, metaPhoneNumberID, from, respose)
     if (respose?.status == 200) {
-      let saveSendedMessage = await saveMessage(from, spid, respose?.message?.messages[0]?.id, text, media, type, type, 'WA API')
+      let saveSendedMessage = await saveMessage(from, spid, respose?.message?.messages[0]?.id, text, media, type, type, 'WA API',"Official campaign Alert***")
     }
 
     return respose;
   } if (channelType == 'WhatsApp Web' || channelType == 2 || channelType == 'WA Web') {
 
     let clientReady = await isClientActive(spid);
-    //console.log("clientReady",clientReady)
+    console.log("campaignAlerts ---------- whatsapp web",  type, from)
     if (clientReady?.status) {
-      let saveSendedMessage = await saveMessage(from, spid, '', text, media, type, type, 'WA Web')
+      let saveSendedMessage = await saveMessage(from, spid, '', text, media, type, type, 'WA Web',"Web campaign Alert***")
       let response = await middleWare.postDataToAPI(spid, from, getMediaType, text, media, '', saveSendedMessage);
     //  console.log("campaignAlertsThroughselectedchannel response", JSON.stringify(response?.status));
 
@@ -688,10 +689,10 @@ function determineMediaType(mediaType) {
   }
 }
 
-async function saveMessage(PhoneNo, spid, msgTemplateId, text, media, type, mediaType, channel) {
+async function saveMessage(PhoneNo, spid, msgTemplateId, text, media, type, mediaType, channel,fromWhere) {
 
   let InteractionId = await insertInteractionAndRetrieveId(PhoneNo, spid, channel);
-  console.log(PhoneNo, spid, "InteractionId InteractionId", InteractionId)
+  console.log(PhoneNo, fromWhere, spid, "InteractionId InteractionId", InteractionId)
 
   let msgQuery = `insert into Message (interaction_id,message_direction,message_text,message_media,Type,SPID,media_type,Agent_id,assignAgent,msg_status,Message_template_id) values ?`
   let savedMessage = await db.excuteQuery(msgQuery, [[[InteractionId[0]?.InteractionId, 'Out', text, media, 'text', spid, mediaType, '', -1, 1, msgTemplateId]]]);
