@@ -229,6 +229,7 @@ export interface templateMessageData {
     industry:string;
     topic:string;
     FooterText:string;
+    buttons:any;
 
 }
 
@@ -342,6 +343,7 @@ export interface newTemplateFormData {
     created_By:string;
     template_id:number;
     template_json:any[];
+    buttons:string;
     isTemplate:number;
     isCopied:number;
 }

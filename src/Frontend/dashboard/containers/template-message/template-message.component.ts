@@ -503,6 +503,8 @@ export class TemplateMessageComponent implements OnInit {
         this.showCampaignDetail = !this.showCampaignDetail;
         if (this.showCampaignDetail) {
             this.templatesMessageData = data;
+            if(this.templatesMessageData?.buttons)
+            this.templatesMessageData.buttons = JSON.parse(this.templatesMessageData?.buttons)
             this.status = this.templatesMessageData.status;
             this.BodyText = this.templatesMessageData.BodyText;
             this.selectedType= this.templatesMessageData.media_type;
@@ -676,8 +678,9 @@ checkTemplateName(e:any){
     }
 
     copyTemplate() {
-        let nameExist = this.filteredTemplatesData.filter((item:any)=>item.TemplateName == this.templatesMessageDataById.TemplateName +' copy');
-        if(nameExist.length >0){
+        console.log(this.templatesMessageDataById)
+        let nameExist = this.filteredTemplatesData.filter((item:any)=>item.TemplateName == (this.templatesMessageDataById.TemplateName +' copy'));
+        if(nameExist.length ==0){
         const copyTemplateForm: newTemplateFormData = <newTemplateFormData>{};
         copyTemplateForm.ID = 0;
         copyTemplateForm.spid = this.templatesMessageDataById.spid;
@@ -693,6 +696,7 @@ checkTemplateName(e:any){
         copyTemplateForm.Category = this.templatesMessageDataById.Category;
         copyTemplateForm.category_id = this.templatesMessageDataById.category_id;
         copyTemplateForm.Language = this.templatesMessageDataById.Language;
+        copyTemplateForm.buttons = JSON.stringify(this.templatesMessageDataById.buttons);
         copyTemplateForm.status = 'draft';
         copyTemplateForm.isCopied = 1;
         copyTemplateForm.template_id = this.templatesMessageDataById.template_id;
@@ -792,10 +796,10 @@ checkTemplateName(e:any){
             if(this.selectedType != 'text'){
                  headerMedia = {
                         header_handle: [this.metaUploadedId]
-            }
-            
+            }            
         }
-        let comp:any =  [
+        let comp:any =  [];
+         comp =  [
             {
                 type: 'HEADER',
                 format: this.selectedType,
@@ -822,12 +826,17 @@ checkTemplateName(e:any){
         if(!comp[2]['text']){
             comp.splice(2,1);
         }
+        if(!(comp[0]['text'] || comp[0]['example'])){
+            comp.splice(0,1);
+        }
         if(buttons.length > 0){
             comp.push( {
                 type: 'BUTTONS',                       
                 buttons:buttons                
             });
+            newTemplateForm.buttons =JSON.stringify(buttons);
         }
+
 
             newTemplateForm.template_json.push({
                 name: this.newTemplateForm.controls.TemplateName.value,
@@ -836,15 +845,19 @@ checkTemplateName(e:any){
                 components:comp
                 
             });
+
         }   
         return newTemplateForm;
     }
 
     replaceBracesWithNumbers(text: string): string {
+        if(text){
         let counter = 1;
         return text.replace(/{{.*?}}/g, () => {
           return `{{${counter++}}}`; 
         });
+    } else
+        return '';
       }
     
     patchFormValue() {
@@ -854,7 +867,6 @@ checkTemplateName(e:any){
         for (let prop in data) {
             let value = data[prop as keyof typeof data];
             if (this.newTemplateForm.get(prop)){
-                if(prop == 'FooterText')
              this.newTemplateForm.get(prop)?.setValue(value);
             }
             this.id = ID;
@@ -1021,6 +1033,32 @@ insertAtCursor(selectedValue: any) {
           $('#newTemplateMessage').modal('hide');
           $('#newTemplateMessagePreview').modal('show');
       };
+      let buttons =[];
+      if(this.newTemplateForm.controls.buttonType.value == 'Quick Reply'){
+        // let obj =[];
+         let i = 0;
+         for(let item of this.quickReplyButtons){
+             i++;
+             if(this.newTemplateForm.get(`quickreply${i}`)?.value)
+                 buttons.push({type: "QUICK_REPLY",text: this.newTemplateForm.get(`quickreply${i}`)?.value})
+         }
+     }else{
+         if(this.newTemplateForm.controls.buttonText.value){
+         buttons =[{
+             type: 'PHONE_NUMBER',
+             text: this.newTemplateForm.controls.buttonText.value,
+             phone_number: this.newTemplateForm.controls.phone_number.value,
+            // countryCode: this.newTemplateForm.controls.country_code.value,
+             //displayPhoneNumber: this.newTemplateForm.controls.displayPhoneNumber.value,
+         },
+         // {
+         //     type: 'URL',
+         //     text: this.newTemplateForm.controls.url?.value,
+         //     url: this.newTemplateForm.controls.url?.value,
+         // }
+     ]
+ }
+     }
 
     }
 
