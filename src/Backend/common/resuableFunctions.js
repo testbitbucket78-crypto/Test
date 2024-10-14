@@ -214,6 +214,55 @@ AND SP_ID = ?;`;
       console.log("ERR updateContactData",err)
     }
   }
+  async function notifiactionsToBeSent(UID, ID){
+   const usersUID = UID;
+   const notificationId = ID;
+   let query = `SELECT * FROM TeamboxNotificationSettings WHERE UID = ? AND notificationId= ? AND isDeleted != 1`;
+   try {
+    const result = await db.excuteQuery(query, [usersUID, notificationId]);
+    if(result.length == 0){
+      return false;
+    }
+    const data = result[0];
+    let check;
+    if(notificationId == 1){
+      check = data?.PushNotificationValue
+    }
+    if(notificationId == 2){
+      check = data?.PushNotificationValue
+    }
+    if(notificationId == 3){
+      check = data?.PushNotificationValue
+    }
+    if(notificationId == 4){
+       check = data?.PushNotificationValue
+    }
+    if(check == 1){
+      return true;
+    }
+    else return false;
 
+   } catch (err){
+    console.error("Error fetching notification settings:", err);
+    return false;  
+   }
+  }
+  async function currentlyAssigned(interactionId) {
+    const query = `SELECT user.uid 
+                   FROM InteractionMapping 
+                   JOIN user ON user.uid = InteractionMapping.AgentId 
+                   WHERE is_active = 1 
+                   AND InteractionMapping.InteractionId = ? 
+                   ORDER BY InteractionMapping.MappingId DESC 
+                   LIMIT 1`;
+  
+    try {
+        let result = await db.excuteQuery(query, [interactionId]);
+        return result.length > 0 ? result[0].uid : null;
+    } catch (error) {
+        console.error('Error executing query:', error);
+        throw error; 
+    }
+  }
 
-  module.exports  ={isStatusEmpty,getDefaultAttribue,isHolidays,isWorkingTime,resetContactFields,determineMediaFromLink}
+  module.exports  ={isStatusEmpty,getDefaultAttribue,isHolidays,isWorkingTime,resetContactFields,determineMediaFromLink,notifiactionsToBeSent,currentlyAssigned}
