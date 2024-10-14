@@ -120,15 +120,23 @@ export class SettingsService {
 //     return '';
 // }
 
-convertTimeFormat(time: string | null | undefined, isStaticFormate: boolean = false): string {
-  if (!time || typeof time !== 'string') {
+convertTimeFormat(time: string | null | undefined, isStaticFormat: boolean = false): string {
+  if (!time) {
     return ''; 
   }
 
-  let format = isStaticFormate ? '24' : this.timeFormat;
+  let format = isStaticFormat ? '24' : this.timeFormat;
   const trimmedTime = time.trim(); 
 
+  // Check if input is already in 24-hour format (no AM/PM modifier)
+  const is24HourInput = /^[0-9]{2}:[0-9]{2}$/.test(trimmedTime);
+
+  // Convert to 24-hour format
   if (format === '24') {
+    if (is24HourInput) {
+      return trimmedTime; // Already in 24-hour format, return as is
+    }
+
     const [timePart, modifier] = trimmedTime.split(' ');
 
     if (!timePart || !modifier) {
@@ -150,7 +158,7 @@ convertTimeFormat(time: string | null | undefined, isStaticFormate: boolean = fa
 
     return `${hours.padStart(2, '0')}:${minutes.padStart(2, '0')}`;
 
-  } else {
+  } else { // Convert to 12-hour format
     let [hours, minutes] = trimmedTime.split(':');
 
     if (!hours || !minutes) {
@@ -170,6 +178,7 @@ convertTimeFormat(time: string | null | undefined, isStaticFormate: boolean = fa
     return `${hours.padStart(2, '0')}:${minutes.padStart(2, '0')} ${modifier}`;
   }
 }
+
 
   getInitials(name:any){
     let intials ='';

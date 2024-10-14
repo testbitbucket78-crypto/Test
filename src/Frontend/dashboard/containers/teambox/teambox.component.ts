@@ -278,7 +278,8 @@ public  fieldsData: { [key: string]: string } = { text: 'name' };
 		height: '50px'
 	  };
 	  isLoadingOnScroll!: boolean;
-	event='teamBox';
+	event='teamBox';	
+    lastCursorPosition: Range | null = null;
 	constructor(private http: HttpClient,private apiService: TeamboxService ,public settingService: SettingsService,public settingsService: SettingsService, config: NgbModalConfig, private modalService: NgbModal,private fb: FormBuilder,private elementRef: ElementRef,private renderer: Renderer2, private router: Router,private websocketService: WebsocketService,
 		public phoneValidator:PhoneValidationService, private datePipe:DatePipe,
 		private dashboardService: DashboardService,
@@ -667,7 +668,7 @@ public  fieldsData: { [key: string]: string } = { text: 'name' };
 			htmlcontent += mediaName
 		}
 	
-		htmlcontent +='<p>'+ item?.BodyText+'</p>'+'<br>';
+		htmlcontent +='<p>'+ item?.BodyText+'</p>';
 		if (item?.FooterText) {
 			htmlcontent+='<p>'+item?.FooterText+'</p>';
 		}
@@ -761,7 +762,7 @@ InsertMentionOption(user:any){
 		this.attachMentionHandlers();
 	  }, 10);
 	this.showMention = false;
-	this.selectInteraction(this.selectedInteraction)
+	//this.selectInteraction(this.selectedInteraction)
 }
 
 attachMentionHandlers() {
@@ -797,9 +798,11 @@ ToggleInsertTemplateOption(){
 ToggleAttributesOption(){
 	if(this.selectedInteraction?.assignTo?.AgentId == this.uid || this.showChatNotes=='notes' ){
 		if((this.showChatNotes=='text' && this.selectedInteraction?.channel=='WA API' && this.selectedInteraction?.progressbar?.progressbarValue >0) ||(this.showChatNotes=='text' && this.selectedInteraction.channel=='WA Web') || this.showChatNotes=='notes' )
-		{
-	this.closeAllModal()
-	$("#atrributemodal").modal('show'); 
+		{			
+			const selection = window.getSelection();
+			this.lastCursorPosition = selection?.getRangeAt(0) || null;
+			this.closeAllModal()
+			$("#atrributemodal").modal('show'); 
 		}
 	}
 
@@ -830,13 +833,37 @@ UpdateVariable(event: any, index: number) {
 			this.fallbackvalue[index] = "";
 		}
 }
+
+
 selectAttributes(item:any) {
-	 this.closeAllModal();
 	const selectedValue = item;
-	let content:any = this.chatEditor.value || '';
-	content = content+'<span contenteditable="false" class="e-mention-chip"><a _ngcontent-yyb-c67="" href="mailto:" title="">{{'+selectedValue+'}}</a></span>'
-	this.chatEditor.value = content;
+	let content:any ='';	
+		content = this.chatEditor.value || '';	
+		const container = document.createElement('div');
+		container.innerHTML = this.chatEditor?.value;
+		this.insertAtCursor(selectedValue);
+		this.closeAllModal();
 }
+
+insertAtCursor(selectedValue: any) {
+  const spaceNode = document.createElement('span');
+  spaceNode.innerHTML = '&nbsp;'; 
+  spaceNode.setAttribute('contenteditable', 'true');
+    this.lastCursorPosition?.insertNode(spaceNode);
+    setTimeout(() => {
+        const range = document.createRange();
+        const selection = window.getSelection();
+        range.setStartAfter(spaceNode);  
+        range.setEndAfter(spaceNode); 
+
+        selection?.removeAllRanges();
+        selection?.addRange(range);
+    }, 100);
+	const newNode = document.createElement('span');
+	newNode.innerHTML =  '<span contenteditable="false" class="e-mention-chip"><a _ngcontent-yyb-c67="" title="">{{'+selectedValue+'}}</a></span>';
+	this.lastCursorPosition?.insertNode(newNode);
+}
+
 isCustomValue(value: string): boolean {
 	if(value){
 		let isMatched = false
@@ -3297,6 +3324,38 @@ checkAuthentication(){
 	})
 }
 
+getUserListFromMessage(value: string): string[] {
+    const tempDiv = document.createElement('div');
+    tempDiv.innerHTML = value;
+    
+    const mentionElements = tempDiv.querySelectorAll('a'); 
+
+    const userList: string[] = [];
+    
+    mentionElements.forEach((el) => {
+        let username = el.textContent?.trim();
+        
+        if (username && username.startsWith('@')) {
+            username = username.substring(1);
+            userList.push(username);
+        }
+    });
+
+    return userList;
+}
+getUIDsFromNames(Names: any): number[] {
+    const uids: number[] = [];
+    const extractedNames = Names;
+    extractedNames.forEach((name: string) => {
+        const matchedUser = this.userList.find((user: any) => user.name === name);
+
+        if (matchedUser) {
+            uids.push(matchedUser.uid);
+        }
+    });
+
+    return uids;
+}
 sendMessage(isTemplate:boolean=false,templateTxt:string=''){
 	var tempDivElement = document.createElement("div");   
 
@@ -3333,6 +3392,13 @@ sendMessage(isTemplate:boolean=false,templateTxt:string=''){
 		}
 		console.log(value);
 	let agentName = this.userList.filter((items:any) => items.uid == this.uid)[0]?.name;
+	let uidMentioned: number[] = [];
+	   if(value){ 
+		const userMentioned = this.getUserListFromMessage(value);
+		if(userMentioned && userMentioned.length) { 
+			 uidMentioned = this.getUIDsFromNames(userMentioned);
+		}
+	   }
 		var bodyData = {
 			InteractionId: this.selectedInteraction.InteractionId,
 			CustomerId: this.selectedInteraction.customerId,
@@ -3355,6 +3421,7 @@ sendMessage(isTemplate:boolean=false,templateTxt:string=''){
 			action:'edited by ' + agentName,
 			action_at:new Date(),
 			action_by:name,
+			uidMentioned: uidMentioned
 		}
 		console.log(bodyData,'Bodydata')
 		let input = {
