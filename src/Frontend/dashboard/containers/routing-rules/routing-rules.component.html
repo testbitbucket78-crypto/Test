@@ -46,7 +46,7 @@
             </div>
             <div class="sub-contents">
                 <p>Assign new incoming conversation to all the active agents one after another ensuring these are getting distributed equally among them.</p>           
-                <div class="select-heading py-2">Max. No. of Open Conversation Allowed</div>
+                <div class="select-heading py-2">Maximum Concurrent Open Conversations Allowed per Agent </div>
                 <select class="input-form" [disabled]="defaultAssignRule!=='roundrobin'" [(ngModel)]="conversationallowed"
                 [ngClass]="{'error-outline': conversationallowed === '' && defaultAssignRule === 'roundrobin'}" >
                     <option [ngValue]="'1'">1</option>
@@ -110,11 +110,11 @@
                     <input type="radio" [disabled]="isManageMissedChat" id="chat-assign-co" name="chat-assign" [checked]="isMissChatAssigContactOwner" (change)="missedChatOptionsChange('isMissChatAssigContactOwner')" [value]="isMissChatAssigContactOwner">
                     <label class="m-0" for="chat-assign-co">Contact Owner</label>
                 </div>
-                <div class="pl-4 sel-type-btns">
+                <div class="pl-2 sel-type-btns">
                     <input type="radio" [disabled]="isManageMissedChat" id="chat-assign-admin" name="chat-assign" [checked]="isadmin" (change)="missedChatOptionsChange('isadmin')" [value]="isadmin" >
-                    <label class="m-0" for="chat-assign-admin">Admin</label>
+                    <label class="m-0" for="chat-assign-admin">Default Admin</label>
                 </div>
-                <div class="pl-4 sel-type-btns">
+                <div class="pl-2 sel-type-btns">
                     <input type="radio" [disabled]="isManageMissedChat" id="chat-assign-su" name="chat-assign" [checked]="assignspecificuser" (change)="missedChatOptionsChange('assignspecificuser')"[value]="assignspecificuser">
                     <label class="m-0" for="chat-assign-su">Assign a Specific User</label>
                 </div>

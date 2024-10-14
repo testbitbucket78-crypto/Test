@@ -1154,7 +1154,7 @@ async function isDataInCorrectFormat(columnDataType, actuallName, displayName, u
 
         case 'Time':
           if (displayName) {
-              const time = moment(displayName, ['h:mm A', 'HH:mm', 'HH:mm:ss'], true);
+              const time = moment(displayName, ['h:mm A', 'HH:mm', 'HH:mm:ss','h:mm:ss A'], true);
               if (!time.isValid()) {
                   return { isError: true, reason: `${fieldDisplayName} is invalid` };
               }
