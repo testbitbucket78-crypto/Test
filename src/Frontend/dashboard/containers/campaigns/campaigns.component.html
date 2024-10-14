@@ -407,7 +407,7 @@
 					<div class="template_list">
 						<div class="template_box" *ngFor='let template of allTemplates ;let i = index'>
 							<label class="container" (click)="selectTemplate(template)">
-								<input type="radio" name="selectedTemplate" [checked]="template?.BodyText == selectedCampaign?.message_content">
+								<input type="radio" name="selectedTemplate" [checked]="template?.ID == selectedTemplate?.ID">
 								<span class="checkmark radio"></span>
 								<div class="template_body">
 									<p>{{template?.TemplateName}}</p>
