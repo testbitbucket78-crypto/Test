@@ -287,7 +287,7 @@ function ClientInstance(spid, authStr, phoneNo) {
                 for (let currentIndex = 0; currentIndex <= lastIndex; currentIndex++) {
                   let n_chat_mensaje = mensajes_verificar[currentIndex];
 
-               //   let getmessages = savelostChats(n_chat_mensaje, phoneNo, spid, currentIndex, lastIndex);
+                  let getmessages = savelostChats(n_chat_mensaje, phoneNo, spid, currentIndex, lastIndex);
 
                 }
 
@@ -491,6 +491,7 @@ WHERE customerId IN (SELECT customerId FROM EndCustomer WHERE Phone_number =? an
       const timeOut = setTimeout(() => {
         //  client.initialize().catch(_ => _);
         client.initialize().catch((error) => {
+          logger.error(`Web Js Client Initialization error caught --- ${err}`);
           console.log("intilize_________________")
           console.error(error);
         });
