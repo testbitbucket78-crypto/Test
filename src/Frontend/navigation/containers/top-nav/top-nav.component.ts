@@ -7,6 +7,7 @@ import { Router } from '@angular/router';
 import { interval } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
 import { NotificationService } from 'Frontend/dashboard/services/notification.service';
+import { ViewEncapsulation } from '@angular/core';
 
 @HostListener('window:scroll', ['$event'])
 
@@ -16,6 +17,7 @@ import { NotificationService } from 'Frontend/dashboard/services/notification.se
     //changeDetection: ChangeDetectionStrategy.OnPush,
     templateUrl: './top-nav.component.html',
     styleUrls: ['top-nav.component.scss'],
+    //encapsulation: ViewEncapsulation.None 
 })
 export class TopNavComponent implements OnInit {
     @Input() title: string = '';
