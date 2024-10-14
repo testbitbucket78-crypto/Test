@@ -67,11 +67,11 @@ app.post("/webhook", async (req, res) => {
 
     let extractedMessage = await extractDataFromMessage(body)
 
-    res.status(200).send({
-      msg: "extractedMessage",
-      status: 200
-    });
-
+      res.status(200).send({
+        msg: "extractedMessage",
+        status: 200
+      });
+    
   } catch (err) {
     db.errlog(err);
     console.log("errrrrrrrr", err)
@@ -82,6 +82,17 @@ app.post("/webhook", async (req, res) => {
   }
 
 });
+
+const updateTemplateStatus = async (templateId, newStatus) => {
+  const query = `
+      UPDATE templateMessages
+      SET status = ?, updated_at = NOW()
+      WHERE templateID = ?
+  `;
+  const values = [newStatus, templateId];
+  const result = await db.excuteQuery(query, values);
+  return result;
+};
 
 
 async function extractDataFromMessage(body) {
@@ -177,18 +188,37 @@ async function extractDataFromMessage(body) {
     let smsId = body.entry[0].changes[0].value.statuses[0].id
     let smsTime = body.entry[0].changes[0].value.statuses[0].timestamp
     var d = new Date(smsTime * 1000).toUTCString();
-    
+
     const message_time = moment.utc(d).format('YYYY-MM-DD HH:mm:ss');
     let displayPhoneNumber = body.entry[0].changes[0].value.metadata.display_phone_number
     let customerPhoneNumber = body.entry[0].changes[0].value.statuses[0].recipient_id
-    let failedMessageReason ='';
-    if(body.entry[0].changes[0].value.statuses[0].errors?.length >0){
+    let failedMessageReason = '';
+    if (body.entry[0].changes[0].value.statuses[0].errors?.length > 0) {
       failedMessageReason = body.entry[0].changes[0].value.statuses[0]?.errors[0].error_data.details
     }
-   
+
     //console.log("messageStatus ,displayPhoneNumber ,customerPhoneNumber " )
     // console.log(messageStatus ,displayPhoneNumber ,customerPhoneNumber)
-    let updatedStatus = await saveSendedMessageStatus(messageStatus, displayPhoneNumber, customerPhoneNumber, smsId, message_time,failedMessageReason)
+    let updatedStatus = await saveSendedMessageStatus(messageStatus, displayPhoneNumber, customerPhoneNumber, smsId, message_time, failedMessageReason)
+  }else if(body.entry && body.entry.length > 0 && body.entry[0].changes && body.entry[0].changes.length > 0 &&
+    body.entry[0].changes[0].value){
+    
+    if (body.object === 'whatsapp_business_account') {
+      body.entry.forEach(async (entry) => {
+        const changes = entry.changes;
+        changes.forEach(async (change) => {
+          if (change.field === 'message_template_status_update') {
+            const templateId = change.value.message_template_id;
+            const newStatus = change.value.event;
+
+            // Update your database
+            await updateTemplateStatus(templateId, newStatus);
+            console.log(`Template ${templateId} status updated to ${newStatus}`);
+          }
+        });
+      });
+      
+    } 
   }
 
 }
@@ -331,21 +361,21 @@ async function getDetatilsOfSavedMessage(saveMessage, message_text, phone_number
           let getIntractionStatus = await db.excuteQuery('select * from Interaction WHERE InteractionId=? and SP_ID=?', [newId, sid]);
           //check if assignment trigger and chat is ressolve then open 
           if (defaultReplyAction >= 0) {
-            let isEmptyInteraction = await   commonFun.isStatusEmpty(newId, sid,custid)
-            let ResolveOpenChat = await db.excuteQuery('UPDATE Interaction SET interaction_status =? WHERE InteractionId !=? and customerId=?',['Resolved',newId,custid]) ;
-            console.log("ResolveOpenChat *********",ResolveOpenChat)
-            let updateInteraction = await db.excuteQuery('UPDATE Interaction SET interaction_status=? ,interaction_open_datetime=? WHERE InteractionId=?', ['Open',updated_at, newId])
-            if(isEmptyInteraction == 1){
-              updateInteraction = await db.excuteQuery('UPDATE Interaction SET interaction_status=?,updated_at=? ,interaction_open_datetime=? WHERE InteractionId=?', ['Open', updated_at,updated_at, newId])
+            let isEmptyInteraction = await commonFun.isStatusEmpty(newId, sid, custid)
+            let ResolveOpenChat = await db.excuteQuery('UPDATE Interaction SET interaction_status =? WHERE InteractionId !=? and customerId=?', ['Resolved', newId, custid]);
+            console.log("ResolveOpenChat *********", ResolveOpenChat)
+            let updateInteraction = await db.excuteQuery('UPDATE Interaction SET interaction_status=? ,interaction_open_datetime=? WHERE InteractionId=?', ['Open', updated_at, newId])
+            if (isEmptyInteraction == 1) {
+              updateInteraction = await db.excuteQuery('UPDATE Interaction SET interaction_status=?,updated_at=? ,interaction_open_datetime=? WHERE InteractionId=?', ['Open', updated_at, updated_at, newId])
             }
-             console.log("commonFun",updateInteraction)
+            console.log("commonFun", updateInteraction)
             if (updateInteraction?.affectedRows > 0) {
               notify.NotifyServer(display_phone_number, false, newId, 0, 'IN', 'Status changed')
             }
             notify.NotifyServer(display_phone_number, false, newId, 0, 'IN', 'Assign Agent')
           } else {
             let updateInteraction = await db.excuteQuery('UPDATE Interaction SET interaction_status=? WHERE InteractionId=?', [getIntractionStatus[0]?.interaction_status, newId])
-             console.log("DEBUGGGGGGGGGGGGGGGGGG",updateInteraction.affectedRows)
+            console.log("DEBUGGGGGGGGGGGGGGGGGG", updateInteraction.affectedRows)
             if (updateInteraction?.affectedRows > 0) {
               notify.NotifyServer(display_phone_number, false, newId, 0, 'IN', 'Status changed')
             }
@@ -358,13 +388,13 @@ async function getDetatilsOfSavedMessage(saveMessage, message_text, phone_number
         //  console.log("routing ------------ called after false return")
         let myUTCString = new Date().toUTCString();
         const updated_at = moment.utc(myUTCString).format('YYYY-MM-DD HH:mm:ss');
-        let isEmptyInteraction = await   commonFun.isStatusEmpty(newId, sid,custid)
-       
-          let ResolveOpenChat = await db.excuteQuery('UPDATE Interaction SET interaction_status =? WHERE InteractionId !=? and customerId=?',['Resolved',newId,custid]) ;
-          console.log("ResolveOpenChat -----",ResolveOpenChat)
-      
+        let isEmptyInteraction = await commonFun.isStatusEmpty(newId, sid, custid)
+
+        let ResolveOpenChat = await db.excuteQuery('UPDATE Interaction SET interaction_status =? WHERE InteractionId !=? and customerId=?', ['Resolved', newId, custid]);
+        console.log("ResolveOpenChat -----", ResolveOpenChat)
+
         let updateInteraction = await db.excuteQuery('UPDATE Interaction SET interaction_status=? WHERE InteractionId=?', ['Open', newId])
-        if(isEmptyInteraction == 1){
+        if (isEmptyInteraction == 1) {
           updateInteraction = await db.excuteQuery('UPDATE Interaction SET interaction_status=?,updated_at=? WHERE InteractionId=?', ['Open', updated_at, newId])
         }
         if (updateInteraction?.affectedRows > 0) {
@@ -430,7 +460,7 @@ async function saveImageFromReceivedMessage(from, message, phone_number_id, disp
   })
 }
 
-async function saveSendedMessageStatus(messageStatus, displayPhoneNumber, customerPhoneNumber, smsId, createdTime,failedMessageReason) {
+async function saveSendedMessageStatus(messageStatus, displayPhoneNumber, customerPhoneNumber, smsId, createdTime, failedMessageReason) {
 
   // let getMessageId = await db.excuteQuery(process.env.messageIdQuery, []);
   // console.log(getMessageId)
@@ -491,12 +521,12 @@ WHERE customerId IN (SELECT customerId FROM EndCustomer WHERE Phone_number =? an
     // notify.NotifyServer(displayPhoneNumber, true)
     let ack3InId = await db.excuteQuery(notifyInteraction, [customerPhoneNumber, spid])
     notify.NotifyServer(displayPhoneNumber, false, ack3InId[0]?.InteractionId, 'Out', 3, 0)
-  }else if (messageStatus == 'failed'){
+  } else if (messageStatus == 'failed') {
     let campaignReadQuery = 'UPDATE CampaignMessages set status=3 where phone_number =? and status = 0  and messageTemptateId =?';
     let campaignRead = await db.excuteQuery(campaignReadQuery, [customerPhoneNumber, smsId])
     const smsupdate = `UPDATE Message SET msg_status = 9 ,failedMessageReason=? where Message_template_id =? and SPID=?`
     //  console.log(smsupdate)
-    let resd = await db.excuteQuery(smsupdate, [failedMessageReason,smsId, spid])
+    let resd = await db.excuteQuery(smsupdate, [failedMessageReason, smsId, spid])
     //   console.log("read", resd?.affectedRows)
     // notify.NotifyServer(displayPhoneNumber, true)
     let ack3InId = await db.excuteQuery(notifyInteraction, [customerPhoneNumber, spid])
