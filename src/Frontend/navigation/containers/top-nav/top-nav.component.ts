@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Input, ElementRef, Component, OnInit,HostListener} from '@angular/core';
+import { Input, ElementRef, Component, OnInit,HostListener} from '@angular/core';
 import { NavigationService } from 'Frontend/navigation/services';
 import { AuthService } from 'Frontend/auth/services';
 import { ProfileService } from 'Frontend/dashboard/services/profile.service';
@@ -7,17 +7,14 @@ import { Router } from '@angular/router';
 import { interval } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
 import { NotificationService } from 'Frontend/dashboard/services/notification.service';
-import { ViewEncapsulation } from '@angular/core';
 
 @HostListener('window:scroll', ['$event'])
 
 
 @Component({
     selector: 'sb-top-nav',
-    //changeDetection: ChangeDetectionStrategy.OnPush,
     templateUrl: './top-nav.component.html',
     styleUrls: ['top-nav.component.scss'],
-    //encapsulation: ViewEncapsulation.None 
 })
 export class TopNavComponent implements OnInit {
     @Input() title: string = '';
