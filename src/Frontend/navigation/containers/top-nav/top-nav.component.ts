@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Input, ElementRef, Component, OnInit,HostListener} from '@angular/core';
+import { Input, ElementRef, Component, OnInit,HostListener} from '@angular/core';
 import { NavigationService } from 'Frontend/navigation/services';
 import { AuthService } from 'Frontend/auth/services';
 import { ProfileService } from 'Frontend/dashboard/services/profile.service';
@@ -13,7 +13,6 @@ import { NotificationService } from 'Frontend/dashboard/services/notification.se
 
 @Component({
     selector: 'sb-top-nav',
-    //changeDetection: ChangeDetectionStrategy.OnPush,
     templateUrl: './top-nav.component.html',
     styleUrls: ['top-nav.component.scss'],
 })
