@@ -91,7 +91,7 @@ const login = async (req, res) => {
 
 const isSpAlreadyExist = async function (req, res) {
     try {
-        var loginQuery = `SELECT * FROM user WHERE email_id =?  and isDeleted !=1 and IsActive !=2 and ParentId !=0`
+        var loginQuery = `SELECT * FROM user WHERE email_id =?  and isDeleted !=1 and IsActive !=2 ` //I have to use unique email troughout engagekart
         var credentialsOfEmail = await db.excuteQuery(loginQuery, [req.body.email_id])
         if (credentialsOfEmail?.length > 0) {
             return res.status(409).send({
@@ -99,7 +99,7 @@ const isSpAlreadyExist = async function (req, res) {
                 status: 409
             });
         }
-        var loginQueryPhone = `SELECT * FROM user WHERE  mobile_number=? and isDeleted !=1 and IsActive !=2 and ParentId !=0`
+        var loginQueryPhone = `SELECT * FROM user WHERE  registerPhone=? and isDeleted !=1 and IsActive !=2 and ParentId is null`
         var credentialsOfPhone = await db.excuteQuery(loginQueryPhone, [req.body.mobile_number])
         if (credentialsOfPhone?.length > 0) {
             return res.status(409).send({
@@ -130,17 +130,18 @@ const isSpAlreadyExist = async function (req, res) {
 const register = async function (req, res) {
     console.log(req.body)
     name = req.body.name
-    mobile_number = req.body.mobile_number
+    mobile_number = req.body?.mobile_number
     email_id = req.body.email_id
     password = req.body.password
     confirmPassword = req.body.confirmPassword
     LoginIP = req.body.LoginIP
     countryCode = req.body.country_code
     display_mobile_number = req.body?.display_mobile_number
+    registerPhone = req.body?.registerPhone
     try {
 
 
-        var credentials = await db.excuteQuery(val.loginQuery, [req.body.email_id, mobile_number])
+        var credentials = await db.excuteQuery(val.loginQuery, [req.body.email_id, registerPhone])
         if (credentials.length > 0) {
             res.status(409).send({
                 msg: 'User Already Exist with this email or Phone Number !',
@@ -153,7 +154,7 @@ const register = async function (req, res) {
             }
             // Hash the password before storing it in the database
             const hash = await bcrypt.hash(password, 10);
-            var values = [name, mobile_number, email_id, hash, LoginIP, countryCode, display_mobile_number]  // pending add countryCode in stored procedure
+            var values = [name,registerPhone, email_id, hash, LoginIP, countryCode, display_mobile_number]  // pending add countryCode in stored procedure
             var registeredUser = await db.excuteQuery(val.registerQuery, values)   //need to change LoginIP in signup stored procedure
             const token = jwt.sign({ email_id: registeredUser.email_id }, SECRET_KEY);
 
@@ -162,7 +163,7 @@ const register = async function (req, res) {
             Your account is all set and ready to go. Start exploring your new features and make the most out of our platform today!
             - Team Engagekart
           `;
-            var data = getTextMessageInput(mobile_number, body);
+            var data = getTextMessageInput(registerPhone, body);
 
             sendMessage(data)
 
@@ -180,7 +181,7 @@ const register = async function (req, res) {
            <p>Here are your account details on Engagekart:</p>
            <p><a href="${loginPageURL}">${loginPageURL}</a></p>
            <p>User ID: ${req.body.email_id}<br>
-           Mobile: ${req.body.mobile_number}<br>
+           Mobile: ${req.body.registerPhone}<br>
            Role: Admin</p>
            <p>Thank you for choosing Engagekart!</p>
            <p>Best regards,<br>

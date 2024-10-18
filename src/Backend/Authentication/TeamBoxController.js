@@ -777,8 +777,11 @@ async function getDefaultActionTimeandUpdatePauseTime(spid,customerId) {
         let getDefaultAction = await db.excuteQuery(val.defaultQuery, [spid]);
         let timePause = getDefaultAction[0]?.pauseAutoReplyTime ? getDefaultAction[0]?.pauseAutoReplyTime :0;
         let currentTime = new Date(); // Its default gives utc on server and i have to use it to compare only server time so not changed into UTC.
+        let autoReplyVal =0;
+        if(timePause !=0){
+            autoReplyVal = new Date(currentTime.getTime() + timePause * 60000); // Clone the UTC time
+        }
       
-        let autoReplyVal = new Date(currentTime.getTime() + timePause * 60000); // Clone the UTC time
       
         console.log("currentTime,autoReplyVal ,timePause----", new Date(),  autoReplyVal,timePause,autoReplyVal.toISOString())
  

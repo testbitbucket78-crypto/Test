@@ -30,7 +30,7 @@ let clientPidMapping = {};
 let clientSpidInprogress = {};
 let isQRstack;
 let undefinedCount = 0;
-
+let updateUserQuery = `update user set mobile_number=? , isAutoScanOnce =? where SP_ID=? and ParentId is null and isDeleted !=1 and IsActive !=2`
 let notifyInteraction = `SELECT InteractionId FROM Interaction WHERE customerId IN (SELECT customerId FROM EndCustomer WHERE Phone_number = ? and SP_ID=? ) and is_deleted !=1   order by created_at desc`
 async function createClientInstance(spid, phoneNo) {
   console.log(spid, phoneNo, new Date().toUTCString());
@@ -149,6 +149,81 @@ function killChromeProcesses(spid, callback) {
   }
 }
 
+async function isPhoneAlreadyInUsed(mobile_number) {
+  try {
+    let isExist = await db.excuteQuery('select * from user where mobile_number=? and isAutoScanOnce =? and ParentId is null and  isDeleted !=1 and IsActive !=2', [mobile_number, 1]);
+  //console.log("is Exist",isExist)
+    if (isExist?.length >0) {
+      return true;
+    }
+    return false;
+  } catch (err) {
+    console.log("check existing phone error", err);
+    return err;
+  }
+}
+
+async function isWrongNumberScanned(spid, scannedPhone) {
+  try {
+    let isExist = await db.excuteQuery('select * from user where SP_ID=? and isAutoScanOnce =? and ParentId is null and isDeleted !=1 and IsActive !=2', [spid, 1]);
+   //console.log("isWrongNumberScanned",isExist)
+    if (isExist?.length > 0 && (isExist[0]?.mobile_number != scannedPhone)) {
+
+      return true;
+    } 
+    return false;
+  } catch (err) {
+    console.log("check existing phone error", err);
+    return err;
+  }
+}
+
+async function destroyWrongScan(spid){
+try{
+  if (clientSpidMapping.hasOwnProperty(spid)) {
+    delete clientSpidMapping[spid];
+    try {
+      // kill the cycle with pid and sign = 'SIGINT' 
+      process.kill(clientPidMapping[spid]);
+      delete clientPidMapping[spid];
+
+      let dir = path.join(__dirname, '.wwebjs_auth');
+      let sessionDir = path.join(dir, `session-${spid}`);
+
+      if (fs.existsSync(sessionDir)) {
+        console.log(`wrong Deleting directory: ${sessionDir}`);
+
+        // First, attempt to kill related processes (e.g., Chrome) that may be locking files
+        killChromeProcesses(spid, () => {
+          setTimeout(() => {
+            try {
+              // Use fs-extra's removeSync for better handling of recursive deletes
+              fs.rmdirSync(sessionDir, { recursive: true });
+              console.log(`Successfully deleted directory: ${sessionDir}`);
+            } catch (err) {
+              console.error(`Error deleting directory ${sessionDir}:`, err);
+            }
+          }, 2000); // Adjust the delay as necessary
+        });
+
+      } else {
+        console.log(`disconnected Directory not found: ${sessionDir}`);
+      }
+
+    } catch (err) {
+      console.log("Delete clientPidMapping issues in wrong scan")
+    }
+
+    console.log(`destroy wrong no. ${spid} from clientSpidMapping.`);
+
+  }
+  } catch (err) {
+    console.log("destroyWrongScan catch error", err);
+    return err;
+  }
+}
+
+
 function ClientInstance(spid, authStr, phoneNo) {
   return new Promise(async (resolve, reject) => {
     try {
@@ -156,7 +231,7 @@ function ClientInstance(spid, authStr, phoneNo) {
         puppeteer: {
           headless: true,
           executablePath: "/usr/bin/google-chrome-stable",
-          // executablePath: "C:/Program Files/Google/Chrome/Application/chrome.exe",
+          //executablePath: "C:/Program Files/Google/Chrome/Application/chrome.exe",
           // executablePath: "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome",
 
           args: [
@@ -226,78 +301,55 @@ function ClientInstance(spid, authStr, phoneNo) {
 
         try {
           console.log("Above client ready", new Date().toUTCString())
-          if (phoneNo != client.info.wid.user) {
-            console.log("wrong Number")
-            notify.NotifyServer(phoneNo, false, 'Wrong Number')
-            client.destroy();
-            if (clientSpidMapping.hasOwnProperty(spid)) {
-              delete clientSpidMapping[spid];
-              try {
-                // kill the cycle with pid and sign = 'SIGINT' 
-                process.kill(clientPidMapping[spid]);
-                delete clientPidMapping[spid];
+          let isPhoneAlreadyUsed = await isPhoneAlreadyInUsed(client.info.wid.user)
+          if (!isPhoneAlreadyUsed) {
+            let wrongNumber = await isWrongNumberScanned(spid, client.info.wid.user)
+            if (wrongNumber) {       //phoneNo != client.info.wid.user
+              console.log("wrong Number Scanned")
+              notify.NotifyServer(phoneNo, false, 'Wrong Number')
+              client.destroy();
+              await destroyWrongScan(spid)
+              return resolve({ status: 404, value: 'Wrong Number ,Please use logged in User Phone Number !' });
 
-                let dir = path.join(__dirname, '.wwebjs_auth');
-                let sessionDir = path.join(dir, `session-${spid}`);
-                
-                if (fs.existsSync(sessionDir)) {
-                  console.log(`wrong Deleting directory: ${sessionDir}`);
-                  
-                  // First, attempt to kill related processes (e.g., Chrome) that may be locking files
-                  killChromeProcesses(spid, () => {
-                    setTimeout(() => {
-                    try {
-                      // Use fs-extra's removeSync for better handling of recursive deletes
-                      fs.rmdirSync(sessionDir, { recursive: true });
-                      console.log(`Successfully deleted directory: ${sessionDir}`);
-                    } catch (err) {
-                      console.error(`Error deleting directory ${sessionDir}:`, err);
-                    }
-                  }, 2000); // Adjust the delay as necessary
-                  });
-                  
-                } else {
-                  console.log(`disconnected Directory not found: ${sessionDir}`);
+
+            } else {
+              console.log('Client is ready!');
+              notify.NotifyServer(phoneNo, false, 'Client is ready!')
+              let updateScannedNumber = await db.excuteQuery(updateUserQuery, [client.info.wid.user, 1, spid])
+              console.log(client.info.wid.user, 1, spid,'updateScannedNumber',updateScannedNumber);
+              let allChats = await client.getChats();
+              let chat_activos = allChats.splice(0, 10);
+              for (const chat of chat_activos) {
+                if (!chat.isGroup) {
+                  let mensajes_verificar = await chat.fetchMessages({ limit: 30 });
+                  // Sort messages by timestamp
+                  mensajes_verificar.sort((a, b) => a.timestamp - b.timestamp);
+
+                  let lastIndex = mensajes_verificar.length - 1;
+
+
+                  for (let currentIndex = 0; currentIndex <= lastIndex; currentIndex++) {
+                    let n_chat_mensaje = mensajes_verificar[currentIndex];
+
+                    //   let getmessages = savelostChats(n_chat_mensaje, phoneNo, spid, currentIndex, lastIndex);
+
+                  }
+
+
+
+                  // apply rauting rules and sreply 
                 }
-
-              } catch (err) {
-                console.log("Delete clientPidMapping issues in wrong scan")
               }
-
-              console.log(`destroy wrong no. ${spid} from clientSpidMapping.`);
-
+            
+              console.log("resolve client ready", new Date().toUTCString())
+              return resolve({ status: 201, value: 'Client is ready!' });
             }
-            return resolve({ status: 404, value: 'Wrong Number ,Please use logged in User Phone Number !' });
-
-
           } else {
-            console.log('Client is ready!');
-            notify.NotifyServer(phoneNo, false, 'Client is ready!')
-            let allChats = await client.getChats();
-            let chat_activos = allChats.splice(0, 10);
-            for (const chat of chat_activos) {
-              if (!chat.isGroup) {
-                let mensajes_verificar = await chat.fetchMessages({ limit: 30 });
-                // Sort messages by timestamp
-                mensajes_verificar.sort((a, b) => a.timestamp - b.timestamp);
-
-                let lastIndex = mensajes_verificar.length - 1;
-
-
-                for (let currentIndex = 0; currentIndex <= lastIndex; currentIndex++) {
-                  let n_chat_mensaje = mensajes_verificar[currentIndex];
-
-               //   let getmessages = savelostChats(n_chat_mensaje, phoneNo, spid, currentIndex, lastIndex);
-
-                }
-
-
-
-                // apply rauting rules and sreply 
-              }
-            }
-            console.log("resolve client ready", new Date().toUTCString())
-            return resolve({ status: 201, value: 'Client is ready!' });
+            console.log("Already used by another SPID")
+            notify.NotifyServer(phoneNo, false, 'This Phone is already used in EngageKart !');
+            client.destroy();
+            await destroyWrongScan(spid)
+            return resolve({ status: 410, value: 'This Phone is already used in EngageKart !' });
           }
         } catch (readyerr) {
           console.log("client ready err", readyerr)
@@ -381,32 +433,32 @@ function ClientInstance(spid, authStr, phoneNo) {
                 process.kill(clientPidMapping[spid]);
                 delete clientPidMapping[spid];
 
-               // delete session of the spid 
+                // delete session of the spid 
 
-               let dir = path.join(__dirname, '.wwebjs_auth');
-               let sessionDir = path.join(dir, `session-${spid}`);
-               
-               if (fs.existsSync(sessionDir)) {
-                 console.log(`disconnected  Deleting directory: ${sessionDir}`);
-                 
-                 // First, attempt to kill related processes (e.g., Chrome) that may be locking files
-                 killChromeProcesses(spid, () => {
-                   setTimeout(() => {
-                   try {
-                     // Use fs-extra's removeSync for better handling of recursive deletes
-                     fs.rmdirSync(sessionDir, { recursive: true });
-                     console.log(`Successfully deleted directory on disconnected: ${sessionDir}`);
-                   } catch (err) {
-                     console.error(`Error deleting directory on disconnected ${sessionDir}:`, err);
-                   }
-                 }, 2000); // Adjust the delay as necessary
-                 });
-                 
-               } else {
-                 console.log(`disconnected Directory not found: ${sessionDir}`);
-               }
+                let dir = path.join(__dirname, '.wwebjs_auth');
+                let sessionDir = path.join(dir, `session-${spid}`);
 
-             //______________________________________//
+                if (fs.existsSync(sessionDir)) {
+                  console.log(`disconnected  Deleting directory: ${sessionDir}`);
+
+                  // First, attempt to kill related processes (e.g., Chrome) that may be locking files
+                  killChromeProcesses(spid, () => {
+                    setTimeout(() => {
+                      try {
+                        // Use fs-extra's removeSync for better handling of recursive deletes
+                        fs.rmdirSync(sessionDir, { recursive: true });
+                        console.log(`Successfully deleted directory on disconnected: ${sessionDir}`);
+                      } catch (err) {
+                        console.error(`Error deleting directory on disconnected ${sessionDir}:`, err);
+                      }
+                    }, 2000); // Adjust the delay as necessary
+                  });
+
+                } else {
+                  console.log(`disconnected Directory not found: ${sessionDir}`);
+                }
+
+                //______________________________________//
                 let updateWebdetails = await db.excuteQuery('update WhatsAppWeb set channel_status=0 where connected_id =? and spid=?', [phoneNo, spid]);
               } catch (err) {
                 console.log("Delete clientPidMapping issues in disconnected", err)
@@ -897,7 +949,7 @@ async function savelostChats(message, spPhone, spid, currentIndex, lastIndex) {
     let from = (message.from).replace(/@c\.us$/, '')   //phoneNo
     let countryCodeObj;
     if (from) {
-     countryCodeObj = mapCountryCode.mapCountryCode(from); //Country Code abstraction `countryCode` = '91', `country` = 'IN', `localNumber` = '8130818921'
+      countryCodeObj = mapCountryCode.mapCountryCode(from); //Country Code abstraction `countryCode` = '91', `country` = 'IN', `localNumber` = '8130818921'
     }
     let countryCode = countryCodeObj?.country + " +" + countryCodeObj?.countryCode;
     let phone_number_id = message.id.id
@@ -953,10 +1005,10 @@ async function savelostChats(message, spPhone, spid, currentIndex, lastIndex) {
 
 
       if (from != 'status@broadcast') {
-        console.log("endCustomer",endCustomer,"Type",Type,"message_text",message_text,"****************",currentIndex , lastIndex,message.timestamp)
-      //  console.log("lost messages time", d)
+        console.log("endCustomer", endCustomer, "Type", Type, "message_text", message_text, "****************", currentIndex, lastIndex, message.timestamp)
+        //  console.log("lost messages time", d)
         let saveMessage = await saveIncommingMessages(message_direction, from, message_text, phone_number_id, display_phone_number, endCustomer, message_text, message_media, "Message_template_id", "Quick_reply_id", Type, "ExternalMessageId", contactName, ackStatus, message_time, countryCode);
- //console.log(saveMessage)
+        //console.log(saveMessage)
         if (currentIndex == lastIndex) {
           console.log(message_text, "mett indec=======================", currentIndex, lastIndex)
 
@@ -1020,8 +1072,8 @@ async function actionsOflatestLostMessage(message_text, phone_number_id, from, d
           //check if assignment trigger from smart reply and chat is ressolve then open 
           if (smartReplyActions >= 0) {
             let isEmptyInteraction = await commonFun.isStatusEmpty(newId, sid, custid)
-            let ResolveOpenChat = await db.excuteQuery('UPDATE Interaction SET interaction_status =? WHERE InteractionId !=? and customerId=?',['Resolved',newId,custid]) ;
-            console.log("ResolveOpenChat -----",ResolveOpenChat)
+            let ResolveOpenChat = await db.excuteQuery('UPDATE Interaction SET interaction_status =? WHERE InteractionId !=? and customerId=?', ['Resolved', newId, custid]);
+            console.log("ResolveOpenChat -----", ResolveOpenChat)
             let updateInteraction = await db.excuteQuery('UPDATE Interaction SET interaction_status=? WHERE InteractionId=?', ['Open', newId])
             if (isEmptyInteraction == 1) {
               updateInteraction = await db.excuteQuery('UPDATE Interaction SET interaction_status=?,updated_at=? WHERE InteractionId=?', ['Open', updated_at, newId])
@@ -1039,8 +1091,8 @@ async function actionsOflatestLostMessage(message_text, phone_number_id, from, d
         // let getIntractionStatus = await db.excuteQuery('select * from Interaction WHERE InteractionId=? and SP_ID=?', [newId, sid]);
 
         let isEmptyInteraction = await commonFun.isStatusEmpty(newId, sid, custid)
-        let ResolveOpenChat = await db.excuteQuery('UPDATE Interaction SET interaction_status =? WHERE InteractionId !=? and customerId=?',['Resolved',newId,custid]) ;
-        console.log("ResolveOpenChat -----",ResolveOpenChat)
+        let ResolveOpenChat = await db.excuteQuery('UPDATE Interaction SET interaction_status =? WHERE InteractionId !=? and customerId=?', ['Resolved', newId, custid]);
+        console.log("ResolveOpenChat -----", ResolveOpenChat)
         let updateInteraction = await db.excuteQuery('UPDATE Interaction SET interaction_status=? WHERE InteractionId=?', ['Open', newId])
         if (isEmptyInteraction == 1) {
           updateInteraction = await db.excuteQuery('UPDATE Interaction SET interaction_status=?,updated_at=? WHERE InteractionId=?', ['Open', updated_at, newId])
@@ -1231,8 +1283,8 @@ async function getDetatilsOfSavedMessage(saveMessage, message_text, phone_number
         //check if assignment trigger and chat is ressolve then open 
         if (defaultReplyAction >= 0) {
           let isEmptyInteraction = await commonFun.isStatusEmpty(newId, sid, custid)
-          let ResolveOpenChat = await db.excuteQuery('UPDATE Interaction SET interaction_status =? WHERE InteractionId !=? and customerId=?',['Resolved',newId,custid]) ;
-          console.log("ResolveOpenChat (((((((((((",ResolveOpenChat)
+          let ResolveOpenChat = await db.excuteQuery('UPDATE Interaction SET interaction_status =? WHERE InteractionId !=? and customerId=?', ['Resolved', newId, custid]);
+          console.log("ResolveOpenChat (((((((((((", ResolveOpenChat)
           let updateInteraction = await db.excuteQuery('UPDATE Interaction SET interaction_status=? WHERE InteractionId=?', ['Open', newId])
           if (isEmptyInteraction == 1) {
             updateInteraction = await db.excuteQuery('UPDATE Interaction SET interaction_status=?,updated_at=? WHERE InteractionId=?', ['Open', updated_at, newId])
@@ -1256,8 +1308,8 @@ async function getDetatilsOfSavedMessage(saveMessage, message_text, phone_number
       let myUTCString = new Date().toUTCString();
       const updated_at = moment.utc(myUTCString).format('YYYY-MM-DD HH:mm:ss');
       let isEmptyInteraction = await commonFun.isStatusEmpty(newId, sid, custid)
-      let ResolveOpenChat = await db.excuteQuery('UPDATE Interaction SET interaction_status =? WHERE InteractionId !=? and customerId=?',['Resolved',newId,custid]) ;
-      console.log("ResolveOpenChat *********************",ResolveOpenChat)
+      let ResolveOpenChat = await db.excuteQuery('UPDATE Interaction SET interaction_status =? WHERE InteractionId !=? and customerId=?', ['Resolved', newId, custid]);
+      console.log("ResolveOpenChat *********************", ResolveOpenChat)
       let updateInteraction = await db.excuteQuery('UPDATE Interaction SET interaction_status=? WHERE InteractionId=?', ['Open', newId])
       if (isEmptyInteraction == 1) {
         updateInteraction = await db.excuteQuery('UPDATE Interaction SET interaction_status=?,updated_at=? WHERE InteractionId=?', ['Open', updated_at, newId])
