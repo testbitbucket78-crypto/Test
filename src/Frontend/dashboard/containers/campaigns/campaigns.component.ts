@@ -119,6 +119,7 @@ export class CampaignsComponent implements OnInit {
 	 allTemplates:any=[];
 	 initallTemplates:any=[];
 	 allTemplatesMain:any=[];
+	 initTemplates:any=[];
 	 selectedTemplate:any=[];
 	 templatesVariable:any=[];
 	 selecetdVariable:any=[];
@@ -213,6 +214,7 @@ constructor(config: NgbModalConfig, private modalService: NgbModal,private datep
 		this.getWhatsAppDetails();
 		this.getContactFilterBy();
 		this.getUserList();
+		this.getAllTemplates();
 	}
 
 	@HostListener('document:scroll', ['$event'])
@@ -1385,9 +1387,14 @@ formateDate(dateTime:string){
 		this.selectedTemplate = this.selectedCampaign
 		this.selectedTemplate['Header']=this.selectedCampaign?.message_heading
 		this.selectedTemplate['BodyText']=this.selectedCampaign?.message_content
-		this.selectedTemplate['Links']=this.selectedCampaign?.message_media
+		this.selectedTemplate['Links']=this.selectedCampaign?.message_media;
 
-		this.selectedTemplate['allVariables'] =this.selectedCampaign?.allVariables
+		let template = this.initTemplates.filter((item:any)=> item.ID == this.selectedCampaign?.templateId)[0];
+		if(template){
+			console.log(template)
+		this.selectedTemplate = template;
+		}
+		this.selectedTemplate['allVariables'] =this.selectedCampaign?.allVariables;
 		this.closeAllModal()
 		this.modalReference = this.modalService.open(addNewCampaign,{size: 'xl', windowClass:'white-bg'});
 	}
@@ -2346,8 +2353,13 @@ testinfo(){
 			this.isAuthentication = true;
 			this.isMarketing = true;
 			this.isUtility = true;
-		})
-		
+		})		
+	}
+	async getAllTemplates(){
+		let spid = Number(this.SPID)
+		this.settingsService.getApprovedTemplate(spid,1).subscribe(allTemplates =>{
+			this.initTemplates = allTemplates?.templates;
+		})		
 	}
  	searchTemplate(event:any){
 		let searchKey = event.target.value

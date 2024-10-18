@@ -3389,8 +3389,11 @@ sendMessage(isTemplate:boolean=false,templateTxt:string=''){
 			this.messageMediaFile = '';
 		} else if(this.messageMeidaFile){
             value = this.processMediaType(this.mediaType,this.messageMeidaFile,value)
+		} else{
+			console.log(value);
+			value = this.ensureSpaceBeforeTags(value);
+			console.log(value);
 		}
-		console.log(value);
 	let agentName = this.userList.filter((items:any) => items.uid == this.uid)[0]?.name;
 	let uidMentioned: number[] = [];
 	   if(value){ 
@@ -4016,7 +4019,17 @@ sendMessage(isTemplate:boolean=false,templateTxt:string=''){
   closeTemplatePopup(){
 	this.messageMeidaFile = '';
 	this.messageMediaFile ='';
-
+  }
+  ensureSpaceBeforeTags(htmlString: string): string {
+	const tags = ['strong', 'em', 'span'];  
+	tags.forEach(tag => {
+	  const regex = new RegExp(`([^\\s])(<${tag}(\\s|>))`, 'g');
+	  htmlString = htmlString.replace(regex, `$1 $2`);
+	//   const nestedTagRegex = new RegExp(`\\s(<${tag}(\\s|>))`, 'g');
+	//   htmlString = htmlString.replace(nestedTagRegex, `$1`);
+	});  
+	console.log(htmlString);
+	return htmlString;
   }
 
 }
