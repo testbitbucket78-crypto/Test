@@ -776,10 +776,10 @@ const addUser = async (req, res) => {
 
             var User = await db.excuteQuery(val.insertQuery, [values]);
             const created_at = moment.utc(myUTCString).format('YYYY-MM-DD HH:mm:ss');
-            var addNotifyOnestatus = await db.excuteQuery(val.addNotification,[[[User?.insertId,1,1,1,0,created_at]]])
-            var addNotifyTwostatus = await db.excuteQuery(val.addNotification,[[[User?.insertId,2,1,1,0,created_at]]])
-            var addNotifyThreestatus = await db.excuteQuery(val.addNotification,[[[User?.insertId,3,1,1,0,created_at]]])
-            var addNotifyFourstatus = await db.excuteQuery(val.addNotification,[[[User?.insertId,4,1,1,0,created_at]]])
+            var addNotifyOnestatus = await db.excuteQuery(val.addNotification,[[[User?.insertId,1,1,0,0,created_at]]])
+            var addNotifyTwostatus = await db.excuteQuery(val.addNotification,[[[User?.insertId,2,1,0,0,created_at]]])
+            var addNotifyThreestatus = await db.excuteQuery(val.addNotification,[[[User?.insertId,3,1,0,0,created_at]]])
+            var addNotifyFourstatus = await db.excuteQuery(val.addNotification,[[[User?.insertId,4,1,0,0,created_at]]])
 
             inviteUser(email_id, name, SP_ID, registerPhone, RoleName, randomstring)
             res.status(200).send({

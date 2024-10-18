@@ -1361,6 +1361,7 @@ formateDate(dateTime:string){
 		this.modalReference = this.modalService.open(addNewCampaign,{size: 'xl', windowClass:'white-bg'});
 	}
 	editCampaign(addNewCampaign:any,step:any){
+		console.log(this.selectedCampaign?.csv_contacts,'this.selectedCampaign?.csv_contacts')
 		this.newCampaignDetail.Id = this.selectedCampaign.Id;
 		this.isEditCampaign = true;
 		this.activeStep=step
@@ -1377,7 +1378,8 @@ formateDate(dateTime:string){
 		this.newListName=JSON.parse(this.selectedCampaign?.segments_contacts)?.length+' unique contacts selected';
 		}else if(this.selectedCampaign?.csv_contacts.length>0){
 			this.step2Option='ImportContacts'
-			this.csvContactList = 	JSON.parse(this.selectedCampaign?.csv_contacts)
+			this.csvContactList = 	JSON.parse(this.selectedCampaign?.csv_contacts);
+			this.csvContactColmuns = Object.keys(this.csvContactList[0]);
 			this.importedContacts=JSON.parse(this.selectedCampaign?.csv_contacts)?.length+' unique contacts selected';
 		}
 		this.selectedTemplate = this.selectedCampaign
@@ -1451,9 +1453,10 @@ formateDate(dateTime:string){
 		this.modalReference2.close();
 	}
 	constructMessageContent(BodyText: string): string {
-		let content = BodyText;
+	
+		let content ='<p>'+ BodyText+'</p>';
 		if (this.selectedTemplate?.FooterText && this.selectedTemplate?.FooterText.trim() !== '') {
-		  content += this.selectedTemplate?.FooterText;
+		  content += '<p>'+this.selectedTemplate?.FooterText+'</p>';
 		}
 		return content;
 	  }
@@ -1500,6 +1503,7 @@ formateDate(dateTime:string){
 			button_exp:this.selectedTemplate?.button_exp,
 			category:this.selectedTemplate?.Category,
 			category_id:this.selectedTemplate?.category_id,
+			templateId:this.selectedTemplate?.ID,
 			time_zone:this.selecteTimeZone,
 			start_datetime:sratdatetime,
 			end_datetime:'',
@@ -2099,7 +2103,8 @@ testinfo(){
 						i++
 						}
 					})
-					this.csvContactColmuns = tabalHeader
+					this.csvContactColmuns = tabalHeader;
+					console.log(this.csvContactColmuns,'this.csvContactColmuns');
 					let contactsData:any=[]
 					tabalRows.map((rowbh:any)=>{
 						let row:any={}
@@ -2141,6 +2146,7 @@ testinfo(){
 					}
 				});
 				this.csvContactColmuns = tableHeader;
+				console.log(this.csvContactColmuns,'this.csvContactColmuns');
 				let contactsData: any[] = [];
 				tableRows.map((rowbh: any) => {
 					let row: any = {};

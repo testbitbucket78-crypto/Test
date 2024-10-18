@@ -66,8 +66,12 @@ async function AssignToContactOwner(sid, newId, agid, custid, isMissedChat) {
           let openAssignChat = await updateInteraction(newId, sid, 'AssignToContactOwner', custid)
           let myUTCString = new Date().toUTCString();
           const utcTimestamp = moment.utc(myUTCString).format('YYYY-MM-DD HH:mm:ss');
-          let notifyvalues = [[sid, 'New Chat Assigned to You', 'A new Chat has been Assigned to you', agid, 'Routing rules', agid, utcTimestamp]];
+          const currentAssignedUser = await commonFun.currentlyAssigned(newId);
+          const check = await commonFun.notifiactionsToBeSent(currentAssignedUser,2);
+          if(check){
+          let notifyvalues = [[sid, 'New Chat Assigned to You', 'A new Chat has been Assigned to you', agid, 'Routing rules', currentAssignedUser, utcTimestamp]];
           let mentionRes = await db.excuteQuery(`INSERT INTO Notification(sp_id,subject,message,sent_to,module_name,uid,created_at) values ?`, [notifyvalues]);
+          }
           return true; // Return true if insertion is successful
         } else {
           return { message: "Insertion into InteractionMapping failed" };
@@ -108,9 +112,12 @@ async function assignToLastAssistedAgent(sid, newId, agid, custid) {
           let openAssignChat = await updateInteraction(newId, sid, 'LastAssistedAgent', custid)
           let myUTCString = new Date().toUTCString();
           const utcTimestamp = moment.utc(myUTCString).format('YYYY-MM-DD HH:mm:ss');
-          let notifyvalues = [[sid, 'New Chat Assigned to You', 'A new Chat has been Assigned to you', agid, 'Routing rules', agid, utcTimestamp]];
+          const currentAssignedUser = await commonFun.currentlyAssigned(newId);
+          const check = await commonFun.notifiactionsToBeSent(currentAssignedUser,2);
+          if(check){
+          let notifyvalues = [[sid, 'New Chat Assigned to You', 'A new Chat has been Assigned to you', agid, 'Routing rules', currentAssignedUser, utcTimestamp]];
           let mentionRes = await db.excuteQuery(`INSERT INTO Notification(sp_id,subject,message,sent_to,module_name,uid,created_at) values ?`, [notifyvalues]);
-
+          }
           return true; // Return true if insertion is successful
 
         }
@@ -212,9 +219,12 @@ WHERE u.SP_ID =? AND u.isDeleted != 1 and u.IsActive =1 and r.RoleName != 'Admin
                 let openAssignChat = await updateInteraction(newId, sid, 'RoundRobin', custid)
                 let myUTCString = new Date().toUTCString();
                 const utcTimestamp = moment.utc(myUTCString).format('YYYY-MM-DD HH:mm:ss');
-                let notifyvalues = [[sid, 'New Chat Assigned to You', 'A new Chat has been Assigned to you', agid, 'Routing rules', agid, utcTimestamp]];
+                const currentAssignedUser = await commonFun.currentlyAssigned(newId);
+                const check = await commonFun.notifiactionsToBeSent(currentAssignedUser,2);
+                if(check){
+                let notifyvalues = [[sid, 'New Chat Assigned to You', 'A new Chat has been Assigned to you', agid, 'Routing rules', currentAssignedUser, utcTimestamp]];
                 let mentionRes = await db.excuteQuery(`INSERT INTO Notification(sp_id,subject,message,sent_to,module_name,uid,created_at) values ?`, [notifyvalues]);
-
+                }
                 return true; // Return true if insertion is successful
               } else {
                 return { message: "Insertion into InteractionMapping failed" };
@@ -249,8 +259,12 @@ async function ManualAssign(newId, sid, agid, custid) {
           let openAssignChat = await updateInteraction(newId, sid, 'ManualAssign', custid)
           let myUTCString = new Date().toUTCString();
           const utcTimestamp = moment.utc(myUTCString).format('YYYY-MM-DD HH:mm:ss');
-          let notifyvalues = [[sid, 'New Chat Assigned to You', 'A new Chat has been Assigned to you', agid, 'Routing rules', agid, utcTimestamp]];
+          const currentAssignedUser = await commonFun.currentlyAssigned(newId);
+          const check = await commonFun.notifiactionsToBeSent(currentAssignedUser,2);
+          if(check){
+          let notifyvalues = [[sid, 'New Chat Assigned to You', 'A new Chat has been Assigned to you', agid, 'Routing rules', currentAssignedUser, utcTimestamp]];
           let mentionRes = await db.excuteQuery(`INSERT INTO Notification(sp_id,subject,message,sent_to,module_name,uid,created_at) values ?`, [notifyvalues]);
+          }
           return true; // Return true if insertion is successful
         }
       } else {
@@ -348,8 +362,12 @@ async function AssignAdmin(newId, sid, agid, custid) {
       let openAssignChat = await updateInteraction(newId, sid, 'AssignAdmin', custid)
       let myUTCString = new Date().toUTCString();
       const utcTimestamp = moment.utc(myUTCString).format('YYYY-MM-DD HH:mm:ss');
-      let notifyvalues = [[sid, 'New Chat Assigned to You', 'A new Chat has been Assigned to you', agid, 'Routing rules', agid, utcTimestamp]];
+      const currentAssignedUser = await commonFun.currentlyAssigned(newId);
+      const check = await commonFun.notifiactionsToBeSent(currentAssignedUser,2);
+      if(check){
+      let notifyvalues = [[sid, 'New Chat Assigned to You', 'A new Chat has been Assigned to you', agid, 'Routing rules', currentAssignedUser, utcTimestamp]];
       let mentionRes = await db.excuteQuery(`INSERT INTO Notification(sp_id,subject,message,sent_to,module_name,uid,created_at) values ?`, [notifyvalues]);
+      }
       return true;
     } else {
       return { message: "Insertion into InteractionMapping failed" };
@@ -374,8 +392,12 @@ async function AssignSpecificUser(sid, newId, agid, custid) {
         let openAssignChat = await updateInteraction(newId, sid, 'AssignSpecificUser', custid)
         let myUTCString = new Date().toUTCString();
         const utcTimestamp = moment.utc(myUTCString).format('YYYY-MM-DD HH:mm:ss');
-        let notifyvalues = [[sid, 'New Chat Assigned to You', 'A new Chat has been Assigned to you', agid, 'Routing rules', agid, utcTimestamp]];
+        const currentAssignedUser = await commonFun.currentlyAssigned(newId);
+        const check = await commonFun.notifiactionsToBeSent(currentAssignedUser,2);
+        if(check){
+        let notifyvalues = [[sid, 'New Chat Assigned to You', 'A new Chat has been Assigned to you', agid, 'Routing rules', currentAssignedUser, utcTimestamp]];
         let mentionRes = await db.excuteQuery(`INSERT INTO Notification(sp_id,subject,message,sent_to,module_name,uid,created_at) values ?`, [notifyvalues]);
+        }
         return true;
       } else {
         return { message: "Insertion into InteractionMapping failed" };
@@ -406,8 +428,12 @@ async function AssignMissedToContactOwner(sid, newId, agid, custid) {
           let openAssignChat = await updateInteraction(newId, sid, 'AssignMissedToContactOwner', custid)
           let myUTCString = new Date().toUTCString();
           const utcTimestamp = moment.utc(myUTCString).format('YYYY-MM-DD HH:mm:ss');
-          let notifyvalues = [[sid, 'New Chat Assigned to You', 'A new Chat has been Assigned to you', agid, 'Routing rules', agid, utcTimestamp]];
+          const currentAssignedUser = await commonFun.currentlyAssigned(newId);
+          const check = await commonFun.notifiactionsToBeSent(currentAssignedUser,2);
+          if(check){
+          let notifyvalues = [[sid, 'New Chat Assigned to You', 'A new Chat has been Assigned to you', agid, 'Routing rules', currentAssignedUser, utcTimestamp]];
           let mentionRes = await db.excuteQuery(`INSERT INTO Notification(sp_id,subject,message,sent_to,module_name,uid,created_at) values ?`, [notifyvalues]);
+          }
           return true;
         } else {
           return { message: "Insertion into InteractionMapping failed" };

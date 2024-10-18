@@ -678,7 +678,7 @@ const insertMessage = async (req, res) => {
             let agentName = await db.excuteQuery('select name from user where uid=?', [Agent_id]);
             let channelType = await db.excuteQuery('select * from EndCustomer where customerId=? and SP_ID=?', [customerId, SPID]);
             let spchannel = await db.excuteQuery('select channel_id from WhatsAppWeb where spid=? limit 1', [SPID]);
-
+            let uidMentioned = Array.isArray(req.body?.uidMentioned) ? req.body.uidMentioned : [];
             const channel = channelType.length > 0 ? channelType[0].channel : spchannel[0]?.channel_id;
 
             var values = [[SPID, Type, ExternalMessageId, interaction_id, Agent_id, message_direction, message_text, message_media, media_type, Message_template_id, Quick_reply_id, created_at, created_at, mediaSize, assignAgent]];
@@ -693,12 +693,22 @@ const insertMessage = async (req, res) => {
                 var mentionedNotification = await db.excuteQuery(mentionQuery, [messageTextParameter, agentNameParameter]);
             }
 
-            if (mentionedNotification.length != 0 && 'notes') {
+            if (Type == 'notes') {
                 let myUTCString = new Date().toUTCString();
                 const utcTimestamp = moment.utc(myUTCString).format('YYYY-MM-DD HH:mm:ss');
-                let notifyvalues = [[SPID, '@Mention in the Notes', 'A new Chat has been Assigned to you', Agent_id, 'teambox', Agent_id, utcTimestamp]];
-                let mentionRes = await db.excuteQuery(val.addNotification, [notifyvalues]);
-                //  logger.debug('Mention Result:', mentionRes);
+                await Promise.all(
+                    uidMentioned.map(async (element) => {
+                        const check = await commonFun.notifiactionsToBeSent(element,4);
+                        if (check) {
+                            let notifyvalues = [
+                                [SPID, '@Mention in the Notes', 'A new Chat has been Assigned to you', element, 'teambox', element, utcTimestamp]
+                            ];
+                            let mentionRes = await db.excuteQuery(val.addNotification, [notifyvalues]);
+                        } else {
+                            console.log(`Notification disabled for UID: ${element}`);
+                        }
+                    })
+                );
             }
 
             let content = await removeTags.removeTagsFromMessages(message_text);
@@ -801,6 +811,8 @@ function determineMediaType(mediaType) {
         case 'application/pdf':
             return 'document';
         case 'image/jpeg':
+        case 'image/jpg':
+        case 'image/png':
             return 'image';
         case '':
             return 'text';
@@ -935,9 +947,12 @@ const updateInteractionMapping = async (req, res) => {
 
             const myUTCString = new Date().toUTCString();
             const utcTimestamp = moment.utc(myUTCString).format('YYYY-MM-DD HH:mm:ss');
-            const notifyvalues = [[nameData[0].SP_ID, 'New Chat Assigned to You', 'A new Chat has been Assigned to you', AgentId, 'teambox', MappedBy, utcTimestamp]];
+            const check = await commonFun.notifiactionsToBeSent(AgentId,2);
+            if(check){
+            const notifyvalues = [[nameData[0].SP_ID, 'New Chat Assigned to You', 'A new Chat has been Assigned to you', AgentId, 'teambox', AgentId, utcTimestamp]];
             const notifyRes = await db.excuteQuery(val.addNotification, [notifyvalues]);
             logger.debug('Notification Result:', notifyRes);
+            }
         }
 
         const myUTCString = new Date().toUTCString();

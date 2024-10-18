@@ -618,7 +618,7 @@ checkTemplateName(e:any){
                             this.removeFormValues();
                         }
                         else{
-                            this.showToaster('there is something wrong in this template','error')
+                            this.showToaster('something went wrong','error')
                         }
                     });
             } else {
@@ -638,7 +638,7 @@ checkTemplateName(e:any){
                             this.removeFormValues();
                         }
                         else{
-                            this.showToaster('there is something wrong in this template','error')
+                            this.showToaster('something went wrong','error')
                         }
                     });
             }
@@ -654,6 +654,21 @@ checkTemplateName(e:any){
             $('#confirmationModal').modal('show');
             this.showCampaignDetail =false;
     }
+    cancelSave(){
+        $('#confirmationModal').modal('hide');
+        $('#newTemplateMessagePreview').modal('show');
+
+    }
+
+    onInputChange(event: any) {
+        console.log(event);
+        let inputValue = event.target.value;
+        inputValue = inputValue.replace(/\s+/g, '_')  
+                               .toLowerCase()         
+                               .replace(/[^a-z0-9_]/g, ''); 
+        event.target.value = inputValue;
+        this.newTemplateForm.get('TemplateName')?.setValue(inputValue);
+      }
 
     saveAsDraft() {
         this.status = 'draft';
@@ -661,6 +676,8 @@ checkTemplateName(e:any){
     }
 
     copyTemplate() {
+        let nameExist = this.filteredTemplatesData.filter((item:any)=>item.TemplateName == this.templatesMessageDataById.TemplateName +' copy');
+        if(nameExist.length >0){
         const copyTemplateForm: newTemplateFormData = <newTemplateFormData>{};
         copyTemplateForm.ID = 0;
         copyTemplateForm.spid = this.templatesMessageDataById.spid;
@@ -686,10 +703,10 @@ checkTemplateName(e:any){
         // else {
         //     copyTemplateForm.template_json = [];
         // }
-        let nameExist = this.filteredTemplatesData.filter((item:any)=>item.TemplateName == this.templatesMessageDataById.TemplateName +' copy');
-        if(nameExist.length >0){
-            copyTemplateForm.TemplateName = this.templatesMessageDataById.TemplateName +' copy' + Math.random();
-        }
+        // let nameExist = this.filteredTemplatesData.filter((item:any)=>item.TemplateName == this.templatesMessageDataById.TemplateName +' copy');
+        // if(nameExist.length >0){
+        //     copyTemplateForm.TemplateName = this.templatesMessageDataById.TemplateName +' copy' + Math.random();
+        // }
        
             this.apiService.saveNewTemplateData(copyTemplateForm, this.selectedPreview)
             .subscribe(response => {
@@ -699,7 +716,10 @@ checkTemplateName(e:any){
                     this.getTemplatesData();
                 }
             });
+         }else{            
+            this.showToaster('Quick response already exist with this name !','error');
          }
+        }
 
          replaceVariable(val:string[]){
             let replacedVariables:any[] =[];
@@ -859,6 +879,16 @@ checkTemplateName(e:any){
         $('#newTemplateMessageFirst').modal('show');
         this.patchFormValue();
     }
+    // copyCampaign() {
+    //     this.editQuickResponse();
+    //     this.ID = 0;
+    //     this.usertemplateForm.controls.Header.setValue('Copied ' + this.repliestemplateData.Header);
+    //     let nameExist = this.initTemplates.filter((item:any)=>item.TemplateName == ('Copied ' + this.repliestemplateData.Header));
+    //           if(nameExist.length >0){
+    //             this.usertemplateForm.controls.Header.setValue((`Copied_${Math.random()} ` + this.repliestemplateData.Header));
+    //           }
+    //     this.saveTemplate();
+    //   }
     copyGalleryData() {
         $('#newTemplateMessageFirst').modal('show');
         this.patchGalleryFormValue();
@@ -939,14 +969,25 @@ checkTemplateName(e:any){
     }
 
     
-    insertAtCursor(selectedValue:any) {
-        const editorElement = this.chatEditor.element.querySelector('.e-content');
-        const newNode = document.createElement('span');
-        newNode.innerHTML =  '<span contenteditable="false" class="e-mention-chip"><a _ngcontent-yyb-c67="" title="">{{'+selectedValue+'}}</a></span>';;
-        //newNode.style.color = '#000';
-        this.lastCursorPosition?.insertNode(newNode);
-      }
-    
+insertAtCursor(selectedValue: any) {
+  const spaceNode = document.createElement('span');
+  spaceNode.innerHTML = '&nbsp;'; 
+  spaceNode.setAttribute('contenteditable', 'true');
+    this.lastCursorPosition?.insertNode(spaceNode);
+    setTimeout(() => {
+        const range = document.createRange();
+        const selection = window.getSelection();
+        range.setStartAfter(spaceNode);  
+        range.setEndAfter(spaceNode); 
+
+        selection?.removeAllRanges();
+        selection?.addRange(range);
+    }, 100);
+	const newNode = document.createElement('span');
+	newNode.innerHTML =  '<span contenteditable="false" class="e-mention-chip"><a _ngcontent-yyb-c67="" title="">{{'+selectedValue+'}}</a></span>';
+	this.lastCursorPosition?.insertNode(newNode);
+}
+     /* GET VARIABLE VALUES */
     getVariables(sentence: string, first: string, last: string, isTempateJson:boolean =false) {
         let goodParts: string[] = [];
     

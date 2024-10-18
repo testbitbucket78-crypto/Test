@@ -267,6 +267,24 @@ async function saveIncommingMessages(from, firstMessage, phone_number_id, displa
   return saveMessage;
 }
 
+async function currentlyAssigned(interactionId) {
+  const query = `SELECT user.uid 
+                 FROM InteractionMapping 
+                 JOIN user ON user.uid = InteractionMapping.AgentId 
+                 WHERE is_active = 1 
+                 AND InteractionMapping.InteractionId = ? 
+                 ORDER BY InteractionMapping.MappingId DESC 
+                 LIMIT 1`;
+
+  try {
+      let result = await db.excuteQuery(query, [interactionId]);
+      return result.length > 0 ? result[0].uid : null;
+  } catch (error) {
+      console.error('Error executing query:', error);
+      throw error; 
+  }
+}
+
 async function getDetatilsOfSavedMessage(saveMessage, message_text, phone_number_id, contactName, from, display_phone_number) {
   if (saveMessage?.length > 0) {
     console.log(display_phone_number + " .." + message_text)
@@ -298,9 +316,12 @@ async function getDetatilsOfSavedMessage(saveMessage, message_text, phone_number
 
     let myUTCString = new Date().toUTCString();
     const utcTimestamp = moment.utc(myUTCString).format('YYYY-MM-DD HH:mm:ss');
-    let notifyvalues = [[sid, 'New Message in your Chat', 'You have a new message in you current Open Chat', agid, 'WA Web', agid, utcTimestamp]];
-    let mentionRes = await db.excuteQuery(`INSERT INTO Notification(sp_id,subject,message,sent_to,module_name,uid,created_at) values ?`, [notifyvalues]);
-
+    const currentAssignedUser = await currentlyAssigned(newId); //todo need to check after deploy out of scope to test
+    const check = await commonFun.notifiactionsToBeSent(currentAssignedUser,3);
+    if(check){
+      let notifyvalues = [[sid, 'New Message in your Chat', 'You have a new message in you current Open Chat', agid, 'WA Web', currentAssignedUser, utcTimestamp]];
+      let mentionRes = await db.excuteQuery(`INSERT INTO Notification(sp_id,subject,message,sent_to,module_name,uid,created_at) values ?`, [notifyvalues]);
+    }
 
     let contact = await db.excuteQuery('select * from EndCustomer where customerId =? and SP_ID=?', [custid, sid])
     // if(contact?.length >0){
@@ -386,8 +407,11 @@ async function getDetatilsOfSavedMessage(saveMessage, message_text, phone_number
 
           let myUTCString = new Date().toUTCString();
           const utcTimestamp = moment.utc(myUTCString).format('YYYY-MM-DD HH:mm:ss');
+          const check = await commonFun.notifiactionsToBeSent(agid,2);
+          if(check){
           let notifyvalues = [[sid, 'New Chat Assigned to You', 'A new Chat has been Assigned to you', agid, 'Routing rules', agid, utcTimestamp]];
           let mentionRes = await db.excuteQuery(`INSERT INTO Notification(sp_id,subject,message,sent_to,module_name,uid,created_at) values ?`, [notifyvalues]);
+          }
         }
         //Here i have to check if any routing rules addded then send websocket
       }

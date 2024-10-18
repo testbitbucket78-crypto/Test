@@ -184,6 +184,8 @@ export class SmartRepliesComponent implements OnInit,OnDestroy {
 		isEditAssigned:any=false;
 		AssignedIndex:any = 0;
 		channelOption : any = [];
+		
+		lastCursorPosition: Range | null = null;
 		// channelOption:any=[
 		// 	{value:1,label:'WhatsApp Official',checked:false},
 		// 	{value:2,label:'WhatsApp Web',checked:false}];
@@ -667,6 +669,8 @@ showAddSmartRepliesModal() {
 	ToggleAttributesOption() {
 		this.closeAllModal()
 		$("#showAttributes").modal('show');
+		const selection = window.getSelection();		
+		this.lastCursorPosition = selection?.getRangeAt(0) || null;
         document.getElementById('addsmartreplies')!.style.display = 'none';
 	}
 	ToggleQuickReplies() {
@@ -758,15 +762,43 @@ showAddSmartRepliesModal() {
 		this.selectedAttribute = '';
 	}
 
+	// selectAttributes(item:any) {
+	// 	this.closeAllModal();
+	// 	const selectedValue = item;
+	// 	let content:any = this.chatEditor.value || '';
+	// 	content = content.replace(/<p[^>]*>/g, '').replace(/<\/p>/g, '');
+	// 	content = content+'<span contenteditable="false" class="e-mention-chip"><a _ngcontent-yyb-c67="" href="mailto:" title="">{{'+selectedValue+'}}</a></span>'
+	// 	this.chatEditor.value = content;
+	// }
 	selectAttributes(item:any) {
-		this.closeAllModal();
 		const selectedValue = item;
-		let content:any = this.chatEditor.value || '';
-		content = content.replace(/<p[^>]*>/g, '').replace(/<\/p>/g, '');
-		content = content+'<span contenteditable="false" class="e-mention-chip"><a _ngcontent-yyb-c67="" href="mailto:" title="">{{'+selectedValue+'}}</a></span>'
-		this.chatEditor.value = content;
+		let content:any ='';	
+			content = this.chatEditor.value || '';	
+			const container = document.createElement('div');
+			container.innerHTML = this.chatEditor?.value;
+			this.insertAtCursor(selectedValue);
+			this.closeAllModal();
 	}
 	
+	insertAtCursor(selectedValue: any) {
+	  const spaceNode = document.createElement('span');
+	  spaceNode.innerHTML = '&nbsp;'; 
+	  spaceNode.setAttribute('contenteditable', 'true');
+		this.lastCursorPosition?.insertNode(spaceNode);
+		setTimeout(() => {
+			const range = document.createRange();
+			const selection = window.getSelection();
+			range.setStartAfter(spaceNode);  
+			range.setEndAfter(spaceNode); 
+	
+			selection?.removeAllRanges();
+			selection?.addRange(range);
+		}, 100);
+		const newNode = document.createElement('span');
+		newNode.innerHTML =  '<span contenteditable="false" class="e-mention-chip"><a _ngcontent-yyb-c67="" title="">{{'+selectedValue+'}}</a></span>';
+		this.lastCursorPosition?.insertNode(newNode);
+	}
+
 	selectQuickReplies(item:any){
 		this.closeAllModal()
 		let mediaContent;
