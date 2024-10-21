@@ -12,7 +12,8 @@ app.use(bodyParser.urlencoded({ extended: true }));
 const fs = require('fs');
 const path = require('path');
 const axios = require('axios');
-
+const middleWare = require('../middleWare')
+const commonFun = require('../common/resuableFunctions');
 
 
 const insertAndEditWhatsAppWeb = async (req, res) => {
@@ -116,6 +117,81 @@ const selectDetails = async (req, res) => {
     } catch (err) {
         console.log(err)
         db.errlog(err);
+        res.send(err)
+    }
+}
+const isInvalidParam = (value) => value === null || value === undefined || value === 0 || value === '0' || value === 'undefined';
+
+const mapResponseData = (data) => {
+    const status = data ? 200 : 500;
+    return {
+        response: {
+            balance_limit_today: data.balance_limit_today,
+            quality_rating: data.quality_rating,
+            fb_verification: data.fb_verification,
+            channel_id: data.phone_number_id
+        },
+        status: status,
+    };
+};
+
+const getQualityRating = async (req, res) => {
+    try {
+        const phoneNo = req?.params?.phoneNo
+        const WABA_Id = req?.params?.WABA_ID;
+        const metaPhoneNumberID = req?.params?.phone_number_id;
+
+        if (isInvalidParam(phoneNo) || isInvalidParam(WABA_Id) || isInvalidParam(metaPhoneNumberID)) {
+            return res?.status(200).json({
+                response : {
+                    message: 'Missing or invalid required parameters: phoneNo, WABA_ID, and/or phone_number_id',
+                    status: 400
+                }
+            });
+        }
+
+        let check = await db.excuteQuery(val.selectHealthStatus, [metaPhoneNumberID]);
+        let result;
+        let result2;
+        if (check.length > 0) {
+            var lastUpdatedDate = new Date(check[0].updated_at).toISOString().split('T')[0];
+            var currentDate = new Date().toISOString().split('T')[0];
+        }
+        if (!check.length) {
+            let result = await middleWare.getQualityRating(metaPhoneNumberID);
+            let result2 = await middleWare.getVerificationStatus(WABA_Id);
+
+            const quality_rating = result?.response?.quality_rating;
+            const phone_number_id = result?.response?.id;
+            const messaging_limit_tier = commonFun.convertMessagingLimitTier(result?.response?.messaging_limit_tier);
+            const fbVerification = result2?.response?.business_verification_status;
+
+            if (quality_rating && phone_number_id && messaging_limit_tier && fbVerification) {
+                result = await db.excuteQuery(val.insertHealthStatus, [phone_number_id, phoneNo, messaging_limit_tier, quality_rating, new Date(), fbVerification]);
+            }
+
+        }
+        else if (lastUpdatedDate !== currentDate) {
+            result = await middleWare.getQualityRating(metaPhoneNumberID);
+            result2 = await middleWare.getVerificationStatus(WABA_Id);
+
+            const quality_rating = result?.response.quality_rating;
+            const phone_number_id = result?.response?.id;
+            const messaging_limit_tier = commonFun.convertMessagingLimitTier(result?.response?.messaging_limit_tier);
+            const fbVerification = result2?.response?.business_verification_status;
+
+            if (quality_rating && phone_number_id && messaging_limit_tier && fbVerification) {
+                await commonFun.updateHealthStatus(phone_number_id, quality_rating, 'Scheduler', fbVerification);
+            }
+
+        }
+
+        let response;
+        let healthStatus = await db.excuteQuery(val.selectHealthStatus, [metaPhoneNumberID]);
+        if (healthStatus.length) response = mapResponseData(healthStatus[0]);
+        return res?.status(200).json(response);
+    } catch (err) {
+        console.log(err)
         res.send(err)
     }
 }
@@ -315,5 +391,5 @@ const testWebhook=async (req,res) =>{
 }
 module.exports = {
     insertAndEditWhatsAppWeb, selectDetails, addToken, deleteToken, enableToken, selectToken,
-    createInstance, getQRcode, generateQRcode,editToken,testWebhook
+    createInstance, getQRcode, generateQRcode,editToken,testWebhook,getQualityRating
 }

@@ -17,7 +17,7 @@ const mytoken = process.env.VERIFY_TOKEN;
 const mapCountryCode = require('../Contact/utils.js');
 const commonFun = require('../common/resuableFunctions.js')
 let notifyInteraction = `SELECT InteractionId FROM Interaction WHERE customerId IN (SELECT customerId FROM EndCustomer WHERE Phone_number = ? and SP_ID=?  ) and is_deleted !=1   order by created_at desc`
-
+let metaPhoneNumberID = 211544555367892 //todo need to make it dynamic 
 
 app.listen(process.env.PORT, () => {
   console.log('Server is running on port ' + process.env.PORT);
@@ -207,6 +207,7 @@ async function extractDataFromMessage(body) {
       body.entry.forEach(async (entry) => {
         const changes = entry.changes;
         changes.forEach(async (change) => {
+          console.log("Fields name from whatsapp_business_account" +change?.field)
           if (change.field === 'message_template_status_update') {
             const templateId = change.value.message_template_id;
             const newStatus = change.value.event;
@@ -215,6 +216,14 @@ async function extractDataFromMessage(body) {
             await updateTemplateStatus(templateId, newStatus);
             console.log(`Template ${templateId} status updated to ${newStatus}`);
           }
+
+          //todo Need to test this webhook
+          if (change?.field === 'phone_number_quality_update') {
+            const currentLimit = change?.value?.current_limit;
+            const messaging_limit_tier = commonFun.convertMessagingLimitTier(currentLimit);
+            if(currentLimit) await commonFun.updateCurrentLimit(metaPhoneNumberID, messaging_limit_tier, 'Web hook');
+          }
+
         });
       });
       

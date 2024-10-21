@@ -134,8 +134,44 @@ async function sendDefultMsg(link, caption, typeOfmsg, phone_number_id, from) {
     }
 
 }
+async function getQualityRating(phoneNumberId) {
+    try {
+        const response = await axios.get(`https://graph.facebook.com/v18.0/${phoneNumberId}?fields=display_phone_number,quality_rating,messaging_limit_tier`, {
+            headers: {
+                'Authorization': `Bearer ${token}`
+            }
+        });
 
+        return {
+            status: response?.status,
+            response: response.data,
+        };
+    } catch (err) {
+        return {
+            status: err?.response?.status || 500,
+            message: err?.message || 'An error occurred',
+        };
+    }
+}
+async function getVerificationStatus(WABA_ID){
+    try {
+        const response = await axios.get(`https://graph.facebook.com/v18.0/${WABA_ID}?fields=business_verification_status`, {
+            headers: {
+                'Authorization': `Bearer ${token}`
+            }
+        });
 
+        return {
+            status: response?.status,
+            response: response.data,
+        };
+    } catch (err) {
+        return {
+            status: err?.response?.status || 500,
+            message: err?.message || 'An error occurred',
+        };
+    }
+} 
 
 
 async function sendTextOnWhatsApp(messageTo, messageText) {
@@ -348,4 +384,4 @@ async function createWhatsAppPayload(type, to, templateName, languageCode, heade
 // const payload = createWhatsAppPayload('text', '918130818921', 'cip_attribute', 'en', headerVariables, bodyVariables, 'https://picsum.photos/id/1/200/300');
 // console.log(JSON.stringify(payload, null, 2));
 
-module.exports = { channelssetUp, postDataToAPI, sendDefultMsg,createWhatsAppPayload }
+module.exports = { channelssetUp, postDataToAPI, sendDefultMsg,createWhatsAppPayload,getQualityRating,getVerificationStatus }
