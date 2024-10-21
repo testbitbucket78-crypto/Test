@@ -175,6 +175,16 @@ export class CampaignsComponent implements OnInit {
 	customFieldData:[] = [];
 	tag:[] =[];
 	userList:any;
+    messagingLimit = 0;
+    channelQualityRating = '';
+	ShowAssignOption!: boolean; 
+	channelSelected: string = '';
+	channelPhoneNumber: string = '';
+	balanceLimitTooltip!: boolean;
+	channelQualityTooltip!: boolean;
+	phoneNo = 0;
+	phone_no_id = 0;
+	WABA_Id = 0;
 	 
 constructor(config: NgbModalConfig, private modalService: NgbModal,private datepipe: DatePipe,private dashboardService: DashboardService,
 	private apiService: TeamboxService,public settingsService:SettingsService,private _settingsService:SettingsService,
@@ -227,6 +237,41 @@ constructor(config: NgbModalConfig, private modalService: NgbModal,private datep
 		event.preventDefault(); // Prevent default scrolling behavior
 	  }
 	}
+	
+
+	getQualityRating() {
+		this.settingsService.getQualityRating(this.phoneNo, this.phone_no_id, this.WABA_Id).subscribe(
+			data => {
+				let res: any = data
+				if (res?.status === 200) {
+					if (res?.response) {
+						const rating = res?.response?.quality_rating;
+						const messagingLimit = res?.response?.balance_limit_today;
+						this.channelQualityRating = this.settingsService.getQualityRatingClass(rating);
+						this.messagingLimit = messagingLimit;
+					}
+				}
+				else {
+					console.log("Error Code : " +res?.status);
+				}
+			},
+			error => {
+				console.error('Error fetching quality rating:', error);
+			}
+		);
+	}
+
+	toggleAssignOption(){
+		this.ShowAssignOption =!this.ShowAssignOption
+	}
+
+	updateDropdown(id: string) {
+		const selectedChannel = this.channelOption.find((channel: any)=> channel.connected_id === id);
+		if (selectedChannel) {
+		  this.channelSelected = selectedChannel.label;
+		}
+		this.ShowAssignOption =false;
+	  }
 
 	prepareCampaingForm(){
 		return this.fb.group({
@@ -275,6 +320,16 @@ constructor(config: NgbModalConfig, private modalService: NgbModal,private datep
 				  connected_id: item?.connected_id,
 				  channel_status: item?.channel_status
 				}));
+
+				if(this.channelOption.length == 1){
+					this.channelSelected = this.channelOption[0].label;
+					this.channelPhoneNumber = this.channelOption[0].connected_id;
+
+				}
+				this.phoneNo =  response?.whatsAppDetails[0]?.connected_id;
+				this.phone_no_id = response?.whatsAppDetails[0]?.phone_number_id;
+				this.WABA_Id = response?.whatsAppDetails[0]?.WABA_ID;
+				this.getQualityRating();
 			  }
 		 }
 	   })

@@ -19,6 +19,24 @@
 					<input (keyup)="SearchCampaign($event)" type="text" placeholder="Search" aria-label="Search" class="search-box" aria-describedby="basic-addon2" />
 			</div>
 			<div class="campaigns_page_right">
+				<div class="D-whatsApp">
+					<button class="D2-whatsApp" (click)="toggleAssignOption()" >
+						<span>
+							<img class="icon" src="/assets/img/teambox/whatsapp-icon-l.svg" />
+							{{channelSelected}} ({{channelPhoneNumber}})
+							<img src="../../../../assets/img/arrow-down.svg"/>
+						</span>
+					</button>
+					<div *ngIf="ShowAssignOption" class="popup-dialog AssignOption p-15">
+						<p *ngFor="let channel of channelOption" class="d-flex align-items-center px-2 py-1" 
+						(click)="updateDropdown(channel.connected_id)">
+						<img class="icon" src="/assets/img/teambox/whatsapp-icon-l.svg" />
+							<span class="text-capitalize initials">{{channel.label}} ({{channel.connected_id}})</span>
+						</p>
+					</div>
+				</div>
+
+
 				<div class="drop-down-btn">
 					<div class="toggle-box" (click)="filterCampaign(filtercampaign)">
 						<img src="assets/img/teambox/filter-icon.svg">
@@ -33,14 +51,48 @@
 		</div>
 
 		<div class="campaigns_section">
-			<p class="campaigns_content_heading"><img src="../../../../assets/img/info-icon.png" (click)=" toggleContactOption()">
+			<!-- <p class="campaigns_content_heading"><img src="../../../../assets/img/info-icon.png" (click)=" toggleContactOption()">
 				
-				</p>
-				<div  *ngIf="ShowContactOwner" class="showInfoFallback1">
+				</p> -->
+				<!-- <div  *ngIf="ShowContactOwner" class="showInfoFallback1">
 					<p id="p-body">You can input a value as a fallback for the selected variable (attribute) in the message. This fallback will be used whenever no data is available for the selected variable in the contacts database.
 					</p>
 					<button id="radio-close-btn" (click)="ShowContactOwner = false">X</button>
-				  </div>
+				  </div> -->
+				<div *ngIf="channelSelected === 'WA API'" class="info-container ml-2 mb-2 d-flex align-items-center">
+					<div class="d-flex align-items-center">
+						<img src="../../../../assets/img/info-icon.png" (click)="balanceLimitTooltip = !balanceLimitTooltip" style="width: 15px; height: 15px;">
+						<div *ngIf="balanceLimitTooltip" class="showInfoFallback1 ">
+							<p id="p-body">
+								The maximum number of business-initiated conversations you can initiate within a 24-hour period.
+							</p>
+							<button id="radio-close-btn" (click)="balanceLimitTooltip = false">X</button>
+						</div>
+						<p class="d-inline-flex pl-2 mb-0">
+							<span>
+								Messaging Limit:&nbsp;
+							</span>
+							<strong>{{ messagingLimit }}</strong>
+						</p>
+					</div>
+					<div class="d-flex align-items-center">
+						<img src="../../../../assets/img/info-icon.png" (click)="channelQualityTooltip = !channelQualityTooltip" style="width: 15px; height: 15px;">
+						<div *ngIf="channelQualityTooltip" class="showInfoFallback1 ">
+							<p id="p-body">
+								Your quality rating is based on how messages have been received by recipients over the past seven days.
+It is determined by a combination of user feedback signals like blocks, reports and the reasons users provide when they block a business
+							</p>
+							<button id="radio-close-btn" (click)=" channelQualityTooltip= false">X</button>
+						</div>
+						<p class="d-inline-flex pl-2 mb-0">
+							<span>
+								Channel Quality Rating:&nbsp;
+							</span>
+							<strong [ngClass]="channelQualityRating">{{ channelQualityRating }}</strong>
+						</p>
+					</div>
+					<a href="https://www.facebook.com/business/help/896873687365001" target="_blank">Know More</a>
+				</div>
 				 <!-- <div *ngIf="ShowContactOwner" class=" ContactOption" (click)="stopPropagation($event)">
 				<p><span>Messaging limit:</span>WhatsApp enforces a policy limiting business to 1,000 messages per 24-hour period to prevent spam and maintain a quality user experience. However there is no cap on receiving messages from users.</p>
 				</div> -->
@@ -221,7 +273,7 @@
 					<span class="checkmark"></span>
 				  </label>			
 				</div>
-			<p class="label">By Channels</p>
+			<!-- <p class="label">By Channels</p>
 			<div class="input_group">			  
 				  <label class="container" *ngFor="let channel of channelOption ;let i = index">
 					{{
@@ -232,7 +284,7 @@
 					<input [(ngModel)]="channel.checked" type="checkbox" name="channel" value={{channel.value}} (click)="updateFilter($event,channel)">
 					<span class="checkmark"></span>
 				  </label>
-			</div>
+			</div> -->
 			<p class="label">By Categories</p>
 			<div class="input_group">				  
 				  <label class="container" *ngFor="let category of categoriesOption ;let i = index">
