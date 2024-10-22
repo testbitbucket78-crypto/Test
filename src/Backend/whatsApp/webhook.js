@@ -94,6 +94,25 @@ const updateTemplateStatus = async (templateId, newStatus) => {
   return result;
 };
 
+const updateQuality = async (templateId, newQualityStatus) => {
+  const query = `
+      UPDATE templateMessages
+      SET quality = ?, updated_at = NOW()
+      WHERE templateID = ?
+  `;
+  try {
+    const values = [newQualityStatus, templateId];
+    const result = await db.excuteQuery(query, values);
+    if (result && result?.affectedRows > 0) {
+      console.log("Data Updated Successfully!");
+    } else {
+      console.log("No records were updated.");
+    }
+    return result;
+  } catch (error) {
+    console.error('Error in updateQuality:', error);
+  }
+};
 
 async function extractDataFromMessage(body) {
 
@@ -222,8 +241,15 @@ async function extractDataFromMessage(body) {
             const currentLimit = change?.value?.current_limit;
             const messaging_limit_tier = commonFun.convertMessagingLimitTier(currentLimit);
             if(currentLimit) await commonFun.updateCurrentLimit(metaPhoneNumberID, messaging_limit_tier, 'Web hook');
+            console.log("phone_number_quality_update" +currentLimit);
           }
-
+          
+          if(change?.field === 'message_template_quality_update') {
+            const templateId = change?.value?.message_template_id;
+            const newQualityStatus = change?.value?.new_quality_score;
+            if(templateId) await updateQuality(templateId, newQualityStatus);
+            console.log("message_template_quality_update" +newQualityStatus);
+          }
         });
       });
       
