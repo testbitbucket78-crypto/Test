@@ -134,6 +134,18 @@ It is determined by a combination of user feedback signals like blocks, reports 
 					</div>
 					<p class="start_time">Created on <span>{{settingsService?.getDateTimeFormate(selectedCampaign?.created_datetime_formated)}}</span> Start time <span>{{settingsService?.getDateTimeFormate(selectedCampaign?.start_datetime_formated)}}</span></p>
 					<p class="title" ><img *ngIf="selectedCampaign?.status==0 || selectedCampaign?.status==1" (click)="editCampaign(addNewCampaign,1)" class="icon_sm" src="/assets/img/teambox/edit-icon.svg"> {{selectedCampaign?.title}}</p>
+					
+					<div *ngIf="showDownloadBtn" class="d-flex align-items-center mb-3"> 
+						<img src="../../../../assets/img/info-icon.png" (click)="dowloadTooltip = !dowloadTooltip" style="width: 15px; height: 15px; margin-right: 18px;">
+						<div *ngIf="dowloadTooltip" class="showInfoFallback1 t-15">
+							<p id="p-body">
+								Please note the values for various report components can update based on the actual status provided by Meta. e.g. Seen or Reply status and its time.
+							</p>
+							<button id="radio-close-btn" (click)="dowloadTooltip = false">X</button>
+						</div>
+						<button class="new-token-btn mr-2 mw-60" (click)="downloadCampignReport(selectedCampaign?.Id, selectedCampaign?.title)">Download Latest Report</button>
+					</div>
+					
 					<p><img class="icon" src="/assets/img/teambox/whatsapp-icon-l.svg" />{{selectedCampaign?.channel_label}}</p>
 					<!--If running start-->
 					<div *ngIf="selectedCampaign.status>1">

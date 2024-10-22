@@ -185,7 +185,11 @@ export class CampaignsComponent implements OnInit {
 	phoneNo = 0;
 	phone_no_id = 0;
 	WABA_Id = 0;
-	 
+	dowloadTooltip!: boolean;
+	showDownloadBtn!: boolean;
+	userName: string = '';
+	userEmail: string = '';
+
 constructor(config: NgbModalConfig, private modalService: NgbModal,private datepipe: DatePipe,private dashboardService: DashboardService,
 	private apiService: TeamboxService,public settingsService:SettingsService,private _settingsService:SettingsService,
 	private fb: FormBuilder,private router: Router,private el: ElementRef) {
@@ -215,6 +219,8 @@ constructor(config: NgbModalConfig, private modalService: NgbModal,private datep
 				this.loginAs='Agent'
 		}
 		this.profilePicture = (JSON.parse(sessionStorage.getItem('loginDetails')!)).profile_img;
+		this.userName = (JSON.parse(sessionStorage.getItem('loginDetails')!))?.name;
+		this.userEmail = (JSON.parse(sessionStorage.getItem('loginDetails')!))?.email_id;
 		this.routerGuard()
 		this.getAllCampaigns()
 		this.getContactList('')
@@ -640,6 +646,7 @@ constructor(config: NgbModalConfig, private modalService: NgbModal,private datep
 
     async getCampaignDetail(CampaignID:any){
         await this.apiService.getCampaignDetail(CampaignID).subscribe(campaign =>{
+			this.showDownloadBtn = false;
 			let campaigns:any=campaign
 				let item = campaigns[0]
 				if(item.status==0){
@@ -653,6 +660,7 @@ constructor(config: NgbModalConfig, private modalService: NgbModal,private datep
 				}else
 				if(item.status==3){
 					item['status_label'] ='completed'
+					this.showDownloadBtn = true;
 				}
 				else{
 					item['status_label'] ='draft'
@@ -710,6 +718,22 @@ constructor(config: NgbModalConfig, private modalService: NgbModal,private datep
 		})
 
 
+	}
+	async downloadCampignReport(CampaignId: number, Name: string) {
+		if (CampaignId && Name) {
+			let data = {
+				campaignId: CampaignId,
+				userName: this.userName,
+				emailId: this.userEmail,
+				campaignName: Name,
+				spid: this.SPID
+			}
+			await this.apiService.downloadCampignReport(data).subscribe((response: any) => {
+				if (response) {
+					console.log("Campaign Report sent successfully");
+				}
+			})
+		}
 	}
 	statusUpdate(id:number,status:string){
 		const campaign = this.allCampaign.find((x: any) => x.Id === id);
