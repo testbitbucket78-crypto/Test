@@ -141,6 +141,7 @@ getwhatsapp() {
 }
 
 getQualityRating() {
+  this.isLoading = true;
   this.apiService.getQualityRating(this.phoneNo, this.phone_no_id, this.WABA_Id).subscribe(
     data => {
       let res: any = data
@@ -151,9 +152,11 @@ getQualityRating() {
       }
       else {
         console.log("Error Code : " +res?.status);
+        this.isLoading = false;
       }
     },
     error => {
+      this.isLoading = false;
       console.error('Error fetching quality rating:', error);
     }
   );
@@ -173,6 +176,7 @@ mapHealthStatus(qualityStatus: any){
      }
      this.healthStatusData.push(healthStatus);
    });
+   this.isLoading = false;
 }
 
 getaccountByID(data:any) {
