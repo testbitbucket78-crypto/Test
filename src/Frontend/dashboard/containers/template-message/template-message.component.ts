@@ -85,9 +85,78 @@ export class TemplateMessageComponent implements OnInit {
         { value: 2, label: 'WA Web', checked: false },
     ];
     filterListLanguage = [
-        { value: 0, label: 'English', checked: false },
-        { value: 1, label: 'Other', checked: false },
-    ];
+        { label: 'Afrikaans', code: 'af', checked: false },
+        { label: 'Albanian', code: 'sq', checked: false },
+        { label: 'Arabic', code: 'ar', checked: false },
+        { label: 'Azerbaijani', code: 'az', checked: false },
+        { label: 'Bengali', code: 'bn', checked: false },
+        { label: 'Bulgarian', code: 'bg', checked: false },
+        { label: 'Catalan', code: 'ca', checked: false },
+        { label: 'Chinese (CHN)', code: 'zh_CN', checked: false },
+        { label: 'Chinese (HKG)', code: 'zh_HK', checked: false },
+        { label: 'Chinese (TAI)', code: 'zh_TW', checked: false },
+        { label: 'Croatian', code: 'hr', checked: false },
+        { label: 'Czech', code: 'cs', checked: false },
+        { label: 'Danish', code: 'da', checked: false },
+        { label: 'Dutch', code: 'nl', checked: false },
+        { label: 'English', code: 'en', checked: false },
+        { label: 'English (UK)', code: 'en_GB', checked: false },
+        { label: 'English (US)', code: 'en_US', checked: false },
+        { label: 'Estonian', code: 'et', checked: false },
+        { label: 'Filipino', code: 'fil', checked: false },
+        { label: 'Finnish', code: 'fi', checked: false },
+        { label: 'French', code: 'fr', checked: false },
+        { label: 'Georgian', code: 'ka', checked: false },
+        { label: 'German', code: 'de', checked: false },
+        { label: 'Greek', code: 'el', checked: false },
+        { label: 'Gujarati', code: 'gu', checked: false },
+        { label: 'Hausa', code: 'ha', checked: false },
+        { label: 'Hebrew', code: 'he', checked: false },
+        { label: 'Hindi', code: 'hi', checked: false },
+        { label: 'Hungarian', code: 'hu', checked: false },
+        { label: 'Indonesian', code: 'id', checked: false },
+        { label: 'Irish', code: 'ga', checked: false },
+        { label: 'Italian', code: 'it', checked: false },
+        { label: 'Japanese', code: 'ja', checked: false },
+        { label: 'Kannada', code: 'kn', checked: false },
+        { label: 'Kazakh', code: 'kk', checked: false },
+        { label: 'Kinyarwanda', code: 'rw_RW', checked: false },
+        { label: 'Korean', code: 'ko', checked: false },
+        { label: 'Kyrgyz (Kyrgyzstan)', code: 'ky_KG', checked: false },
+        { label: 'Lao', code: 'lo', checked: false },
+        { label: 'Latvian', code: 'lv', checked: false },
+        { label: 'Lithuanian', code: 'lt', checked: false },
+        { label: 'Macedonian', code: 'mk', checked: false },
+        { label: 'Malay', code: 'ms', checked: false },
+        { label: 'Malayalam', code: 'ml', checked: false },
+        { label: 'Marathi', code: 'mr', checked: false },
+        { label: 'Norwegian', code: 'nb', checked: false },
+        { label: 'Persian', code: 'fa', checked: false },
+        { label: 'Polish', code: 'pl', checked: false },
+        { label: 'Portuguese (BR)', code: 'pt_BR', checked: false },
+        { label: 'Portuguese (POR)', code: 'pt_PT', checked: false },
+        { label: 'Punjabi', code: 'pa', checked: false },
+        { label: 'Romanian', code: 'ro', checked: false },
+        { label: 'Russian', code: 'ru', checked: false },
+        { label: 'Serbian', code: 'sr', checked: false },
+        { label: 'Slovak', code: 'sk', checked: false },
+        { label: 'Slovenian', code: 'sl', checked: false },
+        { label: 'Spanish', code: 'es', checked: false },
+        { label: 'Spanish (ARG)', code: 'es_AR', checked: false },
+        { label: 'Spanish (SPA)', code: 'es_ES', checked: false },
+        { label: 'Spanish (MEX)', code: 'es_MX', checked: false },
+        { label: 'Swahili', code: 'sw', checked: false },
+        { label: 'Swedish', code: 'sv', checked: false },
+        { label: 'Tamil', code: 'ta', checked: false },
+        { label: 'Telugu', code: 'te', checked: false },
+        { label: 'Thai', code: 'th', checked: false },
+        { label: 'Turkish', code: 'tr', checked: false },
+        { label: 'Ukrainian', code: 'uk', checked: false },
+        { label: 'Urdu', code: 'ur', checked: false },
+        { label: 'Uzbek', code: 'uz', checked: false },
+        { label: 'Vietnamese', code: 'vi', checked: false },
+        { label: 'Zulu', code: 'zu', checked: false }
+      ]
     filterListStatus = [
         { value: 0, label: 'draft', checked: false },
         { value: 1, label: 'approved', checked: false },
@@ -189,7 +258,7 @@ export class TemplateMessageComponent implements OnInit {
         const selection = window.getSelection();
         this.lastCursorPosition = selection?.getRangeAt(0) || null;
         $('#atrributemodal').modal('show');
-        $('#newTemplateMessage').modal('hide');
+        //$('#newTemplateMessage').modal('hide');
     }
 
 
@@ -277,8 +346,8 @@ export class TemplateMessageComponent implements OnInit {
     }
 
 
-    showMessageType(type: string) {
-        this.selectedType = type;
+    showMessageType() {
+        // this.selectedType = type;
         this.newTemplateForm.get('Links')?.setValue(null);
         this.newTemplateForm.get('Header')?.setValue('');
         this.selectedPreview = '';
@@ -560,7 +629,7 @@ export class TemplateMessageComponent implements OnInit {
         if(this.newTemplateForm.get('BodyText')?.value == null)  this.newTemplateForm.get('BodyText')?.setValue('');
         if(this.newTemplateForm.get('Header')) this.newTemplateForm.get('Header')?.setValue('');
         if(this.newTemplateForm.get('FooterText')) this.newTemplateForm.get('FooterText')?.setValue('');
-        this.showMessageType("text")
+        this.showMessageType()
         this.templatesMessageData.media_type = "text";
         const selTextRadio = document.getElementById('sel-text') as HTMLInputElement;
         if (selTextRadio) {
@@ -841,7 +910,7 @@ checkTemplateName(e:any){
             newTemplateForm.template_json.push({
                 name: this.newTemplateForm.controls.TemplateName.value,
                 category: this.newTemplateForm.controls.Category.value,
-                language: this.newTemplateForm.controls.Language.value == 'English' ? 'en_US' :this.newTemplateForm.controls.Language.value,
+                language: this.filterListLanguage.filter((item:any)=> item.label == this.newTemplateForm.controls.Language.value)[0]?.code,
                 components:comp
                 
             });
@@ -937,7 +1006,7 @@ checkTemplateName(e:any){
     }
     closeAtrrModal() {
         this.attributesearch ='';
-        $('#newTemplateMessage').modal('show');
+        //$('#newTemplateMessage').modal('show');
         $('#atrributemodal').modal('hide');
         this.isHeaderAttribute = false;
     }
@@ -994,11 +1063,12 @@ insertAtCursor(selectedValue: any) {
 
         selection?.removeAllRanges();
         selection?.addRange(range);
-    }, 100);
+    }, 50);
 	const newNode = document.createElement('span');
 	newNode.innerHTML =  '<span contenteditable="false" class="e-mention-chip"><a _ngcontent-yyb-c67="" title="">{{'+selectedValue+'}}</a></span>';
 	this.lastCursorPosition?.insertNode(newNode);
 }
+
      /* GET VARIABLE VALUES */
     getVariables(sentence: string, first: string, last: string, isTempateJson:boolean =false) {
         let goodParts: string[] = [];

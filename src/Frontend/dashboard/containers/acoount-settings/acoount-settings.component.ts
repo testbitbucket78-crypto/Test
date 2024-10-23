@@ -4,8 +4,11 @@ import { repliesaccountList, whatsAppDetails } from 'Frontend/dashboard/models/s
 import { accountmodel } from 'Frontend/dashboard/models/settings.model';
 import { WebsocketService } from '../../services/websocket.service';
 import { WebSocketSubject } from 'rxjs/webSocket';
+import { FacebookService } from 'Frontend/dashboard/services/facebook-embedded.service';
+import { environment } from 'environments/environment';
 
 declare var $:any;
+declare var FB: any; 
 
 @Component({
   selector: 'sb-acoount-settings',
@@ -71,8 +74,12 @@ export class AcoountSettingsComponent implements OnInit {
   connection:number[] =[1,3,2,4];
   selectedTab:number = 1;
   public ipAddress:string[] = [''];
+  public channelDomain:string = environment.chhanel;
 
-  constructor( private apiService:SettingsService,public settingsService:SettingsService,private websocketService: WebsocketService,private changeDetector: ChangeDetectorRef) {}
+  constructor( private apiService:SettingsService,
+    public facebookService:FacebookService,
+    public settingsService:SettingsService,
+    private websocketService: WebsocketService,private changeDetector: ChangeDetectorRef) {}
 
   private socket$: WebSocketSubject<any> = new WebSocketSubject('wss://notify.stacknize.com');
 
@@ -85,6 +92,8 @@ export class AcoountSettingsComponent implements OnInit {
     this.SPPhonenumber = (JSON.parse(sessionStorage.getItem('SPPhonenumber')!));
     this.getwhatsapp();
     this.subscribeToNotifications();
+    this.loadFacebookSDK();
+    this.fetchLastName();
   }
 
   showToaster(message:any,type:any){
@@ -356,4 +365,62 @@ async subscribeToNotifications() {
   };
   this.websocketService.connect(notificationIdentifier);
  }
+
+ loadFacebookSDK(): void {
+  //if (!(window as any).fbAsyncInit) {
+    (window as any).fbAsyncInit = () => {
+      FB.init({
+        appId: '1147412316230943', // Replace with your app id
+        cookie: true,
+        xfbml: true,
+        version: 'v2.4' // Use the latest version
+      });
+    };
+ // }
+
+  // Dynamically load SDK if not already loaded
+  const scriptElement = document.createElement('script');
+  scriptElement.id = 'facebook-jssdk';
+  scriptElement.src = 'https://connect.facebook.net/en_US/sdk.js';
+  const firstScript = document.getElementsByTagName('script')[0];
+  if (document.getElementById('facebook-jssdk')) {
+    firstScript.parentNode?.insertBefore(scriptElement, firstScript);
+  }
+}
+
+fetchLastName(): void {
+  this.facebookService.getMyLastName().subscribe({
+    next: (response) => {
+      let lastName = response.last_name;
+      console.log(lastName);
+    },
+    error: (err) => {
+      console.error('Error fetching last name:', err);
+    }
+  });
+}
+
+fbLoginCallback(response: any): void {
+  if (response.authResponse) {
+    const code = response.authResponse.code;
+    console.log('Auth Code:', code);
+    // Send this code to your backend to exchange it for an access token
+  }
+  // Displaying the response in the console
+  console.log('FB Login Response:', response);
+}
+
+// This method will launch the WhatsApp signup by invoking FB.login
+launchWhatsAppSignup(): void {
+  FB.login((response: any) => this.fbLoginCallback(response), {
+    config_id: '523980490418313', // Your configuration ID here
+    response_type: 'code', // Required for System User access token
+    override_default_response_type: true,
+    extras: {
+      setup: {},
+      featureType: '',
+      sessionInfoVersion: '2',
+    }
+  });
+}
 }

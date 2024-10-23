@@ -15,7 +15,7 @@ import { JwtInterceptor } from 'Frontend/dashboard/Intercepttor/JwtInterceptor';
 @NgModule({
     declarations: [AppComponent],
     imports: [BrowserModule, FormsModule, ReactiveFormsModule,  AppRoutingModule, HttpClientModule, BrowserAnimationsModule, DashboardModule],
-    providers: [{ provide: LocationStrategy, useClass: HashLocationStrategy },
+    providers: [       
         { provide: HTTP_INTERCEPTORS, useClass: JwtInterceptor, multi: true },],
     bootstrap: [AppComponent],
 })

@@ -2516,7 +2516,7 @@ console.log(this.allTemplatesMain);
 	  }
 	  directToSettings() {
 		this.closeAllModal();
-		this.router.navigate(['dashboard/setting']);
+		this.router.navigate(['setting']);
 	  }
 
 	  removeSegmentedAudienceList() {

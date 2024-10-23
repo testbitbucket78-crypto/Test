@@ -6,7 +6,8 @@ export const environment = {
     production: false,
     baseUrl: 'https://authapi.sampanatechnologies.com',
     API_URL:'https://settings.stacknize.com',
-    API_Keyword:'stacknize'
+    API_Keyword:'stacknize',
+    chhanel:'web'
 };
 
 /*

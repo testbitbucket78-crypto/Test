@@ -296,13 +296,12 @@ countryCodes = [
 onButtonClick(data:any, event: any) {
 
   const target = event.target;  
-   // this.router.navigateByUrl(`Dashboard/teambox?isNewMessage=${true}`);
   //  console.log('btnclick')
   //  console.log(this.settingsService.checkRoleExist('8'))
   //  console.log(this.settingsService.subprivilages);
    //console.log(this.settingsService.subprivilages);
    if(!this.settingsService.checkRoleExist('8'))
-      this.router.navigate(['/dashboard/teambox'], { queryParams: { isNewMessage: true,srchText: data?.Phone_number} });
+      this.router.navigate(['/teambox'], { queryParams: { isNewMessage: true,srchText: data?.Phone_number} });
 }
     ngOnInit() {
       this.isLoadingOnInit = true;

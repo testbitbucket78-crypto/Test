@@ -405,7 +405,7 @@
                     <h6>Template Name <span class="text-danger font-weight-bold">*</span></h6>
                 </div>
                 <div class="sel-type-text">
-                    <textarea name="text-editor" formControlName="TemplateName" maxlength="512"rows="8"
+                    <textarea name="text-editor" class="template-Name-box scrollBar-visible" formControlName="TemplateName" maxlength="512"rows="8"
                     (change)="checkTemplateName($event)" (input)="onInputChange($event)" placeholder="Enter template name in max 512 characters. Only alphabets, numbers and underscore is allowed to enter."></textarea>
                 </div>
 
@@ -469,14 +469,14 @@
            <div class="modal-container">
 
 
-            <div class="modal-body">
+            <div class="modal-body scrollBar-visible">
 
 
                 <div class="main-container-for-body">
                     <button type="button" class="previous-btn" type="button" data-bs-toggle="modal" data-bs-target="#newTemplateMessageFirst">
                         <img src="../../../../assets/img/profile/previous.svg" />
                     </button>
-                    <div class="d-flex justify-content-between align-items-center sel-type-btns">
+                    <!-- <div class="d-flex justify-content-between align-items-center sel-type-btns">
 
                         <input type="radio" id="sel-text" name="sel-type" (change)="showMessageType('text')" 
                            [checked]="templatesMessageData.media_type=='text' || galleryMessageData.media_type=='text'">
@@ -491,15 +491,24 @@
                         [checked]="templatesMessageData.media_type=='document' || galleryMessageData.media_type=='document'">
                         <label [ngClass]="{'radio-label': selectedType === 'document'}" class="m-0" for="sel-document">Document</label>
                     
+                    </div> -->
+                    <div>
+                        <select [(ngModel)]="selectedType" [ngModelOptions]="{standalone: true}"  class="sel input-form" (change)="showMessageType()">
+                            <option value="">None</option>
+                            <option value="text">Text</option>
+                            <option value="image">Image</option>
+                            <option value="video">Video</option>
+                            <option value="document">Document</option>
+                        </select>
                     </div>
 
                     <div class="sel-type-text-container">
                             <div *ngIf="selectedType === 'text'">
                             <div class="d-flex justify-content-between align-items-center pt-3 pb-2 msg-head">
-                                <h6>Header <span>(Optional)</span></h6><div><span class="characters-count">{{ getCharacterCount(3) }}</span><span>/60 Characters</span></div>
+                                <h6>Header {{selectedType}}<span>(Optional)</span></h6><div><span class="characters-count">{{ getCharacterCount(3) }}</span><span>/60 Characters</span></div>
                             </div>
                             <div class="sel-type-text">
-                                <textarea id = "headerText" name="text-editor" formControlName="Header" maxlength="60"rows="6" placeholder="Enter" (input)="updateCharacterCount($event,3)"></textarea>
+                                <textarea id = "headerText" name="text-editor" formControlName="Header" maxlength="60"rows="3" placeholder="Enter" (input)="updateCharacterCount($event,3)"></textarea>
                                 <button (click)="isHeaderAttribute = true;ToggleAttributesOption();" style="width:28px;height:28px;border-radius: 35%!important;border: 1px solid #e2e2e2!important;background:#fff;" class="attibutes-btn">
                                     <div><img style="width:10px;" src="/assets/img/teambox/attributes.svg"></div>
                                 </button>
@@ -513,16 +522,18 @@
                         <div *ngIf="newTemplateForm.get('Links')?.value == null">
                         <label class="type_label" for="sel-type-image"><img src="../../../../assets/img/teambox/add-white.svg" /></label>
                         <p class="m-0">Upload image</p></div> 
-                        <div class="main-preview-type-image" *ngIf="newTemplateForm.get('Links')?.value !== null" [ngStyle]="{'background-image': 'url(' + selectedPreview + ')'}">
+                        <div *ngIf="newTemplateForm.get('Links')?.value != null">
+                            <label class="type_label" for="sel-type-image"><img src="../../../../assets/img/teambox/add-white.svg" /></label>
+                            </div>
+                        <!-- [ngStyle]="{'background-image': 'url(' + selectedPreview + ')'}" -->
+                        <div class="main-preview-type-image" *ngIf="newTemplateForm.get('Links')?.value !== null" >
                             <span class="p-2 text-right" (click)="removeValue()"><img src="../../../../assets/img/settings/remove.svg" /></span>
                         </div>
                 </div>
 
-                <div *ngIf="selectedType === 'video'" class="my-4 sel-type-video">
-                    <input type="file" accept="video/mp4" name="video-upload" (change)="onFileChange($event)" id="sel-type-video" (click)="$event.target.value=null">
-                    <label *ngIf="!selectedPreview || loadingVideo" class="type_label" for="sel-type-video"><img src="../../../../assets/img/teambox/add-white.svg" /></label> 
-                    <div class="video-player">
-                        <span *ngIf="selectedPreview" class="p-2 text-right main-preview-type-video" (click)="removeValue()">
+                <div *ngIf="selectedType === 'video'" class="my-4 sel-type-image">
+                    <div class="main-preview-type-doc">
+                        <span *ngIf="selectedPreview" class="p-2 " (click)="removeValue()">
                           <img src="../../../../assets/img/settings/remove.svg" />
                         </span>
                         <div *ngIf="loadingVideo" class="text-center">
@@ -530,8 +541,11 @@
                               <span class="sr-only">Loading...</span>
                             </div>
                           </div>
-                    <video [src]="selectedPreview" type="video/mp4" controls #videoPlayer></video>
+                    <!-- <video [src]="selectedPreview" type="video/mp4" controls #videoPlayer></video> -->
                     </div>
+                    <input type="file" accept="video/mp4" name="video-upload" (change)="onFileChange($event)" id="sel-type-video" (click)="$event.target.value=null">
+                    <label *ngIf="!selectedPreview || loadingVideo" class="type_label" for="sel-type-video"><img src="../../../../assets/img/teambox/add-white.svg" /></label> 
+                    <img *ngIf="newTemplateForm.get('Links')?.value !== null" src="../../../../assets/img/settings/doc.svg" />
                     <div class="custom-play-button"></div>
                 
                 </div>

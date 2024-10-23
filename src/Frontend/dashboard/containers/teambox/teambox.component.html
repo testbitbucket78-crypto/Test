@@ -269,8 +269,8 @@
 										</div>
 								</div>
 									<div class="content" (mouseover)="markItRead()">
-										<div *ngIf="message.message_media" class="message_media">
-											<img class="preview_icon" *ngIf="message.media_type == 'video/mp4'"
+										<div *ngIf="message?.message_media" class="message_media">
+											<img class="preview_icon" *ngIf="message?.media_type == 'video/mp4'"
 												src="/assets/img/teambox/video_preview.png"
 												(click)="downloadFile(message.message_media)">
 											<img class="preview_icon" *ngIf="message.media_type == 'text/plain'"
@@ -304,10 +304,10 @@
 												</div>
 											</ng-template>
 										  </div> -->
-										<div class="message_text" [innerHTML]="message.message_text | sanitizeHtml">
-											<button *ngIf="!showFullMessage && message.message_text.length> maxLength" (click)="toggleShowFullMessage()">Read More</button>
+										<div class="message_text" [innerHTML]="message?.message_text | sanitizeHtml">
+											<button *ngIf="!showFullMessage && message?.message_text?.length> maxLength" (click)="toggleShowFullMessage()">Read More</button>
 										</div>
-										<div [ngClass]="{'message_box_container':message.media_type}">
+										<div [ngClass]="{'message_box_container':message?.media_type}">
 											<!-- <span *ngIf="message.media_type" class="message_size">{{message.mediaSize}} KB</span> -->
 										
 											<span class="message_time"

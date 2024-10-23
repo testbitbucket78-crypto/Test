@@ -869,7 +869,7 @@ img.icon_sm {
 .main-preview-type-doc {
     position: absolute;
     right: 4%;
-    top: 9%;
+    margin-top: -36px;
     z-index: 99999;
     cursor: pointer;
 }
@@ -1020,7 +1020,7 @@ input[type="radio"]:checked + label::before {
 
 .sel-type-image {
     width: 100%;
-    height: 170px;
+    height: 70px;
     background: #FFFFFF;
     border: 1px solid #EBEBEB;
     border-radius: 19px;
@@ -1055,7 +1055,7 @@ input[type="radio"]:checked + label::before {
 .sel-type-image p {
     color: #000000;
     font-weight: 700;
-    padding-top: 65px;
+    padding-top: 38px;
 }
 
 .sel-type-link input {
@@ -1086,7 +1086,7 @@ input[type="radio"]:checked + label::before {
 
 .video-player video {
     width: 100%;
-    height: auto;
+    height: 70px;
     display: block;
     outline: none;
     border: 1px solid #EBEBEB;
@@ -1138,25 +1138,24 @@ input[type="radio"]:checked + label::before {
 }
 
 .type_label {
-    // background: #6149CD;
-    box-shadow: 1px 8px 29px #695F9724;
-    border-radius: 19px;
+    box-shadow: 1px 8px 29px rgba(105, 95, 151, 0.1411764706);
+    border-radius: 14px;
     opacity: 1;
-    width: 45px;
-    height: 45px;
+    width: 33px;
+    height: 33px;
     background: #6149CD;
     text-align: center;
     cursor: pointer;
     position: absolute;
     z-index: 99999;
     left: 54%;
-    top: 16%;
 }
 
 .type_label img {
     margin-left: auto;
     margin-right: auto;
-    margin-top: 14px;
+    margin-top: 7px;
+    height: 10px;
 }
 
 // input type url
@@ -1581,7 +1580,7 @@ input[type="radio"]:checked + label::before {
     color: #7A86A1;
   }
 
-  .preview-part .message_section .message_data::-webkit-scrollbar {
+  .preview-part .message_section .message_data::-webkit-scrollbar , .scrollBar-visible::-webkit-scrollbar{
     display: block !important;
 }
 
@@ -1677,4 +1676,9 @@ input[type="radio"]:checked + label::before {
 }
 .ft-12{
     font-size: 12px;
+}
+
+.template-Name-box{
+    height: 80px;
+    overflow-y: scroll;
 }
