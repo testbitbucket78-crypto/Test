@@ -194,18 +194,20 @@ convertTimeFormat(time: string | null | undefined, isStaticFormat: boolean = fal
 
   
   getQualityRatingClass(rating: string): string {
-    if (!rating) return 'N/A';
-    switch (rating) { 
-        case 'GREEN':
-            return 'High'; 
-        case 'YELLOW':
-            return 'Medium';
-        case 'RED':
-            return 'Low';
-        default:
-            return '';
+    if (!rating) return '';
+    switch (rating) {
+      case 'GREEN':
+        return 'High';
+      case 'YELLOW':
+        return 'Medium';
+      case 'RED':
+        return 'Low';
+      case 'UNKNOWN':
+        return 'Unknown';
+      default:
+        return '';
     }
-}
+  }
   getCompanyDetailData(spId: number): Observable<companyDetailResponse> {
     return this.http.get<companyDetailResponse>(`${this.API_URL}/companyDetail/${spId}`);
   }

@@ -230,7 +230,7 @@ export interface templateMessageData {
     topic:string;
     FooterText:string;
     buttons:any;
-
+    quality:string;
 }
 
 export interface repliestemplateList{
