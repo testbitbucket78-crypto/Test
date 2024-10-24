@@ -1792,7 +1792,7 @@ testinfo(){
 		this.CampaignNameAlreadyExist();
 
 		if(this.activeStep < 3){
-			this.selectedTemplate=''
+			//this.selectedTemplate=''
 		}
 		if(this.activeStep ==2){
 			this.getTemplates()
