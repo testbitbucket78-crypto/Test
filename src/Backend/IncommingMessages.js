@@ -116,6 +116,9 @@ async function autoReplyDefaultAction(isAutoReply, autoReplyTime, isAutoReplyDis
       let sendSReply = await sendSmartReply(message_text, phone_number_id, contactName, from, sid, custid, agid, replystatus, newId, msg_id, newlyInteractionId, channelType, isContactPreviousDeleted ,newiN,display_phone_number)
       return sendSReply;
 
+    }else if(autoReplyTime == null &&  isAutoReplyDisable != 1){
+      let sendSReply = await sendSmartReply(message_text, phone_number_id, contactName, from, sid, custid, agid, replystatus, newId, msg_id, newlyInteractionId, channelType, isContactPreviousDeleted, newiN,display_phone_number)
+      return sendSReply;
     }
 
     return false;
@@ -862,7 +865,7 @@ async function messageThroughselectedchannel(spid, from, type, text, media, phon
     let response = false;
     let myUTCString = new Date().toUTCString();
     const time = moment.utc(myUTCString).format('YYYY-MM-DD HH:mm:ss');
-    let result = await middleWare.sendDefultMsg(media, text, getMediaType, phone_number_id, from);
+    let result = await middleWare.sendDefultMsg(media, text, getMediaType, phone_number_id, from,spid);
     // console.log("messageThroughselectedchannel", result?.status)
     if (result?.status == 200) {
       let messageValu = [[spid, 'text', "", interactionId, agentId, 'Out', Message_text, (media ? media : 'text'), media_type, result.message.messages[0].id, "", time, time, "", -2, 1]]
@@ -893,7 +896,7 @@ async function SreplyThroughselectedchannel(spid, from, type, text, media, phone
     let response = false;
     let myUTCString = new Date().toUTCString();
     const time = moment.utc(myUTCString).format('YYYY-MM-DD HH:mm:ss');
-    let sReply = await middleWare.sendDefultMsg(media, text, type, phone_number_id, from);
+    let sReply = await middleWare.sendDefultMsg(media, text, type, phone_number_id, from,spid);
     console.log(type,"sReply?.status ", sReply?.status,media_type)
     if (sReply?.status == 200) {
 

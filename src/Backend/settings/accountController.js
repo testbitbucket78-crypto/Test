@@ -43,11 +43,11 @@ const insertAndEditWhatsAppWeb = async (req, res) => {
             restart,
             reset
         } = req.body;
-        
+
         const is_deleted = 0;  // default value
         let myUTCString = new Date().toUTCString();
         const updated_at = moment.utc(myUTCString).format('YYYY-MM-DD HH:mm:ss');
-      
+
 
         console.log("id-------", id);
 
@@ -126,7 +126,7 @@ const addToken = async (req, res) => {
         spid = req.body.spid
         APIName = req.body.APIName
         IPAddress = req.body.IPAddress
-        
+
         let myUTCString = new Date().toUTCString();
         const created_at = moment.utc(myUTCString).format('YYYY-MM-DD HH:mm:ss');
         let tokenVal = [[spid, APIName, created_at]];
@@ -156,11 +156,11 @@ const editToken = async (req, res) => {
         spid = req.body.spid
         APIName = req.body.APIName
         IPAddress = req.body.IPAddress
-   
+
         let myUTCString = new Date().toUTCString();
         const updated_at = moment.utc(myUTCString).format('YYYY-MM-DD HH:mm:ss');
-        let deleteIP = await db.excuteQuery(val.deleteIPQuery, [updated_at,id])
-      
+        let deleteIP = await db.excuteQuery(val.deleteIPQuery, [updated_at, id])
+
         let updateTokenVal = [spid, APIName, updated_at, id];
         let updatedToken = await db.excuteQuery(val.updateTokenQuery, updateTokenVal)
 
@@ -182,9 +182,9 @@ const editToken = async (req, res) => {
 
 const deleteToken = async (req, res) => {
     try {
-         let myUTCString = new Date().toUTCString();
+        let myUTCString = new Date().toUTCString();
         const time = moment.utc(myUTCString).format('YYYY-MM-DD HH:mm:ss');
-        let deleteIPs = await db.excuteQuery(val.deleteIPQuery, [time,req.params.id])
+        let deleteIPs = await db.excuteQuery(val.deleteIPQuery, [time, req.params.id])
         let deletedToken = await db.excuteQuery(val.deleteTokenQuery, [time, req.params.id]);
         res.status(200).send({
             deletedToken: deletedToken,
@@ -202,7 +202,7 @@ const enableToken = async (req, res) => {
     try {
         id = req.body.id
         isEnable = req.body.isEnable
-             let myUTCString = new Date().toUTCString();
+        let myUTCString = new Date().toUTCString();
         const time = moment.utc(myUTCString).format('YYYY-MM-DD HH:mm:ss');
         let enabledVal = await db.excuteQuery(val.isEnableQuery, [isEnable, time, id]);
         res.status(200).send({
@@ -300,20 +300,70 @@ const generateQRcode = async (req, res) => {
     res.send(200)
 }
 
-const testWebhook=async (req,res) =>{
-    try{
+const testWebhook = async (req, res) => {
+    try {
         console.log("testWebhook");
         res.status(200).send({
-            msg:"testwebhook ! ",
+            msg: "testwebhook ! ",
             status: 200
         })
-    }catch (err) {
+    } catch (err) {
         console.log(err)
         db.errlog(err);
         res.send(err)
     }
 }
+
+const addWAAPIDetails = async (req, res) => {
+    try {
+        const spid = req.body.spid
+        const phoneNo = req.body?.phoneNo
+        const code = req.body.Code;  // Get the authorization code from the query string
+        const user_uid = req.body.user_uid
+        const phoneNumber_id = req.body.phoneNumber_id
+        const waba_id = req.body.waba_id
+        const business_id = 329128366153270
+     
+        if (!code) {
+            return res.status(400).send('Authorization code missing');
+        }
+
+        // Exchange the code for an access token
+
+        const response = await axios({
+            method: 'GET',
+            url: `https://graph.facebook.com/v21.0/oauth/access_token`,
+            params: {
+                client_id: '1147412316230943', //app id
+                client_secret: '44119ebcff7e1e62fb7d7e3175350aa9',
+                redirect_uri :`https://developers.facebook.com/es/oauth/callback/?business_id=${business_id}%26nonce=ZalyOc2m5QjeRKBMvqmEsEZlWn9gKb85`,
+                grant_type :'authorization_code',
+                code: code
+            }
+        });
+
+        const { access_token } = response.data;
+        // Store access_token for future API calls or redirect to your app
+        if (response.data) {
+            let myUTCString = new Date().toUTCString();
+            const created_at = moment.utc(myUTCString).format('YYYY-MM-DD HH:mm:ss');
+            let addToken = await db.excuteQuery('insert into WA_API_Details (token,spid,phoneNo,user_uid,phoneNumber_id,waba_id,created_at) VALUES(?,?,?)', [access_token, spid, phoneNo,user_uid,phoneNumber_id,waba_id, created_at])
+        }
+        
+        res.status(200).send({
+            access_token: access_token,
+            status: 200
+        })
+    } catch (err) {
+        db.errlog(err);
+        res.status(500).send({
+            err: err,
+            status: 500
+        })
+    }
+}
+
 module.exports = {
     insertAndEditWhatsAppWeb, selectDetails, addToken, deleteToken, enableToken, selectToken,
-    createInstance, getQRcode, generateQRcode,editToken,testWebhook
+    createInstance, getQRcode, generateQRcode, editToken, testWebhook, addWAAPIDetails
 }

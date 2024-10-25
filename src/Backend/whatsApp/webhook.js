@@ -67,11 +67,11 @@ app.post("/webhook", async (req, res) => {
 
     let extractedMessage = await extractDataFromMessage(body)
 
-      res.status(200).send({
-        msg: "extractedMessage",
-        status: 200
-      });
-    
+    res.status(200).send({
+      msg: "extractedMessage",
+      status: 200
+    });
+
   } catch (err) {
     db.errlog(err);
     console.log("errrrrrrrr", err)
@@ -132,9 +132,15 @@ async function extractDataFromMessage(body) {
     // Variable to hold the filename
     let extension;
 
+    var d = new Date(firstMessage.timestamp * 1000).toUTCString();
+
+    const message_time = moment.utc(d).format('YYYY-MM-DD HH:mm:ss');
+    console.log("message_time", message_time)
+
+
     if (firstMessage.context) {
       let spid = await db.excuteQuery('select SP_ID from user where mobile_number =? limit 1', [display_phone_number])
-      let campaignRepliedQuery = `UPDATE CampaignMessages set status=4 where phone_number =${from} and (status = 3 OR status =2) and SP_ID = ${spid[0]?.SP_ID} AND messageTemptateId = '${firstMessage.context?.id}'` // will replace it withmessage id later
+      let campaignRepliedQuery = `UPDATE CampaignMessages set status=4,RepliedTime=${message_time} where phone_number =${from} and (status = 3 OR status =2) and SP_ID = ${spid[0]?.SP_ID} AND messageTemptateId = '${firstMessage.context?.id}'` // will replace it withmessage id later
       console.log(campaignRepliedQuery)
       let campaignReplied = await db.excuteQuery(campaignRepliedQuery, [])
       //console.log(repliedNumber, spid, "campaignReplied*******", campaignReplied?.affectedRows)
@@ -150,10 +156,7 @@ async function extractDataFromMessage(body) {
       extension = filename.substring(filename.lastIndexOf('.'));
     }
 
-    var d = new Date(firstMessage.timestamp * 1000).toUTCString();
 
-    const message_time = moment.utc(d).format('YYYY-MM-DD HH:mm:ss');
-    console.log("message_time", message_time)
     // Getting the file extension
 
     console.log(Type, " body.entry " + phoneNo, extension)
@@ -193,16 +196,18 @@ async function extractDataFromMessage(body) {
     let displayPhoneNumber = body.entry[0].changes[0].value.metadata.display_phone_number
     let customerPhoneNumber = body.entry[0].changes[0].value.statuses[0].recipient_id
     let failedMessageReason = '';
+    let failedMessageCode = '';
     if (body.entry[0].changes[0].value.statuses[0].errors?.length > 0) {
       failedMessageReason = body.entry[0].changes[0].value.statuses[0]?.errors[0].error_data.details
+      failedMessageCode = body.entry[0].changes[0].value.statuses[0]?.errors[0].code
     }
 
     //console.log("messageStatus ,displayPhoneNumber ,customerPhoneNumber " )
     // console.log(messageStatus ,displayPhoneNumber ,customerPhoneNumber)
-    let updatedStatus = await saveSendedMessageStatus(messageStatus, displayPhoneNumber, customerPhoneNumber, smsId, message_time, failedMessageReason)
-  }else if(body.entry && body.entry.length > 0 && body.entry[0].changes && body.entry[0].changes.length > 0 &&
-    body.entry[0].changes[0].value){
-    
+    let updatedStatus = await saveSendedMessageStatus(messageStatus, displayPhoneNumber, customerPhoneNumber, smsId, message_time, failedMessageReason, failedMessageCode)
+  } else if (body.entry && body.entry.length > 0 && body.entry[0].changes && body.entry[0].changes.length > 0 &&
+    body.entry[0].changes[0].value) {
+
     if (body.object === 'whatsapp_business_account') {
       body.entry.forEach(async (entry) => {
         const changes = entry.changes;
@@ -214,16 +219,35 @@ async function extractDataFromMessage(body) {
             // Update your database
             await updateTemplateStatus(templateId, newStatus);
             console.log(`Template ${templateId} status updated to ${newStatus}`);
+          } else if (change.field === 'account_update') {
+            const waba_id = change.value.waba_info.waba_id;
+            const phone_id = change.value.waba_info.owner_business_id;
+            await updateWhatsAppDetails(waba_id, phone_id,'unique identifire verify from UI IN SIGNUP TIME');
           }
         });
       });
-      
-    } 
+
+    }
   }
 
 }
 
 
+const updateWhatsAppDetails = async (waba_id, phone_id, phoneNo) => {
+  try {
+    const query = `
+    UPDATE WA_API_Details
+    SET waba_id = ?,phoneNumber_id=? updated_at = NOW()
+    WHERE phoneNo = ?
+`;
+    const values = [waba_id, phone_id, phoneNo];       // find unique identifire
+    const result = await db.excuteQuery(query, values);
+    return result;
+  } catch (err) {
+    console.log("wadetails update err", err)
+  }
+
+};
 
 async function saveIncommingMessages(from, firstMessage, phone_number_id, display_phone_number, phoneNo, message_text, message_media, Message_template_id, Quick_reply_id, Type, ExternalMessageId, contactName, extension, message_time, countryCode) {
   console.log("sabewdfesk", Type, extension)
@@ -277,11 +301,11 @@ async function currentlyAssigned(interactionId) {
                  LIMIT 1`;
 
   try {
-      let result = await db.excuteQuery(query, [interactionId]);
-      return result.length > 0 ? result[0].uid : null;
+    let result = await db.excuteQuery(query, [interactionId]);
+    return result.length > 0 ? result[0].uid : null;
   } catch (error) {
-      console.error('Error executing query:', error);
-      throw error; 
+    console.error('Error executing query:', error);
+    throw error;
   }
 }
 
@@ -317,8 +341,8 @@ async function getDetatilsOfSavedMessage(saveMessage, message_text, phone_number
     let myUTCString = new Date().toUTCString();
     const utcTimestamp = moment.utc(myUTCString).format('YYYY-MM-DD HH:mm:ss');
     const currentAssignedUser = await currentlyAssigned(newId); //todo need to check after deploy out of scope to test
-    const check = await commonFun.notifiactionsToBeSent(currentAssignedUser,3);
-    if(check){
+    const check = await commonFun.notifiactionsToBeSent(currentAssignedUser, 3);
+    if (check) {
       let notifyvalues = [[sid, 'New Message in your Chat', 'You have a new message in you current Open Chat', agid, 'WA Web', currentAssignedUser, utcTimestamp]];
       let mentionRes = await db.excuteQuery(`INSERT INTO Notification(sp_id,subject,message,sent_to,module_name,uid,created_at) values ?`, [notifyvalues]);
     }
@@ -407,10 +431,10 @@ async function getDetatilsOfSavedMessage(saveMessage, message_text, phone_number
 
           let myUTCString = new Date().toUTCString();
           const utcTimestamp = moment.utc(myUTCString).format('YYYY-MM-DD HH:mm:ss');
-          const check = await commonFun.notifiactionsToBeSent(agid,2);
-          if(check){
-          let notifyvalues = [[sid, 'New Chat Assigned to You', 'A new Chat has been Assigned to you', agid, 'Routing rules', agid, utcTimestamp]];
-          let mentionRes = await db.excuteQuery(`INSERT INTO Notification(sp_id,subject,message,sent_to,module_name,uid,created_at) values ?`, [notifyvalues]);
+          const check = await commonFun.notifiactionsToBeSent(agid, 2);
+          if (check) {
+            let notifyvalues = [[sid, 'New Chat Assigned to You', 'A new Chat has been Assigned to you', agid, 'Routing rules', agid, utcTimestamp]];
+            let mentionRes = await db.excuteQuery(`INSERT INTO Notification(sp_id,subject,message,sent_to,module_name,uid,created_at) values ?`, [notifyvalues]);
           }
         }
         //Here i have to check if any routing rules addded then send websocket
@@ -460,7 +484,7 @@ async function saveImageFromReceivedMessage(from, message, phone_number_id, disp
   })
 }
 
-async function saveSendedMessageStatus(messageStatus, displayPhoneNumber, customerPhoneNumber, smsId, createdTime, failedMessageReason) {
+async function saveSendedMessageStatus(messageStatus, displayPhoneNumber, customerPhoneNumber, smsId, createdTime, failedMessageReason, failedMessageCode) {
 
   // let getMessageId = await db.excuteQuery(process.env.messageIdQuery, []);
   // console.log(getMessageId)
@@ -477,6 +501,8 @@ async function saveSendedMessageStatus(messageStatus, displayPhoneNumber, custom
     spid = userSP[0].SP_ID
   }
   if (messageStatus == 'sent') {
+    let campaignDeliveredQuery = 'UPDATE CampaignMessages set status=1 , SentTime=? where phone_number =?  and messageTemptateId =?'
+    let campaignDelivered = await db.excuteQuery(campaignDeliveredQuery, [createdTime, customerPhoneNumber, smsId])
     let updateMessageTime = await db.excuteQuery('UPDATE Message set created_at=? where Message_template_id=?', [createdTime, smsId])
     const smsdelupdate = `UPDATE Message
 SET msg_status = 1 
@@ -492,8 +518,8 @@ WHERE customerId IN (SELECT customerId FROM EndCustomer WHERE Phone_number = ? a
     notify.NotifyServer(displayPhoneNumber, false, ack1InId[0]?.InteractionId, 'Out', 1, 0)
 
   } else if (messageStatus == 'delivered') {
-    let campaignDeliveredQuery = 'UPDATE CampaignMessages set status=2 where phone_number =? and status = 1 and messageTemptateId =?'
-    let campaignDelivered = await db.excuteQuery(campaignDeliveredQuery, [customerPhoneNumber, smsId])
+    let campaignDeliveredQuery = 'UPDATE CampaignMessages set status=2 , DeliveredTime=? where phone_number =? and status = 1  and messageTemptateId =?'
+    let campaignDelivered = await db.excuteQuery(campaignDeliveredQuery, [createdTime, customerPhoneNumber, smsId])
     const smsdelupdate = `UPDATE Message
 SET msg_status = 2 
 WHERE interaction_id IN (
@@ -508,8 +534,8 @@ WHERE customerId IN (SELECT customerId FROM EndCustomer WHERE Phone_number = ? a
 
   } else if (messageStatus == 'read') {
     //  console.log("read")
-    let campaignReadQuery = 'UPDATE CampaignMessages set status=3 where phone_number =? and status = 2  and messageTemptateId =?';
-    let campaignRead = await db.excuteQuery(campaignReadQuery, [customerPhoneNumber, smsId])
+    let campaignReadQuery = 'UPDATE CampaignMessages set status=3 , SeenTime=? where phone_number =? and status = 2   and messageTemptateId =?';
+    let campaignRead = await db.excuteQuery(campaignReadQuery, [createdTime, customerPhoneNumber, smsId])
     const smsupdate = `UPDATE Message
 SET msg_status = 3 
 WHERE interaction_id IN (
@@ -522,8 +548,8 @@ WHERE customerId IN (SELECT customerId FROM EndCustomer WHERE Phone_number =? an
     let ack3InId = await db.excuteQuery(notifyInteraction, [customerPhoneNumber, spid])
     notify.NotifyServer(displayPhoneNumber, false, ack3InId[0]?.InteractionId, 'Out', 3, 0)
   } else if (messageStatus == 'failed') {
-    let campaignReadQuery = 'UPDATE CampaignMessages set status=3 where phone_number =? and status = 0  and messageTemptateId =?';
-    let campaignRead = await db.excuteQuery(campaignReadQuery, [customerPhoneNumber, smsId])
+    let campaignReadQuery = 'UPDATE CampaignMessages set status=0,FailureReason=?,FailureCode=? where phone_number =?  and messageTemptateId =?';
+    let campaignRead = await db.excuteQuery(campaignReadQuery, [failedMessageReason, failedMessageCode, customerPhoneNumber, smsId])
     const smsupdate = `UPDATE Message SET msg_status = 9 ,failedMessageReason=? where Message_template_id =? and SPID=?`
     //  console.log(smsupdate)
     let resd = await db.excuteQuery(smsupdate, [failedMessageReason, smsId, spid])

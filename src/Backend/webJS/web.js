@@ -1,7 +1,7 @@
 const express = require('express');
 const { request } = require('http');
 const app = express();
-const { Client, LocalAuth, MessageMedia, Location } = require('whatsapp-web.js');
+const { Client, LocalAuth, MessageMedia, Location ,Buttons} = require('whatsapp-web.js');
 const puppeteer = require('puppeteer')
 // const qrcode = require('qrcode-terminal');
 const bodyParser = require('body-parser');
@@ -149,11 +149,11 @@ function killChromeProcesses(spid, callback) {
   }
 }
 
-async function isPhoneAlreadyInUsed(mobile_number) {
+async function isPhoneAlreadyInUsed(mobile_number,spid) {
   try {
     let isExist = await db.excuteQuery('select * from user where mobile_number=? and isAutoScanOnce =? and ParentId is null and  isDeleted !=1 and IsActive !=2', [mobile_number, 1]);
   //console.log("is Exist",isExist)
-    if (isExist?.length >0) {
+    if (isExist?.length >0 && isExist[0].SP_ID != spid) {
       return true;
     }
     return false;
@@ -231,7 +231,7 @@ function ClientInstance(spid, authStr, phoneNo) {
         puppeteer: {
           headless: true,
           executablePath: "/usr/bin/google-chrome-stable",
-          //executablePath: "C:/Program Files/Google/Chrome/Application/chrome.exe",
+         // executablePath: "C:/Program Files/Google/Chrome/Application/chrome.exe",
           // executablePath: "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome",
 
           args: [
@@ -301,7 +301,7 @@ function ClientInstance(spid, authStr, phoneNo) {
 
         try {
           console.log("Above client ready", new Date().toUTCString())
-          let isPhoneAlreadyUsed = await isPhoneAlreadyInUsed(client.info.wid.user)
+          let isPhoneAlreadyUsed = await isPhoneAlreadyInUsed(client.info.wid.user,spid)
           if (!isPhoneAlreadyUsed) {
             let wrongNumber = await isWrongNumberScanned(spid, client.info.wid.user)
             if (wrongNumber) {       //phoneNo != client.info.wid.user
@@ -373,8 +373,11 @@ function ClientInstance(spid, authStr, phoneNo) {
             if (repliedMessage && repliedMessage.fromMe) {
               // Notify about the reply
               const repliedNumber = (message.from).replace(/@c\.us$/, "");
+              var d = new Date(message.timestamp * 1000).toUTCString();
+
+              const message_time = moment.utc(d).format('YYYY-MM-DD HH:mm:ss');
               console.log(repliedMessage?._data?.id?.id, "reply ___________________", message.body)
-              let campaignRepliedQuery = `UPDATE CampaignMessages set status=4 where phone_number =${repliedNumber} and (status = 3 OR status =2) and SP_ID = ${spid} AND messageTemptateId = '${repliedMessage?._data?.id?.id}'`
+              let campaignRepliedQuery = `UPDATE CampaignMessages set status=4 ,RepliedTime =${message_time} where phone_number =${repliedNumber} and (status = 3 OR status =2) and SP_ID = ${spid} AND messageTemptateId = '${repliedMessage?._data?.id?.id}'`
               console.log(campaignRepliedQuery)
               let campaignReplied = await db.excuteQuery(campaignRepliedQuery, [])
               console.log(repliedNumber, spid, "campaignReplied*******", campaignReplied?.affectedRows)
@@ -483,6 +486,8 @@ function ClientInstance(spid, authStr, phoneNo) {
             var d = new Date(message.timestamp * 1000).toUTCString();
 
             const message_time = moment.utc(d).format('YYYY-MM-DD HH:mm:ss');
+            let campaignDeliveredQuery = 'UPDATE CampaignMessages set status=1 , SentTime=? where phone_number =?  and messageTemptateId =?'
+            let campaignDelivered = await db.excuteQuery(campaignDeliveredQuery, [message_time,phoneNumber, message._data.id.id])
             if (message._data.id.id) {
               let updateMessageTime = await db.excuteQuery('UPDATE Message set created_at=? where Message_template_id=?', [message_time, message._data.id.id])
             }
@@ -502,8 +507,11 @@ WHERE customerId IN (SELECT customerId FROM EndCustomer WHERE Phone_number = ? a
 
 
           } else if (ack == '2') {
-            let campaignDeliveredQuery = 'UPDATE CampaignMessages set status=2 where phone_number =? and status = 1 and messageTemptateId=?'
-            let campaignDelivered = await db.excuteQuery(campaignDeliveredQuery, [phoneNumber, message?._data?.id?.id])
+            var d = new Date(message.timestamp * 1000).toUTCString();
+
+            const message_time = moment.utc(d).format('YYYY-MM-DD HH:mm:ss');
+            let campaignDeliveredQuery = 'UPDATE CampaignMessages set status=2, DeliveredTime=? where phone_number =? and status = 1 and messageTemptateId=?'
+            let campaignDelivered = await db.excuteQuery(campaignDeliveredQuery, [message_time,phoneNumber, message?._data?.id?.id])
             const smsdelupdate = `UPDATE Message
 SET msg_status = 2 
 WHERE interaction_id IN (
@@ -518,8 +526,11 @@ WHERE customerId IN (SELECT customerId FROM EndCustomer WHERE Phone_number = ? a
             notify.NotifyServer(phoneNo, false, ack2InId[0]?.InteractionId, 'Out', 2, 0)
           } else if (ack == '3') {
             //  console.log("read")
-            let campaignReadQuery = 'UPDATE CampaignMessages set status=3 where phone_number =? and status = 2 and messageTemptateId=?';
-            let campaignRead = await db.excuteQuery(campaignReadQuery, [phoneNumber, message?._data?.id?.id])
+            var d = new Date(message.timestamp * 1000).toUTCString();
+
+            const message_time = moment.utc(d).format('YYYY-MM-DD HH:mm:ss');
+            let campaignReadQuery = 'UPDATE CampaignMessages set status=3 , SeenTime=? where phone_number =? and status = 2 and messageTemptateId=?';
+            let campaignRead = await db.excuteQuery(campaignReadQuery, [message_time,phoneNumber, message?._data?.id?.id])
             const smsupdate = `UPDATE Message
 SET msg_status = 3 
 WHERE interaction_id IN (
@@ -543,7 +554,7 @@ WHERE customerId IN (SELECT customerId FROM EndCustomer WHERE Phone_number =? an
       const timeOut = setTimeout(() => {
         //  client.initialize().catch(_ => _);
         client.initialize().catch((error) => {
-          logger.error(`Web Js Client Initialization error caught --- ${err}`);
+          logger.error(`Web Js Client Initialization error caught --- ${error}`);
           console.log("intilize_________________")
           console.error(error);
         });
@@ -803,7 +814,27 @@ async function sendDifferentMessagesTypes(client, endCust, type, text, link, int
       let updateMessageTime = await db.excuteQuery(`UPDATE Message set updated_at=? , Message_template_id =? where Message_id=?`, [updated_at, sendId?._data?.id?.id, msg_id])
       return { status: 200, msgId: sendId?._data?.id?.id }
     }
-
+  // New block: Sending button messages
+  if (type === 'buttons') {
+    const buttons = [
+      { buttonId: 'btn1', buttonText: { displayText: 'Visit Website' }, type: 1 },
+      { buttonId: 'btn2', buttonText: { displayText: 'Call Now' }, type: 1 }
+    ];
+  
+    let button = new Buttons(
+      "Button body",
+      [{ body: "bt1" }, { body: "bt2" }, { body: "bt3" }],
+      "title",
+      "footer"
+      );
+    //console.log("butttospf",buttonMessage)
+    let myUTCString = new Date().toUTCString();
+    const updated_at = moment.utc(myUTCString).format('YYYY-MM-DD HH:mm:ss');
+    let sendId = await client.sendMessage(endCust + '@c.us', button);
+    //console.log(endCust,"sendId",sendId)
+    let updateMessageTime = await db.excuteQuery(`UPDATE Message set updated_at=? , Message_template_id =? where Message_id=?`, [updated_at, sendId?._data?.id?.id, msg_id]);
+    return { status: 200, msgId: sendId?._data?.id?.id };
+  }
   } catch (err) {
     console.log("++++++++++++++++++++++++++++++++++++++++++++")
     console.log(err)
