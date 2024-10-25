@@ -663,3 +663,26 @@ input[type="radio"]:checked + label::before {
 .disableBtn{
   background-color: grey;
 }
+
+
+
+.setting-card-status-details {
+  background-color: #FFF4F2;
+  border-radius: 20px;
+  padding: 20px;
+  
+}
+.High {
+  color: green;
+  font-weight: 1000;
+}
+
+.Low {
+  color: red;
+  font-weight: 1000;
+}
+
+.Medium {
+  color: yellow;
+  font-weight: 1000;
+}

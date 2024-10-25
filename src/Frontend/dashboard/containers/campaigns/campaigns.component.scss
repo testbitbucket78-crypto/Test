@@ -2494,5 +2494,67 @@ position: absolute;
     overflow: hidden;
     text-overflow: ellipsis;
   }
+  .info-container {
+  	font-size: 14px;
+  	margin-top: -6px;
 
+  	.High {
+  		color: green;
+  	}
 
+  	.Low {
+  		color: red
+  	}
+
+  	.Medium {
+  		color: yellow;
+  	}
+
+  	&>div:nth-child(1) {
+		height: 35px;
+		display: inline-flex;
+		align-items: center;
+  		padding: 8px 15px;
+  		border: 1px solid #EBEBEB;
+  		border-radius: 20px;
+  	}
+
+  	&>div:nth-child(2) {
+		height: 35px;
+		display: inline-flex;
+		align-items: center;
+  		padding: 8px 15px;
+		margin: 0 0 0 30px;
+  		border-radius: 20px 0 0 20px;
+  		border: 1px solid #EBEBEB;
+  	}
+
+  	& a {
+		height: 35px;
+		display: inline-flex;
+		align-items: center;
+		font-size: 12px;
+  		padding: 8px 15px;
+  		border: 1px solid #EBEBEB;
+		cursor: pointer !important;
+		border-left: none;
+  		border-radius: 0 20px 20px 0;
+  	}
+
+  }
+.D2-whatsApp{
+	border-radius: 20px;
+    border: 1px solid #ebebee;
+    height: 35px;
+    background: white;
+	font-size: 12px;
+	padding: 0 15px;
+}
+.p-15{
+	padding: 0 15px;
+}.mw-60{
+	width: 60% !important;
+}
+.t-15{
+	top: 15rem !important;
+}

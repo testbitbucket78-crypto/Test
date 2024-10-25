@@ -42,8 +42,9 @@
                             <span>id: {{item?.ID}}</span>
                         </div>
                         <p class="pb-2 title ellipsis">{{getLimitedMessageText(item?.TemplateName)}}</p>
-                        <p class="start_time">Created On: <span>{{settingsService?.getDateTimeFormate(item?.created_at )}}</span></p>
-                        <p class="start_time">Modified On: <span>{{ item?.updated_at ? (settingsService?.getDateTimeFormate(item?.updated_at)) : 'NA' }}</span></p>
+                        <p *ngIf="filterListChannel[0]?.label === 'WA Web'" class="start_time">Created On: <span>{{settingsService?.getDateTimeFormate(item?.created_at )}}</span></p>
+                        <p *ngIf="filterListChannel[0]?.label === 'WA Web'" class="start_time">Modified On: <span>{{ item?.updated_at ? (settingsService?.getDateTimeFormate(item?.updated_at)) : 'NA' }}</span></p>
+                        <p *ngIf="filterListChannel[0]?.label === 'WA API'" >Quality : <span> {{settingsService?.getQualityRatingClass(item?.quality)}}</span></p>
                         <p class="pt-2"><img  class="icon" src="../../../../assets/img/teambox/whatsapp-icon-l.svg" />{{item?.Channel}}</p>
                         <div class="campaigns_section_item_statics">
                             <div><p>{{item?.Category}}</p><p><span>Category</span></p></div>
@@ -85,6 +86,8 @@
                                 <div class="img" *ngIf="!profilePicture">{{apiService.getInitials(templatesMessageData?.created_By)}}</div>
                             <p class="m-0">{{templatesMessageData?.created_By}}</p></div>
                             <p><span>Created By</span></p>
+                            <p *ngIf="filterListChannel[0]?.label === 'WA API'">Quality : <span> {{settingsService?.getQualityRatingClass(templatesMessageData?.quality)}}</span></p>
+
                         </div>
                         <p class="title" >{{templatesMessageData?.TemplateName}}</p>
                         <p><img class="icon" src="../../../../assets/img/teambox/whatsapp-icon-l.svg" />{{templatesMessageData?.Channel}}</p>
