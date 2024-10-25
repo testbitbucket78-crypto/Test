@@ -1,6 +1,6 @@
 import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { SettingsService } from 'Frontend/dashboard/services/settings.service';
-import { repliesaccountList, whatsAppDetails } from 'Frontend/dashboard/models/settings.model';
+import { repliesaccountList, whatsAppDetails, healthStatusData } from 'Frontend/dashboard/models/settings.model';
 import { accountmodel } from 'Frontend/dashboard/models/settings.model';
 import { WebsocketService } from '../../services/websocket.service';
 import { WebSocketSubject } from 'rxjs/webSocket';
@@ -62,6 +62,10 @@ export class AcoountSettingsComponent implements OnInit {
   roboot=[0];
   restart=[0];
   reset=[0];
+  phoneNo = 0;
+	phone_no_id = 0;
+	WABA_Id = 0;
+  healthStatusData: healthStatusData[] = [];
 
   conversationType!:string;
   phoneType!:string;
@@ -119,13 +123,60 @@ getwhatsapp() {
     this.whatsAppDetails.forEach(detail => {
     this.selectedId.push(detail.id);
     });
-    this.channel=this.whatsAppDetails[0]?.channel_status;
-    this.connectionn=this.whatsAppDetails[0]?.connection_date;
-    this.wave=this.whatsAppDetails[0]?.WAVersion;
+    if(this.whatsAppDetails.length > 0){
+      this.channel=this.whatsAppDetails[0]?.channel_status;
+      this.connectionn=this.whatsAppDetails[0]?.connection_date;
+      this.wave=this.whatsAppDetails[0]?.WAVersion;
+  
+      this.phoneNo =  this.whatsAppDetails[0]?.connected_id;
+      this.phone_no_id = this.whatsAppDetails[0]?.phone_number_id;
+      this.WABA_Id = this.whatsAppDetails[0]?.WABA_ID;
+      this.getQualityRating();
+    }
+
     if(this.whatsAppDataUpdated){
       if(this.whatsAppDetails[0]?.channel_id) this.setChannelId(this.whatsAppDetails[0]?.channel_id);
     }
   });
+}
+
+getQualityRating() {
+  this.isLoading = true;
+  this.apiService.getQualityRating(this.phoneNo, this.phone_no_id, this.WABA_Id).subscribe(
+    data => {
+      let res: any = data
+      if (res?.status === 200) {
+        if (res?.response) {
+         this.mapHealthStatus(res?.response);
+        }
+      }
+      else {
+        console.log("Error Code : " +res?.status);
+        this.isLoading = false;
+      }
+    },
+    error => {
+      this.isLoading = false;
+      console.error('Error fetching quality rating:', error);
+    }
+  );
+}
+
+mapHealthStatus(qualityStatus: any){
+  this.whatsAppDetails.forEach(data => {
+    const healthStatus: healthStatusData = {
+       phone_no: data?.connected_id,
+       channel_id: qualityStatus?.channel_id,
+       Quality_Rating: this.settingsService.getQualityRatingClass(qualityStatus?.quality_rating),
+       Status: data?.channel_status,
+       WABA_Id: data?.WABA_ID,
+       Message_Limit: qualityStatus?.balance_limit_today,
+       Fb_Verification: qualityStatus?.fb_verification,
+       channel_type: data?.channel_id
+     }
+     this.healthStatusData.push(healthStatus);
+   });
+   this.isLoading = false;
 }
 
 getaccountByID(data:any) {
