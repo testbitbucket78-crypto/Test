@@ -75,7 +75,7 @@ WHERE m.interaction_id = ?
 async function autoReplyDefaultAction(isAutoReply, autoReplyTime, isAutoReplyDisable, message_text, phone_number_id, contactName, from, sid, custid, agid, replystatus, newId, msg_id, newlyInteractionId, channelType, isContactPreviousDeleted, inactiveAgent, inactiveTimeOut, newiN,display_phone_number) {
   console.log("isAutoReply, autoReplyTime, isAutoReplyDisable")
   console.log(isAutoReply, autoReplyTime, isAutoReplyDisable)
-  let assignAgent = await db.excuteQuery('select * from InteractionMapping where InteractionId =? and AgentId != ? order by created_at dec limit 1', [newId, -1]);
+  let assignAgent = await db.excuteQuery('select * from InteractionMapping where InteractionId =? order by created_at desc limit 1', [newId]);
   let interactionStatus = await db.excuteQuery('select * from Interaction where InteractionId = ? and is_deleted !=1 ', [newId])
 
   const timeoutDuration = inactiveTimeOut * 60 * 1000; // Convert minutes to milliseconds
@@ -105,17 +105,20 @@ async function autoReplyDefaultAction(isAutoReply, autoReplyTime, isAutoReplyDis
     //const autoReplyVal = new Date(currentTime)   // autoReplyTime when auto reply start
     console.log("currentTime,autoReplyVal ,autoReplyTime", currentTime, autoReplyTime)
     console.log( (autoReplyTime <= currentTime),"(autoReplyTime != null && (autoReplyTime <= currentTime) && autoReplyTime != undefined ",(autoReplyTime != null && (autoReplyTime <= currentTime) && autoReplyTime != undefined ))
-    if (autoReplyTime != null && (autoReplyTime <= currentTime) && autoReplyTime != undefined ) {
+    if (autoReplyTime != null && (autoReplyTime <= currentTime) && autoReplyTime != undefined && autoReplyTime !=0 && isAutoReplyDisable != 1) {
       let sendSReply = await sendSmartReply(message_text, phone_number_id, contactName, from, sid, custid, agid, replystatus, newId, msg_id, newlyInteractionId, channelType, isContactPreviousDeleted, newiN,display_phone_number)
       return sendSReply;
     }
-    else if (isAutoReplyDisable == 1 && ((assignAgent?.length == 0 || (assignAgent?.length != 0 && interactionStatus[0]?.interaction_status == 'Resolved')) || (assignAgent?.length > 0 && interactionStatus[0]?.interaction_status == 'Open'))) {
+    else if (isAutoReplyDisable == 1 && ((assignAgent?.length == 0 || (assignAgent[0].AgentId == -1 && interactionStatus[0]?.interaction_status == 'Resolved')) || (assignAgent[0].AgentId == -1 && interactionStatus[0]?.interaction_status == 'Open'))) {
 
       const currentTime = new Date();
       const autoReplyVal = new Date(autoReplyTime)   // autoReplyTime when auto reply start
       let sendSReply = await sendSmartReply(message_text, phone_number_id, contactName, from, sid, custid, agid, replystatus, newId, msg_id, newlyInteractionId, channelType, isContactPreviousDeleted ,newiN,display_phone_number)
       return sendSReply;
 
+    }else if(autoReplyTime == null &&  isAutoReplyDisable != 1){
+      let sendSReply = await sendSmartReply(message_text, phone_number_id, contactName, from, sid, custid, agid, replystatus, newId, msg_id, newlyInteractionId, channelType, isContactPreviousDeleted, newiN,display_phone_number)
+      return sendSReply;
     }
 
     return false;
@@ -862,7 +865,7 @@ async function messageThroughselectedchannel(spid, from, type, text, media, phon
     let response = false;
     let myUTCString = new Date().toUTCString();
     const time = moment.utc(myUTCString).format('YYYY-MM-DD HH:mm:ss');
-    let result = await middleWare.sendDefultMsg(media, text, getMediaType, phone_number_id, from);
+    let result = await middleWare.sendDefultMsg(media, text, getMediaType, phone_number_id, from,spid);
     // console.log("messageThroughselectedchannel", result?.status)
     if (result?.status == 200) {
       let messageValu = [[spid, 'text', "", interactionId, agentId, 'Out', Message_text, (media ? media : 'text'), media_type, result.message.messages[0].id, "", time, time, "", -2, 1]]
@@ -893,7 +896,7 @@ async function SreplyThroughselectedchannel(spid, from, type, text, media, phone
     let response = false;
     let myUTCString = new Date().toUTCString();
     const time = moment.utc(myUTCString).format('YYYY-MM-DD HH:mm:ss');
-    let sReply = await middleWare.sendDefultMsg(media, text, type, phone_number_id, from);
+    let sReply = await middleWare.sendDefultMsg(media, text, type, phone_number_id, from,spid);
     console.log(type,"sReply?.status ", sReply?.status,media_type)
     if (sReply?.status == 200) {
 
