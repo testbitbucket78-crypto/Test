@@ -169,7 +169,7 @@ async function parseMessage(testMessage, custid, sid, msgVar) {
 
 async function parseMessageForCSV(message_content, contact, messageVariable) {
   // Replace placeholders in the content with values from message_variables
-  let content = await removeTags.removeTagsFromMessages(testMessage);
+  let content = await removeTags.removeTagsFromMessages(message_content);
   let message_variables = messageVariable && messageVariable.length > 0 ? JSON.parse(messageVariable) : undefined;
   if (message_variables) {
     message_variables.forEach(variable => {
