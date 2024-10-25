@@ -59,7 +59,7 @@ router.get('/searchinteraction/:searchKey/:AgentId/:spid',authenticateToken,Team
 
 
 router.get('/messages/:InteractionId/:Type/:RangeStart/:RangeEnd/:spid',TeamBoxController.getAllMessageByInteractionId);
-router.post('/newmessage',authenticateToken,TeamBoxController.insertMessage);
+router.post('/newmessage',TeamBoxController.insertMessage);
 router.post('/deletemessage',authenticateToken,TeamBoxController.deleteMessage);
 router.post('/updatemessageread',authenticateToken,TeamBoxController.updateMessageRead);
 router.post('/interactionmapping',authenticateToken,TeamBoxController.updateInteractionMapping);
@@ -180,5 +180,5 @@ router.post('/alertUser',authenticateToken,CampaignsController.campaignAlerts);
 router.get('/exitCampaign/:title/:spid/:Id',authenticateToken,CampaignsController.isExistCampaign);
 router.post('/processQuery',authenticateToken,CampaignsController.processContactQueries)
 router.get('/csvSample', authenticateToken,CampaignsController.download)
-
+router.post('/campaignReport',authenticateToken,CampaignsController.campaignReport)
 module.exports = router;

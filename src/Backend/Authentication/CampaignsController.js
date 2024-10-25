@@ -5,6 +5,10 @@ const app = express();
 const http = require("https");
 const middleWare = require('../middleWare')
 const removeTags = require('../removeTagsFromRichTextEditor')
+const nodemailer = require('nodemailer');
+const val = require('./constant')
+const moment = require('moment');
+const xlsx = require('xlsx'); // Import the xlsx package
 app.use(bodyParser.json());
 const path = require("path");
 
@@ -811,10 +815,10 @@ const copyCampaign = async (req, res) => {
     let CopyQuery;
     let campaignTitle = await db.excuteQuery("SELECT * from Campaign  where title=? and is_deleted !=1 and sp_id=?", ['copy of '+existCampaign[0].title, req.params.spid])
     if (campaignTitle?.length == 0) {
-         CopyQuery = "INSERT INTO Campaign (sp_id,title,channel_id,message_heading,message_content,message_media,message_variables,button_yes,button_no,button_exp,category,time_zone,start_datetime,end_datetime,csv_contacts,segments_contacts,media_type) SELECT sp_id, CONCAT('Copy of ',title),channel_id,message_heading,message_content,message_media,message_variables,button_yes,button_no,button_exp,category,time_zone,' ',' ',csv_contacts,segments_contacts,media_type FROM Campaign WHERE Id = " + req.params.CampaignId
+         CopyQuery = "INSERT INTO Campaign (sp_id,title,channel_id,message_heading,message_content,message_media,message_variables,button_yes,button_no,button_exp,category,time_zone,start_datetime,end_datetime,csv_contacts,segments_contacts,media_type) SELECT sp_id, CONCAT('copy of ',title),channel_id,message_heading,message_content,message_media,message_variables,button_yes,button_no,button_exp,category,time_zone,' ',' ',csv_contacts,segments_contacts,media_type FROM Campaign WHERE Id = " + req.params.CampaignId
 
     } else { 
-        CopyQuery = `INSERT INTO Campaign (sp_id,title,channel_id,message_heading,message_content,message_media,message_variables,button_yes,button_no,button_exp,category,time_zone,start_datetime,end_datetime,csv_contacts,segments_contacts,media_type) SELECT sp_id, CONCAT('Copy of ${existCampaign[0].title} ', ${randomName}),channel_id,message_heading,message_content,message_media,message_variables,button_yes,button_no,button_exp,category,time_zone,' ',' ',csv_contacts,segments_contacts,media_type FROM Campaign WHERE Id = ` + req.params.CampaignId
+        CopyQuery = `INSERT INTO Campaign (sp_id,title,channel_id,message_heading,message_content,message_media,message_variables,button_yes,button_no,button_exp,category,time_zone,start_datetime,end_datetime,csv_contacts,segments_contacts,media_type) SELECT sp_id, CONCAT('copy of ${existCampaign[0].title} ', ${randomName}),channel_id,message_heading,message_content,message_media,message_variables,button_yes,button_no,button_exp,category,time_zone,' ',' ',csv_contacts,segments_contacts,media_type FROM Campaign WHERE Id = ` + req.params.CampaignId
     }
 //  console.log(CopyQuery)
        let campaignCopied = await db.excuteQuery(CopyQuery, []);
@@ -844,7 +848,220 @@ const download = (req, res) => {
     }
 }
 
-module.exports = { copyCampaign, getCampaignMessages, sendCampinMessage, saveCampaignMessages, getContactAttributesByCustomer, getEndCustomerDetail, getAdditiionalAttributes, deleteCampaign, addCampaign, getCampaigns, getCampaignDetail, getFilteredCampaign, getContactList, updatedContactList, addNewContactList, applyFilterOnEndCustomer, campaignAlerts, deleteContactList, isExistCampaign, processContactQueries, download };
+
+
+  const convertToMomentFormat = (format) => {
+    return format.replace(/yyyy/g, 'YYYY').replace(/dd/g, 'DD').replace(/MM/g, 'MM');
+  };
+  
+  async function formatterDateTime(data, sp_id) {
+    const select = 'SELECT * FROM localDetails WHERE SP_ID = ?';
+    const formatSettings = await db.excuteQuery(select, [sp_id]);
+  
+    if (!formatSettings || formatSettings.length === 0) {
+      return data; // No formatting if no settings found
+    }
+  
+    let { Date_Format, Time_Format } = formatSettings[0];
+  
+    if (Date_Format) {
+      Date_Format = convertToMomentFormat(Date_Format);
+    }
+  
+    const timeFields = ['Submit Time', 'Delivered Time', 'Seen Time'];
+  
+    const formattedData = data.map(record => {
+      timeFields.forEach(field => {
+        const originalTime = record[field];
+  
+        // Log the original time for debugging
+       // console.log(`Original ${field}:`, originalTime);
+  
+        if (originalTime) {
+          try {
+            // Parse the ISO date-time using moment
+            const dateTime = moment(originalTime);
+  
+            // Log the parsed date for debugging
+           // console.log(`Parsed ${field} with moment:`, dateTime.isValid() ? dateTime.toISOString() : 'Invalid');
+  
+            if (dateTime.isValid()) {
+              const formattedDate = dateTime.format(Date_Format || 'MM/DD/YYYY');
+              const formattedTime = dateTime.format(Time_Format === '12' ? 'h:mm A' : 'HH:mm');
+  
+              // Combine the formatted date and time into one field
+              record[field] = `${formattedDate} ${formattedTime}`;
+            } else {
+              console.error(`Invalid date for ${field}:`, originalTime);
+            }
+          } catch (error) {
+            console.error(`Error formatting ${field}:`, error);
+          }
+        } else {
+          // Set to empty string if null
+          record[field] = '';
+        }
+      });
+  
+      record['Message Status'] = mapStatusToText(record['Message Status']); // Map status
+  
+      return record; // Return formatted record
+    });
+  
+    return formattedData; // Return the formatted data
+  }
+  
+
+
+  
+  
+  
+const fetchCampaignMessages = async (campaignId) => {
+    const query = `
+        SELECT 
+            CampaignId AS "Msg ID",
+            phone_number AS "Customer Number",
+            status AS "Message Status",
+            SentTime AS "Submit Time",
+            DeliveredTime AS "Delivered Time",
+            SeenTime AS "Seen Time",
+            RepliedTime AS "Replied Time",
+            FailureReason AS "Failure Reason",
+            FailureCode AS "Error Codes"
+        FROM CampaignMessages
+        WHERE CampaignId = ?
+    `;
+    let result = await db.excuteQuery(query, [campaignId])
+    return result;
+};
+
+const mapStatusToText = (status) => {
+    const statusMap = {
+        0: 'Failed',
+        1: 'Submitted',
+        2: 'Delivered',
+        3: 'Seen',
+        4: 'Replied'
+    };
+    return statusMap[status] || ''; // Return an empty string if status is not in the map
+};
+
+const sanitizeMessages = (messages) => {
+    return messages.map(message => ({
+        'Msg ID': message['Msg ID'] || '',
+        'Customer Number': message['Customer Number'] || '',
+        'Message Status': mapStatusToText(message['Message Status']),
+        'Submit Time': message['Submit Time'] || '',
+        'Delivered Time': message['Delivered Time'] || '',
+        'Seen Time': message['Seen Time'] || '',
+        'Replied Time': message['Replied Time'] || '',
+        'Failure Reason': message['Failure Reason'] || '',
+        'Error Codes': message['Error Codes'] || ''
+    }));
+};
+
+
+
+const campaignReport = async (req, res) => {
+    try {
+        const campaignId = req.body.campaignId; 
+        const userName = req.body.userName;
+        const emailId = req.body.emailId;
+        const campaignName = req.body.campaignName;
+        const spid = req.body.spid;
+
+        // Step 1: Fetch data from the CampaignMessages table
+        const campaignMessages = await fetchCampaignMessages(campaignId);
+        const formattedMessages = await formatterDateTime(campaignMessages, spid);
+        
+        // Step 2: Sanitize the messages (replace null values with empty strings)
+        const sanitizedMessages = sanitizeMessages(formattedMessages);
+
+        // Step 3: Prepare the data for XLSX
+        const headerMessage = "To check the exact reason of message failure from Meta error codes, please refer to this link and search for the relevant error code https://developers.facebook.com/docs/whatsapp/cloud-api/support/error-codes";
+        const xlsxData = [
+            [headerMessage], // First row with header message
+            [], // Empty row for spacing
+            ['Msg ID', 'Customer Number', 'Message Status', 'Submit Time', 'Delivered Time', 'Seen Time', 'Replied Time', 'Failure Reason', 'Error Codes'], // Headers
+            ...sanitizedMessages.map(message => [
+                message['Msg ID'],
+                message['Customer Number'],
+                message['Message Status'],
+                message['Submit Time'],
+                message['Delivered Time'],
+                message['Seen Time'],
+                message['Replied Time'],
+                message['Failure Reason'],
+                message['Error Codes']
+            ]) // Mapping the sanitized messages to rows
+        ];
+
+        // Step 4: Create a new workbook and add the data
+        const workbook = xlsx.utils.book_new();
+        const worksheet = xlsx.utils.aoa_to_sheet(xlsxData); // Create worksheet from array of arrays
+        xlsx.utils.book_append_sheet(workbook, worksheet, 'Campaign Report');
+
+        // Step 5: Write the XLSX file asynchronously
+        const filePath = path.join(__dirname, 'campaign_report.xlsx');
+        xlsx.writeFile(workbook, filePath);
+
+        const timestamp = Date.now();
+        const randomNumber = Math.floor(Math.random() * 10000);
+        var mailOptions = {
+            from: val.email,
+            to: emailId,
+            subject: "Engagekart - Campaign Messages report",
+            html: `
+            <p>Dear ${userName},</p>
+            <p>Please find attached here the detail report for your campaign ${campaignName} from your Engagekart account.</p>
+            <p>Thank you,</p>
+            <p>Team Engagekart</p>
+            `,
+            attachments: [
+                {
+                    filename: `${timestamp}-${randomNumber}.xlsx`, // Change the extension to .xlsx
+                    path: filePath,
+                },
+            ]
+        };
+    
+        transporter.sendMail(mailOptions, (error, info) => {
+            if (error) {
+                res.send(error);
+            }
+            console.log('Message sent: %s', info.messageId);
+            console.log('Preview URL: %s', nodemailer.getTestMessageUrl(info));
+            res.status(200).send({ msg: "Campaign report has been sent" });
+        });
+
+    } catch (error) {
+        console.error('Error generating campaign report:', error);
+        db.errlog(error); // Log error to your database or logging system
+        res.status(500).send({
+            msg: 'Internal server error while generating report',
+            status: 500
+        });
+    }
+};
+
+
+
+
+//common method for send email through node mailer
+let transporter = nodemailer.createTransport({
+    //service: 'gmail',
+    host: val.emailHost,
+    port: val.port,
+    secure: true,
+    auth: {
+      user: val.email,
+      pass: val.appPassword
+    },
+  });
+
+
+
+module.exports = { copyCampaign, getCampaignMessages, sendCampinMessage, saveCampaignMessages, getContactAttributesByCustomer, getEndCustomerDetail, getAdditiionalAttributes, deleteCampaign, addCampaign, getCampaigns, getCampaignDetail, getFilteredCampaign, getContactList, updatedContactList, addNewContactList, applyFilterOnEndCustomer, campaignAlerts, deleteContactList, isExistCampaign, processContactQueries, download,campaignReport };
 
 
 

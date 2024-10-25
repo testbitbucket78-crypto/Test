@@ -84,7 +84,7 @@ async function NoCustomerReplyReminder() {
                 // Update message status and insert new message
                 await db.excuteQuery(settingVal.systemMsgQuery, [5, currenttime, message.MaxMessageId]);
                 let messageValu = [
-                  [message.SPID, 'text', metaPhoneNumberID, message.interaction_id, message.Agent_id, 'out', message.message_value, (message.link ? message.link : 'text'), message.message_type, "", "", currenttime, currenttime, 5, -2, 1]
+                  [message.SPID, 'text', metaPhoneNumberID, message.interaction_id, message.Agent_id, 'Out', message.message_text, (message.link ? message.link : 'text'), message.message_type,  response?.message?.messages[0]?.id, "", currenttime, currenttime, 5, -2, 1]
                 ];
                 await db.excuteQuery(insertMessageQuery, [messageValu]);
               }
@@ -185,7 +185,7 @@ async function NoCustomerReplyTimeout() {
                 await db.excuteQuery(settingVal.systemMsgQuery, [6, currenttime, msg.Message_id]);
 
                 let messageValu = [
-                  [msg.SPID, 'text', metaPhoneNumberID, msg.interaction_id, msg.Agent_id, 'out', msg.value, (msg.link ? msg.link : 'text'), msg.message_type, "", "", currenttime, currenttime, 6, -2, 1]
+                  [msg.SPID, 'text', metaPhoneNumberID, msg.interaction_id, msg.Agent_id, 'out', msg.value, (msg.link ? msg.link : 'text'), msg.message_type,  response?.message?.messages[0]?.id, "", currenttime, currenttime, 6, -2, 1]
                 ];
                 let insertedMessage = await db.excuteQuery(insertMessageQuery, [messageValu]);
                 logger.info(`NoCustomerReplyTimeout msg, ${insertedMessage}, ${new Date()}`);
@@ -256,7 +256,7 @@ async function NoAgentReplyTimeOut() {
           if (!workingHoursCache.has(msg.SPID)) {
             isWorkingHour = isWorkingTime(msg.start_time, msg.end_time, msg.working_days);
             workingHoursCache.set(msg.SPID, isWorkingHour);
-            logger.info(`isWorkingHour calculated for SPID: ${msg.SPID}`, { isWorkingHour });
+            logger.info(`isWorkingHour calculated for SPID: ${msg.SPID}, ${isWorkingHour}`);
           } else {
             isWorkingHour = workingHoursCache.get(msg.SPID);
           }
@@ -299,7 +299,7 @@ async function NoAgentReplyTimeOut() {
                 let myUTCString = new Date().toUTCString();
                 const currenttime = moment.utc(myUTCString).format('YYYY-MM-DD HH:mm:ss');
                 let messageValu = [
-                  [msg.SPID, 'text', metaPhoneNumberID, msg.interaction_id, msg.Agent_id, 'out', msg.value, (msg.link ? msg.link : 'text'), msg.message_type, "", "", currenttime, currenttime, 4, -2, 1]
+                  [msg.SPID, 'text', metaPhoneNumberID, msg.interaction_id, msg.Agent_id, 'out', msg.value, (msg.link ? msg.link : 'text'), msg.message_type, response?.message?.messages[0]?.id, "", currenttime, currenttime, 4, -2, 1]
                 ];
                 let insertedMessage = await db.excuteQuery(insertMessageQuery, [messageValu]);
 
@@ -414,7 +414,7 @@ async function messageThroughselectedchannel(spid, from, type, text, media, phon
     if (channelType == 'WhatsApp Official' || channelType == 1 || channelType == 'WA API') {
       logger.info(`WhatsApp Official send process start`, { spid, from, timestamp: new Date() });
       
-      let response ='' //= await middleWare.sendDefultMsg(media, text, getMediaType, phone_number_id, from);
+      let response = await middleWare.sendDefultMsg(media, text, getMediaType, phone_number_id, from,spid);
       
       logger.info(`WhatsApp Official send process end`, { spid, from, timestamp: new Date(), responseStatus: response?.status });
       return response;
@@ -498,6 +498,12 @@ async function getExtraxtedMessage(message_text, SPID, customerId) {
 
 
 function isWorkingTime(starthour, endhour , workDays) {
+
+    // Check if starthour, endhour, and workDays are provided and not null
+    if (!starthour || !endhour || !workDays) {
+      console.error("Error: Missing required parameters. Please check starthour, endhour, or workDays.");
+      return false;
+    }
 
   const currentDay = new Date().toLocaleDateString('en-US', { weekday: 'long' });
   let datetime = new Date().toLocaleString(undefined, { timeZone: 'Asia/Kolkata' });
