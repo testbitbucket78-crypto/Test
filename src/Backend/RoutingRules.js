@@ -146,15 +146,48 @@ async function assignToLastAssistedAgent(sid, newId, agid, custid) {
   }
 }
 
+async function getUsersBySPId(spid) {
+  if (!spid) {
+    console.log("SP_ID is required");
+    return;
+  }
+
+  try {
+    const query = `
+      SELECT u.uid 
+      FROM user u 
+      JOIN roles r ON u.UserType = r.roleID 
+      WHERE u.SP_ID = ? AND u.isDeleted != 1 AND u.IsActive < 2
+    `;
+
+    let result = await db.excuteQuery(query, [spid]);
+    return result; // Array of users with 'uid'
+  } catch (error) {
+    console.error("Error fetching users by SP ID:", error);
+    return [];
+  }
+}
 
 async function BroadCast(sid, agid, newId) {
   try {
     console.log("BroadCast");
     let myUTCString = new Date().toUTCString();
     const created_at = moment.utc(myUTCString).format('YYYY-MM-DD HH:mm:ss');
-    var addNotification = `INSERT INTO Notification(sp_id,subject,message,sent_to,module_name,uid,created_at) values ?`;
-    let notifyvalues = [[sid, 'Notify Online Agents', 'A new Unassigned Chat is available to assigned', agid, 'webhook', '-1', created_at]];
-    let notifyRes = await db.excuteQuery(addNotification, [notifyvalues]);
+
+    let allUsers = await getUsersBySPId(sid);
+    for (const user of allUsers) {
+      let UID = user?.uid
+      const check = await commonFun.notifiactionsToBeSent(UID, 1);
+      if (check) {
+        const addNotification = `
+          INSERT INTO Notification(sp_id,subject,message,sent_to,module_name,uid,created_at) values ?
+        `;
+        const notifyvalues = [
+          [sid, 'New Chat Notification', 'A new Unassigned Chat is available to assigned', agid, 'webhook', UID, created_at]
+        ];
+        await db.excuteQuery(addNotification, [notifyvalues]);
+      }
+    }
     return 'broadcast'; // Return the result of the query
   } catch (err) {
     console.log("ERR _ _ _ BroadCast", err);
