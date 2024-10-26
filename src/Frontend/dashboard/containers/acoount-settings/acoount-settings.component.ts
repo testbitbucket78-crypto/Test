@@ -411,19 +411,23 @@ async subscribeToNotifications() {
         if (msgjson.displayPhoneNumber) {
           this.qrcode = msgjson.message;
           this.changeDetector.detectChanges();
-
-          if (msgjson.message == 'Client is ready!') {
-            this.showToaster('Your Device Linked Successfully !', 'success');
-            $("#qrWhatsappModal").modal('hide');
-          }
           var id =0;
           if (this.selectedId?.length > 0) {
             id= this.selectedId[this.selectedId?.length - 1] ? this.selectedId[this.selectedId?.length - 1] :0;
-         }
+          }
+          if (msgjson.message == 'Client is ready!') {
+            this.channel_status = 1; 
+            this.showToaster('Your Device Linked Successfully !', 'success');
+            this.saveWhatsappWebDetails(id);
+            $("#qrWhatsappModal").modal('hide');
+            this.hideModal();
+          }
+         
           if(msgjson.message == 'Wrong Number'){
             this.channel_status = 0; 
             this.saveWhatsappWebDetails(id);
             this.showToaster('Wrong Number, Please use logged in number!', 'error');
+            this.hideModal();
           }
 
           if (msgjson.message == 'QR generation timed out. Plese re-open account settings and generate QR code') {
@@ -433,6 +437,7 @@ async subscribeToNotifications() {
             this.showToaster('QR generation timed out. Plese re-open account settings and generate QR code', 'error');
             this.loadingQRCode = false;
             $("#qrWhatsappModal").modal('hide');
+            this.hideModal();
           }
         }
       } catch (e) {

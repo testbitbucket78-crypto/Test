@@ -135,16 +135,6 @@ It is determined by a combination of user feedback signals like blocks, reports 
 					<p class="start_time">Created on <span>{{settingsService?.getDateTimeFormate(selectedCampaign?.created_datetime_formated)}}</span> Start time <span>{{settingsService?.getDateTimeFormate(selectedCampaign?.start_datetime_formated)}}</span></p>
 					<p class="title" ><img *ngIf="selectedCampaign?.status==0 || selectedCampaign?.status==1" (click)="editCampaign(addNewCampaign,1)" class="icon_sm" src="/assets/img/teambox/edit-icon.svg"> {{selectedCampaign?.title}}</p>
 					
-					<div *ngIf="showDownloadBtn" class="d-flex align-items-center mb-3"> 
-						<img src="../../../../assets/img/info-icon.png" (click)="dowloadTooltip = !dowloadTooltip" style="width: 15px; height: 15px; margin-right: 18px;">
-						<div *ngIf="dowloadTooltip" class="showInfoFallback1 t-15">
-							<p id="p-body">
-								Please note the values for various report components can update based on the actual status provided by Meta. e.g. Seen or Reply status and its time.
-							</p>
-							<button id="radio-close-btn" (click)="dowloadTooltip = false">X</button>
-						</div>
-						<button class="new-token-btn mr-2 mw-60" (click)="downloadCampignReport(selectedCampaign?.Id, selectedCampaign?.title)">Download Latest Report</button>
-					</div>
 					
 					<p><img class="icon" src="/assets/img/teambox/whatsapp-icon-l.svg" />{{selectedCampaign?.channel_label}}</p>
 					<!--If running start-->
@@ -197,6 +187,34 @@ It is determined by a combination of user feedback signals like blocks, reports 
 						<div class="running_section_row">
 							
 						</div>
+					</div>
+					<div *ngIf="showDownloadBtn" class="d-flex align-items-center mb-3 mt-3">
+						<div class="position-relative">
+							<img src="../../../../assets/img/info-icon.png" (click)="dowloadTooltip = !dowloadTooltip" style="width: 15px; height: 15px; margin-right: 18px;">
+							<div *ngIf="dowloadTooltip" class="showInfoFallback1 t-0">
+								<p id="p-body">
+									Please note the values for various report components can update based on the actual status provided by Meta. e.g. Seen or Reply status and its time.
+								</p>
+								<button id="radio-close-btn" (click)="dowloadTooltip = false">X</button>
+							</div>
+						</div>
+						<button [disabled]="downloadBtnLoad" [ngClass]="!downloadBtnLoad ? 'downloadBtnEnabled' : 'downloadBtnDisabled'" class="new-token-btn w-auto mr-2 d-flex align-items-center" (click)="downloadCampignReport(selectedCampaign?.Id, selectedCampaign?.title)">
+							<span>
+								Download Latest Report
+							</span>
+							<div class="btn-circle-download ml-2">
+								<svg id="arrow" width="10px" height="16px" viewBox="17 14 14 20">
+								  <path d="M24,15 L24,32"></path>
+								  <polyline points="30 27 24 33 18 27"></polyline>
+								</svg>
+								<svg id="check" width="18px" height="12px" viewBox="13 17 21 15">
+								  <polyline points="32.5 18.5 20 31 14.5 25.5"></polyline>
+								</svg>
+								<svg  id="border" width="25px" height="25px" viewBox="0 0 48 48">
+								  <path d="M24,1 L24,1 L24,1 C36.7025492,1 47,11.2974508 47,24 L47,24 L47,24 C47,36.7025492 36.7025492,47 24,47 L24,47 L24,47 C11.2974508,47 1,36.7025492 1,24 L1,24 L1,24 C1,11.2974508 11.2974508,1 24,1 L24,1 Z"></path>
+								</svg>
+							</div>							  
+						</button>
 					</div>
 					</div>
 
