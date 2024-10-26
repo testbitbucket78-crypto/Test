@@ -43,7 +43,7 @@ async function fetchScheduledMessages() {
 
     // HAVE TO CHANGE THIS IN ASYNC FOR EACH SPID
     for (const message of messagesData) {
-
+        console.log(message.sp_id,new Date(currentDateTime)  ,new Date(message.start_datetime),message.Id,message.start_datetime)
       //  let campaignTime = await getCampTime(message.sp_id)  // same as below loop
      // console.log(message.sp_id, "campaignTime", isWorkingTime(message), new Date(message.start_datetime) < new Date(currentDateTime), new Date(message.start_datetime), new Date(), new Date(currentDateTime))
       logger.info(`fetchScheduledMessages isWorkingTime ${isWorkingTime(message)}  time ${new Date(message.start_datetime) <= new Date(currentDateTime)}`)
@@ -169,7 +169,7 @@ async function parseMessage(testMessage, custid, sid, msgVar) {
 
 async function parseMessageForCSV(message_content, contact, messageVariable) {
   // Replace placeholders in the content with values from message_variables
-  let content = await removeTags.removeTagsFromMessages(testMessage);
+  let content = await removeTags.removeTagsFromMessages(message_content);
   let message_variables = messageVariable && messageVariable.length > 0 ? JSON.parse(messageVariable) : undefined;
   if (message_variables) {
     message_variables.forEach(variable => {
@@ -209,7 +209,7 @@ function parseMessageTemplate(template) {
   return placeholders;
 }
 
-async function sendMessages(phoneNumber, message, id, campaign, response, textMessage, msgId) {
+async function sendMessages(phoneNumber, message, id, campaign, response, textMessage, msgId,channel,FailureCode,FailureReason) {
   try {
     var status = 0
     if (response == 200) {
@@ -228,7 +228,9 @@ async function sendMessages(phoneNumber, message, id, campaign, response, textMe
       status_message: response,
       status: status,
       sp_id: campaign.sp_id,
-      msgId: msgId
+      msgId: msgId,
+      FailureReason : FailureReason,
+      FailureCode : FailureCode
     }
 
 
@@ -242,8 +244,8 @@ async function sendMessages(phoneNumber, message, id, campaign, response, textMe
 
 
 async function saveSendedMessage(MessageBodyData) {
-  var inserQuery = "INSERT INTO CampaignMessages (phone_number,button_yes,button_no,button_exp,message_media,message_content,message_heading,CampaignId,schedule_datetime,status_message,status,SP_ID,messageTemptateId) values ?";
-  let saveMessage = await db.excuteQuery(inserQuery, [[[MessageBodyData.phone_number, '', '', '', MessageBodyData.message_media, MessageBodyData.message_content, '', MessageBodyData.CampaignId, MessageBodyData.schedule_datetime, MessageBodyData.status_message, MessageBodyData.status, MessageBodyData.sp_id, MessageBodyData.msgId]]])
+  var inserQuery = "INSERT INTO CampaignMessages (phone_number,button_yes,button_no,button_exp,message_media,message_content,message_heading,CampaignId,schedule_datetime,status_message,status,SP_ID,messageTemptateId,FailureReason,FailureCode) values ?";
+  let saveMessage = await db.excuteQuery(inserQuery, [[[MessageBodyData.phone_number, '', '', '', MessageBodyData.message_media, MessageBodyData.message_content, '', MessageBodyData.CampaignId, MessageBodyData.schedule_datetime, MessageBodyData.status_message, MessageBodyData.status, MessageBodyData.sp_id, MessageBodyData.msgId,MessageBodyData.FailureReason,MessageBodyData.FailureCode]]])
 }
 
 
@@ -368,7 +370,11 @@ function isWorkingTime(item) {
   try {
     const currentDay = new Date().toLocaleDateString('en-US', { weekday: 'long' });  // for finding current date
     let datetime = new Date().toLocaleString(undefined, { timeZone: 'Asia/Kolkata' }); // TO CHANGE WITH UTC
-
+   // Check if starthour, endhour, and workDays are provided and not null
+   if (!item.start_time || !item.end_time) {
+    console.error("Error: Missing required parameters. Please check starthour, endhour, or workDays.");
+    return true;
+  }
 
     // for (const item of data) {
     //   const workingDays = item.day.split(',');
@@ -388,7 +394,7 @@ function isWorkingTime(item) {
 
     // }
 
-    return false;
+    return true;
   }
   catch (err) {
     console.log(err)
@@ -560,7 +566,7 @@ async function isClientActive(spid) {
   return new Promise(async (resolve, reject) => {
     try {
 
-      const apiUrl = 'https://waweb.stacknize.com/IsClientReady'; // Replace with your API endpoint
+      const apiUrl ='https://waweb.stacknize.com/IsClientReady'; // Replace with your API endpoint
       const dataToSend = {
         spid: spid
       };
@@ -590,15 +596,16 @@ async function messageThroughselectedchannel(spid, from, type, text, media, phon
   if(getMediaType === 'unknown' && media) getMediaType = determineMediaFromLink(media);
   if (channelType == 'WhatsApp Official' || channelType == 1 || channelType == 'WA API') {
 
-    let response = await middleWare.sendDefultMsg(media, text, getMediaType, metaPhoneNumberID, from);
+    let response = await middleWare.sendDefultMsg(media, text, getMediaType, metaPhoneNumberID, from,spid);
     console.log("Official response", JSON.stringify(response?.status));
 
-    if (response?.status) {
+    if (response?.status == 200) {
       //interaction_id,message_direction,message_text,message_media,Type,SPID,media_type,Agent_id,assignAgent,Message_template_id
       let saveSendedMessage = await saveMessage(from, spid, response?.message?.messages[0]?.id, message_content, media, type, type, 'WA API',"Official campaign message");
-      let saveInCampaignMessage = await sendMessages(from, text, campaignId, message, response.status, text, response.message?.messages[0]?.id)
+      let saveInCampaignMessage = await sendMessages(from, text, campaignId, message, response.status, text, response.message?.messages[0]?.id,'WA API','','')
     } else {
-      let saveInCampaignMessage = await sendMessages(from, text, campaignId, message, response.status, text, response.message?.messages[0]?.id)
+      console.log("else of OFFICIAL")
+      let saveInCampaignMessage = await sendMessages(from, text, campaignId, message, response.status, text, response.message?.messages[0]?.id,'WA API',response.message?.error.code,response.message?.error.error_data.details)
     }
 
     return response;
@@ -610,8 +617,13 @@ async function messageThroughselectedchannel(spid, from, type, text, media, phon
       let saveSendedMessage = await saveMessage(from, spid, '', message_content, media, type, type, 'WA Web',"Web campaign message")
       let response = await middleWare.postDataToAPI(spid, from, getMediaType, text, media, '', saveSendedMessage);
       console.log(spid," web response", JSON.stringify(response?.status), response.msgId);
-
-      let saveInCampaignMessage = await sendMessages(from, text, campaignId, message, response.status, text, response.msgId)
+      if(response.status == 200){
+      let saveInCampaignMessage = await sendMessages(from, text, campaignId, message, response.status, text, response.msgId,'WA Web', '','');
+      }else{
+      console.log("else of webJS",from,spid)
+      let updateMessage = await db.excuteQuery('update Message set msg_status=? where Message_id=?',[9,saveSendedMessage]) 
+      let saveInCampaignMessage = await sendMessages(from, text, campaignId, message, response.status, text, response.msgId,'WA Web', response.status,response.msgId);
+      }
       return response;
 
     } else {
@@ -645,7 +657,7 @@ async function campaignAlertsThroughselectedchannel(spid, from, type, text, medi
   let getMediaType = determineMediaType(type);
   if (channelType == 'WhatsApp Official' || channelType == 1 || channelType == 'WA API') {
 
-    let respose = await middleWare.sendDefultMsg(media, text, getMediaType, metaPhoneNumberID, from);
+    let respose = await middleWare.sendDefultMsg(media, text, getMediaType, metaPhoneNumberID, from,spid);
     console.log("campaignAlerts", media, text, type, metaPhoneNumberID, from, respose)
     if (respose?.status == 200) {
       let saveSendedMessage = await saveMessage(from, spid, respose?.message?.messages[0]?.id, text, media, type, type, 'WA API',"Official campaign Alert***")
@@ -656,7 +668,7 @@ async function campaignAlertsThroughselectedchannel(spid, from, type, text, medi
 
     let clientReady = await isClientActive(spid);
     console.log("campaignAlerts ---------- whatsapp web",  type, from)
-    if (clientReady?.status) {
+    if (clientReady?.status == 200) {
       let saveSendedMessage = await saveMessage(from, spid, '', text, media, type, type, 'WA Web',"Web campaign Alert***")
       let response = await middleWare.postDataToAPI(spid, from, getMediaType, text, media, '', saveSendedMessage);
     //  console.log("campaignAlertsThroughselectedchannel response", JSON.stringify(response?.status));

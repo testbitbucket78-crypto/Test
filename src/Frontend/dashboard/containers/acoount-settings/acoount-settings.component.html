@@ -16,7 +16,7 @@
                 (click)="selectedTab = 3">Integration</a> -->
         </div>
     </div>
-    <div class="setting-card" *ngIf="selectedTab==1 && !settingsService.checkRoleExist('45')">
+    <div class="setting-card" *ngIf="selectedTab==1 && !settingsService.checkRoleExist('45') && whatsAppDetails[0]?.channel_id == 'WA Web'">
         <h4>Channels</h4>
         <div class="row">
             <div class="col-sm-6 p-5">
@@ -73,6 +73,60 @@
             </div>
         </div>
 
+    </div>
+    <!-- Here making UI for the channel Web API  -->
+    <div>
+        <div class="setting-card" *ngIf="healthStatusData[0]?.channel_type == 'WA API'">
+            <h4>Channels</h4>
+            <div *ngFor="let Details of healthStatusData" class="d-flex flex-column px-4">
+                <div class="py-4 setting-field">
+                    <a class="setting-field-link" [ngClass]="selectedTab==1 ? 'active' : ''"
+                        *ngIf="!settingsService.checkRoleExist('45')" (click)="selectedTab = 1">WhatsApp API</a>
+                </div>
+                <div class="d-flex align-items-center justify-content-end mb-3">
+                    <button class="new-token-btn">Add New +</button>
+                </div>
+                <div class="setting-card-status-details">
+
+                <div class="row">
+                    <div class="col-6">
+                        <div class="d-flex flex-column">
+                            <p class="p-2 rounded-pill bg-white mb-3">Phone Number : <span>{{Details?.phone_no}}</span></p>
+                            <p class="p-2 rounded-pill bg-white mb-3">Channel Id : <span>{{Details?.channel_id}}</span></p>
+                            <p class="p-2 rounded-pill bg-white mb-3">WABA Id : <span>{{Details?.WABA_Id}}</span></p>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="d-flex flex-column">
+                            <p class="p-2 rounded-pill bg-white mb-3">Quality Rating : <span [ngClass]="Details?.Quality_Rating">{{Details?.Quality_Rating}}</span></p>
+                            <p class="p-2 rounded-pill bg-white mb-3">Messaging Limit : <span>{{Details?.Message_Limit}}</span></p>
+                            <p class="p-2 rounded-pill bg-white mb-3">FB Verification : <span>
+                                <img 
+                                [src]="Details?.Fb_Verification === 'verified' ? '../../../../assets/img/settings/connected.svg' : '../../../../assets/img/settings/not-connected.svg'"
+                                class="me-2" 
+                                 />
+                                {{Details?.Fb_Verification}}</span></p>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <p class="p-2 rounded-pill bg-white m-0">Status: 
+                            <span class="ml-2">
+                            <img 
+                            [src]="Details?.Status === 1 ? '../../../../assets/img/settings/connected.svg' : '../../../../assets/img/settings/not-connected.svg'" 
+                            alt="{{ Details?.Status === 1 ? 'Connected' : 'Disconnected' }}" 
+                            class="me-2" 
+                          />
+                            {{ Details?.Status === 1 ? 'Connected' : 'Disconnected' }}</span></p>
+                    </div>
+                    <div class="d-flex col-6">
+                        <button class="new-token-btn mr-2">Manage Profile</button>
+                        <button class="new-token-btn">Channel Settings</button>
+                    </div>
+                </div>
+                </div>
+
+            </div>
+        </div>
     </div>
 
     <div class="modal fade" tabindex="-1" id="connectWhatsappModal" data-bs-backdrop="static"  role="dialog">

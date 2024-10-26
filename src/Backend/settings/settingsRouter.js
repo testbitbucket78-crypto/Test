@@ -125,6 +125,7 @@ router.post('/deleteTemplates',authenticateToken,campaignController.deleteTempla
 router.post('/addGallery',authenticateToken,campaignController.addGallery)
 router.get('/getGallery/:spid/:isTemplate',authenticateToken,campaignController.getGallery)  // pass spid=0,isTemplate=2
 router.get('/exitTemplate/:spid/:isTemplate/:name',authenticateToken,campaignController.isExistTemplate);  // istemplate=1
+router.get('/getFlows/:spid',authenticateToken,campaignController.getFlows)
 
 //------------------UPLOAD  MEDIA ON METS IMPLEMENTATIONS------------------------//
 const multer = require('multer');
@@ -202,6 +203,8 @@ router.post('/uploadfiletoMeta/:spid/:name',upload.single('dataFile'), async (re
 
 router.post('/addWhatsAppDetails',authenticateToken,accountController.insertAndEditWhatsAppWeb)
 router.get('/getWhatsAppDetails/:spid',authenticateToken,accountController.selectDetails)
+router.post('/addWAapiDetails',authenticateToken,accountController.addWAAPIDetails)
+router.get('/getQualityRating/:phoneNo/:phone_number_id/:WABA_ID',authenticateToken,accountController.getQualityRating)
 
 router.post('/addToken',authenticateToken,accountController.addToken)
 router.post('/editToken',authenticateToken,accountController.editToken)

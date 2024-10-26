@@ -797,7 +797,7 @@ checkTemplateName(e:any){
                 }
             });
          }else{            
-            this.showToaster('Quick response already exist with this name !','error');
+            this.showToaster('Template name already exists.','error');
          }
         }
 

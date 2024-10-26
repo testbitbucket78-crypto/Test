@@ -536,12 +536,22 @@ const deleteCustomField = async (req, res) => {
     }
 }
 
-
-async function Createtemplate(messageData) {
+async function getWAdetails(spid) {
     try {
-        //   var access_token = 'Bearer EAAQTkLZBFFR8BOxmMdkw15j53ZCZBhwSL6FafG1PCR0pyp11EZCP5EO8o1HNderfZCzbZBZBNXiEFWgIrwslwoSXjQ6CfvIdTgEyOxCazf0lWTLBGJsOqXnQcURJxpnz3i7fsNbao0R8tc3NlfNXyN9RdDAm8s6CxUDSZCJW9I5kSmJun0Prq21QeOWqxoZAZC0ObXSOxM3pK0KfffXZC5S'
-        //_____________________________ TEMPLATE SETTINGS _________________________________//
+        let details = await db.excuteQuery('select * from WA_API_Details where spid=? and isDeleted !=1', [spid]);
+        if (details?.length == 1) {
+            return details;
+        }
+        return 'not exist';
+    } catch (err) {
+        return 'not exist';
+    }
+}
 
+async function Createtemplate(messageData,spid) {
+    try {
+        let WAdetails = await getWAdetails(spid);
+        if(WAdetails != 'not exist'){
         // Convert array to object
         const dataObject = messageData[0];
         // // Find the BODY component
@@ -557,16 +567,19 @@ async function Createtemplate(messageData) {
         console.log("Yes json", JSON.stringify(messageData))
         const response = await axios({
             method: "POST",
-            url: `https://graph.facebook.com/v20.0/192571223940007/message_templates?access_token`,
+            url: `https://graph.facebook.com/v20.0/${WAdetails[0].waba_id}/message_templates?access_token`,
             data: dataObject, // Use the video message structure
             "headers": {
-                "Authorization": 'Bearer EAAQTkLZBFFR8BOxmMdkw15j53ZCZBhwSL6FafG1PCR0pyp11EZCP5EO8o1HNderfZCzbZBZBNXiEFWgIrwslwoSXjQ6CfvIdTgEyOxCazf0lWTLBGJsOqXnQcURJxpnz3i7fsNbao0R8tc3NlfNXyN9RdDAm8s6CxUDSZCJW9I5kSmJun0Prq21QeOWqxoZAZC0ObXSOxM3pK0KfffXZC5S',
+                "Authorization": 'Bearer ' +WAdetails[0].token,
                 "Content-Type": "application/json",
             }
         })
         console.log("response", response.data)
 
         return response.data;
+    }else{
+     return 'channel not found'
+    }
     } catch (err) {
         logger.error('add template :', err.response ? err.response.data : err.message);
         console.log("error", err.response ? err.response.data : err.message);
@@ -600,18 +613,23 @@ async function editTemplate(templateID, messageData) {
 
 
 
-async function getOfficialTemplate() {
+async function getOfficialTemplate(spid) {
     try {
+        let WAdetails = await getWAdetails(spid);
+        if(WAdetails != 'not exist'){
         const response = await axios({
             method: "GET",
-            url: `https://graph.facebook.com/v20.0/192571223940007/message_templates?access_token`,
+            url: `https://graph.facebook.com/v20.0/${WAdetails[0].waba_id}/message_templates?access_token`,
             "headers": {
-                "Authorization": 'Bearer EAAQTkLZBFFR8BOxmMdkw15j53ZCZBhwSL6FafG1PCR0pyp11EZCP5EO8o1HNderfZCzbZBZBNXiEFWgIrwslwoSXjQ6CfvIdTgEyOxCazf0lWTLBGJsOqXnQcURJxpnz3i7fsNbao0R8tc3NlfNXyN9RdDAm8s6CxUDSZCJW9I5kSmJun0Prq21QeOWqxoZAZC0ObXSOxM3pK0KfffXZC5S',
+                "Authorization": 'Bearer '+WAdetails[0].token,
                 "Content-Type": "application/json",
             }
         });
         // console.log(response.data, "**********");
         return response.data;
+    }else{
+        return 'channel not found';
+    }
     } catch (err) {
         console.log("error", err.response ? err.response.data : err.message);
         return err.message;
@@ -701,23 +719,23 @@ const addTemplate = async (req, res) => {
             let addedtem;
             if (Channel == 'WhatsApp Official' || Channel == 'WA API') {
                 if(isTemplate == 1 && isCopied != 1){
-                    templateStatus = await Createtemplate(template_json);
+                    templateStatus = await Createtemplate(template_json,spid);
                     console.log("templateStatus", templateStatus)
     
                     status = templateStatus.status
                     if (templateStatus.status){
-                    let temValues = [[TemplateName, Channel, Category, Language, media_type, Header, BodyText, image, FooterText, JSON.stringify(template_json), status, spid, created_By, created_at, isTemplate, industry, category_id,templateStatus.id,buttons]]
+                    let temValues = [[TemplateName, Channel, Category, Language, media_type, Header, BodyText, image, FooterText, JSON.stringify(template_json), status, spid, created_By, created_at, isTemplate, industry, category_id,templateStatus.id,buttons,'UNKNOWN']]
                     addedtem = await db.excuteQuery(val.addTemplates, [temValues])
                     }else{
                         statusCode = 400;
                     }
                 }else if (isTemplate == 0 || isCopied == 1) {
-                    let temValues = [[TemplateName, Channel, Category, Language, media_type, Header, BodyText, image, FooterText, JSON.stringify(template_json), req.body.status, spid, created_By, created_at, isTemplate, industry, category_id,'',buttons]]
+                    let temValues = [[TemplateName, Channel, Category, Language, media_type, Header, BodyText, image, FooterText, JSON.stringify(template_json), req.body.status, spid, created_By, created_at, isTemplate, industry, category_id,'',buttons,'UNKNOWN']]
                     addedtem = await db.excuteQuery(val.addTemplates, [temValues])
                 }
             } else if (Channel == 'WhatsApp Web' || Channel == 'WA Web') {
 
-                let temValues = [[TemplateName, Channel, Category, Language, media_type, Header, BodyText, image, FooterText, JSON.stringify(template_json), status, spid, created_By, created_at, isTemplate, industry, category_id,'','']]
+                let temValues = [[TemplateName, Channel, Category, Language, media_type, Header, BodyText, image, FooterText, JSON.stringify(template_json), status, spid, created_By, created_at, isTemplate, industry, category_id,'','','UNKNOWN']]
                 addedtem = await db.excuteQuery(val.addTemplates, [temValues])
             }
             res.status(200).send({
@@ -732,7 +750,7 @@ const addTemplate = async (req, res) => {
             if (Channel == 'WhatsApp Official' || Channel == 'WA API') {
                
                 if (isTemplate == 1) {
-                     updatedTemplate = await Createtemplate(template_json);
+                     updatedTemplate = await Createtemplate(template_json,spid);
                     console.log("edittemplateStatus", updatedTemplate);
                     status = updatedTemplate.status
                     if(updatedTemplate.status){
@@ -791,7 +809,7 @@ const isExistTemplate = async (req, res) => {
 
 const getTemplate = async (req, res) => {
     try {
-        let officialTemplates = await getOfficialTemplate();
+        let officialTemplates = await getOfficialTemplate(req.params.spid);
         //console.log(officialTemplates)
         let templates = await db.excuteQuery(val.selectTemplate, [req.params.spid, req.params.isTemplate]);
 
@@ -1040,10 +1058,43 @@ function parseMessageTemplate(template) {
     return placeholders;
 }
 
+const getFlows = async (req,res) =>{
+    try {
+        let WAdetails = await getWAdetails(req.params.spid);
+        if(WAdetails != 'not exist'){
+        const response = await axios({
+            method: "GET",
+            url: `https://graph.facebook.com/v20.0/${WAdetails[0].waba_id}/flows?access_token`,
+            "headers": {
+                "Authorization": 'Bearer '+WAdetails[0].token,
+                "Content-Type": "application/json",
+            }
+        });
+
+         // Filter the flows locally to return only those with status 'PUBLISHED'
+         const publishedFlows = response.data.data.filter(flow => flow.status === 'PUBLISHED');
+        res.send({
+            status: 200,
+            flows: publishedFlows
+        })
+    }else{
+        res.send({
+            status: 400,
+            flows: 'channel not found'
+        }) 
+    }
+    } catch (err) {
+        res.send({
+            status: 500,
+            err: err.message
+        })
+    }
+}
+
 module.exports = {
     addCampaignTimings, updateCampaignTimings, selectCampaignTimings, getUserList, addAndUpdateCampaign,
     selectCampaignAlerts, addCampaignTest, selectCampaignTest, addTag, gettags, deleteTag, addTemplate, getTemplate, deleteTemplates,
     testCampaign, addCustomField, editCustomField, getCustomField, deleteCustomField, getCustomFieldById, enableMandatoryfield,
-    enableStatusfield, getApprovedTemplate, addGallery, getGallery, isExistTemplate ,uploadMediaOnMeta
+    enableStatusfield, getApprovedTemplate, addGallery, getGallery, isExistTemplate ,uploadMediaOnMeta,getFlows
 
 }

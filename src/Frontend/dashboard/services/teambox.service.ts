@@ -182,7 +182,9 @@ export class TeamboxService {
   public getCampaignMessages(CampaignId: any) {
     return this.http.get(API_URL+'/getCampaignMessages/'+CampaignId);
   }
-  
+  public downloadCampignReport(Data: any) {
+    return this.http.post(API_URL+'/campaignReport/', Data);
+  }
   public sendCampinMessage(bodyData: any) {
     return this.http.post(API_URL+'/sendCampinMessage/',bodyData);
   }

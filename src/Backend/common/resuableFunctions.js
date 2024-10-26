@@ -1,4 +1,5 @@
 const db = require('../dbhelper');
+const { MessagingLimitTiers } = require('../enum');
 async function isStatusEmpty(InteractionId, spid,cusid) {
     try {
       let isUpdateTime ;
@@ -264,5 +265,52 @@ AND SP_ID = ?;`;
         throw error; 
     }
   }
+async function updateHealthStatus(phone_number_id, quality_rating, entered_by, fb_verification) {
+  const query = 'UPDATE businessHealth SET quality_rating = ?, entered_by = ?, fb_verification = ? WHERE phone_number_id = ?';
+  try {
+    let result = await db.excuteQuery(query, [quality_rating, entered_by, fb_verification, phone_number_id]);
+    if (!result || result?.affectedRows === 0) {
+      console.error('No record updated. Check if phone_number_id exists.');
+  } else {
+      console.log('Record updated successfully.');
+  }
+  } catch (error) {
+    console.error('Error updating quality rating:', error);
+  }
+}
 
-  module.exports  ={isStatusEmpty,getDefaultAttribue,isHolidays,isWorkingTime,resetContactFields,determineMediaFromLink,notifiactionsToBeSent,currentlyAssigned}
+async function updateCurrentLimit(phone_number_id, currentLimit, entered_by) {
+  const query = 'UPDATE businessHealth SET balance_limit_today = ?, entered_by = ? WHERE phone_number_id = ?';
+  try {
+    let result = await db.excuteQuery(query, [currentLimit, entered_by, phone_number_id]);
+    if (!result || result?.affectedRows === 0) {
+      console.error('No record updated. Check if phone_number_id exists.');
+    } else {
+      console.log('Record updated successfully.');
+    }
+  } catch (error) {
+    console.error('Error updating quality rating:', error);
+  }
+}
+
+
+function convertMessagingLimitTier(tier) {
+  switch (tier) {
+      case 'TIER_50':
+          return MessagingLimitTiers.TIER_50;
+      case 'TIER_250':
+          return MessagingLimitTiers.TIER_250;
+      case 'TIER_1K':
+          return MessagingLimitTiers.TIER_1K;
+      case 'TIER_10K':
+          return MessagingLimitTiers.TIER_10K;
+      case 'TIER_100K':
+          return MessagingLimitTiers.TIER_100K;
+      case 'TIER_UNLIMITED':
+          return MessagingLimitTiers.TIER_UNLIMITED;
+      default:
+          return 'Unknown Tier';
+  }
+}
+
+  module.exports  ={isStatusEmpty,getDefaultAttribue,isHolidays,isWorkingTime,resetContactFields,determineMediaFromLink,notifiactionsToBeSent,currentlyAssigned,updateHealthStatus, convertMessagingLimitTier, updateCurrentLimit}

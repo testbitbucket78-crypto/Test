@@ -192,6 +192,22 @@ convertTimeFormat(time: string | null | undefined, isStaticFormat: boolean = fal
     return intials;
   }
 
+  
+  getQualityRatingClass(rating: string): string {
+    if (!rating) return '';
+    switch (rating) {
+      case 'GREEN':
+        return 'High';
+      case 'YELLOW':
+        return 'Medium';
+      case 'RED':
+        return 'Low';
+      case 'UNKNOWN':
+        return 'Unknown';
+      default:
+        return '';
+    }
+  }
   getCompanyDetailData(spId: number): Observable<companyDetailResponse> {
     return this.http.get<companyDetailResponse>(`${this.API_URL}/companyDetail/${spId}`);
   }
@@ -227,7 +243,9 @@ const headers = new HttpHeaders({
   getLocaleData(spId: number): Observable<localeDetailResponse> {
     return this.http.get<localeDetailResponse>(`${this.API_URL}/localDetails/${spId}`);
   }
-
+  public getQualityRating(phoneNo: number, phone_number_id: number, WABA_ID: number) {
+    return this.http.get(`${this.API_URL}/getQualityRating/${phoneNo}/${phone_number_id}/${WABA_ID}`);
+}
   
   getFlowData(spId: number): Observable<any> {
     return this.http.get<any>(`${this.API_URL}/getFlows/${spId}`);

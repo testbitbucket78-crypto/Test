@@ -5,8 +5,8 @@ const axios = require('axios');
 const token = 'EAAQTkLZBFFR8BOxmMdkw15j53ZCZBhwSL6FafG1PCR0pyp11EZCP5EO8o1HNderfZCzbZBZBNXiEFWgIrwslwoSXjQ6CfvIdTgEyOxCazf0lWTLBGJsOqXnQcURJxpnz3i7fsNbao0R8tc3NlfNXyN9RdDAm8s6CxUDSZCJW9I5kSmJun0Prq21QeOWqxoZAZC0ObXSOxM3pK0KfffXZC5S';
 const db = require("./dbhelper");
 
-function postDataToAPI(spid, phoneNo, type, text, link,interaction_id, msg_id,spNumber) {
- 
+function postDataToAPI(spid, phoneNo, type, text, link, interaction_id, msg_id, spNumber) {
+
     return new Promise(async (resolve, reject) => {
         try {
             var phoneNumber = removePlusFromPhoneNumber(phoneNo)
@@ -17,13 +17,13 @@ function postDataToAPI(spid, phoneNo, type, text, link,interaction_id, msg_id,sp
                 link: link,
                 text: text,
                 phoneNo: phoneNumber,
-                interaction_id:interaction_id,
-                msg_id:msg_id,
-                spNumber:spNumber
+                interaction_id: interaction_id,
+                msg_id: msg_id,
+                spNumber: spNumber
             };
 
             const response = await axios.post(apiUrl, dataToSend);
-           //console.log(response)
+            //console.log(response)
             resolve(response.data); // Resolve with the response data
         } catch (error) {
             //console.error('Error:', error.message);
@@ -41,25 +41,25 @@ function removePlusFromPhoneNumber(phoneNumber) {
     return phoneNumber;
 }
 
-async function channelssetUp(spid, channelType, mediaType, messageTo, message_body, media,interaction_id,msg_id,spNumber) {
+async function channelssetUp(spid, channelType, mediaType, messageTo, message_body, media, interaction_id, msg_id, spNumber) {
     try {
         var phoneNumber = removePlusFromPhoneNumber(messageTo)
-       // console.log(spid, channelType, mediaType, messageTo, message_body, media)
-        if (channelType == 'WhatsApp Official' || channelType == 1 || channelType == 'WA API' ) {
+        // console.log(spid, channelType, mediaType, messageTo, message_body, media)
+        if (channelType == 'WhatsApp Official' || channelType == 1 || channelType == 'WA API') {
 
-           // let WhatsAppOfficialMessage = await sendMessagesThroughWhatsAppOfficial(phoneNumber, mediaType, message_body,media)
-            let WhatsAppOfficialMessage = await sendDefultMsg(media, message_body, mediaType, 211544555367892, phoneNumber)
-           // let NotSendedMessage = await db.excuteQuery('UPDATE Message set Message_template_id=? where Message_id=?', [WhatsAppOfficialMessage?.message?.messages[0]?.id,msg_id]); // comment due to campaign send message error have to change in Message table store place then use this
+            // let WhatsAppOfficialMessage = await sendMessagesThroughWhatsAppOfficial(phoneNumber, mediaType, message_body,media)
+            let WhatsAppOfficialMessage = await sendDefultMsg(media, message_body, mediaType, 211544555367892, phoneNumber, spid)
+            // let NotSendedMessage = await db.excuteQuery('UPDATE Message set Message_template_id=? where Message_id=?', [WhatsAppOfficialMessage?.message?.messages[0]?.id,msg_id]); // comment due to campaign send message error have to change in Message table store place then use this
             // console.log("WhatsAppOfficialMessage")
             // console.log(WhatsAppOfficialMessage)
             return WhatsAppOfficialMessage;
         } else if (channelType == 'WhatsApp Web' || channelType == 2 || channelType == 'WA Web') {
 
-           // let content = await removeTags.removeTagsFromMessages(message_body);
+            // let content = await removeTags.removeTagsFromMessages(message_body);
 
-           // console.log("content middleware" ,content ,"-00098")
-            let messages = await postDataToAPI(spid, phoneNumber, mediaType, message_body, media,interaction_id,msg_id,spNumber)
-             console.log(messages)
+            // console.log("content middleware" ,content ,"-00098")
+            let messages = await postDataToAPI(spid, phoneNumber, mediaType, message_body, media, interaction_id, msg_id, spNumber)
+            console.log(messages)
             return messages;
         }
     } catch (err) {
@@ -68,16 +68,16 @@ async function channelssetUp(spid, channelType, mediaType, messageTo, message_bo
     }
 }
 
-async function sendMessagesThroughWhatsAppOfficial(phoneNumber, mediaType, message_body,media) {
+async function sendMessagesThroughWhatsAppOfficial(phoneNumber, mediaType, message_body, media) {
     try {
 
         if (mediaType == 'text') {
             // console.log("text______" + message_body);
-          let response= await sendTextOnWhatsApp(phoneNumber, message_body,media);
-          return response;
+            let response = await sendTextOnWhatsApp(phoneNumber, message_body, media);
+            return response;
         } else if (mediaType == 'image') {
             // console.log("image______" + message_body)
-            let response= await sendMediaOnWhatsApp(phoneNumber, message_body,media);
+            let response = await sendMediaOnWhatsApp(phoneNumber, message_body, media);
             return response;
         }
     } catch (err) {
@@ -86,11 +86,25 @@ async function sendMessagesThroughWhatsAppOfficial(phoneNumber, mediaType, messa
     }
 }
 
-async function sendDefultMsg(link, caption, typeOfmsg, phone_number_id, from) {
+async function getWAdetails(spid) {
+    try {
+        let details = await db.excuteQuery('select * from WA_API_Details where spid=? and isDeleted !=1', [spid]);
+        if (details?.length == 1) {
+            return details;
+        }
+        return 'not exist';
+    } catch (err) {
+        return 'not exist';
+    }
+}
+
+async function sendDefultMsg(link, caption, typeOfmsg, phone_number_id, from, spid) {  // need to get spid
     //console.log("messageData===")
     //console.log(caption)
     try {
 
+        let WAdetails = await getWAdetails(spid);
+        if(WAdetails != 'not exist'){
         const messageData = {
             messaging_product: "whatsapp",
             recipient_type: "individual",
@@ -114,28 +128,70 @@ async function sendDefultMsg(link, caption, typeOfmsg, phone_number_id, from) {
         // Send the video message using Axios
         const response = await axios({
             method: "POST",
-            url: `https://graph.facebook.com/v19.0/${phone_number_id}/messages?access_token=${token}`,
+            url: `https://graph.facebook.com/v19.0/${WAdetails[0].phoneNumber_id}/messages?access_token=${WAdetails[0].token}`,
             data: messageData, // Use the video message structure
             headers: { "Content-Type": "application/json" },
         })
-         //console.log("****META APIS****", response.data);
+        //console.log("****META APIS****", response.data);
         return {
-            status :200,
-            message : response.data
+            status: 200,
+            message: response.data
         };
+    }else{
+        return {
+            status: 400,
+            message: 'channel not found for this sp'
+        };
+    }
         //console.log("****META APIS****", caption);
     } catch (err) {
         // console.error("______META ERR_____", err.message);
-       // return err.message;
+        // return err.message;
         return {
-            status :500,
-            message : err.message
+            status:500,
+            message: err.message
         };
     }
 
 }
+async function getQualityRating(phoneNumberId) {
+    try {
+        const response = await axios.get(`https://graph.facebook.com/v18.0/${phoneNumberId}?fields=display_phone_number,quality_rating,messaging_limit_tier`, {
+            headers: {
+                'Authorization': `Bearer ${token}`
+            }
+        });
 
+        return {
+            status: response?.status,
+            response: response.data,
+        };
+    } catch (err) {
+        return {
+            status: err?.response?.status || 500,
+            message: err?.message || 'An error occurred',
+        };
+    }
+}
+async function getVerificationStatus(WABA_ID){
+    try {
+        const response = await axios.get(`https://graph.facebook.com/v18.0/${WABA_ID}?fields=business_verification_status`, {
+            headers: {
+                'Authorization': `Bearer ${token}`
+            }
+        });
 
+        return {
+            status: response?.status,
+            response: response.data,
+        };
+    } catch (err) {
+        return {
+            status: err?.response?.status || 500,
+            message: err?.message || 'An error occurred',
+        };
+    }
+} 
 
 
 async function sendTextOnWhatsApp(messageTo, messageText) {
@@ -195,7 +251,7 @@ async function sendTextOnWhatsApp(messageTo, messageText) {
 }
 
 
-async function sendMediaOnWhatsApp(messageTo, mediaFile,media) {
+async function sendMediaOnWhatsApp(messageTo, mediaFile, media) {
     // var reqBH = http.request(WHATSAPPOptions, (resBH) => {
     //     var chunks = [];
     //     resBH.on("data", function (chunk) {
@@ -217,50 +273,50 @@ async function sendMediaOnWhatsApp(messageTo, mediaFile,media) {
     //     }
     // }));
     // reqBH.end();
-  
-      return new Promise((resolve, reject) => {
-        const reqBH = http.request(WHATSAPPOptions, (resBH) => {
-          let chunks = [];
-    
-          resBH.on('data', (chunk) => {
-            chunks.push(chunk);
-          });
-    
-          resBH.on('end', () => {
-            const body = Buffer.concat(chunks);
-            const bodyString = body.toString();
 
-            try {
-                const jsonResponse = JSON.parse(bodyString);
-                resolve({ status: 200, data: jsonResponse }); // Resolve with status 200
-            } catch (error) {
-                reject({ status: 500, error: `Error parsing JSON: ${error.message}` });
-            }
-          });
-    
-          resBH.on('error', (error) => {
-            reject(error); // Reject with the error if there's an issue
-          });
+    return new Promise((resolve, reject) => {
+        const reqBH = http.request(WHATSAPPOptions, (resBH) => {
+            let chunks = [];
+
+            resBH.on('data', (chunk) => {
+                chunks.push(chunk);
+            });
+
+            resBH.on('end', () => {
+                const body = Buffer.concat(chunks);
+                const bodyString = body.toString();
+
+                try {
+                    const jsonResponse = JSON.parse(bodyString);
+                    resolve({ status: 200, data: jsonResponse }); // Resolve with status 200
+                } catch (error) {
+                    reject({ status: 500, error: `Error parsing JSON: ${error.message}` });
+                }
+            });
+
+            resBH.on('error', (error) => {
+                reject(error); // Reject with the error if there's an issue
+            });
         });
-    
+
         reqBH.write(JSON.stringify({
-          "messaging_product": "whatsapp",
-          "recipient_type": "individual",
-          "to": messageTo,
-          "type": "image",
-          "image": {
-            "link": media,
-            "caption":mediaFile
-          }
+            "messaging_product": "whatsapp",
+            "recipient_type": "individual",
+            "to": messageTo,
+            "type": "image",
+            "image": {
+                "link": media,
+                "caption": mediaFile
+            }
         }));
         reqBH.end();
-    
+
         reqBH.on('error', (error) => {
-          reject(error); // Handle errors with the request itself
+            reject(error); // Handle errors with the request itself
         });
-      });
-    
-    
+    });
+
+
 }
 
 const WHATSAPPOptions = {
@@ -348,4 +404,4 @@ async function createWhatsAppPayload(type, to, templateName, languageCode, heade
 // const payload = createWhatsAppPayload('text', '918130818921', 'cip_attribute', 'en', headerVariables, bodyVariables, 'https://picsum.photos/id/1/200/300');
 // console.log(JSON.stringify(payload, null, 2));
 
-module.exports = { channelssetUp, postDataToAPI, sendDefultMsg,createWhatsAppPayload }
+module.exports = { channelssetUp, postDataToAPI, sendDefultMsg, createWhatsAppPayload,getQualityRating,getVerificationStatus }
