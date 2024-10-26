@@ -1513,7 +1513,11 @@ formateDate(dateTime:string){
 		this.closeAllModal()
 		this.modalReference = this.modalService.open(addNewCampaign,{size: 'xl', windowClass:'white-bg'});
 	}
-	ConfirmCampaignSchedule(ConfirmCampaign:any){
+	 async ConfirmCampaignSchedule(ConfirmCampaign:any){
+       await this.CampaignNameAlreadyExist()
+		if(this.isCampaignAlreadyExist){
+			return 
+		}
 		if(this.scheduled ==1 && this.selecteScheduleDate==''){
 			this.showToaster('Please select schedule date...','error')
 		}else{
@@ -2668,20 +2672,28 @@ console.log(this.allTemplatesMain);
 		  console.log(this.optInStatus)
 		  }
 		
-		  CampaignNameAlreadyExist() {
-			let spid = this.SPID;
-			let title = this.newCampaignDetail.get('title')?.value;
+		  CampaignNameAlreadyExist(): Promise<void> {
+			return new Promise((resolve) => {
+			  let spid = this.SPID;
+			  let title = this.newCampaignDetail.get('title')?.value;
+		  
 			  this.apiService.isCampaignExists(title, spid, this.selectedCampaign.Id).subscribe(
 				(response: any) => {
-					if (response.status === 409) {
-						this.isCampaignAlreadyExist = true;
-						this.showToaster('Campaign Already Exist with this name !', 'error');
-					} else {
-						this.isCampaignAlreadyExist = false;
-					}
+				if (response.status === 409) {
+					this.isCampaignAlreadyExist = true;
+					this.showToaster('Campaign Already Exist with this name!', 'error');
+				} else {
+					this.isCampaignAlreadyExist = false;
 				}
-			);
-		}
+				  resolve();
+				},
+				(error: any) => {
+				  this.isCampaignAlreadyExist = false;
+				  resolve();
+				}
+			  );
+			});
+		  }
 	
 		getCampaignTimingList(){
 			this._settingsService.getCampaignTimingList(Number(this.SPID))
