@@ -553,7 +553,7 @@
                     </div>
                     <input type="file" accept="video/mp4" name="video-upload" (change)="onFileChange($event)" id="sel-type-video" (click)="$event.target.value=null">
                     <label *ngIf="!selectedPreview || loadingVideo" class="type_label" for="sel-type-video"><img src="../../../../assets/img/teambox/add-white.svg" /></label> 
-                    <p class="m-0">Upload video <span>Choose MP4 file</span></p> 
+                    <p class="m-0" *ngIf="!selectedPreview || loadingVideo">Upload video <span>Choose MP4 file</span></p> 
                     <img *ngIf="newTemplateForm.get('Links')?.value !== null" src="../../../../assets/img/settings/doc.svg" />
                     <div class="custom-play-button"></div>
                 
