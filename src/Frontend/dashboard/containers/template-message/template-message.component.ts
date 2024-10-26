@@ -6,6 +6,7 @@ import { TeamboxService } from 'Frontend/dashboard/services';
 import { parsePhoneNumberFromString } from 'libphonenumber-js';
 import { ToolbarService, LinkService, ImageService, EmojiPickerService, CountService} from '@syncfusion/ej2-angular-richtexteditor';
 import { RichTextEditorComponent, HtmlEditorService } from '@syncfusion/ej2-angular-richtexteditor';
+import { faSmileWink } from '@fortawesome/free-solid-svg-icons';
 
 declare var $: any;
 @Component({
@@ -254,7 +255,7 @@ export class TemplateMessageComponent implements OnInit {
         }
         setTimeout(() => {
             this.hideToaster();
-        }, 3000);
+        }, 6000);
     }
     hideToaster() {
         this.successMessage = '';
@@ -1102,8 +1103,7 @@ insertAtCursor(selectedValue: any) {
     
 
     previewTemplate() {
-        console.log(this.buttonsArray)
-        console.log(JSON.stringify(this.buttonsArray));
+        if(this.validateItems()){
         let isVariableValue:string = this.newTemplateForm.controls.Header.value + this.newTemplateForm.controls.BodyText.value ;
 
 		if (isVariableValue) {
@@ -1137,6 +1137,7 @@ insertAtCursor(selectedValue: any) {
      ]
  }
      }
+    }
 
     }
 
@@ -1323,30 +1324,35 @@ openButtonPopUp() {
   }
 
 
-  validateItems(): void {
+  validateItems():boolean {
     let validationErrors = ''; // Clear previous errors
 
     this.buttonsArray.forEach((item, index) => {
       if (!item.buttonText) {
-        validationErrors = `Button ${index + 1}: 'buttonText' is required.`;
+        validationErrors = validationErrors + '<br>'+ `Button ${index + 1}: 'buttonText' is required.`;
       }
       if (item.type === 'Visit Website' && !item.webUrl) {
         validationErrors= `Button ${index + 1}: 'webUrl' is required for Visit Website button.`;
       }
       if (item.type === 'Call Phone') {
         if (!item.code) {
-          validationErrors = `Button ${index + 1}: 'code' is required for Call Phone button.`;
+          validationErrors = validationErrors + '<br>'+ `Button ${index + 1}: 'code' is required for Call Phone button.`;
         }
         if (!item.phoneNumber) {
-          validationErrors = `Button ${index + 1}: 'Phone Number' is required for Call Phone button.`;
+          validationErrors = validationErrors + '<br>'+ `Button ${index + 1}: 'Phone Number' is required for Call Phone button.`;
         }
       }
       if (item.type === 'Copy offer Code' && !item.code) {
-        validationErrors = `Button ${index + 1}: 'code' is required for Copy offer Code buttomn.`;
+        validationErrors = validationErrors + '<br>'+ `Button ${index + 1}: 'code' is required for Copy offer Code buttomn.`;
       }
     });
-
-    this.showToaster(validationErrors,'error')
+if (validationErrors){
+    this.showToaster(validationErrors,'error');
+return false;
+}
+else
+return true
+    
   }
 
 }
