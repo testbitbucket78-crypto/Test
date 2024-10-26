@@ -189,6 +189,7 @@ export class CampaignsComponent implements OnInit {
 	showDownloadBtn!: boolean;
 	userName: string = '';
 	userEmail: string = '';
+	downloadBtnLoad!: boolean;
 
 constructor(config: NgbModalConfig, private modalService: NgbModal,private datepipe: DatePipe,private dashboardService: DashboardService,
 	private apiService: TeamboxService,public settingsService:SettingsService,private _settingsService:SettingsService,
@@ -728,9 +729,24 @@ constructor(config: NgbModalConfig, private modalService: NgbModal,private datep
 				campaignName: Name,
 				spid: this.SPID
 			}
+			var downloadIcon = document.querySelector(".btn-circle-download");
+			if (downloadIcon) {
+				this.downloadBtnLoad = true;
+				downloadIcon.classList.add("load");
+			}
 			await this.apiService.downloadCampignReport(data).subscribe((response: any) => {
+				downloadIcon?.classList.add("done");
 				if (response) {
+					setTimeout(() => {
+						downloadIcon?.classList.remove("load");
+						downloadIcon?.classList.remove("done");
+						this.downloadBtnLoad = false;
+					}, 1000)
 					console.log("Campaign Report sent successfully");
+					this.showToaster("Campaign report has been sent successfully on your registered email",'success');
+				}
+				else{
+					this.showToaster("Sorry, there is some error. Please try after some time",'error');
 				}
 			})
 		}
