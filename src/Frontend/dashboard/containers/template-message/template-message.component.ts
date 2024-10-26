@@ -1,5 +1,5 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
-import { FormControl, FormGroup, Validators } from '@angular/forms';
+import { Component, ElementRef, OnInit, Renderer2, ViewChild } from '@angular/core';
+import { AbstractControl, FormControl, FormGroup, ValidationErrors, Validators } from '@angular/forms';
 import { newTemplateFormData, quickReplyButtons, templateMessageData,} from 'Frontend/dashboard/models/settings.model';
 import { SettingsService } from 'Frontend/dashboard/services/settings.service';
 import { TeamboxService } from 'Frontend/dashboard/services';
@@ -41,6 +41,7 @@ export class TemplateMessageComponent implements OnInit {
     templatesData = [];
     galleryData = [];
     allVariablesList:string[] =[];
+    templateFlows:any =[];
     filteredGalleryData = [];
     filteredTemplatesData: templateMessageData[] = [];
     templatesMessageData: templateMessageData = <templateMessageData>{};
@@ -229,8 +230,15 @@ export class TemplateMessageComponent implements OnInit {
         keepFormat: false,
     };
     newTemplateForm!: FormGroup;
+    buttonsArray:any[] =[];
+    isPopupVisible:boolean = false;
+    isAllButtonPopupVisible:boolean = false;
 
-    constructor(public apiService: SettingsService,public settingsService: SettingsService, private _teamboxService: TeamboxService) {}
+  @ViewChild('popupContainer') popupContainer!: ElementRef;
+
+    constructor(public apiService: SettingsService,
+        private renderer: Renderer2,
+        public settingsService: SettingsService, private _teamboxService: TeamboxService) {}
 
     errorMessage = '';
     successMessage = '';
@@ -280,6 +288,7 @@ export class TemplateMessageComponent implements OnInit {
         this.quickreply = this.newTemplateForm.get(dynamicControlName)?.value;
         this.getTemplatesData();
         this.getAttributeList();
+        this.getFlowList();
         this.getWhatsAppDetails();
     }
    
@@ -319,7 +328,7 @@ export class TemplateMessageComponent implements OnInit {
             Category: new FormControl(null, [Validators.required]),
             Language: new FormControl(null, [Validators.required]),
             media_type: new FormControl(null),
-            Header: new FormControl(null),
+            Header: new FormControl(null,this.noEmojiValidator),
             Links: new FormControl(null),
             BodyText: new FormControl('', [Validators.required]),
             FooterText: new FormControl(''),
@@ -544,9 +553,6 @@ export class TemplateMessageComponent implements OnInit {
         }
     }
 
-    removeQuickReplyButtons(index: any) {
-        this.quickReplyButtons.splice(index, 1);
-    }
 
     toggleGalleryData(data: any) {
         this.showGalleryDetail = !this.showGalleryDetail;
@@ -748,7 +754,7 @@ checkTemplateName(e:any){
 
     copyTemplate() {
         console.log(this.templatesMessageDataById)
-        let nameExist = this.filteredTemplatesData.filter((item:any)=>item.TemplateName == (this.templatesMessageDataById.TemplateName +' copy'));
+        let nameExist = this.filteredTemplatesData.filter((item:any)=>item.TemplateName == (this.templatesMessageDataById.TemplateName +'_copy'));
         if(nameExist.length ==0){
         const copyTemplateForm: newTemplateFormData = <newTemplateFormData>{};
         copyTemplateForm.ID = 0;
@@ -760,7 +766,7 @@ checkTemplateName(e:any){
         copyTemplateForm.Links = this.templatesMessageDataById.Links;
         copyTemplateForm.BodyText = this.templatesMessageDataById.BodyText;
         copyTemplateForm.FooterText = this.templatesMessageDataById.FooterText;
-        copyTemplateForm.TemplateName = this.templatesMessageDataById.TemplateName +' copy';
+        copyTemplateForm.TemplateName = this.templatesMessageDataById.TemplateName +'_copy';
         copyTemplateForm.Channel = this.templatesMessageDataById.Channel;
         copyTemplateForm.Category = this.templatesMessageDataById.Category;
         copyTemplateForm.category_id = this.templatesMessageDataById.category_id;
@@ -1096,7 +1102,9 @@ insertAtCursor(selectedValue: any) {
     
 
     previewTemplate() {
-        let isVariableValue:string = this.newTemplateForm.controls.BodyText.value + this.newTemplateForm.controls.Header.value;
+        console.log(this.buttonsArray)
+        console.log(JSON.stringify(this.buttonsArray));
+        let isVariableValue:string = this.newTemplateForm.controls.Header.value + this.newTemplateForm.controls.BodyText.value ;
 
 		if (isVariableValue) {
 		  this.allVariablesList = this.getVariables(isVariableValue, "{{", "}}");
@@ -1140,6 +1148,15 @@ insertAtCursor(selectedValue: any) {
                 this.attributesList = attributeListData.map(
                     (attrList: any) => attrList.displayName
                 );
+            }
+        });
+    }
+
+    getFlowList() {
+        this.settingsService.getFlowData(this.spid).subscribe((response: any) => {
+            if (response) {
+                console.log(response);
+                this.templateFlows =  response?.flows;
             }
         });
     }
@@ -1223,4 +1240,113 @@ addCustomAttribute(){
 //     this.customValue = `var${this.countValue}`
 //     this.countValue = 1;
 //   }
+
+addButtons(type:string){
+    if(type =='Quick Reply')
+        this.buttonsArray.push({type:type,buttonText:''});
+    else if(type =='Call Phone')
+        this.buttonsArray.push({type:type,buttonText:'',code:'',phoneNumber:'',displayPhoneNumber:''});
+    else if(type =='Copy offer Code')
+        this.buttonsArray.push({type:type,buttonText:'Copy Offer Code',code:''});
+    else if(type =='Complete Flow')
+        this.buttonsArray.push({type:type,buttonText:'',flowId:''});
+    else if(type =='Visit Website')
+        this.buttonsArray.push({type:type,buttonText:'',webUrl:''});
+
+    this.isPopupVisible = false;
+}
+
+openButtonPopUp() {
+    this.isPopupVisible = !this.isPopupVisible;
+
+    // Close the popup if a click happens outside of it
+    if (this.isPopupVisible) {
+      this.renderer.listen('window', 'click', (event: Event) => {
+        if (!this.popupContainer?.nativeElement?.contains(event.target)) {
+          //this.isPopupVisible = false;
+        }
+      });
+    }
+  }
+
+  isDisableButton(type:any){
+    let isFlow = this.buttonsArray.filter((item:any)=>item?.type == 'Complete Flow')?.length > 0;
+    if(type =='Quick Reply' ){
+        if(this.buttonsArray.length == 10 || isFlow)
+            return true;
+        else
+            return false;
+    }
+    else if(type =='Call Phone'){
+        let isExist = this.buttonsArray.filter((item:any)=>item?.type == 'Call Phone')?.length > 0;
+        if(this.buttonsArray.length == 10 || isExist || isFlow)
+            return true;
+        else
+            return false;
+    }
+    else if(type =='Copy offer Code'){
+        let isExist = this.buttonsArray.filter((item:any)=>item?.type == 'Copy offer Code')?.length > 0;
+        if(this.buttonsArray.length == 10 || isExist || isFlow)
+            return true;
+        else
+            return false;
+    }
+    else if(type =='Complete Flow'){
+        if(this.buttonsArray.length > 0 || isFlow)
+            return true;
+        else
+            return false;
+    }
+    else if(type =='Visit Website'){
+        let isExist = this.buttonsArray.filter((item:any)=>item?.type == 'Visit Website')?.length > 1;
+        if(this.buttonsArray.length == 10 || isFlow || isExist)
+            return true;
+        else
+            return false;
+    }
+  }
+
+  removeQuickReplyButtons(index: any) {
+    console.log(index);
+      this.buttonsArray.splice(index, 1);
+  }
+
+  noEmojiValidator(control: AbstractControl): ValidationErrors | null {
+    const emojiRegex = /[\p{Emoji}\u200D\uFE0F]/gu; // Regex for emojis
+    if (control.value) {
+      const sanitizedValue = control.value.replace(emojiRegex, '');
+      if (sanitizedValue !== control.value) {
+        control.setValue(sanitizedValue, { emitEvent: false }); // Set sanitized value
+      }
+    }
+    return null; // Return no error for validator
+  }
+
+
+  validateItems(): void {
+    let validationErrors = ''; // Clear previous errors
+
+    this.buttonsArray.forEach((item, index) => {
+      if (!item.buttonText) {
+        validationErrors = `Button ${index + 1}: 'buttonText' is required.`;
+      }
+      if (item.type === 'Visit Website' && !item.webUrl) {
+        validationErrors= `Button ${index + 1}: 'webUrl' is required for Visit Website button.`;
+      }
+      if (item.type === 'Call Phone') {
+        if (!item.code) {
+          validationErrors = `Button ${index + 1}: 'code' is required for Call Phone button.`;
+        }
+        if (!item.phoneNumber) {
+          validationErrors = `Button ${index + 1}: 'Phone Number' is required for Call Phone button.`;
+        }
+      }
+      if (item.type === 'Copy offer Code' && !item.code) {
+        validationErrors = `Button ${index + 1}: 'code' is required for Copy offer Code buttomn.`;
+      }
+    });
+
+    this.showToaster(validationErrors,'error')
+  }
+
 }

@@ -24,7 +24,6 @@
                     <div class="account-card-header">
                         <img src="../../../../assets/img/teambox/whatsapp-icon-l.svg">
                         <button *ngIf="whatsAppDetails.length ==0" class="account-btn" (click)="openDiv()">Connect</button>
-                        <button  class="account-btn" (click)="launchWhatsAppSignup()">Connect</button>
                     </div>
                     <div>
                         <h5>WhatsApp Web</h5>
@@ -38,7 +37,7 @@
                 <div (click)="setChannelId('WA API')" [ngClass]="{'card2_Wof': channel_id === 'WA API'}" class="account-card card2 mb-3" *ngIf="channelDomain =='api'">
                     <div class="account-card-header">
                         <img src="../../../../assets/img/teambox/whatsapp-icon-l.svg">
-                        <!-- <button class="account-btn" (click)="openDiv()">Connect</button> -->
+                        <button  class="account-btn" (click)="launchWhatsAppSignup()">Connect</button>
                     </div>
                     <div>
                         <h5>WhatsApp Official</h5>

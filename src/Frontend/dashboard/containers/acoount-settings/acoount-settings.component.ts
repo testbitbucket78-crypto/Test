@@ -1,4 +1,4 @@
-import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef, Renderer2 } from '@angular/core';
 import { SettingsService } from 'Frontend/dashboard/services/settings.service';
 import { repliesaccountList, whatsAppDetails } from 'Frontend/dashboard/models/settings.model';
 import { accountmodel } from 'Frontend/dashboard/models/settings.model';
@@ -75,10 +75,15 @@ export class AcoountSettingsComponent implements OnInit {
   selectedTab:number = 1;
   public ipAddress:string[] = [''];
   public channelDomain:string = environment.chhanel;
-
+  private sessionInfoListener: any;
+Authcode:any='';
+phoneId:any='';
+wabaId:any='';
+uid = (JSON.parse(sessionStorage.getItem('loginDetails')!)).uid;
   constructor( private apiService:SettingsService,
     public facebookService:FacebookService,
     public settingsService:SettingsService,
+    private renderer: Renderer2,
     private websocketService: WebsocketService,private changeDetector: ChangeDetectorRef) {}
 
   private socket$: WebSocketSubject<any> = new WebSocketSubject('wss://notify.stacknize.com');
@@ -94,6 +99,35 @@ export class AcoountSettingsComponent implements OnInit {
     this.subscribeToNotifications();
     this.loadFacebookSDK();
     this.fetchLastName();
+    this.sessionInfoListener = (event: MessageEvent) => {
+      if (!event.origin || !event.origin.endsWith("facebook.com")) {
+        return;
+      }
+      
+      try {
+        const data = JSON.parse(event.data);
+        
+        if (data.type === 'WA_EMBEDDED_SIGNUP') {
+          if (data.event === 'FINISH') {
+            const { phone_number_id, waba_id } = data.data;
+            this.phoneId = phone_number_id;
+            this.wabaId = waba_id;
+            this.saveWhatsappAPIDetails()
+            console.log("Phone number ID ", phone_number_id, " WhatsApp business account ID ", waba_id);
+          } else if (data.event === 'ERROR') {
+            const { error_message } = data.data;
+            console.error("Error: ", error_message);
+          } else {
+            const { current_step } = data.data;
+            console.warn("Cancel at ", current_step);
+          }
+        }
+      } catch {
+        console.log('Non JSON Response', event.data);
+      }
+    };
+
+    this.renderer.listen('window', 'message', this.sessionInfoListener);
   }
 
   showToaster(message:any,type:any){
@@ -404,17 +438,13 @@ fbLoginCallback(response: any): void {
   if (response.authResponse) {
     const code = response.authResponse.code;
     console.log('Auth Code:', code);
-    // Send this code to your backend to exchange it for an access token
   }
-  // Displaying the response in the console
-  console.log('FB Login Response:', response);
 }
 
-// This method will launch the WhatsApp signup by invoking FB.login
 launchWhatsAppSignup(): void {
   FB.login((response: any) => this.fbLoginCallback(response), {
-    config_id: '523980490418313', // Your configuration ID here
-    response_type: 'code', // Required for System User access token
+    config_id: '523980490418313',
+    response_type: 'code', 
     override_default_response_type: true,
     extras: {
       setup: {},
@@ -423,4 +453,28 @@ launchWhatsAppSignup(): void {
     }
   });
 }
+
+saveWhatsappAPIDetails() { 
+  let data={
+    spid : this.spid,
+    code : this.Authcode,  
+    user_uid : this.uid,
+    phoneNumber_id : this.phoneId,
+    waba_id : this.wabaId,
+  }
+  this.apiService.addWhatsAppDetails(data).subscribe
+  ((resopnse :any) => {
+    if(resopnse.status === 200) {
+      console.log(this.whatAppDetails)
+      console.log(resopnse)
+    }
+
+  });
+  ((error: any) => {
+    if(error) {
+      this.showToaster('An error occurred please contact adminintrator', 'error');
+    }
+  })
+}
+
 }
