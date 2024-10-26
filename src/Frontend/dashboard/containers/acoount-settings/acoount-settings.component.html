@@ -10,17 +10,17 @@
         <div class="col-sm-9 py-4 setting-field">
             <a class="setting-field-link" [ngClass]="selectedTab==1 ? 'active' : ''"  *ngIf="!settingsService.checkRoleExist('45')"
                 (click)="selectedTab = 1">Channels</a>
-            <a class="setting-field-link" [ngClass]="selectedTab==2 ? 'active' : ''" (click)="selectedTab = 2" *ngIf="!settingsService.checkRoleExist('46') && whatsAppDetails[0]?.channel_id == 'WA Web'">API
+            <!-- <a class="setting-field-link" [ngClass]="selectedTab==2 ? 'active' : ''" (click)="selectedTab = 2" *ngIf="!settingsService.checkRoleExist('46')">API
                 Token</a>
-            <a class="setting-field-link" [ngClass]="selectedTab==3 ? 'active' : ''" *ngIf="!settingsService.checkRoleExist('47') && whatsAppDetails[0]?.channel_id == 'WA Web'"
-                (click)="selectedTab = 3">Integration</a>
+            <a class="setting-field-link" [ngClass]="selectedTab==3 ? 'active' : ''" *ngIf="!settingsService.checkRoleExist('47')"
+                (click)="selectedTab = 3">Integration</a> -->
         </div>
     </div>
     <div class="setting-card" *ngIf="selectedTab==1 && !settingsService.checkRoleExist('45') && whatsAppDetails[0]?.channel_id == 'WA Web'">
         <h4>Channels</h4>
         <div class="row">
             <div class="col-sm-6 p-5">
-                <div (click)="setChannelId('WA Web')" [ngClass]="{'card1_Wb': channel_id === 'WA Web'}" class="account-card card1 mb-3">
+                <div (click)="setChannelId('WA Web')" [ngClass]="{'card1_Wb': channel_id === 'WA Web'}" class="account-card card1 mb-3" *ngIf="channelDomain =='web'">
                     <div class="account-card-header">
                         <img src="../../../../assets/img/teambox/whatsapp-icon-l.svg">
                         <button *ngIf="whatsAppDetails.length ==0" class="account-btn" (click)="openDiv()">Connect</button>
@@ -34,10 +34,10 @@
                     </div>
                     </div>
                 </div>
-                <div (click)="setChannelId('WA API')" [ngClass]="{'card2_Wof': channel_id === 'WA API'}" class="account-card card2 mb-3">
+                <div (click)="setChannelId('WA API')" [ngClass]="{'card2_Wof': channel_id === 'WA API'}" class="account-card card2 mb-3" *ngIf="channelDomain =='api'">
                     <div class="account-card-header">
                         <img src="../../../../assets/img/teambox/whatsapp-icon-l.svg">
-                        <!-- <button class="account-btn" (click)="openDiv()">Connect</button> -->
+                        <button  class="account-btn" (click)="launchWhatsAppSignup()">Connect</button>
                     </div>
                     <div>
                         <h5>WhatsApp Official</h5>
@@ -494,5 +494,26 @@
                 <p>Lorium ipsum dolor sit amet lopnikumn gonia</p>                
             </div>
         </div>
+
     
 </div>
+<!-- 
+<script>
+    window.fbAsyncInit = function() {
+      FB.init({
+        appId: '{your-app-id}', // Replace with your App ID
+        cookie: true,
+        xfbml: true,
+        version: 'v2.4' // Use the latest version
+      });
+    };
+  
+    (function(d, s, id){
+       var js, fjs = d.getElementsByTagName(s)[0];
+       if (d.getElementById(id)) { return; }
+       js = d.createElement(s); js.id = id;
+       js.src = "https://connect.facebook.net/en_US/sdk.js";
+       fjs.parentNode.insertBefore(js, fjs);
+     }(document, 'script', 'facebook-jssdk'));
+  </script> -->
+  

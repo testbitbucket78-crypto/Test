@@ -164,7 +164,7 @@
               <div class="recentconversation" *ngFor="let items of recentConversation" >
                 <div class="text-capitalize initials"> {{ items?.nameInitials }} </div>
                 <div class="col-md-8 rc-body">
-                  <p class="text-capitalize" id="item-name" [innerHTML]="items.Name"></p>
+                  <p class="text-capitalize" id="item-name" [innerHTML]="items?.Name"></p>
                   <p id="item-message" [innerHTML]="getLimitedMessageText(items?.message_text)"></p>
                 </div>
   
@@ -184,7 +184,7 @@
                 <p class="txt-1" style="margin-top:30px">Your available balance</p>
                 <p class="txt-2" style=" font-size: 27px;"><b>₹{{availableAmount}}</b></p>
                 <div class="col-sm-12">
-                  <button [routerLink]="['/dashboard/myprofile']">Add Funds</button>
+                  <button [routerLink]="['/myprofile']">Add Funds</button>
                 </div>
               </div>
             </div> -->

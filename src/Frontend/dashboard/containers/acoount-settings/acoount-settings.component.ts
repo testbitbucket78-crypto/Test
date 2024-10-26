@@ -1,11 +1,14 @@
-import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef, Renderer2 } from '@angular/core';
 import { SettingsService } from 'Frontend/dashboard/services/settings.service';
 import { repliesaccountList, whatsAppDetails, healthStatusData } from 'Frontend/dashboard/models/settings.model';
 import { accountmodel } from 'Frontend/dashboard/models/settings.model';
 import { WebsocketService } from '../../services/websocket.service';
 import { WebSocketSubject } from 'rxjs/webSocket';
+import { FacebookService } from 'Frontend/dashboard/services/facebook-embedded.service';
+import { environment } from 'environments/environment';
 
 declare var $:any;
+declare var FB: any; 
 
 @Component({
   selector: 'sb-acoount-settings',
@@ -75,8 +78,17 @@ export class AcoountSettingsComponent implements OnInit {
   connection:number[] =[1,3,2,4];
   selectedTab:number = 1;
   public ipAddress:string[] = [''];
-
-  constructor( private apiService:SettingsService,public settingsService:SettingsService,private websocketService: WebsocketService,private changeDetector: ChangeDetectorRef) {}
+  public channelDomain:string = environment.chhanel;
+  private sessionInfoListener: any;
+Authcode:any='';
+phoneId:any='';
+wabaId:any='';
+uid = (JSON.parse(sessionStorage.getItem('loginDetails')!)).uid;
+  constructor( private apiService:SettingsService,
+    public facebookService:FacebookService,
+    public settingsService:SettingsService,
+    private renderer: Renderer2,
+    private websocketService: WebsocketService,private changeDetector: ChangeDetectorRef) {}
 
   private socket$: WebSocketSubject<any> = new WebSocketSubject('wss://notify.stacknize.com');
 
@@ -89,6 +101,37 @@ export class AcoountSettingsComponent implements OnInit {
     this.SPPhonenumber = (JSON.parse(sessionStorage.getItem('SPPhonenumber')!));
     this.getwhatsapp();
     this.subscribeToNotifications();
+    this.loadFacebookSDK();
+    this.fetchLastName();
+    this.sessionInfoListener = (event: MessageEvent) => {
+      if (!event.origin || !event.origin.endsWith("facebook.com")) {
+        return;
+      }
+      
+      try {
+        const data = JSON.parse(event.data);
+        
+        if (data.type === 'WA_EMBEDDED_SIGNUP') {
+          if (data.event === 'FINISH') {
+            const { phone_number_id, waba_id } = data.data;
+            this.phoneId = phone_number_id;
+            this.wabaId = waba_id;
+            this.saveWhatsappAPIDetails()
+            console.log("Phone number ID ", phone_number_id, " WhatsApp business account ID ", waba_id);
+          } else if (data.event === 'ERROR') {
+            const { error_message } = data.data;
+            console.error("Error: ", error_message);
+          } else {
+            const { current_step } = data.data;
+            console.warn("Cancel at ", current_step);
+          }
+        }
+      } catch {
+        console.log('Non JSON Response', event.data);
+      }
+    };
+
+    this.renderer.listen('window', 'message', this.sessionInfoListener);
   }
 
   showToaster(message:any,type:any){
@@ -407,4 +450,82 @@ async subscribeToNotifications() {
   };
   this.websocketService.connect(notificationIdentifier);
  }
+
+ loadFacebookSDK(): void {
+  //if (!(window as any).fbAsyncInit) {
+    (window as any).fbAsyncInit = () => {
+      FB.init({
+        appId: '1147412316230943', // Replace with your app id
+        cookie: true,
+        xfbml: true,
+        version: 'v2.4' // Use the latest version
+      });
+    };
+ // }
+
+  // Dynamically load SDK if not already loaded
+  const scriptElement = document.createElement('script');
+  scriptElement.id = 'facebook-jssdk';
+  scriptElement.src = 'https://connect.facebook.net/en_US/sdk.js';
+  const firstScript = document.getElementsByTagName('script')[0];
+  if (document.getElementById('facebook-jssdk')) {
+    firstScript.parentNode?.insertBefore(scriptElement, firstScript);
+  }
+}
+
+fetchLastName(): void {
+  this.facebookService.getMyLastName().subscribe({
+    next: (response) => {
+      let lastName = response.last_name;
+      console.log(lastName);
+    },
+    error: (err) => {
+      console.error('Error fetching last name:', err);
+    }
+  });
+}
+
+fbLoginCallback(response: any): void {
+  if (response.authResponse) {
+    const code = response.authResponse.code;
+    console.log('Auth Code:', code);
+  }
+}
+
+launchWhatsAppSignup(): void {
+  FB.login((response: any) => this.fbLoginCallback(response), {
+    config_id: '523980490418313',
+    response_type: 'code', 
+    override_default_response_type: true,
+    extras: {
+      setup: {},
+      featureType: '',
+      sessionInfoVersion: '2',
+    }
+  });
+}
+
+saveWhatsappAPIDetails() { 
+  let data={
+    spid : this.spid,
+    code : this.Authcode,  
+    user_uid : this.uid,
+    phoneNumber_id : this.phoneId,
+    waba_id : this.wabaId,
+  }
+  this.apiService.addWhatsAppDetails(data).subscribe
+  ((resopnse :any) => {
+    if(resopnse.status === 200) {
+      console.log(this.whatAppDetails)
+      console.log(resopnse)
+    }
+
+  });
+  ((error: any) => {
+    if(error) {
+      this.showToaster('An error occurred please contact adminintrator', 'error');
+    }
+  })
+}
+
 }

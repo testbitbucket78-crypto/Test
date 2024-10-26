@@ -126,6 +126,7 @@ export interface RolesData {
 export interface UserData {
     name: string;
     mobile_number: number;
+    registerPhone: number;
     display_mobile_number: number;
     uid: number;
     country_code:string;

@@ -6,17 +6,17 @@
    <h1 class="m-0  main-heading">{{title}}</h1>
     <!-- Navbar-->
     <ul class="navbar-nav ml-auto md-0 top-icons">
-        <img routerLink="/dashboard/setting" title="Settings" src="../../../../assets/img/top-nav/Setting.svg">
-        <img routerLink="/dashboard/support" title="Support" src="../../../../assets/img/top-nav/support.svg">
+        <img routerLink="/setting" title="Settings" src="../../../../assets/img/top-nav/Setting.svg">
+        <img routerLink="/support" title="Support" src="../../../../assets/img/top-nav/support.svg">
         <div class="d-flex">
         <img  src="../../../../assets/img/top-nav/notifications.svg" title="Notifications" (click)="toggleShowNotifications()">
         <div *ngIf="unreadCount > 0" class="notify-count">{{unreadCount}}</div>
       </div>
-        <img  routerLink="/dashboard/teambox" title="Teambox" src="../../../../assets/img/top-nav/chat-icon.svg">
+        <img  routerLink="/teambox" title="Teambox" src="../../../../assets/img/top-nav/chat-icon.svg">
         <div>
         <img *ngIf="profilePicture" class="profilepic" src="{{profilePicture}}?{{randomNumber}}" title="Profile" (click)="toggleShowProfile()"/>
         <div class="pick">
-          <img *ngIf="!profilePicture" src="../../../../assets/img/top-nav/myprofile.svg" title="Profile" (click)="toggleShowProfile()">
+          <img  src="../../../../assets/img/top-nav/myprofile.svg" title="Profile" (click)="toggleShowProfile()">
         </div>
         
       </div>
@@ -50,7 +50,7 @@
 </div>
 
   <div class="footer d-flex align-items-center justify-content-center p-4 pb-3">
-    <button id="view-notifications-btn" routerLink="/dashboard/notifications">View all Notifications</button>
+    <button id="view-notifications-btn" routerLink="/notifications">View all Notifications</button>
   </div>
 </div>
   </div>
@@ -76,7 +76,7 @@
 
       </div>
 
-      <div class="row ml-0 mr-0 mb-3 profile-content2" routerLink="/dashboard/myprofile">
+      <div class="row ml-0 mr-0 mb-3 profile-content2" routerLink="/myprofile">
         <div class="d-flex justify-content-around align-items-center profile-p">
           <div class="col-sm-8 ml-2 profile-c">
             <h3>Manage your profile</h3>

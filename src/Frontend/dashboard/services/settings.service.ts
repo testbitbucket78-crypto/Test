@@ -246,6 +246,11 @@ const headers = new HttpHeaders({
   public getQualityRating(phoneNo: number, phone_number_id: number, WABA_ID: number) {
     return this.http.get(`${this.API_URL}/getQualityRating/${phoneNo}/${phone_number_id}/${WABA_ID}`);
 }
+  
+  getFlowData(spId: number): Observable<any> {
+    return this.http.get<any>(`${this.API_URL}/getFlows/${spId}`);
+  }
+
   saveCompanyDetail(companyData:companyDetail): Observable<any> {
     return this.http.post(`${this.API_URL}/companyDetail`, companyData)
   }
@@ -438,6 +443,11 @@ const headers = new HttpHeaders({
   
   addWhatsAppDetails(tagData:any): Observable<any> {
     return this.http.post<any>(`${this.API_URL}/addWhatsAppDetails`,tagData);
+  } 
+
+  
+  addWhatsAppAPIDetails(data:any): Observable<any> {
+    return this.http.post<any>(`${this.API_URL}/addWAapiDetails`,data);
   } 
   
   

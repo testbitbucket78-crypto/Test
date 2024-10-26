@@ -1,11 +1,12 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
-import { FormControl, FormGroup, Validators } from '@angular/forms';
+import { Component, ElementRef, OnInit, Renderer2, ViewChild } from '@angular/core';
+import { AbstractControl, FormControl, FormGroup, ValidationErrors, Validators } from '@angular/forms';
 import { newTemplateFormData, quickReplyButtons, templateMessageData,} from 'Frontend/dashboard/models/settings.model';
 import { SettingsService } from 'Frontend/dashboard/services/settings.service';
 import { TeamboxService } from 'Frontend/dashboard/services';
 import { parsePhoneNumberFromString } from 'libphonenumber-js';
 import { ToolbarService, LinkService, ImageService, EmojiPickerService, CountService} from '@syncfusion/ej2-angular-richtexteditor';
 import { RichTextEditorComponent, HtmlEditorService } from '@syncfusion/ej2-angular-richtexteditor';
+import { faSmileWink } from '@fortawesome/free-solid-svg-icons';
 
 declare var $: any;
 @Component({
@@ -41,6 +42,7 @@ export class TemplateMessageComponent implements OnInit {
     templatesData = [];
     galleryData = [];
     allVariablesList:string[] =[];
+    templateFlows:any =[];
     filteredGalleryData = [];
     filteredTemplatesData: templateMessageData[] = [];
     templatesMessageData: templateMessageData = <templateMessageData>{};
@@ -85,9 +87,78 @@ export class TemplateMessageComponent implements OnInit {
         { value: 2, label: 'WA Web', checked: false },
     ];
     filterListLanguage = [
-        { value: 0, label: 'English', checked: false },
-        { value: 1, label: 'Other', checked: false },
-    ];
+        { label: 'Afrikaans', code: 'af', checked: false },
+        { label: 'Albanian', code: 'sq', checked: false },
+        { label: 'Arabic', code: 'ar', checked: false },
+        { label: 'Azerbaijani', code: 'az', checked: false },
+        { label: 'Bengali', code: 'bn', checked: false },
+        { label: 'Bulgarian', code: 'bg', checked: false },
+        { label: 'Catalan', code: 'ca', checked: false },
+        { label: 'Chinese (CHN)', code: 'zh_CN', checked: false },
+        { label: 'Chinese (HKG)', code: 'zh_HK', checked: false },
+        { label: 'Chinese (TAI)', code: 'zh_TW', checked: false },
+        { label: 'Croatian', code: 'hr', checked: false },
+        { label: 'Czech', code: 'cs', checked: false },
+        { label: 'Danish', code: 'da', checked: false },
+        { label: 'Dutch', code: 'nl', checked: false },
+        { label: 'English', code: 'en', checked: false },
+        { label: 'English (UK)', code: 'en_GB', checked: false },
+        { label: 'English (US)', code: 'en_US', checked: false },
+        { label: 'Estonian', code: 'et', checked: false },
+        { label: 'Filipino', code: 'fil', checked: false },
+        { label: 'Finnish', code: 'fi', checked: false },
+        { label: 'French', code: 'fr', checked: false },
+        { label: 'Georgian', code: 'ka', checked: false },
+        { label: 'German', code: 'de', checked: false },
+        { label: 'Greek', code: 'el', checked: false },
+        { label: 'Gujarati', code: 'gu', checked: false },
+        { label: 'Hausa', code: 'ha', checked: false },
+        { label: 'Hebrew', code: 'he', checked: false },
+        { label: 'Hindi', code: 'hi', checked: false },
+        { label: 'Hungarian', code: 'hu', checked: false },
+        { label: 'Indonesian', code: 'id', checked: false },
+        { label: 'Irish', code: 'ga', checked: false },
+        { label: 'Italian', code: 'it', checked: false },
+        { label: 'Japanese', code: 'ja', checked: false },
+        { label: 'Kannada', code: 'kn', checked: false },
+        { label: 'Kazakh', code: 'kk', checked: false },
+        { label: 'Kinyarwanda', code: 'rw_RW', checked: false },
+        { label: 'Korean', code: 'ko', checked: false },
+        { label: 'Kyrgyz (Kyrgyzstan)', code: 'ky_KG', checked: false },
+        { label: 'Lao', code: 'lo', checked: false },
+        { label: 'Latvian', code: 'lv', checked: false },
+        { label: 'Lithuanian', code: 'lt', checked: false },
+        { label: 'Macedonian', code: 'mk', checked: false },
+        { label: 'Malay', code: 'ms', checked: false },
+        { label: 'Malayalam', code: 'ml', checked: false },
+        { label: 'Marathi', code: 'mr', checked: false },
+        { label: 'Norwegian', code: 'nb', checked: false },
+        { label: 'Persian', code: 'fa', checked: false },
+        { label: 'Polish', code: 'pl', checked: false },
+        { label: 'Portuguese (BR)', code: 'pt_BR', checked: false },
+        { label: 'Portuguese (POR)', code: 'pt_PT', checked: false },
+        { label: 'Punjabi', code: 'pa', checked: false },
+        { label: 'Romanian', code: 'ro', checked: false },
+        { label: 'Russian', code: 'ru', checked: false },
+        { label: 'Serbian', code: 'sr', checked: false },
+        { label: 'Slovak', code: 'sk', checked: false },
+        { label: 'Slovenian', code: 'sl', checked: false },
+        { label: 'Spanish', code: 'es', checked: false },
+        { label: 'Spanish (ARG)', code: 'es_AR', checked: false },
+        { label: 'Spanish (SPA)', code: 'es_ES', checked: false },
+        { label: 'Spanish (MEX)', code: 'es_MX', checked: false },
+        { label: 'Swahili', code: 'sw', checked: false },
+        { label: 'Swedish', code: 'sv', checked: false },
+        { label: 'Tamil', code: 'ta', checked: false },
+        { label: 'Telugu', code: 'te', checked: false },
+        { label: 'Thai', code: 'th', checked: false },
+        { label: 'Turkish', code: 'tr', checked: false },
+        { label: 'Ukrainian', code: 'uk', checked: false },
+        { label: 'Urdu', code: 'ur', checked: false },
+        { label: 'Uzbek', code: 'uz', checked: false },
+        { label: 'Vietnamese', code: 'vi', checked: false },
+        { label: 'Zulu', code: 'zu', checked: false }
+      ]
     filterListStatus = [
         { value: 0, label: 'draft', checked: false },
         { value: 1, label: 'approved', checked: false },
@@ -160,8 +231,15 @@ export class TemplateMessageComponent implements OnInit {
         keepFormat: false,
     };
     newTemplateForm!: FormGroup;
+    buttonsArray:any[] =[];
+    isPopupVisible:boolean = false;
+    isAllButtonPopupVisible:boolean = false;
 
-    constructor(public apiService: SettingsService,public settingsService: SettingsService, private _teamboxService: TeamboxService) {}
+  @ViewChild('popupContainer') popupContainer!: ElementRef;
+
+    constructor(public apiService: SettingsService,
+        private renderer: Renderer2,
+        public settingsService: SettingsService, private _teamboxService: TeamboxService) {}
 
     errorMessage = '';
     successMessage = '';
@@ -177,7 +255,7 @@ export class TemplateMessageComponent implements OnInit {
         }
         setTimeout(() => {
             this.hideToaster();
-        }, 3000);
+        }, 6000);
     }
     hideToaster() {
         this.successMessage = '';
@@ -189,7 +267,7 @@ export class TemplateMessageComponent implements OnInit {
         const selection = window.getSelection();
         this.lastCursorPosition = selection?.getRangeAt(0) || null;
         $('#atrributemodal').modal('show');
-        $('#newTemplateMessage').modal('hide');
+        //$('#newTemplateMessage').modal('hide');
     }
 
 
@@ -211,6 +289,7 @@ export class TemplateMessageComponent implements OnInit {
         this.quickreply = this.newTemplateForm.get(dynamicControlName)?.value;
         this.getTemplatesData();
         this.getAttributeList();
+        this.getFlowList();
         this.getWhatsAppDetails();
     }
    
@@ -250,7 +329,7 @@ export class TemplateMessageComponent implements OnInit {
             Category: new FormControl(null, [Validators.required]),
             Language: new FormControl(null, [Validators.required]),
             media_type: new FormControl(null),
-            Header: new FormControl(null),
+            Header: new FormControl(null,this.noEmojiValidator),
             Links: new FormControl(null),
             BodyText: new FormControl('', [Validators.required]),
             FooterText: new FormControl(''),
@@ -277,8 +356,8 @@ export class TemplateMessageComponent implements OnInit {
     }
 
 
-    showMessageType(type: string) {
-        this.selectedType = type;
+    showMessageType() {
+        // this.selectedType = type;
         this.newTemplateForm.get('Links')?.setValue(null);
         this.newTemplateForm.get('Header')?.setValue('');
         this.selectedPreview = '';
@@ -475,9 +554,6 @@ export class TemplateMessageComponent implements OnInit {
         }
     }
 
-    removeQuickReplyButtons(index: any) {
-        this.quickReplyButtons.splice(index, 1);
-    }
 
     toggleGalleryData(data: any) {
         this.showGalleryDetail = !this.showGalleryDetail;
@@ -560,7 +636,7 @@ export class TemplateMessageComponent implements OnInit {
         if(this.newTemplateForm.get('BodyText')?.value == null)  this.newTemplateForm.get('BodyText')?.setValue('');
         if(this.newTemplateForm.get('Header')) this.newTemplateForm.get('Header')?.setValue('');
         if(this.newTemplateForm.get('FooterText')) this.newTemplateForm.get('FooterText')?.setValue('');
-        this.showMessageType("text")
+        this.showMessageType()
         this.templatesMessageData.media_type = "text";
         const selTextRadio = document.getElementById('sel-text') as HTMLInputElement;
         if (selTextRadio) {
@@ -679,7 +755,7 @@ checkTemplateName(e:any){
 
     copyTemplate() {
         console.log(this.templatesMessageDataById)
-        let nameExist = this.filteredTemplatesData.filter((item:any)=>item.TemplateName == (this.templatesMessageDataById.TemplateName +' copy'));
+        let nameExist = this.filteredTemplatesData.filter((item:any)=>item.TemplateName == (this.templatesMessageDataById.TemplateName +'_copy'));
         if(nameExist.length ==0){
         const copyTemplateForm: newTemplateFormData = <newTemplateFormData>{};
         copyTemplateForm.ID = 0;
@@ -691,7 +767,7 @@ checkTemplateName(e:any){
         copyTemplateForm.Links = this.templatesMessageDataById.Links;
         copyTemplateForm.BodyText = this.templatesMessageDataById.BodyText;
         copyTemplateForm.FooterText = this.templatesMessageDataById.FooterText;
-        copyTemplateForm.TemplateName = this.templatesMessageDataById.TemplateName +' copy';
+        copyTemplateForm.TemplateName = this.templatesMessageDataById.TemplateName +'_copy';
         copyTemplateForm.Channel = this.templatesMessageDataById.Channel;
         copyTemplateForm.Category = this.templatesMessageDataById.Category;
         copyTemplateForm.category_id = this.templatesMessageDataById.category_id;
@@ -841,7 +917,7 @@ checkTemplateName(e:any){
             newTemplateForm.template_json.push({
                 name: this.newTemplateForm.controls.TemplateName.value,
                 category: this.newTemplateForm.controls.Category.value,
-                language: this.newTemplateForm.controls.Language.value == 'English' ? 'en_US' :this.newTemplateForm.controls.Language.value,
+                language: this.filterListLanguage.filter((item:any)=> item.label == this.newTemplateForm.controls.Language.value)[0]?.code,
                 components:comp
                 
             });
@@ -937,7 +1013,7 @@ checkTemplateName(e:any){
     }
     closeAtrrModal() {
         this.attributesearch ='';
-        $('#newTemplateMessage').modal('show');
+        //$('#newTemplateMessage').modal('show');
         $('#atrributemodal').modal('hide');
         this.isHeaderAttribute = false;
     }
@@ -994,11 +1070,12 @@ insertAtCursor(selectedValue: any) {
 
         selection?.removeAllRanges();
         selection?.addRange(range);
-    }, 100);
+    }, 50);
 	const newNode = document.createElement('span');
 	newNode.innerHTML =  '<span contenteditable="false" class="e-mention-chip"><a _ngcontent-yyb-c67="" title="">{{'+selectedValue+'}}</a></span>';
 	this.lastCursorPosition?.insertNode(newNode);
 }
+
      /* GET VARIABLE VALUES */
     getVariables(sentence: string, first: string, last: string, isTempateJson:boolean =false) {
         let goodParts: string[] = [];
@@ -1026,7 +1103,8 @@ insertAtCursor(selectedValue: any) {
     
 
     previewTemplate() {
-        let isVariableValue:string = this.newTemplateForm.controls.BodyText.value + this.newTemplateForm.controls.Header.value;
+        if(this.validateItems()){
+        let isVariableValue:string = this.newTemplateForm.controls.Header.value + this.newTemplateForm.controls.BodyText.value ;
 
 		if (isVariableValue) {
 		  this.allVariablesList = this.getVariables(isVariableValue, "{{", "}}");
@@ -1059,6 +1137,7 @@ insertAtCursor(selectedValue: any) {
      ]
  }
      }
+    }
 
     }
 
@@ -1070,6 +1149,15 @@ insertAtCursor(selectedValue: any) {
                 this.attributesList = attributeListData.map(
                     (attrList: any) => attrList.displayName
                 );
+            }
+        });
+    }
+
+    getFlowList() {
+        this.settingsService.getFlowData(this.spid).subscribe((response: any) => {
+            if (response) {
+                console.log(response);
+                this.templateFlows =  response?.flows;
             }
         });
     }
@@ -1153,4 +1241,118 @@ addCustomAttribute(){
 //     this.customValue = `var${this.countValue}`
 //     this.countValue = 1;
 //   }
+
+addButtons(type:string){
+    if(type =='Quick Reply')
+        this.buttonsArray.push({type:type,buttonText:''});
+    else if(type =='Call Phone')
+        this.buttonsArray.push({type:type,buttonText:'',code:'',phoneNumber:'',displayPhoneNumber:''});
+    else if(type =='Copy offer Code')
+        this.buttonsArray.push({type:type,buttonText:'Copy Offer Code',code:''});
+    else if(type =='Complete Flow')
+        this.buttonsArray.push({type:type,buttonText:'',flowId:''});
+    else if(type =='Visit Website')
+        this.buttonsArray.push({type:type,buttonText:'',webUrl:''});
+
+    this.isPopupVisible = false;
+}
+
+openButtonPopUp() {
+    this.isPopupVisible = !this.isPopupVisible;
+
+    // Close the popup if a click happens outside of it
+    if (this.isPopupVisible) {
+      this.renderer.listen('window', 'click', (event: Event) => {
+        if (!this.popupContainer?.nativeElement?.contains(event.target)) {
+          //this.isPopupVisible = false;
+        }
+      });
+    }
+  }
+
+  isDisableButton(type:any){
+    let isFlow = this.buttonsArray.filter((item:any)=>item?.type == 'Complete Flow')?.length > 0;
+    if(type =='Quick Reply' ){
+        if(this.buttonsArray.length == 10 || isFlow)
+            return true;
+        else
+            return false;
+    }
+    else if(type =='Call Phone'){
+        let isExist = this.buttonsArray.filter((item:any)=>item?.type == 'Call Phone')?.length > 0;
+        if(this.buttonsArray.length == 10 || isExist || isFlow)
+            return true;
+        else
+            return false;
+    }
+    else if(type =='Copy offer Code'){
+        let isExist = this.buttonsArray.filter((item:any)=>item?.type == 'Copy offer Code')?.length > 0;
+        if(this.buttonsArray.length == 10 || isExist || isFlow)
+            return true;
+        else
+            return false;
+    }
+    else if(type =='Complete Flow'){
+        if(this.buttonsArray.length > 0 || isFlow)
+            return true;
+        else
+            return false;
+    }
+    else if(type =='Visit Website'){
+        let isExist = this.buttonsArray.filter((item:any)=>item?.type == 'Visit Website')?.length > 1;
+        if(this.buttonsArray.length == 10 || isFlow || isExist)
+            return true;
+        else
+            return false;
+    }
+  }
+
+  removeQuickReplyButtons(index: any) {
+    console.log(index);
+      this.buttonsArray.splice(index, 1);
+  }
+
+  noEmojiValidator(control: AbstractControl): ValidationErrors | null {
+    const emojiRegex = /[\p{Emoji}\u200D\uFE0F]/gu; // Regex for emojis
+    if (control.value) {
+      const sanitizedValue = control.value.replace(emojiRegex, '');
+      if (sanitizedValue !== control.value) {
+        control.setValue(sanitizedValue, { emitEvent: false }); // Set sanitized value
+      }
+    }
+    return null; // Return no error for validator
+  }
+
+
+  validateItems():boolean {
+    let validationErrors = ''; // Clear previous errors
+
+    this.buttonsArray.forEach((item, index) => {
+      if (!item.buttonText) {
+        validationErrors = validationErrors + '<br>'+ `Button ${index + 1}: 'buttonText' is required.`;
+      }
+      if (item.type === 'Visit Website' && !item.webUrl) {
+        validationErrors= `Button ${index + 1}: 'webUrl' is required for Visit Website button.`;
+      }
+      if (item.type === 'Call Phone') {
+        if (!item.code) {
+          validationErrors = validationErrors + '<br>'+ `Button ${index + 1}: 'code' is required for Call Phone button.`;
+        }
+        if (!item.phoneNumber) {
+          validationErrors = validationErrors + '<br>'+ `Button ${index + 1}: 'Phone Number' is required for Call Phone button.`;
+        }
+      }
+      if (item.type === 'Copy offer Code' && !item.code) {
+        validationErrors = validationErrors + '<br>'+ `Button ${index + 1}: 'code' is required for Copy offer Code buttomn.`;
+      }
+    });
+if (validationErrors){
+    this.showToaster(validationErrors,'error');
+return false;
+}
+else
+return true
+    
+  }
+
 }
