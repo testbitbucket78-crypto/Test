@@ -724,18 +724,18 @@ const addTemplate = async (req, res) => {
     
                     status = templateStatus.status
                     if (templateStatus.status){
-                    let temValues = [[TemplateName, Channel, Category, Language, media_type, Header, BodyText, image, FooterText, JSON.stringify(template_json), status, spid, created_By, created_at, isTemplate, industry, category_id,templateStatus.id,buttons]]
+                    let temValues = [[TemplateName, Channel, Category, Language, media_type, Header, BodyText, image, FooterText, JSON.stringify(template_json), status, spid, created_By, created_at, isTemplate, industry, category_id,templateStatus.id,buttons,'UNKNOWN']]
                     addedtem = await db.excuteQuery(val.addTemplates, [temValues])
                     }else{
                         statusCode = 400;
                     }
                 }else if (isTemplate == 0 || isCopied == 1) {
-                    let temValues = [[TemplateName, Channel, Category, Language, media_type, Header, BodyText, image, FooterText, JSON.stringify(template_json), req.body.status, spid, created_By, created_at, isTemplate, industry, category_id,'',buttons]]
+                    let temValues = [[TemplateName, Channel, Category, Language, media_type, Header, BodyText, image, FooterText, JSON.stringify(template_json), req.body.status, spid, created_By, created_at, isTemplate, industry, category_id,'',buttons,'UNKNOWN']]
                     addedtem = await db.excuteQuery(val.addTemplates, [temValues])
                 }
             } else if (Channel == 'WhatsApp Web' || Channel == 'WA Web') {
 
-                let temValues = [[TemplateName, Channel, Category, Language, media_type, Header, BodyText, image, FooterText, JSON.stringify(template_json), status, spid, created_By, created_at, isTemplate, industry, category_id,'','']]
+                let temValues = [[TemplateName, Channel, Category, Language, media_type, Header, BodyText, image, FooterText, JSON.stringify(template_json), status, spid, created_By, created_at, isTemplate, industry, category_id,'','','UNKNOWN']]
                 addedtem = await db.excuteQuery(val.addTemplates, [temValues])
             }
             res.status(200).send({

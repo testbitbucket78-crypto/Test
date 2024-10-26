@@ -408,7 +408,7 @@ let getCustomColumnById = `SELECT * FROM SPIDCustomContactFields WHERE id=? AND 
 
 //________________________________________TEMPLATE SETTINGS__________________________//
 
-var addTemplates = `INSERT INTO templateMessages (TemplateName,Channel,Category,Language,media_type,Header,BodyText,Links,FooterText,template_json,status,spid,created_By,created_at,isTemplate,industry,category_id,templateID,buttons) VALUES ?`
+var addTemplates = `INSERT INTO templateMessages (TemplateName,Channel,Category,Language,media_type,Header,BodyText,Links,FooterText,template_json,status,spid,created_By,created_at,isTemplate,industry,category_id,templateID,buttons,quality) VALUES ?`
 var selectTemplate = `SELECT * FROM templateMessages WHERE spid=? and isDeleted !=1 and isTemplate=?`
 var selectApprovedTemplate = `SELECT * FROM templateMessages WHERE spid=? and isDeleted !=1  and (status='saved' OR status='APPROVED') and isTemplate=?`
 var updateTemplate = `UPDATE templateMessages SET TemplateName=?,Channel=?,Category=?,Language=?,media_type=?,Header=?,BodyText=?,Links=?,FooterText=?,template_json=?,status=?,spid=?,created_By=?,updated_at=?,isTemplate=?,industry=?,category_id=?,templateID=?,buttons=? where ID=?`
@@ -437,6 +437,10 @@ WHERE t.spid = ? AND t.is_Deleted != 1 AND i.is_Deleted != 1; `
 var isEnableQuery=`UPDATE APIToken SET isEnable=? ,updated_at=? where id=?`
 var insertIPAddress=`INSERT INTO APIIPAddress (spid,token_id,IPAddress,created_at,is_Deleted) values ?`
 
+//____________________________________BusinessHealth____________________________//
+var insertHealthStatus = `INSERT INTO businessHealth (phone_number_id, channel_phone_number, balance_limit_today, quality_rating, created_at, fb_verification) VALUES (?, ?, ?, ?, ?, ?)`;
+var selectHealthStatus = `SELECT * FROM businessHealth WHERE phone_number_id = ?`
+
 module.exports = {
     host, user, password, database, insertCompanyDetails, insertlocalDetails, insertBillingDetails, selectCompanyDetails, selectlocalDetails, selectBillingDetails,
     updateCompanyDetails, updatelocalDetails, updateBillingDetails, insertWork, selectWork, deleteWork, insertHoliday, selectHoliday, removeHoliday, updateWork, getSubRight, getRights,
@@ -451,5 +455,5 @@ module.exports = {
     addtag, updatetag, deletetag, selecttag, addTemplates, selectTemplate, updateTemplate, deleteTemplate, insertWhatsappdetails, updateWhatsappdetails, selectChannelCount,
     Whatsappdetails,addTokenQuery,updateTokenQuery,deleteTokenQuery,selectTokenQuery,isEnableQuery,baseURL,accessToken,deleteIPQuery,insertIPAddress,updateNotification,
     getColCount,addcolumn,getcolumn,deletecolumn,getcolumnid,enableMandatory,enablestatus,editfield ,selectApprovedTemplate ,addGallery ,getGallery,selectUserByIdQuery,
-    content_type,access_token,url,selectActiveQuery,getAllUserQuery,checkDeletedColumn,getCustomColumnById,permanentDeleteColumn
+    content_type,access_token,url,selectActiveQuery,getAllUserQuery,checkDeletedColumn,getCustomColumnById,permanentDeleteColumn,selectHealthStatus,insertHealthStatus
 }
