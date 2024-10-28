@@ -111,9 +111,9 @@
                                 {{ countryCode }}
                               </option>
                               </select>
-                              <input type="text" class="form-control" id="mobile_number" formControlName="mobile_number" 
-                              name="mobile_number" style="display: none">  
-                              <input type="text" class="form-control phone-input" id="mobile_number"  autocomplete="none" formControlName="display_mobile_number" 
+                              <input type="text" class="form-control" id="registerPhone" formControlName="registerPhone" 
+                              name="registerPhone" style="display: none">  
+                              <input type="text" class="form-control phone-input" id="registerPhone"  autocomplete="none" formControlName="display_mobile_number" 
                                 name="display_mobile_number" placeholder="Phone Number" aria-label="City" pattern="^[^+\-.,?*%$eE]+$"
                                 onKeyPress="return /^[0-9]$/.test(event.key)"
                                 [ngClass]="{'is-invalid' : userDetailForm.controls.display_mobile_number.errors && (userDetailForm.get('display_mobile_number')?.touched || userDetailForm.get('display_mobile_number')?.dirty) }" 
@@ -196,7 +196,7 @@
             </div>
             <div class="w-45">
                 <span class="sub-heading">Phone Number</span><br>
-                <p class="black">{{userData?.mobile_number}}</p>
+                <p class="black">{{userData?.registerPhone}}</p>
             </div>
         </div>
         <div class="flex-row  pt-4">

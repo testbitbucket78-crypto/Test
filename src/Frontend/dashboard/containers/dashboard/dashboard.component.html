@@ -164,7 +164,7 @@
               <div class="recentconversation" *ngFor="let items of recentConversation" >
                 <div class="text-capitalize initials"> {{ items?.nameInitials }} </div>
                 <div class="col-md-8 rc-body">
-                  <p class="text-capitalize" id="item-name" [innerHTML]="items.Name"></p>
+                  <p class="text-capitalize" id="item-name" [innerHTML]="items?.Name"></p>
                   <p id="item-message" [innerHTML]="getLimitedMessageText(items?.message_text)"></p>
                 </div>
   
@@ -172,22 +172,22 @@
               </div>
             </div>
   
-            <div class="card10 pb-3 mx-5"  *ngIf="!settingsService.checkRoleExist('48')">
+            <!-- <div class="card10 pb-3 mx-5"  *ngIf="!settingsService.checkRoleExist('48')">
               <div class="card10-p">
                
                 <img src="assets/img/img2.png" class="pb-3" alt="error">
                 <p class="txt-1">Premium+</p>
-                <!-- <p class="txt-2">₹0.50 per message</p> -->
+                <p class="txt-2">₹0.50 per message</p>
               </div>
   
               <div class="card10-c mx-3 py-4">
                 <p class="txt-1" style="margin-top:30px">Your available balance</p>
                 <p class="txt-2" style=" font-size: 27px;"><b>₹{{availableAmount}}</b></p>
                 <div class="col-sm-12">
-                  <button [routerLink]="['/dashboard/myprofile']">Add Funds</button>
+                  <button [routerLink]="['/myprofile']">Add Funds</button>
                 </div>
               </div>
-            </div>
+            </div> -->
           </div>
         </div>
       </div>

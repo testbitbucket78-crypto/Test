@@ -175,7 +175,22 @@ export class CampaignsComponent implements OnInit {
 	customFieldData:[] = [];
 	tag:[] =[];
 	userList:any;
-	 
+    messagingLimit = 0;
+    channelQualityRating = '';
+	ShowAssignOption!: boolean; 
+	channelSelected: string = '';
+	channelPhoneNumber: string = '';
+	balanceLimitTooltip!: boolean;
+	channelQualityTooltip!: boolean;
+	phoneNo = 0;
+	phone_no_id = 0;
+	WABA_Id = 0;
+	dowloadTooltip!: boolean;
+	showDownloadBtn!: boolean;
+	userName: string = '';
+	userEmail: string = '';
+	downloadBtnLoad!: boolean;
+
 constructor(config: NgbModalConfig, private modalService: NgbModal,private datepipe: DatePipe,private dashboardService: DashboardService,
 	private apiService: TeamboxService,public settingsService:SettingsService,private _settingsService:SettingsService,
 	private fb: FormBuilder,private router: Router,private el: ElementRef) {
@@ -205,6 +220,8 @@ constructor(config: NgbModalConfig, private modalService: NgbModal,private datep
 				this.loginAs='Agent'
 		}
 		this.profilePicture = (JSON.parse(sessionStorage.getItem('loginDetails')!)).profile_img;
+		this.userName = (JSON.parse(sessionStorage.getItem('loginDetails')!))?.name;
+		this.userEmail = (JSON.parse(sessionStorage.getItem('loginDetails')!))?.email_id;
 		this.routerGuard()
 		this.getAllCampaigns()
 		this.getContactList('')
@@ -227,6 +244,41 @@ constructor(config: NgbModalConfig, private modalService: NgbModal,private datep
 		event.preventDefault(); // Prevent default scrolling behavior
 	  }
 	}
+	
+
+	getQualityRating() {
+		this.settingsService.getQualityRating(this.phoneNo, this.phone_no_id, this.WABA_Id).subscribe(
+			data => {
+				let res: any = data
+				if (res?.status === 200) {
+					if (res?.response) {
+						const rating = res?.response?.quality_rating;
+						const messagingLimit = res?.response?.balance_limit_today;
+						this.channelQualityRating = this.settingsService.getQualityRatingClass(rating);
+						this.messagingLimit = messagingLimit;
+					}
+				}
+				else {
+					console.log("Error Code : " +res?.status);
+				}
+			},
+			error => {
+				console.error('Error fetching quality rating:', error);
+			}
+		);
+	}
+
+	toggleAssignOption(){
+		this.ShowAssignOption =!this.ShowAssignOption
+	}
+
+	updateDropdown(id: string) {
+		const selectedChannel = this.channelOption.find((channel: any)=> channel.connected_id === id);
+		if (selectedChannel) {
+		  this.channelSelected = selectedChannel.label;
+		}
+		this.ShowAssignOption =false;
+	  }
 
 	prepareCampaingForm(){
 		return this.fb.group({
@@ -275,6 +327,16 @@ constructor(config: NgbModalConfig, private modalService: NgbModal,private datep
 				  connected_id: item?.connected_id,
 				  channel_status: item?.channel_status
 				}));
+
+				if(this.channelOption.length == 1){
+					this.channelSelected = this.channelOption[0].label;
+					this.channelPhoneNumber = this.channelOption[0].connected_id;
+
+				}
+				this.phoneNo =  response?.whatsAppDetails[0]?.connected_id;
+				this.phone_no_id = response?.whatsAppDetails[0]?.phone_number_id;
+				this.WABA_Id = response?.whatsAppDetails[0]?.WABA_ID;
+				this.getQualityRating();
 			  }
 		 }
 	   })
@@ -585,6 +647,7 @@ constructor(config: NgbModalConfig, private modalService: NgbModal,private datep
 
     async getCampaignDetail(CampaignID:any){
         await this.apiService.getCampaignDetail(CampaignID).subscribe(campaign =>{
+			this.showDownloadBtn = false;
 			let campaigns:any=campaign
 				let item = campaigns[0]
 				if(item.status==0){
@@ -598,6 +661,7 @@ constructor(config: NgbModalConfig, private modalService: NgbModal,private datep
 				}else
 				if(item.status==3){
 					item['status_label'] ='completed'
+					this.showDownloadBtn = true;
 				}
 				else{
 					item['status_label'] ='draft'
@@ -655,6 +719,37 @@ constructor(config: NgbModalConfig, private modalService: NgbModal,private datep
 		})
 
 
+	}
+	async downloadCampignReport(CampaignId: number, Name: string) {
+		if (CampaignId && Name) {
+			let data = {
+				campaignId: CampaignId,
+				userName: this.userName,
+				emailId: this.userEmail,
+				campaignName: Name,
+				spid: this.SPID
+			}
+			var downloadIcon = document.querySelector(".btn-circle-download");
+			if (downloadIcon) {
+				this.downloadBtnLoad = true;
+				downloadIcon.classList.add("load");
+			}
+			await this.apiService.downloadCampignReport(data).subscribe((response: any) => {
+				downloadIcon?.classList.add("done");
+				if (response) {
+					setTimeout(() => {
+						downloadIcon?.classList.remove("load");
+						downloadIcon?.classList.remove("done");
+						this.downloadBtnLoad = false;
+					}, 1000)
+					console.log("Campaign Report sent successfully");
+					this.showToaster("Campaign report has been sent successfully on your registered email",'success');
+				}
+				else{
+					this.showToaster("Sorry, there is some error. Please try after some time",'error');
+				}
+			})
+		}
 	}
 	statusUpdate(id:number,status:string){
 		const campaign = this.allCampaign.find((x: any) => x.Id === id);
@@ -1434,7 +1529,11 @@ formateDate(dateTime:string){
 		this.closeAllModal()
 		this.modalReference = this.modalService.open(addNewCampaign,{size: 'xl', windowClass:'white-bg'});
 	}
-	ConfirmCampaignSchedule(ConfirmCampaign:any){
+	 async ConfirmCampaignSchedule(ConfirmCampaign:any){
+       await this.CampaignNameAlreadyExist()
+		if(this.isCampaignAlreadyExist){
+			return 
+		}
 		if(this.scheduled ==1 && this.selecteScheduleDate==''){
 			this.showToaster('Please select schedule date...','error')
 		}else{
@@ -1792,7 +1891,7 @@ testinfo(){
 		this.CampaignNameAlreadyExist();
 
 		if(this.activeStep < 3){
-			this.selectedTemplate=''
+			//this.selectedTemplate=''
 		}
 		if(this.activeStep ==2){
 			this.getTemplates()
@@ -2516,7 +2615,7 @@ console.log(this.allTemplatesMain);
 	  }
 	  directToSettings() {
 		this.closeAllModal();
-		this.router.navigate(['dashboard/setting']);
+		this.router.navigate(['setting']);
 	  }
 
 	  removeSegmentedAudienceList() {
@@ -2589,20 +2688,28 @@ console.log(this.allTemplatesMain);
 		  console.log(this.optInStatus)
 		  }
 		
-		  CampaignNameAlreadyExist() {
-			let spid = this.SPID;
-			let title = this.newCampaignDetail.get('title')?.value;
+		  CampaignNameAlreadyExist(): Promise<void> {
+			return new Promise((resolve) => {
+			  let spid = this.SPID;
+			  let title = this.newCampaignDetail.get('title')?.value;
+		  
 			  this.apiService.isCampaignExists(title, spid, this.selectedCampaign.Id).subscribe(
 				(response: any) => {
-					if (response.status === 409) {
-						this.isCampaignAlreadyExist = true;
-						this.showToaster('Campaign Already Exist with this name !', 'error');
-					} else {
-						this.isCampaignAlreadyExist = false;
-					}
+				if (response.status === 409) {
+					this.isCampaignAlreadyExist = true;
+					this.showToaster('Campaign Already Exist with this name!', 'error');
+				} else {
+					this.isCampaignAlreadyExist = false;
 				}
-			);
-		}
+				  resolve();
+				},
+				(error: any) => {
+				  this.isCampaignAlreadyExist = false;
+				  resolve();
+				}
+			  );
+			});
+		  }
 	
 		getCampaignTimingList(){
 			this._settingsService.getCampaignTimingList(Number(this.SPID))

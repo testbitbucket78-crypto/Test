@@ -19,6 +19,24 @@
 					<input (keyup)="SearchCampaign($event)" type="text" placeholder="Search" aria-label="Search" class="search-box" aria-describedby="basic-addon2" />
 			</div>
 			<div class="campaigns_page_right">
+				<div class="D-whatsApp">
+					<button class="D2-whatsApp" (click)="toggleAssignOption()" >
+						<span>
+							<img class="icon" src="/assets/img/teambox/whatsapp-icon-l.svg" />
+							{{channelSelected}} ({{channelPhoneNumber}})
+							<img src="../../../../assets/img/arrow-down.svg"/>
+						</span>
+					</button>
+					<div *ngIf="ShowAssignOption" class="popup-dialog AssignOption p-15">
+						<p *ngFor="let channel of channelOption" class="d-flex align-items-center px-2 py-1" 
+						(click)="updateDropdown(channel.connected_id)">
+						<img class="icon" src="/assets/img/teambox/whatsapp-icon-l.svg" />
+							<span class="text-capitalize initials">{{channel.label}} ({{channel.connected_id}})</span>
+						</p>
+					</div>
+				</div>
+
+
 				<div class="drop-down-btn">
 					<div class="toggle-box" (click)="filterCampaign(filtercampaign)">
 						<img src="assets/img/teambox/filter-icon.svg">
@@ -33,14 +51,48 @@
 		</div>
 
 		<div class="campaigns_section">
-			<p class="campaigns_content_heading"><img src="../../../../assets/img/info-icon.png" (click)=" toggleContactOption()">
+			<!-- <p class="campaigns_content_heading"><img src="../../../../assets/img/info-icon.png" (click)=" toggleContactOption()">
 				
-				</p>
-				<div  *ngIf="ShowContactOwner" class="showInfoFallback1">
+				</p> -->
+				<!-- <div  *ngIf="ShowContactOwner" class="showInfoFallback1">
 					<p id="p-body">You can input a value as a fallback for the selected variable (attribute) in the message. This fallback will be used whenever no data is available for the selected variable in the contacts database.
 					</p>
 					<button id="radio-close-btn" (click)="ShowContactOwner = false">X</button>
-				  </div>
+				  </div> -->
+				<div *ngIf="channelSelected === 'WA API'" class="info-container ml-2 mb-2 d-flex align-items-center">
+					<div class="d-flex align-items-center">
+						<img src="../../../../assets/img/info-icon.png" (click)="balanceLimitTooltip = !balanceLimitTooltip" style="width: 15px; height: 15px;">
+						<div *ngIf="balanceLimitTooltip" class="showInfoFallback1 ">
+							<p id="p-body">
+								The maximum number of business-initiated conversations you can initiate within a 24-hour period.
+							</p>
+							<button id="radio-close-btn" (click)="balanceLimitTooltip = false">X</button>
+						</div>
+						<p class="d-inline-flex pl-2 mb-0">
+							<span>
+								Messaging Limit:&nbsp;
+							</span>
+							<strong>{{ messagingLimit }}</strong>
+						</p>
+					</div>
+					<div class="d-flex align-items-center">
+						<img src="../../../../assets/img/info-icon.png" (click)="channelQualityTooltip = !channelQualityTooltip" style="width: 15px; height: 15px;">
+						<div *ngIf="channelQualityTooltip" class="showInfoFallback1 ">
+							<p id="p-body">
+								Your quality rating is based on how messages have been received by recipients over the past seven days.
+It is determined by a combination of user feedback signals like blocks, reports and the reasons users provide when they block a business
+							</p>
+							<button id="radio-close-btn" (click)=" channelQualityTooltip= false">X</button>
+						</div>
+						<p class="d-inline-flex pl-2 mb-0">
+							<span>
+								Channel Quality Rating:&nbsp;
+							</span>
+							<strong [ngClass]="channelQualityRating">{{ channelQualityRating }}</strong>
+						</p>
+					</div>
+					<a href="https://www.facebook.com/business/help/896873687365001" target="_blank">Know More</a>
+				</div>
 				 <!-- <div *ngIf="ShowContactOwner" class=" ContactOption" (click)="stopPropagation($event)">
 				<p><span>Messaging limit:</span>WhatsApp enforces a policy limiting business to 1,000 messages per 24-hour period to prevent spam and maintain a quality user experience. However there is no cap on receiving messages from users.</p>
 				</div> -->
@@ -82,6 +134,8 @@
 					</div>
 					<p class="start_time">Created on <span>{{settingsService?.getDateTimeFormate(selectedCampaign?.created_datetime_formated)}}</span> Start time <span>{{settingsService?.getDateTimeFormate(selectedCampaign?.start_datetime_formated)}}</span></p>
 					<p class="title" ><img *ngIf="selectedCampaign?.status==0 || selectedCampaign?.status==1" (click)="editCampaign(addNewCampaign,1)" class="icon_sm" src="/assets/img/teambox/edit-icon.svg"> {{selectedCampaign?.title}}</p>
+					
+					
 					<p><img class="icon" src="/assets/img/teambox/whatsapp-icon-l.svg" />{{selectedCampaign?.channel_label}}</p>
 					<!--If running start-->
 					<div *ngIf="selectedCampaign.status>1">
@@ -133,6 +187,34 @@
 						<div class="running_section_row">
 							
 						</div>
+					</div>
+					<div *ngIf="showDownloadBtn" class="d-flex align-items-center mb-3 mt-3">
+						<div class="position-relative">
+							<img src="../../../../assets/img/info-icon.png" (click)="dowloadTooltip = !dowloadTooltip" style="width: 15px; height: 15px; margin-right: 18px;">
+							<div *ngIf="dowloadTooltip" class="showInfoFallback1 t-0">
+								<p id="p-body">
+									Please note the values for various report components can update based on the actual status provided by Meta. e.g. Seen or Reply status and its time.
+								</p>
+								<button id="radio-close-btn" (click)="dowloadTooltip = false">X</button>
+							</div>
+						</div>
+						<button [disabled]="downloadBtnLoad" [ngClass]="!downloadBtnLoad ? 'downloadBtnEnabled' : 'downloadBtnDisabled'" class="new-token-btn w-auto mr-2 d-flex align-items-center" (click)="downloadCampignReport(selectedCampaign?.Id, selectedCampaign?.title)">
+							<span>
+								Download Latest Report
+							</span>
+							<div class="btn-circle-download ml-2">
+								<svg id="arrow" width="10px" height="16px" viewBox="17 14 14 20">
+								  <path d="M24,15 L24,32"></path>
+								  <polyline points="30 27 24 33 18 27"></polyline>
+								</svg>
+								<svg id="check" width="18px" height="12px" viewBox="13 17 21 15">
+								  <polyline points="32.5 18.5 20 31 14.5 25.5"></polyline>
+								</svg>
+								<svg  id="border" width="25px" height="25px" viewBox="0 0 48 48">
+								  <path d="M24,1 L24,1 L24,1 C36.7025492,1 47,11.2974508 47,24 L47,24 L47,24 C47,36.7025492 36.7025492,47 24,47 L24,47 L24,47 C11.2974508,47 1,36.7025492 1,24 L1,24 L1,24 C1,11.2974508 11.2974508,1 24,1 L24,1 Z"></path>
+								</svg>
+							</div>							  
+						</button>
 					</div>
 					</div>
 
@@ -221,7 +303,7 @@
 					<span class="checkmark"></span>
 				  </label>			
 				</div>
-			<p class="label">By Channels</p>
+			<!-- <p class="label">By Channels</p>
 			<div class="input_group">			  
 				  <label class="container" *ngFor="let channel of channelOption ;let i = index">
 					{{
@@ -232,7 +314,7 @@
 					<input [(ngModel)]="channel.checked" type="checkbox" name="channel" value={{channel.value}} (click)="updateFilter($event,channel)">
 					<span class="checkmark"></span>
 				  </label>
-			</div>
+			</div> -->
 			<p class="label">By Categories</p>
 			<div class="input_group">				  
 				  <label class="container" *ngFor="let category of categoriesOption ;let i = index">

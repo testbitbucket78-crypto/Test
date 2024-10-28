@@ -201,10 +201,10 @@ export class DashboardComponent implements OnInit {
 
     getLimitedMessageText(message: string) {
         let maxLength = 70;
-        if (message.length <= maxLength) {
+        if (message?.length <= maxLength) {
         return message;
         } else {
-        return message.substring(0, maxLength) + '...';
+        return message?.substring(0, maxLength) + '...';
         }
 
     }

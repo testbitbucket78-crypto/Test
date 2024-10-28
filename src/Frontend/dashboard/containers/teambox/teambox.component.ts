@@ -3928,7 +3928,10 @@ sendMessage(isTemplate:boolean=false,templateTxt:string=''){
 		  //this.editContact.get('tag')?.setValue(selectedTags); 
 		  let idx = this.filteredCustomFields.findIndex((item:any)=> item.ActuallName == prop);
 		  if( idx>-1 &&  this.filteredCustomFields[idx] && (this.filteredCustomFields[idx].type == 'Date Time' || this.filteredCustomFields[idx].type == 'Date')){
-			this.editContact.get(prop)?.setValue(value);
+			if(value){
+				let dateVal = this.datePipe.transform(new Date(value),'yyyy-MM-dd')
+				this.editContact.get(prop)?.setValue(dateVal);
+			  }
 		  }else if(idx>-1 &&  this.filteredCustomFields[idx] && (this.filteredCustomFields[idx].type == 'Select')){
 			let val = value ? value.split(':')[0] : '';
 			console.log(val);

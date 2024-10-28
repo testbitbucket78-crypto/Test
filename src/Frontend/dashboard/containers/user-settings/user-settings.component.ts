@@ -51,7 +51,7 @@ export class UserSettingsComponent implements OnInit {
             sortable: true,
         },
         {
-            field: 'mobile_number',
+            field: 'registerPhone',
             headerName: 'Phone No.',
             width:150,
             suppressSizeToFit: false,
@@ -204,7 +204,7 @@ getPhoneNumberValidation(){
               //  Validators.pattern(/^[a-zA-Z.-]+(?:\s+[a-zA-Z.-]+)*$/),
                 Validators.minLength(2),
               ]),
-            mobile_number: new FormControl(null,[Validators.required]),
+              registerPhone: new FormControl(null,[Validators.required]),
             country_code: new FormControl(['IN +91']),
             display_mobile_number:new FormControl('', Validators.compose([Validators.required, Validators.minLength(6),Validators.maxLength(15)])),
             UserType: new FormControl('',[Validators.required]),
@@ -298,7 +298,7 @@ getPhoneNumberValidation(){
         userData.SP_ID = this.sp_Id;
         userData.UserType = this.userDetailForm.controls.UserType.value;
         userData.email_id = this.userDetailForm.controls.email_id.value;
-        userData.mobile_number = this.userDetailForm.controls.mobile_number.value;
+        userData.registerPhone = this.userDetailForm.controls.registerPhone.value;
         userData.display_mobile_number = this.userDetailForm.controls.display_mobile_number.value;
         userData.country_code = this.userDetailForm.controls.country_code.value;
         userData.name = this.userDetailForm.controls.name.value;
@@ -374,7 +374,7 @@ getPhoneNumberValidation(){
           let formattedPhoneNumber = parsePhoneNumberFromString(phoneNumberWithCountryCode);
       
           if (formattedPhoneNumber) {
-            this.userDetailForm.get('mobile_number')?.setValue(formattedPhoneNumber.formatInternational().replace(/[\s+]/g, ''));
+            this.userDetailForm.get('registerPhone')?.setValue(formattedPhoneNumber.formatInternational().replace(/[\s+]/g, ''));
           }
         }
         }

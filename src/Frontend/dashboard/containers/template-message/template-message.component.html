@@ -1,5 +1,5 @@
 <div class="toaster" (click)="hideToaster()">
-    <p *ngIf="errorMessage" class="error">{{errorMessage}}</p>
+    <p *ngIf="errorMessage" class="error" [innerHtml]="errorMessage"></p>
     <p *ngIf="successMessage" class="success">{{successMessage}}</p>
     <p *ngIf="warningMessage" class="warning">{{warningMessage}}</p>
 </div>
@@ -42,8 +42,9 @@
                             <span>id: {{item?.ID}}</span>
                         </div>
                         <p class="pb-2 title ellipsis">{{getLimitedMessageText(item?.TemplateName)}}</p>
-                        <p class="start_time">Created On: <span>{{settingsService?.getDateTimeFormate(item?.created_at )}}</span></p>
-                        <p class="start_time">Modified On: <span>{{ item?.updated_at ? (settingsService?.getDateTimeFormate(item?.updated_at)) : 'NA' }}</span></p>
+                        <p *ngIf="filterListChannel[0]?.label === 'WA Web'" class="start_time">Created On: <span>{{settingsService?.getDateTimeFormate(item?.created_at )}}</span></p>
+                        <p *ngIf="filterListChannel[0]?.label === 'WA Web'" class="start_time">Modified On: <span>{{ item?.updated_at ? (settingsService?.getDateTimeFormate(item?.updated_at)) : 'NA' }}</span></p>
+                        <p *ngIf="filterListChannel[0]?.label === 'WA API'" >Quality : <span> {{settingsService?.getQualityRatingClass(item?.quality)}}</span></p>
                         <p class="pt-2"><img  class="icon" src="../../../../assets/img/teambox/whatsapp-icon-l.svg" />{{item?.Channel}}</p>
                         <div class="campaigns_section_item_statics">
                             <div><p>{{item?.Category}}</p><p><span>Category</span></p></div>
@@ -85,6 +86,8 @@
                                 <div class="img" *ngIf="!profilePicture">{{apiService.getInitials(templatesMessageData?.created_By)}}</div>
                             <p class="m-0">{{templatesMessageData?.created_By}}</p></div>
                             <p><span>Created By</span></p>
+                            <p *ngIf="filterListChannel[0]?.label === 'WA API'">Quality : <span> {{settingsService?.getQualityRatingClass(templatesMessageData?.quality)}}</span></p>
+
                         </div>
                         <p class="title" >{{templatesMessageData?.TemplateName}}</p>
                         <p><img class="icon" src="../../../../assets/img/teambox/whatsapp-icon-l.svg" />{{templatesMessageData?.Channel}}</p>
@@ -405,7 +408,7 @@
                     <h6>Template Name <span class="text-danger font-weight-bold">*</span></h6>
                 </div>
                 <div class="sel-type-text">
-                    <textarea name="text-editor" formControlName="TemplateName" maxlength="512"rows="8"
+                    <textarea name="text-editor" class="template-Name-box scrollBar-visible" formControlName="TemplateName" maxlength="512"rows="8"
                     (change)="checkTemplateName($event)" (input)="onInputChange($event)" placeholder="Enter template name in max 512 characters. Only alphabets, numbers and underscore is allowed to enter."></textarea>
                 </div>
 
@@ -444,6 +447,14 @@
                         <option *ngFor="let item of filterListLanguage">{{item?.label}}</option>     
                     </select>
                 </div>
+                <div class="p-1 msg-head">
+                    <h6 class="pt-1 pb-2">Allow category change<span class="text-danger font-weight-bold">*</span></h6>
+                    <select class="sel input-form" formControlName="Language">
+                        <option [disabled]="true" [selected]="true" [hidden]="true" [value]="null">Select language</option>
+                        <option value="Yes">Yes</option>     
+                        <option value="No" >No</option>     
+                    </select>
+                </div>
             </div>
         </div>
             <div class="pr-4 modal-footer">
@@ -469,14 +480,14 @@
            <div class="modal-container">
 
 
-            <div class="modal-body">
+            <div class="modal-body scrollBar-visible">
 
 
                 <div class="main-container-for-body">
                     <button type="button" class="previous-btn" type="button" data-bs-toggle="modal" data-bs-target="#newTemplateMessageFirst">
                         <img src="../../../../assets/img/profile/previous.svg" />
                     </button>
-                    <div class="d-flex justify-content-between align-items-center sel-type-btns">
+                    <!-- <div class="d-flex justify-content-between align-items-center sel-type-btns">
 
                         <input type="radio" id="sel-text" name="sel-type" (change)="showMessageType('text')" 
                            [checked]="templatesMessageData.media_type=='text' || galleryMessageData.media_type=='text'">
@@ -491,15 +502,24 @@
                         [checked]="templatesMessageData.media_type=='document' || galleryMessageData.media_type=='document'">
                         <label [ngClass]="{'radio-label': selectedType === 'document'}" class="m-0" for="sel-document">Document</label>
                     
+                    </div> -->
+                    <div>
+                        <select [(ngModel)]="selectedType" [ngModelOptions]="{standalone: true}"  class="sel input-form" (change)="showMessageType()">
+                            <option value="">None</option>
+                            <option value="text">Text</option>
+                            <option value="image">Image</option>
+                            <option value="video">Video</option>
+                            <option value="document">Document</option>
+                        </select>
                     </div>
 
                     <div class="sel-type-text-container">
                             <div *ngIf="selectedType === 'text'">
                             <div class="d-flex justify-content-between align-items-center pt-3 pb-2 msg-head">
-                                <h6>Header <span>(Optional)</span></h6><div><span class="characters-count">{{ getCharacterCount(3) }}</span><span>/60 Characters</span></div>
+                                <h6>Header {{selectedType}}<span>(Optional)</span></h6><div><span class="characters-count">{{ getCharacterCount(3) }}</span><span>/60 Characters</span></div>
                             </div>
                             <div class="sel-type-text">
-                                <textarea id = "headerText" name="text-editor" formControlName="Header" maxlength="60"rows="6" placeholder="Enter" (input)="updateCharacterCount($event,3)"></textarea>
+                                <textarea id = "headerText" name="text-editor" formControlName="Header" maxlength="60"rows="3" placeholder="Enter" (input)="updateCharacterCount($event,3)"></textarea>
                                 <button (click)="isHeaderAttribute = true;ToggleAttributesOption();" style="width:28px;height:28px;border-radius: 35%!important;border: 1px solid #e2e2e2!important;background:#fff;" class="attibutes-btn">
                                     <div><img style="width:10px;" src="/assets/img/teambox/attributes.svg"></div>
                                 </button>
@@ -512,17 +532,19 @@
                         <input type="file" accept="image/jpeg, image/png" (change)="onFileChange($event)" id="sel-type-image" (click)="$event.target.value=null">
                         <div *ngIf="newTemplateForm.get('Links')?.value == null">
                         <label class="type_label" for="sel-type-image"><img src="../../../../assets/img/teambox/add-white.svg" /></label>
-                        <p class="m-0">Upload image</p></div> 
-                        <div class="main-preview-type-image" *ngIf="newTemplateForm.get('Links')?.value !== null" [ngStyle]="{'background-image': 'url(' + selectedPreview + ')'}">
+                        <p class="m-0">Upload image <span>Choose JPG or PNG file</span></p></div> 
+                        <div *ngIf="newTemplateForm.get('Links')?.value != null">
+                            <label class="type_label image-label" ><img src="../../../../assets/img/teambox/photo-icon.svg" /></label>
+                            </div>
+                        <!-- [ngStyle]="{'background-image': 'url(' + selectedPreview + ')'}" -->
+                        <div class="main-preview-type-image" *ngIf="newTemplateForm.get('Links')?.value !== null" >
                             <span class="p-2 text-right" (click)="removeValue()"><img src="../../../../assets/img/settings/remove.svg" /></span>
                         </div>
                 </div>
 
-                <div *ngIf="selectedType === 'video'" class="my-4 sel-type-video">
-                    <input type="file" accept="video/mp4" name="video-upload" (change)="onFileChange($event)" id="sel-type-video" (click)="$event.target.value=null">
-                    <label *ngIf="!selectedPreview || loadingVideo" class="type_label" for="sel-type-video"><img src="../../../../assets/img/teambox/add-white.svg" /></label> 
-                    <div class="video-player">
-                        <span *ngIf="selectedPreview" class="p-2 text-right main-preview-type-video" (click)="removeValue()">
+                <div *ngIf="selectedType === 'video'" class="my-4 sel-type-image" [ngClass]="{'video-back':newTemplateForm.get('Links')?.value !== null}">
+                    <div class="main-preview-type-doc">
+                        <span *ngIf="selectedPreview" class="p-2 " (click)="removeValue()">
                           <img src="../../../../assets/img/settings/remove.svg" />
                         </span>
                         <div *ngIf="loadingVideo" class="text-center">
@@ -530,8 +552,12 @@
                               <span class="sr-only">Loading...</span>
                             </div>
                           </div>
-                    <video [src]="selectedPreview" type="video/mp4" controls #videoPlayer></video>
+                    <!-- <video [src]="selectedPreview" type="video/mp4" controls #videoPlayer></video> -->
                     </div>
+                    <input type="file" accept="video/mp4" name="video-upload" (change)="onFileChange($event)" id="sel-type-video" (click)="$event.target.value=null">
+                    <label *ngIf="!selectedPreview || loadingVideo" class="type_label" for="sel-type-video"><img src="../../../../assets/img/teambox/add-white.svg" /></label> 
+                    <p class="m-0" *ngIf="!selectedPreview || loadingVideo">Upload video <span>Choose MP4 file</span></p> 
+                    <img *ngIf="newTemplateForm.get('Links')?.value !== null" src="../../../../assets/img/teambox/video_preview.png" />
                     <div class="custom-play-button"></div>
                 
                 </div>
@@ -546,7 +572,7 @@
                         <input type="file" accept=".doc, .docx, .pdf" (change)="onFileChange($event)" name="document-select" id="sel-type-document" (click)="$event.target.value=null">
                         <div *ngIf="newTemplateForm.get('Links')?.value == null">
                         <label class="type_label" for="sel-type-document"><img src="../../../../assets/img/teambox/add-white.svg" /></label>
-                        <p class="m-0">Upload document</p>
+                        <p class="m-0">Upload document  <span>Choose PDF file</span></p>
                        </div>
                          
                 </div>
@@ -569,7 +595,7 @@
                    </ejs-richtexteditor>
                    <!-- (change)="onContentChange($event)" -->
                 </div>
-                <div><a class="ft-12" href="https://developers.facebook.com/docs/whatsapp/message-templates/guidelines#common-rejection-reasons">Learn more about formatting in Message Template Guidelines</a></div>
+                <div><a class="ft-12" target="_blank" href="https://developers.facebook.com/docs/whatsapp/message-templates/guidelines#common-rejection-reasons">Learn more about formatting in Message Template Guidelines</a></div>
               
                 <div class="d-flex justify-content-between align-items-center pt-3 pb-2 msg-head">
                     <h6>Footer Text<span>(Optional)</span></h6><div> <span class="characters-count">{{ getCharacterCount(5) }}</span><span>/60 Characters</span></div>
@@ -583,19 +609,30 @@
             <div *ngIf="newTemplateForm.get('Channel')?.value == 'WA API'" class="d-flex pt-3 pb-2 flex-column add-buttons">
                 <div class="px-4 pt-1 msg-head">
                     <h6>Buttons<span>(Optional)</span></h6>
-                    <span class="pb-1">Add buttons to let customers respond to your message or<br /> take action</span>
+                    <span class="pb-1">Add buttons to let customers respond to your message or take action. You can add up to total of 10 buttons. If you add more than 3 buttons, they will appear in a list.</span>
                     <br />
-                    <select class="mt-1 input-form" formControlName="buttonType">
-                        <option  [disabled]="true" [selected]="true" [hidden]="true">Select a button type</option>
+                    <!-- <select class="mt-1 input-form" formControlName="buttonType">
+                        <option  [disabled]="true" [selected]="true" [hidden]="true" ()>Select a button type</option>
                         <option value="Quick Reply">Quick Reply</option>
-                        <option value="Call to Action">Call to Action</option>
-                    </select>
+                        <option value="Call to Action">Visit Website</option>
+                        <option value="Call to Action">Call Phone</option>
+                        <option value="Call to Action">Complete Flow</option>
+                        <option value="Call to Action">Copy offer Code</option>
+                    </select> -->
+                    <button (click)="openButtonPopUp()" class="add-btn">+ Add Buttons</button>
+                    <div class="btn-popup" *ngIf="isPopupVisible">
+                        <div class="btn-Name" (click)="addButtons('Quick Reply')" [class.disabled]="isDisableButton('Quick Reply')">Quick Reply  </div>
+                        <div class="btn-Name" (click)="addButtons('Visit Website')" [class.disabled]="isDisableButton('Visit Website')">Visit Website <div class="font-small">2 buttons maximum</div></div>
+                        <div class="btn-Name" (click)="addButtons('Call Phone')" [class.disabled]="isDisableButton('Call Phone')">Call Phone <div class="font-small">1 button maximum</div></div>
+                        <div class="btn-Name" (click)="addButtons('Complete Flow')" [class.disabled]="isDisableButton('Complete Flow')">Complete Flow <div class="font-small">1 button maximum</div></div>
+                        <div class="btn-Name" (click)="addButtons('Copy offer Code')" [class.disabled]="isDisableButton('Copy offer Code')">Copy offer Code <div class="font-small">1 button maximum</div></div>
+                    </div>
                 </div>
 
-                <div class="quick-reply-btns" *ngIf="newTemplateForm.get('buttonType')?.value === 'Quick Reply'">
+                 <!-- <div class="quick-reply-btns" *ngIf="newTemplateForm.get('buttonType')?.value === 'Quick Reply'">
                    <span>You can add upto 3 quick replies buttons</span>
 
-                   <div *ngFor="let quickReply of quickReplyButtons;let idx=index">
+                  <div *ngFor="let quickReply of quickReplyButtons;let idx=index">
                     <div class="d-flex justify-content-between align-items-center msg-head">
                         <h6>Quick Reply {{ idx + 1 }}</h6><div><span class="characters-count">{{ getCharacterCount(idx) }}</span><span>/25 Characters</span></div>
                     </div>
@@ -608,51 +645,188 @@
                         </div>
                         <a class="remove-btn" (click)="removeQuickReplyButtons(idx)" *ngIf="quickReplyButtons?.length>1">- Remove</a>
                     </div>
-                   </div>
+                   </div> 
                     
-                </div>
+                </div> -->
 
-                <div class="call-to-action-btns" *ngIf="newTemplateForm.get('buttonType')?.value === 'Call to Action'">
-                    <span>You can add upto 2 call to action buttons</span>
-                    
-                  <div class="container-call-to-btns">
-                    <div class="d-flex justify-content-between">
-                      <div class="pt-3 pb-2 msg-head">
-                            <h6 class="pt-1 pb-3">Type of Action</h6>
-                            <select class="input-form">
-                                <option [selected]="true">Call Phone</option>
-                                <option [disabled]="true" >Visit Website</option>
-                            </select>
+                <div class="call-to-action-btns" >     
+                    <!-- <div *ngFor="let quickReply of quickReplyButtons;let idx=index">
+                        <div class="d-flex justify-content-between align-items-center msg-head">
+                            <h6>Quick Reply {{ idx + 1 }}</h6><div><span class="characters-count">{{ getCharacterCount(idx) }}</span><span>/25 Characters</span></div>
                         </div>
-                    <div class="flex-grow-1">
-                        <div class="d-flex justify-content-between align-items-center pt-3 pb-2 msg-head">
-                            <h6>Button Name</h6> <div><span class="characters-count">{{ getCharacterCount(6) }}</span><span>/25 Characters</span></div>
-                          </div>
-                          <div class="sel-type-link">
-                            <input type="text" formControlName="buttonText" maxlength="25"  placeholder="Enter" (input)="updateCharacterCount($event, 6)">
-                        </div>                         
+                        <div class="flex-column sel-type-link">
+                            <input type="text" id="quickreply" maxlength="25" [formControlName]="'quickreply' + (idx + 1)" placeholder="Enter" (input)="updateCharacterCount($event, idx)">
+                        </div>
+                        <div class="d-flex justify-content-between incoming-card">
+                            <div>
+                                <a class="add-btn" (click)="addQuickReplyButtons()" *ngIf="idx == quickReplyButtons?.length -1">+ Add</a>
+                            </div>
+                            <a class="remove-btn" (click)="removeQuickReplyButtons(idx)" *ngIf="quickReplyButtons?.length>1">- Remove</a>
+                        </div>
+                       </div> -->
+
+                <div class="container-call-to-btns" *ngFor="let item of buttonsArray;let idx = index">
+                    <div class="d-flex btn-container" *ngIf="item.type =='Quick Reply'">
+                        <div class="flex-end pb-2">
+                            <div class="btn-type-heading">Quick Reply</div>
+                        </div>
+                        <div class="flex-grow-1 ml-2 pb-2">
+                            <div class="d-flex justify-content-between align-items-center msg-head">
+                                <h6>Button Text</h6>
+                                <!-- {{ getCharacterCount(idx) }} -->
+                                <div><span class="characters-count">{{item?.buttonText?.length}}</span><span>/25 Characters</span></div>
+                            </div>
+                            <div class="flex-column sel-type-link">
+                                <!-- (input)="updateCharacterCount($event, idx)" -->
+                                <input type="text" id="quickreply" [(ngModel)]="item.buttonText" [ngModelOptions]="{standalone: true}" maxlength="25" placeholder="e.g. Yes">
+                            </div>
+                        </div>
                     </div>
-                  </div>
-                  <div class="d-flex justify-content-between">
-                    <div class="pt-3 pb-2 msg-head">
-                    <h6 class="pt-1 pb-3">Country</h6>
-                    <select class="callto input-form" formControlName="country_code">
-                        <option *ngFor="let countryCode of countryCodes let i = index" [ngValue]="countryCode">
-                          {{ countryCode }}
-                        </option>
-                      </select>
+                    <div class="btn-container" *ngIf="item.type =='Copy offer Code'">
+                        <div class="d-flex ">
+                        <div class="flex-end">
+                            <div class="btn-type-heading">Copy Offer Code</div>
+                        </div>
+                        <div class="flex-grow-1 ml-2">
+                            <div class="d-flex justify-content-between align-items-center msg-head">
+                                <h6>Button Text</h6>
+                                <!-- {{ getCharacterCount(idx) }} -->
+                                <div><span class="characters-count">{{item?.buttonText?.length}}</span><span>/25 Characters</span></div>
+                            </div>
+                            <div class="flex-column sel-type-link">
+                                <!-- (input)="updateCharacterCount($event, idx)" -->
+                                <input type="text" id="quickreply" maxlength="25" placeholder="Enter" disabled [(ngModel)]="item.buttonText" [ngModelOptions]="{standalone: true}" >
+                            </div>
+                        </div>
                     </div>
-                    <div class="flex-grow-1">
-                      <div class="d-flex justify-content-between align-items-center pt-3 pb-2 msg-head">
-                        <h6>Phone No.</h6> <div><span class="characters-count">{{ getCharacterCount(7) }}</span><span>/20 Characters</span></div>
-                      </div>
-                      <div class="sel-type-link">
-                        <input type="text" formControlName="phone_number" maxlength="20" placeholder="Enter" style="display: none">
-                        <input type="text" formControlName="displayPhoneNumber" maxlength="20" placeholder="Enter" (input)="updateCharacterCount($event, 7)" (change)="formatPhoneNumber()">
-                   </div>  
-                   </div>
-                  </div>
-                  </div>
+                        <div class="d-flex pb-2" >                            
+                            <div class="flex-grow-1 ml-2">
+                                <div class="d-flex justify-content-between align-items-center msg-head">
+                                    <!-- {{ getCharacterCount(idx) }} -->
+                                    <div><span class="characters-count">{{item?.code?.length}}</span><span>/15 Characters</span></div>
+                                </div>
+                                <div class="flex-column sel-type-link">
+                                    <!-- (input)="updateCharacterCount($event, idx)" -->
+                                    <input type="text" id="quickreply" maxlength="15" placeholder="e.g. Get50Off" [(ngModel)]="item.code" [ngModelOptions]="{standalone: true}" >
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="btn-container" *ngIf="item.type =='Complete Flow'">
+                        <div class="d-flex">
+                        <div class="flex-end">
+                            <div class="btn-type-heading">Complete Flow</div>
+                        </div>
+                        <div class="flex-grow-1 ml-2">
+                            <div class="d-flex justify-content-between align-items-center msg-head">
+                                <h6>Button Text</h6>
+                                <!-- {{ getCharacterCount(idx) }} -->
+                                <div><span class="characters-count">{{item?.buttonText?.length}}</span><span>/25 Characters</span></div>
+                            </div>
+                            <div class="flex-column sel-type-link">
+                                <!-- (input)="updateCharacterCount($event, idx)" -->
+                                <input type="text" id="quickreply" maxlength="25" placeholder="e.g. Sign up" [(ngModel)]="item.buttonText" [ngModelOptions]="{standalone: true}" >
+                            </div>
+                        </div>
+                    </div>
+
+                        <div class="d-flex pt-3 pb-2" >                            
+                            <div class="flex-grow-1">
+                                <div class="d-flex justify-content-between align-items-center msg-head">
+                                    <!-- {{ getCharacterCount(idx) }} -->
+                                    <!-- <div><span class="characters-count">{{item?.buttonText?.length}}</span><span>/25 Characters</span></div> -->
+                                </div>
+                                <div class="flex-column sel-type-link">
+                                    <!-- (input)="updateCharacterCount($event, idx)" -->
+                                    <!-- <input type="text" id="quickreply" maxlength="25" placeholder="Enter" [(ngModel)]="item.buttonText" [ngModelOptions]="{standalone: true}" > -->
+                                    <select class="sel input-form" [(ngModel)]="item.flow" [ngModelOptions]="{standalone: true}">
+                                        <option value="" selected disabled>Select</option>
+                                        <option *ngFor="let flow of templateFlows" [value]="flow?.id">{{flow?.name}}</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="btn-container" *ngIf="item.type =='Call Phone'">
+                        <div class="d-flex justify-content-between">
+                            <div class="flex-end">
+                                <div class="btn-type-heading">Call Phone</div>
+                            </div>
+                            <div class="flex-grow-1 ml-2">
+                                <div class="d-flex justify-content-between align-items-center  msg-head">
+                                    <h6>Button Text</h6>
+                                    <div><span class="characters-count">{{item?.buttonText?.length}}</span><span>/25 Characters</span>
+                                    </div>
+                                </div>
+                                <div class="sel-type-link">
+                                    <input type="text" [(ngModel)]="item.buttonText" [ngModelOptions]="{standalone: true}" maxlength="25" placeholder="e.g. Call us">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="d-flex justify-content-between">
+                            <div class="pt-3 pb-2 msg-head">
+                                <h6 class="pt-1 ">Country</h6>
+                                <select class="callto input-form" [(ngModel)]="item.code" [ngModelOptions]="{standalone: true}">
+                                    <option *ngFor="let countryCode of countryCodes let i = index" [ngValue]="countryCode">
+                                        {{ countryCode }}
+                                    </option>
+                                </select>
+                            </div>
+                            <div class="flex-grow-1 ml-2">
+                                <div class="d-flex justify-content-between align-items-center pt-3  msg-head">
+                                    <h6>Phone No.</h6>
+                                    <div><span class="characters-count">{{ getCharacterCount(7) }}</span><span>/20 Characters</span>
+                                    </div>
+                                </div>
+                                <div class="sel-type-link">
+                                    <input type="text" [(ngModel)]="item.phoneNumber" [ngModelOptions]="{standalone: true}" maxlength="20" placeholder="Enter" style="display: none">
+                                    <input type="text" [(ngModel)]="item.displayPhoneNumber" [ngModelOptions]="{standalone: true}" maxlength="20" placeholder="e.g. 9876543210">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="btn-container" *ngIf="item.type =='Visit Website'">
+                        <div class="d-flex justify-content-between">
+                            <div class="flex-end">
+                                <div class="btn-type-heading">Visit Website</div>
+                            </div>
+                            <div class="flex-grow-1 ml-2">
+                                <div class="d-flex justify-content-between align-items-center msg-head">
+                                    <h6>Button Text</h6>
+                                    <div><span class="characters-count">{{item?.buttonText?.length}}</span><span>/25 Characters</span>
+                                    </div>
+                                </div>
+                                <div class="sel-type-link">
+                                    <input type="text"  maxlength="25" placeholder="e.g. Visit website"
+                                    [(ngModel)]="item.buttonText" [ngModelOptions]="{standalone: true}" >
+                                </div>
+                            </div>
+                        </div>
+                        <div class="d-flex justify-content-between">
+                            <div class="pt-3  msg-head">
+                                <h6 class="pt-1 ">URL Type</h6>
+                                <select class="callto input-form">
+                                    <option>Static</option>
+                                    <option>Dynamic</option>
+                                </select>
+                            </div>
+                            <div class="flex-grow-1 ml-2">
+                                <div class="d-flex justify-content-between align-items-center pt-3  msg-head">
+                                    <h6>Website URL</h6>
+                                    <div><span class="characters-count">{{ getCharacterCount(7) }}</span><span>/20 Characters</span>
+                                    </div>
+                                </div>
+                                <div class="sel-type-link">
+                                    <input type="text" placeholder="e.g. https://www.example.com">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="d-flex justify-content-between incoming-card">      
+                        <div></div>                  
+                        <a class="remove-btn" (click)="removeQuickReplyButtons(idx)" >- Remove</a>
+                    </div>
+                </div>
                 </div>
             
             </div>      
@@ -675,17 +849,25 @@
                 </div>
                 <!-- <div class="message_type" [ngStyle]="{'background-image': 'url(' + templatesMessageData?.Links + ')'}"></div> -->
                 <div class="message_data" [ngClass]="{'preview': selectedType === 'text'}" >
-                    <span class="font-weight-bolder">{{newTemplateForm.get('Header')!.value}}</span><br /><br />
+                    <span class="temp-header font-weight-bolder">{{newTemplateForm.get('Header')!.value}}</span><br /><br />
                     <span *ngIf="newTemplateForm.get('BodyText')!.value" class="richtext BodyText" [innerHTML]="newTemplateForm.get('BodyText')?.value | sanitizeHtml"></span><br /><br />
-                    <span>{{newTemplateForm.get('FooterText')?.value}}</span><br />
+                    <span class="temp-footer">{{newTemplateForm.get('FooterText')?.value}}</span><br />
                 </div>                
-                <div *ngIf="newTemplateForm.controls.buttonType.value == 'Quick Reply'" class="w-70">
-                    <div *ngFor="let item of this.quickReplyButtons;let i =index" class="text-center"><button class="template-btn">{{ newTemplateForm?.get(['quickreply' + (i+1)])?.value }}</button> </div>
+                <div *ngFor="let item of buttonsArray;let i =index">
+                    <div  class="text-center" *ngIf="item?.buttonText && i<3"><button class="template-btn" (click)="isAllButtonPopupVisible = !isAllButtonPopupVisible" [ngClass]="{'btn-radius': ((buttonsArray.length-1)== i || (buttonsArray.length >2 && i==2))}">{{(i==2 && buttonsArray?.length>3) ? 'Show All Buttons' : item?.buttonText }}</button> </div>
+                </div>
+                <div class="all-btn-popup" *ngIf="isAllButtonPopupVisible">
+                    
+                    <div (click)="isAllButtonPopupVisible = false">
+                        <img src="../../../../assets/img/teambox/icon-close.svg">
+                        <div>All options</div>
+                    </div>
+                    <div class="all-btn-Name" *ngFor="let item of buttonsArray;let i =index" > {{item?.buttonText}}</div>
                 </div>
                 
-                <div *ngIf="newTemplateForm.controls.buttonType.value == 'Call to Action'" class="w-70">
+                <!-- <div *ngIf="newTemplateForm.controls.buttonType.value == 'Call to Action'" class="w-70">
                     <div class="text-center"><button class="template-btn">{{this.newTemplateForm?.controls?.buttonText?.value}}</button> </div>
-                </div>
+                </div> -->
             </div>
         </div>
 
@@ -748,17 +930,25 @@
                 </div>
                 <!-- <div class="message_type" [ngStyle]="{'background-image': 'url(' + templatesMessageData?.Links + ')'}"></div> -->
                 <div class="message_data" [ngClass]="{'preview': selectedType === 'text'}" >
-                    <span *ngIf="newTemplateForm.get('Header')?.value" class="font-weight-bolder" [innerHTML]="newTemplateForm.get('Header')?.value | sanitizeHtml"></span><br /><br />
+                    <span class="temp-header" *ngIf="newTemplateForm.get('Header')?.value" class="font-weight-bolder" [innerHTML]="newTemplateForm.get('Header')?.value | sanitizeHtml"></span><br /><br />
                     <span *ngIf="newTemplateForm.get('BodyText')?.value" [innerHTML]="newTemplateForm.get('BodyText')?.value | sanitizeHtml" ></span><br /><br />
-                    <span *ngIf="newTemplateForm.get('FooterText')?.value" [innerHTML]="newTemplateForm.get('FooterText')?.value | sanitizeHtml"></span><br />
+                    <span class="temp-footer" *ngIf="newTemplateForm.get('FooterText')?.value" [innerHTML]="newTemplateForm.get('FooterText')?.value | sanitizeHtml"></span><br />
                 </div>
-                <div *ngIf="newTemplateForm.controls.buttonType.value == 'Quick Reply'" class="w-70">
-                    <div *ngFor="let item of this.quickReplyButtons;let i =index" class="text-center"><button class="template-btn">{{ newTemplateForm?.get(['quickreply' + (i+1)])?.value }}</button> </div>
+                <div *ngFor="let item of buttonsArray;let i =index">
+                    <div  class="text-center" *ngIf="item?.buttonText && i<3"><button class="template-btn" (click)="isAllButtonPopupVisible = !isAllButtonPopupVisible" [ngClass]="{'btn-radius': ((buttonsArray.length-1)== i || (buttonsArray.length >2 && i==2))}">{{(i==2 && buttonsArray?.length>3) ? 'Show All Buttons' : item?.buttonText }}</button> </div>
+                </div>
+                <div class="all-btn-popup" *ngIf="isAllButtonPopupVisible">
+                    
+                    <div (click)="isAllButtonPopupVisible = false">
+                        <img src="../../../../assets/img/teambox/icon-close.svg">
+                        <div>All options</div>
+                    </div>
+                    <div class="all-btn-Name" *ngFor="let item of buttonsArray;let i =index" > {{item?.buttonText}}</div>
                 </div>
                 
-                <div *ngIf="newTemplateForm.controls.buttonType.value == 'Call to Action'" class="w-70">
+                <!-- <div *ngIf="newTemplateForm.controls.buttonType.value == 'Call to Action'" class="w-70">
                     <div class="text-center"><button class="template-btn">{{this.newTemplateForm?.controls?.buttonText?.value}}</button> </div>
-                </div>
+                </div> -->
             </div>
         </div>
 

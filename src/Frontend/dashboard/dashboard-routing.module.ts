@@ -9,11 +9,7 @@ import { DashboardModule } from './dashboard.module';
 /* Containers */
 import * as dashboardContainers from './containers';
 
-/* Guards */
-import * as dashboardGuards from './guards';
-
-/* Routes */
-export const ROUTES: Routes = [
+export const routes: Routes = [
     {
         path: '',
         data: {
@@ -25,178 +21,123 @@ export const ROUTES: Routes = [
                 },
             ],
         } as SBRouteData,
-        canActivate: [],
         component: dashboardContainers.DashboardComponent,
     },
-     {
+    {
         path: 'contacts',
         data: {
             title: 'Contacts',
             breadcrumbs: [
-                {
-                    text: 'Dashboard',
-                    link: '/dashboard',
-                },
                 {
                     text: 'Contacts',
                     active: true,
                 },
             ],
         } as SBRouteData,
-        canActivate: [],
         component: dashboardContainers.ContactsComponent,
     },
-
-     {
+    {
         path: 'teambox',
         data: {
             title: 'Teambox',
             breadcrumbs: [
                 {
-                    text: 'Dashboard',
-                    link: '/dashboard',
-                },
-                // {
-                //     text: 'Dashboard',
-                //     link: '/teambox:isNewMessage',
-                // },
-                {
                     text: 'Teambox',
                     active: true,
                 },
             ],
         } as SBRouteData,
-        canActivate: [],
         component: dashboardContainers.TeamboxComponent,
     },
-     {
+    {
         path: 'teambox/:isNewMessage',
         data: {
             title: 'Teambox',
             breadcrumbs: [
                 {
-                    text: 'Dashboard',
-                    link: '/dashboard',
-                },
-                // {
-                //     text: 'Dashboard',
-                //     link: '/teambox:isNewMessage',
-                // },
-                {
                     text: 'Teambox',
                     active: true,
                 },
             ],
         } as SBRouteData,
-        canActivate: [],
         component: dashboardContainers.TeamboxComponent,
     },
- {
+    {
         path: 'import',
         data: {
             title: 'Import Contact',
             breadcrumbs: [
-                {
-                    text: 'Dashboard',
-                    link: '/dashboard',
-                },
                 {
                     text: 'Import Contact',
                     active: true,
                 },
             ],
         } as SBRouteData,
-        canActivate: [],
         component: dashboardContainers.ImportComponent,
     },
-     {
+    {
         path: 'campaigns',
         data: {
             title: 'Campaigns',
             breadcrumbs: [
-                {
-                    text: 'Dashboard',
-                    link: '/dashboard',
-                },
                 {
                     text: 'Campaigns',
                     active: true,
                 },
             ],
         } as SBRouteData,
-        canActivate: [],
         component: dashboardContainers.CampaignsComponent,
     },
-     {
+    {
         path: 'funnel',
         data: {
             title: 'Funnel',
             breadcrumbs: [
-                {
-                    text: 'Dashboard',
-                    link: '/dashboard',
-                },
                 {
                     text: 'Funnel',
                     active: true,
                 },
             ],
         } as SBRouteData,
-        canActivate: [],
         component: dashboardContainers.FunnelComponent,
     },
-      {
+    {
         path: 'smartReplies',
         data: {
             title: 'Smart Replies',
             breadcrumbs: [
-                {
-                    text: 'Dashboard',
-                    link: '/dashboard',
-                },
                 {
                     text: 'Smart Replies',
                     active: true,
                 },
             ],
         } as SBRouteData,
-        canActivate: [],
         component: dashboardContainers.SmartRepliesComponent,
     },
-      {
+    {
         path: 'flowBuilder',
         data: {
             title: 'Flow builder',
             breadcrumbs: [
-                {
-                    text: 'Dashboard',
-                    link: '/dashboard',
-                },
                 {
                     text: 'Flow builder',
                     active: true,
                 },
             ],
         } as SBRouteData,
-        canActivate: [],
         component: dashboardContainers.FlowBuilderComponent,
     },
-  {
+    {
         path: 'reports',
         data: {
             title: 'Reports',
             breadcrumbs: [
-                {
-                    text: 'Dashboard',
-                    link: '/dashboard',
-                },
                 {
                     text: 'Reports',
                     active: true,
                 },
             ],
         } as SBRouteData,
-        canActivate: [],
         component: dashboardContainers.ReportsComponent,
     },
     {
@@ -205,34 +146,24 @@ export const ROUTES: Routes = [
             title: 'Conversational Reports',
             breadcrumbs: [
                 {
-                    text: 'Dashboard',
-                    link: '/dashboard',
-                },
-                {
                     text: 'Conversational Reports',
                     active: true,
                 },
             ],
         } as SBRouteData,
-        canActivate: [],
         component: dashboardContainers.ConversationalReportsComponent,
     },
-      {
+    {
         path: 'campaignReports',
         data: {
             title: 'Campaign Reports',
             breadcrumbs: [
                 {
-                    text: 'Dashboard',
-                    link: '/dashboard',
-                },
-                {
-                    text: 'Campaign Report',
+                    text: 'Campaign Reports',
                     active: true,
                 },
             ],
         } as SBRouteData,
-        canActivate: [],
         component: dashboardContainers.CampaignReportsComponent,
     },
     {
@@ -241,34 +172,24 @@ export const ROUTES: Routes = [
             title: 'Automation Reports',
             breadcrumbs: [
                 {
-                    text: 'Dashboard',
-                    link: '/dashboard',
-                },
-                {
                     text: 'Automation Reports',
                     active: true,
                 },
             ],
         } as SBRouteData,
-        canActivate: [],
         component: dashboardContainers.AutomationReportsComponent,
     },
-     {
+    {
         path: 'setting',
         data: {
             title: 'Settings',
             breadcrumbs: [
-                {
-                    text: 'Dashboard',
-                    link: '/dashboard',
-                },
                 {
                     text: 'Settings',
                     active: true,
                 },
             ],
         } as SBRouteData,
-        canActivate: [],
         component: dashboardContainers.SettingComponent,
     },
     {
@@ -277,35 +198,24 @@ export const ROUTES: Routes = [
             title: 'Profile',
             breadcrumbs: [
                 {
-                    text: 'Dashboard',
-                    link: '/dashboard',
-                },
-                {
                     text: 'Profile',
                     active: true,
                 },
             ],
         } as SBRouteData,
-        canActivate: [],
         component: dashboardContainers.MyprofileComponent,
     },
-
     {
         path: 'support',
         data: {
             title: 'Support',
             breadcrumbs: [
                 {
-                    text: 'Dashboard',
-                    link: '/dashboard',
-                },
-                {
                     text: 'Support',
                     active: true,
                 },
             ],
         } as SBRouteData,
-        canActivate: [],
         component: dashboardContainers.SupportComponent,
     },
     {
@@ -314,23 +224,23 @@ export const ROUTES: Routes = [
             title: 'Notifications',
             breadcrumbs: [
                 {
-                    text: 'Dashboard',
-                    link: '/dashboard',
-                },
-                {
                     text: 'Notifications',
                     active: true,
                 },
             ],
         } as SBRouteData,
-        canActivate: [],
         component: dashboardContainers.NotificationsComponent,
-    },
-
+    }
 ];
 
+// @NgModule({
+//     imports: [RouterModule.forRoot(routes, { useHash: false })],
+//     exports: [RouterModule],
+// })
+// export class AppRoutingModule {}
+
 @NgModule({
-    imports: [DashboardModule, RouterModule.forChild(ROUTES)],
+    imports: [DashboardModule, RouterModule.forRoot(routes, { useHash: false })],
     exports: [RouterModule],
 })
 export class DashboardRoutingModule {}

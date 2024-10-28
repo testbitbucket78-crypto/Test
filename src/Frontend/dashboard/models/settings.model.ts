@@ -126,6 +126,7 @@ export interface RolesData {
 export interface UserData {
     name: string;
     mobile_number: number;
+    registerPhone: number;
     display_mobile_number: number;
     uid: number;
     country_code:string;
@@ -230,7 +231,7 @@ export interface templateMessageData {
     topic:string;
     FooterText:string;
     buttons:any;
-
+    quality:string;
 }
 
 export interface repliestemplateList{
@@ -375,7 +376,16 @@ export interface editAutoDeletionData {
     autodeletion_contacts:string;
 }
 
-
+export interface healthStatusData {
+    phone_no: string;
+    channel_id: string;
+    WABA_Id: string;
+    Status: string;
+    Quality_Rating: string;
+    Message_Limit: string;
+    Fb_Verification: string;
+    channel_type: string;
+}
 
 
 
