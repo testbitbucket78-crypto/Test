@@ -50,7 +50,6 @@ export class LoginComponent implements OnInit {
     }
 
     login(){
-         debugger;
         const loginPayload = {
             ...this.loginformValue,
             channel: this.channelDomain  
