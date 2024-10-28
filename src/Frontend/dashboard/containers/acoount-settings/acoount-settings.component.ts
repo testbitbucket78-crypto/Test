@@ -155,6 +155,12 @@ uid = (JSON.parse(sessionStorage.getItem('loginDetails')!)).uid;
 		this.warnMessage='';
 		this.errorMessage='';
 	}
+  checkChannel(): boolean {
+    if (this.channelDomain == 'web') {
+      return true;
+    }
+    return false;
+  }
 
   // getwhatsappwebdetails
 getwhatsapp() { 
