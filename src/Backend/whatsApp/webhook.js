@@ -140,10 +140,10 @@ async function extractDataFromMessage(body) {
 
     if (firstMessage.context) {
       let spid = await db.excuteQuery('select SP_ID from user where mobile_number =? limit 1', [display_phone_number])
-      let campaignRepliedQuery = `UPDATE CampaignMessages set status=4,RepliedTime=${message_time} where phone_number =${from} and (status = 3 OR status =2) and SP_ID = ${spid[0]?.SP_ID} AND messageTemptateId = '${firstMessage.context?.id}'` // will replace it withmessage id later
+      let campaignRepliedQuery = `UPDATE CampaignMessages set status=4,RepliedTime='${message_time}' where phone_number =${from} and (status = 3 OR status =2) and SP_ID = ${spid[0]?.SP_ID} AND messageTemptateId = '${firstMessage.context?.id}'` // will replace it withmessage id later
       console.log(campaignRepliedQuery)
       let campaignReplied = await db.excuteQuery(campaignRepliedQuery, [])
-      //console.log(repliedNumber, spid, "campaignReplied*******", campaignReplied?.affectedRows)
+      //console.log( spid, "campaignReplied*******", campaignReplied?.affectedRows)
     }
 
     // Conditional check to determine the filename based on type

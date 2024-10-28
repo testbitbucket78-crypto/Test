@@ -812,7 +812,7 @@ const getTemplate = async (req, res) => {
         let officialTemplates = await getOfficialTemplate(req.params.spid);
         //console.log(officialTemplates)
         let templates = await db.excuteQuery(val.selectTemplate, [req.params.spid, req.params.isTemplate]);
-
+        if ( officialTemplates != 'channel not found' ){
         // Create a lookup object from newData
         const statusLookup = officialTemplates.data.reduce((lookup, item) => {
             lookup[item.name] = item.status;
@@ -829,6 +829,7 @@ const getTemplate = async (req, res) => {
                 }
             }
         });
+    }
         //  console.log(templates)
         res.status(200).send({
             templates: templates,

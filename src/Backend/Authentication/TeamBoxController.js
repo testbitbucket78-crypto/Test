@@ -793,13 +793,13 @@ async function getDefaultActionTimeandUpdatePauseTime(spid,customerId) {
         }
       
       
-        console.log("currentTime,autoReplyVal ,timePause----", new Date(),  autoReplyVal,timePause,autoReplyVal.toISOString())
+      //  console.log("currentTime,autoReplyVal ,timePause----", new Date(),  autoReplyVal,timePause,autoReplyVal.toISOString())
  
         let updatePauseTime = await db.excuteQuery(val.updateContactDefaultQuery, [autoReplyVal, customerId, spid])
         console.log(timePause,spid,"Teambox updatePauseTime", updatePauseTime.affectedRows)
     } catch (err) {
 
-        logger.error('Error in getDefaultActionTimeandUpdatePauseTime');
+        logger.error(`Error in getDefaultActionTimeandUpdatePauseTime ${err}`);
 
     }
 }

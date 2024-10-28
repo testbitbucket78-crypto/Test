@@ -1,7 +1,7 @@
 const express = require('express');
 const { request } = require('http');
 const app = express();
-const { Client, LocalAuth, MessageMedia, Location ,Buttons} = require('whatsapp-web.js');
+const { Client, LocalAuth, MessageMedia, Location, Buttons } = require('whatsapp-web.js');
 const puppeteer = require('puppeteer')
 // const qrcode = require('qrcode-terminal');
 const bodyParser = require('body-parser');
@@ -84,7 +84,7 @@ process.on('uncaughtException', function (err) {
   try {
     console.log("uncaught exception was trying to close this. THe expectation is that it is coming from pupeeter hence ignoring.")
     console.log(err)
-    logger.info(`uncaught exception was trying to close this`)
+    logger.info(`uncaught exception was trying to close this web js *********`)
     let getAllclient = getAllWidData(clientSpidMapping)
     if (err.message.includes('Puppeteer')) {
       console.log("Ignoring Puppeteer-related error");
@@ -149,11 +149,11 @@ function killChromeProcesses(spid, callback) {
   }
 }
 
-async function isPhoneAlreadyInUsed(mobile_number,spid) {
+async function isPhoneAlreadyInUsed(mobile_number, spid) {
   try {
     let isExist = await db.excuteQuery('select * from user where mobile_number=? and isAutoScanOnce =? and ParentId is null and  isDeleted !=1 and IsActive !=2', [mobile_number, 1]);
-  //console.log("is Exist",isExist)
-    if (isExist?.length >0 && isExist[0].SP_ID != spid) {
+    //console.log("is Exist",isExist)
+    if (isExist?.length > 0 && isExist[0].SP_ID != spid) {
       return true;
     }
     return false;
@@ -166,11 +166,11 @@ async function isPhoneAlreadyInUsed(mobile_number,spid) {
 async function isWrongNumberScanned(spid, scannedPhone) {
   try {
     let isExist = await db.excuteQuery('select * from user where SP_ID=? and isAutoScanOnce =? and ParentId is null and isDeleted !=1 and IsActive !=2', [spid, 1]);
-   //console.log("isWrongNumberScanned",isExist)
+    //console.log("isWrongNumberScanned",isExist)
     if (isExist?.length > 0 && (isExist[0]?.mobile_number != scannedPhone)) {
 
       return true;
-    } 
+    }
     return false;
   } catch (err) {
     console.log("check existing phone error", err);
@@ -178,45 +178,45 @@ async function isWrongNumberScanned(spid, scannedPhone) {
   }
 }
 
-async function destroyWrongScan(spid){
-try{
-  if (clientSpidMapping.hasOwnProperty(spid)) {
-    delete clientSpidMapping[spid];
-    try {
-      // kill the cycle with pid and sign = 'SIGINT' 
-      process.kill(clientPidMapping[spid]);
-      delete clientPidMapping[spid];
+async function destroyWrongScan(spid) {
+  try {
+    if (clientSpidMapping.hasOwnProperty(spid)) {
+      delete clientSpidMapping[spid];
+      try {
+        // kill the cycle with pid and sign = 'SIGINT' 
+        process.kill(clientPidMapping[spid]);
+        delete clientPidMapping[spid];
 
-      let dir = path.join(__dirname, '.wwebjs_auth');
-      let sessionDir = path.join(dir, `session-${spid}`);
+        let dir = path.join(__dirname, '.wwebjs_auth');
+        let sessionDir = path.join(dir, `session-${spid}`);
 
-      if (fs.existsSync(sessionDir)) {
-        console.log(`wrong Deleting directory: ${sessionDir}`);
+        if (fs.existsSync(sessionDir)) {
+          console.log(`wrong Deleting directory: ${sessionDir}`);
 
-        // First, attempt to kill related processes (e.g., Chrome) that may be locking files
-        killChromeProcesses(spid, () => {
-          setTimeout(() => {
-            try {
-              // Use fs-extra's removeSync for better handling of recursive deletes
-              fs.rmdirSync(sessionDir, { recursive: true });
-              console.log(`Successfully deleted directory: ${sessionDir}`);
-            } catch (err) {
-              console.error(`Error deleting directory ${sessionDir}:`, err);
-            }
-          }, 2000); // Adjust the delay as necessary
-        });
+          // First, attempt to kill related processes (e.g., Chrome) that may be locking files
+          killChromeProcesses(spid, () => {
+            setTimeout(() => {
+              try {
+                // Use fs-extra's removeSync for better handling of recursive deletes
+                fs.rmdirSync(sessionDir, { recursive: true });
+                console.log(`Successfully deleted directory: ${sessionDir}`);
+              } catch (err) {
+                console.error(`Error deleting directory ${sessionDir}:`, err);
+              }
+            }, 2000); // Adjust the delay as necessary
+          });
 
-      } else {
-        console.log(`disconnected Directory not found: ${sessionDir}`);
+        } else {
+          console.log(`disconnected Directory not found: ${sessionDir}`);
+        }
+
+      } catch (err) {
+        console.log("Delete clientPidMapping issues in wrong scan")
       }
 
-    } catch (err) {
-      console.log("Delete clientPidMapping issues in wrong scan")
+      console.log(`destroy wrong no. ${spid} from clientSpidMapping.`);
+
     }
-
-    console.log(`destroy wrong no. ${spid} from clientSpidMapping.`);
-
-  }
   } catch (err) {
     console.log("destroyWrongScan catch error", err);
     return err;
@@ -231,7 +231,7 @@ function ClientInstance(spid, authStr, phoneNo) {
         puppeteer: {
           headless: true,
           executablePath: "/usr/bin/google-chrome-stable",
-         // executablePath: "C:/Program Files/Google/Chrome/Application/chrome.exe",
+          // executablePath: "C:/Program Files/Google/Chrome/Application/chrome.exe",
           // executablePath: "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome",
 
           args: [
@@ -301,7 +301,7 @@ function ClientInstance(spid, authStr, phoneNo) {
 
         try {
           console.log("Above client ready", new Date().toUTCString())
-          let isPhoneAlreadyUsed = await isPhoneAlreadyInUsed(client.info.wid.user,spid)
+          let isPhoneAlreadyUsed = await isPhoneAlreadyInUsed(client.info.wid.user, spid)
           if (!isPhoneAlreadyUsed) {
             let wrongNumber = await isWrongNumberScanned(spid, client.info.wid.user)
             if (wrongNumber) {       //phoneNo != client.info.wid.user
@@ -316,7 +316,7 @@ function ClientInstance(spid, authStr, phoneNo) {
               console.log('Client is ready!');
               notify.NotifyServer(phoneNo, false, 'Client is ready!')
               let updateScannedNumber = await db.excuteQuery(updateUserQuery, [client.info.wid.user, 1, spid])
-              console.log(client.info.wid.user, 1, spid,'updateScannedNumber',updateScannedNumber);
+              console.log(client.info.wid.user, 1, spid, 'updateScannedNumber', updateScannedNumber);
               let allChats = await client.getChats();
               let chat_activos = allChats.splice(0, 10);
               for (const chat of chat_activos) {
@@ -331,7 +331,7 @@ function ClientInstance(spid, authStr, phoneNo) {
                   for (let currentIndex = 0; currentIndex <= lastIndex; currentIndex++) {
                     let n_chat_mensaje = mensajes_verificar[currentIndex];
 
-                       let getmessages = savelostChats(n_chat_mensaje, phoneNo, spid, currentIndex, lastIndex);
+                    let getmessages = savelostChats(n_chat_mensaje, phoneNo, spid, currentIndex, lastIndex);
 
                   }
 
@@ -340,7 +340,7 @@ function ClientInstance(spid, authStr, phoneNo) {
                   // apply rauting rules and sreply 
                 }
               }
-            
+
               console.log("resolve client ready", new Date().toUTCString())
               return resolve({ status: 201, value: 'Client is ready!' });
             }
@@ -487,7 +487,7 @@ function ClientInstance(spid, authStr, phoneNo) {
 
             const message_time = moment.utc(d).format('YYYY-MM-DD HH:mm:ss');
             let campaignDeliveredQuery = 'UPDATE CampaignMessages set status=1 , SentTime=? where phone_number =?  and messageTemptateId =?'
-            let campaignDelivered = await db.excuteQuery(campaignDeliveredQuery, [message_time,phoneNumber, message._data.id.id])
+            let campaignDelivered = await db.excuteQuery(campaignDeliveredQuery, [message_time, phoneNumber, message._data.id.id])
             if (message._data.id.id) {
               let updateMessageTime = await db.excuteQuery('UPDATE Message set created_at=? where Message_template_id=?', [message_time, message._data.id.id])
             }
@@ -511,7 +511,7 @@ WHERE customerId IN (SELECT customerId FROM EndCustomer WHERE Phone_number = ? a
 
             const message_time = moment.utc(d).format('YYYY-MM-DD HH:mm:ss');
             let campaignDeliveredQuery = 'UPDATE CampaignMessages set status=2, DeliveredTime=? where phone_number =? and status = 1 and messageTemptateId=?'
-            let campaignDelivered = await db.excuteQuery(campaignDeliveredQuery, [message_time,phoneNumber, message?._data?.id?.id])
+            let campaignDelivered = await db.excuteQuery(campaignDeliveredQuery, [message_time, phoneNumber, message?._data?.id?.id])
             const smsdelupdate = `UPDATE Message
 SET msg_status = 2 
 WHERE interaction_id IN (
@@ -530,7 +530,7 @@ WHERE customerId IN (SELECT customerId FROM EndCustomer WHERE Phone_number = ? a
 
             const message_time = moment.utc(d).format('YYYY-MM-DD HH:mm:ss');
             let campaignReadQuery = 'UPDATE CampaignMessages set status=3 , SeenTime=? where phone_number =? and status = 2 and messageTemptateId=?';
-            let campaignRead = await db.excuteQuery(campaignReadQuery, [message_time,phoneNumber, message?._data?.id?.id])
+            let campaignRead = await db.excuteQuery(campaignReadQuery, [message_time, phoneNumber, message?._data?.id?.id])
             const smsupdate = `UPDATE Message
 SET msg_status = 3 
 WHERE interaction_id IN (
@@ -719,15 +719,18 @@ async function sendMessages(spid, endCust, type, text, link, interaction_id, msg
     if (client) {
       let contactId = `${endCust}@c.us`
       try {
-        let isRegistered = await client.isRegisteredUser(contactId);
-        if (isRegistered) {
-          let msg = await sendDifferentMessagesTypes(client, endCust, type, text, link, interaction_id, msg_id, spNumber);
-          if (msg?.status == 500) {                               // Just try 2nd time in case of fail 
-            msg = await sendDifferentMessagesTypes(client, endCust, type, text, link, interaction_id, msg_id, spNumber);
+        let isRegistered = await client.isRegisteredUser(contactId); 
+        if (type == 'unknown') {
+          if (isRegistered) {
+            let msg = await sendDifferentMessagesTypes(client, endCust, type, text, link, interaction_id, msg_id, spNumber);
+            if (msg?.status == 500) {                               // Just try 2nd time in case of fail 
+              msg = await sendDifferentMessagesTypes(client, endCust, type, text, link, interaction_id, msg_id, spNumber);
+            }
+            return msg;
           }
-          return msg;
+          return { status: 404, msgId: 'Phone no is not registered on whatsApp' }
         }
-        return { status: 404, msgId: 'Phone no is not registered on whatsApp' }
+        return { status: 204, msgId: 'Content not found for this type' }
       } catch (error) {
         return { status: 401, msgId: 'Error checking registration' }
       }
@@ -738,6 +741,7 @@ async function sendMessages(spid, endCust, type, text, link, interaction_id, msg
     }
   } catch (err) {
     console.log(err);
+    return { status: 500, msgId: 'Channel is disconnected' }
   }
 }
 
@@ -814,27 +818,27 @@ async function sendDifferentMessagesTypes(client, endCust, type, text, link, int
       let updateMessageTime = await db.excuteQuery(`UPDATE Message set updated_at=? , Message_template_id =? where Message_id=?`, [updated_at, sendId?._data?.id?.id, msg_id])
       return { status: 200, msgId: sendId?._data?.id?.id }
     }
-  // New block: Sending button messages
-  if (type === 'buttons') {
-    const buttons = [
-      { buttonId: 'btn1', buttonText: { displayText: 'Visit Website' }, type: 1 },
-      { buttonId: 'btn2', buttonText: { displayText: 'Call Now' }, type: 1 }
-    ];
-  
-    let button = new Buttons(
-      "Button body",
-      [{ body: "bt1" }, { body: "bt2" }, { body: "bt3" }],
-      "title",
-      "footer"
+    // New block: Sending button messages
+    if (type === 'buttons') {
+      const buttons = [
+        { buttonId: 'btn1', buttonText: { displayText: 'Visit Website' }, type: 1 },
+        { buttonId: 'btn2', buttonText: { displayText: 'Call Now' }, type: 1 }
+      ];
+
+      let button = new Buttons(
+        "Button body",
+        [{ body: "bt1" }, { body: "bt2" }, { body: "bt3" }],
+        "title",
+        "footer"
       );
-    //console.log("butttospf",buttonMessage)
-    let myUTCString = new Date().toUTCString();
-    const updated_at = moment.utc(myUTCString).format('YYYY-MM-DD HH:mm:ss');
-    let sendId = await client.sendMessage(endCust + '@c.us', button);
-    //console.log(endCust,"sendId",sendId)
-    let updateMessageTime = await db.excuteQuery(`UPDATE Message set updated_at=? , Message_template_id =? where Message_id=?`, [updated_at, sendId?._data?.id?.id, msg_id]);
-    return { status: 200, msgId: sendId?._data?.id?.id };
-  }
+      //console.log("butttospf",buttonMessage)
+      let myUTCString = new Date().toUTCString();
+      const updated_at = moment.utc(myUTCString).format('YYYY-MM-DD HH:mm:ss');
+      let sendId = await client.sendMessage(endCust + '@c.us', button);
+      //console.log(endCust,"sendId",sendId)
+      let updateMessageTime = await db.excuteQuery(`UPDATE Message set updated_at=? , Message_template_id =? where Message_id=?`, [updated_at, sendId?._data?.id?.id, msg_id]);
+      return { status: 200, msgId: sendId?._data?.id?.id };
+    }
   } catch (err) {
     console.log("++++++++++++++++++++++++++++++++++++++++++++")
     console.log(err)
@@ -1142,10 +1146,10 @@ async function actionsOflatestLostMessage(message_text, phone_number_id, from, d
           let myUTCString = new Date().toUTCString();
           const utcTimestamp = moment.utc(myUTCString).format('YYYY-MM-DD HH:mm:ss');
           const currentAssignedUser = await currentlyAssigned(newId);
-          const check = await commonFun.notifiactionsToBeSent(currentAssignedUser,2);
-          if(check){
-          let notifyvalues = [[sid, 'New Chat Assigned to You', 'A new Chat has been Assigned to you', agid, 'Routing rules', currentAssignedUser, utcTimestamp]];
-          let mentionRes = await db.excuteQuery(`INSERT INTO Notification(sp_id,subject,message,sent_to,module_name,uid,created_at) values ?`, [notifyvalues]);
+          const check = await commonFun.notifiactionsToBeSent(currentAssignedUser, 2);
+          if (check) {
+            let notifyvalues = [[sid, 'New Chat Assigned to You', 'A new Chat has been Assigned to you', agid, 'Routing rules', currentAssignedUser, utcTimestamp]];
+            let mentionRes = await db.excuteQuery(`INSERT INTO Notification(sp_id,subject,message,sent_to,module_name,uid,created_at) values ?`, [notifyvalues]);
           }
         }
       }
@@ -1256,11 +1260,11 @@ async function currentlyAssigned(interactionId) {
                  LIMIT 1`;
 
   try {
-      let result = await db.excuteQuery(query, [interactionId]);
-      return result.length > 0 ? result[0].uid : null;
+    let result = await db.excuteQuery(query, [interactionId]);
+    return result.length > 0 ? result[0].uid : null;
   } catch (error) {
-      console.error('Error executing query:', error);
-      throw error; 
+    console.error('Error executing query:', error);
+    throw error;
   }
 }
 
@@ -1299,8 +1303,8 @@ async function getDetatilsOfSavedMessage(saveMessage, message_text, phone_number
     let myUTCString = new Date().toUTCString();
     const utcTimestamp = moment.utc(myUTCString).format('YYYY-MM-DD HH:mm:ss');
     const currentAssignedUser = await currentlyAssigned(newId);
-    const check = await commonFun.notifiactionsToBeSent(currentAssignedUser,3);
-    if(check){
+    const check = await commonFun.notifiactionsToBeSent(currentAssignedUser, 3);
+    if (check) {
       let notifyvalues = [[sid, 'New Message in your Chat', 'You have a new message in you current Open Chat', agid, 'WA Web', currentAssignedUser, utcTimestamp]];
       let mentionRes = await db.excuteQuery(`INSERT INTO Notification(sp_id,subject,message,sent_to,module_name,uid,created_at) values ?`, [notifyvalues]);
     }
@@ -1382,10 +1386,10 @@ async function getDetatilsOfSavedMessage(saveMessage, message_text, phone_number
         let myUTCString = new Date().toUTCString();
         const utcTimestamp = moment.utc(myUTCString).format('YYYY-MM-DD HH:mm:ss');
         const currentAssignedUser = await currentlyAssigned(newId);
-        const check = await commonFun.notifiactionsToBeSent(currentAssignedUser,2);
-        if(check){
-        let notifyvalues = [[sid, 'New Chat Assigned to You', 'A new Chat has been Assigned to you', agid, 'Routing rules', currentAssignedUser, utcTimestamp]];
-        let mentionRes = await db.excuteQuery(`INSERT INTO Notification(sp_id,subject,message,sent_to,module_name,uid,created_at) values ?`, [notifyvalues]);
+        const check = await commonFun.notifiactionsToBeSent(currentAssignedUser, 2);
+        if (check) {
+          let notifyvalues = [[sid, 'New Chat Assigned to You', 'A new Chat has been Assigned to you', agid, 'Routing rules', currentAssignedUser, utcTimestamp]];
+          let mentionRes = await db.excuteQuery(`INSERT INTO Notification(sp_id,subject,message,sent_to,module_name,uid,created_at) values ?`, [notifyvalues]);
         }
       }
       //Here i have to check if any routing rules addded then send websocket

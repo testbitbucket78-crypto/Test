@@ -17,7 +17,7 @@ app.use(bodyParser.urlencoded({ limit: "10000kb", extended: true }));
 //Default actions
 const defaultaction = async (req, res) => {
     try {
-        console.log(req.body.SP_ID)
+       // console.log(req.body.SP_ID)
         SP_ID = req.body.SP_ID
         isAgentActive = req.body.isAgentActive
         agentActiveTime = req.body.agentActiveTime
@@ -30,15 +30,26 @@ const defaultaction = async (req, res) => {
         pausedTill = req.body.pausedTill
         defaultAdminUid = req.body?.defaultAdminUid
         defaultAdminName = req.body?.defaultAdminName
-
-        console.log(req.body)
+        pauseAutoReplyTime = req.body.pauseAutoReplyTime
+       // console.log(req.body)
         var select = await db.excuteQuery(val.defaultactiondetails, [SP_ID])
-        console.log(select)
+      //  console.log(select)
         if (select.length != 0) {
-
             var defaultValues = [req.body.isAgentActive, req.body.agentActiveTime, req.body.isAutoReply, req.body.autoReplyTime, req.body.isAutoReplyDisable, req.body.isContactAdd, pausedTill, req.body.created_at,req.body.pauseAgentActiveTime, req.body.pauseAutoReplyTime,defaultAdminUid ,defaultAdminName ,req.body.SP_ID, select[0]?.id]
             var updateddefaultData = await db.excuteQuery(val.updatedefaultactionDetails, defaultValues)
-
+            if(isAutoReplyDisable == 1){
+                let updatePause = await db.excuteQuery('update EndCustomer set defaultAction_PauseTime =? where SP_ID=? and customerId >=1',[0,SP_ID])
+                console.log("isAutoReplyDisable",updatePause)
+             }
+             if(select[0]?.pauseAutoReplyTime != pauseAutoReplyTime){
+                let oldPauseAutoReplyTime = select[0]?.pauseAutoReplyTime || 0; // Fallback to 0 if undefined
+                let newPauseAutoReplyTime = pauseAutoReplyTime || 0; // Fallback to 0 if undefined
+                
+                // Calculate the new date based on ((time - oldValue) + newValue)
+                let autoReplyPauseVal = new Date(currentTime.getTime() - (oldPauseAutoReplyTime * 60000) + (newPauseAutoReplyTime * 60000));
+                let updatePause = await db.excuteQuery(`update EndCustomer set defaultAction_PauseTime =? where SP_ID=? and customerId >=1 AND !(defaultAction_PauseTime =? or defaultAction_PauseTime IS  null)`,[autoReplyPauseVal,SP_ID,'0000-00-00 00:00:00'])
+                console.log("pauseAutoReplyTime",updatePause)
+             }
             res.status(200).send({
                 msg: 'defaultaction updated successfully !',
                 updateddefaultData: updateddefaultData,
@@ -47,7 +58,7 @@ const defaultaction = async (req, res) => {
         } else {
             var defaultinsert = [req.body.SP_ID, req.body.isAgentActive, req.body.agentActiveTime, req.body.isAutoReply, req.body.autoReplyTime, req.body.isAutoReplyDisable, req.body.isContactAdd, pausedTill, req.body.created_at, req.body.pauseAgentActiveTime, req.body.pauseAutoReplyTime,defaultAdminUid ,defaultAdminName]
             var defaultaction = await db.excuteQuery(val.defaultinsertDetails, [[defaultinsert]])
-
+           
             res.status(200).send({
                 msg: 'defaultaction added successfully !',
                 defaultaction: defaultaction,
