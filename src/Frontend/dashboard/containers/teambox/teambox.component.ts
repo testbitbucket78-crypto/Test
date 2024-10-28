@@ -449,6 +449,8 @@ public  fieldsData: { [key: string]: string } = { text: 'name' };
 		this.getCustomers()
 		this.newContact.reset();
 		// this.getTemplates();
+		this.mediaType = ''
+		this.attachmentMedia = ''
 
 		$("#editTemplateMedia").modal('hide');
 		$("#templatePreview").modal('hide');

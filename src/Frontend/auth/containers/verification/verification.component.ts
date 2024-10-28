@@ -360,11 +360,12 @@ export class VerificationComponent implements OnInit {
             // If not verified, show an error message or perform desired action
 
             this.values = sessionStorage.getItem('formValues')
-
-
+            let formValues = JSON.parse(this.formValues);
+            formValues.registerPhone = formValues?.mobile_number;
+            this.formValues = JSON.stringify(formValues); // adding payload re-Formatting to string
             this.apiService.register(this.formValues).subscribe((response: any) => {
 
-                if (response.status === 200) {
+                if (response?.status === 200) {
                     $("#successRegister").modal('show'); 
                     sessionStorage.removeItem('formValues')
                     sessionStorage.removeItem('verificationDataEmail')
@@ -374,8 +375,15 @@ export class VerificationComponent implements OnInit {
             },
                 (error) => {
 
-                    if (error.status === 409) {
+                    if (error?.status === 409) {
                         let errorMessage = "! User Already Exist with this email";
+                        this.errorDiv = document.getElementById("error-message");
+                        if (this.errorDiv) {
+                            this.errorDiv.innerHTML = errorMessage;
+                        }
+                    }
+                    else if(error?.status === 500){
+                        let errorMessage = "! Internal Server Error";
                         this.errorDiv = document.getElementById("error-message");
                         if (this.errorDiv) {
                             this.errorDiv.innerHTML = errorMessage;
