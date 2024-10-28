@@ -868,7 +868,7 @@ const download = (req, res) => {
       Date_Format = convertToMomentFormat(Date_Format);
     }
   
-    const timeFields = ['Submit Time', 'Delivered Time', 'Seen Time'];
+    const timeFields = ['Submit Time', 'Delivered Time', 'Seen Time','Replied Time'];
   
     const formattedData = data.map(record => {
       timeFields.forEach(field => {
@@ -950,7 +950,7 @@ const sanitizeMessages = (messages) => {
     return messages.map(message => ({
         'Msg ID': message['Msg ID'] || '',
         'Customer Number': message['Customer Number'] || '',
-        'Message Status': mapStatusToText(message['Message Status']),
+        'Message Status': message['Message Status'] || '',//mapStatusToText(message['Message Status']),
         'Submit Time': message['Submit Time'] || '',
         'Delivered Time': message['Delivered Time'] || '',
         'Seen Time': message['Seen Time'] || '',

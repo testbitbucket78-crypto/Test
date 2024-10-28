@@ -30,9 +30,9 @@ async function autoDeletion() {
 
                 let deleteMediaQuery = `UPDATE Message set is_deleted=1,updated_at=? where SPID=? and message_media !="text" AND DATE(created_at) <= ? `;
                 const daysOfmessage = subtractDaysFromNow(data.autodeletion_media);
-
-                logger.info(`Media deletion initiated for SPID: ${data.SP_ID}, days given: ${data.autodeletion_media}, subtracted days: ${daysOfmessage}`);
-                await db.excuteQuery(deleteMediaQuery, [updated_at, data.SP_ID, daysOfmessage]);
+                let deletedMedia = await db.excuteQuery(deleteMediaQuery, [updated_at, data.SP_ID, daysOfmessage]);
+                logger.info(`Media deletion initiated for SPID: ${data.SP_ID}, days given: ${data.autodeletion_media}, subtracted days: ${daysOfmessage} ,affected rows: ${deletedMedia?.affectedRows}`);
+               
 
             } else {
                 logger.info(`Media not marked for deletion for SPID: ${data.SP_ID}, days given: ${data.autodeletion_media}`);
@@ -56,7 +56,7 @@ async function autoDeletion() {
                 const daysOfcontact = subtractDaysFromNow(data.autodeletion_contacts);
 
                 let deletedContact = await db.excuteQuery(deleteContactQuery, [new Date(), data.SP_ID, daysOfcontact]);
-                let interactionDeletion = await db.excuteQuery(`UPDATE Interaction SET is_deleted =1, interaction_status=?, updated_at=? WHERE SP_ID=? AND created_at < ?`, ['Resolved', new Date(), data.SP_ID, daysOfcontact]);
+              //  let interactionDeletion = await db.excuteQuery(`UPDATE Interaction SET is_deleted =1, interaction_status=?, updated_at=? WHERE SP_ID=? AND created_at < ?`, ['Resolved', new Date(), data.SP_ID, daysOfcontact]);
 
                 logger.info(`Contact deletion initiated for SPID: ${data.SP_ID}, days given: ${data.autodeletion_contacts}, subtracted days: ${daysOfcontact}, affected rows: ${deletedContact?.affectedRows}`);
 

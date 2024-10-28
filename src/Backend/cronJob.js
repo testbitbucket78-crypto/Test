@@ -78,7 +78,7 @@ async function fetchScheduledMessages() {
     }
 
   } catch (err) {
-    console.log(err)
+    logger.error(`fetchScheduledMessages  error ${err}`)
   }
 
 }

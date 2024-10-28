@@ -36,9 +36,9 @@ const login = async (req, res) => {
 
         const emailId = req.body.email_id;
         const password = req.body.password;
-
+        const Channel = req.bpdy.Channel;
         // Retrieve all user records with the matching email ID
-        const credentials = await db.excuteQuery('SELECT * FROM user WHERE email_id = ? AND isDeleted != 1 AND IsActive != 2', [emailId]);
+        const credentials = await db.excuteQuery('SELECT * FROM user WHERE email_id = ? AND isDeleted != 1 and Channel=? AND IsActive != 2', [emailId,Channel]);
 
         if (credentials.length === 0) {
             return res.status(401).send({
@@ -53,7 +53,7 @@ const login = async (req, res) => {
             const validPassword = await bcrypt.compare(password, credentials[i]['password']);
             if (validPassword) {
                 user = credentials[i];
-                spPhoneNumber = await db.excuteQuery('select * from user where SP_ID=? AND ParentId IS NULL ORDER BY CreatedDate DESC LIMIT 1',[credentials[i]?.SP_ID])
+                spPhoneNumber = await db.excuteQuery('select * from user where SP_ID=? and Channel=? AND ParentId IS NULL ORDER BY CreatedDate DESC LIMIT 1',[credentials[i]?.SP_ID,Channel])
                 break;
             }
         }
@@ -138,6 +138,7 @@ const register = async function (req, res) {
     countryCode = req.body.country_code
     display_mobile_number = req.body?.display_mobile_number
     registerPhone = req.body?.registerPhone
+    Channel = req.body?.Channel
     try {
 
 
@@ -154,7 +155,7 @@ const register = async function (req, res) {
             }
             // Hash the password before storing it in the database
             const hash = await bcrypt.hash(password, 10);
-            var values = [name,registerPhone, email_id, hash, LoginIP, countryCode, display_mobile_number]  // pending add countryCode in stored procedure
+            var values = [name,registerPhone, email_id, hash, LoginIP, countryCode, display_mobile_number,Channel]  // pending add countryCode in stored procedure
             var registeredUser = await db.excuteQuery(val.registerQuery, values)   //need to change LoginIP in signup stored procedure
             const token = jwt.sign({ email_id: registeredUser.email_id }, SECRET_KEY);
 
