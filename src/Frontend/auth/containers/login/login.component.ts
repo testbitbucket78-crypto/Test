@@ -52,7 +52,7 @@ export class LoginComponent implements OnInit {
     login(){
         const loginPayload = {
             ...this.loginformValue,
-            channel: this.channelDomain  
+            Channel: this.channelDomain  
         };
         this.apiService.login(loginPayload).subscribe(
             result => {
