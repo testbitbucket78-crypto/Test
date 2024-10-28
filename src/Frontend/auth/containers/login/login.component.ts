@@ -6,6 +6,7 @@ import { Router } from '@angular/router';
 import { AuthService } from './../../services';
 import { SettingsService } from 'Frontend/dashboard/services/settings.service';
 import { Validators } from '@angular/forms';
+import { environment } from 'environments/environment';
 @Component({
     selector: 'sb-login',
     changeDetection: ChangeDetectionStrategy.OnPush,
@@ -28,6 +29,7 @@ export class LoginComponent implements OnInit {
     isLoading!: boolean;
     visible: boolean = true;
     changetype: boolean = true;
+    public channelDomain:string = environment?.chhanel;
 
     constructor(private apiService: AuthService, private router: Router, private formBuilder: FormBuilder, private settingsService:SettingsService,private cdr: ChangeDetectorRef) {
 
@@ -48,7 +50,12 @@ export class LoginComponent implements OnInit {
     }
 
     login(){
-        this.apiService.login(this.loginformValue).subscribe(
+         debugger;
+        const loginPayload = {
+            ...this.loginformValue,
+            channel: this.channelDomain  
+        };
+        this.apiService.login(loginPayload).subscribe(
             result => {
                 this.isLoading = false;
                 if (result?.status === 200) {

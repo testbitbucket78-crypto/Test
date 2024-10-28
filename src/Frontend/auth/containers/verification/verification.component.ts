@@ -3,6 +3,7 @@ import { AuthService } from './../../services';
 import { Router } from '@angular/router';
 import { FormControl, FormBuilder} from '@angular/forms';
 import { Validators } from '@angular/forms';
+import { environment } from 'environments/environment';
 declare var $: any;
 
 @Component({
@@ -37,6 +38,7 @@ export class VerificationComponent implements OnInit {
     title = 'formValidation';
     submitted = false;
     values: any;
+    public channelDomain:string = environment?.chhanel;
     constructor(private apiService: AuthService, private router: Router, private formBuilder: FormBuilder, private cdr: ChangeDetectorRef) { 
         
         this.otpForm = this.formBuilder.group({
@@ -362,6 +364,7 @@ export class VerificationComponent implements OnInit {
             this.values = sessionStorage.getItem('formValues')
             let formValues = JSON.parse(this.formValues);
             formValues.registerPhone = formValues?.mobile_number;
+            formValues.Channel = this.channelDomain;
             this.formValues = JSON.stringify(formValues); // adding payload re-Formatting to string
             this.apiService.register(this.formValues).subscribe((response: any) => {
 
