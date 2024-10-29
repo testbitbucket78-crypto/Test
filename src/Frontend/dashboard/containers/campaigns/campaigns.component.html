@@ -61,7 +61,7 @@
 				  </div> -->
 				<div *ngIf="channelSelected === 'WA API'" class="info-container ml-2 mb-2 d-flex align-items-center">
 					<div class="d-flex align-items-center">
-						<img src="../../../../assets/img/info-icon.png" (click)="balanceLimitTooltip = !balanceLimitTooltip" style="width: 15px; height: 15px;">
+						<img src="../../../../assets/img/info-icon.png" (click)="balanceLimitTooltip = !balanceLimitTooltip" style="width: 15px; height: 15px;cursor: pointer;">
 						<div *ngIf="balanceLimitTooltip" class="showInfoFallback1 ">
 							<p id="p-body">
 								The maximum number of business-initiated conversations you can initiate within a 24-hour period.
@@ -76,7 +76,7 @@
 						</p>
 					</div>
 					<div class="d-flex align-items-center">
-						<img src="../../../../assets/img/info-icon.png" (click)="channelQualityTooltip = !channelQualityTooltip" style="width: 15px; height: 15px;">
+						<img src="../../../../assets/img/info-icon.png" (click)="channelQualityTooltip = !channelQualityTooltip" style="width: 15px; height: 15px;cursor: pointer">
 						<div *ngIf="channelQualityTooltip" class="showInfoFallback1 ">
 							<p id="p-body">
 								Your quality rating is based on how messages have been received by recipients over the past seven days.
@@ -190,8 +190,8 @@ It is determined by a combination of user feedback signals like blocks, reports 
 					</div>
 					<div *ngIf="showDownloadBtn" class="d-flex align-items-center mb-3 mt-3">
 						<div class="position-relative">
-							<img src="../../../../assets/img/info-icon.png" (click)="dowloadTooltip = !dowloadTooltip" style="width: 15px; height: 15px; margin-right: 18px;">
-							<div *ngIf="dowloadTooltip" class="showInfoFallback1 t-0">
+							<img src="../../../../assets/img/info-icon.png" (click)="dowloadTooltip = !dowloadTooltip" style="width: 15px; height: 15px; margin-right: 18px;cursor: pointer;">
+							<div *ngIf="dowloadTooltip" class="showInfoFallback1 t-0" style="z-index: 1;">
 								<p id="p-body">
 									Please note the values for various report components can update based on the actual status provided by Meta. e.g. Seen or Reply status and its time.
 								</p>
