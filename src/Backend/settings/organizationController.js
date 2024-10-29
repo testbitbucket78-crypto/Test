@@ -743,7 +743,7 @@ const addUser = async (req, res) => {
         mobile_number = req.body.mobile_number
         LoginIP = req.body.LoginIP
         RoleName = req.body?.role
-
+        Channel = req.body?.Channel
         let myUTCString = new Date().toUTCString();
         const CreatedDate = moment.utc(myUTCString).format('YYYY-MM-DD HH:mm:ss');
         ParentId = req.body.uid
@@ -772,7 +772,7 @@ const addUser = async (req, res) => {
         } else {
             var randomstring = Math.random().toString(36).slice(-8);
             const hash = await bcrypt.hash(randomstring, 10);
-            var values = [[SP_ID, email_id, name, mobile_number,registerPhone, hash, CreatedDate, ParentId, UserType, IsDeleted, IsActive, CreatedDate, LoginIP, countryCode, displayPhoneNumber]]
+            var values = [[SP_ID, email_id, name, mobile_number,registerPhone, hash, CreatedDate, ParentId, UserType, IsDeleted, IsActive, CreatedDate, LoginIP, countryCode, displayPhoneNumber,Channel]]
 
             var User = await db.excuteQuery(val.insertQuery, [values]);
             const created_at = moment.utc(myUTCString).format('YYYY-MM-DD HH:mm:ss');
@@ -884,6 +884,7 @@ const editUser = async (req, res) => {
         displayPhoneNumber = req.body?.display_mobile_number
         UserType = req.body?.UserType
         registerPhone = req.body?.registerPhone
+        Channel = req.body?.Channel
         var randomstring = Math.random().toString(36).slice(-8);
 
 
@@ -932,7 +933,7 @@ const editUser = async (req, res) => {
         if (currentUser[0]?.registerPhone !== registerPhone) changes.push(`New Phone: ${registerPhone}`);
         if (previousRole[0]?.RoleName !== currentRole[0]?.RoleName) changes.push(`New Role: ${RoleName}`);
 
-        var editUserData = await db.excuteQuery(val.updateQuery, [email_id, name, registerPhone, LastModifiedDate, UserType, countryCode, displayPhoneNumber, uid])
+        var editUserData = await db.excuteQuery(val.updateQuery, [email_id, name, registerPhone, LastModifiedDate, UserType, countryCode, displayPhoneNumber,Channel, uid])
 
 
 

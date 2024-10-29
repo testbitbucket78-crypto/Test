@@ -249,7 +249,7 @@ deleteMedia=`UPDATE Message set is_deleted=1,updated_at=? where SPID=? and  mess
 
 let isNoReplySent = `select * from Message where interaction_id =? and system_message_type_id=4`
 let getInteractionbyId =`select * from Interaction WHERE InteractionId=? and interaction_status=?  and is_deleted !=1`
-let getLatestMsgbyInteraction = `SELECT M.interaction_id,SUBSTRING_INDEX(GROUP_CONCAT(distinct imp.AgentId ORDER BY imp.created_at desc), ',', 1) as AgentId,whour.start_time,whour.end_time,whour.working_days, I.customerId,max(M.updated_at) as nonSystemUpdatedMsgTime, M.SPID, M.Agent_id, MAX(M.Message_id) as MaxMessageId, Max(ms.updated_at) as updated_at, I.updated_at as updateTime
+let getLatestMsgbyInteraction = `SELECT M.interaction_id,SUBSTRING_INDEX(GROUP_CONCAT(distinct imp.AgentId ORDER BY imp.created_at desc), ',', 1) as AgentId,whour.start_time,whour.end_time,whour.working_days, I.customerId,max(M.updated_at) as nonSystemUpdatedMsgTime, M.SPID ,M.message_direction , M.Agent_id, MAX(M.Message_id) as MaxMessageId, Max(ms.updated_at) as updated_at, I.updated_at as updateTime
  ,dm.autoreply,defAc.isAutoReply,defAc.isAutoReplyDisable,defAc.pauseAutoReplyTime, dm.value, dm.message_type, dm.Is_disable, dm.link, ec.channel, ec.Phone_number as customer_phone_number,ec.defaultAction_PauseTime, interaction_status, ms.Message_id as SystemReplyMessageId, ms.system_message_type_id
     FROM (SELECT MAX(InteractionId) AS InteractionId, customerId, interaction_status, Max(updated_at) as updated_at FROM Interaction where interaction_status = 'Open' group by customerId) AS I
      left Join  Message M on I.InteractionId = M.interaction_id and (M.system_message_type_id IS NULL  OR M.system_message_type_id != 4 )

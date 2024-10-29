@@ -75,8 +75,8 @@ WHERE u.SP_ID =? AND u.isDeleted != 1  AND u.uid = ?`
 
 selectByIdQuery = `select Company_Name,profile_img from companyDetails where SP_ID=?`
 userdeletQuery = "UPDATE user SET IsDeleted='1' WHERE uid=?"
-updateQuery = "UPDATE user SET  email_id=?, name=?, registerPhone=?, LastModifiedDate=?, UserType=?,country_code=? ,display_mobile_number=? WHERE uid=?";
-insertQuery = "INSERT INTO user (SP_ID, email_id, name, mobile_number,registerPhone,password,CreatedDate,ParentId,UserType,IsDeleted,IsActive,LastModifiedDate,LoginIP,country_code,display_mobile_number) VALUES ?";
+updateQuery = "UPDATE user SET  email_id=?, name=?, registerPhone=?, LastModifiedDate=?, UserType=?,country_code=? ,display_mobile_number=?,Channel=? WHERE uid=?";
+insertQuery = "INSERT INTO user (SP_ID, email_id, name, mobile_number,registerPhone,password,CreatedDate,ParentId,UserType,IsDeleted,IsActive,LastModifiedDate,LoginIP,country_code,display_mobile_number,Channel) VALUES ?";
 findEmail = "SELECT * FROM user WHERE email_id=?  and isDeleted !=1 " //unique through engagekart
 getRole = `SELECT 
 r.*,
@@ -408,12 +408,13 @@ let getCustomColumnById = `SELECT * FROM SPIDCustomContactFields WHERE id=? AND 
 
 //________________________________________TEMPLATE SETTINGS__________________________//
 
-var addTemplates = `INSERT INTO templateMessages (TemplateName,Channel,Category,Language,media_type,Header,BodyText,Links,FooterText,template_json,status,spid,created_By,created_at,isTemplate,industry,category_id,templateID,buttons,quality) VALUES ?`
+var addTemplates = `INSERT INTO templateMessages (TemplateName,Channel,Category,Language,media_type,Header,BodyText,Links,FooterText,template_json,status,spid,created_By,created_at,isTemplate,industry,category_id,templateID,buttons,quality,categoryChange) VALUES ?`
 var selectTemplate = `SELECT * FROM templateMessages WHERE spid=? and isDeleted !=1 and isTemplate=?`
 var selectApprovedTemplate = `SELECT * FROM templateMessages WHERE spid=? and isDeleted !=1  and (status='saved' OR status='APPROVED') and isTemplate=?`
-var updateTemplate = `UPDATE templateMessages SET TemplateName=?,Channel=?,Category=?,Language=?,media_type=?,Header=?,BodyText=?,Links=?,FooterText=?,template_json=?,status=?,spid=?,created_By=?,updated_at=?,isTemplate=?,industry=?,category_id=?,templateID=?,buttons=? where ID=?`
+var updateTemplate = `UPDATE templateMessages SET TemplateName=?,Channel=?,Category=?,Language=?,media_type=?,Header=?,BodyText=?,Links=?,FooterText=?,template_json=?,status=?,spid=?,created_By=?,updated_at=?,isTemplate=?,industry=?,category_id=?,templateID=?,buttons=?,categoryChange=? where ID=?`
 var deleteTemplate = `UPDATE templateMessages set isDeleted=1 ,updated_at=? where ID=?`
 var addGallery = `INSERT INTO templateMessages (TemplateName,Channel,Category,Language,media_type,Header,BodyText,Links,FooterText,template_json,status,spid,created_By,created_at,isTemplate,industry,category_id,updated_at,topic) VALUES ?`
+var updateGallery = `UPDATE templateMessages SET TemplateName=?,Channel=?,Category=?,Language=?,media_type=?,Header=?,BodyText=?,Links=?,FooterText=?,template_json=?,status=?,spid=?,created_By=?,updated_at=?,isTemplate=?,industry=?,category_id=?,topic=? where ID=?`
 var getGallery = `SELECT * FROM templateMessages WHERE spid=? and isDeleted !=1 and isTemplate=?`
 
 
@@ -451,7 +452,7 @@ module.exports = {
     , profilebillQuery, updatePlanQuery, selectbillinghistory, useData, selectPlan, usageInsiteQuery, addFunds
     , subFAQsQuery, FAQsQuery, UserGuideTopicsQuery, UserGuideSubTopicsQuery, allusageInsiteCount, invoicePdf, billhistoryQuery, planquery, cNameQuery, insertSPTransations
     , manageplans, manageplansCharges, selectNotification, updateNotifications, addCampaignTimingsQuery, deleteCampaignTimingsQuery, selectCampaignTimingsQuery, campaignAlertUsersList,
-    addCampaignAlerts, deleteCampaignAlerts, selectCampaignAlerts, addCampaignTest, deleteCampaignTest, selectCampaignTest,
+    addCampaignAlerts, deleteCampaignAlerts, selectCampaignAlerts, addCampaignTest, deleteCampaignTest, selectCampaignTest,updateGallery,
     addtag, updatetag, deletetag, selecttag, addTemplates, selectTemplate, updateTemplate, deleteTemplate, insertWhatsappdetails, updateWhatsappdetails, selectChannelCount,
     Whatsappdetails,addTokenQuery,updateTokenQuery,deleteTokenQuery,selectTokenQuery,isEnableQuery,baseURL,accessToken,deleteIPQuery,insertIPAddress,updateNotification,
     getColCount,addcolumn,getcolumn,deletecolumn,getcolumnid,enableMandatory,enablestatus,editfield ,selectApprovedTemplate ,addGallery ,getGallery,selectUserByIdQuery,
