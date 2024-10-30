@@ -235,7 +235,7 @@ async function NoAgentReplyTimeOut() {
 
       for (let i = 0; i < noAgentReplydata.length; i += batchSize) {
         const batch = noAgentReplydata.slice(i, i + batchSize); // Process in batches
-        logger.info(`Processing batch ${(i / batchSize) + 1} with ${batch.length} messages`, { timestamp: new Date() });
+       // logger.info(`Processing batch ${(i / batchSize) + 1} with ${batch.length} messages`, { timestamp: new Date() });
 
         // Process each message in the current batch
         for (const msg of batch) {
@@ -247,16 +247,19 @@ async function NoAgentReplyTimeOut() {
           if (!replyPauseCache.has(msg.SPID)) {
             isReplyPause = await isReplySent(msg.isAutoReply, msg.defaultAction_PauseTime, msg.isAutoReplyDisable, msg.AgentId, msg.interaction_status);
             replyPauseCache.set(msg.SPID, isReplyPause);
-            logger.info(`isReplyPause calculated for SPID: ${msg.SPID}`, { isReplyPause });
+          //  logger.info(`isReplyPause calculated for SPID: ${msg.SPID}`, { isReplyPause });
           } else {
             isReplyPause = replyPauseCache.get(msg.SPID);
           }
 
           // Check if workingHoursCache already has the result for this SPID
           if (!workingHoursCache.has(msg.SPID)) {
-            isWorkingHour = isWorkingTime(msg.start_time, msg.end_time, msg.working_days);
+            //console.log(msg.start_time, msg.end_time, msg.working_days,msg.SPID,"working hour")
+            //console.log("Types - starthour:", typeof msg.start_time, ", endhour:", typeof msg.end_time, ", workDays:", typeof msg.working_days, ", spid:", typeof msg.SPID);
+
+            isWorkingHour = isWorkingTime(msg.start_time, msg.end_time, msg.working_days,msg.SPID);
             workingHoursCache.set(msg.SPID, isWorkingHour);
-            logger.info(`isWorkingHour calculated for SPID: ${msg.SPID}, ${isWorkingHour}`);
+           // logger.info(`isWorkingHour calculated for SPID: ${msg.SPID}, ${isWorkingHour}`);
           } else {
             isWorkingHour = workingHoursCache.get(msg.SPID);
           }
@@ -267,7 +270,7 @@ async function NoAgentReplyTimeOut() {
               message_text = await removeTags.removeTagsFromMessages(msg.value);
             }
             extractedMessageCache.set(msg.SPID, message_text);
-            logger.info(`Message extracted for SPID: ${msg.SPID}`, { message_text });
+           // logger.info(`Message extracted for SPID: ${msg.SPID}`, { message_text });
           } else {
             message_text = extractedMessageCache.get(msg.SPID);
           }
@@ -276,10 +279,14 @@ async function NoAgentReplyTimeOut() {
           let autoReplyVal = new Date(msg.nonSystemUpdatedMsgTime.getTime() + msg.autoreply * 60000); // Clone the UTC time
 
           // Log conditions before checking if a reply should be sent
-          logger.info(`Checking conditions for SPID, phone_number, msg.updated_at , interaction updateTime ,autoReplyVal : ${isReplyPause}, ${new Date()}, ${msg.SPID}, ${msg.customer_phone_number},${msg.updated_at}, ${msg.updateTime}, ${autoReplyVal}`)    
-
-          // Check conditions to send a reply
-          if (isReplyPause && msg.Is_disable != 0 && (!(msg.updated_at >= msg.updateTime) || msg.updated_at == null) && currentTime >= autoReplyVal) {
+     
+            logger.info(`Checking conditions for SPID, phone_number, msg.updated_at , interaction updateTime ,autoReplyVal : ${isReplyPause}, ${new Date()}, ${msg.SPID}, ${msg.customer_phone_number},${msg.updated_at}, ${msg.updateTime}, ${autoReplyVal}`)    
+          if(msg.SPID == 55){
+console.log(msg.start_time, msg.end_time, msg.working_days,msg.SPID,msg.customer_phone_number,isWorkingHour,isReplyPause , msg.Is_disable != 0 , (!(msg.updated_at >= msg.updateTime) || msg.updated_at == null) , currentTime >= autoReplyVal , msg.message_direction == 'IN')
+console.log("msg.start_time, msg.end_time, msg.working_days,msg.SPID,PHONE,isWorkingHour,isReplyPause , msg.Is_disable != 0 , (!(msg.updated_at >= msg.updateTime) || msg.updated_at == null) , currentTime >= autoReplyVal , msg.message_direction == 'IN'")
+          }
+// Check conditions to send a reply
+          if (isReplyPause && msg.Is_disable != 0 && (!(msg.updated_at >= msg.updateTime) || msg.updated_at == null) && currentTime >= autoReplyVal && msg.message_direction == 'IN') {
             if (isWorkingHour === true) {
               logger.info(`Sending message for SPID: ${msg.SPID}`, { timestamp: new Date() });
               let response = await messageThroughselectedchannel(
@@ -307,21 +314,21 @@ async function NoAgentReplyTimeOut() {
               }
             }
           }
-        }
+        
 
         // Add delay between processing batches
         if (i + batchSize < noAgentReplydata.length) {
           await new Promise(resolve => setTimeout(resolve, delayBetweenBatches));
         }
 
-        logger.info(`-------------------------------------------------------------`)
+       // logger.info(`-------------------------------------------------------------`)
 
 
 
+      }
 
 
-
-        logger.info(`${i} NoAgentReplyTimeOut another batch ${new Date()}`)
+       // logger.info(`${i} NoAgentReplyTimeOut another batch ${new Date()}`)
 
       }
     }
@@ -497,11 +504,12 @@ async function getExtraxtedMessage(message_text, SPID, customerId) {
 
 
 
-function isWorkingTime(starthour, endhour , workDays) {
+function isWorkingTime(starthour, endhour , workDays,spid) {
 
     // Check if starthour, endhour, and workDays are provided and not null
     if (!starthour || !endhour || !workDays) {
-      console.error("Error: Missing required parameters. Please check starthour, endhour, or workDays.");
+
+      console.log("Error: Missing required parameters. Please check starthour, endhour, or workDays.",starthour, endhour , workDays,spid);
       return false;
     }
 
@@ -519,7 +527,7 @@ function isWorkingTime(starthour, endhour , workDays) {
     const endTime = end_time.split(':');
 //console.log("starthour, endhour , workDays",starthour, endhour , workDays)
     if (workingDays.includes(currentDay) && (((startTime[0] < date) || (date === startTime[0] && startTime[1] <= getMin)) && ((endTime[0] > date) || ((endTime[1] === getMin) && (endTime[1] >= getMin))))) {
-      console.log("data===========")
+      //console.log("data===========",spid)
       return true;
     }
 
