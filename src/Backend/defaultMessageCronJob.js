@@ -55,8 +55,8 @@ async function NoCustomerReplyReminder() {
               // Check if extractedMessageCache already has the result for this SP_ID
               if (!extractedMessageCache.has(message.SP_ID)) {
                // message_text = await getExtraxtedMessage(message.message_value, message.SP_ID, message.customerId);
-               if(message.message_text != null){
-                message_text = await removeTags.removeTagsFromMessages(message.message_text); // Clean up message
+               if(message.value != null){
+                message_text = await removeTags.removeTagsFromMessages(message.value); // Clean up message
                }
                 
                 extractedMessageCache.set(message.SP_ID, message_text); // Cache the result
@@ -84,7 +84,7 @@ async function NoCustomerReplyReminder() {
                 // Update message status and insert new message
                 await db.excuteQuery(settingVal.systemMsgQuery, [5, currenttime, message.MaxMessageId]);
                 let messageValu = [
-                  [message.SPID, 'text', metaPhoneNumberID, message.interaction_id, message.Agent_id, 'Out', message.message_text, (message.link ? message.link : 'text'), message.message_type,  response?.message?.messages[0]?.id, "", currenttime, currenttime, 5, -2, 1]
+                  [message.SPID, 'text', metaPhoneNumberID, message.interaction_id, message.Agent_id, 'Out', message.value, (message.link ? message.link : 'text'), message.message_type,  response?.message?.messages[0]?.id, "", currenttime, currenttime, 5, -2, 1]
                 ];
                 await db.excuteQuery(insertMessageQuery, [messageValu]);
               }
@@ -185,7 +185,7 @@ async function NoCustomerReplyTimeout() {
                 await db.excuteQuery(settingVal.systemMsgQuery, [6, currenttime, msg.Message_id]);
 
                 let messageValu = [
-                  [msg.SPID, 'text', metaPhoneNumberID, msg.interaction_id, msg.Agent_id, 'out', msg.value, (msg.link ? msg.link : 'text'), msg.message_type,  response?.message?.messages[0]?.id, "", currenttime, currenttime, 6, -2, 1]
+                  [msg.SPID, 'text', metaPhoneNumberID, msg.interaction_id, msg.Agent_id, 'Out', msg.value, (msg.link ? msg.link : 'text'), msg.message_type,  response?.message?.messages[0]?.id, "", currenttime, currenttime, 6, -2, 1]
                 ];
                 let insertedMessage = await db.excuteQuery(insertMessageQuery, [messageValu]);
                 logger.info(`NoCustomerReplyTimeout msg, ${insertedMessage}, ${new Date()}`);
@@ -280,12 +280,9 @@ async function NoAgentReplyTimeOut() {
 
           // Log conditions before checking if a reply should be sent
      
-            logger.info(`Checking conditions for SPID, phone_number, msg.updated_at , interaction updateTime ,autoReplyVal : ${isReplyPause}, ${new Date()}, ${msg.SPID}, ${msg.customer_phone_number},${msg.updated_at}, ${msg.updateTime}, ${autoReplyVal}`)    
-          if(msg.SPID == 55){
-console.log(msg.start_time, msg.end_time, msg.working_days,msg.SPID,msg.customer_phone_number,isWorkingHour,isReplyPause , msg.Is_disable != 0 , (!(msg.updated_at >= msg.updateTime) || msg.updated_at == null) , currentTime >= autoReplyVal , msg.message_direction == 'IN')
-console.log("msg.start_time, msg.end_time, msg.working_days,msg.SPID,PHONE,isWorkingHour,isReplyPause , msg.Is_disable != 0 , (!(msg.updated_at >= msg.updateTime) || msg.updated_at == null) , currentTime >= autoReplyVal , msg.message_direction == 'IN'")
-          }
-// Check conditions to send a reply
+            logger.info(`Checking conditions for isWorkingHour, isReplyPause ,SPID, phone_number, msg.updated_at , interaction updateTime ,autoReplyVal :${isWorkingHour} ${isReplyPause}, ${new Date()}, ${msg.SPID}, ${msg.customer_phone_number},${msg.updated_at}, ${msg.updateTime}, ${autoReplyVal}`)    
+
+         // Check conditions to send a reply
           if (isReplyPause && msg.Is_disable != 0 && (!(msg.updated_at >= msg.updateTime) || msg.updated_at == null) && currentTime >= autoReplyVal && msg.message_direction == 'IN') {
             if (isWorkingHour === true) {
               logger.info(`Sending message for SPID: ${msg.SPID}`, { timestamp: new Date() });
@@ -306,7 +303,7 @@ console.log("msg.start_time, msg.end_time, msg.working_days,msg.SPID,PHONE,isWor
                 let myUTCString = new Date().toUTCString();
                 const currenttime = moment.utc(myUTCString).format('YYYY-MM-DD HH:mm:ss');
                 let messageValu = [
-                  [msg.SPID, 'text', metaPhoneNumberID, msg.interaction_id, msg.Agent_id, 'out', msg.value, (msg.link ? msg.link : 'text'), msg.message_type, response?.message?.messages[0]?.id, "", currenttime, currenttime, 4, -2, 1]
+                  [msg.SPID, 'text', metaPhoneNumberID, msg.interaction_id, msg.Agent_id, 'Out', msg.value, (msg.link ? msg.link : 'text'), msg.message_type, response?.message?.messages[0]?.id, "", currenttime, currenttime, 4, -2, 1]
                 ];
                 let insertedMessage = await db.excuteQuery(insertMessageQuery, [messageValu]);
 

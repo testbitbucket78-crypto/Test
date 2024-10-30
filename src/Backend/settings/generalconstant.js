@@ -74,7 +74,7 @@ ic.customerId,
 ic.updated_at  as updateTime,
 SUBSTRING_INDEX(GROUP_CONCAT(distinct imp.AgentId ORDER BY imp.created_at desc), ',', 1) as AgentId,whour.start_time,whour.end_time,whour.working_days,
 defAc.isAutoReply,defAc.isAutoReplyDisable,defAc.pauseAutoReplyTime,
-m.interaction_id, m.SPID, m.Agent_id, MAX(m.Message_id) as MaxMessageId, Max(m.updated_at) as updated_at,latestMsg.latestMessageDate,
+m.interaction_id, m.SPID, m.Agent_id, MAX(m.Message_id) as MaxMessageId, Max(m.created_at) as updated_at,latestMsg.latestMessageDate,
 ec.channel,
 ec.phone_number AS customer_phone_number,
 ec.defaultAction_PauseTime,
@@ -84,13 +84,13 @@ Interaction ic
 JOIN (
 SELECT
     interaction_id,
-    MAX(updated_at) AS latestMessageDate
+    MAX(created_at) AS latestMessageDate
 FROM Message
-WHERE message_direction = 'out' 
+WHERE message_direction = 'Out' 
 AND (system_message_type_id IS NULL OR system_message_type_id IN (1, 2,3,4,6))  
 GROUP BY interaction_id HAVING latestMessageDate <= DATE_SUB(NOW(), INTERVAL 23 HOUR)
 ) latestMsg ON ic.interactionId = latestMsg.interaction_id
-JOIN Message m ON latestMsg.interaction_id = m.interaction_id AND latestMsg.latestMessageDate = m.updated_at
+JOIN Message m ON latestMsg.interaction_id = m.interaction_id AND latestMsg.latestMessageDate = m.created_at
 LEFT JOIN Message m_in ON ic.InteractionId = m_in.interaction_id
 AND m_in.message_direction = 'IN'
 AND m_in.updated_at > latestMsg.latestMessageDate
