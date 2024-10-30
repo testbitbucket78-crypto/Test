@@ -927,7 +927,7 @@ const download = (req, res) => {
 const fetchCampaignMessages = async (campaignId, timeZone) => {
     const query = `
     SELECT 
-        CampaignId AS "Msg ID",
+        id AS "Msg ID",
         phone_number AS "Customer Number",
         status AS "Message Status",
         CONVERT_TZ(SentTime, '+00:00', '${timeZone}') AS "Submit Time",
