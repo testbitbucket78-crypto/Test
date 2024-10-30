@@ -165,7 +165,7 @@ ToggleAttributesOption(){
 const selection = window.getSelection();
 this.lastCursorPosition = selection?.getRangeAt(0) || null;
 $('#atrributemodal').modal('show');
-$('#welcomGreeting').modal('hide');
+//$('#welcomGreeting').modal('hide');
 }
 
   selectAttributes(item:any){

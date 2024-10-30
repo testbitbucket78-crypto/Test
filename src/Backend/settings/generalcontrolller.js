@@ -42,6 +42,7 @@ const defaultaction = async (req, res) => {
                 console.log("isAutoReplyDisable",updatePause)
              }
              if(select[0]?.pauseAutoReplyTime != pauseAutoReplyTime){
+                let currentTime = new Date();
                 let oldPauseAutoReplyTime = select[0]?.pauseAutoReplyTime || 0; // Fallback to 0 if undefined
                 let newPauseAutoReplyTime = pauseAutoReplyTime || 0; // Fallback to 0 if undefined
                 

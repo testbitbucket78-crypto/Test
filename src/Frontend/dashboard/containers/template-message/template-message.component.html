@@ -25,7 +25,7 @@
              </div>
            </div>
 
-          <button class="mx-2 new-message-btn" data-bs-toggle="modal" data-bs-target="#newTemplateMessageFirst"><img class="mx-1 icon" src="../../../../assets/img/teambox/add.svg" /> New Template</button>	
+          <button class="mx-2 new-message-btn" data-bs-toggle="modal" data-bs-target="#newTemplateMessageFirst" (click)="addNewTemplate()"><img class="mx-1 icon" src="../../../../assets/img/teambox/add.svg" /> New Template</button>	
         </div>
         
 
@@ -108,7 +108,7 @@
                             [ngStyle]="{'background-image': 'url(' + templatesMessageData?.Links + ')'}">
                         </div>
                             <div *ngIf="templatesMessageData?.media_type == 'video'" class="message_type">
-                                <video autoplay loop muted id="video-background" [src]="templatesMessageData?.Links" type="video/mp4"></video>
+                                <video  loop muted id="video-background" [src]="templatesMessageData?.Links" type="video/mp4"></video>
                             </div>
                             <div *ngIf="templatesMessageData?.media_type == 'document'" class="message_type">
                                 <div class="doc-preview" *ngIf="templatesMessageData?.Links" width="100%" height="150px">
@@ -121,7 +121,15 @@
                                 <span *ngIf="templatesMessageData?.FooterText" [innerHTML]="templatesMessageData?.FooterText | sanitizeHtml"></span><br />
                             </div>
                             <div *ngIf="templatesMessageData?.buttons && templatesMessageData?.buttons?.length >0" class="w-70">
-                                <div *ngFor="let item of templatesMessageData?.buttons" class="text-center"><button class="template-btn">{{item?.text}}</button> </div>
+                                <div *ngFor="let item of templatesMessageData?.buttons let i = index" >
+                                <div  class="text-center" *ngIf="item?.buttonText && i<3"><button class="template-btn" (click)="isAllButtonPopupVisible = !isAllButtonPopupVisible" [ngClass]="{'btn-radius': ((templatesMessageData?.buttons?.length-1)== i || (templatesMessageData?.buttons?.length >2 && i==2))}">
+                                    <img class="btn-preview-img" *ngIf="item.type =='Quick Reply'" src="../../../../assets/img/settings/reply-arrow.svg"> 
+                                    <img class="btn-preview-img" *ngIf="item.type =='Call Phone'" src="../../../../assets/img/settings/phone-call.svg"> 
+                                    <img class="btn-preview-img" *ngIf="item.type =='Copy offer Code'" src="../../../../assets/img/settings/copy.svg"> 
+                                    <img class="btn-preview-img" *ngIf="item.type =='Visit Website'" src="../../../../assets/img/settings/open-in-new.svg"> 
+                                    <img class="btn-preview-img" *ngIf="item.type =='Complete Flow'" src="../../../../assets/img/settings/form.svg"> 
+                                    {{(i==2 && templatesMessageData?.buttons?.length>3) ? 'Show All Buttons' : item?.buttonText }}</button> </div>
+                                </div>
                             </div>
                             <!-- <div class="contact-us">
                                 Contact Us
@@ -245,7 +253,7 @@
         <div class="message_section">
             <div *ngIf="galleryMessageData.media_type == 'image'" class="message_type" [ngStyle]="{'background-image': 'url(' + galleryMessageData?.Links + ')'}"></div>
             <div *ngIf="galleryMessageData.media_type == 'video'" class="message_type">
-                <video autoplay loop id="video-background" [src]="galleryMessageData?.Links" type="video/mp4"></video>
+                <video  loop id="video-background" [src]="galleryMessageData?.Links" type="video/mp4"></video>
             </div>
             <div *ngIf="galleryMessageData?.media_type == 'document'" class="message_type">
                 <div class="doc-preview" *ngIf="galleryMessageData?.Links" width="100%" height="150px">
@@ -448,11 +456,20 @@
                     </select>
                 </div>
                 <div class="p-1 msg-head">
-                    <h6 class="pt-1 pb-2">Allow category change<span class="text-danger font-weight-bold">*</span></h6>
-                    <select class="sel input-form" formControlName="Language">
-                        <option [disabled]="true" [selected]="true" [hidden]="true" [value]="null">Select language</option>
+                    <div class="d-flex justify-content-between">
+                    <h6 class="pt-1 pb-2">Allow category change <span class="text-danger font-weight-bold">*</span></h6>
+                    <div>
+                        <img src="../../../../assets/img/info-icon.png" (click)="channelQualityTooltip = !channelQualityTooltip" style="width: 15px; height: 15px;cursor: pointer">
+                        <div *ngIf="channelQualityTooltip" class="showInfoFallback1 ">
+							<p id="p-body">selecting this to 'yes' will prevent your template from being rejected for miscategorization</p>
+							<button id="radio-close-btn" (click)=" channelQualityTooltip= false">X</button>
+						</div>
+                    </div>
+                </div>
+                    <select class="sel input-form" formControlName="categoryChange">
+                        <option [disabled]="true" [selected]="true" [hidden]="true" [value]="null">Select Category Change</option>
                         <option value="Yes">Yes</option>     
-                        <option value="No" >No</option>     
+                        <option value="No">No</option>     
                     </select>
                 </div>
             </div>
@@ -530,6 +547,9 @@
             
                 <div *ngIf="selectedType === 'image'" class="my-4 sel-type-image">
                         <input type="file" accept="image/jpeg, image/png" (change)="onFileChange($event)" id="sel-type-image" (click)="$event.target.value=null">
+                        <div *ngIf="loadingVideo" class="spinner-border" role="status">
+                            <span class="sr-only">Loading...</span>
+                          </div>
                         <div *ngIf="newTemplateForm.get('Links')?.value == null">
                         <label class="type_label" for="sel-type-image"><img src="../../../../assets/img/teambox/add-white.svg" /></label>
                         <p class="m-0">Upload image <span>Choose JPG or PNG file</span></p></div> 
@@ -540,29 +560,35 @@
                         <div class="main-preview-type-image" *ngIf="newTemplateForm.get('Links')?.value !== null" >
                             <span class="p-2 text-right" (click)="removeValue()"><img src="../../../../assets/img/settings/remove.svg" /></span>
                         </div>
+                        <span class="document-preview m-0" *ngIf="newTemplateForm.get('Links')?.value !== null" >{{ this.fileName }}</span>
                 </div>
 
                 <div *ngIf="selectedType === 'video'" class="my-4 sel-type-image" [ngClass]="{'video-back':newTemplateForm.get('Links')?.value !== null}">
+                    <div *ngIf="loadingVideo" class="spinner-border" role="status">
+                        <span class="sr-only">Loading...</span>
+                      </div>
                     <div class="main-preview-type-doc">
                         <span *ngIf="selectedPreview" class="p-2 " (click)="removeValue()">
                           <img src="../../../../assets/img/settings/remove.svg" />
                         </span>
-                        <div *ngIf="loadingVideo" class="text-center">
-                            <div class="spinner-border" role="status">
-                              <span class="sr-only">Loading...</span>
-                            </div>
-                          </div>
+                        <!-- <div *ngIf="loadingVideo" class="text-center">
+                            
+                          </div> -->
                     <!-- <video [src]="selectedPreview" type="video/mp4" controls #videoPlayer></video> -->
                     </div>
                     <input type="file" accept="video/mp4" name="video-upload" (change)="onFileChange($event)" id="sel-type-video" (click)="$event.target.value=null">
                     <label *ngIf="!selectedPreview || loadingVideo" class="type_label" for="sel-type-video"><img src="../../../../assets/img/teambox/add-white.svg" /></label> 
                     <p class="m-0" *ngIf="!selectedPreview || loadingVideo">Upload video <span>Choose MP4 file</span></p> 
-                    <img *ngIf="newTemplateForm.get('Links')?.value !== null" src="../../../../assets/img/teambox/video_preview.png" />
+                    <img *ngIf="newTemplateForm.get('Links')?.value !== null" src="../../../../assets/img/teambox/video_preview.png" height="32px"/>
+                    <span class="document-preview m-0" *ngIf="newTemplateForm.get('Links')?.value !== null" >{{ this.fileName }}</span>
                     <div class="custom-play-button"></div>
                 
                 </div>
             
                 <div *ngIf="selectedType === 'document'" class="my-4 sel-type-image" [ngClass]="{'document-selected':newTemplateForm.get('Links')?.value !== null}">
+                    <div *ngIf="loadingVideo" class="spinner-border" role="status">
+                        <span class="sr-only">Loading...</span>
+                      </div>
                     <div class="main-preview-type-doc" *ngIf="newTemplateForm.get('Links')?.value !== null">
                         <span class="p-2" (click)="removeValue()"><img src="../../../../assets/img/settings/remove.svg" /></span>
                     </div>
@@ -667,7 +693,8 @@
 
                 <div class="container-call-to-btns" *ngFor="let item of buttonsArray;let idx = index">
                     <div class="d-flex btn-container" *ngIf="item.type =='Quick Reply'">
-                        <div class="flex-end pb-2">
+                        <div class="msg-head btn-type-head">
+                            <h6>Button Type</h6>
                             <div class="btn-type-heading">Quick Reply</div>
                         </div>
                         <div class="flex-grow-1 ml-2 pb-2">
@@ -684,7 +711,8 @@
                     </div>
                     <div class="btn-container" *ngIf="item.type =='Copy offer Code'">
                         <div class="d-flex ">
-                        <div class="flex-end">
+                        <div class="msg-head btn-type-head">
+                            <h6>Button Type</h6>
                             <div class="btn-type-heading">Copy Offer Code</div>
                         </div>
                         <div class="flex-grow-1 ml-2">
@@ -703,6 +731,7 @@
                             <div class="flex-grow-1 ml-2">
                                 <div class="d-flex justify-content-between align-items-center msg-head">
                                     <!-- {{ getCharacterCount(idx) }} -->
+                                    <h6>Sample offer code</h6>
                                     <div><span class="characters-count">{{item?.code?.length}}</span><span>/15 Characters</span></div>
                                 </div>
                                 <div class="flex-column sel-type-link">
@@ -714,13 +743,13 @@
                     </div>
                     <div class="btn-container" *ngIf="item.type =='Complete Flow'">
                         <div class="d-flex">
-                        <div class="flex-end">
+                        <div class="msg-head btn-type-head">
+                            <h6>Button Type</h6>
                             <div class="btn-type-heading">Complete Flow</div>
                         </div>
                         <div class="flex-grow-1 ml-2">
                             <div class="d-flex justify-content-between align-items-center msg-head">
                                 <h6>Button Text</h6>
-                                <!-- {{ getCharacterCount(idx) }} -->
                                 <div><span class="characters-count">{{item?.buttonText?.length}}</span><span>/25 Characters</span></div>
                             </div>
                             <div class="flex-column sel-type-link">
@@ -749,7 +778,8 @@
                     </div>
                     <div class="btn-container" *ngIf="item.type =='Call Phone'">
                         <div class="d-flex justify-content-between">
-                            <div class="flex-end">
+                            <div class="msg-head btn-type-head">
+                                <h6>Button Type</h6>
                                 <div class="btn-type-heading">Call Phone</div>
                             </div>
                             <div class="flex-grow-1 ml-2">
@@ -764,8 +794,8 @@
                             </div>
                         </div>
                         <div class="d-flex justify-content-between">
-                            <div class="pt-3 pb-2 msg-head">
-                                <h6 class="pt-1 ">Country</h6>
+                            <div class="pt-3 pb-2 msg-head btn-type-head">
+                                <h6 >Country</h6>
                                 <select class="callto input-form" [(ngModel)]="item.code" [ngModelOptions]="{standalone: true}">
                                     <option *ngFor="let countryCode of countryCodes let i = index" [ngValue]="countryCode">
                                         {{ countryCode }}
@@ -787,7 +817,8 @@
                     </div>
                     <div class="btn-container" *ngIf="item.type =='Visit Website'">
                         <div class="d-flex justify-content-between">
-                            <div class="flex-end">
+                            <div class="msg-head btn-type-head">
+                                <h6>Button Type</h6>
                                 <div class="btn-type-heading">Visit Website</div>
                             </div>
                             <div class="flex-grow-1 ml-2">
@@ -803,8 +834,8 @@
                             </div>
                         </div>
                         <div class="d-flex justify-content-between">
-                            <div class="pt-3  msg-head">
-                                <h6 class="pt-1 ">URL Type</h6>
+                            <div class="pt-3  msg-head btn-type-head">
+                                <h6 >URL Type</h6>
                                 <select class="callto input-form">
                                     <option>Static</option>
                                     <option>Dynamic</option>
@@ -817,7 +848,7 @@
                                     </div>
                                 </div>
                                 <div class="sel-type-link">
-                                    <input type="text" placeholder="e.g. https://www.example.com">
+                                    <input type="text" placeholder="e.g. https://www.example.com" [(ngModel)]="item.webUrl" [ngModelOptions]="{standalone: true}">
                                 </div>
                             </div>
                         </div>
@@ -838,7 +869,7 @@
                 <div *ngIf="selectedType === 'image'" class="message_type" [ngStyle]="{'background-image': 'url(' + selectedPreview + ')'}">
                 </div>
                 <div *ngIf="selectedType === 'video'" class="video message_type">
-                    <video *ngIf="selectedPreview" [src]="selectedPreview" type="video/mp4" autoplay muted #videoPlayer></video>
+                    <video *ngIf="selectedPreview" [src]="selectedPreview" type="video/mp4"  muted #videoPlayer></video>
                 </div>
                 <div *ngIf="selectedType === 'document'" class="message_type" [ngClass]="{'document-selected':newTemplateForm.get('Links')!.value !== null}">
                     <div class="d-flex flex-column">
@@ -854,7 +885,14 @@
                     <span class="temp-footer">{{newTemplateForm.get('FooterText')?.value}}</span><br />
                 </div>                
                 <div *ngFor="let item of buttonsArray;let i =index">
-                    <div  class="text-center" *ngIf="item?.buttonText && i<3"><button class="template-btn" (click)="isAllButtonPopupVisible = !isAllButtonPopupVisible" [ngClass]="{'btn-radius': ((buttonsArray.length-1)== i || (buttonsArray.length >2 && i==2))}">{{(i==2 && buttonsArray?.length>3) ? 'Show All Buttons' : item?.buttonText }}</button> </div>
+                    <div  class="text-center" *ngIf="item?.buttonText && i<3"><button class="template-btn" (click)="isAllButtonPopupVisible = !isAllButtonPopupVisible" [ngClass]="{'btn-radius': ((buttonsArray.length-1)== i || (buttonsArray.length >2 && i==2))}">
+                        <img class="btn-preview-img" *ngIf="item.type =='Quick Reply' && !((buttonsArray.length-1)== i || (buttonsArray.length >2 && i==2))" src="../../../../assets/img/settings/reply-arrow.svg"> 
+                        <img class="btn-preview-img" *ngIf="item.type =='Call Phone' && !((buttonsArray.length-1)== i || (buttonsArray.length >2 && i==2))" src="../../../../assets/img/settings/phone-call.svg"> 
+                        <img class="btn-preview-img" *ngIf="item.type =='Copy offer Code' && !((buttonsArray.length-1)== i || (buttonsArray.length >2 && i==2))" src="../../../../assets/img/settings/copy.svg"> 
+                        <img class="btn-preview-img" *ngIf="item.type =='Visit Website' && !((buttonsArray.length-1)== i || (buttonsArray.length >2 && i==2))" src="../../../../assets/img/settings/open-in-new.svg"> 
+                        <img class="btn-preview-img" *ngIf="item.type =='Complete Flow' && ! ((buttonsArray.length-1)== i || (buttonsArray.length >2 && i==2))" src="../../../../assets/img/settings/form.svg"> 
+                        <img class="btn-preview-img" *ngIf="((buttonsArray.length-1)== i || (buttonsArray.length >2 && i==2))" src="../../../../assets/img/settings/options-lines.svg"> 
+                        {{(i==2 && buttonsArray?.length>3) ? 'Show All Buttons' : item?.buttonText }}</button> </div>
                 </div>
                 <div class="all-btn-popup" *ngIf="isAllButtonPopupVisible">
                     
@@ -862,7 +900,13 @@
                         <img src="../../../../assets/img/teambox/icon-close.svg">
                         <div>All options</div>
                     </div>
-                    <div class="all-btn-Name" *ngFor="let item of buttonsArray;let i =index" > {{item?.buttonText}}</div>
+                    <div class="all-btn-Name" *ngFor="let item of buttonsArray;let i =index" >
+                        <img class="btn-preview-img" *ngIf="item.type =='Quick Reply'" src="../../../../assets/img/settings/reply-arrow.svg"> 
+                        <img class="btn-preview-img" *ngIf="item.type =='Call Phone'" src="../../../../assets/img/settings/phone-call.svg"> 
+                        <img class="btn-preview-img" *ngIf="item.type =='Copy offer Code'" src="../../../../assets/img/settings/copy.svg"> 
+                        <img class="btn-preview-img" *ngIf="item.type =='Visit Website'" src="../../../../assets/img/settings/open-in-new.svg"> 
+                        <img class="btn-preview-img" *ngIf="item.type =='Complete Flow'" src="../../../../assets/img/settings/form.svg"> 
+                        {{item?.buttonText}}</div>
                 </div>
                 
                 <!-- <div *ngIf="newTemplateForm.controls.buttonType.value == 'Call to Action'" class="w-70">
@@ -919,7 +963,7 @@
                 <div *ngIf="selectedType === 'image'" class="message_type" [ngStyle]="{'background-image': 'url(' + selectedPreview + ')'}">
                 </div>
                 <div *ngIf="selectedType === 'video'" class="video message_type">
-                    <video *ngIf="selectedPreview" [src]="selectedPreview" type="video/mp4" autoplay muted #videoPlayer></video>
+                    <video *ngIf="selectedPreview" [src]="selectedPreview" type="video/mp4"  muted #videoPlayer></video>
                 </div>
                 <div *ngIf="selectedType === 'document'" class="message_type" [ngClass]="{'document-selected':newTemplateForm.get('Links')!.value !== null}">
                     <div class="d-flex flex-column">
@@ -934,16 +978,28 @@
                     <span *ngIf="newTemplateForm.get('BodyText')?.value" [innerHTML]="newTemplateForm.get('BodyText')?.value | sanitizeHtml" ></span><br /><br />
                     <span class="temp-footer" *ngIf="newTemplateForm.get('FooterText')?.value" [innerHTML]="newTemplateForm.get('FooterText')?.value | sanitizeHtml"></span><br />
                 </div>
+                               
                 <div *ngFor="let item of buttonsArray;let i =index">
-                    <div  class="text-center" *ngIf="item?.buttonText && i<3"><button class="template-btn" (click)="isAllButtonPopupVisible = !isAllButtonPopupVisible" [ngClass]="{'btn-radius': ((buttonsArray.length-1)== i || (buttonsArray.length >2 && i==2))}">{{(i==2 && buttonsArray?.length>3) ? 'Show All Buttons' : item?.buttonText }}</button> </div>
+                    <div  class="text-center" *ngIf="item?.buttonText && i<3"><button class="template-btn" (click)="isAllButtonPopupVisible = !isAllButtonPopupVisible" [ngClass]="{'btn-radius': ((buttonsArray.length-1)== i || (buttonsArray.length >2 && i==2))}">
+                        <img class="btn-preview-img" *ngIf="item.type =='Quick Reply'" src="../../../../assets/img/settings/reply-arrow.svg"> 
+                        <img class="btn-preview-img" *ngIf="item.type =='Call Phone'" src="../../../../assets/img/settings/phone-call.svg"> 
+                        <img class="btn-preview-img" *ngIf="item.type =='Copy offer Code'" src="../../../../assets/img/settings/copy.svg"> 
+                        <img class="btn-preview-img" *ngIf="item.type =='Visit Website'" src="../../../../assets/img/settings/open-in-new.svg"> 
+                        <img class="btn-preview-img" *ngIf="item.type =='Complete Flow'" src="../../../../assets/img/settings/form.svg"> 
+                        {{(i==2 && buttonsArray?.length>3) ? 'Show All Buttons' : item?.buttonText }}</button> </div>
                 </div>
-                <div class="all-btn-popup" *ngIf="isAllButtonPopupVisible">
-                    
+                <div class="all-btn-popup" *ngIf="isAllButtonPopupVisible">                    
                     <div (click)="isAllButtonPopupVisible = false">
                         <img src="../../../../assets/img/teambox/icon-close.svg">
                         <div>All options</div>
                     </div>
-                    <div class="all-btn-Name" *ngFor="let item of buttonsArray;let i =index" > {{item?.buttonText}}</div>
+                    <div class="all-btn-Name" *ngFor="let item of buttonsArray;let i =index" >
+                        <img class="btn-preview-img" *ngIf="item.type =='Quick Reply'" src="../../../../assets/img/settings/reply-arrow.svg"> 
+                        <img class="btn-preview-img" *ngIf="item.type =='Call Phone'" src="../../../../assets/img/settings/phone-call.svg"> 
+                        <img class="btn-preview-img" *ngIf="item.type =='Copy offer Code'" src="../../../../assets/img/settings/copy.svg"> 
+                        <img class="btn-preview-img" *ngIf="item.type =='Visit Website'" src="../../../../assets/img/settings/open-in-new.svg"> 
+                        <img class="btn-preview-img" *ngIf="item.type =='Complete Flow'" src="../../../../assets/img/settings/form.svg"> 
+                        {{item?.buttonText}}</div>
                 </div>
                 
                 <!-- <div *ngIf="newTemplateForm.controls.buttonType.value == 'Call to Action'" class="w-70">
@@ -982,9 +1038,9 @@
 
 </div>
 
-	<div class="modal fade" tabindex="-1" id="atrributemodal" #atrributemodal data-bs-backdrop="static" role="dialog">
+	<div class="modal fade attr-popup-background" tabindex="-1" id="atrributemodal" #atrributemodal data-bs-backdrop="static" role="dialog">
 		<div class="modal-dialog" role="document">
-			<div class="attrmodal modal-content">
+			<div class="attrmodal modal-content popup-background-none">
 				<div class="modal-body">
 					<div class="custom_modal bg-pink sm attributes">
 						<div class="modal-header">

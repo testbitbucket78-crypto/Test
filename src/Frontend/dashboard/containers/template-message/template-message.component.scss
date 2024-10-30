@@ -1581,11 +1581,14 @@ input[type="radio"]:checked + label::before {
 
   .preview-part .message_section .message_data::-webkit-scrollbar , .scrollBar-visible::-webkit-scrollbar{
     display: block !important;
-    background-color:none !important;
+    background:none !important;
 }
 //   .preview-part .message_section .message_data::-webkit-scrollbar , .scrollBar-visible::-webkit-scrollbar{
 //     display: block !important;
 // }
+* ::-webkit-scrollbar-track{
+    display: none !important;
+}
 
 .popup-dialog{
 	background: #FFFFFF 0% 0% no-repeat padding-box;
@@ -1736,6 +1739,7 @@ input[type="radio"]:checked + label::before {
   .btn-Name{
     padding: 4px 0px;
     font-weight: bold;
+    cursor: pointer !important;
   }
 
   .font-small{
@@ -1801,3 +1805,70 @@ input[type="radio"]:checked + label::before {
     border-radius: 12px;
     margin-top: 8px;
   }
+
+  .btn-type-head h6{
+    margin: 0;
+    font-size: 12px;
+    font-weight: 800;
+    color: #000000;
+    padding: 5px;
+  }
+
+  .btn-preview-img{
+    height: 18px;
+    width: 18px;
+    margin-right: 3px;
+  }
+
+  .sel-type-image .spinner-border{
+    width: 2rem !important;
+    height: 2rem !important;
+    color: gray !important;
+    top: unset  !important;
+    left: unset  !important;
+    z-index: 999999  !important;
+  }
+
+  #radio-close-btn {
+    width: 26px;
+    height: 26px;
+    position: absolute;
+    top: 4%;
+    right: 4%;
+    background: #ffffff;
+    border-radius: 9px;
+    opacity: 1;
+    border: 1px solid #ebebeb;
+    font-family: "Manrope";
+    font-size: 13px;
+}
+
+#p-body{
+    padding: 9px;
+    width: 90%;
+    margin: 0px !important;
+    font-size: 13px;
+}
+
+  
+.showInfoFallback1 {
+	position: absolute;
+    /* top: 3px; */
+    /* bottom: -97px; */
+    width: 280px;
+    height: auto;
+    background: #ffffff 0% 0% no-repeat padding-box;
+    box-shadow: 4px 22px 54px rgba(105, 95, 151, 0.1019607843);
+    border-radius: 20px;
+    opacity: 1;
+    /* overflow: auto; */
+    right: 0;
+}
+
+.popup-background-none{
+    background-color: #ddd3d300 !important;
+}
+
+.attr-popup-background{
+    background-color: #ddd3d396 !important;
+}

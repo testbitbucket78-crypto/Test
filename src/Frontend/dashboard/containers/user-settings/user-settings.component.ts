@@ -10,6 +10,8 @@ import { GridService } from '../../services/ag-grid.service';
 import { catchError } from 'rxjs/operators';
 import { of } from 'rxjs';
 import { PhoneValidationService } from 'Frontend/dashboard/services/phone-validation.service';
+import { environment } from 'environments/environment';
+
 declare var $: any;
 
 @Component({
@@ -129,6 +131,8 @@ export class UserSettingsComponent implements OnInit {
     warningMessage = '';
     login_uid:any;
     isLoading!:boolean;
+    public channelDomain:string = environment.chhanel;
+
     constructor(private _settingsService: SettingsService,public settingsService: SettingsService, private datepipe: DatePipe, public GridService: GridService,
         public phoneValidator:PhoneValidationService,) {
         this.sp_Id = Number(sessionStorage.getItem('SP_ID'));
@@ -304,6 +308,7 @@ getPhoneNumberValidation(){
         userData.name = this.userDetailForm.controls.name.value;
         userData.uid = this.uid;
         userData.role = this.rolesList.filter((item:any)=> item.roleID ==this.userDetailForm.controls.UserType.value)[0].RoleName;
+        userData.Channel = this.channelDomain;
         return userData;
     }
 

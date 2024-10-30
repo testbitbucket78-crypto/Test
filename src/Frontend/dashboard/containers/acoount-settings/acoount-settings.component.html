@@ -84,7 +84,7 @@
                         *ngIf="!settingsService.checkRoleExist('45')" (click)="selectedTab = 1">WhatsApp API</a>
                 </div>
                 <div class="d-flex align-items-center justify-content-end mb-3">
-                    <button class="new-token-btn">Add New +</button>
+                    <button class="new-token-btn" (click)="launchWhatsAppSignup()">Add New +</button>
                 </div>
                 <div *ngFor="let Details of healthStatusData" class="setting-card-status-details">
 

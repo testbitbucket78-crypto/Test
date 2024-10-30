@@ -317,19 +317,19 @@ public  fieldsData: { [key: string]: string } = { text: 'name' };
 		this.templateChecked = true;
 		this.selectedTemplate = template
 
-		let template_json = JSON.parse(this.selectedTemplate?.template_json)[0];
-		let buttons = [];
-		if(template_json && template_json?.components){
-			if(template_json?.components[1]?.button){
-		for(let item of template_json?.components[1]?.button){
-		if(item){
-			buttons.push({name:item});
-		  }
-		  }
-	    }
-		this.selectedTemplate['buttons'] = buttons;
-		console.log(this.selectedTemplate,'selected temp;ate')
-	  }
+	// 	let template_json = JSON.parse(this.selectedTemplate?.template_json)[0];
+	// 	let buttons = [];
+	// 	if(template_json && template_json?.components){
+	// 		if(template_json?.components[1]?.button){
+	// 	for(let item of template_json?.components[1]?.button){
+	// 	if(item){
+	// 		buttons.push({name:item});
+	// 	  }
+	// 	  }
+	//     }
+	// 	this.selectedTemplate['buttons'] = buttons;
+	// 	console.log(this.selectedTemplate,'selected temp;ate')
+	//   }
 	}
 
 	// resetMessageTex(){
@@ -1516,9 +1516,13 @@ console.log(getMimeTypePrefix);
 	async getTemplates(channel:any) {
 		let spid = Number(this.SPID)
 		this.settingService.getApprovedTemplate(spid,1).subscribe(allTemplates =>{
+			allTemplates?.templates.forEach((item:any) => {
+				item.buttons = JSON.parse(item?.buttons);
+			});
+
 			this.allTemplatesMain = allTemplates.templates
 			console.log(this.allTemplatesMain)
-			this.allTemplates = allTemplates.templates
+			this.allTemplates = allTemplates.templates;
 
 			this.allTemplates = this.allTemplates.filter((item:any) => item.Channel == channel);
 			this.allTemplatesMain =JSON.parse(JSON.stringify(this.allTemplatesMain.filter((item:any) => item.Channel == channel)));
@@ -4026,15 +4030,17 @@ sendMessage(isTemplate:boolean=false,templateTxt:string=''){
 	this.messageMediaFile ='';
   }
   ensureSpaceBeforeTags(htmlString: string): string {
-	const tags = ['strong', 'em', 'span'];  
+	const tags = ['strong', 'em', 'span'];
+	
 	tags.forEach(tag => {
-	  const regex = new RegExp(`([^\\s])(<${tag}(\\s|>))`, 'g');
-	  htmlString = htmlString.replace(regex, `$1 $2`);
-	//   const nestedTagRegex = new RegExp(`\\s(<${tag}(\\s|>))`, 'g');
-	//   htmlString = htmlString.replace(nestedTagRegex, `$1`);
-	});  
+		const spaceBeforeRegex = new RegExp(`([^\\s])(<${tag}(\\s|>))`, 'g');
+		htmlString = htmlString.replace(spaceBeforeRegex, `$1 $2`);
+		const spaceAfterRegex = new RegExp(`(<${tag}[^>]*>)([^\\s])`, 'g');
+		htmlString = htmlString.replace(spaceAfterRegex, `$1 $2`);
+	});
+	
 	console.log(htmlString);
 	return htmlString;
-  }
+}
 
 }

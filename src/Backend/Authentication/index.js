@@ -36,7 +36,7 @@ const login = async (req, res) => {
 
         const emailId = req.body.email_id;
         const password = req.body.password;
-        const Channel = req.bpdy.Channel;
+        const Channel = req.body.Channel;
         // Retrieve all user records with the matching email ID
         const credentials = await db.excuteQuery('SELECT * FROM user WHERE email_id = ? AND isDeleted != 1 and Channel=? AND IsActive != 2', [emailId,Channel]);
 

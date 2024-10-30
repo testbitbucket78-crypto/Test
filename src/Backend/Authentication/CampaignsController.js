@@ -8,7 +8,7 @@ const removeTags = require('../removeTagsFromRichTextEditor')
 const nodemailer = require('nodemailer');
 const val = require('./constant')
 const moment = require('moment');
-const xlsx = require('xlsx'); // Import the xlsx package
+const ExcelJS = require('exceljs');
 app.use(bodyParser.json());
 const path = require("path");
 
@@ -77,11 +77,11 @@ const addCampaign = async (req, res) => {
             updateQuery += " start_time= '" + req.body?.start_time + "',";
             updateQuery += " end_time= '" + req.body?.end_time + "',";
             updateQuery += " media_type= '" + req.body?.media_type + "',";
-            updateQuery += " message_footer= '" +  req.body?.message_footer + "',";
+            updateQuery += " message_footer= '" + req.body?.message_footer + "',";
             updateQuery += " OptInStatus= '" + req.body?.OptInStatus + "'";
             updateQuery += " templateId= '" + req.body?.templateId + "'";
             updateQuery += " WHERE Id =" + req.body.Id
-           let editedCampaign = await db.excuteQuery(updateQuery,[])
+            let editedCampaign = await db.excuteQuery(updateQuery, [])
             let editCampaign = {
                 insertId: req.body.Id
             }
@@ -89,7 +89,7 @@ const addCampaign = async (req, res) => {
             if (status == '2') {
                 statusToUpdate = 2;
             }
-           // campaignAlerts(req.body, req.body.Id, statusToUpdate)
+            // campaignAlerts(req.body, req.body.Id, statusToUpdate)
             // db.runQuery(req, res, updateQuery, []);
             res.send({
                 "status": 200,
@@ -99,7 +99,7 @@ const addCampaign = async (req, res) => {
         } else {
 
             var inserQuery = "INSERT INTO Campaign (status,sp_id,title,channel_id,message_heading,message_content,message_media,message_variables,button_yes,button_no,button_exp,category,time_zone,start_datetime,end_datetime,csv_contacts,segments_contacts,category_id,OptInStatus,start_time,end_time,media_type,message_footer, templateId) values ? ";
-            let addCampaignValue = [[status, SP_ID, title, channel_id, message_heading, message_content, message_media, message_variables, button_yes, button_no, button_exp, category, time_zone, start_datetime, end_datetime, csv_contacts, segments_contacts, category_id, OptInStatus, start_time, end_time, media_type,message_footer,templateId]]
+            let addCampaignValue = [[status, SP_ID, title, channel_id, message_heading, message_content, message_media, message_variables, button_yes, button_no, button_exp, category, time_zone, start_datetime, end_datetime, csv_contacts, segments_contacts, category_id, OptInStatus, start_time, end_time, media_type, message_footer, templateId]]
 
             let addcampaign = await db.excuteQuery(inserQuery, [addCampaignValue]);
 
@@ -251,12 +251,12 @@ const processContactQueries = async (req, res) => {
         // Execute each query sequentially
         for (let query of queries) {
             let listQuery = query //+ " and EC.isDeleted !=1  AND EC.IsTemporary !=1"
-            if(isOptIn == 1){
-              //+ " and EC.isDeleted !=1  AND EC.IsTemporary !=1 and EC.OptInStatus =? "
-                query=query.replace('Group by EC.customerId',' and EC.OptInStatus =? Group by EC.customerId ')
-                listQuery = query 
+            if (isOptIn == 1) {
+                //+ " and EC.isDeleted !=1  AND EC.IsTemporary !=1 and EC.OptInStatus =? "
+                query = query.replace('Group by EC.customerId', ' and EC.OptInStatus =? Group by EC.customerId ')
+                listQuery = query
             }
-            const queryResult = await db.excuteQuery(listQuery,['Yes']);
+            const queryResult = await db.excuteQuery(listQuery, ['Yes']);
             results = results.concat(queryResult);
         }
 
@@ -304,8 +304,8 @@ const getContactAttributesByCustomer = (req, res) => {
 
 
 // Function to parse the message template and retrieve placeholders
- function parseMessageTemplate(template) {
-   // console.log("2983728",template)
+function parseMessageTemplate(template) {
+    // console.log("2983728",template)
     // const placeholderRegex = /{{(.*?)}}/g;
     // const placeholders = [];
     // let match;
@@ -322,7 +322,7 @@ const getContactAttributesByCustomer = (req, res) => {
         console.log(`Matched placeholder: ${match[1]} at position ${match.index}`);
         placeholders.push(match[1]);
     }
-   // console.log("All placeholders:", placeholders);
+    // console.log("All placeholders:", placeholders);
     return placeholders;
 }
 
@@ -374,7 +374,7 @@ const sendCampinMessage = async (req, res) => {
 
         console.log(content, "___________message_variables ____________", message_variables)
         //         // Replace placeholders in the content with values from message_variables
-        const placeholders =  parseMessageTemplate(content);
+        const placeholders = parseMessageTemplate(content);
         // if (message_variables) {
         //     message_variables.forEach(variable => {
         //         const label = variable.label;
@@ -384,16 +384,16 @@ const sendCampinMessage = async (req, res) => {
         // }
 
 
-        
+
         //console.log(placeholders?.length,"parseMessageTemplate"  ,parseMessageTemplate)
         if (placeholders?.length > 0) {
 
             const results = await removeTags.getDefaultAttribue(message_variables, spid, customerId);
             console.log("getDefaultAttribue", results)
-//console.log("placeholders",placeholders)
+            //console.log("placeholders",placeholders)
             placeholders.forEach(placeholder => {
                 const result = results.find(result => result.hasOwnProperty(placeholder));
-                console.log(placeholder,"place foreach",results)
+                console.log(placeholder, "place foreach", results)
                 const replacement = result && result[placeholder] !== undefined ? result[placeholder] : null;
                 content = content.replace(`{{${placeholder}}}`, replacement);
             });
@@ -411,17 +411,17 @@ const sendCampinMessage = async (req, res) => {
         console.log(spid, req.body.channel_id, type, messageTo, "****", customerId)
 
         if (new Date(inputDate) <= new Date(formattedTime) && results[0]?.isBlocked != 1) {
-          //  console.log("iiiiiiiiiiiiiii",content)
+            //  console.log("iiiiiiiiiiiiiii",content)
             let messagestatus;
             if (optInStatus == 'Yes') {
 
                 if (results[0]?.OptInStatus == 'Yes' || results[0]?.OptInStatus == '1') {
-                    messagestatus = await middleWare.channelssetUp(spid,req.body.channel_id, type, messageTo, content, media)
+                    messagestatus = await middleWare.channelssetUp(spid, req.body.channel_id, type, messageTo, content, media)
                 }
             } else {
-             //   console.log(spid, req.body.channel_id, type, messageTo, "+++++++", customerId)
-                messagestatus = await middleWare.channelssetUp(spid,req.body.channel_id, type, messageTo, content, media)
-             // messagestatus = await middleWare.createWhatsAppPayload(type, messageTo, templateName, languageCode, headerVariables = [], bodyVariables = [], media)
+                //   console.log(spid, req.body.channel_id, type, messageTo, "+++++++", customerId)
+                messagestatus = await middleWare.channelssetUp(spid, req.body.channel_id, type, messageTo, content, media)
+                // messagestatus = await middleWare.createWhatsAppPayload(type, messageTo, templateName, languageCode, headerVariables = [], bodyVariables = [], media)
             }
             console.log("isFinished ", isFinished, TemplateData.status)
             if (isFinished == true) {
@@ -550,14 +550,14 @@ async function campaignAlerts(TemplateData, insertId, statusToUpdate) {
 }
 
 async function sendBatchMessage(user, sp_id, type, message_content, message_media, phone_number_id, channel_id, Id, updatedStatus) {
-    console.log(sp_id,"channel_id, Id" ,channel_id, Id,updatedStatus)
+    console.log(sp_id, "channel_id, Id", channel_id, Id, updatedStatus)
     for (var i = 0; i < user.length; i++) {
         let mobile_number = user[i]?.mobile_number
         //console.log("sendBatchMessage" ,sp_id, channel_id, type, mobile_number, message_content, message_media)
         setTimeout(async () => {
             //  messageThroughselectedchannel(sp_id, mobile_number, type, message_content, message_media, phone_number_id, channel_id)
             let batchresponse = await middleWare.channelssetUp(sp_id, channel_id, type, mobile_number, message_content, message_media);
-            console.log(channel_id,batchresponse, "batchresponse", type)
+            console.log(channel_id, batchresponse, "batchresponse", type)
         }, 10)
     }
     let updateQuery = `UPDATE Campaign SET status=?,updated_at=? where Id=?`;
@@ -602,7 +602,7 @@ async function find_message_status(sp_id, Id) {
 
 async function msg(alert) {
     try {
-        console.log("alert" ,alert.status)
+        console.log("alert", alert.status)
         let message = ''
         console.log("findmessages", alert.SP_ID, alert?.Id)
         let msgStatus = await find_message_status(alert.SP_ID, alert?.Id)
@@ -660,24 +660,24 @@ async function insertInteractionAndRetrieveId(custid, sid) {
             await db.excuteQuery(
                 'INSERT INTO Interaction (customerId, interaction_status, SP_ID, interaction_type) VALUES (?, ?, ?, ?)',
                 [custid, 'empty', sid, 'User Initiated']
-             );
-        // } else {
+            );
+            // } else {
 
-        //     // Check for the maximum created_at date of Message
-        //     let maxdate = await db.excuteQuery(
-        //         'SELECT max(created_at) as maxdate from Message where interaction_id in (select InteractionId from Interaction where customerId=? and is_deleted !=1 and SP_ID=?)',
-        //         [custid, sid]
-        //     );
+            //     // Check for the maximum created_at date of Message
+            //     let maxdate = await db.excuteQuery(
+            //         'SELECT max(created_at) as maxdate from Message where interaction_id in (select InteractionId from Interaction where customerId=? and is_deleted !=1 and SP_ID=?)',
+            //         [custid, sid]
+            //     );
 
 
-        //     // If maxdate is older than 24 hours, insert a new interaction
-        //     if (!maxdate || new Date(maxdate) <= new Date(Date.now() - 24 * 60 * 60 * 1000)) {
-        //         console.log("______________________")
-        //         await db.excuteQuery(
-        //             'INSERT INTO Interaction (customerId, interaction_status, SP_ID, interaction_type) VALUES (?, ?, ?, ?)',
-        //             [custid, 'empty', sid, 'User Initiated']
-        //         );
-        //     }
+            //     // If maxdate is older than 24 hours, insert a new interaction
+            //     if (!maxdate || new Date(maxdate) <= new Date(Date.now() - 24 * 60 * 60 * 1000)) {
+            //         console.log("______________________")
+            //         await db.excuteQuery(
+            //             'INSERT INTO Interaction (customerId, interaction_status, SP_ID, interaction_type) VALUES (?, ?, ?, ?)',
+            //             [custid, 'empty', sid, 'User Initiated']
+            //         );
+            //     }
         }
 
         // Retrieve the newly inserted or existing Interaction ID
@@ -701,7 +701,7 @@ async function insertInteractionAndRetrieveId(custid, sid) {
 
 const saveCampaignMessages = async (req, res) => {
     try {
-         console.log("saveCampaignMessages")
+        console.log("saveCampaignMessages")
         let media = req.body.message_media
         let status_message = req.body.status_message
         let button_yes = req.body.button_yes
@@ -715,12 +715,12 @@ const saveCampaignMessages = async (req, res) => {
         let SP_ID = req.body.SP_ID
         let type = req.body.media_type
         let mediaType;
-        if(type == 'image'){
+        if (type == 'image') {
             mediaType = 'image/jpg'
-        }if(type == 'video'){
-            mediaType ='video/mp4'
-        }if(type == 'document'){
-            mediaType ='application/pdf'
+        } if (type == 'video') {
+            mediaType = 'video/mp4'
+        } if (type == 'document') {
+            mediaType = 'application/pdf'
         }
         // let content = req.body.message_content
         button_yes = (button_yes === null || button_yes === undefined) ? '' : button_yes;
@@ -809,26 +809,26 @@ const getCampaignMessages = async (req, res) => {
 
 const copyCampaign = async (req, res) => {
     let Query = "SELECT * from Campaign  where Id = " + req.params.CampaignId
-    let existCampaign = await db.excuteQuery(Query,[])
+    let existCampaign = await db.excuteQuery(Query, [])
     //console.log("existCampaign",'Copy of '+existCampaign[0].title)
     let randomName = Math.floor(10000 + Math.random() * 90000);
     let CopyQuery;
-    let campaignTitle = await db.excuteQuery("SELECT * from Campaign  where title=? and is_deleted !=1 and sp_id=?", ['copy of '+existCampaign[0].title, req.params.spid])
+    let campaignTitle = await db.excuteQuery("SELECT * from Campaign  where title=? and is_deleted !=1 and sp_id=?", ['copy of ' + existCampaign[0].title, req.params.spid])
     if (campaignTitle?.length == 0) {
-         CopyQuery = "INSERT INTO Campaign (sp_id,title,channel_id,message_heading,message_content,message_media,message_variables,button_yes,button_no,button_exp,category,time_zone,start_datetime,end_datetime,csv_contacts,segments_contacts,media_type,templateId) SELECT sp_id, CONCAT('copy of ',title),channel_id,message_heading,message_content,message_media,message_variables,button_yes,button_no,button_exp,category,time_zone,' ',' ',csv_contacts,segments_contacts,media_type,templateId FROM Campaign WHERE Id = " + req.params.CampaignId
+        CopyQuery = "INSERT INTO Campaign (sp_id,title,channel_id,message_heading,message_content,message_media,message_variables,button_yes,button_no,button_exp,category,time_zone,start_datetime,end_datetime,csv_contacts,segments_contacts,media_type,templateId) SELECT sp_id, CONCAT('copy of ',title),channel_id,message_heading,message_content,message_media,message_variables,button_yes,button_no,button_exp,category,time_zone,' ',' ',csv_contacts,segments_contacts,media_type,templateId FROM Campaign WHERE Id = " + req.params.CampaignId
 
-    } else { 
+    } else {
         CopyQuery = `INSERT INTO Campaign (sp_id,title,channel_id,message_heading,message_content,message_media,message_variables,button_yes,button_no,button_exp,category,time_zone,start_datetime,end_datetime,csv_contacts,segments_contacts,media_type,templateId) SELECT sp_id, CONCAT('copy of ${existCampaign[0].title} ', ${randomName}),channel_id,message_heading,message_content,message_media,message_variables,button_yes,button_no,button_exp,category,time_zone,' ',' ',csv_contacts,segments_contacts,media_type,templateId FROM Campaign WHERE Id = ` + req.params.CampaignId
     }
-//  console.log(CopyQuery)
-       let campaignCopied = await db.excuteQuery(CopyQuery, []);
-        res.send({
-            "status": 200,
-            "message": campaignCopied,
-        })
-    
-    
- 
+    //  console.log(CopyQuery)
+    let campaignCopied = await db.excuteQuery(CopyQuery, []);
+    res.send({
+        "status": 200,
+        "message": campaignCopied,
+    })
+
+
+
 }
 
 
@@ -865,60 +865,60 @@ const download = (req, res) => {
   async function formatterDateTime(data, sp_id) {
     const select = 'SELECT * FROM localDetails WHERE SP_ID = ?';
     const formatSettings = await db.excuteQuery(select, [sp_id]);
-  
+
     if (!formatSettings || formatSettings.length === 0) {
-      return data; // No formatting if no settings found
+        return data; // No formatting if no settings found
     }
-  
+
     let { Date_Format, Time_Format } = formatSettings[0];
-  
+
     if (Date_Format) {
-      Date_Format = convertToMomentFormat(Date_Format);
+        Date_Format = convertToMomentFormat(Date_Format);
     }
-  
-    const timeFields = ['Submit Time', 'Delivered Time', 'Seen Time','Replied Time'];
-  
+
+    const timeFields = ['Submit Time', 'Delivered Time', 'Seen Time', 'Replied Time'];
+
     const formattedData = data.map(record => {
-      timeFields.forEach(field => {
-        const originalTime = record[field];
-  
-        // Log the original time for debugging
-       // console.log(`Original ${field}:`, originalTime);
-  
-        if (originalTime) {
-          try {
-            // Parse the ISO date-time using moment
-            const dateTime = moment(originalTime);
-  
-            // Log the parsed date for debugging
-           // console.log(`Parsed ${field} with moment:`, dateTime.isValid() ? dateTime.toISOString() : 'Invalid');
-  
-            if (dateTime.isValid()) {
-              const formattedDate = dateTime.format(Date_Format || 'MM/DD/YYYY');
-              const formattedTime = dateTime.format(Time_Format === '12' ? 'h:mm A' : 'HH:mm');
-  
-              // Combine the formatted date and time into one field
-              record[field] = `${formattedDate} ${formattedTime}`;
+        timeFields.forEach(field => {
+            const originalTime = record[field];
+
+            // Log the original time for debugging
+            // console.log(`Original ${field}:`, originalTime);
+
+            if (originalTime) {
+                try {
+                    // Parse the ISO date-time using moment
+                    const dateTime = moment(originalTime);
+
+                    // Log the parsed date for debugging
+                    // console.log(`Parsed ${field} with moment:`, dateTime.isValid() ? dateTime.toISOString() : 'Invalid');
+
+                    if (dateTime.isValid()) {
+                        const formattedDate = dateTime.format(Date_Format || 'MM/DD/YYYY');
+                        const formattedTime = dateTime.format(Time_Format === '12' ? 'h:mm A' : 'HH:mm');
+
+                        // Combine the formatted date and time into one field
+                        record[field] = `${formattedDate} ${formattedTime}`;
+                    } else {
+                        console.error(`Invalid date for ${field}:`, originalTime);
+                    }
+                } catch (error) {
+                    console.error(`Error formatting ${field}:`, error);
+                }
             } else {
-              console.error(`Invalid date for ${field}:`, originalTime);
+                // Set to empty string if null
+                record[field] = '';
             }
-          } catch (error) {
-            console.error(`Error formatting ${field}:`, error);
-          }
-        } else {
-          // Set to empty string if null
-          record[field] = '';
-        }
-      });
-  
-      record['Message Status'] = mapStatusToText(record['Message Status']); // Map status
-  
-      return record; // Return formatted record
+        });
+
+        record['Message Status'] = mapStatusToText(record['Message Status']); // Map status
+
+        return record; // Return formatted record
     });
-  
+
     return formattedData; // Return the formatted data
-  }
-  
+}
+
 
 
   
@@ -972,7 +972,7 @@ const sanitizeMessages = (messages) => {
 
 const campaignReport = async (req, res) => {
     try {
-        const campaignId = req.body.campaignId; 
+        const campaignId = req.body.campaignId;
         const userName = req.body.userName;
         const emailId = req.body.emailId;
         const campaignName = req.body.campaignName;
@@ -981,17 +981,42 @@ const campaignReport = async (req, res) => {
         // Step 1: Fetch data from the CampaignMessages table
         const campaignMessages = await fetchCampaignMessages(campaignId, timeZone);
         const formattedMessages = await formatterDateTime(campaignMessages, spid);
-        
+
         // Step 2: Sanitize the messages (replace null values with empty strings)
         const sanitizedMessages = sanitizeMessages(formattedMessages);
 
-        // Step 3: Prepare the data for XLSX
-        const headerMessage = "To check the exact reason of message failure from Meta error codes, please refer to this link and search for the relevant error code https://developers.facebook.com/docs/whatsapp/cloud-api/support/error-codes";
-        const xlsxData = [
-            [headerMessage], // First row with header message
-            [], // Empty row for spacing
-            ['Msg ID', 'Customer Number', 'Message Status', 'Submit Time', 'Delivered Time', 'Seen Time', 'Replied Time', 'Failure Reason', 'Error Codes'], // Headers
-            ...sanitizedMessages.map(message => [
+
+        // Step 1: Prepare the data for ExcelJS
+
+        const headerMessageText = "To check the exact reason for message failure from Meta error codes, please refer to this";
+        const linkText = "https://developers.facebook.com/docs/whatsapp/cloud-api/support/error-codes";
+        const headerMessageLink = "https://developers.facebook.com/docs/whatsapp/cloud-api/support/error-codes";
+        const afterLinkText = "and search for the relevant error code.";
+        const workbook = new ExcelJS.Workbook();
+        const worksheet = workbook.addWorksheet('Campaign Report');
+
+        /// Add cells with separate parts of the message
+        worksheet.addRow([headerMessageText, linkText, afterLinkText]);
+
+        // Set hyperlink on the "link" cell 
+        const linkCell = worksheet.getCell('B1');
+        linkCell.value = { text: linkText, hyperlink: headerMessageLink };
+        linkCell.font = { color: { argb: 'FF0000FF' }, underline: true }; // Blue color and underline to indicate a hyperlink
+
+        // Adjust column widths for better readability 
+        worksheet.getColumn(1).width = 50;
+        worksheet.getColumn(2).width = 10;
+        worksheet.getColumn(3).width = 50;
+
+        // Step 3: Add an empty row for spacing
+        worksheet.addRow([]);
+
+        // Step 4: Add headers
+        worksheet.addRow(['Msg ID', 'Customer Number', 'Message Status', 'Submit Time', 'Delivered Time', 'Seen Time', 'Replied Time', 'Failure Reason', 'Error Codes']);
+
+        // Step 5: Add sanitized messages
+        sanitizedMessages.forEach(message => {
+            worksheet.addRow([
                 message['Msg ID'],
                 message['Customer Number'],
                 message['Message Status'],
@@ -1001,17 +1026,16 @@ const campaignReport = async (req, res) => {
                 message['Replied Time'],
                 message['Failure Reason'],
                 message['Error Codes']
-            ]) // Mapping the sanitized messages to rows
-        ];
+            ]);
+        });
 
-        // Step 4: Create a new workbook and add the data
-        const workbook = xlsx.utils.book_new();
-        const worksheet = xlsx.utils.aoa_to_sheet(xlsxData); // Create worksheet from array of arrays
-        xlsx.utils.book_append_sheet(workbook, worksheet, 'Campaign Report');
-
-        // Step 5: Write the XLSX file asynchronously
+        // Step 6: Write the workbook to a file
         const filePath = path.join(__dirname, 'campaign_report.xlsx');
-        xlsx.writeFile(workbook, filePath);
+        workbook.xlsx.writeFile(filePath).then(() => {
+            console.log('Excel file created successfully!');
+        }).catch(error => {
+            console.error('Error writing Excel file:', error);
+        });
 
         const timestamp = Date.now();
         const randomNumber = Math.floor(Math.random() * 10000);
@@ -1032,7 +1056,7 @@ const campaignReport = async (req, res) => {
                 },
             ]
         };
-    
+
         transporter.sendMail(mailOptions, (error, info) => {
             if (error) {
                 res.send(error);
@@ -1062,14 +1086,14 @@ let transporter = nodemailer.createTransport({
     port: val.port,
     secure: true,
     auth: {
-      user: val.email,
-      pass: val.appPassword
+        user: val.email,
+        pass: val.appPassword
     },
-  });
+});
 
 
 
-module.exports = { copyCampaign, getCampaignMessages, sendCampinMessage, saveCampaignMessages, getContactAttributesByCustomer, getEndCustomerDetail, getAdditiionalAttributes, deleteCampaign, addCampaign, getCampaigns, getCampaignDetail, getFilteredCampaign, getContactList, updatedContactList, addNewContactList, applyFilterOnEndCustomer, campaignAlerts, deleteContactList, isExistCampaign, processContactQueries, download,campaignReport };
+module.exports = { copyCampaign, getCampaignMessages, sendCampinMessage, saveCampaignMessages, getContactAttributesByCustomer, getEndCustomerDetail, getAdditiionalAttributes, deleteCampaign, addCampaign, getCampaigns, getCampaignDetail, getFilteredCampaign, getContactList, updatedContactList, addNewContactList, applyFilterOnEndCustomer, campaignAlerts, deleteContactList, isExistCampaign, processContactQueries, download, campaignReport };
 
 
 
