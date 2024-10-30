@@ -134,6 +134,7 @@ export interface UserData {
     email_id: string;
     role: string;
     SP_ID: number;
+    Channel: string;
 }
 
 export interface TeamData {

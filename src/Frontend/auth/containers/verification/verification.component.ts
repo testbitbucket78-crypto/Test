@@ -334,7 +334,8 @@ export class VerificationComponent implements OnInit {
             },
             (error: any) => {
               if (error.status == 403) {
-                this.showToaster('Oops! looks like some issue here. Please try after some time.', 'error');
+                this.showToaster(error?.error?.msg, 'error');
+                this.cdr.detectChanges();
               }
             }
           );
