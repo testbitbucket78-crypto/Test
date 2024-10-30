@@ -19,8 +19,6 @@
 						[ngClass]="searchFocused ? 'search-box active' : 'search-box'" type="text" [placeholder]="searchFocused ? 'Search by Name or Phone No.' : 'Search'" 
 						aria-label="Search" aria-describedby="basic-addon2" />
 
-
-
 					<div *ngIf="!searchFocused" class="drop-down-btn" (click)="addfilters()">
 						<div class="toggle-box" (click)="toggleFilerOption()"><img
 								src="assets/img/teambox/filter-icon.svg"></div>
@@ -988,12 +986,12 @@ popupWidth='250px' popupHeight='200px'>
 							</div>
 							<div class="template_list">
 							  <div class="mb-4 template_box" *ngFor="let template of allTemplates ;let i = index">
-								<div class="px-4 template_box_inner d-flex align-items-start">
+								<div class="px-4 template_box_inner d-flex align-items-start w-100">
 								  <div class="d-flex align-items-center template_box_inner">
 								  <input type="radio" id="selectedTemplate{{i}}" name="selectedTemplate" [checked]="templateChecked" (click)="selectTemplate(template)">
 								  <label class="m-0" for="selectedTemplate{{i}}"></label>
 								  </div>
-							   <div class="template_head flex-column">
+							   <div class="template_head flex-column w-100">
 								<p class="m-0 template_name">{{template.TemplateName}}</p>
 								<p class="m-0"><span>{{settingsService?.getDateTimeFormate(template.created_at,true)}}</span></p>
 						
@@ -1009,6 +1007,17 @@ popupWidth='250px' popupHeight='200px'>
 									<p [innerHTML]="template.BodyText| sanitizeHtml"></p>
 									<p *ngIf="template.FooterText" [innerHTML]="template.FooterText | sanitizeHtml"></p>
 								  </div>
+								  <div *ngIf="template?.buttons && template?.buttons?.length >0" class="w-70">
+									<div *ngFor="let item of template?.buttons let i = index" >
+									<div  class="text-center" *ngIf="item?.buttonText && i<3"><button class="template-btn"  [ngClass]="{'btn-radius': ((template?.buttons?.length-1)== i || (template?.buttons?.length >2 && i==2))}">
+										<img class="btn-preview-img" *ngIf="item.type =='Quick Reply'" src="../../../../assets/img/settings/reply-arrow.svg"> 
+										<img class="btn-preview-img" *ngIf="item.type =='Call Phone'" src="../../../../assets/img/settings/phone-call.svg"> 
+										<img class="btn-preview-img" *ngIf="item.type =='Copy offer Code'" src="../../../../assets/img/settings/copy.svg"> 
+										<img class="btn-preview-img" *ngIf="item.type =='Visit Website'" src="../../../../assets/img/settings/open-in-new.svg"> 
+										<img class="btn-preview-img" *ngIf="item.type =='Complete Flow'" src="../../../../assets/img/settings/form.svg"> 
+										{{(i==2 && template?.buttons?.length>3) ? 'Show All Buttons' : item?.buttonText }}</button> </div>
+									</div>
+								</div>
 								<!--  <div *ngIf="template.Channel === 'WhatsApp Official'" class="template_btn">
 									<button type="button" class="btn">Button 1</button>
 									<button type="button" class="btn">Button 2</button> 
@@ -1078,9 +1087,15 @@ popupWidth='250px' popupHeight='200px'>
 											<p *ngIf="selectedTemplate.FooterText" [innerHTML]="selectedTemplate.FooterText | sanitizeHtml"></p>
 										  </div>
 									</div>
-									<div *ngIf="selectedTemplate.Channel === 'WA API'" class="px-2 template_btn">
-										<div *ngFor="let button of selectedTemplate.buttons">
-											<button type="button" class="btn">{{button.name}}</button>
+									<div *ngIf="selectedTemplate?.buttons && selectedTemplate?.buttons?.length >0" class="px-2 w-100">
+										<div *ngFor="let item of selectedTemplate?.buttons let i = index" >
+										<div  class="text-center" *ngIf="item?.buttonText && i<3"><button class="template-btn"  [ngClass]="{'btn-radius': ((selectedTemplate?.buttons?.length-1)== i || (selectedTemplate?.buttons?.length >2 && i==2))}">
+											<img class="btn-preview-img" *ngIf="item.type =='Quick Reply'" src="../../../../assets/img/settings/reply-arrow.svg"> 
+											<img class="btn-preview-img" *ngIf="item.type =='Call Phone'" src="../../../../assets/img/settings/phone-call.svg"> 
+											<img class="btn-preview-img" *ngIf="item.type =='Copy offer Code'" src="../../../../assets/img/settings/copy.svg"> 
+											<img class="btn-preview-img" *ngIf="item.type =='Visit Website'" src="../../../../assets/img/settings/open-in-new.svg"> 
+											<img class="btn-preview-img" *ngIf="item.type =='Complete Flow'" src="../../../../assets/img/settings/form.svg"> 
+											{{(i==2 && selectedTemplate?.buttons?.length>3) ? 'Show All Buttons' : item?.buttonText }}</button> </div>
 										</div>
 									</div>
 								</div>
@@ -1155,7 +1170,7 @@ popupWidth='250px' popupHeight='200px'>
 									</div>
 								  </form>
 
-								<div *ngIf="selectedTemplate.Channel === 'WA API'" >
+								<!-- <div *ngIf="selectedTemplate.Channel === 'WA API'" >
 								<p class="mt-2">Button Payload <span>(Optional)</span><img class="px-2 icon sm"
 										src="/assets/img/campaign/Info.svg"></p>
 								<div *ngFor="let button of selectedTemplate.buttons; let ith = index">
@@ -1165,7 +1180,7 @@ popupWidth='250px' popupHeight='200px'>
 											placeholder="Input payload value">
 									</div>
 								</div>
-							</div>
+							</div> -->
 							</div>
 						</div>
 					
@@ -1357,9 +1372,15 @@ popupWidth='250px' popupHeight='200px'>
 							<p *ngIf="selectedTemplate.FooterText" [innerHTML]="selectedTemplate.FooterText | sanitizeHtml"></p>
 						  </div>
 					</div>
-					<div *ngIf="selectedTemplate.Channel === 'WA API'" class="px-2 template_btn">
-						<div *ngFor="let button of selectedTemplate.buttons">
-							<button type="button" class="btn">{{button.name}}</button>
+					<div *ngIf="selectedTemplate?.buttons && selectedTemplate?.buttons?.length >0 && selectedTemplate.Channel === 'WA API'" class="w-100 px-2">
+						<div *ngFor="let item of selectedTemplate?.buttons let i = index" >
+						<div  class="text-center" *ngIf="item?.buttonText && i<3"><button class="template-btn"  [ngClass]="{'btn-radius': ((selectedTemplate?.buttons?.length-1)== i || (selectedTemplate?.buttons?.length >2 && i==2))}">
+							<img class="btn-preview-img" *ngIf="item.type =='Quick Reply'" src="../../../../assets/img/settings/reply-arrow.svg"> 
+							<img class="btn-preview-img" *ngIf="item.type =='Call Phone'" src="../../../../assets/img/settings/phone-call.svg"> 
+							<img class="btn-preview-img" *ngIf="item.type =='Copy offer Code'" src="../../../../assets/img/settings/copy.svg"> 
+							<img class="btn-preview-img" *ngIf="item.type =='Visit Website'" src="../../../../assets/img/settings/open-in-new.svg"> 
+							<img class="btn-preview-img" *ngIf="item.type =='Complete Flow'" src="../../../../assets/img/settings/form.svg"> 
+							{{(i==2 && selectedTemplate?.buttons?.length>3) ? 'Show All Buttons' : item?.buttonText }}</button> </div>
 						</div>
 					</div>
 				</div>

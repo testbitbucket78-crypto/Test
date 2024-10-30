@@ -15,23 +15,26 @@ export class WebsocketService {
     this.socket$.next(JSON.stringify(spn));
     // Handle incoming messages
     let i =0
+    const intervalId = setInterval(() => {      
+      this.socket$.next("ping alive switch");
+ }, 30000);
+ 
     this.socket$.subscribe(
       (message) => {
         console.log('Received message:', message);
-        // Process the received data here
       },
       (error) => {
         console.error('WebSocket error:', error);
+        clearInterval(intervalId);
         this.connect(spn);
       },
       () => {
         console.log('WebSocket connection closed');
-        this.connect(spn); // Handle disconnection on close
+        clearInterval(intervalId);
+        this.connect(spn); 
       }
     );
-    setInterval(() => {      
-             this.socket$.next("ping alive switch");
-        }, 30000);
+    
   }
 
   // send(message: any): void {
