@@ -54,7 +54,7 @@ export class ContactFilterComponent implements OnInit {
 
 	getContactFilterBy(){
 		this.contactFilterBy=[
-			{value:'Phone_number',label:'Phone_number',checked:false,addeFilter:[],
+			{value:'Phone_number',label:'Phone Number',checked:false,addeFilter:[],
 			option:[
 				{label:'Is empty',checked:false,type:'none'},
 				{label:'Is not empty',checked:false,type:'none'},
@@ -89,21 +89,27 @@ export class ContactFilterComponent implements OnInit {
 			]},
 			{value:'tag',label:'Tag',checked:false,addeFilter:[],
 			option:[
-			{label:'Is',checked:false,type:'select_opt',options:['Paid','Un-Paid','New Customer']},
-			{label:'Is not',checked:false,type:'select_opt',options:['Paid','Un-Paid','New Customer']},
+				{label:'Is empty',checked:false,type:'none'},
+				{label:'Is not empty',checked:false,type:'none'},
+			{label:'Is equal to',checked:false,type:'select_opt',options:['Paid','Un-Paid','New Customer']},
+			{label:'Is not equal to',checked:false,type:'select_opt',options:['Paid','Un-Paid','New Customer']},
 			]},
 			
-			{value:'OptInStatus',label:'OptInStatus',checked:false,addeFilter:[],
+			{value:'OptInStatus',label:'Message Opt-in',checked:false,addeFilter:[],
 			option:[
 				{label:'True',checked:false,type:'switch'},
 				{label:'False',checked:false,type:'switch'},
+				{label:'Is empty',checked:false,type:'none'},
+				{label:'Is not empty',checked:false,type:'none'},
 			]},		
-			{value:'isBlocked',label:'Blocked',checked:false,addeFilter:[],
+			{value:'isBlocked',label:'Block',checked:false,addeFilter:[],
 			option:[
+				{label:'Is empty',checked:false,type:'none'},
+				{label:'Is not empty',checked:false,type:'none'},
 				{label:'True',checked:false,type:'switch'},
 				{label:'False',checked:false,type:'switch'},
 			]},
-			{value:'created_at',label:'Created At',checked:false,addeFilter:[],
+			{value:'created_at',label:'Contact Created At',checked:false,addeFilter:[],
 			option:[
 				{label:'Is empty',checked:false,type:'none',filterPrefixType:'date'},
 						{label:'Is not empty',checked:false,type:'none',filterPrefixType:'date'},
@@ -115,24 +121,34 @@ export class ContactFilterComponent implements OnInit {
 			]},
 			{value:'Last Conversation With',label:'Last Conversation With',checked:false,addeFilter:[],
 			option:[
-			{label:'bot',checked:false,type:'none'},
-			{label:'user',checked:false,type:'user'},
+				{label:'Is empty',checked:false,type:'none'},
+				{label:'Is not empty',checked:false,type:'none'},
+				{label:'Is equal to',checked:false,type:'user'},
+				{label:'Is not equal to',checked:false,type:'user'}
 			]},
 			{value:'Creator',label:'Creator',checked:false,addeFilter:[],
 			option:[
-			{label:'bot',checked:false,type:'none'},
-			{label:'user',checked:false,type:'user'},
+				{label:'Is empty',checked:false,type:'none'},
+				{label:'Is not empty',checked:false,type:'none'},
+				{label:'Is equal to',checked:false,type:'user'},
+				{label:'Is not equal to',checked:false,type:'user'}
 			]},
 			{value:'Conversation Resolved',label:'Conversation Resolved',checked:false,addeFilter:[],
 			option:[
+				{label:'Is empty',checked:false,type:'none'},
+				{label:'Is not empty',checked:false,type:'none'},
 			{label:'true',checked:false,type:'none'},
 			{label:'false',checked:false,type:'none'}
 			]},
 			{value:'Conversation Assigned to',label:'Conversation Assigned to',checked:false,addeFilter:[],
 			option:[
-				{label:'bot',checked:false,type:'none'},
-				{label:'unassigned',checked:false,type:'none'},
-				{label:'user',checked:false,type:'user'},
+				{label:'Is empty',checked:false,type:'none'},
+				{label:'Is not empty',checked:false,type:'none'},
+				{label:'Is equal to',checked:false,type:'user'},
+				{label:'Is not equal to',checked:false,type:'user'},
+				// {label:'bot',checked:false,type:'none'},
+				// {label:'unassigned',checked:false,type:'none'},
+				// {label:'user',checked:false,type:'user'},
 			]},
 			{value:'Last Message Received At',label:'Last Message Received At',checked:false,addeFilter:[],
 			option:[
@@ -238,6 +254,18 @@ export class ContactFilterComponent implements OnInit {
 						{label:'Is equal to',checked:false,type:'select_opt',options:selectOptions},
 						{label:'Is not equal to',checked:false,type:'select_opt',options:selectOptions}
 					];
+					break;
+				}				
+				case 'Time':{
+					options =[
+						{label:'Is empty',checked:false,type:'none',filterPrefixType:'date'},
+						{label:'Is not empty',checked:false,type:'none',filterPrefixType:'date'},
+						{label:'Between',checked:false,type:'d_date',filterPrefixType:'date'},
+						{label:'After',checked:false,type:'date',filterPrefixType:'date'},
+						{label:'Before',checked:false,type:'date',filterPrefixType:'date'},
+						{label:'Is equal to',checked:false,type:'date',filterPrefixType:'date'},
+						{label:'Is not equal to',checked:false,type:'date',filterPrefixType:'date'},
+						];
 					break;
 				}
 			}			
@@ -615,5 +643,13 @@ export class ContactFilterComponent implements OnInit {
 		this.modalReference.close();		
 		this.modalService.dismissAll();
 		this.closeFilterPopup.emit();
+	}
+
+	getActualName(val:any){
+		let filt = this.contactFilterBy.filter((item:any)=> item.value == val)
+		if(filt.length >0){
+			return filt[0]?.label;
+		} else
+			return val;
 	}
 }

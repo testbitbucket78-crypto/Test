@@ -333,6 +333,7 @@ export interface newTemplateFormData {
     TemplateName:string;
     Channel: string;
     Category: string;
+    categoryChange: string;
     category_id:number;
     Language: string;
     media_type: string;

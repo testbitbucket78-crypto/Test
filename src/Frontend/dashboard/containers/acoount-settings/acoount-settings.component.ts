@@ -110,13 +110,17 @@ uid = (JSON.parse(sessionStorage.getItem('loginDetails')!)).uid;
       
       try {
         const data = JSON.parse(event.data);
-        
+        console.log(data);
         if (data.type === 'WA_EMBEDDED_SIGNUP') {
           if (data.event === 'FINISH') {
             const { phone_number_id, waba_id } = data.data;
             this.phoneId = phone_number_id;
             this.wabaId = waba_id;
-            this.saveWhatsappAPIDetails()
+            
+            setTimeout(() => {
+              console.log(this.Authcode);
+              this.saveWhatsappAPIDetails()
+            }, 2500); 
             console.log("Phone number ID ", phone_number_id, " WhatsApp business account ID ", waba_id);
           } else if (data.event === 'ERROR') {
             const { error_message } = data.data;
@@ -499,6 +503,7 @@ fetchLastName(): void {
 fbLoginCallback(response: any): void {
   if (response.authResponse) {
     const code = response.authResponse.code;
+    this.Authcode = code;
     console.log('Auth Code:', code);
   }
 }
@@ -519,12 +524,12 @@ launchWhatsAppSignup(): void {
 saveWhatsappAPIDetails() { 
   let data={
     spid : this.spid,
-    code : this.Authcode,  
+    Code : this.Authcode,  
     user_uid : this.uid,
     phoneNumber_id : this.phoneId,
     waba_id : this.wabaId,
   }
-  this.apiService.addWhatsAppDetails(data).subscribe
+  this.apiService.addWhatsAppAPIDetails(data).subscribe
   ((resopnse :any) => {
     if(resopnse.status === 200) {
       console.log(this.whatAppDetails)
