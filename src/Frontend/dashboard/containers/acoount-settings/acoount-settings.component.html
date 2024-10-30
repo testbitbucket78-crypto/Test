@@ -16,7 +16,7 @@
                 (click)="selectedTab = 3">Integration</a> -->
         </div>
     </div>
-    <div class="setting-card" *ngIf="selectedTab==1 && !settingsService.checkRoleExist('45') && whatsAppDetails[0]?.channel_id == 'WA Web'">
+    <div class="setting-card" *ngIf="selectedTab==1 && !settingsService.checkRoleExist('45') && checkChannel()">
         <h4>Channels</h4>
         <div class="row">
             <div class="col-sm-6 p-5">
@@ -76,9 +76,9 @@
     </div>
     <!-- Here making UI for the channel Web API  -->
     <div>
-        <div class="setting-card" *ngIf="healthStatusData[0]?.channel_type == 'WA API'">
+        <div class="setting-card" *ngIf="channelDomain =='api'">
             <h4>Channels</h4>
-            <div *ngFor="let Details of healthStatusData" class="d-flex flex-column px-4">
+            <div class="d-flex flex-column px-4">
                 <div class="py-4 setting-field">
                     <a class="setting-field-link" [ngClass]="selectedTab==1 ? 'active' : ''"
                         *ngIf="!settingsService.checkRoleExist('45')" (click)="selectedTab = 1">WhatsApp API</a>
@@ -86,7 +86,7 @@
                 <div class="d-flex align-items-center justify-content-end mb-3">
                     <button class="new-token-btn">Add New +</button>
                 </div>
-                <div class="setting-card-status-details">
+                <div *ngFor="let Details of healthStatusData" class="setting-card-status-details">
 
                 <div class="row">
                     <div class="col-6">
