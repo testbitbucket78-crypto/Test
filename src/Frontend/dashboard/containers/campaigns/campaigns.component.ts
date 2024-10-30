@@ -352,14 +352,18 @@ constructor(config: NgbModalConfig, private modalService: NgbModal,private datep
 		})
 	  }
 
-	 getContactFilterBy(){
+	  getContactFilterBy(){
 		this.contactFilterBy=[
-			{value:'Phone_number',label:'Phone_number',checked:false,addeFilter:[],
+			{value:'Phone_number',label:'Phone Number',checked:false,addeFilter:[],
 			option:[
+				{label:'Is empty',checked:false,type:'none'},
+				{label:'Is not empty',checked:false,type:'none'},
 			{label:'Contains',checked:false,type:'text'},
 			{label:'Does Not Contain',checked:false,type:'text'},
 			{label:'Starts with',checked:false,type:'text'},
 			{label:'End with',checked:false,type:'text'},
+			{label:'Is equal to',checked:false,type:'text'},
+			{label:'Is not equal to',checked:false,type:'text'},
 			]},
 			{value:'Name',label:'Name',checked:false,addeFilter:[],
 			option:[
@@ -367,111 +371,139 @@ constructor(config: NgbModalConfig, private modalService: NgbModal,private datep
 			{label:'Does Not Contain',checked:false,type:'text'},
 			{label:'Starts with',checked:false,type:'text'},
 			{label:'End with',checked:false,type:'text'},
-			{label:'Is',checked:false,type:'select',options:['Empty']},
-			{label:'Is not',checked:false,type:'select',options:['Empty']},
+			{label:'Is empty',checked:false,type:'none'},
+			{label:'Is not empty',checked:false,type:'none'},
+			{label:'Is equal to',checked:false,type:'text'},
+			{label:'Is not equal to',checked:false,type:'text'},
 			]},
 			{value:'emailId',label:'emailId',checked:false,addeFilter:[],
 			option:[
-			{label:'Contains',checked:false,type:'text'},
-			{label:'Does Not Contain',checked:false,type:'text'},
-			{label:'Includes domain',checked:false,type:'text'},
-			{label:'Exclude domain',checked:false,type:'text'},
-			{label:'Is',checked:false,type:'select',options:['Empty']},
-			{label:'Is not',checked:false,type:'select',options:['Empty']},
+				{label:'Contains',checked:false,type:'text'},
+				{label:'Does Not Contain',checked:false,type:'text'},
+				{label:'Starts with',checked:false,type:'text'},
+				{label:'End with',checked:false,type:'text'},
+				{label:'Is empty',checked:false,type:'none'},
+				{label:'Is not empty',checked:false,type:'none'},
+				{label:'Is equal to',checked:false,type:'text'},
+				{label:'Is not equal to',checked:false,type:'text'},
 			]},
 			{value:'tag',label:'Tag',checked:false,addeFilter:[],
 			option:[
-			{label:'Is',checked:false,type:'select_opt',options:['Paid','Un-Paid','New Customer']},
-			{label:'Is not',checked:false,type:'select_opt',options:['Paid','Un-Paid','New Customer']},
+				{label:'Is empty',checked:false,type:'none'},
+				{label:'Is not empty',checked:false,type:'none'},
+			{label:'Is equal to',checked:false,type:'select_opt',options:['Paid','Un-Paid','New Customer']},
+			{label:'Is not equal to',checked:false,type:'select_opt',options:['Paid','Un-Paid','New Customer']},
 			]},
 			
-			{value:'OptInStatus',label:'OptInStatus',checked:false,addeFilter:[],
+			{value:'OptInStatus',label:'Message Opt-in',checked:false,addeFilter:[],
 			option:[
-			{label:'Is',checked:false,type:'select',options:['Active Subscribers','Inactive Subscribers','Active Contacts','Inactive Contacts']},
-			{label:'Is not',checked:false,type:'select',options:['Active Subscribers','Inactive Subscribers','Active Contacts','Inactive Contacts']}
+				{label:'True',checked:false,type:'switch'},
+				{label:'False',checked:false,type:'switch'},
+				{label:'Is empty',checked:false,type:'none'},
+				{label:'Is not empty',checked:false,type:'none'},
 			]},		
-			{value:'isBlocked',label:'Blocked',checked:false,addeFilter:[],
+			{value:'isBlocked',label:'Block',checked:false,addeFilter:[],
 			option:[
-				{label:'Is',checked:false,type:'select',options:['true','false']},
-				{label:'Is not',checked:false,type:'select',options:['true','false']}
+				{label:'Is empty',checked:false,type:'none'},
+				{label:'Is not empty',checked:false,type:'none'},
+				{label:'True',checked:false,type:'switch'},
+				{label:'False',checked:false,type:'switch'},
 			]},
-			{value:'created_at',label:'Created At',checked:false,addeFilter:[],
+			{value:'created_at',label:'Contact Created At',checked:false,addeFilter:[],
 			option:[
-			{label:'Is',checked:false,type:'datetime'},
-			{label:'Is not',checked:false,type:'datetime'},
-			{label:'Between',checked:false,type:'d_datetime'},
-			{label:'After',checked:false,type:'date'},
-			{label:'Before',checked:false,type:'date'}
+				{label:'Is empty',checked:false,type:'none',filterPrefixType:'date'},
+						{label:'Is not empty',checked:false,type:'none',filterPrefixType:'date'},
+						{label:'Between',checked:false,type:'d_date',filterPrefixType:'date'},
+						{label:'After',checked:false,type:'date',filterPrefixType:'date'},
+						{label:'Before',checked:false,type:'date',filterPrefixType:'date'},
+						{label:'Is equal to',checked:false,type:'date',filterPrefixType:'date'},
+						{label:'Is not equal to',checked:false,type:'date',filterPrefixType:'date'},
 			]},
-			{value:'name',label:'Last Conversation With',checked:false,addeFilter:[],
+			{value:'Last Conversation With',label:'Last Conversation With',checked:false,addeFilter:[],
 			option:[
-			{label:'bot',checked:false,type:'none'},
-			{label:'user',checked:false,type:'user'},
+				{label:'Is empty',checked:false,type:'none'},
+				{label:'Is not empty',checked:false,type:'none'},
+				{label:'Is equal to',checked:false,type:'user'},
+				{label:'Is not equal to',checked:false,type:'user'}
 			]},
-			{value:'name',label:'Creator',checked:false,addeFilter:[],
+			{value:'Creator',label:'Creator',checked:false,addeFilter:[],
 			option:[
-			{label:'bot',checked:false,type:'none'},
-			{label:'user',checked:false,type:'user'},
+				{label:'Is empty',checked:false,type:'none'},
+				{label:'Is not empty',checked:false,type:'none'},
+				{label:'Is equal to',checked:false,type:'user'},
+				{label:'Is not equal to',checked:false,type:'user'}
 			]},
-			{value:'created_at',label:'Conversation Resolved',checked:false,addeFilter:[],
+			{value:'Conversation Resolved',label:'Conversation Resolved',checked:false,addeFilter:[],
 			option:[
+				{label:'Is empty',checked:false,type:'none'},
+				{label:'Is not empty',checked:false,type:'none'},
 			{label:'true',checked:false,type:'none'},
 			{label:'false',checked:false,type:'none'}
 			]},
-			{value:'created_at',label:'Conversation Assigned to',checked:false,addeFilter:[],
+			{value:'Conversation Assigned to',label:'Conversation Assigned to',checked:false,addeFilter:[],
 			option:[
-				{label:'bot',checked:false,type:'none'},
-				{label:'unassigned',checked:false,type:'none'},
-				{label:'user',checked:false,type:'user'},
+				{label:'Is empty',checked:false,type:'none'},
+				{label:'Is not empty',checked:false,type:'none'},
+				{label:'Is equal to',checked:false,type:'user'},
+				{label:'Is not equal to',checked:false,type:'user'},
+				// {label:'bot',checked:false,type:'none'},
+				// {label:'unassigned',checked:false,type:'none'},
+				// {label:'user',checked:false,type:'user'},
 			]},
-			{value:'created_at',label:'Last Message Received At',checked:false,addeFilter:[],
+			{value:'Last Message Received At',label:'Last Message Received At',checked:false,addeFilter:[],
 			option:[
-			{label:'Is',checked:false,type:'datetime'},
-			{label:'Is not',checked:false,type:'datetime'},
-			{label:'Between',checked:false,type:'d_datetime'},
-			{label:'After',checked:false,type:'date'},
-			{label:'Before',checked:false,type:'date'}
+				{label:'Is empty',checked:false,type:'none',filterPrefixType:'date'},
+						{label:'Is not empty',checked:false,type:'none',filterPrefixType:'date'},
+						{label:'Between',checked:false,type:'d_date',filterPrefixType:'date'},
+						{label:'After',checked:false,type:'date',filterPrefixType:'date'},
+						{label:'Before',checked:false,type:'date',filterPrefixType:'date'},
+						{label:'Is equal to',checked:false,type:'date',filterPrefixType:'date'},
+						{label:'Is not equal to',checked:false,type:'date',filterPrefixType:'date'},
 			]},
-			{value:'created_at',label:'Last Message Sent At',checked:false,addeFilter:[],
+			{value:'Last Message Sent At',label:'Last Message Sent At',checked:false,addeFilter:[],
 			option:[
-			{label:'Is',checked:false,type:'datetime'},
-			{label:'Is not',checked:false,type:'datetime'},
-			{label:'Between',checked:false,type:'d_datetime'},
-			{label:'After',checked:false,type:'date'},
-			{label:'Before',checked:false,type:'date'}
+				{label:'Is empty',checked:false,type:'none',filterPrefixType:'date'},
+						{label:'Is not empty',checked:false,type:'none',filterPrefixType:'date'},
+						{label:'Between',checked:false,type:'d_date',filterPrefixType:'date'},
+						{label:'After',checked:false,type:'date',filterPrefixType:'date'},
+						{label:'Before',checked:false,type:'date',filterPrefixType:'date'},
+						{label:'Is equal to',checked:false,type:'date',filterPrefixType:'date'},
+						{label:'Is not equal to',checked:false,type:'date',filterPrefixType:'date'},
 			]},
 			
 		];
 	}
 	
-	 getCustomFieldsData() {
+	getCustomFieldsData() {
 		this.getContactFilterBy();
 		this._settingsService.getNewCustomField(this.SPID).subscribe(response => {
 		  this.customFieldData = response.getfields;
-		  console.log(this.customFieldData);  
+
 		  const defaultFieldNames:any = ["Name", "Phone_number", "emailId", "ContactOwner", "OptInStatus","tag"];
 		  if(this.customFieldData){
 			 const filteredFields:any = this.customFieldData?.filter(
 				(field:any) => !defaultFieldNames.includes(field.ActuallName) && field.status ==1 );
-				console.log(filteredFields);  
+ 
 		filteredFields.forEach((item:any)=>{
 			let options:any;
-			console.log(item,'txt');  
+ 
 			switch(item?.type){
 				case 'Date':{
 					 options =[
-						{label:'Is',checked:false,type:'date'},
-						{label:'Is not',checked:false,type:'date'},
-						{label:'Between',checked:false,type:'d_date'},
-						{label:'After',checked:false,type:'date'},
-						{label:'Before',checked:false,type:'date'}
+						{label:'Is empty',checked:false,type:'none',filterPrefixType:'date'},
+						{label:'Is not empty',checked:false,type:'none',filterPrefixType:'date'},
+						{label:'Between',checked:false,type:'d_date',filterPrefixType:'date'},
+						{label:'After',checked:false,type:'date',filterPrefixType:'date'},
+						{label:'Before',checked:false,type:'date',filterPrefixType:'date'},
+						{label:'Is equal to',checked:false,type:'date',filterPrefixType:'date'},
+						{label:'Is not equal to',checked:false,type:'date',filterPrefixType:'date'},
 						];
 						break;
 				}
 				case 'Switch':{
 					options =[
-						{label:'Is empty',checked:false,type:'switch'},
-						{label:'Is not empty',checked:false,type:'switch'},
+						{label:'Is empty',checked:false,type:'none'},
+						{label:'Is not empty',checked:false,type:'none'},
 						{label:'Yes',checked:false,type:'switch'},
 						{label:'No',checked:false,type:'switch'},
 					];
@@ -479,55 +511,67 @@ constructor(config: NgbModalConfig, private modalService: NgbModal,private datep
 				}
 				case 'text':{
 					 options =[
-						{label:'Is empty',checked:false,type:'switch'},
-						{label:'Is not empty',checked:false,type:'switch'},
+						{label:'Is empty',checked:false,type:'none'},
+						{label:'Is not empty',checked:false,type:'none'},
 						{label:'Contains',checked:false,type:'text'},
 						{label:'Does Not Contain',checked:false,type:'text'},
 						{label:'Starts with',checked:false,type:'text'},
 						{label:'End with',checked:false,type:'text'},
-						{label:'Is',checked:false,type:'select',options:['Empty']},
-						{label:'Is not',checked:false,type:'select',options:['Empty']},
+						{label:'Is equal to',checked:false,type:'text'},
+						{label:'Is not equal to',checked:false,type:'text'},
 						];
 						break;
 				}
 				case 'Number':{
 					options =[
-						{label:'Is empty',checked:false,type:'switch'},
-						{label:'Is not empty',checked:false,type:'switch'},
+						{label:'Is empty',checked:false,type:'none'},
+						{label:'Is not empty',checked:false,type:'none'},
 					   {label:'Contains',checked:false,type:'text'},
 					   {label:'Does Not Contain',checked:false,type:'text'},
 					   {label:'Less than',checked:false,type:'text'},
 					   {label:'Greater than',checked:false,type:'text'},
 					   {label:'Starts with',checked:false,type:'text'},
 					   {label:'End with',checked:false,type:'text'},
-					   {label:'Is',checked:false,type:'select',options:['Empty']},
-					   {label:'Is not',checked:false,type:'select',options:['Empty']},
+					   {label:'Is equal to',checked:false,type:'text'},
+					   {label:'Is not equal to',checked:false,type:'text'},
 					   ];
 					   break;
 			   }
 				case 'Select':{
 					let selectOptions = JSON.parse(item?.dataTypeValues);
 					options =[
-						{label:'Is empty',checked:false,type:'switch'},
-						{label:'Is not empty',checked:false,type:'switch'},
-						// {label:'Is',checked:false,type:'select_opt',options:selectOptions},
-						// {label:'Is not',checked:false,type:'select_opt',options:selectOptions}
+						{label:'Is empty',checked:false,type:'none'},
+						{label:'Is not empty',checked:false,type:'none'},
+						{label:'Is equal to',checked:false,type:'select_opt',options:selectOptions},
+						{label:'Is not equal to',checked:false,type:'select_opt',options:selectOptions}
 					];
 					break;
 				}
 				case 'Multi Select':{
 					let selectOptions = JSON.parse(item?.dataTypeValues);
 					options =[
-						{label:'Is empty',checked:false,type:'switch'},
-						{label:'Is not empty',checked:false,type:'switch'},
-						// {label:'Is',checked:false,type:'select_opt',options:selectOptions},
-						// {label:'Is not',checked:false,type:'select_opt',options:selectOptions}
+						{label:'Is empty',checked:false,type:'none'},
+						{label:'Is not empty',checked:false,type:'none'},
+						{label:'Is equal to',checked:false,type:'select_opt',options:selectOptions},
+						{label:'Is not equal to',checked:false,type:'select_opt',options:selectOptions}
 					];
+					break;
+				}				
+				case 'Time':{
+					options =[
+						{label:'Is empty',checked:false,type:'none',filterPrefixType:'date'},
+						{label:'Is not empty',checked:false,type:'none',filterPrefixType:'date'},
+						{label:'Between',checked:false,type:'d_date',filterPrefixType:'date'},
+						{label:'After',checked:false,type:'date',filterPrefixType:'date'},
+						{label:'Before',checked:false,type:'date',filterPrefixType:'date'},
+						{label:'Is equal to',checked:false,type:'date',filterPrefixType:'date'},
+						{label:'Is not equal to',checked:false,type:'date',filterPrefixType:'date'},
+						];
 					break;
 				}
 			}			
 			this.contactFilterBy.push({value:item?.ActuallName,label:item?.displayName,checked:false,addeFilter:[],option:options});
-			console.log(this.contactFilterBy);
+
 		  })
 		}
 		})

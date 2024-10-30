@@ -886,11 +886,12 @@
                 </div>                
                 <div *ngFor="let item of buttonsArray;let i =index">
                     <div  class="text-center" *ngIf="item?.buttonText && i<3"><button class="template-btn" (click)="isAllButtonPopupVisible = !isAllButtonPopupVisible" [ngClass]="{'btn-radius': ((buttonsArray.length-1)== i || (buttonsArray.length >2 && i==2))}">
-                        <img class="btn-preview-img" *ngIf="item.type =='Quick Reply'" src="../../../../assets/img/settings/reply-arrow.svg"> 
-                        <img class="btn-preview-img" *ngIf="item.type =='Call Phone'" src="../../../../assets/img/settings/phone-call.svg"> 
-                        <img class="btn-preview-img" *ngIf="item.type =='Copy offer Code'" src="../../../../assets/img/settings/copy.svg"> 
-                        <img class="btn-preview-img" *ngIf="item.type =='Visit Website'" src="../../../../assets/img/settings/open-in-new.svg"> 
-                        <img class="btn-preview-img" *ngIf="item.type =='Complete Flow'" src="../../../../assets/img/settings/form.svg"> 
+                        <img class="btn-preview-img" *ngIf="item.type =='Quick Reply' && !((buttonsArray.length-1)== i || (buttonsArray.length >2 && i==2))" src="../../../../assets/img/settings/reply-arrow.svg"> 
+                        <img class="btn-preview-img" *ngIf="item.type =='Call Phone' && !((buttonsArray.length-1)== i || (buttonsArray.length >2 && i==2))" src="../../../../assets/img/settings/phone-call.svg"> 
+                        <img class="btn-preview-img" *ngIf="item.type =='Copy offer Code' && !((buttonsArray.length-1)== i || (buttonsArray.length >2 && i==2))" src="../../../../assets/img/settings/copy.svg"> 
+                        <img class="btn-preview-img" *ngIf="item.type =='Visit Website' && !((buttonsArray.length-1)== i || (buttonsArray.length >2 && i==2))" src="../../../../assets/img/settings/open-in-new.svg"> 
+                        <img class="btn-preview-img" *ngIf="item.type =='Complete Flow' && ! ((buttonsArray.length-1)== i || (buttonsArray.length >2 && i==2))" src="../../../../assets/img/settings/form.svg"> 
+                        <img class="btn-preview-img" *ngIf="((buttonsArray.length-1)== i || (buttonsArray.length >2 && i==2))" src="../../../../assets/img/settings/options-lines.svg"> 
                         {{(i==2 && buttonsArray?.length>3) ? 'Show All Buttons' : item?.buttonText }}</button> </div>
                 </div>
                 <div class="all-btn-popup" *ngIf="isAllButtonPopupVisible">
@@ -1037,9 +1038,9 @@
 
 </div>
 
-	<div class="modal fade" tabindex="-1" id="atrributemodal" #atrributemodal data-bs-backdrop="static" role="dialog">
+	<div class="modal fade attr-popup-background" tabindex="-1" id="atrributemodal" #atrributemodal data-bs-backdrop="static" role="dialog">
 		<div class="modal-dialog" role="document">
-			<div class="attrmodal modal-content">
+			<div class="attrmodal modal-content popup-background-none">
 				<div class="modal-body">
 					<div class="custom_modal bg-pink sm attributes">
 						<div class="modal-header">

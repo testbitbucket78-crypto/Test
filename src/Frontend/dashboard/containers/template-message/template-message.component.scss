@@ -1864,3 +1864,11 @@ input[type="radio"]:checked + label::before {
     /* overflow: auto; */
     right: 0;
 }
+
+.popup-background-none{
+    background-color: #ddd3d300 !important;
+}
+
+.attr-popup-background{
+    background-color: #ddd3d396 !important;
+}
