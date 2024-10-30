@@ -924,22 +924,22 @@ const download = (req, res) => {
   
   
   
-const fetchCampaignMessages = async (campaignId) => {
+const fetchCampaignMessages = async (campaignId, timeZone) => {
     const query = `
-        SELECT 
-            CampaignId AS "Msg ID",
-            phone_number AS "Customer Number",
-            status AS "Message Status",
-            CONVERT_TZ(SentTime, '+00:00', '+05:30') AS "Submit Time",
-            CONVERT_TZ(DeliveredTime, '+00:00', '+05:30') AS "Delivered Time",
-            CONVERT_TZ(SeenTime, '+00:00', '+05:30') AS "Seen Time",
-            CONVERT_TZ(RepliedTime, '+00:00', '+05:30') AS "Replied Time",
-            FailureReason AS "Failure Reason",
-            FailureCode AS "Error Codes"
-        FROM CampaignMessages
-        WHERE CampaignId = ?
-    `;
-    let result = await db.excuteQuery(query, [campaignId])
+    SELECT 
+        CampaignId AS "Msg ID",
+        phone_number AS "Customer Number",
+        status AS "Message Status",
+        CONVERT_TZ(SentTime, '+00:00', '${timeZone}') AS "Submit Time",
+        CONVERT_TZ(DeliveredTime, '+00:00', '${timeZone}') AS "Delivered Time",
+        CONVERT_TZ(SeenTime, '+00:00', '${timeZone}') AS "Seen Time",
+        CONVERT_TZ(RepliedTime, '+00:00', '${timeZone}') AS "Replied Time",
+        FailureReason AS "Failure Reason",
+        FailureCode AS "Error Codes"
+    FROM CampaignMessages
+    WHERE CampaignId = ?
+`;
+    let result = await db.excuteQuery(query, [campaignId]);
     return result;
 };
 
@@ -977,9 +977,9 @@ const campaignReport = async (req, res) => {
         const emailId = req.body.emailId;
         const campaignName = req.body.campaignName;
         const spid = req.body.spid;
-
+        const timeZone = req?.body?.timeZone
         // Step 1: Fetch data from the CampaignMessages table
-        const campaignMessages = await fetchCampaignMessages(campaignId);
+        const campaignMessages = await fetchCampaignMessages(campaignId, timeZone);
         const formattedMessages = await formatterDateTime(campaignMessages, spid);
         
         // Step 2: Sanitize the messages (replace null values with empty strings)
