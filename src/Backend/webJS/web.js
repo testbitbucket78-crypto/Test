@@ -1364,7 +1364,7 @@ async function getDetatilsOfSavedMessage(saveMessage, message_text, phone_number
 
       }
     }
-    if (replystatus != "Open") {
+    if (defaultReplyAction == 'false' && replystatus != "Open") {
       let myUTCString = new Date().toUTCString();
       const updated_at = moment.utc(myUTCString).format('YYYY-MM-DD HH:mm:ss');
       let isEmptyInteraction = await commonFun.isStatusEmpty(newId, sid, custid)
