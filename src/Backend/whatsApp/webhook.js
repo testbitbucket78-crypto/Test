@@ -467,10 +467,10 @@ async function getDetatilsOfSavedMessage(saveMessage, message_text, phone_number
           let myUTCString = new Date().toUTCString();
           const utcTimestamp = moment.utc(myUTCString).format('YYYY-MM-DD HH:mm:ss');
           const check = await commonFun.notifiactionsToBeSent(agid, 2);
-          if (check) {
-            let notifyvalues = [[sid, 'New Chat Assigned to You', 'A new Chat has been Assigned to you', agid, 'Routing rules', agid, utcTimestamp]];
-            let mentionRes = await db.excuteQuery(`INSERT INTO Notification(sp_id,subject,message,sent_to,module_name,uid,created_at) values ?`, [notifyvalues]);
-          }
+          // if (check) {
+          //   let notifyvalues = [[sid, 'New Chat Assigned to You', 'A new Chat has been Assigned to you', agid, 'Routing rules', agid, utcTimestamp]];
+          //   let mentionRes = await db.excuteQuery(`INSERT INTO Notification(sp_id,subject,message,sent_to,module_name,uid,created_at) values ?`, [notifyvalues]);
+          // }
         }
         //Here i have to check if any routing rules addded then send websocket
       }
