@@ -765,13 +765,16 @@ constructor(config: NgbModalConfig, private modalService: NgbModal,private datep
 
 	}
 	async downloadCampignReport(CampaignId: number, Name: string) {
+		//const selectedTimeZone = Intl.DateTimeFormat().resolvedOptions().timeZone || 'UTC';
+    const offset = this.getDateTimeZoneOffset();
 		if (CampaignId && Name) {
 			let data = {
 				campaignId: CampaignId,
 				userName: this.userName,
 				emailId: this.userEmail,
 				campaignName: Name,
-				spid: this.SPID
+				spid: this.SPID,
+				timeZone: offset
 			}
 			var downloadIcon = document.querySelector(".btn-circle-download");
 			if (downloadIcon) {
@@ -794,6 +797,15 @@ constructor(config: NgbModalConfig, private modalService: NgbModal,private datep
 				}
 			})
 		}
+	}
+	getDateTimeZoneOffset(){
+		const currentTime = new Date();
+		const offsetMinutes = currentTime.getTimezoneOffset();
+		const offsetSign = offsetMinutes > 0 ? "-" : "+";
+		const offsetHours = String(Math.floor(Math.abs(offsetMinutes) / 60)).padStart(2, '0');
+		const offsetMins = String(Math.abs(offsetMinutes) % 60).padStart(2, '0');
+		const offset = `${offsetSign}${offsetHours}:${offsetMins}`;
+		return offset;
 	}
 	statusUpdate(id:number,status:string){
 		const campaign = this.allCampaign.find((x: any) => x.Id === id);
