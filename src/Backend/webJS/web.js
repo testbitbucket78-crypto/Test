@@ -1147,10 +1147,10 @@ async function actionsOflatestLostMessage(message_text, phone_number_id, from, d
           const utcTimestamp = moment.utc(myUTCString).format('YYYY-MM-DD HH:mm:ss');
           const currentAssignedUser = await currentlyAssigned(newId);
           const check = await commonFun.notifiactionsToBeSent(currentAssignedUser, 2);
-          if (check) {
-            let notifyvalues = [[sid, 'New Chat Assigned to You', 'A new Chat has been Assigned to you', agid, 'Routing rules', currentAssignedUser, utcTimestamp]];
-            let mentionRes = await db.excuteQuery(`INSERT INTO Notification(sp_id,subject,message,sent_to,module_name,uid,created_at) values ?`, [notifyvalues]);
-          }
+          // if (check) {
+          //   let notifyvalues = [[sid, 'New Chat Assigned to You', 'A new Chat has been Assigned to you', agid, 'Routing rules', currentAssignedUser, utcTimestamp]];
+          //   let mentionRes = await db.excuteQuery(`INSERT INTO Notification(sp_id,subject,message,sent_to,module_name,uid,created_at) values ?`, [notifyvalues]);
+          // }
         }
       }
     }
@@ -1387,10 +1387,10 @@ async function getDetatilsOfSavedMessage(saveMessage, message_text, phone_number
         const utcTimestamp = moment.utc(myUTCString).format('YYYY-MM-DD HH:mm:ss');
         const currentAssignedUser = await currentlyAssigned(newId);
         const check = await commonFun.notifiactionsToBeSent(currentAssignedUser, 2);
-        if (check) {
-          let notifyvalues = [[sid, 'New Chat Assigned to You', 'A new Chat has been Assigned to you', agid, 'Routing rules', currentAssignedUser, utcTimestamp]];
-          let mentionRes = await db.excuteQuery(`INSERT INTO Notification(sp_id,subject,message,sent_to,module_name,uid,created_at) values ?`, [notifyvalues]);
-        }
+        // if (check) {
+        //   let notifyvalues = [[sid, 'New Chat Assigned to You', 'A new Chat has been Assigned to you', agid, 'Routing rules', currentAssignedUser, utcTimestamp]];
+        //   let mentionRes = await db.excuteQuery(`INSERT INTO Notification(sp_id,subject,message,sent_to,module_name,uid,created_at) values ?`, [notifyvalues]);
+        // }
       }
       //Here i have to check if any routing rules addded then send websocket
     }
