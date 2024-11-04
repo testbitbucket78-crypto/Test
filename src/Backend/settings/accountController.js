@@ -412,7 +412,7 @@ const addWAAPIDetails = async (req, res) => {
             params: {
                 client_id: '1147412316230943', //app id
                 client_secret: '44119ebcff7e1e62fb7d7e3175350aa9',
-                redirect_uri :`https://developers.facebook.com/es/oauth/callback/?business_id=${business_id}%26nonce=ZalyOc2m5QjeRKBMvqmEsEZlWn9gKb85`,
+                //redirect_uri :`https://developers.facebook.com/es/oauth/callback/?business_id=${business_id}%26nonce=ZalyOc2m5QjeRKBMvqmEsEZlWn9gKb85`,
                 grant_type :'authorization_code',
                 code: code
             }
@@ -423,7 +423,7 @@ const addWAAPIDetails = async (req, res) => {
         if (response.data) {
             let myUTCString = new Date().toUTCString();
             const created_at = moment.utc(myUTCString).format('YYYY-MM-DD HH:mm:ss');
-            let addToken = await db.excuteQuery('insert into WA_API_Details (token,spid,phoneNo,user_uid,phoneNumber_id,waba_id,created_at) VALUES(?,?,?)', [access_token, spid, phoneNo,user_uid,phoneNumber_id,waba_id, created_at])
+            let addToken = await db.excuteQuery('insert into WA_API_Details (token,spid,phoneNo,user_uid,phoneNumber_id,waba_id,created_at) VALUES(?,?,?,?,?,?,?)', [access_token, spid, phoneNo,user_uid,phoneNumber_id,waba_id, created_at])
         }
         
         res.status(200).send({
