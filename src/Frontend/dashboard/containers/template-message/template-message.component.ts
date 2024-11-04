@@ -32,7 +32,7 @@ export class TemplateMessageComponent implements OnInit {
     BodyText: any;
     fileName: any; 
     TemplateName = '';
-    selectedType: string = 'text';
+    selectedType: string = '';
     selectedPreview: string = '';
     metaUploadedId: string = '';
     showCampaignDetail: boolean = false;
@@ -234,6 +234,7 @@ export class TemplateMessageComponent implements OnInit {
     buttonsArray:any[] =[];
     isPopupVisible:boolean = false;
     isAllButtonPopupVisible:boolean = false;
+    channelQualityTooltip:boolean = false;
 
   @ViewChild('popupContainer') popupContainer!: ElementRef;
 
@@ -327,6 +328,7 @@ export class TemplateMessageComponent implements OnInit {
             TemplateName: new FormControl(null, [Validators.required]),
             Channel: new FormControl(null, [Validators.required]),
             Category: new FormControl(null, [Validators.required]),
+            categoryChange: new FormControl(null, [Validators.required]),
             Language: new FormControl(null, [Validators.required]),
             media_type: new FormControl(null),
             Header: new FormControl(null,this.noEmojiValidator),
@@ -653,12 +655,13 @@ export class TemplateMessageComponent implements OnInit {
       this.TemplateName = this.newTemplateForm.get('TemplateName')?.value;
       const Channel =  this.newTemplateForm.get('Channel')?.value;
       const Category =  this.newTemplateForm.get('Category')?.value;
+      const categoryChange =  this.newTemplateForm.get('categoryChange')?.value;
       const Language = this.newTemplateForm.get('Language')?.value;
+      console.log(this.newTemplateForm.get('categoryChange')?.value)
 
-    if(this.TemplateName && Channel && Category && Language) {
+    if(this.TemplateName && Channel && Category && Language && categoryChange) {
         $('#newTemplateMessage').modal('show');
-        $('#newTemplateMessageFirst').modal('hide');
-        
+        $('#newTemplateMessageFirst').modal('hide');        
      }
      else {
         this.showToaster('! Please fill in all the values before proceeding','error');
@@ -828,6 +831,7 @@ checkTemplateName(e:any){
         newTemplateForm.FooterText = this.newTemplateForm.controls.FooterText.value;
         newTemplateForm.TemplateName = this.newTemplateForm.controls.TemplateName.value;
         newTemplateForm.Channel = this.newTemplateForm.controls.Channel.value;
+        newTemplateForm.categoryChange = this.newTemplateForm.controls.categoryChange.value;
         newTemplateForm.Category = this.Category;
         newTemplateForm.category_id = this.category_id;
         newTemplateForm.Language = this.newTemplateForm.controls.Language.value;
@@ -843,31 +847,47 @@ checkTemplateName(e:any){
              bodyAtt = this.replaceVariable(bodyAtt);
             let header_text;
             let body_text;
-            if(this.newTemplateForm.controls.buttonType.value == 'Quick Reply'){
-               // let obj =[];
-                let i = 0;
-                for(let item of this.quickReplyButtons){
-                    i++;
-                    if(this.newTemplateForm.get(`quickreply${i}`)?.value)
-                        buttons.push({type: "QUICK_REPLY",text: this.newTemplateForm.get(`quickreply${i}`)?.value})
+             if(this.buttonsArray.length > 0) {
+            newTemplateForm.buttons =JSON.stringify(this.buttonsArray);
+                for(let item of this.buttonsArray){
+                    let btn ={};
+                if(item?.type =='Call Phone') {
+                    btn = {
+                        type: 'PHONE_NUMBER',
+                        text: item.buttonText,
+                        phone_number: item.phone_number,
+                    };
                 }
-            }else{
-                if(this.newTemplateForm.controls.buttonText.value){
-                buttons =[{
-                    type: 'PHONE_NUMBER',
-                    text: this.newTemplateForm.controls.buttonText.value,
-                    phone_number: this.newTemplateForm.controls.phone_number.value,
-                   // countryCode: this.newTemplateForm.controls.country_code.value,
-                    //displayPhoneNumber: this.newTemplateForm.controls.displayPhoneNumber.value,
-                },
-                // {
-                //     type: 'URL',
-                //     text: this.newTemplateForm.controls.url?.value,
-                //     url: this.newTemplateForm.controls.url?.value,
-                // }
-            ]
-        }
+                else if(item?.type =='Quick Reply') {
+                    btn = {
+                        type: 'QUICK_REPLY',
+                        text: item.buttonText
+                    };
+                }
+                else if(item?.type =='Copy offer Code') {
+                    btn = {
+                        type: 'COPY_CODE',
+                        example: item.code
+                    };
+                }
+                else if(item?.type =='Complete Flow') {
+                    btn = {
+                        type: 'FLOW',
+                        text: item.buttonText,
+                        flow_id: item.flowId,
+                        //url: this.newTemplateForm.controls.url?.value,
+                    };
+                }                
+                else if(item?.type =='Visit Website') {
+                    btn = {
+                        type: 'URL',
+                        text: item.buttonText,
+                        url: item.webUrl,
+                    };
+                }
+                buttons.push(btn);
             }
+        }
             let headerMedia ={};
             if(this.selectedType != 'text'){
                  headerMedia = {
@@ -902,7 +922,7 @@ checkTemplateName(e:any){
         if(!comp[2]['text']){
             comp.splice(2,1);
         }
-        if(!(comp[0]['text'] || comp[0]['example'])){
+        if(!(comp[0]['text'] || comp[0]['example']) || this.selectedType ==''){
             comp.splice(0,1);
         }
         if(buttons.length > 0){
@@ -910,13 +930,11 @@ checkTemplateName(e:any){
                 type: 'BUTTONS',                       
                 buttons:buttons                
             });
-            newTemplateForm.buttons =JSON.stringify(buttons);
         }
-
-
             newTemplateForm.template_json.push({
                 name: this.newTemplateForm.controls.TemplateName.value,
                 category: this.newTemplateForm.controls.Category.value,
+                allow_category_change: this.newTemplateForm.controls.categoryChange.value == 'Yes' ? true : false,
                 language: this.filterListLanguage.filter((item:any)=> item.label == this.newTemplateForm.controls.Language.value)[0]?.code,
                 components:comp
                 
@@ -1108,35 +1126,10 @@ insertAtCursor(selectedValue: any) {
 
 		if (isVariableValue) {
 		  this.allVariablesList = this.getVariables(isVariableValue, "{{", "}}");
+          console.log(this.allVariablesList);
           $('#newTemplateMessage').modal('hide');
           $('#newTemplateMessagePreview').modal('show');
       };
-      let buttons =[];
-      if(this.newTemplateForm.controls.buttonType.value == 'Quick Reply'){
-        // let obj =[];
-         let i = 0;
-         for(let item of this.quickReplyButtons){
-             i++;
-             if(this.newTemplateForm.get(`quickreply${i}`)?.value)
-                 buttons.push({type: "QUICK_REPLY",text: this.newTemplateForm.get(`quickreply${i}`)?.value})
-         }
-     }else{
-         if(this.newTemplateForm.controls.buttonText.value){
-         buttons =[{
-             type: 'PHONE_NUMBER',
-             text: this.newTemplateForm.controls.buttonText.value,
-             phone_number: this.newTemplateForm.controls.phone_number.value,
-            // countryCode: this.newTemplateForm.controls.country_code.value,
-             //displayPhoneNumber: this.newTemplateForm.controls.displayPhoneNumber.value,
-         },
-         // {
-         //     type: 'URL',
-         //     text: this.newTemplateForm.controls.url?.value,
-         //     url: this.newTemplateForm.controls.url?.value,
-         // }
-     ]
- }
-     }
     }
 
     }
@@ -1325,16 +1318,22 @@ openButtonPopUp() {
 
 
   validateItems():boolean {
-    let validationErrors = ''; // Clear previous errors
-
+    let validationErrors = ''; 
+    const buttonTextSet = new Set<string>();
+    const urlPattern = /^(https?:\/\/).*\.[a-z]{2,}$/i;
     this.buttonsArray.forEach((item, index) => {
       if (!item.buttonText) {
         validationErrors = validationErrors + '<br>'+ `Button ${index + 1}: 'buttonText' is required.`;
       }
-      if (item.type === 'Visit Website' && !item.webUrl) {
-        validationErrors= `Button ${index + 1}: 'webUrl' is required for Visit Website button.`;
+      if (item.type === 'Visit Website') {
+        if (!item.webUrl) {
+            validationErrors= validationErrors + '<br>'+ `Button ${index + 1}: 'webUrl' is required for Visit Website button.`;
+          } else if (!urlPattern.test(item.webUrl)) {
+            validationErrors= validationErrors + '<br>'+ `Button ${index + 1}: 'webUrl' must start with http:// or https:// and end with a valid TLD.`;
+          }
       }
       if (item.type === 'Call Phone') {
+        console.log(item);
         if (!item.code) {
           validationErrors = validationErrors + '<br>'+ `Button ${index + 1}: 'code' is required for Call Phone button.`;
         }
@@ -1345,6 +1344,11 @@ openButtonPopUp() {
       if (item.type === 'Copy offer Code' && !item.code) {
         validationErrors = validationErrors + '<br>'+ `Button ${index + 1}: 'code' is required for Copy offer Code buttomn.`;
       }
+      if (item.buttonText && buttonTextSet.has(item.buttonText)) {
+        validationErrors = validationErrors + '<br>'+ `Button ${index + 1}: Duplicate 'buttonText' value '${item.buttonText}' detected.`;
+      } else {
+        buttonTextSet.add(item.buttonText);
+      }
     });
 if (validationErrors){
     this.showToaster(validationErrors,'error');
@@ -1353,6 +1357,10 @@ return false;
 else
 return true
     
+  }
+
+  addNewTemplate(){
+    this.buttonsArray =[];
   }
 
 }

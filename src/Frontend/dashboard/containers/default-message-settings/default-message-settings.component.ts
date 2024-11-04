@@ -147,7 +147,7 @@ ToggleAttributesOption(){
 	// this.closeAllModal()
   const selection = window.getSelection();
   this.lastCursorPosition = selection?.getRangeAt(0) || null;
-	$("#welcomGreeting").modal('hide');
+	//$("#welcomGreeting").modal('hide');
   $("#atrributemodal").modal('show');
 }
 
