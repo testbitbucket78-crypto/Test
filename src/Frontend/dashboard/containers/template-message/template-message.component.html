@@ -123,11 +123,12 @@
                             <div *ngIf="templatesMessageData?.buttons && templatesMessageData?.buttons?.length >0" class="w-70">
                                 <div *ngFor="let item of templatesMessageData?.buttons let i = index" >
                                 <div  class="text-center" *ngIf="item?.buttonText && i<3"><button class="template-btn" (click)="isAllButtonPopupVisible = !isAllButtonPopupVisible" [ngClass]="{'btn-radius': ((templatesMessageData?.buttons?.length-1)== i || (templatesMessageData?.buttons?.length >2 && i==2))}">
-                                    <img class="btn-preview-img" *ngIf="item.type =='Quick Reply'" src="../../../../assets/img/settings/reply-arrow.svg"> 
-                                    <img class="btn-preview-img" *ngIf="item.type =='Call Phone'" src="../../../../assets/img/settings/phone-call.svg"> 
-                                    <img class="btn-preview-img" *ngIf="item.type =='Copy offer Code'" src="../../../../assets/img/settings/copy.svg"> 
-                                    <img class="btn-preview-img" *ngIf="item.type =='Visit Website'" src="../../../../assets/img/settings/open-in-new.svg"> 
-                                    <img class="btn-preview-img" *ngIf="item.type =='Complete Flow'" src="../../../../assets/img/settings/form.svg"> 
+                                    <img class="btn-preview-img" *ngIf="item.type =='Quick Reply' && !(i==2 && templatesMessageData?.buttons?.length>3)" src="../../../../assets/img/settings/reply-arrow.svg"> 
+                                    <img class="btn-preview-img" *ngIf="item.type =='Call Phone' && !(i==2 && templatesMessageData?.buttons?.length>3)" src="../../../../assets/img/settings/phone-call.svg"> 
+                                    <img class="btn-preview-img" *ngIf="item.type =='Copy offer Code' && !(i==2 && templatesMessageData?.buttons?.length>3)" src="../../../../assets/img/settings/copy.svg"> 
+                                    <img class="btn-preview-img" *ngIf="item.type =='Visit Website' && !(i==2 && templatesMessageData?.buttons?.length>3)" src="../../../../assets/img/settings/open-in-new.svg"> 
+                                    <img class="btn-preview-img" *ngIf="item.type =='Complete Flow' && ! (i==2 && templatesMessageData?.buttons?.length>3)" src="../../../../assets/img/settings/form.svg"> 
+                                    <img class="btn-preview-img" *ngIf="(i==2 && templatesMessageData?.buttons?.length>3)" src="../../../../assets/img/settings/options-lines.svg">  
                                     {{(i==2 && templatesMessageData?.buttons?.length>3) ? 'Show All Buttons' : item?.buttonText }}</button> </div>
                                 </div>
                             </div>
@@ -836,12 +837,12 @@
                         <div class="d-flex justify-content-between">
                             <div class="pt-3  msg-head btn-type-head">
                                 <h6 >URL Type</h6>
-                                <select class="callto input-form">
-                                    <option>Static</option>
-                                    <option>Dynamic</option>
+                                <select class="callto input-form" [(ngModel)]="item.webType" [ngModelOptions]="{standalone: true}">
+                                    <option value="Static">Static</option>
+                                    <option value="Dynamic">Dynamic</option>
                                 </select>
                             </div>
-                            <div class="flex-grow-1 ml-2">
+                            <div class="flex-grow-1 ml-2" >
                                 <div class="d-flex justify-content-between align-items-center pt-3  msg-head">
                                     <h6>Website URL</h6>
                                     <div><span class="characters-count">{{ getCharacterCount(7) }}</span><span>/20 Characters</span>
@@ -849,6 +850,21 @@
                                 </div>
                                 <div class="sel-type-link">
                                     <input type="text" placeholder="e.g. https://www.example.com" [(ngModel)]="item.webUrl" [ngModelOptions]="{standalone: true}">
+                                </div>
+                            </div>
+                        </div>
+                        <div *ngIf="item.webType == 'Dynamic'">
+                            <div class="font-small">Dynamic URL allows you to add a variable. Adding a variable creates a personalized link for the customer to view their info. Only one variable can be added to the end of a URL.</div>
+                            <div class="flex-grow-1 ml-2">
+                                <div class="d-flex justify-content-between align-items-center msg-head">
+                                    <!-- {{ getCharacterCount(idx) }} -->
+                                    <h6>Add sample URL with variable</h6>
+                                    <div><span class="characters-count">{{item?.webUrlSample?.length}}</span><span>/2000 Characters</span></div>
+                                </div>
+                                <div class="d-flex sel-type-link">
+                                    <!-- (input)="updateCharacterCount($event, idx)" -->
+                                    <div class="d-flex align-items-center px-2"ngNonBindable>{{1}}</div>
+                                    <input type="text" id="quickreply" maxlength="2000" [placeholder]="placeholderText" [(ngModel)]="item.webUrlSample" [ngModelOptions]="{standalone: true}" >
                                 </div>
                             </div>
                         </div>
@@ -886,12 +902,12 @@
                 </div>                
                 <div *ngFor="let item of buttonsArray;let i =index">
                     <div  class="text-center" *ngIf="item?.buttonText && i<3"><button class="template-btn" (click)="isAllButtonPopupVisible = !isAllButtonPopupVisible" [ngClass]="{'btn-radius': ((buttonsArray.length-1)== i || (buttonsArray.length >2 && i==2))}">
-                        <img class="btn-preview-img" *ngIf="item.type =='Quick Reply' && !((buttonsArray.length-1)== i || (buttonsArray.length >2 && i==2))" src="../../../../assets/img/settings/reply-arrow.svg"> 
-                        <img class="btn-preview-img" *ngIf="item.type =='Call Phone' && !((buttonsArray.length-1)== i || (buttonsArray.length >2 && i==2))" src="../../../../assets/img/settings/phone-call.svg"> 
-                        <img class="btn-preview-img" *ngIf="item.type =='Copy offer Code' && !((buttonsArray.length-1)== i || (buttonsArray.length >2 && i==2))" src="../../../../assets/img/settings/copy.svg"> 
-                        <img class="btn-preview-img" *ngIf="item.type =='Visit Website' && !((buttonsArray.length-1)== i || (buttonsArray.length >2 && i==2))" src="../../../../assets/img/settings/open-in-new.svg"> 
-                        <img class="btn-preview-img" *ngIf="item.type =='Complete Flow' && ! ((buttonsArray.length-1)== i || (buttonsArray.length >2 && i==2))" src="../../../../assets/img/settings/form.svg"> 
-                        <img class="btn-preview-img" *ngIf="((buttonsArray.length-1)== i || (buttonsArray.length >2 && i==2))" src="../../../../assets/img/settings/options-lines.svg"> 
+                        <img class="btn-preview-img" *ngIf="item.type =='Quick Reply' && !(i==2 && buttonsArray?.length>3)" src="../../../../assets/img/settings/reply-arrow.svg"> 
+                        <img class="btn-preview-img" *ngIf="item.type =='Call Phone' && !(i==2 && buttonsArray?.length>3)" src="../../../../assets/img/settings/phone-call.svg"> 
+                        <img class="btn-preview-img" *ngIf="item.type =='Copy offer Code' && !(i==2 && buttonsArray?.length>3)" src="../../../../assets/img/settings/copy.svg"> 
+                        <img class="btn-preview-img" *ngIf="item.type =='Visit Website' && !(i==2 && buttonsArray?.length>3)" src="../../../../assets/img/settings/open-in-new.svg"> 
+                        <img class="btn-preview-img" *ngIf="item.type =='Complete Flow' && ! (i==2 && buttonsArray?.length>3)" src="../../../../assets/img/settings/form.svg"> 
+                        <img class="btn-preview-img" *ngIf="(i==2 && buttonsArray?.length>3)" src="../../../../assets/img/settings/options-lines.svg"> 
                         {{(i==2 && buttonsArray?.length>3) ? 'Show All Buttons' : item?.buttonText }}</button> </div>
                 </div>
                 <div class="all-btn-popup" *ngIf="isAllButtonPopupVisible">
@@ -951,7 +967,7 @@
                     <div class="my-2 variable-values">         
                         <div *ngFor="let item of allVariablesList; let ith = index" class="d-flex justify-content-between align-items-center form-group">
                             <label class="form-label" for="variableValue{{ith}}">{{item}}</label>
-                            <input type="text" class="form-control" id="variableValue{{ith}}" placeholder="Enter Value">
+                            <input type="text" class="form-control" [(ngModel)]="allVariablesValueList[ith].val" [ngModelOptions]="{standalone: true}" placeholder="Enter Value">
                         </div>
                     </div>
             </div>    
@@ -981,11 +997,12 @@
                                
                 <div *ngFor="let item of buttonsArray;let i =index">
                     <div  class="text-center" *ngIf="item?.buttonText && i<3"><button class="template-btn" (click)="isAllButtonPopupVisible = !isAllButtonPopupVisible" [ngClass]="{'btn-radius': ((buttonsArray.length-1)== i || (buttonsArray.length >2 && i==2))}">
-                        <img class="btn-preview-img" *ngIf="item.type =='Quick Reply'" src="../../../../assets/img/settings/reply-arrow.svg"> 
-                        <img class="btn-preview-img" *ngIf="item.type =='Call Phone'" src="../../../../assets/img/settings/phone-call.svg"> 
-                        <img class="btn-preview-img" *ngIf="item.type =='Copy offer Code'" src="../../../../assets/img/settings/copy.svg"> 
-                        <img class="btn-preview-img" *ngIf="item.type =='Visit Website'" src="../../../../assets/img/settings/open-in-new.svg"> 
-                        <img class="btn-preview-img" *ngIf="item.type =='Complete Flow'" src="../../../../assets/img/settings/form.svg"> 
+                        <img class="btn-preview-img" *ngIf="item.type =='Quick Reply' && !(i==2 && buttonsArray?.length>3)" src="../../../../assets/img/settings/reply-arrow.svg"> 
+                        <img class="btn-preview-img" *ngIf="item.type =='Call Phone' && !(i==2 && buttonsArray?.length>3)" src="../../../../assets/img/settings/phone-call.svg"> 
+                        <img class="btn-preview-img" *ngIf="item.type =='Copy offer Code' && !(i==2 && buttonsArray?.length>3)" src="../../../../assets/img/settings/copy.svg"> 
+                        <img class="btn-preview-img" *ngIf="item.type =='Visit Website' && !(i==2 && buttonsArray?.length>3)" src="../../../../assets/img/settings/open-in-new.svg"> 
+                        <img class="btn-preview-img" *ngIf="item.type =='Complete Flow' && ! (i==2 && buttonsArray?.length>3)" src="../../../../assets/img/settings/form.svg"> 
+                        <img class="btn-preview-img" *ngIf="(i==2 && buttonsArray?.length>3)" src="../../../../assets/img/settings/options-lines.svg"> 
                         {{(i==2 && buttonsArray?.length>3) ? 'Show All Buttons' : item?.buttonText }}</button> </div>
                 </div>
                 <div class="all-btn-popup" *ngIf="isAllButtonPopupVisible">                    
@@ -994,12 +1011,13 @@
                         <div>All options</div>
                     </div>
                     <div class="all-btn-Name" *ngFor="let item of buttonsArray;let i =index" >
-                        <img class="btn-preview-img" *ngIf="item.type =='Quick Reply'" src="../../../../assets/img/settings/reply-arrow.svg"> 
-                        <img class="btn-preview-img" *ngIf="item.type =='Call Phone'" src="../../../../assets/img/settings/phone-call.svg"> 
-                        <img class="btn-preview-img" *ngIf="item.type =='Copy offer Code'" src="../../../../assets/img/settings/copy.svg"> 
-                        <img class="btn-preview-img" *ngIf="item.type =='Visit Website'" src="../../../../assets/img/settings/open-in-new.svg"> 
-                        <img class="btn-preview-img" *ngIf="item.type =='Complete Flow'" src="../../../../assets/img/settings/form.svg"> 
-                        {{item?.buttonText}}</div>
+                        <img class="btn-preview-img" *ngIf="item.type =='Quick Reply' && !(i==2 && buttonsArray?.length>3)" src="../../../../assets/img/settings/reply-arrow.svg"> 
+                        <img class="btn-preview-img" *ngIf="item.type =='Call Phone' && !(i==2 && buttonsArray?.length>3)" src="../../../../assets/img/settings/phone-call.svg"> 
+                        <img class="btn-preview-img" *ngIf="item.type =='Copy offer Code' && !(i==2 && buttonsArray?.length>3)" src="../../../../assets/img/settings/copy.svg"> 
+                        <img class="btn-preview-img" *ngIf="item.type =='Visit Website' && !(i==2 && buttonsArray?.length>3)" src="../../../../assets/img/settings/open-in-new.svg"> 
+                        <img class="btn-preview-img" *ngIf="item.type =='Complete Flow' && ! (i==2 && buttonsArray?.length>3)" src="../../../../assets/img/settings/form.svg"> 
+                        <img class="btn-preview-img" *ngIf="(i==2 && buttonsArray?.length>3)" src="../../../../assets/img/settings/options-lines.svg"> 
+                        {{(i==2 && buttonsArray?.length>3) ? 'Show All Buttons' : item?.buttonText }}</div>
                 </div>
                 
                 <!-- <div *ngIf="newTemplateForm.controls.buttonType.value == 'Call to Action'" class="w-70">
@@ -1009,9 +1027,9 @@
         </div>
 
     </div>
-            <div class="modal-footer">
-                <button type="button" class="account-btn draft" (click)="saveAsDraft()" >Save as draft</button>
-                <button type="button" class="account-btn" (click)="confirmsave()" >Submit</button>
+            <div class="modal-footer" >
+                <button type="button" class="account-btn draft" (click)="saveAsDraft();showVariableValidation()" >Save as draft</button>
+                <button type="button" class="account-btn" (click)="confirmsave() ;showVariableValidation()" >Submit</button>
             </div>
         </form>
         </div>
