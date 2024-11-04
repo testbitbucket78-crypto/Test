@@ -701,7 +701,7 @@ const insertMessage = async (req, res) => {
                         const check = await commonFun.notifiactionsToBeSent(element,4);
                         if (check) {
                             let notifyvalues = [
-                                [SPID, '@Mention in the Notes', 'A new Chat has been Assigned to you', element, 'teambox', element, utcTimestamp]
+                                [SPID, '@Mention in the Notes', 'You have a been mentioned in the Notes', element, 'teambox', element, utcTimestamp]
                             ];
                             let mentionRes = await db.excuteQuery(val.addNotification, [notifyvalues]);
                         } else {
