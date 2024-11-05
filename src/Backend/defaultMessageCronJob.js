@@ -224,7 +224,7 @@ async function NoCustomerReplyTimeout() {
 async function NoAgentReplyTimeOut() {
   try {
     // Fetch messages that need processing
-    let noAgentReplydata = await db.excuteQuery(settingVal.getLatestMsgbyInteraction, [lostMessageTimeGap]);
+    let noAgentReplydata = await db.excuteQuery("CALL noAgentReply()", []); //settingVal.getLatestMsgbyInteraction
     logger.info(`${noAgentReplydata?.length} messages fetched for NoAgentReplyTimeOut`, { timestamp: new Date() });
 
     if (noAgentReplydata?.length > 0) {
