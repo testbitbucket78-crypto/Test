@@ -1427,15 +1427,55 @@ return true
         return false;
   }
 
-  showVariableValidation(){
-    let varValue = this.allVariablesValueList.filter((item:any)=> item.val == '');
-    if(varValue.length > 0)
-        this.showToaster('Please fill all variable values','error');
-  }
 
   replaceVariablePreview(val:any){
+    // {var:item,val:''}
+    let repArray:any[] =[];
     this.allVariablesValueList.forEach((item:any)=>{
-
+        repArray.push({word:item?.var,replaceWord:item?.val})
     })
+    console.log(repArray);
+    const updatedString = this.replaceWordsInSequence(val, repArray);
+    console.log(updatedString);
+    return updatedString
+  }
+
+  replaceWordsInSequence(str: string, replacements: { word: string; replaceWord: string }[]): string {
+    replacements.forEach(({ word, replaceWord }) => {
+      if (replaceWord) {
+        const regex = new RegExp(`\\b${word}\\b`);
+        str = str.replace(word, replaceWord);
+      }
+    });
+  
+    return str;
+  }
+
+//   replaceWordsInSequence(str: string, replacements: { word: string; replaceWord: string }[]): string {
+//     const replacementMap = new Map<string, string[]>();  
+//     replacements.forEach(({ word, replaceWord }) => {
+//         if (replaceWord) { // Only add non-empty replacements
+//           if (!replacementMap.has(word)) {
+//             replacementMap.set(word, []);
+//           }
+//           replacementMap.get(word)!.push(replaceWord);
+//         }
+//       });
+    
+//       replacementMap.forEach((replacementList, word) => {
+//         const regex = new RegExp(`\\b${word}\\b`, 'g'); 
+    
+//         str = str.replace(regex, () => {
+//           return replacementList.length > 0 ? replacementList.shift()! : word;
+//         });
+//       });
+//     return str;
+//   }
+  get hasQuickReplyButtons(): boolean {
+    return this.buttonsArray.some(item => item.type === 'Quick Reply');
+  }
+  
+  get hasNonQuickReplyButtons(): boolean {
+    return this.buttonsArray.some(item => item.type !== 'Quick Reply');
   }
 }

@@ -7,10 +7,13 @@ import { webSocket, WebSocketSubject } from 'rxjs/webSocket';
 })
 export class WebsocketService {
   private socket$: WebSocketSubject<any> = new WebSocketSubject('wss://notify.stacknize.com/');
+  private isReconnecting: boolean = false;
 
   constructor() { }
 
   connect(spn: any): void {
+    if (this.isReconnecting) return;
+      this.isReconnecting = true; 
     this.socket$ = webSocket('wss://notify.stacknize.com/'); // Replace with your server's URL
     this.socket$.next(JSON.stringify(spn));
     // Handle incoming messages
@@ -22,15 +25,18 @@ export class WebsocketService {
     this.socket$.subscribe(
       (message) => {
         console.log('Received message:', message);
+        this.isReconnecting = false;
       },
       (error) => {
         console.error('WebSocket error:', error);
         clearInterval(intervalId);
+        this.isReconnecting = false;
         this.connect(spn);
       },
       () => {
         console.log('WebSocket connection closed');
         clearInterval(intervalId);
+        this.isReconnecting = false;
         this.connect(spn); 
       }
     );
@@ -48,6 +54,7 @@ export class WebsocketService {
   disconnect(): void {
     if (this.socket$) {
       this.socket$.complete();
+      this.isReconnecting = false;
       //connect();
       //this.socket$ = null;
     }
