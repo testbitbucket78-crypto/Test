@@ -61,7 +61,7 @@
                                 </div>
                             </div>
                             <div class="d-flex">
-                            <div class="formrow w-100">
+                            <div class="formrow w-100 form-filter-type">
                                 <p (click)="toggleContactFilter();showContact=!showContact"  class="form-control select_box btn">
                                     {{selectedcontactFilterBy.label}}
                                 </p>
@@ -75,7 +75,7 @@
         
                             </div>
 
-                            <div class="formrow w-100">
+                            <div class="formrow w-100 form-filter-type">
                                 <p (click)="toggleFilterByOption()"  class="form-control select_box btn">
                                     {{addedF?.filterBy}}
                                 </p>
@@ -142,6 +142,15 @@
                                         {{addedF?.filterValue}}
                                     </p>
                                     <div *ngIf="showFilterTagOption" class="popup-dialog">
+                                        <p *ngIf="addedF?.filterPrefix == 'Conversation Assigned to'" (click)="selectFilterOption(i,'Unassigned')">
+                                            <span>Unassigned</span>
+                                        </p>
+                                        <p *ngIf="addedF?.filterPrefix == 'Conversation Assigned to' || addedF?.filterPrefix == 'Last Conversation With'" (click)="selectFilterOption(i,'bot')">
+                                            <span>bot</span>
+                                        </p>
+                                        <p *ngIf="addedF?.filterPrefix == 'Creator'" (click)="selectFilterOption(i,'System')">
+                                            <span>System</span>
+                                        </p>
                                         <p *ngFor="let option of userList ;let l = index" (click)="selectFilterOption(i,option?.name)">
                                             <span>{{option?.name}}</span>
                                         </p>

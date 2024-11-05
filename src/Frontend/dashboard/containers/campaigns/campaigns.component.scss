@@ -2700,3 +2700,12 @@ position: absolute;
 .downloadBtnDisabled {
 	color: #8479b8 !important;
 }
+
+.form-filter-type{
+	max-width: 150px;
+	min-width: 70px;
+}
+
+.addnewitem-content-left::-webkit-scrollbar{
+	display:  block !important;
+}
