@@ -624,12 +624,12 @@
 						  </div>
 						  <div class="template_list">
 							<div class="mb-4 template_box" *ngFor="let template of allTemplates ;let i = index">
-							  <div class="px-4 template_box_inner d-flex align-items-start">
+							  <div class="px-4 template_box_inner d-flex align-items-start w-100">
 								<div class="d-flex align-items-center template_box_inner">
 								<input type="radio" id="selectedTemplate{{i}}" name="selectedTemplate" [checked]="templateChecked" (click)="selectTemplate(template)">
 								<label class="m-0" for="selectedTemplate{{i}}"></label>
 								</div>
-							 <div class="template_head flex-column">
+							 <div class="template_head flex-column w-100">
 							  <p class="template_name">{{template.TemplateName}}</p>
 							  <p class="m-0"><span>{{ settingsService?.getDateTimeFormate(template.created_at,true) }}</span></p>
 					  
@@ -644,6 +644,18 @@
 								  <p *ngIf="template.media_type ==='text' && template.Header" [innerHTML]="template.Header | sanitizeHtml" class="m-0 font-weight-bold"></p>
 								  <p [innerHTML]="template.BodyText | sanitizeHtml"></p>
 								  <p *ngIf="template.FooterText" [innerHTML]="template.FooterText | sanitizeHtml"></p>
+								</div>
+								<div *ngIf="template?.buttons && template?.buttons?.length >0 && template?.Channel === 'WA API'" class="w-100">
+									<div *ngFor="let item of template?.buttons let i = index" >
+									<div  class="text-center" *ngIf="item?.buttonText && i<3"><button class="template-btn"  [ngClass]="{'btn-radius': ((template?.buttons?.length-1)== i || (template?.buttons?.length >2 && i==2))}">
+										<img class="btn-preview-img" *ngIf="item.type =='Quick Reply' && !(i==2 && template?.buttons?.length>3)" src="../../../../assets/img/settings/reply-arrow.svg"> 
+									<img class="btn-preview-img" *ngIf="item.type =='Call Phone' && !(i==2 && template?.buttons?.length>3)" src="../../../../assets/img/settings/phone-call.svg"> 
+									<img class="btn-preview-img" *ngIf="item.type =='Copy offer Code' && !(i==2 && template?.buttons?.length>3)" src="../../../../assets/img/settings/copy.svg"> 
+									<img class="btn-preview-img" *ngIf="item.type =='Visit Website' && !(i==2 && template?.buttons?.length>3)" src="../../../../assets/img/settings/open-in-new.svg"> 
+									<img class="btn-preview-img" *ngIf="item.type =='Complete Flow' && ! (i==2 && template?.buttons?.length>3)" src="../../../../assets/img/settings/form.svg"> 
+									<img class="btn-preview-img" *ngIf="(i==2 && template?.buttons?.length>3)" src="../../../../assets/img/settings/options-lines.svg"> 
+										{{(i==2 && template?.buttons?.length>3) ? 'Show All Buttons' : item?.buttonText }}</button> </div>
+									</div>
 								</div>
 								<!-- <div *ngIf="template.Channel === 'WhatsApp Official'" class="template_btn">
 								  <button type="button" class="btn">Button 1</button>

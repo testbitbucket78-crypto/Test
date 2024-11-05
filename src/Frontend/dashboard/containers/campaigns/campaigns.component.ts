@@ -2502,6 +2502,9 @@ testinfo(){
 	async getTemplates(){
 		let spid = Number(this.SPID)
 		this.settingsService.getApprovedTemplate(spid,1).subscribe(allTemplates =>{
+			allTemplates?.templates.forEach((item:any) => {
+				item.buttons = JSON.parse(item?.buttons);
+			});
 			this.allTemplatesMain = allTemplates.templates;
 			this.allTemplates = allTemplates.templates;
 			this.allTemplates = this.allTemplatesMain.filter((item:any) => item.Channel == this.newCampaignDetail.get('channel_label').value);
