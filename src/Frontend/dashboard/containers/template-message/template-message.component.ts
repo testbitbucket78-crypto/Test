@@ -1478,4 +1478,11 @@ return true
   get hasNonQuickReplyButtons(): boolean {
     return this.buttonsArray.some(item => item.type !== 'Quick Reply');
   }
+
+  showVariableValidation(){
+    let varValue = this.allVariablesValueList.filter((item:any)=> item.val == '');
+    if(varValue.length > 0)
+        this.showToaster('Please fill all variable values','error');
+  }
+
 }
