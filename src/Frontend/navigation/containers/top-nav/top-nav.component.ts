@@ -99,7 +99,7 @@ export class TopNavComponent implements OnInit {
           console.log(data);
           if (data[data.length - 1] && !TopNavComponent.notifiedMessages.has(data[data.length - 1]?.notification_id)) {
             TopNavComponent.notifiedMessages.add(data[data.length - 1]?.notification_id);
-            this.notify(data[data.length - 1]?.message);
+            this.notify(data[data.length - 1]?.message, data[data.length - 1]?.subject);
           }
         }
         this.LastnotificationData =  JSON.parse(JSON.stringify(this.notificationData));
@@ -119,9 +119,9 @@ export class TopNavComponent implements OnInit {
       }));
     }
 
-    notify(msg:any) {
+    notify(msg:any, subject:any) {
       console.log('notification send');
-      this.notificationService.showNotification('New message!', {
+      this.notificationService.showNotification(subject, {
         body: msg,
         icon: '../../../../assets/img/main-logo.png'
       });
