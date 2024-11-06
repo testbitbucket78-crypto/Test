@@ -1297,7 +1297,7 @@ input[type="radio"]:checked + label::before {
   }
 
   .call-to-action-btns {
-    padding: 0 24px 0 24px;
+    padding: 0 14px 0 14px;
   }
 
   .sel.input-form {
@@ -1871,4 +1871,11 @@ input[type="radio"]:checked + label::before {
 
 .attr-popup-background{
     background-color: #ddd3d396 !important;
+}
+
+.group-border{
+    padding: 0px 10px;
+    border: 2px solid black;
+    border-radius: 12px;
+    margin-top: 6px;
 }

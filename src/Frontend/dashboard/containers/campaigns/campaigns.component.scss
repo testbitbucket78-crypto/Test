@@ -533,6 +533,7 @@
 	display: flex;
 	flex-direction: column;
 	padding: 1rem;
+	border-radius: 0px !important;
 	}
    .template .template_text p {
 	color: #000;
@@ -2708,4 +2709,26 @@ position: absolute;
 
 .addnewitem-content-left::-webkit-scrollbar{
 	display:  block !important;
+}
+
+
+.btn-preview-img{
+    height: 18px;
+    width: 18px;
+    margin-right: 3px;
+  }
+
+  .template-btn {
+    width: 100%; 
+   background: white;
+   border: none;
+   word-wrap: break-word;
+   padding: 6px 0px;
+   border-top: 2px #e8edef solid !important;
+   color: #0080ba;
+   font-weight: bold;
+}
+
+.w-100{
+    width: 100% !important;
 }

@@ -691,9 +691,34 @@
                             <a class="remove-btn" (click)="removeQuickReplyButtons(idx)" *ngIf="quickReplyButtons?.length>1">- Remove</a>
                         </div>
                        </div> -->
-
+                       <div *ngIf="hasQuickReplyButtons" class="group-border quick-reply-group">
+                        <div class="container-call-to-btns" *ngFor="let item of buttonsArray;let idx = index">
+                        <div class="d-flex btn-container" *ngIf="item.type =='Quick Reply'">
+                            <div class="msg-head btn-type-head">
+                                <h6>Button Type</h6>
+                                <div class="btn-type-heading">Quick Reply</div>
+                            </div>
+                            <div class="flex-grow-1 ml-2 pb-2">
+                                <div class="d-flex justify-content-between align-items-center msg-head">
+                                    <h6>Button Text</h6>
+                                    <!-- {{ getCharacterCount(idx) }} -->
+                                    <div><span class="characters-count">{{item?.buttonText?.length}}</span><span>/25 Characters</span></div>
+                                </div>
+                                <div class="flex-column sel-type-link">
+                                    <!-- (input)="updateCharacterCount($event, idx)" -->
+                                    <input type="text" id="quickreply" [(ngModel)]="item.buttonText" [ngModelOptions]="{standalone: true}" maxlength="25" placeholder="e.g. Yes">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="d-flex justify-content-between incoming-card" *ngIf="item.type =='Quick Reply'">      
+                            <div></div>                  
+                            <a class="remove-btn" (click)="removeQuickReplyButtons(idx)" >- Remove</a>
+                        </div>
+                    </div>
+                       </div>
+                       <div *ngIf="hasNonQuickReplyButtons" class="group-border non-quick-reply-group">
                 <div class="container-call-to-btns" *ngFor="let item of buttonsArray;let idx = index">
-                    <div class="d-flex btn-container" *ngIf="item.type =='Quick Reply'">
+                    <!-- <div class="d-flex btn-container" *ngIf="item.type =='Quick Reply'">
                         <div class="msg-head btn-type-head">
                             <h6>Button Type</h6>
                             <div class="btn-type-heading">Quick Reply</div>
@@ -701,15 +726,13 @@
                         <div class="flex-grow-1 ml-2 pb-2">
                             <div class="d-flex justify-content-between align-items-center msg-head">
                                 <h6>Button Text</h6>
-                                <!-- {{ getCharacterCount(idx) }} -->
                                 <div><span class="characters-count">{{item?.buttonText?.length}}</span><span>/25 Characters</span></div>
                             </div>
                             <div class="flex-column sel-type-link">
-                                <!-- (input)="updateCharacterCount($event, idx)" -->
                                 <input type="text" id="quickreply" [(ngModel)]="item.buttonText" [ngModelOptions]="{standalone: true}" maxlength="25" placeholder="e.g. Yes">
                             </div>
                         </div>
-                    </div>
+                    </div> -->
                     <div class="btn-container" *ngIf="item.type =='Copy offer Code'">
                         <div class="d-flex ">
                         <div class="msg-head btn-type-head">
@@ -869,11 +892,12 @@
                             </div>
                         </div>
                     </div>
-                    <div class="d-flex justify-content-between incoming-card">      
+                    <div class="d-flex justify-content-between incoming-card" *ngIf="item.type !='Quick Reply'">      
                         <div></div>                  
                         <a class="remove-btn" (click)="removeQuickReplyButtons(idx)" >- Remove</a>
                     </div>
                 </div>
+            </div>
                 </div>
             
             </div>      
@@ -991,7 +1015,7 @@
                 <!-- <div class="message_type" [ngStyle]="{'background-image': 'url(' + templatesMessageData?.Links + ')'}"></div> -->
                 <div class="message_data" [ngClass]="{'preview': selectedType === 'text'}" >
                     <span class="temp-header" *ngIf="newTemplateForm.get('Header')?.value" class="font-weight-bolder" [innerHTML]="newTemplateForm.get('Header')?.value | sanitizeHtml"></span><br /><br />
-                    <span *ngIf="newTemplateForm.get('BodyText')?.value" [innerHTML]="newTemplateForm.get('BodyText')?.value | sanitizeHtml" ></span><br /><br />
+                    <span *ngIf="newTemplateForm.get('BodyText')?.value" [innerHTML]="replaceVariablePreview(newTemplateForm.get('BodyText')?.value) | sanitizeHtml" ></span><br /><br />
                     <span class="temp-footer" *ngIf="newTemplateForm.get('FooterText')?.value" [innerHTML]="newTemplateForm.get('FooterText')?.value | sanitizeHtml"></span><br />
                 </div>
                                

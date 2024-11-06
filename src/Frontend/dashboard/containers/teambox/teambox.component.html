@@ -1010,11 +1010,12 @@ popupWidth='250px' popupHeight='200px'>
 								  <div *ngIf="template?.buttons && template?.buttons?.length >0" class="w-70">
 									<div *ngFor="let item of template?.buttons let i = index" >
 									<div  class="text-center" *ngIf="item?.buttonText && i<3"><button class="template-btn"  [ngClass]="{'btn-radius': ((template?.buttons?.length-1)== i || (template?.buttons?.length >2 && i==2))}">
-										<img class="btn-preview-img" *ngIf="item.type =='Quick Reply'" src="../../../../assets/img/settings/reply-arrow.svg"> 
-										<img class="btn-preview-img" *ngIf="item.type =='Call Phone'" src="../../../../assets/img/settings/phone-call.svg"> 
-										<img class="btn-preview-img" *ngIf="item.type =='Copy offer Code'" src="../../../../assets/img/settings/copy.svg"> 
-										<img class="btn-preview-img" *ngIf="item.type =='Visit Website'" src="../../../../assets/img/settings/open-in-new.svg"> 
-										<img class="btn-preview-img" *ngIf="item.type =='Complete Flow'" src="../../../../assets/img/settings/form.svg"> 
+										<img class="btn-preview-img" *ngIf="item.type =='Quick Reply' && !(i==2 && template?.buttons?.length>3)" src="../../../../assets/img/settings/reply-arrow.svg"> 
+                        				<img class="btn-preview-img" *ngIf="item.type =='Call Phone' && !(i==2 && template?.buttons?.length>3)" src="../../../../assets/img/settings/phone-call.svg"> 
+                        					<img class="btn-preview-img" *ngIf="item.type =='Copy offer Code' && !(i==2 && template?.buttons?.length>3)" src="../../../../assets/img/settings/copy.svg"> 
+                        				<img class="btn-preview-img" *ngIf="item.type =='Visit Website' && !(i==2 && template?.buttons?.length>3)" src="../../../../assets/img/settings/open-in-new.svg"> 
+                        				<img class="btn-preview-img" *ngIf="item.type =='Complete Flow' && ! (i==2 && template?.buttons?.length>3)" src="../../../../assets/img/settings/form.svg"> 
+                        				<img class="btn-preview-img" *ngIf="(i==2 && template?.buttons?.length>3)" src="../../../../assets/img/settings/options-lines.svg">  
 										{{(i==2 && template?.buttons?.length>3) ? 'Show All Buttons' : item?.buttonText }}</button> </div>
 									</div>
 								</div>
@@ -1375,11 +1376,12 @@ popupWidth='250px' popupHeight='200px'>
 					<div *ngIf="selectedTemplate?.buttons && selectedTemplate?.buttons?.length >0 && selectedTemplate.Channel === 'WA API'" class="w-100 px-2">
 						<div *ngFor="let item of selectedTemplate?.buttons let i = index" >
 						<div  class="text-center" *ngIf="item?.buttonText && i<3"><button class="template-btn"  [ngClass]="{'btn-radius': ((selectedTemplate?.buttons?.length-1)== i || (selectedTemplate?.buttons?.length >2 && i==2))}">
-							<img class="btn-preview-img" *ngIf="item.type =='Quick Reply'" src="../../../../assets/img/settings/reply-arrow.svg"> 
-							<img class="btn-preview-img" *ngIf="item.type =='Call Phone'" src="../../../../assets/img/settings/phone-call.svg"> 
-							<img class="btn-preview-img" *ngIf="item.type =='Copy offer Code'" src="../../../../assets/img/settings/copy.svg"> 
-							<img class="btn-preview-img" *ngIf="item.type =='Visit Website'" src="../../../../assets/img/settings/open-in-new.svg"> 
-							<img class="btn-preview-img" *ngIf="item.type =='Complete Flow'" src="../../../../assets/img/settings/form.svg"> 
+							<img class="btn-preview-img" *ngIf="item.type =='Quick Reply' && !(i==2 && selectedTemplate?.buttons?.length>3)" src="../../../../assets/img/settings/reply-arrow.svg"> 
+                        <img class="btn-preview-img" *ngIf="item.type =='Call Phone' && !(i==2 && selectedTemplate?.buttons?.length>3)" src="../../../../assets/img/settings/phone-call.svg"> 
+                        <img class="btn-preview-img" *ngIf="item.type =='Copy offer Code' && !(i==2 && selectedTemplate?.buttons?.length>3)" src="../../../../assets/img/settings/copy.svg"> 
+                        <img class="btn-preview-img" *ngIf="item.type =='Visit Website' && !(i==2 && selectedTemplate?.buttons?.length>3)" src="../../../../assets/img/settings/open-in-new.svg"> 
+                        <img class="btn-preview-img" *ngIf="item.type =='Complete Flow' && ! (i==2 && selectedTemplate?.buttons?.length>3)" src="../../../../assets/img/settings/form.svg"> 
+                        <img class="btn-preview-img" *ngIf="(i==2 && selectedTemplate?.buttons?.length>3)" src="../../../../assets/img/settings/options-lines.svg"> 
 							{{(i==2 && selectedTemplate?.buttons?.length>3) ? 'Show All Buttons' : item?.buttonText }}</button> </div>
 						</div>
 					</div>
