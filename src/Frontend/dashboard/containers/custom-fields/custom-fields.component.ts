@@ -224,7 +224,7 @@ getCustomFieldFormData() {
 let CustomFieldData:addCustomFieldsData = <addCustomFieldsData>{};
     CustomFieldData.id = this.ID;
     CustomFieldData.SP_ID = this.spId;
-    CustomFieldData.ColumnName = this.customFieldForm.controls.displayName.value;
+    CustomFieldData.ColumnName = this.settingsService.trimText(this.customFieldForm.controls.displayName.value);
     CustomFieldData.Type = this.customFieldForm.controls.type.value;
     CustomFieldData.description = this.customFieldForm.controls.description.value;
     CustomFieldData.values = [];

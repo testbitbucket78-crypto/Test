@@ -603,7 +603,7 @@ export class ContactFilterComponent implements OnInit {
             filterType: filter.filterType?filter.filterType:'', 
             filterOperator:filter.filterOperator?filter.filterOperator:'', 
             filterPrefix: filter.filterPrefix?filter.filterPrefix:'', 
-            filterValue: filter.filterValue?filter.filterValue:''
+            filterValue: this._settingsService.trimText(filter.filterValue?filter.filterValue:'')
             })
         })
       })

@@ -285,7 +285,7 @@ export class RolesSettingsComponent implements OnInit {
     copyRolesData() {
         let rolesData: RolesData = <RolesData>{};
         rolesData.SP_ID = this.sp_Id;
-        rolesData.RoleName = this.myForm.controls.roleName.value;
+        rolesData.RoleName = this.settingsService.trimText(this.myForm.controls.roleName.value);
         rolesData.roleID = this.selectedRoleId;
         rolesData.Privileges = '';
         let subRoles: any[] = [];

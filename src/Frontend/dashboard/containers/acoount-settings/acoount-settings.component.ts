@@ -186,7 +186,7 @@ getwhatsapp() {
       this.WABA_Id = this.whatsAppDetails[0]?.WABA_ID;
       this.getQualityRating();
     }
-
+    this.mapHealthStatus({});
     if(this.whatsAppDataUpdated){
       if(this.whatsAppDetails[0]?.channel_id) this.setChannelId(this.whatsAppDetails[0]?.channel_id);
     }
@@ -195,7 +195,7 @@ getwhatsapp() {
 
 getQualityRating() {
   this.isLoading = true;
-  this.apiService.getQualityRating(this.phoneNo, this.phone_no_id, this.WABA_Id).subscribe(
+  this.apiService.getQualityRating(this.phoneNo, this.phone_no_id, this.WABA_Id, this.spid).subscribe(
     data => {
       let res: any = data
       if (res?.status === 200) {
@@ -216,6 +216,7 @@ getQualityRating() {
 }
 
 mapHealthStatus(qualityStatus: any){
+  this.healthStatusData = [];
   this.whatsAppDetails.forEach(data => {
     const healthStatus: healthStatusData = {
        phone_no: data?.connected_id,

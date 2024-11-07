@@ -391,7 +391,7 @@ hideToaster(){
    // if(!this.companyData)
       this.companyData =<companyDetail>{};
     this.companyData.SP_ID = this.sp_Id;
-    this.companyData.Company_Name = this.companyDetailForm.controls.Company_Name.value;
+    this.companyData.Company_Name = this.settingsService.trimText(this.companyDetailForm.controls.Company_Name.value);
     this.companyData.Company_Website = this.companyDetailForm.controls.Company_Website.value;
     this.companyData.Country = this.companyDetailForm.controls.Country.value;
     this.companyData.Employees_count = this.companyDetailForm.controls.Employees_count.value;
@@ -411,8 +411,8 @@ hideToaster(){
     this.billingData.State = this.billingForm.controls.State.value;
     this.billingData.City = this.billingForm.controls.City.value;
     this.billingData.zip_code = this.billingForm.controls.zip_code.value;
-    this.billingData.Address1 = this.billingForm.controls.Address1.value;
-    this.billingData.Address2 = this.billingForm.controls.Address2.value;
+    this.billingData.Address1 = this._settingsService.trimText(this.billingForm.controls.Address1.value);
+    this.billingData.Address2 = this._settingsService.trimText(this.billingForm.controls.Address2.value);
   }
 
   copyLocaleFormData(){

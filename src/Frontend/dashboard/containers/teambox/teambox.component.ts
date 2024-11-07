@@ -908,8 +908,8 @@ selectQuickReplies(item:any){
 	} else {
 		originalName = fileNameWithPrefix.substring(fileNameWithPrefix.indexOf('-') + 1);
 	}
-
-	if(item?.media_type === 'image') {
+    if(item?.media_type === 'text'){mediaName=''} 
+	else if(item?.media_type === 'image') {
 	  mediaContent ='<p><img style="width:100%; height:100%" src="'+item?.Links+'"></p>'
 	  mediaName = '<p class="custom-class-attachmentType"><img src="/assets/img/teambox/photo-icon.svg" alt="icon"> '+originalName+'</p>'
 	}

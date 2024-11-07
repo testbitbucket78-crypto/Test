@@ -305,7 +305,7 @@ getPhoneNumberValidation(){
         userData.registerPhone = this.userDetailForm.controls.registerPhone.value;
         userData.display_mobile_number = this.userDetailForm.controls.display_mobile_number.value;
         userData.country_code = this.userDetailForm.controls.country_code.value;
-        userData.name = this.userDetailForm.controls.name.value;
+        userData.name = this.settingsService.trimText(this.userDetailForm.controls.name.value);
         userData.uid = this.uid;
         userData.role = this.rolesList.filter((item:any)=> item.roleID ==this.userDetailForm.controls.UserType.value)[0].RoleName;
         userData.Channel = this.channelDomain;
