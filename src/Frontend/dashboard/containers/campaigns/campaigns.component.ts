@@ -357,13 +357,15 @@ constructor(config: NgbModalConfig, private modalService: NgbModal,private datep
 			{value:'Phone_number',label:'Phone Number',checked:false,addeFilter:[],
 			option:[
 				{label:'Is empty',checked:false,type:'none'},
-				{label:'Is not empty',checked:false,type:'none'},
-			{label:'Contains',checked:false,type:'text'},
-			{label:'Does Not Contain',checked:false,type:'text'},
-			{label:'Starts with',checked:false,type:'text'},
-			{label:'End with',checked:false,type:'text'},
-			{label:'Is equal to',checked:false,type:'text'},
-			{label:'Is not equal to',checked:false,type:'text'},
+						{label:'Is not empty',checked:false,type:'none'},
+					   {label:'Contains',checked:false,type:'text'},
+					   {label:'Does Not Contain',checked:false,type:'text'},
+					   {label:'Less than',checked:false,type:'text'},
+					   {label:'Greater than',checked:false,type:'text'},
+					   {label:'Starts with',checked:false,type:'text'},
+					   {label:'End with',checked:false,type:'text'},
+					   {label:'Is equal to',checked:false,type:'text'},
+					   {label:'Is not equal to',checked:false,type:'text'},
 			]},
 			{value:'Name',label:'Name',checked:false,addeFilter:[],
 			option:[
@@ -473,8 +475,7 @@ constructor(config: NgbModalConfig, private modalService: NgbModal,private datep
 			
 		];
 	}
-	
-	getCustomFieldsData() {
+    getCustomFieldsData() {
 		this.getContactFilterBy();
 		this._settingsService.getNewCustomField(this.SPID).subscribe(response => {
 		  this.customFieldData = response.getfields;
@@ -765,13 +766,16 @@ constructor(config: NgbModalConfig, private modalService: NgbModal,private datep
 
 	}
 	async downloadCampignReport(CampaignId: number, Name: string) {
+		//const selectedTimeZone = Intl.DateTimeFormat().resolvedOptions().timeZone || 'UTC';
+    const offset = this.getDateTimeZoneOffset();
 		if (CampaignId && Name) {
 			let data = {
 				campaignId: CampaignId,
 				userName: this.userName,
 				emailId: this.userEmail,
 				campaignName: Name,
-				spid: this.SPID
+				spid: this.SPID,
+				timeZone: offset
 			}
 			var downloadIcon = document.querySelector(".btn-circle-download");
 			if (downloadIcon) {
@@ -794,6 +798,15 @@ constructor(config: NgbModalConfig, private modalService: NgbModal,private datep
 				}
 			})
 		}
+	}
+	getDateTimeZoneOffset(){
+		const currentTime = new Date();
+		const offsetMinutes = currentTime.getTimezoneOffset();
+		const offsetSign = offsetMinutes > 0 ? "-" : "+";
+		const offsetHours = String(Math.floor(Math.abs(offsetMinutes) / 60)).padStart(2, '0');
+		const offsetMins = String(Math.abs(offsetMinutes) % 60).padStart(2, '0');
+		const offset = `${offsetSign}${offsetHours}:${offsetMins}`;
+		return offset;
 	}
 	statusUpdate(id:number,status:string){
 		const campaign = this.allCampaign.find((x: any) => x.Id === id);
@@ -2489,6 +2502,9 @@ testinfo(){
 	async getTemplates(){
 		let spid = Number(this.SPID)
 		this.settingsService.getApprovedTemplate(spid,1).subscribe(allTemplates =>{
+			allTemplates?.templates.forEach((item:any) => {
+				item.buttons = JSON.parse(item?.buttons);
+			});
 			this.allTemplatesMain = allTemplates.templates;
 			this.allTemplates = allTemplates.templates;
 			this.allTemplates = this.allTemplatesMain.filter((item:any) => item.Channel == this.newCampaignDetail.get('channel_label').value);
@@ -3059,5 +3075,14 @@ console.log(this.allTemplatesMain);
 	getMediaType(val:any,type:any){
 		if(!val) return 
 		return val.includes(type);
+	}
+
+
+	getActualName(val:any){
+		let filt = this.contactFilterBy.filter((item:any)=> item.value == val)
+		if(filt.length >0){
+			return filt[0]?.label;
+		} else
+			return val;
 	}
 }

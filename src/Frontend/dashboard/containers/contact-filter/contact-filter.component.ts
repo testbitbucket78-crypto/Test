@@ -57,13 +57,15 @@ export class ContactFilterComponent implements OnInit {
 			{value:'Phone_number',label:'Phone Number',checked:false,addeFilter:[],
 			option:[
 				{label:'Is empty',checked:false,type:'none'},
-				{label:'Is not empty',checked:false,type:'none'},
-			{label:'Contains',checked:false,type:'text'},
-			{label:'Does Not Contain',checked:false,type:'text'},
-			{label:'Starts with',checked:false,type:'text'},
-			{label:'End with',checked:false,type:'text'},
-			{label:'Is equal to',checked:false,type:'text'},
-			{label:'Is not equal to',checked:false,type:'text'},
+						{label:'Is not empty',checked:false,type:'none'},
+					   {label:'Contains',checked:false,type:'text'},
+					   {label:'Does Not Contain',checked:false,type:'text'},
+					   {label:'Less than',checked:false,type:'text'},
+					   {label:'Greater than',checked:false,type:'text'},
+					   {label:'Starts with',checked:false,type:'text'},
+					   {label:'End with',checked:false,type:'text'},
+					   {label:'Is equal to',checked:false,type:'text'},
+					   {label:'Is not equal to',checked:false,type:'text'},
 			]},
 			{value:'Name',label:'Name',checked:false,addeFilter:[],
 			option:[
@@ -451,10 +453,12 @@ export class ContactFilterComponent implements OnInit {
 			else
 				contactFilter = contactFilter + " and (Interaction.interaction_status !='Resolved')";
 		  }else if(colName =="Last Conversation With"){
-			let userId = this.userList.filter((item:any)=> item.name ==filters.items[0].filterValue)[0]?.uid;
+			let userId = this.userList.filter((item:any)=> item.name ==filters.items[0].filterValue)[0]?.uid ;
+			userId = userId ? userId : -1;
 			contactFilter = contactFilter + `and  (((  Message.Agent_id LIKE '%${userId}%' ))`;
 		  }else if(colName =="Conversation Assigned to"){
 			let userId = this.userList.filter((item:any)=> item.name ==filters.items[0].filterValue)[0]?.uid;
+			userId = userId ? userId : -1;
 			contactFilter = contactFilter + `(and IM.AgentId='${userId}')`;
 		  }else if(colName =="Last Message Received At"){
 			contactFilter = contactFilter + `and (Message.message_direction ='out' and Message.created_at=?)`;

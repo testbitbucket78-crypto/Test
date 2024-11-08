@@ -850,11 +850,19 @@ const download = (req, res) => {
 
 
 
-const convertToMomentFormat = (format) => {
-    return format.replace(/yyyy/g, 'YYYY').replace(/dd/g, 'DD').replace(/MM/g, 'MM');
-};
-
-async function formatterDateTime(data, sp_id) {
+  const convertToMomentFormat = (format) => {
+        const formatMapping = {
+            'd': 'D', 
+            'dd': 'DD', 
+            'm': 'M', 
+            'mm': 'MM',
+            'yy': 'YY', 
+            'yyyy': 'YYYY'
+        };
+        return format.replace(/d{1,2}|m{1,2}|y{2,4}/gi, match => formatMapping[match.toLowerCase()] || match);
+  };
+  
+  async function formatterDateTime(data, sp_id) {
     const select = 'SELECT * FROM localDetails WHERE SP_ID = ?';
     const formatSettings = await db.excuteQuery(select, [sp_id]);
 
@@ -913,25 +921,25 @@ async function formatterDateTime(data, sp_id) {
 
 
 
-
-
-
-const fetchCampaignMessages = async (campaignId) => {
+  
+  
+  
+const fetchCampaignMessages = async (campaignId, timeZone) => {
     const query = `
-        SELECT 
-            id AS "Msg ID",
-            phone_number AS "Customer Number",
-            status AS "Message Status",
-            SentTime AS "Submit Time",
-            DeliveredTime AS "Delivered Time",
-            SeenTime AS "Seen Time",
-            RepliedTime AS "Replied Time",
-            FailureReason AS "Failure Reason",
-            FailureCode AS "Error Codes"
-        FROM CampaignMessages
-        WHERE CampaignId = ?
-    `;
-    let result = await db.excuteQuery(query, [campaignId])
+    SELECT 
+        id AS "Msg ID",
+        phone_number AS "Customer Number",
+        status AS "Message Status",
+        CONVERT_TZ(SentTime, '+00:00', '${timeZone}') AS "Submit Time",
+        CONVERT_TZ(DeliveredTime, '+00:00', '${timeZone}') AS "Delivered Time",
+        CONVERT_TZ(SeenTime, '+00:00', '${timeZone}') AS "Seen Time",
+        CONVERT_TZ(RepliedTime, '+00:00', '${timeZone}') AS "Replied Time",
+        FailureReason AS "Failure Reason",
+        FailureCode AS "Error Codes"
+    FROM CampaignMessages
+    WHERE CampaignId = ?
+`;
+    let result = await db.excuteQuery(query, [campaignId]);
     return result;
 };
 
@@ -969,9 +977,9 @@ const campaignReport = async (req, res) => {
         const emailId = req.body.emailId;
         const campaignName = req.body.campaignName;
         const spid = req.body.spid;
-
+        const timeZone = req?.body?.timeZone
         // Step 1: Fetch data from the CampaignMessages table
-        const campaignMessages = await fetchCampaignMessages(campaignId);
+        const campaignMessages = await fetchCampaignMessages(campaignId, timeZone);
         const formattedMessages = await formatterDateTime(campaignMessages, spid);
 
         // Step 2: Sanitize the messages (replace null values with empty strings)

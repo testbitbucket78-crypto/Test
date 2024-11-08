@@ -42,6 +42,7 @@ export class TemplateMessageComponent implements OnInit {
     templatesData = [];
     galleryData = [];
     allVariablesList:string[] =[];
+    allVariablesValueList:any[] =[];
     templateFlows:any =[];
     filteredGalleryData = [];
     filteredTemplatesData: templateMessageData[] = [];
@@ -57,6 +58,7 @@ export class TemplateMessageComponent implements OnInit {
     channelOption: any = [];
     countValue: number = 1;
     customValue: string = "var1";
+    public placeholderText = 'Enter full URL for https://www.example.com/{{1}}';
     isLoading!:boolean;
     valuesMap: Map<number, string> = new Map();
     filterListTopic = [
@@ -78,7 +80,7 @@ export class TemplateMessageComponent implements OnInit {
         { value: 8, label: 'Financial', checked: false },
     ];
     filterListCategory = [
-        { value: 3, label: 'Authentication', checked: false },
+        // { value: 3, label: 'Authentication', checked: false },
         { value: 1, label: 'Marketing', checked: false },
         { value: 2, label: 'Utility', checked: false },
     ];
@@ -235,6 +237,7 @@ export class TemplateMessageComponent implements OnInit {
     isPopupVisible:boolean = false;
     isAllButtonPopupVisible:boolean = false;
     channelQualityTooltip:boolean = false;
+    
 
   @ViewChild('popupContainer') popupContainer!: ElementRef;
 
@@ -729,11 +732,13 @@ checkTemplateName(e:any){
     }
 
     confirmsave() {
-        this.status = 'saved';
+        if(!this.CheckVariable()){
+            this.status = 'saved';
             $('#newTemplateMessage').modal('hide');
             $('#newTemplateMessagePreview').modal('hide');
             $('#confirmationModal').modal('show');
             this.showCampaignDetail =false;
+        }
     }
     cancelSave(){
         $('#confirmationModal').modal('hide');
@@ -752,8 +757,10 @@ checkTemplateName(e:any){
       }
 
     saveAsDraft() {
-        this.status = 'draft';
-        this.saveNewTemplate();
+        if(!this.CheckVariable()){
+            this.status = 'draft';
+            this.saveNewTemplate();
+        }
     }
 
     copyTemplate() {
@@ -875,7 +882,9 @@ checkTemplateName(e:any){
                         type: 'FLOW',
                         text: item.buttonText,
                         flow_id: item.flowId,
-                        //url: this.newTemplateForm.controls.url?.value,
+                        // flow_json: "<FLOW_JSON>", 
+                        // flow_action: "<FLOW_ACTION>",
+                        // navigate_screen: "<NAVIGATE_SCREEN>"
                     };
                 }                
                 else if(item?.type =='Visit Website') {
@@ -1127,6 +1136,9 @@ insertAtCursor(selectedValue: any) {
 		if (isVariableValue) {
 		  this.allVariablesList = this.getVariables(isVariableValue, "{{", "}}");
           console.log(this.allVariablesList);
+          this.allVariablesList.forEach((item:any)=>{
+            this.allVariablesValueList.push({var:item,val:''});
+          })
           $('#newTemplateMessage').modal('hide');
           $('#newTemplateMessagePreview').modal('show');
       };
@@ -1235,21 +1247,66 @@ addCustomAttribute(){
 //     this.countValue = 1;
 //   }
 
-addButtons(type:string){
-    if(type =='Quick Reply')
-        this.buttonsArray.push({type:type,buttonText:''});
-    else if(type =='Call Phone')
-        this.buttonsArray.push({type:type,buttonText:'',code:'',phoneNumber:'',displayPhoneNumber:''});
-    else if(type =='Copy offer Code')
-        this.buttonsArray.push({type:type,buttonText:'Copy Offer Code',code:''});
-    else if(type =='Complete Flow')
-        this.buttonsArray.push({type:type,buttonText:'',flowId:''});
-    else if(type =='Visit Website')
-        this.buttonsArray.push({type:type,buttonText:'',webUrl:''});
+addButtons(type: string) {
+    const button = this.createButton(type);
+    if(this.buttonsArray.length>0){
 
+    if (type === 'Quick Reply') {
+        const firstNonQuickReplyIndex = this.buttonsArray.findIndex(item => item.type !== 'Quick Reply');
+
+        if (this.buttonsArray[0].type === 'Quick Reply') {
+            this.buttonsArray.splice(firstNonQuickReplyIndex, 0, button);
+//            this.buttonsArray.push(button);
+        } else {
+            this.buttonsArray.push(button);
+        }
+    } else {
+        const lastQuickReplyIndex = this.buttonsArray.reduce((lastIndex, item, index) =>
+            item.type === 'Quick Reply' ? index : lastIndex, -1);
+            const firstNonQuickReplyIndex = this.buttonsArray.findIndex(item => item.type !== 'Quick Reply');
+        if (this.buttonsArray[0].type != 'Quick Reply') {
+            this.buttonsArray.splice(firstNonQuickReplyIndex, 0, button);
+        } else {
+            this.buttonsArray.push(button);
+        }
+    }
+}else{
+    this.buttonsArray.push(button);
+}
     this.isPopupVisible = false;
 }
 
+// addButtons(type:string){
+//     if(type =='Quick Reply')
+//         this.buttonsArray.push({type:type,buttonText:''});
+//     else if(type =='Call Phone')
+//         this.buttonsArray.push({type:type,buttonText:'',code:'',phoneNumber:'',displayPhoneNumber:''});
+//     else if(type =='Copy offer Code')
+//         this.buttonsArray.push({type:type,buttonText:'Copy Offer Code',code:''});
+//     else if(type =='Complete Flow')
+//         this.buttonsArray.push({type:type,buttonText:'',flowId:''});
+//     else if(type =='Visit Website')
+//         this.buttonsArray.push({type:type,buttonText:'',webUrl:'',webType:'Static',webUrlSample:''});
+
+//     this.isPopupVisible = false;
+// }
+
+createButton(type: string) {
+    switch (type) {
+        case 'Quick Reply':
+            return { type: type, buttonText: '' };
+        case 'Call Phone':
+            return { type: type, buttonText: '', code: '', phoneNumber: '', displayPhoneNumber: '' };
+        case 'Copy offer Code':
+            return { type: type, buttonText: 'Copy Offer Code', code: '' };
+        case 'Complete Flow':
+            return { type: type, buttonText: '', flowId: '' };
+        case 'Visit Website':
+            return { type: type, buttonText: '', webUrl: '', webType: 'Static', webUrlSample: '' };
+        default:
+            return {};
+    }
+}
 openButtonPopUp() {
     this.isPopupVisible = !this.isPopupVisible;
 
@@ -1361,6 +1418,71 @@ return true
 
   addNewTemplate(){
     this.buttonsArray =[];
+  }
+  CheckVariable(){
+    let varValue = this.allVariablesValueList.filter((item:any)=> item.val == '');
+    if(varValue.length > 0)
+        return true;
+    else
+        return false;
+  }
+
+
+  replaceVariablePreview(val:any){
+    // {var:item,val:''}
+    let repArray:any[] =[];
+    this.allVariablesValueList.forEach((item:any)=>{
+        repArray.push({word:item?.var,replaceWord:item?.val})
+    })
+    console.log(repArray);
+    const updatedString = this.replaceWordsInSequence(val, repArray);
+    console.log(updatedString);
+    return updatedString
+  }
+
+  replaceWordsInSequence(str: string, replacements: { word: string; replaceWord: string }[]): string {
+    replacements.forEach(({ word, replaceWord }) => {
+      if (replaceWord) {
+        const regex = new RegExp(`\\b${word}\\b`);
+        str = str.replace(word, replaceWord);
+      }
+    });
+  
+    return str;
+  }
+
+//   replaceWordsInSequence(str: string, replacements: { word: string; replaceWord: string }[]): string {
+//     const replacementMap = new Map<string, string[]>();  
+//     replacements.forEach(({ word, replaceWord }) => {
+//         if (replaceWord) { // Only add non-empty replacements
+//           if (!replacementMap.has(word)) {
+//             replacementMap.set(word, []);
+//           }
+//           replacementMap.get(word)!.push(replaceWord);
+//         }
+//       });
+    
+//       replacementMap.forEach((replacementList, word) => {
+//         const regex = new RegExp(`\\b${word}\\b`, 'g'); 
+    
+//         str = str.replace(regex, () => {
+//           return replacementList.length > 0 ? replacementList.shift()! : word;
+//         });
+//       });
+//     return str;
+//   }
+  get hasQuickReplyButtons(): boolean {
+    return this.buttonsArray.some(item => item.type === 'Quick Reply');
+  }
+  
+  get hasNonQuickReplyButtons(): boolean {
+    return this.buttonsArray.some(item => item.type !== 'Quick Reply');
+  }
+
+  showVariableValidation(){
+    let varValue = this.allVariablesValueList.filter((item:any)=> item.val == '');
+    if(varValue.length > 0)
+        this.showToaster('Please fill all variable values','error');
   }
 
 }

@@ -44,7 +44,7 @@ export class TopNavComponent implements OnInit {
     private notificationInterval: any;
     subscription:any;
     unreadCount!:number;
-
+    static notifiedMessages: Set<string> = new Set<string>(); 
 
     constructor(private navigationService: NavigationService, private authservice:AuthService, private router:Router,private apiService: 
         ProfileService,private elementRef: ElementRef,private _settingsService:SettingsService,private notificationService:NotificationService) {}
@@ -97,7 +97,10 @@ export class TopNavComponent implements OnInit {
         if(this.notificationData.length != this.LastnotificationData.length){
           console.log(data);
           console.log(data);
-          this.notify(data[data.length-1]?.message);
+          if (data[data.length - 1] && !TopNavComponent.notifiedMessages.has(data[data.length - 1]?.notification_id)) {
+            TopNavComponent.notifiedMessages.add(data[data.length - 1]?.notification_id);
+            this.notify(data[data.length - 1]?.message, data[data.length - 1]?.subject);
+          }
         }
         this.LastnotificationData =  JSON.parse(JSON.stringify(this.notificationData));
         this.notificationData.reverse();
@@ -116,9 +119,9 @@ export class TopNavComponent implements OnInit {
       }));
     }
 
-    notify(msg:any) {
+    notify(msg:any, subject:any) {
       console.log('notification send');
-      this.notificationService.showNotification('New message!', {
+      this.notificationService.showNotification(subject, {
         body: msg,
         icon: '../../../../assets/img/main-logo.png'
       });
