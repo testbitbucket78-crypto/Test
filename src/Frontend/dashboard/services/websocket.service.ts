@@ -6,41 +6,61 @@ import { webSocket, WebSocketSubject } from 'rxjs/webSocket';
   providedIn: 'root'
 })
 export class WebsocketService {
-  private socket$: WebSocketSubject<any> = new WebSocketSubject('wss://notify.stacknize.com/');
+  private socket$: WebSocketSubject<any> | null = null;
   private isReconnecting: boolean = false;
+
+  private socketInstance: WebSocket | null = null;
 
   constructor() { }
 
   connect(spn: any): void {
-    if (this.isReconnecting) return;
+    console.log(this.socketInstance);
+    console.log(this.socketInstance?.readyState);
+    if (this.socketInstance && (this.socketInstance?.readyState === WebSocket.OPEN || this.socketInstance?.readyState === WebSocket.CONNECTING)) {
+      console.log("WebSocket is already connected or connection is pending.");
+      return;
+    }
+
       this.isReconnecting = true; 
     this.socket$ = webSocket('wss://notify.stacknize.com/'); // Replace with your server's URL
+    this.socketInstance = new WebSocket('wss://notify.stacknize.com/');
     this.socket$.next(JSON.stringify(spn));
-    // Handle incoming messages
     let i =0
     const intervalId = setInterval(() => {      
-      this.socket$.next("ping alive switch");
+      if (this.socketInstance?.readyState === WebSocket.OPEN) {
+        this.socket$?.next("ping alive switch");
+      }
  }, 30000);
  
     this.socket$.subscribe(
       (message) => {
         console.log('Received message:', message);
-        this.isReconnecting = false;
+        console.log(this.socket$);
       },
       (error) => {
         console.error('WebSocket error:', error);
         clearInterval(intervalId);
-        this.isReconnecting = false;
+        console.log(this.socket$);
+        this.cleanupConnection();
         this.connect(spn);
       },
       () => {
         console.log('WebSocket connection closed');
         clearInterval(intervalId);
-        this.isReconnecting = false;
+        console.log(this.socket$);
+        this.cleanupConnection();
         this.connect(spn); 
       }
     );
     
+  }
+
+  private cleanupConnection(): void {
+    if (this.socketInstance) {
+      this.socketInstance.close();
+      this.socketInstance = null;
+    }
+    this.socket$ = null;
   }
 
   // send(message: any): void {
@@ -48,15 +68,12 @@ export class WebsocketService {
   //     this.socket$.next(message);
   //   }
   // }
-  getMessage(): Observable<any> {
-    return this.socket$.asObservable();
+  getMessage(): (Observable<any> | null) {
+    return this.socket$ ? this.socket$?.asObservable() :null;
   }
   disconnect(): void {
     if (this.socket$) {
       this.socket$.complete();
-      this.isReconnecting = false;
-      //connect();
-      //this.socket$ = null;
     }
   }
 }

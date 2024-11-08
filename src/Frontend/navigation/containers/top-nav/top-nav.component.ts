@@ -47,7 +47,7 @@ export class TopNavComponent implements OnInit {
     static notifiedMessages: Set<string> = new Set<string>(); 
 
     constructor(private navigationService: NavigationService, private authservice:AuthService, private router:Router,private apiService: 
-        ProfileService,private elementRef: ElementRef,private _settingsService:SettingsService,private notificationService:NotificationService) {}
+        ProfileService,private elementRef: ElementRef,public _settingsService:SettingsService,private notificationService:NotificationService) {}
 
     @HostListener('document:click', ['$event'])
     onDocumentClick(event: MouseEvent): void {
