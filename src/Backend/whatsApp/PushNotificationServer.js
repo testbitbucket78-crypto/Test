@@ -52,19 +52,25 @@ wss.on('connection', (ws) => {
       let msgjson = parseJSONObject(message);
       if (msgjson === false) { msgjson = parseJSONObject(JSON.parse(message)); }
       if (msgjson["UniqueSPPhonenumber"]) {
-        clients[msgjson["UniqueSPPhonenumber"]] = ws;
-        if( spAgentMapping[msgjson["spPhoneNumber"]] == undefined){
-          spAgentMapping[msgjson["spPhoneNumber"]] = [];
+        // Check if the client already exists and close the existing WebSocket connection if it does
+        if (clients[msgjson["UniqueSPPhonenumber"]]) {
+            clients[msgjson["UniqueSPPhonenumber"]].close();
+            delete clients[msgjson["UniqueSPPhonenumber"]];
         }
-        
-       if(!(spAgentMapping[msgjson["spPhoneNumber"]].includes(msgjson["UniqueSPPhonenumber"]))){
-        spAgentMapping[msgjson["spPhoneNumber"]].push(msgjson["UniqueSPPhonenumber"]);
-       }
-        // console.log("UniqueSPPhonenumber 1", clients)
+    
+        // Assign the new WebSocket instance to the client
+        clients[msgjson["UniqueSPPhonenumber"]] = ws;
+    
+        if (spAgentMapping[msgjson["spPhoneNumber"]] === undefined) {
+            spAgentMapping[msgjson["spPhoneNumber"]] = [];
+        }
+    
+        if (!spAgentMapping[msgjson["spPhoneNumber"]].includes(msgjson["UniqueSPPhonenumber"])) {
+            spAgentMapping[msgjson["spPhoneNumber"]].push(msgjson["UniqueSPPhonenumber"]);
+        }
+    
         console.log('Active clients : ' + Object.keys(clients).length);
-
-      }
-      else if (msgjson["displayPhoneNumber"]) {
+    } else if (msgjson["displayPhoneNumber"]) {
         Object.keys(spAgentMapping).forEach(function (k) {
           if (k == msgjson["displayPhoneNumber"]) {
             spAgentMapping[k].forEach((item) => {

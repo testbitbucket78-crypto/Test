@@ -16,6 +16,7 @@ const moment = require('moment');
 const mytoken = process.env.VERIFY_TOKEN;
 const mapCountryCode = require('../Contact/utils.js');
 const commonFun = require('../common/resuableFunctions.js')
+const logger = require('../common/logger.log');
 let notifyInteraction = `SELECT InteractionId FROM Interaction WHERE customerId IN (SELECT customerId FROM EndCustomer WHERE Phone_number = ? and SP_ID=?  ) and is_deleted !=1   order by created_at desc`
 let metaPhoneNumberID = 211544555367892 //todo need to make it dynamic 
 
@@ -154,8 +155,9 @@ async function extractDataFromMessage(body) {
     var d = new Date(firstMessage.timestamp * 1000).toUTCString();
 
     const message_time = moment.utc(d).format('YYYY-MM-DD HH:mm:ss');
-    console.log("message_time", message_time)
-
+   // console.log("message_time", message_time)
+    logger.info(`complete Json ${JSON.stringify(body, null, 2)}`)    // for troubleshoot bug 
+    logger.info(`received message ________  ${phoneNo} ,${message_text} ,${message_time} ,${Message_template_id}`)
 
     if (firstMessage.context) {
       let spid = await db.excuteQuery('select SP_ID from user where mobile_number =? limit 1', [display_phone_number])
@@ -190,8 +192,8 @@ async function extractDataFromMessage(body) {
       console.log(Quick_reply_id + uniqueId);
       console.log("status present");
     }
-    console.log("________________SAVEING MESSAGE___________________");
-
+   // console.log("________________SAVEING MESSAGE___________________");
+logger.info(`________________SAVEING MESSAGE___________________`)
     if (message_text) {
       message_text = message_text.replace(/\*(.*?)\*/g, '<strong>$1</strong>');
       message_text = message_text.replace(/_(.*?)_/g, '<em>$1</em>');
@@ -286,6 +288,7 @@ const updateWhatsAppDetails = async (waba_id, phone_id, phoneNo) => {
 
 async function saveIncommingMessages(from, firstMessage, phone_number_id, display_phone_number, phoneNo, message_text, message_media, Message_template_id, Quick_reply_id, Type, ExternalMessageId, contactName, extension, message_time, countryCode) {
   console.log("sabewdfesk", Type, extension)
+  logger.info(`saveIncommingMessages  ${phoneNo} ,${message_text}  ,${message_time}`)
   if (Type == "image") {
     console.log("lets check the image");
 

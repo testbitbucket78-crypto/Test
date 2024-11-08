@@ -50,8 +50,9 @@ async function NoCustomerReplyReminder() {
             } else {
               isReplyPause = replyPauseCache.get(message.SP_ID);
             }
-            logger.info(`isReplyPause NoCustomerReplyReminder , SPID, phone_number, ${isReplyPause} , ${new Date()} , ${message.SPID} , ${message.customer_phone_number }`)
-            if (isReplyPause) {
+            let latestMessageTime = await db.excuteQuery('select * from Message where interaction_id =? order by created_at desc',[message.InteractionId])
+            logger.info(`isReplyPause NoCustomerReplyReminder , SPID, phone_number,${latestMessageTime.created_at},${message.latestMessageDate} ,${msg.Is_disable != 0},${isReplyPause} , ${new Date()} , ${message.SPID} , ${message.customer_phone_number }`)
+            if (isReplyPause && latestMessageTime.created_at < message.latestMessageDate && msg.Is_disable != 0) {
               // Check if extractedMessageCache already has the result for this SP_ID
               if (!extractedMessageCache.has(message.SP_ID)) {
                // message_text = await getExtraxtedMessage(message.message_value, message.SP_ID, message.customerId);
@@ -224,7 +225,7 @@ async function NoCustomerReplyTimeout() {
 async function NoAgentReplyTimeOut() {
   try {
     // Fetch messages that need processing
-    let noAgentReplydata = await db.excuteQuery("CALL noAgentReply()", []); //settingVal.getLatestMsgbyInteraction
+    let noAgentReplydata = await db.excuteQuery(settingVal.getLatestMsgbyInteraction, []);
     logger.info(`${noAgentReplydata?.length} messages fetched for NoAgentReplyTimeOut`, { timestamp: new Date() });
 
     if (noAgentReplydata?.length > 0) {
@@ -242,7 +243,6 @@ async function NoAgentReplyTimeOut() {
           let isReplyPause;
           let isWorkingHour;
           let message_text;
-
           // Check if replyPauseCache already has the result for this SPID
           if (!replyPauseCache.has(msg.SPID)) {
             isReplyPause = await isReplySent(msg.isAutoReply, msg.defaultAction_PauseTime, msg.isAutoReplyDisable, msg.AgentId, msg.interaction_status);
