@@ -230,7 +230,7 @@ It is determined by a combination of user feedback signals like blocks, reports 
 						<div class="doc-preview"*ngIf="selectedCampaign?.media_type=='document'" width="100%" height="150px">
 							<a [href]="selectedCampaign?.message_media"><img src="../../../../assets/img/settings/doc.svg" /></a>
 							</div>
-							<video *ngIf="getMediaType(selectedCampaign?.media_type,'video')" muted id="video-background" [src]="selectedCampaign?.message_media"></video>
+							<video *ngIf="getMediaType(selectedCampaign?.media_type,'video')" controls muted id="video-background" [src]="selectedCampaign?.message_media"></video>
 							<img *ngIf="getMediaType(selectedCampaign?.media_type,'image')" class="template_img" src="{{selectedCampaign?.message_media}}">
 						<!-- <div *ngIf="selectedCampaign.message_media" class="template_img">
 							<img src="{{selectedCampaign.message_media}}">
@@ -503,7 +503,7 @@ It is determined by a combination of user feedback signals like blocks, reports 
 							 <div class="doc-preview"*ngIf="template?.media_type=='document'" width="100%" height="150px">
 								<a [href]="template?.Links"><img src="../../../../assets/img/settings/doc.svg" /></a>
 								</div>
-								<video *ngIf="template.media_type=='video'" muted id="video-background" [src]="template.Links"></video>
+								<video *ngIf="template.media_type=='video'" controls muted id="video-background" [src]="template.Links"></video>
 								<img *ngIf="template.media_type=='image'" class="template_img" src="{{template.Links}}">
 								<div *ngIf="!template.media_type" class="template_img_placeholder"></div>
 								<div class="template_text">
@@ -546,7 +546,7 @@ It is determined by a combination of user feedback signals like blocks, reports 
 									<div class="doc-preview"*ngIf="selectedTemplate?.media_type=='document'">
 										<a [href]="selectedTemplate?.Links"><img src="../../../../assets/img/settings/doc.svg" /></a>
 									  </div>
-									<video *ngIf="selectedTemplate?.media_type=='video'" autoplay muted id="video-background" [src]="selectedTemplate.Links"></video>
+									<video *ngIf="selectedTemplate?.media_type=='video'" controls muted id="video-background" [src]="selectedTemplate.Links"></video>
 									<img *ngIf="selectedTemplate?.media_type=='image'" class="template_img" src="{{selectedTemplate.Links}}">
 						            <div *ngIf="!selectedTemplate?.media_type" class="template_img_placeholder"></div>
 								</div>
@@ -624,7 +624,7 @@ It is determined by a combination of user feedback signals like blocks, reports 
 								<div class="template_img">
 									<p class="close-box" (click)="editTemplateMedia()"><img src="/assets/img/campaign/edit.svg"></p>
 									<img *ngIf="selectedTemplate?.media_type=='image'" class="template_img" src="{{selectedTemplate.Links}}">
-									<video *ngIf="selectedTemplate?.media_type=='video'" muted id="video-background" [src]="selectedTemplate.Links"></video>
+									<video *ngIf="selectedTemplate?.media_type=='video'" controls muted id="video-background" [src]="selectedTemplate.Links"></video>
 									<div class="doc-preview"*ngIf="selectedTemplate?.media_type=='document'" width="100%" height="150px">
 										<a [href]="selectedTemplate?.Links"><img src="../../../../assets/img/settings/doc.svg" /></a>
 									  </div>
@@ -663,7 +663,7 @@ It is determined by a combination of user feedback signals like blocks, reports 
 								<div class="doc-preview"*ngIf="selectedTemplate?.media_type=='document'" width="100%" height="150px">
 									<a [href]="selectedTemplate?.Links"><img src="../../../../assets/img/settings/doc.svg" /></a>
 								  </div>
-								<video *ngIf="selectedTemplate?.media_type=='video'" muted id="video-background" [src]="selectedTemplate?.Links"></video>
+								<video *ngIf="selectedTemplate?.media_type=='video'" controls muted id="video-background" [src]="selectedTemplate?.Links"></video>
 								<img *ngIf="selectedTemplate?.media_type=='image'" class="template_img" src="{{selectedTemplate?.Links}}">
 								<div *ngIf="!selectedTemplate?.media_type" class="template_img_placeholder"></div>
 							</div>
