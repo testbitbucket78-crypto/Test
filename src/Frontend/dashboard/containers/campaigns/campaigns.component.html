@@ -360,13 +360,15 @@ It is determined by a combination of user feedback signals like blocks, reports 
 				<div class="addeidtcampaign_menu_item">
 					<img *ngIf="activeStep > 1" class="icon" src="assets/img/campaign/back.svg" (click)="prevStep()">
 				</div>
-				<div [ngClass]="activeStep > 0 ? 'addeidtcampaign_menu_item active' : 'addeidtcampaign_menu_item'" (click)="setStep(1)" ><span>1</span><p>Add Name & Channel</p></div>
+				<div [ngClass]="activeStep > 0 ? 'addeidtcampaign_menu_item active' : 'addeidtcampaign_menu_item'" ><span>1</span><p>Add Name & Channel</p></div>
 				<div class="addeidtcampaign_menu_item_dotted"><p></p></div>
-				<div [ngClass]="activeStep > 1 ? 'addeidtcampaign_menu_item active' : 'addeidtcampaign_menu_item'"  (click)="setStep(2)"><span>2</span><p>Add Audience</p></div>
+				<div [ngClass]="activeStep > 1 ? 'addeidtcampaign_menu_item active' : 'addeidtcampaign_menu_item'" ><span>2</span><p>Add Audience</p></div>
 				<div class="addeidtcampaign_menu_item_dotted"><p></p></div>
-				<div [ngClass]="activeStep > 2 ? 'addeidtcampaign_menu_item active' : 'addeidtcampaign_menu_item'"  (click)="setStep(3)"><span>3</span><p>Add Message</p></div>
+				<div [ngClass]="activeStep > 2 ? 'addeidtcampaign_menu_item active' : 'addeidtcampaign_menu_item'" ><span>3</span><p>Add Message</p></div>
 				<div class="addeidtcampaign_menu_item_dotted"><p></p></div>
-				<div [ngClass]="activeStep > 3.2 ? 'addeidtcampaign_menu_item active' : 'addeidtcampaign_menu_item'"  (click)="setStep(4)"><span>4</span><p>Preview & Schedule</p></div>
+				<div [ngClass]="activeStep > 3 ? 'addeidtcampaign_menu_item active' : 'addeidtcampaign_menu_item'" ><span>4</span><p>Personalize</p></div>
+				<div class="addeidtcampaign_menu_item"></div>
+				<div [ngClass]="activeStep > 3.2 ? 'addeidtcampaign_menu_item active' : 'addeidtcampaign_menu_item'" ><span>5</span><p>Preview & Schedule</p></div>
 				<div class="addeidtcampaign_menu_item"></div>
 			</div>
 
