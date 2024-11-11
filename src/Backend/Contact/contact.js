@@ -18,7 +18,7 @@ app.use(cors());
 app.use(bodyParser.urlencoded({ limit: '100mb', extended: true }));
 const authenticateToken = require('../Authorize');
 const logger = require('../common/logger.log');
-const {formatterDateTime,formatterDate,formatterTime  }  = require('./utils.js');
+const { formatterDateTime, formatterDate, formatterTime } = require('./utils.js');
 const commonFun = require('../common/resuableFunctions.js')
 
 app.get('/columns/:spid', authenticateToken, async (req, res) => {
@@ -305,7 +305,7 @@ async function processData(data) {
       /\b(1[0-2]|0?[1-9]):[0-5]\d\s?(AM|PM)\b/i,      // HH:MM AM/PM in 12-hour format
       /\b(1[0-2]|0?[1-9]):[0-5]\d:[0-5]\d\s?(AM|PM)\b/i // HH:MM:SS AM/PM in 12-hour format
     ];
-    
+
     for (const item of data) {
       // Loop through each key-value pair in the object
       for (const key in item) {
@@ -321,21 +321,21 @@ async function processData(data) {
         }
       }
       if (containsDateOrTime) break; // Exit outer loop if a date or time value is found
-    } 
+    }
   }
 }
 
 
 
-app.post('/exportCheckedContact', async(req, res) => {
+app.post('/exportCheckedContact', async (req, res) => {
   try {
     console.log(req.body)
     var data = req.body.data
     let SP_ID = req.query.SP_ID
     let isDateTime = await processData(data)
-    if(data.length > 0 && isDateTime) {
+    if (data.length > 0 && isDateTime) {
       let result = await formatterDateTime(data, SP_ID);
-      if(result){
+      if (result) {
         data = result
       }
     }
@@ -373,13 +373,13 @@ app.post('/exportCheckedContact', async(req, res) => {
     transporter.sendMail(mailOptions, (error, info) => {
       if (error) {
         logger.error(`export contact email send error ${error}`)
-       // res.send(error);
-      }else{
+        // res.send(error);
+      } else {
         console.log('Preview URL: %s', nodemailer.getTestMessageUrl(info));
         logger.info(`Message sent: %s, ${info.messageId}`)
-       // res.status(200).send({ msg: "data has been sent" });
+        // res.status(200).send({ msg: "data has been sent" });
       }
-     
+
     });
     return res.status(200).send({ msg: "Contacts exported sucessfully!" });
   } catch (err) {
@@ -665,14 +665,14 @@ async function addOnlynewContact(CSVdata, identifier, SP_ID) {
         UPDATE EndCustomer SET ${fieldNames.replace(/,/g, ' = ?, ')} = ?, isDeleted = 0, created_at = NOW() 
         WHERE ${identifier} = ? AND SP_ID = ?
       `;
-      const updateValues = set.map((field) => field.displayName).concat([identifierValue, SP_ID]);
-      result = await db.excuteQuery(updateQuery, updateValues);
+        const updateValues = set.map((field) => field.displayName).concat([identifierValue, SP_ID]);
+        result = await db.excuteQuery(updateQuery, updateValues);
       }
-      else{
+      else {
         let query = `INSERT INTO EndCustomer (${fieldNames}) SELECT ? WHERE NOT EXISTS (SELECT * FROM EndCustomer WHERE ${identifier}=? and SP_ID=? AND (isDeleted IS NULL OR isDeleted = 0) AND (isBlocked IS NULL OR isBlocked = 0));`;
         const values = set.map((field) => field.displayName);
         console.log(values, fieldNames);
-  
+
         // Ensure db.executeQuery returns a promise
         result = await db.excuteQuery(query, [values, identifierValue, SP_ID]);
       }
@@ -853,15 +853,17 @@ app.post('/verifyData', authenticateToken, async (req, res) => {
           //  console.log(exists,"select")
           if (exists) {
             currentData[i].displayName = value;
+            existSelect = true
           } else {
             existSelect = false
           }
         }
         if (allColumnsData.get(ActuallName) === 'Multi Select') {
           const { exists, value } = await MultiSelectValues(ActuallName, SP_ID, displayName);
-          console.log(exists, "Multi", value)
+           console.log(exists, "Multi", value)
           if (exists) {
             currentData[i].displayName = value;
+            existMultiselect = true
           } else {
             existMultiselect = false
           }
@@ -879,7 +881,8 @@ app.post('/verifyData', authenticateToken, async (req, res) => {
             console.log("isValidLength")
             existPhone = false;
           } else {
-            console.log("currentData[i].countryCode = phoneCheckResult.country;", phoneCheckResult.phoneNumber)
+            existPhone = true;
+            //  console.log("currentData[i].countryCode = phoneCheckResult.country;", phoneCheckResult.phoneNumber)
             // Add country code and display phone number to the existing object
             const countryCode = phoneCheckResult.country;
             withoutCountryPhone = phoneCheckResult.phoneNumber;
@@ -902,15 +905,15 @@ app.post('/verifyData', authenticateToken, async (req, res) => {
           if (dataTypeVerification?.isError) {
             reasons.push(dataTypeVerification.reason);
           }
-          if(allColumnsData.get(ActuallName) == 'Date'){
-            currentData[i].displayName = await formatterDate(displayName,formatSettings);
+          if (allColumnsData.get(ActuallName) == 'Date') {
+            currentData[i].displayName = await formatterDate(displayName, formatSettings);
           }
-          if(allColumnsData.get(ActuallName) == 'Time'){
+          if (allColumnsData.get(ActuallName) == 'Time') {
             currentData[i].displayName = await formatterTime(displayName, formatSettings);
           }
         }
       }
-      
+
       if (reasons.length === 0) {
         if (seenPhoneNumbers.has(phone)) {
           reasons.push("Duplicate phone number");
@@ -927,9 +930,9 @@ app.post('/verifyData', authenticateToken, async (req, res) => {
     }
 
     if (importData.length > 0) {
-      const verifyQuery = 'SELECT * FROM EndCustomer WHERE ' + identity + ' IN (?) AND SP_ID=? AND (isDeleted IS NULL OR isDeleted = 0) AND (isBlocked IS NULL OR isBlocked= 0)';
+      const verifyQuery = 'SELECT * FROM EndCustomer WHERE ' + identity + ' IN (?) AND SP_ID=? AND (isDeleted IS NULL OR isDeleted = 0)';
       const result = await db.excuteQuery(verifyQuery, [queryData, SP_ID]);
-
+      console.log(result, "************")
       let newCon = 0;
       let upCont = 0;
 
@@ -998,10 +1001,20 @@ async function writeErrFile(errData, res, headersArray) {
         const formattedEntry = {};
         error.data.forEach(entry => {
           const matchedHeader = headersArray.find(header => header.ActuallName === entry.ActuallName);
+          
+          // Process displayName to remove prefix if it contains a colon
+          let displayName = entry.displayName;
+          if (typeof displayName === 'string' && displayName.includes(":")) {
+            displayName = displayName
+              .split(',')                        // Split by comma if there are multiple values
+              .map(item => item.includes(':') ? item.split(':')[1] : item) // Remove prefix before the colon if present
+              .join(',');                        // Join back to a single string
+          }
+          
           if (matchedHeader) {
-            formattedEntry[matchedHeader.displayName] = entry.displayName;
+            formattedEntry[matchedHeader.displayName] = displayName;
           } else {
-            formattedEntry[entry.displayName] = entry.displayName;
+            formattedEntry[entry.displayName] = displayName;
           }
         });
         if (Array.isArray(error.reason)) {
@@ -1020,7 +1033,6 @@ async function writeErrFile(errData, res, headersArray) {
 
       const fields = [];
       errData[0].data.forEach(entry => {
-        // Exclude specific values like SP_ID and displayName
         if (entry.ActuallName !== 'SP_ID' && entry.ActuallName !== 'displayPhoneNumber' && entry.ActuallName !== 'countryCode') {
           const matchedHeader = headersArray.find(header => header.ActuallName === entry.ActuallName);
           if (matchedHeader) {
@@ -1048,7 +1060,7 @@ async function writeErrFile(errData, res, headersArray) {
     }
   } catch (err) {
     console.log("writeErrFile");
-    console.log(err)
+    console.log(err);
   }
 }
 
@@ -1168,8 +1180,11 @@ async function isDataInCorrectFormat(columnDataType, actuallName, displayName, u
               // If displayName is an array, check if the first element is in tagsList
               convertedValue = tagsList.includes(displayName[0]);
             } else if (typeof displayName === 'string') {
-              // If displayName is a string, check if it is in tagsList
-              convertedValue = tagsList.includes(displayName);
+              // Split displayName into an array of individual tags
+              const displayNameTags = displayName.split(',');
+
+              // Check if every tag in displayNameTags exists in tagsList
+              convertedValue = displayNameTags.every(tag => tagsList.includes(tag.trim()));
             }
           } else {
             convertedValue = existSelect;
@@ -1195,25 +1210,25 @@ async function isDataInCorrectFormat(columnDataType, actuallName, displayName, u
       //   }
       //   break;
 
-        case 'Time':
-          if (displayName) {
-              const time = moment(displayName, ['h:mm A', 'HH:mm', 'HH:mm:ss','h:mm:ss A'], true);
-              if (!time.isValid()) {
-                  return { isError: true, reason: `${fieldDisplayName} is invalid` };
-              }
+      case 'Time':
+        if (displayName) {
+          const time = moment(displayName, ['h:mm A', 'HH:mm', 'HH:mm:ss', 'h:mm:ss A'], true);
+          if (!time.isValid()) {
+            return { isError: true, reason: `${fieldDisplayName} is invalid` };
           }
+        }
         break;
 
-        case 'Date':
-          if (displayName) {
-            const date = moment(displayName);
-            if (date.isValid()) {
-              return { isError: false };
-            } else {
-              return { isError: true, reason: `${fieldDisplayName} is invalid` };
-            }
+      case 'Date':
+        if (displayName) {
+          const date = moment(displayName);
+          if (date.isValid()) {
+            return { isError: false };
+          } else {
+            return { isError: true, reason: `${fieldDisplayName} is invalid` };
           }
-          break;
+        }
+        break;
       // case 'Date':
       //   if (displayName) {
       //     const date = new Date(displayName);
@@ -1468,8 +1483,8 @@ app.post('/blockedContact', authenticateToken, (req, res) => {
   try {
     let blockedQuery = val.isBlockedQuery
     console.log(req.body.isBlocked, "req.body.isBlocked == 1", req.body.isBlocked == 1)
-      blockedQuery = `UPDATE EndCustomer set  isBlocked=?,isBlockedOn=now() ,OptInStatus='No' where customerId=? and SP_ID=?`
-      UnassignedBlockedContact(req.body.customerId, req.query.SP_ID, req.body.isBlocked)
+    blockedQuery = `UPDATE EndCustomer set  isBlocked=?,isBlockedOn=now() ,OptInStatus='No' where customerId=? and SP_ID=?`
+    UnassignedBlockedContact(req.body.customerId, req.query.SP_ID, req.body.isBlocked)
 
     db.runQuery(req, res, blockedQuery, [req.body.isBlocked, req.body.customerId, req.query.SP_ID])
   } catch (err) {
@@ -1496,7 +1511,7 @@ WHERE InteractionId = (SELECT  InteractionId FROM Interaction WHERE customerId =
     }
     console.log('empty', getInteraction[0]?.InteractionId, customerId, spid)
 
-    let updateStatus = await db.excuteQuery(`update Interaction set interaction_status=? where InteractionId=? and SP_ID=? AND customerId=?`, [isBloacked ? 'empty':'Resolved', getInteraction[0]?.InteractionId, spid, customerId])
+    let updateStatus = await db.excuteQuery(`update Interaction set interaction_status=? where InteractionId=? and SP_ID=? AND customerId=?`, [isBloacked ? 'empty' : 'Resolved', getInteraction[0]?.InteractionId, spid, customerId])
     console.log("updateStatus", updateStatus)
   } catch (err) {
     console.log("err", err)
@@ -1662,7 +1677,7 @@ function parseCountryCodes(countryCodes) {
 
 
 function separatePhoneNumber(countryPhone, countryCodeMap) {
-  
+
   for (const [code, fullCode] of countryCodeMap) {
     if (countryPhone.startsWith(code)) {
       const phoneNumber = countryPhone.slice(code.length).replace(/^0+/, ''); // Remove country code and leading zeros
@@ -1715,15 +1730,15 @@ app.post('/verifyPhoneCode', (req, res) => {
       let phoneObj = phones[i];
       let phone = phoneObj.phone;
       let existPhone = true;
-      
+
       if (seenPhones.has(phone)) {
-          existPhone = false;
+        existPhone = false;
       } else {
         const phoneCheckResult = checkPhoneNumbersLength([phone], countryCodeMap, expectedLengths)[0];
         if (phoneCheckResult.error || !phoneCheckResult.isValidLength) {
-            existPhone = false;
+          existPhone = false;
         }
-        seenPhones.add(phone); 
+        seenPhones.add(phone);
       }
 
       // Store the result for this phone

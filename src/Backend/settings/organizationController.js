@@ -781,7 +781,7 @@ const addUser = async (req, res) => {
             var addNotifyThreestatus = await db.excuteQuery(val.addNotification,[[[User?.insertId,3,1,0,0,created_at]]])
             var addNotifyFourstatus = await db.excuteQuery(val.addNotification,[[[User?.insertId,4,1,0,0,created_at]]])
 
-            inviteUser(email_id, name, SP_ID, registerPhone, RoleName, randomstring)
+            inviteUser(email_id, name, SP_ID, registerPhone, RoleName, randomstring,Channel)
             res.status(200).send({
                 msg: "user details has been sent",
 
@@ -796,13 +796,17 @@ const addUser = async (req, res) => {
     }
 }
 
-async function inviteUser(email_id, name, SP_ID, mobile_number, RoleName, randomstring) {
+async function inviteUser(email_id, name, SP_ID, mobile_number, RoleName, randomstring,Channel) {
 
     var getData = await db.excuteQuery(val.selectByIdQuery, [SP_ID])
 
     if (getData.length >= 0) {
         var Company_Name = getData[0]?.Company_Name
         var logo = getData[0]?.profile_img
+    }
+    let loginURL = 'https://cip.stacknize.com/login'
+    if(Channel == 'api'){
+      loginURL = "https://cipapp.stacknize.com/login";
     }
     var mailOptions = {
         from: val.email,
@@ -821,7 +825,7 @@ async function inviteUser(email_id, name, SP_ID, mobile_number, RoleName, random
     
     To access your Engagekart account, follow these steps:
     
-    1. Go to https://cip.stacknize.com/#/login
+    1. Go to ${loginURL}
     2. Enter your Email ID
     3. Use the temporary password provided above.
     
@@ -975,7 +979,7 @@ const editUser = async (req, res) => {
         }
         if (currentUser?.length > 0 && currentUser[0].IsActive == 3) {
             const hash = await bcrypt.hash(randomstring, 10);
-            inviteUser(email_id, name, SP_ID, registerPhone, RoleName, randomstring);
+            inviteUser(email_id, name, SP_ID, registerPhone, RoleName, randomstring,Channel);
             let updatePass = await db.excuteQuery('UPDATE user set password=? where uid=? ', [hash, uid])
         }
 

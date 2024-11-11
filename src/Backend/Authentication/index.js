@@ -169,8 +169,11 @@ const register = async function (req, res) {
             sendMessage(data)
 
 
-
-            let loginPageURL = "https://cip.stacknize.com/#/login";
+            let loginPageURL = "https://cip.stacknize.com/login";
+            
+            if(Channel == 'api'){
+              loginPageURL = "https://cipapp.stacknize.com/login";
+            }
             var mailOptions = {
                 from: val.email, // Use the sender's email address here
                 to: req.body.email_id, // Recipient's email address from the request body
@@ -259,7 +262,11 @@ const forgotPassword = async (req, res) => {
             var cipherdata = CryptoJS.AES.encrypt(JSON.stringify(uid), 'secretkey123').toString();
             console.log("_____FORGOT PASSWORD ENCRYPT___")
             console.log(cipherdata)
-
+            let ResetPageURL = `https://cip.stacknize.com/reset-password?uid=${cipherdata}`;
+            
+            if(results[0]?.Channel == 'api'){
+             ResetPageURL = `https://cipapp.stacknize.com/reset-password?uid=${cipherdata}`;
+            }
             var mailOptions = {
                 from: val.email,
                 to: req.body.email_id,
@@ -268,7 +275,7 @@ const forgotPassword = async (req, res) => {
                 html: `<p>Hello,</p>
 
                 <p>We have received a Forgot Password request for your Engagekart account. Please use this link provided below to proceed with the reset.<br>
-                <a href="https://cip.stacknize.com/#/reset-password?uid=${cipherdata}">https://cip.stacknize.com/#/reset-password?uid=${cipherdata}</a></p>
+                <a href="${ResetPageURL}">${ResetPageURL}</a></p>
                 
                 <p>If you did not initiate this request, you may ignore this email and we suggest you report this to your business admin manager.</p>
 
