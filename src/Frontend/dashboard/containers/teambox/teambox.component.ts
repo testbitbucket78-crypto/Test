@@ -1360,7 +1360,7 @@ console.log(getMimeTypePrefix);
 		// this.getTemplates()
 		this.subscribeToNotifications();
 		this.getAttributeList();
-        this.sendattachfile();
+      //  this.sendattachfile();
 		this.getQuickResponse();
 		this.getTagData();
 		this.getWhatsAppDetails();
@@ -1400,7 +1400,7 @@ console.log(getMimeTypePrefix);
 			"spPhoneNumber": JSON.parse(sessionStorage.getItem('SPPhonenumber')!)
 		}
 		this.websocketService.connect(notificationIdentifier);
-			this.websocketService.getMessage().pipe().subscribe((message:any) => {
+			this.websocketService.getMessage()?.pipe().subscribe((message:any) => {
 				console.log(message);
 				console.log(this.interactionList,'check id');
 				if(message != undefined )
@@ -1523,7 +1523,7 @@ console.log(getMimeTypePrefix);
 		let spid = Number(this.SPID)
 		this.settingService.getApprovedTemplate(spid,1).subscribe(allTemplates =>{
 			allTemplates?.templates.forEach((item:any) => {
-				item.buttons = JSON.parse(item?.buttons);
+				item.buttons = JSON.parse(item?.buttons ? item?.buttons :'[]');
 			});
 
 			this.allTemplatesMain = allTemplates.templates
@@ -3611,6 +3611,7 @@ sendMessage(isTemplate:boolean=false,templateTxt:string=''){
 		const tempElement = document.createElement('div');
 		tempElement.innerHTML = message;
 		
+		tempElement.querySelectorAll('br').forEach(br => br.remove());
 		let charCount = 0;
 		const truncateNode = (node: Node): boolean => {
 		  if (charCount >= maxLength) return true;
@@ -3757,6 +3758,7 @@ sendMessage(isTemplate:boolean=false,templateTxt:string=''){
 	
 	getContactOnScroll(){
 		const content = document.querySelector('.contact_list');
+		if(content){
     	const scroll$ = fromEvent(content!, 'scroll').pipe(map(() => { return content!.scrollTop; }));
  
     scroll$.subscribe((scrollPos) => {
@@ -3773,6 +3775,7 @@ sendMessage(isTemplate:boolean=false,templateTxt:string=''){
 		this.getCustomers(true);
       }else this.isLoadingOnScroll = false;
     });
+}
 	}
 
 	
@@ -3908,6 +3911,7 @@ sendMessage(isTemplate:boolean=false,templateTxt:string=''){
 		this.settingService.getWhatsAppDetails(this.SPID)
 		.subscribe((response:any) =>{
 		 if(response){
+			console.log('getWhatsAppDetails')
 			 this.WhatsAppDetailList = response?.whatsAppDetails;
 		 }
 	   })
@@ -4051,5 +4055,13 @@ sendMessage(isTemplate:boolean=false,templateTxt:string=''){
 	console.log(htmlString);
 	return htmlString;
 }
+updateValidation(controlName: any){
+	const control = this.editContact.get(controlName);
+	if (control) {
+	  if (!control.value) control.setErrors({ required: true });
+	  else control.setErrors(null);
+	  control.markAsTouched(); 
+	}
+  }
 
 }
