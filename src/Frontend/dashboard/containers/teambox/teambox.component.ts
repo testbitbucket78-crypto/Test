@@ -4037,11 +4037,11 @@ sendMessage(isTemplate:boolean=false,templateTxt:string=''){
 	const tags = ['strong', 'em', 'span'];
 	
 	tags.forEach(tag => {
+		const spaceAfterRegex = new RegExp(`(<${tag}[^>]*>[^<]*</${tag}>)([^\\s<])`, 'g');
+		htmlString = htmlString.replace(spaceAfterRegex, `$1 $2`);
 		const spaceBeforeRegex = new RegExp(`([^\\s])(<${tag}(\\s|>))`, 'g');
 		htmlString = htmlString.replace(spaceBeforeRegex, `$1 $2`);
-		const spaceAfterRegex = new RegExp(`(<${tag}[^>]*>)([^\\s])`, 'g');
-		htmlString = htmlString.replace(spaceAfterRegex, `$1 $2`);
-	});
+});
 	
 	console.log(htmlString);
 	return htmlString;

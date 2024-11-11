@@ -492,7 +492,7 @@ export class TemplateMessageComponent implements OnInit {
 				this.showToaster('Video / Document File size exceeds 10MB limit','error');
 			}
 
-			else if ((mediaType == 'image/jpg' || mediaType == 'image/jpeg' || mediaType == 'image/png' || mediaType == 'image/webp') && fileSizeInMB > imageSizeInMB) {
+			else if ((mediaType == 'image/jpg' || mediaType == 'image/jpeg' || mediaType == 'image/png') && fileSizeInMB > imageSizeInMB) {
 				this.showToaster('Image File size exceeds 5MB limit','error');
 			}
 
@@ -781,6 +781,7 @@ checkTemplateName(e:any){
         copyTemplateForm.Channel = this.templatesMessageDataById.Channel;
         copyTemplateForm.Category = this.templatesMessageDataById.Category;
         copyTemplateForm.category_id = this.templatesMessageDataById.category_id;
+        copyTemplateForm.categoryChange = this.templatesMessageDataById.categoryChange;
         copyTemplateForm.Language = this.templatesMessageDataById.Language;
         copyTemplateForm.buttons = JSON.stringify(this.templatesMessageDataById.buttons);
         copyTemplateForm.status = 'draft';

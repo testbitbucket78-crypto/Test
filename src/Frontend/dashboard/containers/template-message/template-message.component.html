@@ -547,7 +547,7 @@
                     </div>
             
                 <div *ngIf="selectedType === 'image'" class="my-4 sel-type-image">
-                        <input type="file" accept="image/jpeg, image/png" (change)="onFileChange($event)" id="sel-type-image" (click)="$event.target.value=null">
+                        <input type="file" accept="image/jpeg, image/png, image/jpg" (change)="onFileChange($event)" id="sel-type-image" (click)="$event.target.value=null">
                         <div *ngIf="loadingVideo" class="spinner-border" role="status">
                             <span class="sr-only">Loading...</span>
                           </div>
@@ -596,7 +596,7 @@
                     <img *ngIf="newTemplateForm.get('Links')?.value !== null" src="../../../../assets/img/settings/doc.svg" />
                     <span class="document-preview" *ngIf="newTemplateForm.get('Links')?.value !== null" >{{ this.fileName }}</span>
                     <span class="document-preview" *ngIf="newTemplateForm.get('Links')?.value !== null && !this.fileName" >Doc Uploaded Through link</span>
-                        <input type="file" accept=".doc, .docx, .pdf" (change)="onFileChange($event)" name="document-select" id="sel-type-document" (click)="$event.target.value=null">
+                        <input type="file" accept=".pdf" (change)="onFileChange($event)" name="document-select" id="sel-type-document" (click)="$event.target.value=null">
                         <div *ngIf="newTemplateForm.get('Links')?.value == null">
                         <label class="type_label" for="sel-type-document"><img src="../../../../assets/img/teambox/add-white.svg" /></label>
                         <p class="m-0">Upload document  <span>Choose PDF file</span></p>
