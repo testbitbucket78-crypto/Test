@@ -4042,5 +4042,13 @@ sendMessage(isTemplate:boolean=false,templateTxt:string=''){
 	console.log(htmlString);
 	return htmlString;
 }
+updateValidation(controlName: any){
+	const control = this.editContact.get(controlName);
+	if (control) {
+	  if (!control.value) control.setErrors({ required: true });
+	  else control.setErrors(null);
+	  control.markAsTouched(); 
+	}
+  }
 
 }

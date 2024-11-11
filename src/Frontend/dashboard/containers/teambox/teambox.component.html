@@ -1847,11 +1847,11 @@ popupWidth='250px' popupHeight='200px'>
 				<div>
 					<div class="py-2 row-md" *ngFor="let item of filteredCustomFields">
 						<label for="tag">{{item.displayName}}<span class="text-danger" *ngIf="item.mandatory == 1">*</span></label>
-						<input type="text" class="form-control" [formControlName]="item.ActuallName" *ngIf="item.type == 'Text'">
-						<input type="number" class="form-control" [formControlName]="item.ActuallName" *ngIf="item.type == 'Number'">
-						<input type="datetime-local" class="form-control" [formControlName]="item.ActuallName" *ngIf="item.type == 'Date Time'">
-						<input type="time" class="form-control" [formControlName]="item.ActuallName" *ngIf="item.type == 'Time'">
-						<input type="date" class="form-control" [formControlName]="item.ActuallName" *ngIf="item.type == 'Date'">
+						<input type="text" class="form-control" [formControlName]="item.ActuallName" *ngIf="item.type == 'Text'" (input)="updateValidation(item?.ActuallName)">
+						<input type="number" class="form-control" [formControlName]="item.ActuallName" *ngIf="item.type == 'Number'" (input)="updateValidation(item?.ActuallName)">
+						<input type="datetime-local" class="form-control" [formControlName]="item.ActuallName" *ngIf="item.type == 'Date Time'" (input)="updateValidation(item?.ActuallName)">
+						<input type="time" class="form-control" [formControlName]="item.ActuallName" *ngIf="item.type == 'Time'" (input)="updateValidation(item?.ActuallName)">
+						<input type="date" class="form-control" [formControlName]="item.ActuallName" *ngIf="item.type == 'Date'" (input)="updateValidation(item?.ActuallName)">
 						<!-- <input type="checkbox" class="form-control"[formControlName]="item.ActuallName" *ngIf="item.type == 'Switch'"> -->
 						<!-- <div class="row_inline d-flex align-items-center py-2" *ngIf="item.type == 'Switch'">
 						<input class="form-control-checkbox" type="checkbox" id="Opted-ins" [formControlName]="item.ActuallName"/>
@@ -1893,7 +1893,7 @@ popupWidth='250px' popupHeight='200px'>
 				<div class="row" class="m-0 d-flex flex-row-reverse">
 					<div class="m-0 modal-footer row popfooter">
 						<div class="inner_form col-md-6 p-0 text-right">
-							<button type="submit" class="submit-btn">Update</button>
+							<button type="submit" [disabled]="editContact.invalid || !editContact.touched" [class.disabled]="(editContact.invalid || !editContact.touched)" class="submit-btn">Update</button>
 						</div>
 					</div>
 				</div>

@@ -138,6 +138,13 @@
                             <p class="sub-heading">Type</p>
                             <span class="py-2 subtype">{{selectedCustomField?.type}}</span>
                         </div>
+                        <div class="py-1 type"
+                            *ngFor="let options of selectedCustomField?.dataTypeValues; let i = index">
+                            <div *ngIf="options?.optionName != ''">
+                                <p class="sub-heading">Option {{ i + 1 }}</p>
+                                <span class="py-2 subtype">{{options?.optionName}}</span>
+                            </div>
+                        </div>
                     </div>
                     <div class="sideBar-footer">
                         <button (click)="editCustomField()" type="button" class="account-white-btn">
@@ -202,7 +209,7 @@
                                  
                                
                                 <div class="d-flex flex-column billing-form-row">
-                                    <label>Field Type {{isEdit}}</label>
+                                    <label>Field Type</label>
                                     <select name="type" id="type" formControlName="type" (change)="onInputChange();fieldTypeChanged()" >
                                         <option *ngFor="let type of types" [value]="type">
                                             {{type}}
@@ -221,7 +228,7 @@
                                     <div>
                                         <a class="add-btn" (click)="addCustomFieldsOption()">+Add</a>
                                     </div>
-                                    <a class="remove-btn" (click)="removeCustomFieldsOption(ith)" *ngIf="ith>0">-Remove</a>
+                                    <a class="remove-btn" (click)="removeCustomFieldsOption(ith)" *ngIf="ith>1">-Remove</a>
                                 </div>
                               </div>
                         
