@@ -740,7 +740,7 @@ const addUser = async (req, res) => {
         SP_ID = req.body.SP_ID
         email_id = req.body.email_id
         name = req.body.name
-        mobile_number = req.body.mobile_number
+        mobile_number = req.body.registerPhone
         LoginIP = req.body.LoginIP
         RoleName = req.body?.role
         Channel = req.body?.Channel
