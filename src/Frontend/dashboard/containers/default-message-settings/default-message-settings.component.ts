@@ -81,13 +81,7 @@ export class DefaultMessageSettingsComponent implements OnInit {
 		items: [
 			
 			'Bold', 'Italic', 'StrikeThrough','EmojiPicker',
-		{
-			tooltipText: 'Attributes',
-			undo: true,
-			click: this.ToggleAttributesOption.bind(this),
-			template: '<button style="width:28px;height:28px;border-radius: 35%!important;border: 1px solid #e2e2e2!important;background:#fff;" class="e-tbar-btn e-btn" tabindex="-1" id="custom_tbar"  >'
-					+ '<div class="e-tbar-btn-text"><img style="width:10px;" src="/assets/img/teambox/attributes.svg"></div></button>'
-		}
+
   ]};  
   public pasteCleanupSettings: object = {
     prompt: false,

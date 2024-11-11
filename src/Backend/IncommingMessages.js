@@ -116,7 +116,7 @@ async function autoReplyDefaultAction(isAutoReply, autoReplyTime, isAutoReplyDis
       let sendSReply = await sendSmartReply(message_text, phone_number_id, contactName, from, sid, custid, agid, replystatus, newId, msg_id, newlyInteractionId, channelType, isContactPreviousDeleted ,newiN,display_phone_number)
       return sendSReply;
 
-    }else if(autoReplyTime == null &&  isAutoReplyDisable != 1){
+    }else if(autoReplyTime == '0000-00-00 00:00:00' &&  isAutoReplyDisable != 1){
       let sendSReply = await sendSmartReply(message_text, phone_number_id, contactName, from, sid, custid, agid, replystatus, newId, msg_id, newlyInteractionId, channelType, isContactPreviousDeleted, newiN,display_phone_number)
       return sendSReply;
     }

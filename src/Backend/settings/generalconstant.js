@@ -102,7 +102,7 @@ left join defaultActions defAc on defAc.spid = m.SPID and defAc.isDeleted !=1
 WHERE
 (ic.interaction_status = 'Open' OR ic.interaction_status = 'Open Interactions') and ic.is_deleted=0
 AND ic.SP_ID IN (SELECT SP_ID FROM defaultmessages WHERE Is_disable = 1 and title='No Customer Reply Reminder')
-AND  (m.msg_status != 9 AND m.msg_status != 10) 
+AND  (m.msg_status != 9 AND m.msg_status != 10) and ec.isBlocked !=1
 AND m_in.interaction_id IS NULL
 group by latestMsg.interaction_id, ic.customerId  `
 
@@ -185,7 +185,7 @@ WHERE
 AND ic.is_deleted = 0
 AND dm.title = 'No Customer Reply Timeout'
 AND dm.Is_disable = 1 
-and (latestmsg.msg_status != 9 AND latestmsg.msg_status != 10) 
+and (latestmsg.msg_status != 9 AND latestmsg.msg_status != 10) and ec.isBlocked !=1
 AND latestmsg.updated_at <= DATE_SUB(NOW(), INTERVAL dm.autoreply MINUTE)
 group by latestmsg.interaction_id ,ic.customerId`
 
@@ -249,19 +249,91 @@ deleteMedia=`UPDATE Message set is_deleted=1,updated_at=? where SPID=? and  mess
 
 let isNoReplySent = `select * from Message where interaction_id =? and system_message_type_id=4`
 let getInteractionbyId =`select * from Interaction WHERE InteractionId=? and interaction_status=?  and is_deleted !=1`
-let getLatestMsgbyInteraction = `SELECT M.interaction_id,SUBSTRING_INDEX(GROUP_CONCAT(distinct imp.AgentId ORDER BY imp.created_at desc), ',', 1) as AgentId,whour.start_time,whour.end_time,whour.working_days, I.customerId,max(M.updated_at) as nonSystemUpdatedMsgTime, M.SPID ,M.message_direction , M.Agent_id, MAX(M.Message_id) as MaxMessageId, Max(ms.updated_at) as updated_at, I.updated_at as updateTime
- ,dm.autoreply,defAc.isAutoReply,defAc.isAutoReplyDisable,defAc.pauseAutoReplyTime, dm.value, dm.message_type, dm.Is_disable, dm.link, ec.channel, ec.Phone_number as customer_phone_number,ec.defaultAction_PauseTime, interaction_status, ms.Message_id as SystemReplyMessageId, ms.system_message_type_id
-    FROM (SELECT MAX(InteractionId) AS InteractionId, customerId, interaction_status, Max(updated_at) as updated_at FROM Interaction where interaction_status = 'Open' group by customerId) AS I
-     left Join  Message M on I.InteractionId = M.interaction_id and (M.system_message_type_id IS NULL  OR M.system_message_type_id != 4 )
-     Left join EndCustomer ec on I.customerId = ec.customerId
-     left join Message ms on I.InteractionId = ms.interaction_id and ms.system_message_type_id = 4
-     left join defaultmessages dm on dm.SP_ID = M.SPID and title='No Agent Reply' and dm.isDeleted !=1
-     left join InteractionMapping imp on imp.InteractionId = I.InteractionId
-     left join WorkingTimeDetails whour on  whour.SP_ID = M.SPID and whour.isDeleted !=1
-     left join defaultActions defAc on defAc.spid = M.SPID and defAc.isDeleted !=1
-    WHERE (M.msg_status != 9 AND M.msg_status != 10) 
-      AND M.is_deleted != 1 and I.interaction_status = 'Open'      
-    GROUP BY M.interaction_id, I.customerId order by M.updated_at desc;`
+let getLatestMsgbyInteraction = `
+WITH RecentInteractions AS (
+    SELECT 
+        MAX(InteractionId) AS InteractionId, 
+        customerId, 
+        interaction_status, 
+        MAX(updated_at) AS updated_at 
+    FROM 
+        Interaction 
+    WHERE 
+        interaction_status = 'Open' 
+    GROUP BY 
+        customerId
+),
+LatestMessageDirection AS (
+    SELECT 
+        interaction_id, 
+        message_direction 
+    FROM 
+        Message 
+    WHERE 
+        (system_message_type_id IS NULL OR system_message_type_id != 4)
+        AND is_deleted != 1
+    ORDER BY 
+        created_at DESC 
+
+)
+SELECT 
+    M.interaction_id,
+    (SELECT imp.AgentId FROM InteractionMapping imp WHERE imp.InteractionId = I.InteractionId ORDER BY imp.created_at DESC LIMIT 1) AS AgentId,
+    whour.start_time,
+    whour.end_time,
+    whour.working_days,
+    I.customerId,
+    MAX(M.updated_at) AS nonSystemUpdatedMsgTime,
+    M.SPID,
+    LMD.message_direction,
+    M.Agent_id,
+    MAX(M.Message_id) AS MaxMessageId,
+    MAX(ms.created_at) AS updated_at,
+    I.updated_at AS updateTime,
+    dm.autoreply,
+    defAc.isAutoReply,
+    defAc.isAutoReplyDisable,
+    defAc.pauseAutoReplyTime,
+    dm.value,
+    dm.message_type,
+    dm.Is_disable,
+    dm.link,
+    ec.channel,
+    ec.Phone_number AS customer_phone_number,
+    ec.defaultAction_PauseTime,
+    I.interaction_status,
+    ms.Message_id AS SystemReplyMessageId,
+    ms.system_message_type_id
+FROM 
+    RecentInteractions AS I
+LEFT JOIN 
+    Message M ON I.InteractionId = M.interaction_id 
+    AND (M.system_message_type_id IS NULL OR M.system_message_type_id != 4)
+LEFT JOIN 
+    EndCustomer ec ON I.customerId = ec.customerId
+LEFT JOIN 
+    Message ms ON I.InteractionId = ms.interaction_id 
+    AND ms.system_message_type_id = 4
+LEFT JOIN 
+    defaultmessages dm ON dm.SP_ID = M.SPID 
+    AND dm.title = 'No Agent Reply' 
+    AND dm.isDeleted != 1
+LEFT JOIN 
+    WorkingTimeDetails whour ON whour.SP_ID = M.SPID 
+    AND whour.isDeleted != 1
+LEFT JOIN 
+    defaultActions defAc ON defAc.spid = M.SPID 
+    AND defAc.isDeleted != 1
+LEFT JOIN 
+    LatestMessageDirection LMD ON LMD.interaction_id = M.interaction_id
+WHERE 
+    (M.msg_status != 9 AND M.msg_status != 10) and ec.isBlocked !=1
+    AND M.is_deleted != 1 
+    AND I.interaction_status = 'Open'
+GROUP BY 
+    M.interaction_id, I.customerId
+ORDER BY 
+    nonSystemUpdatedMsgTime DESC;`
 
 let defaultMessageQuery = `SELECT * FROM defaultmessages where SP_ID=? AND title=? and isDeleted !=1` 
 let customerPhone =`select * from EndCustomer where customerId=?`
