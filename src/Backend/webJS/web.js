@@ -511,7 +511,7 @@ WHERE customerId IN (SELECT customerId FROM EndCustomer WHERE Phone_number = ? a
 
             const message_time = moment.utc(d).format('YYYY-MM-DD HH:mm:ss');
             let campaignDeliveredQuery = 'UPDATE CampaignMessages set status=2, DeliveredTime=? where phone_number =? and messageTemptateId=?'
-            let campaignDelivered = await db.excuteQuery(campaignDeliveredQuery, [message_time,phoneNumber, message?._data?.id?.id])
+            let campaignDelivered = await db.excuteQuery(campaignDeliveredQuery, [message_time, phoneNumber, message?._data?.id?.id])
             const smsdelupdate = `UPDATE Message
 SET msg_status = 2 
 WHERE interaction_id IN (
@@ -530,7 +530,7 @@ WHERE customerId IN (SELECT customerId FROM EndCustomer WHERE Phone_number = ? a
 
             const message_time = moment.utc(d).format('YYYY-MM-DD HH:mm:ss');
             let campaignReadQuery = 'UPDATE CampaignMessages set status=3 , SeenTime=? where phone_number =? and messageTemptateId=?';
-            let campaignRead = await db.excuteQuery(campaignReadQuery, [message_time,phoneNumber, message?._data?.id?.id])
+            let campaignRead = await db.excuteQuery(campaignReadQuery, [message_time, phoneNumber, message?._data?.id?.id])
             const smsupdate = `UPDATE Message
 SET msg_status = 3 
 WHERE interaction_id IN (
@@ -719,8 +719,8 @@ async function sendMessages(spid, endCust, type, text, link, interaction_id, msg
     if (client) {
       let contactId = `${endCust}@c.us`
       try {
-        let isRegistered = await client.isRegisteredUser(contactId); 
-        if (type == 'unknown') {
+        let isRegistered = await client.isRegisteredUser(contactId);
+        if (type != 'unknown') {
           if (isRegistered) {
             let msg = await sendDifferentMessagesTypes(client, endCust, type, text, link, interaction_id, msg_id, spNumber);
             if (msg?.status == 500) {                               // Just try 2nd time in case of fail 
@@ -729,8 +729,10 @@ async function sendMessages(spid, endCust, type, text, link, interaction_id, msg
             return msg;
           }
           return { status: 404, msgId: 'Phone no is not registered on whatsApp' }
+        } else {
+          return { status: 204, msgId: 'Content not found for this type' }
         }
-        return { status: 204, msgId: 'Content not found for this type' }
+
       } catch (error) {
         return { status: 401, msgId: 'Error checking registration' }
       }

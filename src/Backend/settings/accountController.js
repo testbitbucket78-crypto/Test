@@ -426,6 +426,7 @@ const addWAAPIDetails = async (req, res) => {
             let myUTCString = new Date().toUTCString();
             const created_at = moment.utc(myUTCString).format('YYYY-MM-DD HH:mm:ss');
             let addToken = await db.excuteQuery('insert into WA_API_Details (token,spid,phoneNo,user_uid,phoneNumber_id,waba_id,created_at) VALUES(?,?,?,?,?,?,?)', [access_token, spid, phoneNo,user_uid,phoneNumber_id,waba_id, created_at])
+            let addwhatsappDetails = await db.excuteQuery('insert into WhatsAppWeb (channel_id,channel_status,spid,WABA_ID,phone_number_id,is_deleted,connected_id) values(?,?,?,?,?,?)',['WA API',1,spid,waba_id,phoneNumber_id,0,phoneNo])
         }
         
         res.status(200).send({

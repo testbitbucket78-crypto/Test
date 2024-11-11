@@ -288,12 +288,52 @@ app.get('/', async function (req, res) {
 });
 
 
-app.post('/exportCheckedContact', authenticateToken, async(req, res) => {
+async function processData(data) {
+  if (data.length > 0) {
+    let containsDateOrTime = false;
+
+    const datePatterns = [
+      /\b\d{4}-\d{2}-\d{2}\b/,       // YYYY-MM-DD
+      /\b\d{2}\/\d{2}\/\d{4}\b/,     // DD/MM/YYYY
+      /\b\d{2}-\d{2}-\d{4}\b/,       // DD-MM-YYYY
+      /\b\d{4}\/\d{2}\/\d{2}\b/      // YYYY/MM/DD
+    ];
+
+    const timePatterns = [
+      /\b([01]?\d|2[0-3]):[0-5]\d:[0-5]\d\b/,         // HH:MM:SS in 24-hour format
+      /\b([01]?\d|2[0-3]):[0-5]\d\b/,                 // HH:MM in 24-hour format
+      /\b(1[0-2]|0?[1-9]):[0-5]\d\s?(AM|PM)\b/i,      // HH:MM AM/PM in 12-hour format
+      /\b(1[0-2]|0?[1-9]):[0-5]\d:[0-5]\d\s?(AM|PM)\b/i // HH:MM:SS AM/PM in 12-hour format
+    ];
+    
+    for (const item of data) {
+      // Loop through each key-value pair in the object
+      for (const key in item) {
+        if (item.hasOwnProperty(key)) {
+          const value = item[key];
+          const isDate = datePatterns.some(pattern => pattern.test(value));
+          const isTime = timePatterns.some(pattern => pattern.test(value));
+
+          if (isDate || isTime) {
+            containsDateOrTime = true;
+            break; // Exit inner loop if a date or time value is found
+          }
+        }
+      }
+      if (containsDateOrTime) break; // Exit outer loop if a date or time value is found
+    } 
+  }
+}
+
+
+
+app.post('/exportCheckedContact', async(req, res) => {
   try {
     console.log(req.body)
     var data = req.body.data
     let SP_ID = req.query.SP_ID
-    if(data.length > 0) {
+    let isDateTime = await processData(data)
+    if(data.length > 0 && isDateTime) {
       let result = await formatterDateTime(data, SP_ID);
       if(result){
         data = result
@@ -332,11 +372,14 @@ app.post('/exportCheckedContact', authenticateToken, async(req, res) => {
 
     transporter.sendMail(mailOptions, (error, info) => {
       if (error) {
-        res.send(error);
+        logger.error(`export contact email send error ${error}`)
+       // res.send(error);
+      }else{
+        console.log('Preview URL: %s', nodemailer.getTestMessageUrl(info));
+        logger.info(`Message sent: %s, ${info.messageId}`)
+       // res.status(200).send({ msg: "data has been sent" });
       }
-      console.log('Message sent: %s', info.messageId);
-      console.log('Preview URL: %s', nodemailer.getTestMessageUrl(info));
-      res.status(200).send({ msg: "data has been sent" });
+     
     });
     return res.status(200).send({ msg: "Contacts exported sucessfully!" });
   } catch (err) {
