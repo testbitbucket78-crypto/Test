@@ -155,54 +155,58 @@ async function extractDataFromMessage(body) {
     var d = new Date(firstMessage.timestamp * 1000).toUTCString();
 
     const message_time = moment.utc(d).format('YYYY-MM-DD HH:mm:ss');
-   // console.log("message_time", message_time)
+    // console.log("message_time", message_time)
     logger.info(`complete Json ${JSON.stringify(body, null, 2)}`)    // for troubleshoot bug 
     logger.info(`received message ________  ${phoneNo} ,${message_text} ,${message_time} ,${Message_template_id}`)
+    let isMessageAlreadyExist = await isMessageExist(Message_template_id)
+    if (!isMessageAlreadyExist) {
+      if (firstMessage.context) {
+        let spid = await db.excuteQuery('select SP_ID from user where mobile_number =? limit 1', [display_phone_number])
+        let campaignRepliedQuery = `UPDATE CampaignMessages set status=4,RepliedTime='${message_time}' where phone_number =${from} and (status = 3 OR status =2) and SP_ID = ${spid[0]?.SP_ID} AND messageTemptateId = '${firstMessage.context?.id}'` // will replace it withmessage id later
+        console.log(campaignRepliedQuery)
+        let campaignReplied = await db.excuteQuery(campaignRepliedQuery, [])
+        //console.log( spid, "campaignReplied*******", campaignReplied?.affectedRows)
+      }
 
-    if (firstMessage.context) {
-      let spid = await db.excuteQuery('select SP_ID from user where mobile_number =? limit 1', [display_phone_number])
-      let campaignRepliedQuery = `UPDATE CampaignMessages set status=4,RepliedTime='${message_time}' where phone_number =${from} and (status = 3 OR status =2) and SP_ID = ${spid[0]?.SP_ID} AND messageTemptateId = '${firstMessage.context?.id}'` // will replace it withmessage id later
-      console.log(campaignRepliedQuery)
-      let campaignReplied = await db.excuteQuery(campaignRepliedQuery, [])
-      //console.log( spid, "campaignReplied*******", campaignReplied?.affectedRows)
-    }
-
-    // Conditional check to determine the filename based on type
-    if (Type === 'image') {
-      extension = '.jpg';
-    } else if (Type === 'video') {
-      extension = '.mp4';
-    } else if (Type === 'document') {
-      let filename = firstMessage.document.filename;
-      extension = filename.substring(filename.lastIndexOf('.'));
-    }
+      // Conditional check to determine the filename based on type
+      if (Type === 'image') {
+        extension = '.jpg';
+      } else if (Type === 'video') {
+        extension = '.mp4';
+      } else if (Type === 'document') {
+        let filename = firstMessage.document.filename;
+        extension = filename.substring(filename.lastIndexOf('.'));
+      }
 
 
-    // Getting the file extension
+      // Getting the file extension
 
-    console.log(Type, " body.entry " + phoneNo, extension)
-    let firstStatus = "";
-    let Quick_reply_id = "";
-    let uniqueId = "";
+      console.log(Type, " body.entry " + phoneNo, extension)
+      let firstStatus = "";
+      let Quick_reply_id = "";
+      let uniqueId = "";
 
-    if (changes.value.statuses && changes.value.statuses.length > 0) {
-      firstStatus = changes.value.statuses[0];
-      Quick_reply_id = firstStatus.id;
-      uniqueId = firstStatus.recipient_id;
-      console.log(Quick_reply_id + uniqueId);
-      console.log("status present");
-    }
-   // console.log("________________SAVEING MESSAGE___________________");
-logger.info(`________________SAVEING MESSAGE___________________`)
-    if (message_text) {
-      message_text = message_text.replace(/\*(.*?)\*/g, '<strong>$1</strong>');
-      message_text = message_text.replace(/_(.*?)_/g, '<em>$1</em>');
-      message_text = message_text.replace(/~(.*?)~/g, '<del>$1</del>');
-      message_text = message_text.replace(/\n/g, '<br>');
-    }
-    console.log("after text replacement", message_text)
-    var saveMessages = await saveIncommingMessages(from, firstMessage, phone_number_id, display_phone_number, phoneNo, message_text, message_media, Message_template_id, Quick_reply_id, Type, ExternalMessageId, contactName, extension, message_time, countryCode)
-    var SavedMessageDetails = await getDetatilsOfSavedMessage(saveMessages, message_text, phone_number_id, contactName, from, display_phone_number)
+      if (changes.value.statuses && changes.value.statuses.length > 0) {
+        firstStatus = changes.value.statuses[0];
+        Quick_reply_id = firstStatus.id;
+        uniqueId = firstStatus.recipient_id;
+        console.log(Quick_reply_id + uniqueId);
+        console.log("status present");
+      }
+      // console.log("________________SAVEING MESSAGE___________________");
+      logger.info(`________________SAVEING MESSAGE___________________`)
+      if (message_text) {
+        message_text = message_text.replace(/\*(.*?)\*/g, '<strong>$1</strong>');
+        message_text = message_text.replace(/_(.*?)_/g, '<em>$1</em>');
+        message_text = message_text.replace(/~(.*?)~/g, '<del>$1</del>');
+        message_text = message_text.replace(/\n/g, '<br>');
+      }
+      console.log("after text replacement", message_text)
+      var saveMessages = await saveIncommingMessages(from, firstMessage, phone_number_id, display_phone_number, phoneNo, message_text, message_media, Message_template_id, Quick_reply_id, Type, ExternalMessageId, contactName, extension, message_time, countryCode)
+      var SavedMessageDetails = await getDetatilsOfSavedMessage(saveMessages, message_text, phone_number_id, contactName, from, display_phone_number)
+    }else{
+      logger.info(`Message Already Exist with this message id`)
+    }  //   close multipe events for single message
   }
   else if (body.entry && body.entry.length > 0 && body.entry[0].changes && body.entry[0].changes.length > 0 &&
     body.entry[0].changes[0].value && body.entry[0].changes[0].value.statuses &&
@@ -233,7 +237,7 @@ logger.info(`________________SAVEING MESSAGE___________________`)
       body.entry.forEach(async (entry) => {
         const changes = entry.changes;
         changes.forEach(async (change) => {
-          console.log("Fields name from whatsapp_business_account" +change?.field)
+          console.log("Fields name from whatsapp_business_account" + change?.field)
           if (change.field === 'message_template_status_update') {
             const templateId = change.value.message_template_id;
             const newStatus = change.value.event;
@@ -244,22 +248,22 @@ logger.info(`________________SAVEING MESSAGE___________________`)
           } else if (change.field === 'account_update') {
             const waba_id = change.value.waba_info.waba_id;
             const phone_id = change.value.waba_info.owner_business_id;
-            await updateWhatsAppDetails(waba_id, phone_id,'unique identifire verify from UI IN SIGNUP TIME');
+            await updateWhatsAppDetails(waba_id, phone_id, 'unique identifire verify from UI IN SIGNUP TIME');
           }
 
           //todo Need to test this webhook
           if (change?.field === 'phone_number_quality_update') {
             const currentLimit = change?.value?.current_limit;
             const messaging_limit_tier = commonFun.convertMessagingLimitTier(currentLimit);
-            if(currentLimit) await commonFun.updateCurrentLimit(metaPhoneNumberID, messaging_limit_tier, 'Web hook');
-            console.log("phone_number_quality_update" +currentLimit);
+            if (currentLimit) await commonFun.updateCurrentLimit(metaPhoneNumberID, messaging_limit_tier, 'Web hook');
+            console.log("phone_number_quality_update" + currentLimit);
           }
-          
-          if(change?.field === 'message_template_quality_update') {
+
+          if (change?.field === 'message_template_quality_update') {
             const templateId = change?.value?.message_template_id;
             const newQualityStatus = change?.value?.new_quality_score;
-            if(templateId) await updateQuality(templateId, newQualityStatus);
-            console.log("message_template_quality_update" +newQualityStatus);
+            if (templateId) await updateQuality(templateId, newQualityStatus);
+            console.log("message_template_quality_update" + newQualityStatus);
           }
         });
       });
@@ -269,6 +273,20 @@ logger.info(`________________SAVEING MESSAGE___________________`)
 
 }
 
+
+async function isMessageExist(messageId) {
+  try {
+    let isMessage = await db.excuteQuery('SELECT * FROM Message where Message_template_id=?', [messageId]);
+    logger.info(`isMessageExist length ,isMessage?.length > 0 ${isMessage?.length} ,${isMessage?.length > 0}`)
+    if (isMessage?.length > 0) {
+      return true;
+    } else {
+      return false;
+    }
+  } catch (err) {
+    logger.error(`isMessageExist err ${err}`)
+  }
+}
 
 const updateWhatsAppDetails = async (waba_id, phone_id, phoneNo) => {
   try {
@@ -323,7 +341,7 @@ async function saveIncommingMessages(from, firstMessage, phone_number_id, displa
     var saveMessage = await db.excuteQuery(process.env.query, [phoneNo, 'IN', message_text, message_media, Message_template_id, Quick_reply_id, Type, ExternalMessageId, display_phone_number, contactName, media_type, 'NULL', 'WA API', message_time, countryCode]);
 
     console.log("====SAVED MESSAGE====" + " replyValue length  " + JSON.stringify(saveMessage));
-
+    logger.log(`====SAVED MESSAGE====   ${JSON.stringify(saveMessage)}`)
 
   }
   return saveMessage;
