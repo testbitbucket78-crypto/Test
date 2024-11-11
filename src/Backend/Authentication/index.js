@@ -621,7 +621,7 @@ const sendOtp = async function (req, res) {
 async function canSendOTP(mobile_number) {
     try {
         const result = await db.excuteQuery(
-            'SELECT COUNT(*) AS count, MIN(created_at) AS first_sent_time FROM otpVerify WHERE otpfieldvalue = ? AND created_at >= NOW() - INTERVAL 2 HOUR order by created_at desc',
+            'SELECT COUNT(*) AS count, MAX(created_at) AS first_sent_time FROM otpVerify WHERE otpfieldvalue = ? AND created_at >= NOW() - INTERVAL 2 HOUR order by created_at desc',
             [mobile_number]
         );
 

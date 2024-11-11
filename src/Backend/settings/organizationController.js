@@ -629,13 +629,14 @@ const addRole = async (req, res) => {
     try {
         const roleID = req.body.roleID
         RoleName = req.body.RoleName
+        ifExistRolename = req?.body?.RoleName?.toLowerCase();
         Privileges = req.body.Privileges
         IsActive = 1
         subPrivileges = req.body.subPrivileges
         SP_ID = req.body.SP_ID
         const myUTCString = new Date().toUTCString();
         const created_at = moment.utc(myUTCString).format('YYYY-MM-DD HH:mm:ss');
-        let ifExist = await db.excuteQuery('SELECT * from roles where RoleName=? and SP_ID=? and isDeleted !=1 and roleID !=?', [RoleName, SP_ID, roleID]);
+        let ifExist = await db.excuteQuery('SELECT * from roles where LOWER(RoleName)=? and SP_ID=? and isDeleted !=1 and roleID !=?', [ifExistRolename, SP_ID, roleID]);
         if (ifExist?.length > 0) {
           return  res.status(409).send({
                 msg: 'Role Already exist',
@@ -740,6 +741,7 @@ const addUser = async (req, res) => {
         SP_ID = req.body.SP_ID
         email_id = req.body.email_id
         name = req.body.name
+        isExistName = req?.body?.name?.toLowerCase();
         mobile_number = req.body.mobile_number
         LoginIP = req.body.LoginIP
         RoleName = req.body?.role
@@ -753,13 +755,13 @@ const addUser = async (req, res) => {
         countryCode = req.body.country_code
         displayPhoneNumber = req.body?.display_mobile_number
         registerPhone = req.body?.registerPhone
-        var isNameExist = await db.excuteQuery('SELECT * FROM user WHERE name=? and isDeleted !=1 and SP_ID=?', [name, SP_ID])
+        var isNameExist = await db.excuteQuery('SELECT * FROM user WHERE LOWER(name)=? and isDeleted !=1 and SP_ID=?', [isExistName, SP_ID])
         var isPhoneExist = await db.excuteQuery('SELECT * FROM user WHERE registerPhone=? and isDeleted !=1 and SP_ID=?', [registerPhone, SP_ID])
         var credentials = await db.excuteQuery(val.findEmail, [req.body.email_id])
 
         if (credentials?.length > 0 || isNameExist?.length > 0 || isPhoneExist?.length > 0) {
             let msg = "This email ID is already used by another user, please use a unique email";
-            if (isNameExist?.length > 0 && isNameExist[0].name == name) {
+            if (isNameExist?.length > 0 && isNameExist[0].name.toLowerCase() == isExistName) {
                 msg = "User with this name already exist, please use a unique name";
             }
             if (isPhoneExist?.length > 0 && isPhoneExist[0].registerPhone == registerPhone) {

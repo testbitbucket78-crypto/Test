@@ -154,8 +154,15 @@ async function sendDefultMsg(link, caption, typeOfmsg, phone_number_id, from, sp
     }
 
 }
-async function getQualityRating(phoneNumberId) {
+async function getQualityRating(phoneNumberId, spid) {
     try {
+        const getDetails = await getWAdetails(spid);
+        const token = getDetails?.[0]?.token;
+
+        if (!token) {
+            console.log("Error fetching business verification status")
+        }
+
         const response = await axios.get(`https://graph.facebook.com/v18.0/${phoneNumberId}?fields=display_phone_number,quality_rating,messaging_limit_tier`, {
             headers: {
                 'Authorization': `Bearer ${token}`
@@ -173,8 +180,14 @@ async function getQualityRating(phoneNumberId) {
         };
     }
 }
-async function getVerificationStatus(WABA_ID){
+async function getVerificationStatus(WABA_ID, spid){
     try {
+        const getDetails = await getWAdetails(spid);
+        const token = getDetails?.[0]?.token;
+        if (!token) {
+            console.log("Error fetching business verification status")
+        }
+
         const response = await axios.get(`https://graph.facebook.com/v18.0/${WABA_ID}?fields=business_verification_status`, {
             headers: {
                 'Authorization': `Bearer ${token}`

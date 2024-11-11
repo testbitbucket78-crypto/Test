@@ -140,6 +140,8 @@ const getQualityRating = async (req, res) => {
         const phoneNo = req?.params?.phoneNo
         const WABA_Id = req?.params?.WABA_ID;
         const metaPhoneNumberID = req?.params?.phone_number_id;
+        const spid = req?.params?.spid;
+
 
         if (isInvalidParam(phoneNo) || isInvalidParam(WABA_Id) || isInvalidParam(metaPhoneNumberID)) {
             return res?.status(200).json({
@@ -158,29 +160,29 @@ const getQualityRating = async (req, res) => {
             var currentDate = new Date().toISOString().split('T')[0];
         }
         if (!check.length) {
-            let result = await middleWare.getQualityRating(metaPhoneNumberID);
-            let result2 = await middleWare.getVerificationStatus(WABA_Id);
+            let result = await middleWare.getQualityRating(metaPhoneNumberID, spid);
+            let result2 = await middleWare.getVerificationStatus(WABA_Id. spid);
 
             const quality_rating = result?.response?.quality_rating;
             const phone_number_id = result?.response?.id;
             const messaging_limit_tier = commonFun.convertMessagingLimitTier(result?.response?.messaging_limit_tier);
             const fbVerification = result2?.response?.business_verification_status;
 
-            if (quality_rating && phone_number_id && messaging_limit_tier && fbVerification) {
+            if (quality_rating && phone_number_id && messaging_limit_tier) {
                 result = await db.excuteQuery(val.insertHealthStatus, [phone_number_id, phoneNo, messaging_limit_tier, quality_rating, new Date(), fbVerification]);
             }
 
         }
         else if (lastUpdatedDate !== currentDate) {
-            result = await middleWare.getQualityRating(metaPhoneNumberID);
-            result2 = await middleWare.getVerificationStatus(WABA_Id);
+            result = await middleWare.getQualityRating(metaPhoneNumberID,spid);
+            result2 = await middleWare.getVerificationStatus(WABA_Id, spid);
 
             const quality_rating = result?.response.quality_rating;
             const phone_number_id = result?.response?.id;
             const messaging_limit_tier = commonFun.convertMessagingLimitTier(result?.response?.messaging_limit_tier);
             const fbVerification = result2?.response?.business_verification_status;
 
-            if (quality_rating && phone_number_id && messaging_limit_tier && fbVerification) {
+            if (quality_rating && phone_number_id && messaging_limit_tier) {
                 await commonFun.updateHealthStatus(phone_number_id, quality_rating, 'Scheduler', fbVerification);
             }
 
