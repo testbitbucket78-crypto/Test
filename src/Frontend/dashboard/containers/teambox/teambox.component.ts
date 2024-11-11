@@ -273,6 +273,9 @@ public  fieldsData: { [key: string]: string } = { text: 'name' };
 	srchText:string ='';
 	selectedModalIndex: number = 0;
 	isAgmodalOpened!:boolean;
+	templateName: string = '';
+	templatelanguage: string = '';
+    templateButton: any[] = [];
 	public insertImageSettings: object = {
 		width: '50px',
 		height: '50px'
@@ -677,8 +680,11 @@ public  fieldsData: { [key: string]: string } = { text: 'name' };
 		//this.chatEditor.value =htmlcontent
 		this.isAttachmentMedia = false;
 		this.isTemplate = true;
+		this.templateName= item?.TemplateName;
+		this.templatelanguage = this.settingService?.filterListLanguage.find((lang: any) => lang.label === item?.Language)?.code || '';
 		this.mediaType = item?.media_type;
 		this.messageMeidaFile = item?.Links;
+		this.templateButton = item?.buttons
 		this.addingStylingToMedia(item);
 		console.log(htmlcontent);
 		this.sendMessage(true,htmlcontent);
@@ -3430,7 +3436,10 @@ sendMessage(isTemplate:boolean=false,templateTxt:string=''){
 			action:'edited by ' + agentName,
 			action_at:new Date(),
 			action_by:name,
-			uidMentioned: uidMentioned
+			uidMentioned: uidMentioned,
+			name: this.templateName,
+			language: this.templatelanguage,
+			buttons: this.templateButton
 		}
 		console.log(bodyData,'Bodydata')
 		let input = {
