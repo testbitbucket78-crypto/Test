@@ -108,7 +108,7 @@
                             [ngStyle]="{'background-image': 'url(' + templatesMessageData?.Links + ')'}">
                         </div>
                             <div *ngIf="templatesMessageData?.media_type == 'video'" class="message_type">
-                                <video  loop muted id="video-background" [src]="templatesMessageData?.Links" type="video/mp4"></video>
+                                <video  loop muted id="video-background" controls [src]="templatesMessageData?.Links" type="video/mp4"></video>
                             </div>
                             <div *ngIf="templatesMessageData?.media_type == 'document'" class="message_type">
                                 <div class="doc-preview" *ngIf="templatesMessageData?.Links" width="100%" height="150px">
@@ -909,7 +909,7 @@
                 <div *ngIf="selectedType === 'image'" class="message_type" [ngStyle]="{'background-image': 'url(' + selectedPreview + ')'}">
                 </div>
                 <div *ngIf="selectedType === 'video'" class="video message_type">
-                    <video *ngIf="selectedPreview" [src]="selectedPreview" type="video/mp4"  muted #videoPlayer></video>
+                    <video *ngIf="selectedPreview" [src]="selectedPreview" type="video/mp4" controls muted #videoPlayer></video>
                 </div>
                 <div *ngIf="selectedType === 'document'" class="message_type" [ngClass]="{'document-selected':newTemplateForm.get('Links')!.value !== null}">
                     <div class="d-flex flex-column">
@@ -1003,7 +1003,7 @@
                 <div *ngIf="selectedType === 'image'" class="message_type" [ngStyle]="{'background-image': 'url(' + selectedPreview + ')'}">
                 </div>
                 <div *ngIf="selectedType === 'video'" class="video message_type">
-                    <video *ngIf="selectedPreview" [src]="selectedPreview" type="video/mp4"  muted #videoPlayer></video>
+                    <video *ngIf="selectedPreview" [src]="selectedPreview" type="video/mp4" controls muted #videoPlayer></video>
                 </div>
                 <div *ngIf="selectedType === 'document'" class="message_type" [ngClass]="{'document-selected':newTemplateForm.get('Links')!.value !== null}">
                     <div class="d-flex flex-column">

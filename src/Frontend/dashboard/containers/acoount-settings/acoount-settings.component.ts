@@ -412,7 +412,7 @@ async subscribeToNotifications() {
     "spPhoneNumber": JSON.parse(sessionStorage.getItem('SPPhonenumber')!)
   };
   this.websocketService.connect(notificationIdentifier);
-  this.websocketService.getMessage().subscribe(message => {
+  this.websocketService.getMessage()?.subscribe(message => {
     if (message != undefined) {
       console.log("Seems like some message update from webhook");
       console.log(message);

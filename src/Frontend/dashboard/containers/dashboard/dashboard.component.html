@@ -168,7 +168,7 @@
                   <p id="item-message" [innerHTML]="getLimitedMessageText(items?.message_text)"></p>
                 </div>
   
-                <p id="item-date"><span *ngIf="items.isread == 0 && items.message_direction != 'Out'"><div class="red-dot"></div></span>{{settingsService.timeFormat =='12' ? (items.interaction_date | date:'h:mm a'):(items.interaction_date | date:'h:mm') }}</p>
+                <p id="item-date"><span *ngIf="items.isread == 0 && items.message_direction != 'Out'"><div class="red-dot"></div></span>{{settingsService.timeFormat =='12' ? (items.interaction_date | date:'h:mm a'):(items.interaction_date | date:'H:mm') }}</p>
               </div>
             </div>
   

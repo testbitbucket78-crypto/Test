@@ -18,12 +18,12 @@
                         <h5 class="m-0">Teambox Notifications</h5>
                     </div>
                     <div class="d-flex mb-4 justify-content-end align-items-center toggle-headings">
-                        <div class="col-sm-2 col-xs-2 text-center push-noti">
+                        <div class="col-sm-5 col-xs-2 text-center push-noti">
                             <p class="m-0">Push <br />Notification</p>
                         </div>
-                        <div class="col-sm-3 col-xs-3 text-center sound-noti">
+                        <!-- <div class="col-sm-3 col-xs-3 text-center sound-noti">
                             <p class="m-0">Sound <br />Notification</p>
-                        </div>
+                        </div> -->
                     </div>
                     <div *ngFor="let notifyData of NotificationDataInit; let ith = index" class="row py-2 justify-content-center">
                         <div class="col-sm-12 d-flex teambox-notificaiton-row">
@@ -33,7 +33,7 @@
                                 <p class="m-0 pb-2">{{notifyData?.description}}</p>
                             </div>
                             
-                            <div class="col-sm-2 d-flex justify-content-center align-items-center">
+                            <div class="col-sm-5 d-flex justify-content-center align-items-center">
                                 <div class="p-2 switch-toggle">
                                     <label class="m-0 switch">
                                       <input type="checkbox" class="m-0 form-control-checkbox" 
@@ -43,7 +43,7 @@
                                     </label>
                                   </div>
                             </div>
-                            <div class="col-sm-3 d-flex justify-content-center align-items-center">
+                            <!-- <div class="col-sm-3 d-flex justify-content-center align-items-center">
                                 <div class="p-2 switch-toggle">
                                     <label class="m-0 switch">
                                       <input type="checkbox" class="m-0 form-control-checkbox" [disabled]="!notifyData?.PushNotificationValue"
@@ -52,7 +52,7 @@
                                       <span class="slider"></span>
                                     </label>
                                   </div>
-                            </div>
+                            </div> -->
                         </div>
                     </div>
                         <div class="row py-2 pl-3 pr-4 justify-content-center">

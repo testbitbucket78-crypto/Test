@@ -1933,7 +1933,10 @@ testinfo(){
 			if(this.activeStep ==3.1){
 				this.activeStep = 3;
 				this.setStep(3);
-			}else{
+			} else if(this.activeStep ==4){
+				this.activeStep = 3.1;
+			}
+			else{
 				this.activeStep = this.activeStep-1
 			}			
 		}else{
@@ -2503,7 +2506,7 @@ testinfo(){
 		let spid = Number(this.SPID)
 		this.settingsService.getApprovedTemplate(spid,1).subscribe(allTemplates =>{
 			allTemplates?.templates.forEach((item:any) => {
-				item.buttons = JSON.parse(item?.buttons);
+				item.buttons = JSON.parse(item?.buttons ? item?.buttons :'[]');
 			});
 			this.allTemplatesMain = allTemplates.templates;
 			this.allTemplates = allTemplates.templates;
