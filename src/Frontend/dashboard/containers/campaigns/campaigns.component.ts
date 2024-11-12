@@ -247,7 +247,7 @@ constructor(config: NgbModalConfig, private modalService: NgbModal,private datep
 	
 
 	getQualityRating() {
-		this.settingsService.getQualityRating(this.phoneNo, this.phone_no_id, this.WABA_Id).subscribe(
+		this.settingsService.getQualityRating(this.phoneNo, this.phone_no_id, this.WABA_Id, this.SPID).subscribe(
 			data => {
 				let res: any = data
 				if (res?.status === 200) {
@@ -1224,7 +1224,7 @@ formateDate(dateTime:string){
 					filterType: filter?.filterType?filter?.filterType:'', 
 					filterOperator:filter?.filterOperator?filter?.filterOperator:'', 
 					filterPrefix: filter?.filterPrefix?filter?.filterPrefix:'', 
-					filterValue: filter?.filterValue?filter?.filterValue:''
+					filterValue: this._settingsService.trimText(filter?.filterValue?filter?.filterValue:'')
 					})
 			})
 		})

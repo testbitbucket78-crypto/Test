@@ -192,6 +192,10 @@ convertTimeFormat(time: string | null | undefined, isStaticFormat: boolean = fal
     return intials;
   }
 
+  trimText(text: string): string {
+		if(!text) return '';
+		return text.trim().replace(/\s+/g, ' ');
+	  }
   
   getQualityRatingClass(rating: string): string {
     if (!rating) return '';
@@ -243,8 +247,8 @@ const headers = new HttpHeaders({
   getLocaleData(spId: number): Observable<localeDetailResponse> {
     return this.http.get<localeDetailResponse>(`${this.API_URL}/localDetails/${spId}`);
   }
-  public getQualityRating(phoneNo: number, phone_number_id: number, WABA_ID: number) {
-    return this.http.get(`${this.API_URL}/getQualityRating/${phoneNo}/${phone_number_id}/${WABA_ID}`);
+  public getQualityRating(phoneNo: number, phone_number_id: number, WABA_ID: number, spid: number) {
+    return this.http.get(`${this.API_URL}/getQualityRating/${phoneNo}/${phone_number_id}/${WABA_ID}/${spid}`);
 }
   
   getFlowData(spId: number): Observable<any> {
