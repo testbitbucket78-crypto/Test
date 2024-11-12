@@ -317,7 +317,24 @@
 												  </div>											  
 											</span>
 										</div>
-								
+										 <div *ngIf="message?.button | parseJson as buttons">
+											<div *ngIf="buttons?.length > 0" class="w-70 py-2">
+											  <div *ngFor="let item of buttons; let i = index">
+												<div class="text-center" *ngIf="item?.buttonText && i < 3">
+												  <button class="template-btn" [ngClass]="{'btn-radius': ((buttons.length - 1) === i || (buttons.length > 2 && i === 2))}">
+													<img class="btn-preview-img" *ngIf="item.type === 'Quick Reply' && !(i === 2 && buttons.length > 3)" src="../../../../assets/img/settings/reply-arrow.svg"> 
+													<img class="btn-preview-img" *ngIf="item.type === 'Call Phone' && !(i === 2 && buttons.length > 3)" src="../../../../assets/img/settings/phone-call.svg"> 
+													<img class="btn-preview-img" *ngIf="item.type === 'Copy offer Code' && !(i === 2 && buttons.length > 3)" src="../../../../assets/img/settings/copy.svg"> 
+													<img class="btn-preview-img" *ngIf="item.type === 'Visit Website' && !(i === 2 && buttons.length > 3)" src="../../../../assets/img/settings/open-in-new.svg"> 
+													<img class="btn-preview-img" *ngIf="item.type === 'Complete Flow' && !(i === 2 && buttons.length > 3)" src="../../../../assets/img/settings/form.svg"> 
+													<img class="btn-preview-img" *ngIf="(i === 2 && buttons.length > 3)" src="../../../../assets/img/settings/options-lines.svg">  
+													{{(i === 2 && buttons.length > 3) ? 'Show All Buttons' : item?.buttonText }}
+												  </button>
+												</div>
+											  </div>
+											</div>
+										  </div>
+
 									</div>
 								</div>
 								<div *ngIf="message?.message_direction ==null || !message?.message_direction" class="flex-end action-tab">
