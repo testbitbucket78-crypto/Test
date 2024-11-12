@@ -70,7 +70,7 @@ export class TopNavComponent implements OnInit {
           this.randomNumber = Math.random();
           this.profilePicture = pictureUrl;
         });
-      
+        if(!this.profilePicture) this.profilePicture = (JSON.parse(sessionStorage.getItem('loginDetails')!)).profile_img;
 
         const nameParts = this.Name.split(' ');
         const firstName = nameParts[0] || '';
