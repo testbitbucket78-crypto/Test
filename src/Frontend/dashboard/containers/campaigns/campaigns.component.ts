@@ -247,7 +247,7 @@ constructor(config: NgbModalConfig, private modalService: NgbModal,private datep
 	
 
 	getQualityRating() {
-		this.settingsService.getQualityRating(this.phoneNo, this.phone_no_id, this.WABA_Id).subscribe(
+		this.settingsService.getQualityRating(this.phoneNo, this.phone_no_id, this.WABA_Id, this.SPID).subscribe(
 			data => {
 				let res: any = data
 				if (res?.status === 200) {
@@ -1224,7 +1224,7 @@ formateDate(dateTime:string){
 					filterType: filter?.filterType?filter?.filterType:'', 
 					filterOperator:filter?.filterOperator?filter?.filterOperator:'', 
 					filterPrefix: filter?.filterPrefix?filter?.filterPrefix:'', 
-					filterValue: filter?.filterValue?filter?.filterValue:''
+					filterValue: this._settingsService.trimText(filter?.filterValue?filter?.filterValue:'')
 					})
 			})
 		})
@@ -1933,7 +1933,10 @@ testinfo(){
 			if(this.activeStep ==3.1){
 				this.activeStep = 3;
 				this.setStep(3);
-			}else{
+			} else if(this.activeStep ==4){
+				this.activeStep = 3.1;
+			}
+			else{
 				this.activeStep = this.activeStep-1
 			}			
 		}else{
@@ -2503,7 +2506,7 @@ testinfo(){
 		let spid = Number(this.SPID)
 		this.settingsService.getApprovedTemplate(spid,1).subscribe(allTemplates =>{
 			allTemplates?.templates.forEach((item:any) => {
-				item.buttons = JSON.parse(item?.buttons);
+				item.buttons = JSON.parse(item?.buttons ? item?.buttons :'[]');
 			});
 			this.allTemplatesMain = allTemplates.templates;
 			this.allTemplates = allTemplates.templates;

@@ -431,8 +431,8 @@ getCharacterCount(val:string) {
 }
 
 checkQuickResponseName(e:any){
-let val = e.target.value;
-let temp = this.templates.filter(item => item?.Header == val)[0];
+let val = e.target.value.toLowerCase();
+let temp = this.templates.filter(item => item?.Header.toLowerCase() == val)[0];
 if(temp && this.ID != temp.ID)
 this.showToaster('Quick response already exist with this name !','error');
 

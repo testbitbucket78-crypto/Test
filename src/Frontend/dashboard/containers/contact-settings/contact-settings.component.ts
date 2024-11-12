@@ -92,13 +92,13 @@ export class ContactSettingsComponent implements OnInit {
     tagData.SP_ID = this.sp_Id;
     if(this.selectedtagListData?.ID) {
       tagData.ID = this.selectedtagListData?.ID;
-      tagData.TagName = this.selectedtagListData?.TagName;
+      tagData.TagName = this.settingsService.trimText(this.selectedtagListData?.TagName);
       tagData.TagColour = this.selectedtagListData?.TagColour;
     }
     else {
       tagData.ID = 0;
       tagData.TagColour = this.tagColor;
-      tagData.TagName = this.tagName;
+      tagData.TagName = this.settingsService.trimText(this.tagName);
     }
 
     this._settingsService.updateTagData(tagData)

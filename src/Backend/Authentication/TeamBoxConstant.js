@@ -163,7 +163,7 @@ var selectInteractionByIdQuery = "SELECT * FROM Interaction WHERE Interaction.In
 var getAllMessagesByInteractionId = "SELECT Message.* ,Author.name As AgentName, DelAuthor.name As DeletedBy from Message LEFT JOIN user AS DelAuthor ON Message.Agent_id= DelAuthor.uid LEFT JOIN user AS Author ON Message.Agent_id= Author.uid where  Message.interaction_id=? and Type=?"
 
 
-var insertMessageQuery = "INSERT INTO Message (SPID,Type,ExternalMessageId, interaction_id, Agent_id, message_direction,message_text,message_media,media_type,Message_template_id,Quick_reply_id,created_at,updated_at,mediaSize,assignAgent) VALUES ?"
+var insertMessageQuery = "INSERT INTO Message (SPID,Type,ExternalMessageId, interaction_id, Agent_id, message_direction,message_text,message_media,media_type,Message_template_id,Quick_reply_id,created_at,updated_at,mediaSize,assignAgent,button) VALUES ?"
 
 
 
@@ -372,6 +372,7 @@ getallMessagesWithScripts = `(
         Message.system_message_type_id,
         Message.mediaSize,
         Message.assignAgent,
+        Message.button,
         Author.name AS AgentName,
         DelAuthor.name AS DeletedBy,
         NULL AS action,
@@ -426,6 +427,7 @@ UNION
         NULL AS system_message_type_id,
         NULL AS mediaSize,
         NULL AS assignAgent,
+        NULL AS button,
         NULL AS AgentName,
         NULL AS DeletedBy,
         InteractionEvents.action,
@@ -470,6 +472,7 @@ getMediaMessage = `(
         Message.system_message_type_id,
         Message.mediaSize,
         Message.assignAgent,
+        Message.button,
         NULL AS action,
         NULL AS action_at,
         NULL AS action_by
@@ -519,6 +522,7 @@ UNION
         NULL AS system_message_type_id,
         NULL AS mediaSize,
         NULL AS assignAgent,
+        NULL AS button,
         InteractionEvents.action,
         InteractionEvents.action_at,
         InteractionEvents.action_by
@@ -767,6 +771,7 @@ getmessageBymsgId =`
         Message.system_message_type_id,
         Message.mediaSize,
         Message.assignAgent,
+        Message.button,
         Author.name AS AgentName,
         DelAuthor.name AS DeletedBy
     FROM 

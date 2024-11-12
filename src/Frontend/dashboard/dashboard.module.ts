@@ -41,6 +41,7 @@ import { RichTextEditorAllModule } from '@syncfusion/ej2-angular-richtexteditor'
 import { TimepickerComponent } from './containers/common/timepicker/timepicker.component';
 import { LoaderComponent } from './containers/common/loader/loader.component';
 import { LinkifyPipe } from './containers/linkify/linkify.pipe';
+import { ParseJsonPipe } from './containers/parseJSON/parseJSON.pipe';
 
 @NgModule({
     imports: [
@@ -76,7 +77,8 @@ import { LinkifyPipe } from './containers/linkify/linkify.pipe';
             ContactFilterComponent,
             TimepickerComponent,
             LoaderComponent,
-            LinkifyPipe
+            LinkifyPipe,
+            ParseJsonPipe
         ],
     exports: [...dashboardContainers.containers,
               ...dashboardComponents.components,

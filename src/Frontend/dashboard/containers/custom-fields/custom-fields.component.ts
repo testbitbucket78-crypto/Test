@@ -96,7 +96,15 @@ toggleActiveState(checked: boolean, ID:number) {
 }
 
  toggleSideBar(data:any){
-  this.selectedCustomField = data
+  this.selectedCustomField = { ...data };
+  if (typeof this.selectedCustomField.dataTypeValues === 'string') {
+    try {
+      this.selectedCustomField.dataTypeValues = JSON.parse(this.selectedCustomField.dataTypeValues);
+    } catch (error) {
+      console.error('Failed to parse dataTypeValues:', error);
+      this.selectedCustomField.dataTypeValues = [];
+    }
+  }
   this.showSideBar =!this.showSideBar;
 
  }
@@ -173,9 +181,25 @@ getDynamicFieldData() {
 
 }
 
+  checkDuplicationInOptions(): boolean {
+    for (let i = 0; i < this.addCustomField.length; i++) {
+      for (let j = i + 1; j < this.addCustomField.length; j++) {
+        if ((this.trimText(this.addCustomField[i]?.Option?.toLowerCase()) == this.trimText(this.addCustomField[j]?.Option.toLowerCase()))
+          || !this.addCustomField[i]?.Option || !this.addCustomField[j]?.Option) {
+          return true;
+        }
+      }
+    }
+    return false;
+  }
+
 saveNewCustomField() {
-  
+
   if(this.customFieldForm.valid) {
+    if(this.checkDuplicationInOptions() === true){
+      this.showToaster("Options Cant Be Duplicate or Empty! ","error")
+      return;
+    }
     let addCustomFieldData = this.getCustomFieldFormData();
     if(this.selectedCustomField==null) {
       this.settingsService.saveNewCustomField(addCustomFieldData)
@@ -224,16 +248,20 @@ getCustomFieldFormData() {
 let CustomFieldData:addCustomFieldsData = <addCustomFieldsData>{};
     CustomFieldData.id = this.ID;
     CustomFieldData.SP_ID = this.spId;
-    CustomFieldData.ColumnName = this.customFieldForm.controls.displayName.value;
+    CustomFieldData.ColumnName = this.settingsService.trimText(this.customFieldForm.controls.displayName.value);
     CustomFieldData.Type = this.customFieldForm.controls.type.value;
     CustomFieldData.description = this.customFieldForm.controls.description.value;
     CustomFieldData.values = [];
     this.addCustomField.forEach((item:any,idx)=>{
-      CustomFieldData.values.push({id:idx,optionName:item?.Option});
+      CustomFieldData.values.push({id:idx,optionName:this.trimText(item?.Option)});
     })
     return CustomFieldData;
 }
 
+ trimText(text: string): string {
+  if(!text) return '';
+  return text.trim().replace(/\s+/g, ' ');
+}
 
 
 patchFormDataValue() {
@@ -245,7 +273,7 @@ patchFormDataValue() {
     this.customFieldForm.get(prop)?.setValue(value);
     this.ID=id;
   }  
-  let options= JSON.parse(data?.dataTypeValues);
+  let options= data?.dataTypeValues;
   this.addCustomField = [];
   options.forEach((item:any)=>{
     this.addCustomField.push({id:item.id,Option:item.optionName});
@@ -255,6 +283,10 @@ patchFormDataValue() {
 addCustomFields() {
   this.selectedCustomField = null;
   this.addCustomField =[{
+    id: '',
+    Option: '',
+  },
+  {
     id: '',
     Option: '',
   }];
@@ -299,7 +331,7 @@ fieldTypeChanged(){
     if(this.previousFieldType != this.customFieldForm.controls['type'].value){
       this.addCustomField = [];
       this.addCustomField = [
-        { id: '', Option: '' },
+        { id: '', Option: '' },{id: '', Option: ''}
       ];
     }
   }

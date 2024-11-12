@@ -84,9 +84,11 @@ export class RoutingRulesComponent implements OnInit {
   defaultAssignmentRules(option:string) {
     if(option==='broadcast') {
       this.defaultAssignRule = 'broadcast';
+      this.enableAdmin = 0;
     } else if(option==='roundrobin') {
       this.defaultAssignRule = 'roundrobin';
     } else if (option ==='manualassign') {
+      this.enableAdmin = 0;
       this.defaultAssignRule = 'manualassign';
     }
     this.assignuser = '';
@@ -176,19 +178,19 @@ get checkIfValid(): boolean {
     this.apiService.getRoutingRulesData(this.spId).subscribe(response =>{
           const data:routingRulesData = response.autoaddition[0];
           if(data){
-          this.contactowner = data.contactowner;
-          this.assignagent = data.assignagent;
-          this.broadcast = data.broadcast;
-          this.roundrobin = data.roundrobin;
-          this.conversationallowed = data.conversationallowed;
-          this.manualassign = data.manualassign;
+          this.contactowner = data?.contactowner;
+          this.assignagent = data?.assignagent;
+          this.broadcast = data?.broadcast;
+          this.roundrobin = data?.roundrobin;
+          this.conversationallowed = data?.conversationallowed;
+          this.manualassign = data?.manualassign;
           this.enableAdmin = data?.enableAdmin;
-          this.assignuser = data.assignuser;
-          this.timeoutperiod = data.timeoutperiod;
-          this.isMissChatAssigContactOwner = data.isMissChatAssigContactOwner;
-          this.isadmin = data.isadmin;
-          this.assignspecificuser = data.assignspecificuser;
-          this.selectuser = data.selectuser;
+          this.assignuser = data?.assignuser;
+          this.timeoutperiod = data?.timeoutperiod;
+          this.isMissChatAssigContactOwner = data?.isMissChatAssigContactOwner;
+          this.isadmin = data?.isadmin;
+          this.assignspecificuser = data?.assignspecificuser;
+          this.selectuser = data?.selectuser;
           let isMissedChat: boolean = !!(data?.isMissedChat === 1);
           this.manageMissedChatChange('manageMissedChat',isMissedChat)
         }

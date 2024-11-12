@@ -420,7 +420,7 @@
 								  <div class="conversation_inout_area">
 					  
 									<div class="input-area">
-									  <ejs-richtexteditor id='defaultRTE' #chatEditor [toolbarSettings]='tools' [width]='0' placeholder="Type Reply?..." [pasteCleanupSettings]="pasteCleanupSettings"> </ejs-richtexteditor>
+									  <ejs-richtexteditor id='defaultRTE' #chatEditor [toolbarSettings]='tools' [width]='0' placeholder="Type Reply..." [pasteCleanupSettings]="pasteCleanupSettings"> </ejs-richtexteditor>
 									  <button class="submit_btn" (click)="addMessage()">Add</button>
 									</div>
 								  </div>
@@ -635,7 +635,7 @@
 					  
 							  <div class="inner_box">
 								<img *ngIf="template.media_type === 'image'" class="template_img" src="{{template.Links}}">
-								<video *ngIf="template.media_type === 'video'" muted id="video-background" [src]="template.Links"></video>
+								<video *ngIf="template.media_type === 'video'" controls id="video-background" [src]="template.Links"></video>
 								<div class="doc-preview"*ngIf="template.media_type === 'document'">
 								  <a [href]="template.Links"><img src="../../../../assets/img/settings/doc.svg" /></a>
 								  </div>
@@ -709,7 +709,7 @@
 					  
 									  <div class="px-2 inner_box">
 										<img *ngIf="selectedTemplate.media_type === 'image'" class="template_img" src="{{selectedTemplate.Links}}">
-										<video *ngIf="selectedTemplate.media_type === 'video'" autoplay muted id="video-background" [src]="selectedTemplate.Links"></video>
+										<video *ngIf="selectedTemplate.media_type === 'video'" controls muted id="video-background" [src]="selectedTemplate.Links"></video>
 										<div class="doc-preview"*ngIf="selectedTemplate.media_type === 'document'">
 										  <a [href]="selectedTemplate.Links"><img src="../../../../assets/img/settings/doc.svg" /></a>
 										  </div>
@@ -998,7 +998,7 @@
 					  
 							  <div class="px-2 inner_box">
 								<img *ngIf="selectedTemplate.media_type === 'image'" class="template_img" src="{{selectedTemplate.Links}}">
-								<video *ngIf="selectedTemplate.media_type === 'video'" autoplay muted id="video-background" [src]="selectedTemplate.Links"></video>
+								<video *ngIf="selectedTemplate.media_type === 'video'" controls muted id="video-background" [src]="selectedTemplate.Links"></video>
 								<div class="doc-preview"*ngIf="selectedTemplate.media_type === 'document'">
 								  <a [href]="selectedTemplate.Links"><img src="../../../../assets/img/settings/doc.svg" /></a>
 								  </div>
@@ -1068,7 +1068,7 @@
 							<div class="items_list">
 							  <div class="item" *ngFor="let Message of QuickReplyList" (click)="selectQuickReplies(Message)">
 								<img style="height: 50%; width: 100%;" *ngIf="Message.media_type === 'image'" class="template_img" src="{{Message.Links}}">
-								<video style="height: 50%; width: 100%;"  *ngIf="Message.media_type === 'video'" muted id="video-background" [src]="Message.Links"></video>
+								<video style="height: 50%; width: 100%;"  *ngIf="Message.media_type === 'video'" controls muted id="video-background" [src]="Message.Links"></video>
 								<div class="doc-preview"*ngIf="Message.media_type === 'document'">
 								<a [href]="Message.Links"><img src="../../../../assets/img/settings/doc.svg" /></a>
 								</div>

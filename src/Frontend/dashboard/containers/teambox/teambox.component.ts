@@ -273,6 +273,9 @@ public  fieldsData: { [key: string]: string } = { text: 'name' };
 	srchText:string ='';
 	selectedModalIndex: number = 0;
 	isAgmodalOpened!:boolean;
+	templateName: string = '';
+	templatelanguage: string = '';
+    templateButton: any[] = [];
 	public insertImageSettings: object = {
 		width: '50px',
 		height: '50px'
@@ -677,8 +680,11 @@ public  fieldsData: { [key: string]: string } = { text: 'name' };
 		//this.chatEditor.value =htmlcontent
 		this.isAttachmentMedia = false;
 		this.isTemplate = true;
+		this.templateName= item?.TemplateName;
+		this.templatelanguage = this.settingService?.filterListLanguage.find((lang: any) => lang.label === item?.Language)?.code || '';
 		this.mediaType = item?.media_type;
 		this.messageMeidaFile = item?.Links;
+		this.templateButton = item?.buttons
 		this.addingStylingToMedia(item);
 		console.log(htmlcontent);
 		this.sendMessage(true,htmlcontent);
@@ -908,8 +914,8 @@ selectQuickReplies(item:any){
 	} else {
 		originalName = fileNameWithPrefix.substring(fileNameWithPrefix.indexOf('-') + 1);
 	}
-
-	if(item?.media_type === 'image') {
+    if(item?.media_type === 'text'){mediaName=''} 
+	else if(item?.media_type === 'image') {
 	  mediaContent ='<p><img style="width:100%; height:100%" src="'+item?.Links+'"></p>'
 	  mediaName = '<p class="custom-class-attachmentType"><img src="/assets/img/teambox/photo-icon.svg" alt="icon"> '+originalName+'</p>'
 	}
@@ -1354,7 +1360,7 @@ console.log(getMimeTypePrefix);
 		// this.getTemplates()
 		this.subscribeToNotifications();
 		this.getAttributeList();
-        this.sendattachfile();
+      //  this.sendattachfile();
 		this.getQuickResponse();
 		this.getTagData();
 		this.getWhatsAppDetails();
@@ -1394,7 +1400,7 @@ console.log(getMimeTypePrefix);
 			"spPhoneNumber": JSON.parse(sessionStorage.getItem('SPPhonenumber')!)
 		}
 		this.websocketService.connect(notificationIdentifier);
-			this.websocketService.getMessage().pipe().subscribe((message:any) => {
+			this.websocketService.getMessage()?.pipe().subscribe((message:any) => {
 				console.log(message);
 				console.log(this.interactionList,'check id');
 				if(message != undefined )
@@ -1517,7 +1523,7 @@ console.log(getMimeTypePrefix);
 		let spid = Number(this.SPID)
 		this.settingService.getApprovedTemplate(spid,1).subscribe(allTemplates =>{
 			allTemplates?.templates.forEach((item:any) => {
-				item.buttons = JSON.parse(item?.buttons);
+				item.buttons = JSON.parse(item?.buttons ? item?.buttons :'[]');
 			});
 
 			this.allTemplatesMain = allTemplates.templates
@@ -3430,7 +3436,10 @@ sendMessage(isTemplate:boolean=false,templateTxt:string=''){
 			action:'edited by ' + agentName,
 			action_at:new Date(),
 			action_by:name,
-			uidMentioned: uidMentioned
+			uidMentioned: uidMentioned,
+			name: this.templateName,
+			language: this.templatelanguage,
+			buttons: this.templateButton
 		}
 		console.log(bodyData,'Bodydata')
 		let input = {
@@ -3602,6 +3611,7 @@ sendMessage(isTemplate:boolean=false,templateTxt:string=''){
 		const tempElement = document.createElement('div');
 		tempElement.innerHTML = message;
 		
+		tempElement.querySelectorAll('br').forEach(br => br.remove());
 		let charCount = 0;
 		const truncateNode = (node: Node): boolean => {
 		  if (charCount >= maxLength) return true;
@@ -3748,6 +3758,7 @@ sendMessage(isTemplate:boolean=false,templateTxt:string=''){
 	
 	getContactOnScroll(){
 		const content = document.querySelector('.contact_list');
+		if(content){
     	const scroll$ = fromEvent(content!, 'scroll').pipe(map(() => { return content!.scrollTop; }));
  
     scroll$.subscribe((scrollPos) => {
@@ -3764,6 +3775,7 @@ sendMessage(isTemplate:boolean=false,templateTxt:string=''){
 		this.getCustomers(true);
       }else this.isLoadingOnScroll = false;
     });
+}
 	}
 
 	
@@ -3899,6 +3911,7 @@ sendMessage(isTemplate:boolean=false,templateTxt:string=''){
 		this.settingService.getWhatsAppDetails(this.SPID)
 		.subscribe((response:any) =>{
 		 if(response){
+			console.log('getWhatsAppDetails')
 			 this.WhatsAppDetailList = response?.whatsAppDetails;
 		 }
 	   })
@@ -4042,5 +4055,13 @@ sendMessage(isTemplate:boolean=false,templateTxt:string=''){
 	console.log(htmlString);
 	return htmlString;
 }
+updateValidation(controlName: any){
+	const control = this.editContact.get(controlName);
+	if (control) {
+	  if (!control.value) control.setErrors({ required: true });
+	  else control.setErrors(null);
+	  control.markAsTouched(); 
+	}
+  }
 
 }

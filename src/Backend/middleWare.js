@@ -154,8 +154,15 @@ async function sendDefultMsg(link, caption, typeOfmsg, phone_number_id, from, sp
     }
 
 }
-async function getQualityRating(phoneNumberId) {
+async function getQualityRating(phoneNumberId, spid) {
     try {
+        const getDetails = await getWAdetails(spid);
+        const token = getDetails?.[0]?.token;
+
+        if (!token) {
+            console.log("Error fetching business verification status")
+        }
+
         const response = await axios.get(`https://graph.facebook.com/v18.0/${phoneNumberId}?fields=display_phone_number,quality_rating,messaging_limit_tier`, {
             headers: {
                 'Authorization': `Bearer ${token}`
@@ -173,8 +180,14 @@ async function getQualityRating(phoneNumberId) {
         };
     }
 }
-async function getVerificationStatus(WABA_ID){
+async function getVerificationStatus(WABA_ID, spid){
     try {
+        const getDetails = await getWAdetails(spid);
+        const token = getDetails?.[0]?.token;
+        if (!token) {
+            console.log("Error fetching business verification status")
+        }
+
         const response = await axios.get(`https://graph.facebook.com/v18.0/${WABA_ID}?fields=business_verification_status`, {
             headers: {
                 'Authorization': `Bearer ${token}`
@@ -332,7 +345,8 @@ const WHATSAPPOptions = {
 
 
 
-async function createWhatsAppPayload(type, to, templateName, languageCode, headerVariables = [], bodyVariables = [], mediaLink = null) {
+async function createWhatsAppPayload(type, to, templateName, languageCode, headerVariables = [], bodyVariables = [], mediaLink = null, spid) {
+    let WAdetails = await getWAdetails(spid);
     let payload = {
         messaging_product: "whatsapp",
         recipient_type: "individual",
@@ -394,8 +408,18 @@ async function createWhatsAppPayload(type, to, templateName, languageCode, heade
             payload.template.components = [headerComponent];
         }
     }
-
-    return payload;
+    const response = await axios({
+        method: "POST",
+        url: `https://graph.facebook.com/v19.0/${WAdetails[0].phoneNumber_id}/messages?access_token=${WAdetails[0].token}`,
+        data: payload, // Use the video message structure
+        headers: { "Content-Type": "application/json" },
+    })
+    //console.log("****META APIS****", response.data);
+    return {
+        status: 200,
+        message: response.data
+    };
+   // return payload;
 }
 
 // const headerVariables = ['Header Text']; // Variables for header in 'text' type

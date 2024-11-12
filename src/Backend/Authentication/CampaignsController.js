@@ -78,7 +78,7 @@ const addCampaign = async (req, res) => {
             updateQuery += " end_time= '" + req.body?.end_time + "',";
             updateQuery += " media_type= '" + req.body?.media_type + "',";
             updateQuery += " message_footer= '" + req.body?.message_footer + "',";
-            updateQuery += " OptInStatus= '" + req.body?.OptInStatus + "'";
+            updateQuery += " OptInStatus= '" + req.body?.OptInStatus + "',";
             updateQuery += " templateId= '" + req.body?.templateId + "'";
             updateQuery += " WHERE Id =" + req.body.Id
             let editedCampaign = await db.excuteQuery(updateQuery, [])

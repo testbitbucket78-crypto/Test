@@ -230,7 +230,7 @@ It is determined by a combination of user feedback signals like blocks, reports 
 						<div class="doc-preview"*ngIf="selectedCampaign?.media_type=='document'" width="100%" height="150px">
 							<a [href]="selectedCampaign?.message_media"><img src="../../../../assets/img/settings/doc.svg" /></a>
 							</div>
-							<video *ngIf="getMediaType(selectedCampaign?.media_type,'video')" muted id="video-background" [src]="selectedCampaign?.message_media"></video>
+							<video *ngIf="getMediaType(selectedCampaign?.media_type,'video')" controls muted id="video-background" [src]="selectedCampaign?.message_media"></video>
 							<img *ngIf="getMediaType(selectedCampaign?.media_type,'image')" class="template_img" src="{{selectedCampaign?.message_media}}">
 						<!-- <div *ngIf="selectedCampaign.message_media" class="template_img">
 							<img src="{{selectedCampaign.message_media}}">
@@ -360,13 +360,15 @@ It is determined by a combination of user feedback signals like blocks, reports 
 				<div class="addeidtcampaign_menu_item">
 					<img *ngIf="activeStep > 1" class="icon" src="assets/img/campaign/back.svg" (click)="prevStep()">
 				</div>
-				<div [ngClass]="activeStep > 0 ? 'addeidtcampaign_menu_item active' : 'addeidtcampaign_menu_item'" (click)="setStep(1)" ><span>1</span><p>Add Name & Channel</p></div>
+				<div [ngClass]="activeStep > 0 ? 'addeidtcampaign_menu_item active' : 'addeidtcampaign_menu_item'" ><span>1</span><p>Add Name & Channel</p></div>
 				<div class="addeidtcampaign_menu_item_dotted"><p></p></div>
-				<div [ngClass]="activeStep > 1 ? 'addeidtcampaign_menu_item active' : 'addeidtcampaign_menu_item'"  (click)="setStep(2)"><span>2</span><p>Add Audience</p></div>
+				<div [ngClass]="activeStep > 1 ? 'addeidtcampaign_menu_item active' : 'addeidtcampaign_menu_item'" ><span>2</span><p>Add Audience</p></div>
 				<div class="addeidtcampaign_menu_item_dotted"><p></p></div>
-				<div [ngClass]="activeStep > 2 ? 'addeidtcampaign_menu_item active' : 'addeidtcampaign_menu_item'"  (click)="setStep(3)"><span>3</span><p>Add Message</p></div>
+				<div [ngClass]="activeStep > 2 ? 'addeidtcampaign_menu_item active' : 'addeidtcampaign_menu_item'" ><span>3</span><p>Add Message</p></div>
 				<div class="addeidtcampaign_menu_item_dotted"><p></p></div>
-				<div [ngClass]="activeStep > 3.2 ? 'addeidtcampaign_menu_item active' : 'addeidtcampaign_menu_item'"  (click)="setStep(4)"><span>4</span><p>Preview & Schedule</p></div>
+				<div [ngClass]="activeStep > 3 ? 'addeidtcampaign_menu_item active' : 'addeidtcampaign_menu_item'" ><span>4</span><p>Personalize</p></div>
+				<div class="addeidtcampaign_menu_item"></div>
+				<div [ngClass]="activeStep > 3.2 ? 'addeidtcampaign_menu_item active' : 'addeidtcampaign_menu_item'" ><span>5</span><p>Preview & Schedule</p></div>
 				<div class="addeidtcampaign_menu_item"></div>
 			</div>
 
@@ -501,7 +503,7 @@ It is determined by a combination of user feedback signals like blocks, reports 
 							 <div class="doc-preview"*ngIf="template?.media_type=='document'" width="100%" height="150px">
 								<a [href]="template?.Links"><img src="../../../../assets/img/settings/doc.svg" /></a>
 								</div>
-								<video *ngIf="template.media_type=='video'" muted id="video-background" [src]="template.Links"></video>
+								<video *ngIf="template.media_type=='video'" controls muted id="video-background" [src]="template.Links"></video>
 								<img *ngIf="template.media_type=='image'" class="template_img" src="{{template.Links}}">
 								<div *ngIf="!template.media_type" class="template_img_placeholder"></div>
 								<div class="template_text">
@@ -544,7 +546,7 @@ It is determined by a combination of user feedback signals like blocks, reports 
 									<div class="doc-preview"*ngIf="selectedTemplate?.media_type=='document'">
 										<a [href]="selectedTemplate?.Links"><img src="../../../../assets/img/settings/doc.svg" /></a>
 									  </div>
-									<video *ngIf="selectedTemplate?.media_type=='video'" autoplay muted id="video-background" [src]="selectedTemplate.Links"></video>
+									<video *ngIf="selectedTemplate?.media_type=='video'" controls muted id="video-background" [src]="selectedTemplate.Links"></video>
 									<img *ngIf="selectedTemplate?.media_type=='image'" class="template_img" src="{{selectedTemplate.Links}}">
 						            <div *ngIf="!selectedTemplate?.media_type" class="template_img_placeholder"></div>
 								</div>
@@ -622,7 +624,7 @@ It is determined by a combination of user feedback signals like blocks, reports 
 								<div class="template_img">
 									<p class="close-box" (click)="editTemplateMedia()"><img src="/assets/img/campaign/edit.svg"></p>
 									<img *ngIf="selectedTemplate?.media_type=='image'" class="template_img" src="{{selectedTemplate.Links}}">
-									<video *ngIf="selectedTemplate?.media_type=='video'" muted id="video-background" [src]="selectedTemplate.Links"></video>
+									<video *ngIf="selectedTemplate?.media_type=='video'" controls muted id="video-background" [src]="selectedTemplate.Links"></video>
 									<div class="doc-preview"*ngIf="selectedTemplate?.media_type=='document'" width="100%" height="150px">
 										<a [href]="selectedTemplate?.Links"><img src="../../../../assets/img/settings/doc.svg" /></a>
 									  </div>
@@ -661,7 +663,7 @@ It is determined by a combination of user feedback signals like blocks, reports 
 								<div class="doc-preview"*ngIf="selectedTemplate?.media_type=='document'" width="100%" height="150px">
 									<a [href]="selectedTemplate?.Links"><img src="../../../../assets/img/settings/doc.svg" /></a>
 								  </div>
-								<video *ngIf="selectedTemplate?.media_type=='video'" muted id="video-background" [src]="selectedTemplate?.Links"></video>
+								<video *ngIf="selectedTemplate?.media_type=='video'" controls muted id="video-background" [src]="selectedTemplate?.Links"></video>
 								<img *ngIf="selectedTemplate?.media_type=='image'" class="template_img" src="{{selectedTemplate?.Links}}">
 								<div *ngIf="!selectedTemplate?.media_type" class="template_img_placeholder"></div>
 							</div>
@@ -1120,10 +1122,10 @@ It is determined by a combination of user feedback signals like blocks, reports 
 			<div class="modal-header-left">
 				<img class="icon list" src="assets/img/campaign/back.svg" (click)="openAddNew(addNewCampaign)"> <h4 class="modal-title color" id="modal-basic-title">Saved Lists</h4>
 			</div>
-			<div class="modal-header-right">
+			<!-- <div class="modal-header-right">
 				<p class="text-box-readonly mr-2">Manage Saved Lists from settings</p>
 				<p (click)="directToSettings()" class="close-box" aria-label="Close" ><img class="setting_icon" src="assets/img/campaign/setting-g.svg"></p>
-			</div>
+			</div> -->
 			
 			</div>
 		<div class="modal-body addsegmentaudience">

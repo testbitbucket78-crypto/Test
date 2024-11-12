@@ -100,11 +100,11 @@
                    <div *ngIf="selectedType === 'image'" class="mt-5 mb-4 sel-type-image">
                       <input type="file" accept="image/jpeg, image/png" (change)="onFileChange($event)" id="sel-type-image" (click)="$event.target.value=null">
 
-                        <div *ngIf="defaultMessageForm.get('link')?.value == null || defaultMessageForm.get('link')?.value ==''">
+                        <div *ngIf="(defaultMessageForm.get('link')?.value == null || defaultMessageForm.get('link')?.value =='') && !selectedPreview">
                         <label class="type_label" for="sel-type-image"><img src="../../../../assets/img/teambox/add-white.svg" /></label>
                         <p class="m-0">Upload or enter link of image</p>
                        </div> 
-                        <div class="main-preview-type-image" *ngIf="defaultMessageForm.get('link')?.value !== null && defaultMessageForm.get('link')?.value !=''" [ngStyle]="{'background-image': 'url(' + selectedPreview + ')'}">
+                        <div class="main-preview-type-image" *ngIf="(defaultMessageForm.get('link')?.value !== null && defaultMessageForm.get('link')?.value !='') || selectedPreview" [ngStyle]="{'background-image': 'url(' + selectedPreview + ')'}">
                             <span class="p-2 text-right" (click)="removeMedia()"><img src="../../../../assets/img/settings/remove.svg" /></span>
                         </div>
                     </div>

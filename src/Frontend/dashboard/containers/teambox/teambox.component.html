@@ -317,7 +317,24 @@
 												  </div>											  
 											</span>
 										</div>
-								
+										 <div *ngIf="message?.button | parseJson as buttons">
+											<div *ngIf="buttons?.length > 0" class="w-70 py-2">
+											  <div *ngFor="let item of buttons; let i = index">
+												<div class="text-center" *ngIf="item?.buttonText && i < 3">
+												  <button class="template-btn" [ngClass]="{'btn-radius': ((buttons.length - 1) === i || (buttons.length > 2 && i === 2))}">
+													<img class="btn-preview-img" *ngIf="item.type === 'Quick Reply' && !(i === 2 && buttons.length > 3)" src="../../../../assets/img/settings/reply-arrow.svg"> 
+													<img class="btn-preview-img" *ngIf="item.type === 'Call Phone' && !(i === 2 && buttons.length > 3)" src="../../../../assets/img/settings/phone-call.svg"> 
+													<img class="btn-preview-img" *ngIf="item.type === 'Copy offer Code' && !(i === 2 && buttons.length > 3)" src="../../../../assets/img/settings/copy.svg"> 
+													<img class="btn-preview-img" *ngIf="item.type === 'Visit Website' && !(i === 2 && buttons.length > 3)" src="../../../../assets/img/settings/open-in-new.svg"> 
+													<img class="btn-preview-img" *ngIf="item.type === 'Complete Flow' && !(i === 2 && buttons.length > 3)" src="../../../../assets/img/settings/form.svg"> 
+													<img class="btn-preview-img" *ngIf="(i === 2 && buttons.length > 3)" src="../../../../assets/img/settings/options-lines.svg">  
+													{{(i === 2 && buttons.length > 3) ? 'Show All Buttons' : item?.buttonText }}
+												  </button>
+												</div>
+											  </div>
+											</div>
+										  </div>
+
 									</div>
 								</div>
 								<div *ngIf="message?.message_direction ==null || !message?.message_direction" class="flex-end action-tab">
@@ -997,7 +1014,7 @@ popupWidth='250px' popupHeight='200px'>
 						
 								<div class="inner_box">
 								  <img *ngIf="template.media_type === 'image'" class="template_img" src="{{template.Links}}">
-								  <video *ngIf="template.media_type === 'video'" muted id="video-background" [src]="template.Links"></video>
+								  <video *ngIf="template.media_type === 'video'" controls muted id="video-background" [src]="template.Links"></video>
 								  <div class="doc-preview"*ngIf="template.media_type === 'document'">
 									<a [href]="template.Links"><img src="../../../../assets/img/settings/doc.svg" /></a>
 									</div>
@@ -1075,7 +1092,7 @@ popupWidth='250px' popupHeight='200px'>
 
 									<div class="px-2 inner_box">
 										<img *ngIf="selectedTemplate.media_type === 'image'" class="template_img" src="{{selectedTemplate.Links}}">
-										<video *ngIf="selectedTemplate.media_type === 'video'" muted id="video-background" [src]="selectedTemplate.Links"></video>
+										<video *ngIf="selectedTemplate.media_type === 'video'" controls muted id="video-background" [src]="selectedTemplate.Links"></video>
 										<div class="doc-preview"*ngIf="selectedTemplate.media_type === 'document'">
 										  <a [href]="selectedTemplate.Links"><img src="../../../../assets/img/settings/doc.svg" /></a>
 										  </div>
@@ -1360,7 +1377,7 @@ popupWidth='250px' popupHeight='200px'>
 
 					<div class="px-2 inner_box">
 						<img *ngIf="selectedTemplate.media_type === 'image'" class="template_img" src="{{selectedTemplate.Links}}">
-						<video *ngIf="selectedTemplate.media_type === 'video'" muted id="video-background" [src]="selectedTemplate.Links"></video>
+						<video *ngIf="selectedTemplate.media_type === 'video'" controls muted id="video-background" [src]="selectedTemplate.Links"></video>
 						<div class="doc-preview"*ngIf="selectedTemplate.media_type === 'document'">
 						  <a [href]="selectedTemplate.Links"><img src="../../../../assets/img/settings/doc.svg" /></a>
 						  </div>
@@ -1423,7 +1440,7 @@ popupWidth='250px' popupHeight='200px'>
 								<div class="item" *ngFor="let Message of QuickReplyList | searchfilter:quickreplysearch"
 									(click)="selectQuickReplies(Message)">
 									<img style="height: 50%; width: 100%;" *ngIf="Message.media_type === 'image'" class="template_img" src="{{Message.Links}}">
-									<video style="height: 50%; width: 100%;"  *ngIf="Message.media_type === 'video'" muted id="video-background" [src]="Message.Links"></video>
+									<video style="height: 50%; width: 100%;"  *ngIf="Message.media_type === 'video'" controls muted id="video-background" [src]="Message.Links"></video>
 									<div class="doc-preview"*ngIf="Message.media_type === 'document'">
 									<a [href]="Message.Links"><img src="../../../../assets/img/settings/doc.svg" /></a>
 									</div>
@@ -1847,11 +1864,11 @@ popupWidth='250px' popupHeight='200px'>
 				<div>
 					<div class="py-2 row-md" *ngFor="let item of filteredCustomFields">
 						<label for="tag">{{item.displayName}}<span class="text-danger" *ngIf="item.mandatory == 1">*</span></label>
-						<input type="text" class="form-control" [formControlName]="item.ActuallName" *ngIf="item.type == 'Text'">
-						<input type="number" class="form-control" [formControlName]="item.ActuallName" *ngIf="item.type == 'Number'">
-						<input type="datetime-local" class="form-control" [formControlName]="item.ActuallName" *ngIf="item.type == 'Date Time'">
-						<input type="time" class="form-control" [formControlName]="item.ActuallName" *ngIf="item.type == 'Time'">
-						<input type="date" class="form-control" [formControlName]="item.ActuallName" *ngIf="item.type == 'Date'">
+						<input type="text" class="form-control" [formControlName]="item.ActuallName" *ngIf="item.type == 'Text'" (input)="updateValidation(item?.ActuallName)">
+						<input type="number" class="form-control" [formControlName]="item.ActuallName" *ngIf="item.type == 'Number'" (input)="updateValidation(item?.ActuallName)">
+						<input type="datetime-local" class="form-control" [formControlName]="item.ActuallName" *ngIf="item.type == 'Date Time'" (input)="updateValidation(item?.ActuallName)">
+						<input type="time" class="form-control" [formControlName]="item.ActuallName" *ngIf="item.type == 'Time'" (input)="updateValidation(item?.ActuallName)">
+						<input type="date" class="form-control" [formControlName]="item.ActuallName" *ngIf="item.type == 'Date'" (input)="updateValidation(item?.ActuallName)">
 						<!-- <input type="checkbox" class="form-control"[formControlName]="item.ActuallName" *ngIf="item.type == 'Switch'"> -->
 						<!-- <div class="row_inline d-flex align-items-center py-2" *ngIf="item.type == 'Switch'">
 						<input class="form-control-checkbox" type="checkbox" id="Opted-ins" [formControlName]="item.ActuallName"/>
@@ -1893,7 +1910,7 @@ popupWidth='250px' popupHeight='200px'>
 				<div class="row" class="m-0 d-flex flex-row-reverse">
 					<div class="m-0 modal-footer row popfooter">
 						<div class="inner_form col-md-6 p-0 text-right">
-							<button type="submit" class="submit-btn">Update</button>
+							<button type="submit" [disabled]="editContact.invalid || !editContact.touched" [class.disabled]="(editContact.invalid || !editContact.touched)" class="submit-btn">Update</button>
 						</div>
 					</div>
 				</div>

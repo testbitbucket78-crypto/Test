@@ -679,9 +679,10 @@ const insertMessage = async (req, res) => {
             let channelType = await db.excuteQuery('select * from EndCustomer where customerId=? and SP_ID=?', [customerId, SPID]);
             let spchannel = await db.excuteQuery('select channel_id from WhatsAppWeb where spid=? limit 1', [SPID]);
             let uidMentioned = Array.isArray(req.body?.uidMentioned) ? req.body.uidMentioned : [];
+            let buttons = JSON.stringify(req?.body?.buttons);
             const channel = channelType.length > 0 ? channelType[0].channel : spchannel[0]?.channel_id;
 
-            var values = [[SPID, Type, ExternalMessageId, interaction_id, Agent_id, message_direction, message_text, message_media, media_type, Message_template_id, Quick_reply_id, created_at, created_at, mediaSize, assignAgent]];
+            var values = [[SPID, Type, ExternalMessageId, interaction_id, Agent_id, message_direction, message_text, message_media, media_type, Message_template_id, Quick_reply_id, created_at, created_at, mediaSize, assignAgent, buttons]];
             let msg_id = await db.excuteQuery(messageQuery, [values]);
             //  logger.debug('Message ID:', msg_id);
             let updateInteraction = await db.excuteQuery(val.updateTempInteractionQuery,[0,interaction_id])
@@ -714,9 +715,10 @@ const insertMessage = async (req, res) => {
             let content = await removeTags.removeTagsFromMessages(message_text);
             const placeholders = parseMessageTemplate(content);
             console.log(placeholders)
+            let results;
             if (placeholders.length > 0) {
 
-                let results;
+                
                 // console.log(msgVar != null,"msgVar",msgVar,msgVar !='')
                 if (msgVar != null && msgVar != '') {
 
@@ -744,8 +746,17 @@ const insertMessage = async (req, res) => {
             let middlewareresult = "";
             if (Type != 'notes') {
                 if (channelType[0].isBlocked != 1) {
-                    if (req.body.message_type == 'text') {
-                        if (req.body.message_media !='text') {
+                    if(req?.body?.isTemplate == true){
+                        const mediaType = determineMediaType(media_type);
+                        let valuesArray
+                        if(results && results.length) {
+                             valuesArray = results.map(item => Object.values(item)[0]);
+                        }
+
+                        middlewareresult = await middleWare.createWhatsAppPayload(mediaType, req?.body?.messageTo, req?.body?.name, req?.body?.language, [], valuesArray, message_media, SPID);
+                       // middlewareresult = await middleWare.channelssetUp(SPID, channel, mediaType, req.body.messageTo, content, message_media, interaction_id, msg_id.insertId, spNumber);
+                    } else {
+                       if (req.body.message_media !='text') {
                             const mediaType = determineMediaType(media_type);
                             middlewareresult = await middleWare.channelssetUp(SPID, channel, mediaType, req.body.messageTo, content, message_media, interaction_id, msg_id.insertId, spNumber);
                         } else {
