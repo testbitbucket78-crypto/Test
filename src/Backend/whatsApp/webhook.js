@@ -341,7 +341,7 @@ async function saveIncommingMessages(from, firstMessage, phone_number_id, displa
     var saveMessage = await db.excuteQuery(process.env.query, [phoneNo, 'IN', message_text, message_media, Message_template_id, Quick_reply_id, Type, ExternalMessageId, display_phone_number, contactName, media_type, 'NULL', 'WA API', message_time, countryCode]);
 
     console.log("====SAVED MESSAGE====" + " replyValue length  " + JSON.stringify(saveMessage));
-    logger.log(`====SAVED MESSAGE====   ${JSON.stringify(saveMessage)}`)
+    logger.info(`====SAVED MESSAGE====   ${JSON.stringify(saveMessage)}`)
 
   }
   return saveMessage;

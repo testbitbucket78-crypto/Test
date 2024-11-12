@@ -782,8 +782,10 @@ const addUser = async (req, res) => {
             var addNotifyTwostatus = await db.excuteQuery(val.addNotification,[[[User?.insertId,2,1,0,0,created_at]]])
             var addNotifyThreestatus = await db.excuteQuery(val.addNotification,[[[User?.insertId,3,1,0,0,created_at]]])
             var addNotifyFourstatus = await db.excuteQuery(val.addNotification,[[[User?.insertId,4,1,0,0,created_at]]])
-
-            inviteUser(email_id, name, SP_ID, registerPhone, RoleName, randomstring)
+            
+            const referer = req.get('Referer')
+            let loginPageURL = referer+"login";
+            inviteUser(email_id, name, SP_ID, registerPhone, RoleName, randomstring,loginPageURL)
             res.status(200).send({
                 msg: "user details has been sent",
 
@@ -798,7 +800,7 @@ const addUser = async (req, res) => {
     }
 }
 
-async function inviteUser(email_id, name, SP_ID, mobile_number, RoleName, randomstring) {
+async function inviteUser(email_id, name, SP_ID, mobile_number, RoleName, randomstring,loginURL) {
 
     var getData = await db.excuteQuery(val.selectByIdQuery, [SP_ID])
 
@@ -823,7 +825,7 @@ async function inviteUser(email_id, name, SP_ID, mobile_number, RoleName, random
     
     To access your Engagekart account, follow these steps:
     
-    1. Go to https://cip.stacknize.com/#/login
+    1. Go to ${loginURL}
     2. Enter your Email ID
     3. Use the temporary password provided above.
     
@@ -977,7 +979,9 @@ const editUser = async (req, res) => {
         }
         if (currentUser?.length > 0 && currentUser[0].IsActive == 3) {
             const hash = await bcrypt.hash(randomstring, 10);
-            inviteUser(email_id, name, SP_ID, registerPhone, RoleName, randomstring);
+            const referer = req.get('Referer')
+            let loginPageURL = referer+"login";
+            inviteUser(email_id, name, SP_ID, registerPhone, RoleName, randomstring,loginPageURL);
             let updatePass = await db.excuteQuery('UPDATE user set password=? where uid=? ', [hash, uid])
         }
 
