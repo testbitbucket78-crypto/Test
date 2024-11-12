@@ -742,7 +742,7 @@ const addUser = async (req, res) => {
         email_id = req.body.email_id
         name = req.body.name
         isExistName = req?.body?.name?.toLowerCase();
-        mobile_number = req.body.mobile_number
+        mobile_number = req.body.registerPhone
         LoginIP = req.body.LoginIP
         RoleName = req.body?.role
         Channel = req.body?.Channel

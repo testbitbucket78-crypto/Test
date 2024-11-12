@@ -345,7 +345,8 @@ const WHATSAPPOptions = {
 
 
 
-async function createWhatsAppPayload(type, to, templateName, languageCode, headerVariables = [], bodyVariables = [], mediaLink = null) {
+async function createWhatsAppPayload(type, to, templateName, languageCode, headerVariables = [], bodyVariables = [], mediaLink = null, spid) {
+    let WAdetails = await getWAdetails(spid);
     let payload = {
         messaging_product: "whatsapp",
         recipient_type: "individual",
@@ -407,8 +408,18 @@ async function createWhatsAppPayload(type, to, templateName, languageCode, heade
             payload.template.components = [headerComponent];
         }
     }
-
-    return payload;
+    const response = await axios({
+        method: "POST",
+        url: `https://graph.facebook.com/v19.0/${WAdetails[0].phoneNumber_id}/messages?access_token=${WAdetails[0].token}`,
+        data: payload, // Use the video message structure
+        headers: { "Content-Type": "application/json" },
+    })
+    //console.log("****META APIS****", response.data);
+    return {
+        status: 200,
+        message: response.data
+    };
+   // return payload;
 }
 
 // const headerVariables = ['Header Text']; // Variables for header in 'text' type
