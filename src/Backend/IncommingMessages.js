@@ -673,7 +673,7 @@ async function getWelcomeGreetingData(sid, msg_id, newlyInteractionId, phone_num
       // sendDefultMsg(wlcMessage[0].link, wlcMessage[0].value, wlcMessage[0].message_type, phone_number_id, from); 
       let messageInterval = await db.excuteQuery('select * from Message where interaction_id=?', [newlyInteractionId])
       console.log("welcome messageInterval?.length", messageInterval?.length)
-      if (messageInterval?.length <= 0) {
+      if (messageInterval?.length <= 1) {
         // console.log("messageInterval" ,newId)
         let message_text = await getExtraxtedMessage(wlcMessage[0]?.value,sid,custid)
         let result = await messageThroughselectedchannel(sid, from, wlcMessage[0].message_type, message_text, wlcMessage[0].link, phone_number_id, channelType, agid, newlyInteractionId, wlcMessage[0].message_type,wlcMessage[0]?.value)

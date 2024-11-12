@@ -379,7 +379,7 @@ async function getDetatilsOfSavedMessage(saveMessage, message_text, phone_number
       msg_id: data[5][0]['@msg_id'],
       newlyInteractionId: data[7][0]['@newlyInteractionId'],
       isContactPreviousDeleted: data[10][0]['@isContactPreviousDeleted'],
-      ifgot: data[12][0]['ifgot']
+      ifgot: data[12][0]['@ifgot']
     };
 
     var sid = extractedData.sid

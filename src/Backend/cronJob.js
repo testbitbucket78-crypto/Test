@@ -588,7 +588,7 @@ async function isContactBlocked(phone, spid) {
   try {
     let contactDetails = await db.excuteQuery('select * from EndCustomer where  Phone_Number =? AND SP_ID=? and isBlocked !=1', [phone, spid])
     // if contact not block then length greater thea zero
-    if (contactDetails?.length != 0) {
+    if (contactDetails?.length > 0) {
       return false;
     } else {
       return true;
@@ -739,10 +739,10 @@ async function saveMessage(PhoneNo, spid, msgTemplateId, text, media, type, medi
 
 async function insertInteractionAndRetrieveId(phoneNo, sid, channel) {
   try {
-    let customerId = await db.excuteQuery(`select customerId from EndCustomer where Phone_Number =? AND SP_ID=?  ORDER BY created_at desc limit 1`, [phoneNo, sid]);
+    let customerId = await db.excuteQuery(`select * from EndCustomer where Phone_Number =? AND SP_ID=?  ORDER BY created_at desc limit 1`, [phoneNo, sid]);
 
     let custid = customerId[0]?.customerId;
-
+    logger.info(`insertInteractionAndRetrieveId  get exist contact ${customerId}`)
     if (!custid) {
 
       let countryCodeObj;
@@ -752,7 +752,11 @@ async function insertInteractionAndRetrieveId(phoneNo, sid, channel) {
       let countryCode = countryCodeObj.country + " +" + countryCodeObj.countryCode
       let displayPhoneNumber = countryCodeObj.localNumber
       let addTempContact = await db.excuteQuery(`INSERT into EndCustomer(Phone_Number,SP_ID,channel,Name,OptInStatus,countryCode,displayPhoneNumber,IsTemporary) values (?,?,?,?,?,?,?,?)`, [phoneNo, sid, channel, phoneNo, 'Yes', countryCode, displayPhoneNumber, 1]);
+      logger.info(`Campaign New Contact added insertInteractionAndRetrieveId  ${addTempContact?.affectedRows}  , channel ${channel}`)
       custid = addTempContact?.insertId
+    }else if(customerId[0]?.channel == null){
+      let updateContactChannel = await db.excuteQuery(`update EndCustomer set channel=? where customerId=?`,[channel,custid])
+      logger.info(`Campaign update Contact channel insertInteractionAndRetrieveId ${updateContactChannel?.affectedRows}`)
     }
     console.log(phoneNo, sid, custid)
     // Check if Interaction exists for the customerId

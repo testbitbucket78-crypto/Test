@@ -426,7 +426,7 @@ const checkInteractionPinned = (req, res) => {
 const updatePinnedStatus = (req, res) => {
     //  logger.info('Starting updatePinnedStatus function');
     if (req.body.isPinned) {
-        var updateQuery = "DELETE FROM PinnedInteraction WHERE Id>=1 and AgentId =" + req.body.AgentId + " and InteractionId =" + req.body.InteractionId;
+        var updateQuery = "DELETE FROM PinnedInteraction WHERE Id>=1  and InteractionId =" + req.body.InteractionId;   //and AgentId =" + req.body.AgentId + "
     } else {
         var updateQuery = "INSERT INTO PinnedInteraction (AgentId,InteractionId) VALUES ?";
     }
