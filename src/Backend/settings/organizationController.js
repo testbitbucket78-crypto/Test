@@ -780,8 +780,10 @@ const addUser = async (req, res) => {
             var addNotifyTwostatus = await db.excuteQuery(val.addNotification,[[[User?.insertId,2,1,0,0,created_at]]])
             var addNotifyThreestatus = await db.excuteQuery(val.addNotification,[[[User?.insertId,3,1,0,0,created_at]]])
             var addNotifyFourstatus = await db.excuteQuery(val.addNotification,[[[User?.insertId,4,1,0,0,created_at]]])
-
-            inviteUser(email_id, name, SP_ID, registerPhone, RoleName, randomstring,Channel)
+            
+            const referer = req.get('Referer')
+            let loginPageURL = referer+"login";
+            inviteUser(email_id, name, SP_ID, registerPhone, RoleName, randomstring,loginPageURL)
             res.status(200).send({
                 msg: "user details has been sent",
 
@@ -796,17 +798,13 @@ const addUser = async (req, res) => {
     }
 }
 
-async function inviteUser(email_id, name, SP_ID, mobile_number, RoleName, randomstring,Channel) {
+async function inviteUser(email_id, name, SP_ID, mobile_number, RoleName, randomstring,loginURL) {
 
     var getData = await db.excuteQuery(val.selectByIdQuery, [SP_ID])
 
     if (getData.length >= 0) {
         var Company_Name = getData[0]?.Company_Name
         var logo = getData[0]?.profile_img
-    }
-    let loginURL = 'https://cip.stacknize.com/login'
-    if(Channel == 'api'){
-      loginURL = "https://cipapp.stacknize.com/login";
     }
     var mailOptions = {
         from: val.email,
@@ -979,7 +977,9 @@ const editUser = async (req, res) => {
         }
         if (currentUser?.length > 0 && currentUser[0].IsActive == 3) {
             const hash = await bcrypt.hash(randomstring, 10);
-            inviteUser(email_id, name, SP_ID, registerPhone, RoleName, randomstring,Channel);
+            const referer = req.get('Referer')
+            let loginPageURL = referer+"login";
+            inviteUser(email_id, name, SP_ID, registerPhone, RoleName, randomstring,loginPageURL);
             let updatePass = await db.excuteQuery('UPDATE user set password=? where uid=? ', [hash, uid])
         }
 
