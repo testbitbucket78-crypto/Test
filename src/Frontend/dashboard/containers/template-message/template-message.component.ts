@@ -985,7 +985,12 @@ checkTemplateName(e:any){
         let ID = this.galleryMessageData.ID;
         for (let prop in galleryData) {
             let value = galleryData[prop as keyof typeof galleryData];
-            if (this.newTemplateForm.get(prop)) this.newTemplateForm.get(prop)?.setValue(value);
+            if (this.newTemplateForm.get(prop)){
+                if(prop == 'TemplateName')
+                    this.newTemplateForm.get(prop)?.setValue((value.replaceAll(' ','')).toLowerCase());
+                else
+                    this.newTemplateForm.get(prop)?.setValue(value);
+            }
             this.id = ID;
         }
 
@@ -1131,6 +1136,7 @@ insertAtCursor(selectedValue: any) {
     
 
     previewTemplate() {
+        this.allVariablesValueList =[];
         if(this.validateItems()){
         let isVariableValue:string = this.newTemplateForm.controls.Header.value + this.newTemplateForm.controls.BodyText.value ;
 

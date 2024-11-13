@@ -116,9 +116,9 @@
                                 </div>
                             </div>
                             <div class="message_data" [ngClass]="{'preview': templatesMessageData.media_type === 'text'}">
-                                <span *ngIf="templatesMessageData?.Header" [innerHTML]="templatesMessageData?.Header | sanitizeHtml"></span><br /><br />
+                                <span class="temp-header font-weight-bolder" *ngIf="templatesMessageData?.Header" [innerHTML]="templatesMessageData?.Header | sanitizeHtml"></span><br /><br />
                                 <span *ngIf="templatesMessageData?.BodyText" [innerHTML]="templatesMessageData?.BodyText | sanitizeHtml"></span><br /><br />
-                                <span *ngIf="templatesMessageData?.FooterText" [innerHTML]="templatesMessageData?.FooterText | sanitizeHtml"></span><br />
+                                <span class="temp-footer"  *ngIf="templatesMessageData?.FooterText" [innerHTML]="templatesMessageData?.FooterText | sanitizeHtml"></span><br />
                             </div>
                             <div *ngIf="templatesMessageData?.buttons && templatesMessageData?.buttons?.length >0" class="w-70">
                                 <div *ngFor="let item of templatesMessageData?.buttons let i = index" >
@@ -262,9 +262,9 @@
                 </div>
             </div>
             <div class="message_data" [ngClass]="{'preview': galleryMessageData.media_type === 'text'}">
-                <span [innerHTML]="galleryMessageData?.Header | sanitizeHtml"></span><br /><br />
+                <span class="temp-header font-weight-bolder" [innerHTML]="galleryMessageData?.Header | sanitizeHtml"></span><br /><br />
                 <span [innerHTML]="galleryMessageData?.BodyText | sanitizeHtml"></span><br /><br />
-                <span [innerHTML]="galleryMessageData?.FooterText | sanitizeHtml"></span><br />
+                <span class="temp-footer"  [innerHTML]="galleryMessageData?.FooterText | sanitizeHtml"></span><br />
             </div>
             <!-- <div class="contact-us">
                 Contact Us
@@ -829,12 +829,12 @@
                             <div class="flex-grow-1 ml-2">
                                 <div class="d-flex justify-content-between align-items-center pt-3  msg-head">
                                     <h6>Phone No.</h6>
-                                    <div><span class="characters-count">{{ getCharacterCount(7) }}</span><span>/20 Characters</span>
+                                    <div><span class="characters-count">{{item?.phoneNumber?.length}}</span><span>/20 Characters</span>
                                     </div>
                                 </div>
                                 <div class="sel-type-link">
-                                    <input type="text" [(ngModel)]="item.phoneNumber" [ngModelOptions]="{standalone: true}" maxlength="20" placeholder="Enter" style="display: none">
-                                    <input type="text" [(ngModel)]="item.displayPhoneNumber" [ngModelOptions]="{standalone: true}" maxlength="20" placeholder="e.g. 9876543210">
+                                    <input type="text" [(ngModel)]="item.phoneNumber" [ngModelOptions]="{standalone: true}" maxlength="20" placeholder="e.g. 9876543210"  placeholder="Enter" >
+                                    <input type="text" [(ngModel)]="item.displayPhoneNumber" [ngModelOptions]="{standalone: true}" maxlength="20" placeholder="e.g. 9876543210" style="display: none">
                                 </div>
                             </div>
                         </div>

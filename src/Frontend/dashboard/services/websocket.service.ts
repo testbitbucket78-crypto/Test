@@ -14,8 +14,6 @@ export class WebsocketService {
   constructor() { }
 
   connect(spn: any): void {
-    console.log(this.socketInstance);
-    console.log(this.socketInstance?.readyState);
     if (this.socketInstance && (this.socketInstance?.readyState === WebSocket.OPEN || this.socketInstance?.readyState === WebSocket.CONNECTING)) {
       console.log("WebSocket is already connected or connection is pending.");
       return;
@@ -45,11 +43,11 @@ export class WebsocketService {
         this.connect(spn);
       },
       () => {
-        console.log('WebSocket connection closed');
-        clearInterval(intervalId);
-        console.log(this.socket$);
-        this.cleanupConnection();
-        this.connect(spn); 
+        // console.log('WebSocket connection closed');
+        // clearInterval(intervalId);
+        // console.log(this.socket$);
+        // this.cleanupConnection();
+        // this.connect(spn); 
       }
     );
     
