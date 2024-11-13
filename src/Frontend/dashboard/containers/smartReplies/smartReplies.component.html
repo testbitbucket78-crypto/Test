@@ -237,7 +237,7 @@
 								<h5>Add Keyword</h5>
 								<div class="box2 d-flex" data-required="">
 								  <input class="form-control" id="form-box" #keyowrdtxt [(ngModel)]="keyword" type="text"
-									onKeyPress="return /^[a-zA-Z\s]$/.test(event.key)" placeholder="Enter Keywords" maxlength="56" />
+									onKeyPress="return /^[a-zA-Z0-9\s]$/.test(event.key)" placeholder="Enter Keywords" maxlength="56" />
 								  <button type="button" class="btn7 btn-block ml-2" (click)="addKeyword()">ADD</button>
 								</div>
 								<div *ngIf="keyword.length > 56" class="text-danger mt-2"></div>
@@ -722,11 +722,23 @@
 										  <p *ngIf="selectedTemplate.FooterText" [innerHTML]="selectedTemplate.FooterText | sanitizeHtml"></p>
 										  </div>
 									  </div>
-									  <div *ngIf="selectedTemplate.Channel === 'WA API'" class="px-2 template_btn">
+									  <div *ngIf="selectedTemplate?.buttons && selectedTemplate?.buttons?.length >0 && selectedTemplate?.Channel === 'WA API'" class="w-100">
+										<div *ngFor="let item of selectedTemplate?.buttons let i = index" >
+										<div  class="text-center" *ngIf="item?.buttonText && i<3"><button class="selectedTemplate-btn"  [ngClass]="{'btn-radius': ((selectedTemplate?.buttons?.length-1)== i || (selectedTemplate?.buttons?.length >2 && i==2))}">
+											<img class="btn-preview-img" *ngIf="item.type =='Quick Reply' && !(i==2 && selectedTemplate?.buttons?.length>3)" src="../../../../assets/img/settings/reply-arrow.svg"> 
+										<img class="btn-preview-img" *ngIf="item.type =='Call Phone' && !(i==2 && selectedTemplate?.buttons?.length>3)" src="../../../../assets/img/settings/phone-call.svg"> 
+										<img class="btn-preview-img" *ngIf="item.type =='Copy offer Code' && !(i==2 && selectedTemplate?.buttons?.length>3)" src="../../../../assets/img/settings/copy.svg"> 
+										<img class="btn-preview-img" *ngIf="item.type =='Visit Website' && !(i==2 && selectedTemplate?.buttons?.length>3)" src="../../../../assets/img/settings/open-in-new.svg"> 
+										<img class="btn-preview-img" *ngIf="item.type =='Complete Flow' && ! (i==2 && selectedTemplate?.buttons?.length>3)" src="../../../../assets/img/settings/form.svg"> 
+										<img class="btn-preview-img" *ngIf="(i==2 && selectedTemplate?.buttons?.length>3)" src="../../../../assets/img/settings/options-lines.svg"> 
+											{{(i==2 && selectedTemplate?.buttons?.length>3) ? 'Show All Buttons' : item?.buttonText }}</button> </div>
+										</div>
+									</div>
+									  <!-- <div *ngIf="selectedTemplate.Channel === 'WA API'" class="px-2 template_btn">
 										<button type="button" class="btn">Button 1</button>
 										<button type="button" class="btn">Button 2</button>
 										<button type="button" class="btn">Button 3</button>
-									  </div>
+									  </div> -->
 									</div>
 					  
 								  </div>
@@ -798,7 +810,7 @@
 										</div> -->
 									</div>
 								  </form>
-								  <div *ngIf="selectedTemplate.Channel === 'WA API'" >
+								  <!-- <div *ngIf="selectedTemplate.Channel === 'WA API'" >
 									<p class="mt-2">Button Payload <span>(Optional)</span><img class="px-2 icon sm"
 										src="/assets/img/campaign/Info.svg"></p>
 									<div class="form_row">
@@ -816,7 +828,7 @@
 									  <input type="text" class="form-control" value=""
 										placeholder="Input payload value">
 									</div>
-								  </div>
+								  </div> -->
 								  </div>
 								</div>
 							 
@@ -1010,6 +1022,18 @@
 								  <p [innerHTML]="selectedTemplate.BodyText | sanitizeHtml"></p>
 								  <p *ngIf="selectedTemplate.FooterText" [innerHTML]="selectedTemplate.FooterText | sanitizeHtml"></p>
 								  </div>
+								  <div *ngIf="selectedTemplate?.buttons && selectedTemplate?.buttons?.length >0 && selectedTemplate?.Channel === 'WA API'" class="w-100">
+									<div *ngFor="let item of selectedTemplate?.buttons let i = index" >
+									<div  class="text-center" *ngIf="item?.buttonText && i<3"><button class="selectedTemplate-btn"  [ngClass]="{'btn-radius': ((selectedTemplate?.buttons?.length-1)== i || (selectedTemplate?.buttons?.length >2 && i==2))}">
+										<img class="btn-preview-img" *ngIf="item.type =='Quick Reply' && !(i==2 && selectedTemplate?.buttons?.length>3)" src="../../../../assets/img/settings/reply-arrow.svg"> 
+									<img class="btn-preview-img" *ngIf="item.type =='Call Phone' && !(i==2 && selectedTemplate?.buttons?.length>3)" src="../../../../assets/img/settings/phone-call.svg"> 
+									<img class="btn-preview-img" *ngIf="item.type =='Copy offer Code' && !(i==2 && selectedTemplate?.buttons?.length>3)" src="../../../../assets/img/settings/copy.svg"> 
+									<img class="btn-preview-img" *ngIf="item.type =='Visit Website' && !(i==2 && selectedTemplate?.buttons?.length>3)" src="../../../../assets/img/settings/open-in-new.svg"> 
+									<img class="btn-preview-img" *ngIf="item.type =='Complete Flow' && ! (i==2 && selectedTemplate?.buttons?.length>3)" src="../../../../assets/img/settings/form.svg"> 
+									<img class="btn-preview-img" *ngIf="(i==2 && selectedTemplate?.buttons?.length>3)" src="../../../../assets/img/settings/options-lines.svg"> 
+										{{(i==2 && selectedTemplate?.buttons?.length>3) ? 'Show All Buttons' : item?.buttonText }}</button> </div>
+									</div>
+								</div>
 							  </div>
 							  
 							  <!-- (click)="toggleshowAdvance()"   *ngIf="showAdvance" -->
@@ -1025,11 +1049,11 @@
 							<div class="btn_group"><input type="text" value="No" /> {{selectedTemplate.button_no}}</div>
 							<div class="btn_group"><input type="text" value="EXPLORE" /> {{selectedTemplate.button_exp}}</div>
 						</div> -->
-						<div *ngIf="selectedTemplate.Channel === 'WA API'" class="px-2 template_btn">
+						<!-- <div *ngIf="selectedTemplate.Channel === 'WA API'" class="px-2 template_btn">
 							<button type="button" class="btn">Button 1</button>
 							<button type="button" class="btn">Button 2</button>
 							<button type="button" class="btn">Button 3</button>
-						  </div>
+						  </div> -->
 							</div>
 							  <div>
 
