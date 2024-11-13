@@ -547,7 +547,7 @@
                     </div>
             
                 <div *ngIf="selectedType === 'image'" class="my-4 sel-type-image">
-                        <input type="file" accept="image/jpeg, image/png, image/jpg" (change)="onFileChange($event)" id="sel-type-image" (click)="$event.target.value=null">
+                        <input type="file" accept="image/jpeg, image/png, image/jpg" (change)="onFileChange($event,'image')" id="sel-type-image" (click)="$event.target.value=null">
                         <div *ngIf="loadingVideo" class="spinner-border" role="status">
                             <span class="sr-only">Loading...</span>
                           </div>
@@ -577,7 +577,7 @@
                           </div> -->
                     <!-- <video [src]="selectedPreview" type="video/mp4" controls #videoPlayer></video> -->
                     </div>
-                    <input type="file" accept="video/mp4" name="video-upload" (change)="onFileChange($event)" id="sel-type-video" (click)="$event.target.value=null">
+                    <input type="file" accept="video/mp4" name="video-upload" (change)="onFileChange($event,'video')" id="sel-type-video" (click)="$event.target.value=null">
                     <label *ngIf="!selectedPreview || loadingVideo" class="type_label" for="sel-type-video"><img src="../../../../assets/img/teambox/add-white.svg" /></label> 
                     <p class="m-0" *ngIf="!selectedPreview || loadingVideo">Upload video <span>Choose MP4 file</span></p> 
                     <img *ngIf="newTemplateForm.get('Links')?.value !== null" src="../../../../assets/img/teambox/video_preview.png" height="32px"/>
@@ -596,7 +596,7 @@
                     <img *ngIf="newTemplateForm.get('Links')?.value !== null" src="../../../../assets/img/settings/doc.svg" />
                     <span class="document-preview" *ngIf="newTemplateForm.get('Links')?.value !== null" >{{ this.fileName }}</span>
                     <span class="document-preview" *ngIf="newTemplateForm.get('Links')?.value !== null && !this.fileName" >Doc Uploaded Through link</span>
-                        <input type="file" accept=".pdf" (change)="onFileChange($event)" name="document-select" id="sel-type-document" (click)="$event.target.value=null">
+                        <input type="file" accept=".pdf" (change)="onFileChange($event,'doc')" name="document-select" id="sel-type-document" (click)="$event.target.value=null">
                         <div *ngIf="newTemplateForm.get('Links')?.value == null">
                         <label class="type_label" for="sel-type-document"><img src="../../../../assets/img/teambox/add-white.svg" /></label>
                         <p class="m-0">Upload document  <span>Choose PDF file</span></p>
@@ -625,7 +625,7 @@
                 <div><a class="ft-12" target="_blank" href="https://developers.facebook.com/docs/whatsapp/message-templates/guidelines#common-rejection-reasons">Learn more about formatting in Message Template Guidelines</a></div>
               
                 <div class="d-flex justify-content-between align-items-center pt-3 pb-2 msg-head">
-                    <h6>Footer Text<span>(Optional)</span></h6><div> <span class="characters-count">{{ getCharacterCount(5) }}</span><span>/60 Characters</span></div>
+                    <h6>Footer Text<span>(Optional)</span></h6><div> <span class="characters-count">{{ newTemplateForm?.get('FooterText')?.value?.length }}</span><span>/60 Characters</span></div>
                 </div>
                 <div class="sel-type-text">
                     <textarea name="text-editor" formControlName="FooterText" maxlength="60"rows="4" placeholder="Enter" (input)="updateCharacterCount($event,5)"></textarea>
@@ -868,7 +868,7 @@
                             <div class="flex-grow-1 ml-2" >
                                 <div class="d-flex justify-content-between align-items-center pt-3  msg-head">
                                     <h6>Website URL</h6>
-                                    <div><span class="characters-count">{{ getCharacterCount(7) }}</span><span>/20 Characters</span>
+                                    <div><span class="characters-count">{{ item?.webUrl?.length }}</span><span>/20 Characters</span>
                                     </div>
                                 </div>
                                 <div class="sel-type-link">
@@ -957,7 +957,7 @@
 
     </div>
             <div class="modal-footer">
-                <button type="button" class="account-btn" [disabled]="newTemplateForm.get('BodyText')?.value==''" [class.disabled]="newTemplateForm.invalid" (click)="previewTemplate()">Next</button>
+                <button type="button" class="account-btn" [disabled]="newTemplateForm.invalid" [class.disabled]="newTemplateForm.invalid" (click)="previewTemplate()">Next</button>
             </div>
         </form>
         </div>
