@@ -1020,9 +1020,9 @@ popupWidth='250px' popupHeight='200px'>
 									</div>
 									<!-- <embed *ngIf="template.media_type === 'document'" [src]="template.Links" type="application/pdf" width="100%" height="400px"> -->
 								  <div [ngClass]="{'templateText': template.media_type === 'text'}" class="template_text">
-									<p *ngIf="template.media_type ==='text' && template.Header"  [innerHTML]="template.Header | sanitizeHtml" class="m-0 font-weight-bold"></p>
+									<p *ngIf="template.media_type ==='text' && template.Header" class="temp-header font-weight-bolder" [innerHTML]="template.Header | sanitizeHtml" class="m-0 font-weight-bold"></p>
 									<p [innerHTML]="template.BodyText| sanitizeHtml"></p>
-									<p *ngIf="template.FooterText" [innerHTML]="template.FooterText | sanitizeHtml"></p>
+									<p *ngIf="template.FooterText" class="temp-footer" [innerHTML]="template.FooterText | sanitizeHtml"></p>
 								  </div>
 								  <div *ngIf="template?.buttons && template?.buttons?.length >0" class="w-70">
 									<div *ngFor="let item of template?.buttons let i = index" >
@@ -1100,11 +1100,10 @@ popupWidth='250px' popupHeight='200px'>
 											<img src="/assets/img/campaign/edit.svg">
 										</p>
 										 <div [ngClass]="{'templateText': selectedTemplate.media_type === 'text'}" class="template_text">
-											<p *ngIf="selectedTemplate.media_type ==='text' && selectedTemplate.Header"  [innerHTML]="selectedTemplate.Header | sanitizeHtml" class="m-0 font-weight-bold"></p>
+											<p *ngIf="selectedTemplate.media_type ==='text' && selectedTemplate.Header" class="temp-header font-weight-bolder" [innerHTML]="selectedTemplate.Header | sanitizeHtml" class="m-0 font-weight-bold"></p>
 											<p [innerHTML]="selectedTemplate.BodyText | sanitizeHtml"></p>
-											<p *ngIf="selectedTemplate.FooterText" [innerHTML]="selectedTemplate.FooterText | sanitizeHtml"></p>
+											<p *ngIf="selectedTemplate.FooterText" class="temp-footer" [innerHTML]="selectedTemplate.FooterText | sanitizeHtml"></p>
 										  </div>
-									</div>
 									<div *ngIf="selectedTemplate?.buttons && selectedTemplate?.buttons?.length >0" class="px-2 w-100">
 										<div *ngFor="let item of selectedTemplate?.buttons let i = index" >
 										<div  class="text-center" *ngIf="item?.buttonText && i<3"><button class="template-btn"  [ngClass]="{'btn-radius': ((selectedTemplate?.buttons?.length-1)== i || (selectedTemplate?.buttons?.length >2 && i==2))}">
@@ -1116,6 +1115,7 @@ popupWidth='250px' popupHeight='200px'>
 											{{(i==2 && selectedTemplate?.buttons?.length>3) ? 'Show All Buttons' : item?.buttonText }}</button> </div>
 										</div>
 									</div>
+								</div>
 								</div>
 
 							</div>
@@ -1385,11 +1385,10 @@ popupWidth='250px' popupHeight='200px'>
 							<img src="/assets/img/campaign/edit.svg">
 						</p> -->
 						 <div [ngClass]="{'templateText': selectedTemplate.media_type === 'text'}" class="template_text">
-							<p *ngIf="selectedTemplate.media_type ==='text' && selectedTemplate.Header" [innerHTML]="selectedTemplate.Header | sanitizeHtml" class="m-0 font-weight-bold"></p>
+							<p *ngIf="selectedTemplate.media_type ==='text' && selectedTemplate.Header" class="temp-header font-weight-bolder" [innerHTML]="selectedTemplate.Header | sanitizeHtml" class="m-0 font-weight-bold"></p>
 							<p [innerHTML]="selectedTemplate.BodyText | sanitizeHtml"></p>
-							<p *ngIf="selectedTemplate.FooterText" [innerHTML]="selectedTemplate.FooterText | sanitizeHtml"></p>
+							<p *ngIf="selectedTemplate.FooterText" class="temp-footer" [innerHTML]="selectedTemplate.FooterText | sanitizeHtml"></p>
 						  </div>
-					</div>
 					<div *ngIf="selectedTemplate?.buttons && selectedTemplate?.buttons?.length >0 && selectedTemplate.Channel === 'WA API'" class="w-100 px-2">
 						<div *ngFor="let item of selectedTemplate?.buttons let i = index" >
 						<div  class="text-center" *ngIf="item?.buttonText && i<3"><button class="template-btn"  [ngClass]="{'btn-radius': ((selectedTemplate?.buttons?.length-1)== i || (selectedTemplate?.buttons?.length >2 && i==2))}">
@@ -1402,6 +1401,7 @@ popupWidth='250px' popupHeight='200px'>
 							{{(i==2 && selectedTemplate?.buttons?.length>3) ? 'Show All Buttons' : item?.buttonText }}</button> </div>
 						</div>
 					</div>
+				</div>
 				</div>
 
 			</div>
