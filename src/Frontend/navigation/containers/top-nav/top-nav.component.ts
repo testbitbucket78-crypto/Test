@@ -65,13 +65,13 @@ export class TopNavComponent implements OnInit {
         // this.profilePicture = (JSON.parse(sessionStorage.getItem('loginDetails')!)).profile_img;
 
         this.profilePicture = this.apiService.getProfilePicture();
-
+        
         this.apiService.profilePicture$.subscribe((pictureUrl) => {
           this.randomNumber = Math.random();
           this.profilePicture = pictureUrl;
         });
-        if(!this.profilePicture) this.profilePicture = (JSON.parse(sessionStorage.getItem('loginDetails')!)).profile_img;
-
+        const check = (JSON.parse(sessionStorage.getItem('loginDetails')!)).profile_img;
+        if(check) this.profilePicture = check;
         const nameParts = this.Name.split(' ');
         const firstName = nameParts[0] || '';
         const lastName = nameParts[1] || '';
