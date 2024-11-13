@@ -255,6 +255,14 @@ export class ManageStorageComponent implements OnInit {
     })
     $("#messagedeleteModal").modal('hide');
   }
+  resetData(){
+    this.message_count = '';
+    this.mediaCount = '';
+    this.combinedCount = '';
+    this.message_size = '';
+    this.totalSize = '';
+    this.combinedSize = '';
+  }
 
   getmanualDelation(){
     let showdeletedata={

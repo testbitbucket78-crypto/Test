@@ -196,9 +196,12 @@ getDynamicFieldData() {
 saveNewCustomField() {
 
   if(this.customFieldForm.valid) {
-    if(this.checkDuplicationInOptions() === true){
-      this.showToaster("Options Cant Be Duplicate or Empty! ","error")
-      return;
+    const typeValue = this.customFieldForm.get('type')?.value;
+    if (typeValue === 'Select' || typeValue === 'Multi Select') {
+      if (this.checkDuplicationInOptions() === true) {
+        this.showToaster("Options Cant Be Duplicate or Empty! ", "error")
+        return;
+      }
     }
     let addCustomFieldData = this.getCustomFieldFormData();
     if(this.selectedCustomField==null) {
