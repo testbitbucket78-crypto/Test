@@ -638,6 +638,8 @@ img.preview_icon {
     margin: 0px;
     font-size: 12px;
     color: #000000;
+    max-height: 20px;
+    overflow: hidden;
 }
 
 .active .contacts_detail .message {
