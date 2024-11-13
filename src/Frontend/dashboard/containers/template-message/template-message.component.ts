@@ -519,9 +519,26 @@ export class TemplateMessageComponent implements OnInit {
       }
     }
 
-    onFileChange(event: any) {
+    onFileChange(event: any,type:any) {
         let files: FileList = event.target.files;
-        this.saveVideoAndDocument(files);
+        if(type=='video'){
+            if(files[0]?.type == 'video/mp4')
+                this.saveVideoAndDocument(files);
+            else
+                this.showToaster('Only MP4 files are allowed!','error')
+        } else if(type=='image'){
+            if(files[0]?.type == 'image/jpeg' || files[0]?.type == 'image/png'  || files[0]?.type == 'image/jpg')
+                this.saveVideoAndDocument(files);
+            else
+                this.showToaster('Only jpeg,png,jpg files are allowed!','error')
+        }
+        else if(type=='doc'){
+            if(files[0]?.type == 'application/pdf')
+                this.saveVideoAndDocument(files);
+            else
+                this.showToaster('Only PDF files are allowed!','error')
+        }
+        
     }
 
     uploadThroughLink() {
@@ -1142,7 +1159,9 @@ insertAtCursor(selectedValue: any) {
 
 		if (isVariableValue) {
 		  this.allVariablesList = this.getVariables(isVariableValue, "{{", "}}");
-          console.log(this.allVariablesList);
+          let dynamicWeb= this.buttonsArray.filter((item:any)=> (item?.type =='Visit Website' && item?.webType !='Static'))
+          if(dynamicWeb?.length > 0)
+            this.allVariablesList.push('{{url}}');
           this.allVariablesList.forEach((item:any)=>{
             this.allVariablesValueList.push({var:item,val:''});
           })
@@ -1303,7 +1322,7 @@ createButton(type: string) {
         case 'Quick Reply':
             return { type: type, buttonText: '' };
         case 'Call Phone':
-            return { type: type, buttonText: '', code: '', phoneNumber: '', displayPhoneNumber: '' };
+            return { type: type, buttonText: '', code: 'IN +91', phoneNumber: '', displayPhoneNumber: '' };
         case 'Copy offer Code':
             return { type: type, buttonText: 'Copy Offer Code', code: '' };
         case 'Complete Flow':
