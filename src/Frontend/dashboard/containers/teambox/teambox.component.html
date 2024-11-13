@@ -1104,7 +1104,6 @@ popupWidth='250px' popupHeight='200px'>
 											<p [innerHTML]="selectedTemplate.BodyText | sanitizeHtml"></p>
 											<p *ngIf="selectedTemplate.FooterText" [innerHTML]="selectedTemplate.FooterText | sanitizeHtml"></p>
 										  </div>
-									</div>
 									<div *ngIf="selectedTemplate?.buttons && selectedTemplate?.buttons?.length >0" class="px-2 w-100">
 										<div *ngFor="let item of selectedTemplate?.buttons let i = index" >
 										<div  class="text-center" *ngIf="item?.buttonText && i<3"><button class="template-btn"  [ngClass]="{'btn-radius': ((selectedTemplate?.buttons?.length-1)== i || (selectedTemplate?.buttons?.length >2 && i==2))}">
@@ -1116,6 +1115,7 @@ popupWidth='250px' popupHeight='200px'>
 											{{(i==2 && selectedTemplate?.buttons?.length>3) ? 'Show All Buttons' : item?.buttonText }}</button> </div>
 										</div>
 									</div>
+								</div>
 								</div>
 
 							</div>
@@ -1389,7 +1389,6 @@ popupWidth='250px' popupHeight='200px'>
 							<p [innerHTML]="selectedTemplate.BodyText | sanitizeHtml"></p>
 							<p *ngIf="selectedTemplate.FooterText" [innerHTML]="selectedTemplate.FooterText | sanitizeHtml"></p>
 						  </div>
-					</div>
 					<div *ngIf="selectedTemplate?.buttons && selectedTemplate?.buttons?.length >0 && selectedTemplate.Channel === 'WA API'" class="w-100 px-2">
 						<div *ngFor="let item of selectedTemplate?.buttons let i = index" >
 						<div  class="text-center" *ngIf="item?.buttonText && i<3"><button class="template-btn"  [ngClass]="{'btn-radius': ((selectedTemplate?.buttons?.length-1)== i || (selectedTemplate?.buttons?.length >2 && i==2))}">
@@ -1402,6 +1401,7 @@ popupWidth='250px' popupHeight='200px'>
 							{{(i==2 && selectedTemplate?.buttons?.length>3) ? 'Show All Buttons' : item?.buttonText }}</button> </div>
 						</div>
 					</div>
+				</div>
 				</div>
 
 			</div>
