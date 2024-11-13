@@ -492,7 +492,7 @@ export class TemplateMessageComponent implements OnInit {
 				this.showToaster('Video / Document File size exceeds 10MB limit','error');
 			}
 
-			else if ((mediaType == 'image/jpg' || mediaType == 'image/jpeg' || mediaType == 'image/png' || mediaType == 'image/webp') && fileSizeInMB > imageSizeInMB) {
+			else if ((mediaType == 'image/jpg' || mediaType == 'image/jpeg' || mediaType == 'image/png') && fileSizeInMB > imageSizeInMB) {
 				this.showToaster('Image File size exceeds 5MB limit','error');
 			}
 
@@ -519,9 +519,26 @@ export class TemplateMessageComponent implements OnInit {
       }
     }
 
-    onFileChange(event: any) {
+    onFileChange(event: any,type:any) {
         let files: FileList = event.target.files;
-        this.saveVideoAndDocument(files);
+        if(type=='video'){
+            if(files[0]?.type == 'video/mp4')
+                this.saveVideoAndDocument(files);
+            else
+                this.showToaster('Only MP4 files are allowed!','error')
+        } else if(type=='image'){
+            if(files[0]?.type == 'image/jpeg' || files[0]?.type == 'image/png'  || files[0]?.type == 'image/jpg')
+                this.saveVideoAndDocument(files);
+            else
+                this.showToaster('Only jpeg,png,jpg files are allowed!','error')
+        }
+        else if(type=='doc'){
+            if(files[0]?.type == 'application/pdf')
+                this.saveVideoAndDocument(files);
+            else
+                this.showToaster('Only PDF files are allowed!','error')
+        }
+        
     }
 
     uploadThroughLink() {
@@ -781,6 +798,7 @@ checkTemplateName(e:any){
         copyTemplateForm.Channel = this.templatesMessageDataById.Channel;
         copyTemplateForm.Category = this.templatesMessageDataById.Category;
         copyTemplateForm.category_id = this.templatesMessageDataById.category_id;
+        copyTemplateForm.categoryChange = this.templatesMessageDataById.categoryChange;
         copyTemplateForm.Language = this.templatesMessageDataById.Language;
         copyTemplateForm.buttons = JSON.stringify(this.templatesMessageDataById.buttons);
         copyTemplateForm.status = 'draft';
@@ -984,7 +1002,12 @@ checkTemplateName(e:any){
         let ID = this.galleryMessageData.ID;
         for (let prop in galleryData) {
             let value = galleryData[prop as keyof typeof galleryData];
-            if (this.newTemplateForm.get(prop)) this.newTemplateForm.get(prop)?.setValue(value);
+            if (this.newTemplateForm.get(prop)){
+                if(prop == 'TemplateName')
+                    this.newTemplateForm.get(prop)?.setValue((value.replaceAll(' ','')).toLowerCase());
+                else
+                    this.newTemplateForm.get(prop)?.setValue(value);
+            }
             this.id = ID;
         }
 
@@ -1130,12 +1153,15 @@ insertAtCursor(selectedValue: any) {
     
 
     previewTemplate() {
+        this.allVariablesValueList =[];
         if(this.validateItems()){
         let isVariableValue:string = this.newTemplateForm.controls.Header.value + this.newTemplateForm.controls.BodyText.value ;
 
 		if (isVariableValue) {
 		  this.allVariablesList = this.getVariables(isVariableValue, "{{", "}}");
-          console.log(this.allVariablesList);
+          let dynamicWeb= this.buttonsArray.filter((item:any)=> (item?.type =='Visit Website' && item?.webType !='Static'))
+          if(dynamicWeb?.length > 0)
+            this.allVariablesList.push('{{url}}');
           this.allVariablesList.forEach((item:any)=>{
             this.allVariablesValueList.push({var:item,val:''});
           })
@@ -1296,7 +1322,7 @@ createButton(type: string) {
         case 'Quick Reply':
             return { type: type, buttonText: '' };
         case 'Call Phone':
-            return { type: type, buttonText: '', code: '', phoneNumber: '', displayPhoneNumber: '' };
+            return { type: type, buttonText: '', code: 'IN +91', phoneNumber: '', displayPhoneNumber: '' };
         case 'Copy offer Code':
             return { type: type, buttonText: 'Copy Offer Code', code: '' };
         case 'Complete Flow':
