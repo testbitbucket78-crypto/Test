@@ -641,9 +641,9 @@
 								  </div>
 								  <!-- <embed *ngIf="template.media_type === 'document'" [src]="template.Links" type="application/pdf" width="100%" height="400px"> -->
 								<div [ngClass]="{'templateText': template.media_type === 'text'}" class="template_text">
-								  <p *ngIf="template.media_type ==='text' && template.Header" [innerHTML]="template.Header | sanitizeHtml" class="m-0 font-weight-bold"></p>
+								  <p *ngIf="template.media_type ==='text' && template.Header" class="temp-header font-weight-bolder" [innerHTML]="template.Header | sanitizeHtml" class="temp-header font-weight-bolder" class="m-0 font-weight-bold"></p>
 								  <p [innerHTML]="template.BodyText | sanitizeHtml"></p>
-								  <p *ngIf="template.FooterText" [innerHTML]="template.FooterText | sanitizeHtml"></p>
+								  <p class="temp-footer"  *ngIf="template.FooterText" [innerHTML]="template.FooterText | sanitizeHtml"></p>
 								</div>
 								<div *ngIf="template?.buttons && template?.buttons?.length >0 && template?.Channel === 'WA API'" class="w-100">
 									<div *ngFor="let item of template?.buttons let i = index" >
@@ -717,9 +717,9 @@
 										  <img src="/assets/img/campaign/edit.svg">
 										</p>
 										 <div [ngClass]="{'templateText': selectedTemplate.media_type === 'text'}" class="template_text">
-										  <p *ngIf="selectedTemplate.media_type ==='text' && selectedTemplate.Header" [innerHTML]="selectedTemplate.Header | sanitizeHtml" class="m-0 font-weight-bold"></p>
+										  <p *ngIf="selectedTemplate.media_type ==='text' && selectedTemplate.Header" [innerHTML]="selectedTemplate.Header | sanitizeHtml" class="temp-header font-weight-bolder" class="m-0 font-weight-bold"></p>
 										  <p [innerHTML]="selectedTemplate.BodyText | sanitizeHtml"></p>
-										  <p *ngIf="selectedTemplate.FooterText" [innerHTML]="selectedTemplate.FooterText | sanitizeHtml"></p>
+										  <p class="temp-footer" *ngIf="selectedTemplate.FooterText" [innerHTML]="selectedTemplate.FooterText | sanitizeHtml"></p>
 										  </div>
 									  </div>
 									  <div *ngIf="selectedTemplate?.buttons && selectedTemplate?.buttons?.length >0 && selectedTemplate?.Channel === 'WA API'" class="w-100 px-2">
@@ -1018,9 +1018,9 @@
 								  <img src="/assets/img/campaign/edit.svg">
 								</p> -->
 								 <div [ngClass]="{'templateText': selectedTemplate.media_type === 'text'}" class="template_text">
-								  <p *ngIf="selectedTemplate.media_type ==='text' && selectedTemplate.Header" [innerHTML]="selectedTemplate.Header | sanitizeHtml" class="m-0 font-weight-bold"></p>
+								  <p *ngIf="selectedTemplate.media_type ==='text' && selectedTemplate.Header" [innerHTML]="selectedTemplate.Header | sanitizeHtml" class="temp-header font-weight-bolder" class="m-0 font-weight-bold"></p>
 								  <p [innerHTML]="selectedTemplate.BodyText | sanitizeHtml"></p>
-								  <p *ngIf="selectedTemplate.FooterText" [innerHTML]="selectedTemplate.FooterText | sanitizeHtml"></p>
+								  <p class="temp-footer" *ngIf="selectedTemplate.FooterText" [innerHTML]="selectedTemplate.FooterText | sanitizeHtml"></p>
 								  </div>
 								  <div *ngIf="selectedTemplate?.buttons && selectedTemplate?.buttons?.length >0 && selectedTemplate?.Channel === 'WA API'" class="w-100">
 									<div *ngFor="let item of selectedTemplate?.buttons let i = index" >

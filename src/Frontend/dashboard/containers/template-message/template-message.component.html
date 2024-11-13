@@ -116,9 +116,9 @@
                                 </div>
                             </div>
                             <div class="message_data" [ngClass]="{'preview': templatesMessageData.media_type === 'text'}">
-                                <span *ngIf="templatesMessageData?.Header" [innerHTML]="templatesMessageData?.Header | sanitizeHtml"></span><br /><br />
+                                <span class="temp-header font-weight-bolder" *ngIf="templatesMessageData?.Header" [innerHTML]="templatesMessageData?.Header | sanitizeHtml"></span><br /><br />
                                 <span *ngIf="templatesMessageData?.BodyText" [innerHTML]="templatesMessageData?.BodyText | sanitizeHtml"></span><br /><br />
-                                <span *ngIf="templatesMessageData?.FooterText" [innerHTML]="templatesMessageData?.FooterText | sanitizeHtml"></span><br />
+                                <span class="temp-footer"  *ngIf="templatesMessageData?.FooterText" [innerHTML]="templatesMessageData?.FooterText | sanitizeHtml"></span><br />
                             </div>
                             <div *ngIf="templatesMessageData?.buttons && templatesMessageData?.buttons?.length >0" class="w-70">
                                 <div *ngFor="let item of templatesMessageData?.buttons let i = index" >
@@ -262,9 +262,9 @@
                 </div>
             </div>
             <div class="message_data" [ngClass]="{'preview': galleryMessageData.media_type === 'text'}">
-                <span [innerHTML]="galleryMessageData?.Header | sanitizeHtml"></span><br /><br />
+                <span class="temp-header font-weight-bolder" [innerHTML]="galleryMessageData?.Header | sanitizeHtml"></span><br /><br />
                 <span [innerHTML]="galleryMessageData?.BodyText | sanitizeHtml"></span><br /><br />
-                <span [innerHTML]="galleryMessageData?.FooterText | sanitizeHtml"></span><br />
+                <span class="temp-footer"  [innerHTML]="galleryMessageData?.FooterText | sanitizeHtml"></span><br />
             </div>
             <!-- <div class="contact-us">
                 Contact Us
