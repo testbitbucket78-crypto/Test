@@ -501,6 +501,21 @@ const sendOtp = async function (req, res) {
 
 
         if (otpFor == 'both') {
+
+            let otpcansendForEmail = await canSendOTP(email_id);
+            let otpCanSendForPhone = await canSendOTP(mobile_number);
+            if (!otpcansendForEmail?.canSend || !otpCanSendForPhone?.canSend) {
+                const remainingTime = otpcansendForEmail.remainingTime ?? otpCanSendForPhone.remainingTime;
+                const message = "Please wait " + remainingTime + " minutes before sending another OTP for this " +
+                (!otpcansendForEmail?.canSend ? "email" : "") +
+                (!otpcansendForEmail?.canSend && !otpCanSendForPhone?.canSend ? " and " : "") +
+                (!otpCanSendForPhone?.canSend ? "phone" : "") + ".";
+                return res.status(403).send({
+                    msg: message,
+                    status: 403 
+                })
+            }
+
             transporter.sendMail(mailOptions, (error, info) => {
                 try {
                     if (error) {
