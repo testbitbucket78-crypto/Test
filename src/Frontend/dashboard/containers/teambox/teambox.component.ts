@@ -1437,7 +1437,10 @@ console.log(getMimeTypePrefix);
 											// if(msgjson.msg_status == 1){
 											// this.getMessageData(this.selectedInteraction,true)
 											// }else{
-												this.getMessageData(this.selectedInteraction,true,true)
+												if(msgjson.msg_id == 'Smartreply')
+												this.getMessageData(this.selectedInteraction,true);
+												else
+													this.getMessageData(this.selectedInteraction,true,true)
 											//}
 										}
 								}
