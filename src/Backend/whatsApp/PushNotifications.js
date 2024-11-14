@@ -1,4 +1,4 @@
-const { fromEvent } = require("rxjs");
+/*const { fromEvent } = require("rxjs");
 var WebSocketClient = require('websocket').client;
   var client = new WebSocketClient();
 
@@ -60,5 +60,67 @@ function NotifyServer(display_phone_number,updatemessage,message,status,msg_stat
   }
 }
 
+
+module.exports = { NotifyServer }; */
+
+
+
+
+
+const { io } = require("socket.io-client");
+
+const socket = io('ws://52.66.172.213:3010/'); 
+
+const dataToSend = {
+  "Ping": {
+    message: "Ping alive from Backend"
+  }
+};
+
+
+socket.on("connect", () => {
+  console.log('Socket.IO Client Connected');
+});
+
+
+socket.on('connect_error', (error) => {
+  console.error('Connection Error:', error);
+});
+
+
+setInterval(() => {
+  socket.emit('ping', dataToSend);
+}, 30000);
+
+
+socket.on('message', (message) => {
+  console.log("Received:", message);
+});
+
+function NotifyServer(display_phone_number, updatemessage, message, status, msg_status, msg_id) {
+  try {
+    let notificationMsg = {};
+    if (updatemessage) {
+      notificationMsg = { displayPhoneNumber: display_phone_number, updateMessage: true };
+    } else if (message) {
+      notificationMsg = {
+        displayPhoneNumber: display_phone_number,
+        message: message,
+        status: status,
+        msg_status: msg_status,
+        msg_id: msg_id
+      };
+    }
+
+    if (!socket.connected) {
+      console.error("Socket is not connected");
+      return;
+    }
+
+    socket.emit('message', notificationMsg);
+  } catch (err) {
+    console.error("Notify Error:", err);
+  }
+}
 
 module.exports = { NotifyServer };

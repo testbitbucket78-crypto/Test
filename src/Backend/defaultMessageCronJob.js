@@ -50,9 +50,9 @@ async function NoCustomerReplyReminder() {
             } else {
               isReplyPause = replyPauseCache.get(message.SP_ID);
             }
-            let latestMessageTime = await db.excuteQuery('select * from Message where interaction_id =? order by created_at desc',[message.InteractionId])
-            logger.info(`isReplyPause NoCustomerReplyReminder , SPID, phone_number,${latestMessageTime.created_at},${message.latestMessageDate} ,${message.Is_disable != 0},${isReplyPause} , ${new Date()} , ${message.SPID} , ${message.customer_phone_number }`)
-            if (isReplyPause && latestMessageTime.created_at < message.latestMessageDate && message.Is_disable != 0) {
+            let latestMessageTime = await db.excuteQuery('select * from Message where interaction_id =?  order by created_at desc limit 1',[message.InteractionId])
+            logger.info(`isReplyPause NoCustomerReplyReminder , SPID, phone_number,${latestMessageTime[0]?.created_at},${message.latestMessageDate} ,${message.Is_disable != 0},${isReplyPause} , ${new Date()} , ${message.SPID} , ${message.customer_phone_number }`)
+            if (isReplyPause && latestMessageTime[0]?.created_at < message.latestMessageDate && message.Is_disable != 0) {
               // Check if extractedMessageCache already has the result for this SP_ID
               if (!extractedMessageCache.has(message.SP_ID)) {
                // message_text = await getExtraxtedMessage(message.message_value, message.SP_ID, message.customerId);

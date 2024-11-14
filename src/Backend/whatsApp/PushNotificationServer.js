@@ -1,4 +1,4 @@
-const express = require('express');
+/*const express = require('express');
 const http = require('http');
 const WebSocket = require('ws');
 
@@ -123,9 +123,9 @@ wss.on('connection', (ws) => {
     })
     clients = tempClients;
     console.log('Client disconnected. Now active clients : ' + Object.keys(clients).length);
-  });*/
+  }); already commented ------ */
 
-
+/*
   ws.on('close', () => {
     let tempClients = {};
     let keysToRemove = []; // To keep track of keys to remove from spAgentMapping
@@ -172,4 +172,100 @@ wss.on('connection', (ws) => {
 const port = 3010;
 server.listen(port, () => {
   console.log(`WebSocket server started on port ${port}`);
+}); */
+
+
+
+
+
+
+
+
+
+
+
+const express = require('express');
+const http = require('http');
+const { Server } = require('socket.io');
+
+const app = express();
+const server = http.createServer(app);
+const io = new Server(server);
+
+let clients = {}; 
+
+function parseJSONObject(jsonString) {
+  try {
+    return JSON.parse(jsonString);
+  } catch (e) {
+    return null;
+  }
+}
+
+
+const pingInterval = 30000; // 30 seconds
+const pingMessage = JSON.stringify({
+  Ping: { message: "Ping alive from Notify server Backend" }
 });
+
+function sendPing() {
+  io.emit('ping', pingMessage);
+}
+setInterval(sendPing, pingInterval);
+
+
+io.on('connection', (socket) => {
+  console.log('A client connected:', socket.id);
+
+  
+  socket.emit('message', {
+    message: "Connected to WebSocket server",
+    timestamp: Date.now()
+  });
+
+
+  socket.on('message', (msg) => {
+    try {
+      const message = typeof msg === 'string' ? msg : msg.toString();
+      const msgjson = parseJSONObject(message) || parseJSONObject(JSON.parse(message));
+
+      if (!msgjson) return;
+
+      // If the message contains a phone number, store it
+      if (msgjson.UniqueSPPhonenumber) {
+        const uniquePhone = msgjson.UniqueSPPhonenumber;
+        clients[socket.id] = uniquePhone;
+
+        console.log(`Client connected with phone: ${uniquePhone}`);
+        console.log('Active clients after connection:', JSON.stringify(clients, null, 2));
+      } else {
+        console.log("Received unrecognized message:", message);
+      }
+    } catch (error) {
+      console.log("Error processing message:", error);
+    }
+  });
+
+  
+  socket.on('disconnect', () => {
+    console.log('A client disconnected:', socket.id);
+
+    //  if the client exists in the `clients` object
+    if (clients[socket.id]) {
+      const disconnectedUniquePhone = clients[socket.id];
+      delete clients[socket.id]; // Remove the client from the active clients list
+
+      console.log(`Client ${disconnectedUniquePhone} disconnected`);
+    }
+
+  
+    console.log('Active clients after disconnection:', JSON.stringify(clients, null, 2));
+  });
+});
+
+
+const port = 3010;
+server.listen(port, () => {
+  console.log(`Socket.IO server started on port ${port}`);
+});
+

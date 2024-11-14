@@ -93,8 +93,8 @@ GROUP BY interaction_id HAVING latestMessageDate <= DATE_SUB(NOW(), INTERVAL 23 
 JOIN Message m ON latestMsg.interaction_id = m.interaction_id AND latestMsg.latestMessageDate = m.created_at
 LEFT JOIN Message m_in ON ic.InteractionId = m_in.interaction_id
 AND m_in.message_direction = 'IN'
-AND m_in.updated_at > latestMsg.latestMessageDate
-LEFT JOIN EndCustomer ec ON ic.customerId = ec.customerId
+AND (m_in.created_at > latestMsg.latestMessageDate OR m_in.created_at > DATE_SUB(NOW(), INTERVAL 23 HOUR)) 
+LEFT JOIN EndCustomer ec ON ic.customerId = ec.customerId 
 left join defaultmessages dm on dm.SP_ID = m.SPID and title='No Customer Reply Reminder' and dm.isDeleted !=1
 left join InteractionMapping imp on imp.InteractionId = latestMsg.interaction_id
 left join WorkingTimeDetails whour on  whour.SP_ID = m.SPID and whour.isDeleted !=1
