@@ -7,7 +7,7 @@ import { io, Socket } from 'socket.io-client';
 })
 export class WebsocketService {
   private socket: Socket | null = null;
-  private readonly url = 'https://notify.stacknize.com/'; // Your server's URL
+  private readonly url = 'https://notify.stacknize.com/'; 
 
   constructor() {}
 
@@ -20,13 +20,13 @@ export class WebsocketService {
     // Initialize the socket connection
     this.socket = io(this.url, {
       transports: ['websocket'],
-      reconnectionAttempts: 5, // Retry 5 times on failure
-      reconnectionDelay: 1000, // Delay between retries in ms
+      reconnectionAttempts: 5, 
+      reconnectionDelay: 1000, 
     });
 
     this.socket.on('connect', () => {
       console.log('Socket.io connected');
-      this.socket?.emit('message', spn); // Send the initial data
+      this.socket?.emit('message', spn); 
       this.startPing();
     });
 
