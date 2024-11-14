@@ -31,6 +31,7 @@ export class RegisterComponent implements OnInit {
     isVerifiedPhone!: boolean;
     isVerifiedEmail!: boolean;
     emailVerified!: boolean;
+    errorMessage: string ='';
     countryCodes = [
         'AD +376', 'AE +971', 'AF +93', 'AG +1268', 'AI +1264', 'AL +355', 'AM +374', 'AO +244', 'AR +54', 'AS +1684',
         'AT +43', 'AU +61', 'AW +297', 'AX +358', 'AZ +994', 'BA +387', 'BB +1 246', 'BD +880', 'BE +32', 'BF +226',
@@ -124,6 +125,16 @@ export class RegisterComponent implements OnInit {
         if(mobile_number) this.VerificationData[1].mobile_number = mobile_number;
         sessionStorage.removeItem('verificationDataEmail');
         sessionStorage.removeItem('verificationDataPhone');
+    }
+   
+    showToaster(message:any,type:any){
+    if(type=='error'){
+        this.errorMessage=message;
+      }
+      setTimeout(() => {
+        this.errorMessage='';
+      }, 5000);
+      
     }
     validateName(control: { value: any; }) {
         const name = control.value;
@@ -247,7 +258,10 @@ formatPhoneNumber() {
                   }
               },
               (error) => {
-                  if(error) {
+                if(error?.status == 403){
+                  this.showToaster(error?.error?.msg,"error")
+                  this.cdr.detectChanges();
+                } else if(error) {
                       alert('! Internal Server Error, Please Try After Sometime');
                   }
               });

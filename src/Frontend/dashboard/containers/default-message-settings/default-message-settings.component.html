@@ -32,10 +32,10 @@
                     <h5 *ngIf="selectedCategory == 3" class="modal-title">Add Message for No Customer Reply Reminder</h5>
                     <h5 *ngIf="selectedCategory == 4" class="modal-title">Add Message for All Agents Offline</h5>
                     <h5 *ngIf="selectedCategory == 5" class="modal-title">Add Message for No Customer Reply Timeout</h5>
-                    <button *ngIf="this.selectedMessageData?.value || this.selectedMessageData?.link" type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
+                    <button *ngIf="this.selectedMessageData?.value || this.selectedMessageData?.link" type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" (click)="closeSideBar()">
                         <img src="../../../../assets/img/teambox/icon-close.svg">
                     </button>
-                    <button (click)="removeValue()" *ngIf="!this.selectedMessageData?.value && !this.selectedMessageData?.link" type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
+                    <button (click)="closeSideBar();removeValue()" *ngIf="!this.selectedMessageData?.value && !this.selectedMessageData?.link" type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
                         <img src="../../../../assets/img/teambox/icon-close.svg">
                     </button>
                 </div>

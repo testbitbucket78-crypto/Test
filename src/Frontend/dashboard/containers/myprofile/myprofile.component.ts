@@ -290,7 +290,7 @@ getUserList() {
             this.apiService.setProfilePicture(this.profilePicture);
             let val:any = JSON.parse(sessionStorage.getItem('loginDetails')!);
             val.profile_img = this.profilePicture + '?' + this.randomNumber;
-            sessionStorage.setItem('loginDetails',JSON.stringify(val));
+            if(this.profilePicture) sessionStorage.setItem('loginDetails',JSON.stringify(val));
           }
         }      
       }

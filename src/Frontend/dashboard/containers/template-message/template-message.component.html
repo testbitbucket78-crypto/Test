@@ -138,8 +138,8 @@
                         </div>
                      </div>
                     <div class="action_section">
-                        <button *ngIf="status!=='draft'" type="button" class="btn" (click)="copyTemplate()"><img src="../../../../assets/img/teambox/copy.svg"></button>
-                        <button *ngIf="status=='draft'" class="titleimg" (click)="copyTemplatesData()" ><img src="../../../../assets/img/edit.png"></button>
+                        <button *ngIf="templatesMessageData?.status!=='draft'" type="button" class="btn" (click)="copyTemplate()"><img src="../../../../assets/img/teambox/copy.svg"></button>
+                        <button *ngIf="templatesMessageData?.status=='draft'" class="titleimg" (click)="copyTemplatesData()" ><img src="../../../../assets/img/edit.png"></button>
                         <button type="button" class="btn" data-bs-toggle="modal" data-bs-target="#deleteModal" ><img src="../../../../assets/img/teambox/delete.svg"></button>
                     </div>
                 </div>

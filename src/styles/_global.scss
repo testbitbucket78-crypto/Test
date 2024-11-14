@@ -70,6 +70,9 @@
 	border-radius: 10px;
 
 	}
+  body{
+    overflow: auto !important;
+  }
 	.toaster p.error{
 	background-color: #E02020;
 	}
