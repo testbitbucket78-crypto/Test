@@ -616,15 +616,17 @@ async function messageThroughselectedchannel(spid, from, type, text, media, phon
 
         if (response?.status == 200) {
           //interaction_id,message_direction,message_text,message_media,Type,SPID,media_type,Agent_id,assignAgent,Message_template_id
-          let saveSendedMessage = await saveMessage(from, spid, response?.message?.messages[0]?.id, message_content, media, type, type, 'WA API', "Official campaign message");
+          let saveSendedMessage = await saveMessage(from, spid, response?.message?.messages[0]?.id, message_content, media, type, type, 'WA API', "Official campaign message",1);
           let saveInCampaignMessage = await sendMessages(from, text, campaignId, message, response.status, text, response.message?.messages[0]?.id, 'WA API', '', '')
         } else {
           console.log("else of OFFICIAL")
+          let saveSendedMessage = await saveMessage(from, spid, '', message_content, media, type, type, 'WA API', "Official campaign message",9);
           let saveInCampaignMessage = await sendMessages(from, text, campaignId, message, response.status, text, response.message?.messages[0]?.id, 'WA API', response.message?.error.code, response.message?.error.error_data.details)
         }
 
         return response;
       } else {
+        let saveSendedMessage = await saveMessage(from, spid, '', message_content, media, type, type, 'WA API', "Official campaign message",9);
         let saveInCampaignMessage = await sendMessages(from, text, campaignId, message, 403, text, '', 'WA API', '', 'This contact is blocked')
       }
     } if (channelType == 'WhatsApp Web' || channelType == 2 || channelType == 'WA Web') {
@@ -632,7 +634,7 @@ async function messageThroughselectedchannel(spid, from, type, text, media, phon
         let clientReady = await isClientActive(spid);
         //console.log("clientReady",clientReady)
         if (clientReady?.status) {
-          let saveSendedMessage = await saveMessage(from, spid, '', message_content, media, type, type, 'WA Web', "Web campaign message")
+          let saveSendedMessage = await saveMessage(from, spid, '', message_content, media, type, type, 'WA Web', "Web campaign message",1)
           let response = await middleWare.postDataToAPI(spid, from, getMediaType, text, media, '', saveSendedMessage);
           console.log(spid, " web response", JSON.stringify(response?.status), response.msgId);
           if (response.status == 200) {
@@ -645,10 +647,13 @@ async function messageThroughselectedchannel(spid, from, type, text, media, phon
           return response;
         }
         else {
+          // show campaign fail if channel is not connected
+          let saveSendedMessage = await saveMessage(from, spid, '', message_content, media, type, type, 'WA Web', "Web campaign message",9)
           console.log("isActiveSpidClient returned false for WhatsApp Web");
           return { status: 404 };
         }
       } else {
+        let saveSendedMessage = await saveMessage(from, spid, '', message_content, media, type, type, 'WA Web', "Web campaign message",9)
         let saveInCampaignMessage = await sendMessages(from, text, campaignId, message, 403, text, '', 'WA Web', '', 'This contact is blocked')
       }
     }
@@ -684,7 +689,9 @@ async function campaignAlertsThroughselectedchannel(spid, from, type, text, medi
     let respose = await middleWare.sendDefultMsg(media, text, getMediaType, metaPhoneNumberID, from, spid);
     console.log("campaignAlerts", media, text, type, metaPhoneNumberID, from, respose)
     if (respose?.status == 200) {
-      let saveSendedMessage = await saveMessage(from, spid, respose?.message?.messages[0]?.id, text, media, type, type, 'WA API', "Official campaign Alert***")
+      let saveSendedMessage = await saveMessage(from, spid, respose?.message?.messages[0]?.id, text, media, type, type, 'WA API', "Official campaign Alert***",1)
+    }else{
+      let saveSendedMessage = await saveMessage(from, spid, respose?.message?.messages[0]?.id, text, media, type, type, 'WA API', "Official campaign Alert***",9)
     }
 
     return respose;
@@ -693,13 +700,14 @@ async function campaignAlertsThroughselectedchannel(spid, from, type, text, medi
     let clientReady = await isClientActive(spid);
     console.log("campaignAlerts ---------- whatsapp web", type, from)
     if (clientReady?.status == 200) {
-      let saveSendedMessage = await saveMessage(from, spid, '', text, media, type, type, 'WA Web', "Web campaign Alert***")
+      let saveSendedMessage = await saveMessage(from, spid, '', text, media, type, type, 'WA Web', "Web campaign Alert***",1)
       let response = await middleWare.postDataToAPI(spid, from, getMediaType, text, media, '', saveSendedMessage);
       //  console.log("campaignAlertsThroughselectedchannel response", JSON.stringify(response?.status));
 
       return response;
 
     } else {
+      let saveSendedMessage = await saveMessage(from, spid, '', text, media, type, type, 'WA Web', "Web campaign Alert***",9)
       console.log("isActiveSpidClient returned false for WhatsApp Web");
       return { status: 404 };
     }
@@ -727,13 +735,13 @@ function determineMediaType(mediaType) {
   }
 }
 
-async function saveMessage(PhoneNo, spid, msgTemplateId, text, media, type, mediaType, channel, fromWhere) {
+async function saveMessage(PhoneNo, spid, msgTemplateId, text, media, type, mediaType, channel, fromWhere,msg_status) {
 
   let InteractionId = await insertInteractionAndRetrieveId(PhoneNo, spid, channel);
   console.log(PhoneNo, fromWhere, spid, "InteractionId InteractionId", InteractionId)
 
   let msgQuery = `insert into Message (interaction_id,message_direction,message_text,message_media,Type,SPID,media_type,Agent_id,assignAgent,msg_status,Message_template_id) values ?`
-  let savedMessage = await db.excuteQuery(msgQuery, [[[InteractionId[0]?.InteractionId, 'Out', text, media, 'text', spid, mediaType, '', -1, 1, msgTemplateId]]]);
+  let savedMessage = await db.excuteQuery(msgQuery, [[[InteractionId[0]?.InteractionId, 'Out', text, media, 'text', spid, mediaType, '', -1, msg_status, msgTemplateId]]]);
   let insertedMsgId = saveMessage?.insertId
 }
 
