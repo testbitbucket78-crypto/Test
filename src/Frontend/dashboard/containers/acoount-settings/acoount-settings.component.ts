@@ -69,7 +69,7 @@ export class AcoountSettingsComponent implements OnInit {
 	phone_no_id = 0;
 	WABA_Id = 0;
   healthStatusData: healthStatusData[] = [];
-
+  addButtonDisabled: boolean = false;
   conversationType!:string;
   phoneType!:string;
 
@@ -201,6 +201,7 @@ getQualityRating() {
       if (res?.status === 200) {
         if (res?.response) {
          this.mapHealthStatus(res?.response);
+         this.addButtonDisabled = true;
         }
       }
       else {
