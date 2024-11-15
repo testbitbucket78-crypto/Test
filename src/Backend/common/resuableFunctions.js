@@ -265,10 +265,10 @@ AND SP_ID = ?;`;
         throw error; 
     }
   }
-async function updateHealthStatus(phone_number_id, quality_rating, entered_by, fb_verification) {
-  const query = 'UPDATE businessHealth SET quality_rating = ?, entered_by = ?, fb_verification = ? WHERE phone_number_id = ?';
+async function updateHealthStatus(phone_number_id, quality_rating, entered_by, fb_verification,spid) {
+  const query = 'UPDATE businessHealth SET quality_rating = ?, entered_by = ?, fb_verification = ? WHERE phone_number_id = ? and SP_ID = ?';
   try {
-    let result = await db.excuteQuery(query, [quality_rating, entered_by, fb_verification, phone_number_id]);
+    let result = await db.excuteQuery(query, [quality_rating, entered_by, fb_verification, phone_number_id, spid]);
     if (!result || result?.affectedRows === 0) {
       console.error('No record updated. Check if phone_number_id exists.');
   } else {
