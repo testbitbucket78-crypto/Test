@@ -760,13 +760,19 @@ const addUser = async (req, res) => {
         var credentials = await db.excuteQuery(val.findEmail, [req.body.email_id])
 
         if (credentials?.length > 0 || isNameExist?.length > 0 || isPhoneExist?.length > 0) {
-            let msg = "This email ID is already used by another user, please use a unique email";
-            if (isNameExist?.length > 0 && isNameExist[0].name.toLowerCase() == isExistName) {
-                msg = "User with this name already exist, please use a unique name";
-            }
-            if (isPhoneExist?.length > 0 && isPhoneExist[0].registerPhone == registerPhone) {
-                msg = "User with this phone number already exist, please use a unique phone number";
-            }
+            //let msg = "This email ID is already used by another user, please use a unique email";
+            let msg = `User with this ${credentials?.length > 0 ? "Email" : ""}${
+                credentials?.length > 0 && (isNameExist?.length > 0 || isPhoneExist?.length > 0) ? ", " : ""
+            }${isNameExist?.length > 0 ? `User Name` : ""}${
+                isNameExist?.length > 0 && isPhoneExist?.length > 0 ? ", " : ""
+            }${isPhoneExist?.length > 0 ? "Phone No." : ""} already exists. Please use a unique value.`;
+
+            // if (isNameExist?.length > 0 && isNameExist[0].name.toLowerCase() == isExistName) {
+            //     msg = "User with this name already exist, please use a unique name";
+            // }
+            // if (isPhoneExist?.length > 0 && isPhoneExist[0].registerPhone == registerPhone) {
+            //     msg = "User with this phone number already exist, please use a unique phone number";
+            // }
             res.status(409).send({
                 msg: msg,
                 status: 409

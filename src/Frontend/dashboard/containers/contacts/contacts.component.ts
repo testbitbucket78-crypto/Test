@@ -1075,8 +1075,8 @@ deletContactByID(data: any) {
     let fields:any[] =[];
     this.arrHideColumn.forEach((item)=>{
       if(item.hide){
-        fields.push(item?.field)
-      }
+      fields.push(item?.field)
+    }
     })
 
     const fieldToHeaderMap:any = {};
@@ -1089,7 +1089,26 @@ deletContactByID(data: any) {
       fields.forEach(field => {
           const headerName = fieldToHeaderMap[field]; 
           if (obj.hasOwnProperty(field) && headerName) {
-              newObj[headerName] = obj[field];
+            if(field =="displayPhoneNumber"){
+              newObj[headerName] = obj['Phone_number'];
+            }else{
+              let types = this.filteredCustomFields.filter((item:any)=>item.ActuallName == field)
+              if(types && types[0]?.type =='Select'){
+                let selectName =  obj[field].split(':');
+                newObj[headerName] = selectName[1] ?  selectName[1] : '';
+              } else if(types && types[0]?.type =='Multi Select'){
+                let selectName =  obj[field].split(',');
+                  let names ='';
+                  selectName.forEach((it:any)=>{
+                    let name = it.split(':');
+
+                    names = (names ? names + ',' :'') + (name[1] ?  name[1] : '');
+                  })
+                  newObj[headerName] = names;
+              }else{
+                newObj[headerName] = obj[field];
+              }
+            }
           }
       });
       return newObj;

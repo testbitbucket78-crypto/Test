@@ -507,9 +507,9 @@ It is determined by a combination of user feedback signals like blocks, reports 
 								<img *ngIf="template.media_type=='image'" class="template_img" src="{{template.Links}}">
 								<div *ngIf="!template.media_type" class="template_img_placeholder"></div>
 								<div class="template_text">
-									<p *ngIf="template?.Header" [innerHTML]="template?.Header | sanitizeHtml" class="m-0 font-weight-bold"></p>
+									<p *ngIf="template?.Header" class="temp-header font-weight-bolder" [innerHTML]="template?.Header | sanitizeHtml" class="m-0 font-weight-bold"></p>
 									<div [innerHTML]="template.BodyText | sanitizeHtml"> </div>
-									<p *ngIf="template?.FooterText" [innerHTML]="template?.FooterText | sanitizeHtml" class="footer"></p>
+									<p class="temp-footer"  *ngIf="template?.FooterText" [innerHTML]="template?.FooterText | sanitizeHtml" class="footer"></p>
 								  </div>
 								  <div *ngIf="template?.buttons && template?.buttons?.length >0 && template?.Channel === 'WA API'" class="w-100">
 									<div *ngFor="let item of template?.buttons let i = index" >
@@ -551,9 +551,21 @@ It is determined by a combination of user feedback signals like blocks, reports 
 						            <div *ngIf="!selectedTemplate?.media_type" class="template_img_placeholder"></div>
 								</div>
 								<div class="template_text">
-									<p *ngIf="selectedTemplate?.Header" [innerHTML]="selectedTemplate?.Header | sanitizeHtml" class="name"></p>
+									<p *ngIf="selectedTemplate?.Header" class="temp-header font-weight-bolder" [innerHTML]="selectedTemplate?.Header | sanitizeHtml" class="name"></p>
 									<p [innerHTML]="selectedTemplate?.BodyText | sanitizeHtml" class="description"></p>
-									<p *ngIf="selectedTemplate?.FooterText" [innerHTML]="selectedTemplate?.FooterText | sanitizeHtml" class="footer"></p>
+									<p class="temp-footer" *ngIf="selectedTemplate?.FooterText" [innerHTML]="selectedTemplate?.FooterText | sanitizeHtml" class="footer"></p>
+								</div>
+								<div *ngIf="selectedTemplate?.buttons && selectedTemplate?.buttons?.length >0 && selectedTemplate?.Channel === 'WA API'" class="w-100">
+									<div *ngFor="let item of selectedTemplate?.buttons let i = index" >
+									<div  class="text-center" *ngIf="item?.buttonText && i<3"><button class="template-btn"  [ngClass]="{'btn-radius': ((selectedTemplate?.buttons?.length-1)== i || (selectedTemplate?.buttons?.length >2 && i==2))}">
+										<img class="btn-preview-img" *ngIf="item.type =='Quick Reply' && !(i==2 && selectedTemplate?.buttons?.length>3)" src="../../../../assets/img/settings/reply-arrow.svg"> 
+									<img class="btn-preview-img" *ngIf="item.type =='Call Phone' && !(i==2 && selectedTemplate?.buttons?.length>3)" src="../../../../assets/img/settings/phone-call.svg"> 
+									<img class="btn-preview-img" *ngIf="item.type =='Copy offer Code' && !(i==2 && selectedTemplate?.buttons?.length>3)" src="../../../../assets/img/settings/copy.svg"> 
+									<img class="btn-preview-img" *ngIf="item.type =='Visit Website' && !(i==2 && selectedTemplate?.buttons?.length>3)" src="../../../../assets/img/settings/open-in-new.svg"> 
+									<img class="btn-preview-img" *ngIf="item.type =='Complete Flow' && ! (i==2 && selectedTemplate?.buttons?.length>3)" src="../../../../assets/img/settings/form.svg"> 
+									<img class="btn-preview-img" *ngIf="(i==2 && selectedTemplate?.buttons?.length>3)" src="../../../../assets/img/settings/options-lines.svg"> 
+										{{(i==2 && selectedTemplate?.buttons?.length>3) ? 'Show All Buttons' : item?.buttonText }}</button> </div>
+									</div>
 								</div>
 		
 							</div>
@@ -632,9 +644,21 @@ It is determined by a combination of user feedback signals like blocks, reports 
 								</div>
 								<!-- <div><img src="/assets/img/teambox/edit-icon.svg"></div> -->
 								<div class="template_text">
-									<p *ngIf="selectedTemplate?.TemplateName" [innerHTML]="selectedTemplate?.TemplateName |sanitizeHtml" class="name"></p>
+									<p *ngIf="selectedTemplate?.TemplateName"  [innerHTML]="selectedTemplate?.TemplateName |sanitizeHtml" class="name"></p>
 									<p [innerHTML]="selectedTemplate?.BodyText |sanitizeHtml" class="description"></p>
-									<p *ngIf="selectedTemplate?.FooterText" [innerHTML]="selectedTemplate?.FooterText |sanitizeHtml" class="footer"></p>
+									<p class="temp-footer" *ngIf="selectedTemplate?.FooterText" [innerHTML]="selectedTemplate?.FooterText |sanitizeHtml" class="footer"></p>
+								</div>
+								<div *ngIf="selectedTemplate?.buttons && selectedTemplate?.buttons?.length >0 && selectedTemplate?.Channel === 'WA API'" class="w-100">
+									<div *ngFor="let item of selectedTemplate?.buttons let i = index" >
+									<div  class="text-center" *ngIf="item?.buttonText && i<3"><button class="template-btn"  [ngClass]="{'btn-radius': ((selectedTemplate?.buttons?.length-1)== i || (selectedTemplate?.buttons?.length >2 && i==2))}">
+										<img class="btn-preview-img" *ngIf="item.type =='Quick Reply' && !(i==2 && selectedTemplate?.buttons?.length>3)" src="../../../../assets/img/settings/reply-arrow.svg"> 
+									<img class="btn-preview-img" *ngIf="item.type =='Call Phone' && !(i==2 && selectedTemplate?.buttons?.length>3)" src="../../../../assets/img/settings/phone-call.svg"> 
+									<img class="btn-preview-img" *ngIf="item.type =='Copy offer Code' && !(i==2 && selectedTemplate?.buttons?.length>3)" src="../../../../assets/img/settings/copy.svg"> 
+									<img class="btn-preview-img" *ngIf="item.type =='Visit Website' && !(i==2 && selectedTemplate?.buttons?.length>3)" src="../../../../assets/img/settings/open-in-new.svg"> 
+									<img class="btn-preview-img" *ngIf="item.type =='Complete Flow' && ! (i==2 && selectedTemplate?.buttons?.length>3)" src="../../../../assets/img/settings/form.svg"> 
+									<img class="btn-preview-img" *ngIf="(i==2 && selectedTemplate?.buttons?.length>3)" src="../../../../assets/img/settings/options-lines.svg"> 
+										{{(i==2 && selectedTemplate?.buttons?.length>3) ? 'Show All Buttons' : item?.buttonText }}</button> </div>
+									</div>
 								</div>
 		
 							</div>
@@ -670,7 +694,19 @@ It is determined by a combination of user feedback signals like blocks, reports 
 							<div class="template_text">
 								<p *ngIf="selectedTemplate?.TemplateName" [innerHTML]="selectedTemplate?.TemplateName |sanitizeHtml" class="name"></p>
 								<p [innerHTML]="selectedTemplate?.BodyText |sanitizeHtml" class="description"></p>
-								<p *ngIf="selectedTemplate?.FooterText" [innerHTML]="selectedTemplate?.FooterText |sanitizeHtml" class="footer"></p>
+								<p class="temp-footer" *ngIf="selectedTemplate?.FooterText" [innerHTML]="selectedTemplate?.FooterText |sanitizeHtml" class="footer"></p>
+							</div>
+							<div *ngIf="selectedTemplate?.buttons && selectedTemplate?.buttons?.length >0 && selectedTemplate?.Channel === 'WA API'" class="w-100">
+								<div *ngFor="let item of selectedTemplate?.buttons let i = index" >
+								<div  class="text-center" *ngIf="item?.buttonText && i<3"><button class="template-btn"  [ngClass]="{'btn-radius': ((selectedTemplate?.buttons?.length-1)== i || (selectedTemplate?.buttons?.length >2 && i==2))}">
+									<img class="btn-preview-img" *ngIf="item.type =='Quick Reply' && !(i==2 && selectedTemplate?.buttons?.length>3)" src="../../../../assets/img/settings/reply-arrow.svg"> 
+								<img class="btn-preview-img" *ngIf="item.type =='Call Phone' && !(i==2 && selectedTemplate?.buttons?.length>3)" src="../../../../assets/img/settings/phone-call.svg"> 
+								<img class="btn-preview-img" *ngIf="item.type =='Copy offer Code' && !(i==2 && selectedTemplate?.buttons?.length>3)" src="../../../../assets/img/settings/copy.svg"> 
+								<img class="btn-preview-img" *ngIf="item.type =='Visit Website' && !(i==2 && selectedTemplate?.buttons?.length>3)" src="../../../../assets/img/settings/open-in-new.svg"> 
+								<img class="btn-preview-img" *ngIf="item.type =='Complete Flow' && ! (i==2 && selectedTemplate?.buttons?.length>3)" src="../../../../assets/img/settings/form.svg"> 
+								<img class="btn-preview-img" *ngIf="(i==2 && selectedTemplate?.buttons?.length>3)" src="../../../../assets/img/settings/options-lines.svg"> 
+									{{(i==2 && selectedTemplate?.buttons?.length>3) ? 'Show All Buttons' : item?.buttonText }}</button> </div>
+								</div>
 							</div>
 	
 						</div>

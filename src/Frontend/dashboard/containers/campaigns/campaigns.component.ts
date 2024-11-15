@@ -2607,7 +2607,7 @@ console.log(this.allTemplatesMain);
 	  }
 	  
 	  selectTemplate(template: any) {
-		this.selectedTemplate = template;
+		this.selectedTemplate = JSON.parse(JSON.stringify(template));
 		console.log(template, '----template');
 		let header = template?.Header ? template?.Header : '';
 		var str = header + template.BodyText;
