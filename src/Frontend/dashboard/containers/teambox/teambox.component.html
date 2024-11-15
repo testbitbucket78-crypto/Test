@@ -725,7 +725,7 @@ popupWidth='250px' popupHeight='200px'>
 						
 						<div class="attached_media_list" *ngFor="let file of selectedInteraction.allmedia;let m = index">
 				
-							<p *ngIf="file.message_media!=='0'" class="preview_media">				
+							<p *ngIf="(file?.message_media != '0' && file?.message_media != 'text')" class="preview_media">				
 									<img class="preview_icon" *ngIf="file.media_type == 'video/mp4'"
 										src="/assets/img/teambox/video_preview.png"
 										(click)="downloadFile(file.message_media)">
