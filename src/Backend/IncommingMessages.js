@@ -363,7 +363,8 @@ async function iterateSmartReplies(replymessage, phone_number_id, from, sid, cus
           message.agentId,
           message.interactionId,
           message.testMessage,
-          message.media_type
+          message.media_type,
+          display_phone_number
         );
         // console.log(type,"SreplyThroughselectedchannel response:", respose);
       }
@@ -891,7 +892,7 @@ async function messageThroughselectedchannel(spid, from, type, text, media, phon
   }
 }
 
-async function SreplyThroughselectedchannel(spid, from, type, text, media, phone_number_id, channelType, agentId, interactionId, testMessage, media_type) {
+async function SreplyThroughselectedchannel(spid, from, type, text, media, phone_number_id, channelType, agentId, interactionId, testMessage, media_type,display_phone_number) {
   if (channelType == 'WhatsApp Official' || channelType == 1 || channelType == 'WA API') {
     let response = false;
     let myUTCString = new Date().toUTCString();
@@ -903,6 +904,7 @@ async function SreplyThroughselectedchannel(spid, from, type, text, media, phone
 
       let messageValu = [[spid, 'text', "", interactionId, agentId, 'Out', testMessage, (media ? media : 'text'), media_type, sReply.message.messages[0].id, "", time, time, "", -2, 1]]
       let saveMessage = await db.excuteQuery(insertMessageQuery, [messageValu]);
+      notify.NotifyServer(display_phone_number, false, interactionId, 0, 'Out', 'Smartreply')
       response = true;
     }
     // console.log("sreply", response)
@@ -916,6 +918,7 @@ async function SreplyThroughselectedchannel(spid, from, type, text, media, phone
       const time = moment.utc(myUTCString).format('YYYY-MM-DD HH:mm:ss');
       let messageValu = [[spid, 'text', "", interactionId, agentId, 'Out', testMessage, (media ? media : 'text'), media_type, "", "", time, time, "", -2, 1]]
       let saveMessage = await db.excuteQuery(insertMessageQuery, [messageValu]);
+      notify.NotifyServer(display_phone_number, false, interactionId, 0, 'Out', 'Smartreply')
       return true;
     }
     return false;

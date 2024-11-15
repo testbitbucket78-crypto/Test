@@ -192,8 +192,8 @@ const app = express();
 const server = http.createServer(app);
 const io = new Server(server);
 
-let clients = {}; 
-
+let clients = {};
+let spAgentMapping = {}; 
 function parseJSONObject(jsonString) {
   try {
     return JSON.parse(jsonString);
@@ -217,7 +217,7 @@ setInterval(sendPing, pingInterval);
 io.on('connection', (socket) => {
   console.log('A client connected:', socket.id);
 
-  
+
   socket.emit('message', {
     message: "Connected to WebSocket server",
     timestamp: Date.now()
@@ -226,8 +226,8 @@ io.on('connection', (socket) => {
 
   socket.on('message', (msg) => {
     try {
-      const message = typeof msg === 'string' ? msg : msg.toString();
-      const msgjson = parseJSONObject(message) || parseJSONObject(JSON.parse(message));
+      const message = typeof msg === 'string' ? msg : JSON.stringify(msg); // Convert msg to a string if it's not already
+      const msgjson = parseJSONObject(message);
 
       if (!msgjson) return;
 
@@ -238,15 +238,33 @@ io.on('connection', (socket) => {
 
         console.log(`Client connected with phone: ${uniquePhone}`);
         console.log('Active clients after connection:', JSON.stringify(clients, null, 2));
+      } else if (msgjson.displayPhoneNumber) {
+        // Handle messages intended for specific SPIDs
+        const targetPhone = msgjson.displayPhoneNumber;
+
+        if (spAgentMapping[targetPhone]) {
+          spAgentMapping[targetPhone].forEach((uniqueSPPhone) => {
+            const targetSocketId = Object.keys(clients).find(
+              id => clients[id] === uniqueSPPhone
+            );
+            if (targetSocketId) {
+              io.sockets.sockets.get(targetSocketId)?.emit('message', msgjson);
+            } else {
+              console.log(`Socket for ${uniqueSPPhone} is undefined`);
+            }
+          });
+        }
       } else {
-        console.log("Received unrecognized message:", message);
+        console.log("Received unrecognized message:", message); //Received unrecognized message: {"displayPhoneNumber":"911724610945","message":2873,"status":"Out","msg_status":1,"msg_id":0}
+        // Received unrecognized message: {"displayPhoneNumber":"911724610945","message":2873,"status":"Out","msg_status":2,"msg_id":0}
+
       }
     } catch (error) {
       console.log("Error processing message:", error);
     }
   });
 
-  
+
   socket.on('disconnect', () => {
     console.log('A client disconnected:', socket.id);
 
@@ -258,7 +276,7 @@ io.on('connection', (socket) => {
       console.log(`Client ${disconnectedUniquePhone} disconnected`);
     }
 
-  
+
     console.log('Active clients after disconnection:', JSON.stringify(clients, null, 2));
   });
 });

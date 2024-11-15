@@ -27,7 +27,7 @@ async function NoCustomerReplyReminder() {
   try {
     let defaultMessage = await db.excuteQuery(settingVal.CustomerReplyReminder, [lostMessageTimeGap]);
    
-    logger.info(`NoCustomerReplyReminder, ${defaultMessage?.length , new Date()}`)
+    logger.info(`NoCustomerReplyReminder, ${defaultMessage?.length} , ${new Date()}`)
     if (defaultMessage?.length > 0) {
       // Caches to avoid redundant calculations for the same SP_ID
       const replyPauseCache = new Map();
@@ -50,9 +50,11 @@ async function NoCustomerReplyReminder() {
             } else {
               isReplyPause = replyPauseCache.get(message.SP_ID);
             }
-            let latestMessageTime = await db.excuteQuery('select * from Message where interaction_id =?  order by created_at desc limit 1',[message.InteractionId])
+            let latestMessageTime = await db.excuteQuery('select * from Message where interaction_id =? and message_direction=? and system_message_type_id=? order by created_at desc limit 1',[message.InteractionId,'Out',5]);
+            let latestOutMessageTime = latestMessageTime?.length >0 ? latestMessageTime[0]?.created_at : null;
+           // console.log("*****",latestMessageTime,"NoCustomerReplyReminder",latestOutMessageTime , (latestOutMessageTime < message.latestMessageDate))
             logger.info(`isReplyPause NoCustomerReplyReminder , SPID, phone_number,${latestMessageTime[0]?.created_at},${message.latestMessageDate} ,${message.Is_disable != 0},${isReplyPause} , ${new Date()} , ${message.SPID} , ${message.customer_phone_number }`)
-            if (isReplyPause && latestMessageTime[0]?.created_at < message.latestMessageDate && message.Is_disable != 0) {
+            if (isReplyPause && latestOutMessageTime < message.latestMessageDate && message.Is_disable != 0) {
               // Check if extractedMessageCache already has the result for this SP_ID
               if (!extractedMessageCache.has(message.SP_ID)) {
                // message_text = await getExtraxtedMessage(message.message_value, message.SP_ID, message.customerId);
@@ -65,7 +67,7 @@ async function NoCustomerReplyReminder() {
                 message_text = extractedMessageCache.get(message.SP_ID);
               }
              
-              logger.info(`send no NoCustomerReplyReminder start  ${new Date()}   ,  ${message.SPID},  ${message.customer_phone_number}`)
+              //logger.info(`send no NoCustomerReplyReminder start  ${new Date()}   ,  ${message.SPID},  ${message.customer_phone_number}`)
               // Send the message via the selected channel
               let response = await messageThroughselectedchannel(
                 message.SPID,
