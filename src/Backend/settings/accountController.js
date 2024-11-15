@@ -143,7 +143,7 @@ const getQualityRating = async (req, res) => {
         const spid = req?.params?.spid;
 
 
-        if (isInvalidParam(phoneNo) || isInvalidParam(WABA_Id) || isInvalidParam(metaPhoneNumberID)) {
+        if (isInvalidParam(phoneNo) || isInvalidParam(WABA_Id) || isInvalidParam(metaPhoneNumberID) || isInvalidParam(spid)) {
             return res?.status(200).json({
                 response : {
                     message: 'Missing or invalid required parameters: phoneNo, WABA_ID, and/or phone_number_id',
@@ -152,7 +152,7 @@ const getQualityRating = async (req, res) => {
             });
         }
 
-        let check = await db.excuteQuery(val.selectHealthStatus, [metaPhoneNumberID]);
+        let check = await db.excuteQuery(val.selectHealthStatus, [metaPhoneNumberID, spid]);
         let result;
         let result2;
         if (check.length > 0) {
@@ -161,7 +161,7 @@ const getQualityRating = async (req, res) => {
         }
         if (!check.length) {
             let result = await middleWare.getQualityRating(metaPhoneNumberID, spid);
-            let result2 = await middleWare.getVerificationStatus(WABA_Id. spid);
+            let result2 = await middleWare.getVerificationStatus(WABA_Id, spid);
 
             const quality_rating = result?.response?.quality_rating;
             const phone_number_id = result?.response?.id;
@@ -169,7 +169,7 @@ const getQualityRating = async (req, res) => {
             const fbVerification = result2?.response?.business_verification_status;
 
             if (quality_rating && phone_number_id && messaging_limit_tier) {
-                result = await db.excuteQuery(val.insertHealthStatus, [phone_number_id, phoneNo, messaging_limit_tier, quality_rating, new Date(), fbVerification]);
+                result = await db.excuteQuery(val.insertHealthStatus, [phone_number_id, phoneNo, messaging_limit_tier, quality_rating, new Date(), fbVerification, spid]);
             }
 
         }
@@ -183,13 +183,13 @@ const getQualityRating = async (req, res) => {
             const fbVerification = result2?.response?.business_verification_status;
 
             if (quality_rating && phone_number_id && messaging_limit_tier) {
-                await commonFun.updateHealthStatus(phone_number_id, quality_rating, 'Scheduler', fbVerification);
+                await commonFun.updateHealthStatus(phone_number_id, quality_rating, 'Scheduler', fbVerification, spid);
             }
 
         }
 
         let response;
-        let healthStatus = await db.excuteQuery(val.selectHealthStatus, [metaPhoneNumberID]);
+        let healthStatus = await db.excuteQuery(val.selectHealthStatus, [metaPhoneNumberID, spid]);
         if (healthStatus.length) response = mapResponseData(healthStatus[0]);
         return res?.status(200).json(response);
     } catch (err) {

@@ -439,8 +439,8 @@ var isEnableQuery=`UPDATE APIToken SET isEnable=? ,updated_at=? where id=?`
 var insertIPAddress=`INSERT INTO APIIPAddress (spid,token_id,IPAddress,created_at,is_Deleted) values ?`
 
 //____________________________________BusinessHealth____________________________//
-var insertHealthStatus = `INSERT INTO businessHealth (phone_number_id, channel_phone_number, balance_limit_today, quality_rating, created_at, fb_verification) VALUES (?, ?, ?, ?, ?, ?)`;
-var selectHealthStatus = `SELECT * FROM businessHealth WHERE phone_number_id = ?`
+var insertHealthStatus = `INSERT INTO businessHealth (phone_number_id, channel_phone_number, balance_limit_today, quality_rating, created_at, fb_verification, SP_ID) VALUES (?, ?, ?, ?, ?, ?, ?)`;
+var selectHealthStatus = `SELECT * FROM businessHealth WHERE phone_number_id = ? and SP_ID = ?`
 
 module.exports = {
     host, user, password, database, insertCompanyDetails, insertlocalDetails, insertBillingDetails, selectCompanyDetails, selectlocalDetails, selectBillingDetails,
