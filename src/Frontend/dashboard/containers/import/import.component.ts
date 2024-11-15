@@ -370,7 +370,7 @@ export class ImportComponent implements OnInit {
 			const mapping = row[j];
 			if (mapping?.ActuallName !== undefined) {
 			const formData = {
-			  displayName: mapping?.displayName,
+			  displayName: this._settingsService.trimText(mapping?.displayName),
 			  ActuallName: mapping?.ActuallName
 			};
 			rowData.push(formData);
