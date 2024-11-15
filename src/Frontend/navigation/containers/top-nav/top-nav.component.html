@@ -15,9 +15,14 @@
         <img  routerLink="/teambox" title="Teambox" src="../../../../assets/img/top-nav/chat-icon.svg">
         <div>
         <img *ngIf="profilePicture" class="profilepic" src="{{profilePicture}}?{{randomNumber}}" title="Profile" (click)="toggleShowProfile()"/>
-        <div *ngIf="!profilePicture" class="pick">
+        <!-- <div *ngIf="!profilePicture" class="pick">
           <img  src="../../../../assets/img/top-nav/myprofile.svg" title="Profile" (click)="toggleShowProfile()">
+        </div> -->
+        <div>
+          <div class="d-flex user-img align-items-center">
+          <div class="img" *ngIf="!profilePicture" (click)="toggleShowProfile()">{{_settingsService.getInitials(Name)}}</div>
         </div>
+      </div>
         
       </div>
     </ul>
