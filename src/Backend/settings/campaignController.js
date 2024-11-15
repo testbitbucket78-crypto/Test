@@ -730,7 +730,7 @@ const addTemplate = async (req, res) => {
                     }else{
                         statusCode = 400;
                     }
-                }else if (isTemplate == 0 || isCopied == 1) {
+                }else if (isTemplate == 0 || isCopied == 1  || status == 'draft') {
                     let temValues = [[TemplateName, Channel, Category, Language, media_type, Header, BodyText, image, FooterText, JSON.stringify(template_json), req.body.status, spid, created_By, created_at, isTemplate, industry, category_id,'',buttons,'','UNKNOWN']]
                     addedtem = await db.excuteQuery(val.addTemplates, [temValues])
                 }
