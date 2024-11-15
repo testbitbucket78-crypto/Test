@@ -5,6 +5,9 @@
       <img src="assets/img/img-reg.png" class="float-left">
       <span class="copyright-text">&copy;Copyright 2023</span>
     </div>
+    <div class="toaster" (click)="errorMessage=''">
+      <p *ngIf="errorMessage" class="error">{{errorMessage}}</p>
+    </div>
       <div class="col-lg-7 register-cip ">
   
         <div class="">

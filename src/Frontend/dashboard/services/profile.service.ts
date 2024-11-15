@@ -20,6 +20,7 @@ export class ProfileService {
   //  update Profile Picture globally
 
    setProfilePicture(pictureUrl: string): void {
+    if(!pictureUrl) return;
     this.profilePictureSubject.next(pictureUrl);
     sessionStorage.setItem('profilePicture', pictureUrl);
   }

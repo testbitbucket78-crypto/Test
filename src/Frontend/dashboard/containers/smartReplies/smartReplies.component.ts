@@ -1529,6 +1529,8 @@ stopPropagation(event: Event) {
 				this.modalService.dismissAll(smartreplysuccess);
 				this.reloadCurrentRoute();
 				this.isEditAssigned = false;
+				this.removeModalBackdrop()
+				this.getReplies();
 			  }
 			},
 			(error: any) => {
@@ -1546,8 +1548,8 @@ stopPropagation(event: Event) {
 	}
 	reloadCurrentRoute() {
 		this.router.navigateByUrl('/reload', { skipLocationChange: true }).then(() => {
-		  this.router.navigate([decodeURI(this.location.path())]);
-		});
+			this.router.navigate([decodeURI(this.location.path())]);
+		  });
 	  }
 	private modalRef!: NgbModalRef;
 	smartReplySuccess(smartreplysuccess: any) {
@@ -1915,6 +1917,8 @@ stopPropagation(event: Event) {
 					this.modalService.dismissAll(smartreplysuccess);
 					this.location.replaceState(this.location.path());
 				    this.reloadCurrentRoute();
+					this.removeModalBackdrop();
+					this.getReplies();
 				   }
 				},
 				(error: any) => {

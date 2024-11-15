@@ -542,4 +542,7 @@ trimContent(text: string, characterCount: number): string {
   }
   return trimmedText;
 }
+closeSideBar(){
+  this.showSideBar = false;
+}
 }
