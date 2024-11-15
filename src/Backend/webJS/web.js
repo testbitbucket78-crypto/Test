@@ -377,7 +377,7 @@ function ClientInstance(spid, authStr, phoneNo) {
 
               const message_time = moment.utc(d).format('YYYY-MM-DD HH:mm:ss');
               console.log(repliedMessage?._data?.id?.id, "reply ___________________", message.body)
-              let campaignRepliedQuery = `UPDATE CampaignMessages set status=4 ,RepliedTime =${message_time} where phone_number =${repliedNumber} and (status = 3 OR status =2) and SP_ID = ${spid} AND messageTemptateId = '${repliedMessage?._data?.id?.id}'`
+              let campaignRepliedQuery = `UPDATE CampaignMessages set status=4 ,RepliedTime ='${message_time}' where phone_number =${repliedNumber} and (status = 3 OR status =2) and SP_ID = ${spid} AND messageTemptateId = '${repliedMessage?._data?.id?.id}'`
               console.log(campaignRepliedQuery)
               let campaignReplied = await db.excuteQuery(campaignRepliedQuery, [])
               console.log(repliedNumber, spid, "campaignReplied*******", campaignReplied?.affectedRows)
@@ -935,7 +935,7 @@ async function saveInMessages(message) {
       //  console.log(media.data)
     }
 
-    if (from != 'status@broadcast') {
+    if (from != 'status@broadcast' && from !== '0' && Type !== 'e2e_notification') {
 
       // let myUTCString = new Date().toUTCString();
       // const created_at = moment.utc(myUTCString).format('YYYY-MM-DD HH:mm:ss');
@@ -1042,7 +1042,7 @@ async function savelostChats(message, spPhone, spid, currentIndex, lastIndex) {
 
 
 
-      if (from != 'status@broadcast') {
+      if (from != 'status@broadcast'  && from !== '0' && Type !== 'e2e_notification') {
         console.log("endCustomer", endCustomer, "Type", Type, "message_text", message_text, "****************", currentIndex, lastIndex, message.timestamp)
         //  console.log("lost messages time", d)
         let saveMessage = await saveIncommingMessages(message_direction, from, message_text, phone_number_id, display_phone_number, endCustomer, message_text, message_media, "Message_template_id", "Quick_reply_id", Type, "ExternalMessageId", contactName, ackStatus, message_time, countryCode);
@@ -1194,10 +1194,18 @@ async function saveIncommingMessages(message_direction, from, firstMessage, phon
     // message_text = " "
     var media_type = 'application/pdf'
   }
+
+  let countryCodeObj;
+  if (phoneNo) {
+    countryCodeObj = mapCountryCode.mapCountryCode(phoneNo);
+  }
+    let EcPhonewithoutcountryCode = countryCodeObj?.localNumber; 
+    countryCode = countryCodeObj?.country + " +" + countryCodeObj?.countryCode;
+
   if ((message_text.length > 0 || message_media.length > 0) && Type != 'e2e_notification') {
-    let query = "CALL webhook_2(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)"
+     let query = "CALL webhook_2(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)"
     // console.log([phoneNo, message_direction, message_text, message_media, Message_template_id, Quick_reply_id, Type, ExternalMessageId, display_phone_number, contactName, media_type, ackStatus, 'WA Web', timestramp, countryCode])
-    var saveMessage = await db.excuteQuery(query, [phoneNo, message_direction, message_text, message_media, Message_template_id, Quick_reply_id, Type, ExternalMessageId, display_phone_number, contactName, media_type, ackStatus, 'WA Web', timestramp, countryCode]);
+    var saveMessage = await db.excuteQuery(query, [phoneNo, message_direction, message_text, message_media, Message_template_id, Quick_reply_id, Type, ExternalMessageId, display_phone_number, contactName, media_type, ackStatus, 'WA Web', timestramp, countryCode, EcPhonewithoutcountryCode]);
     notify.NotifyServer(display_phone_number, true);
     //console.log("====SAVED MESSAGE====" + " replyValue length  " + JSON.stringify(saveMessage), "****", phoneNo, phone_number_id);
 

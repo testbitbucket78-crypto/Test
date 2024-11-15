@@ -877,10 +877,13 @@ checkTemplateName(e:any){
                 for(let item of this.buttonsArray){
                     let btn ={};
                 if(item?.type =='Call Phone') {
+                    let formattedPhoneNumber = parsePhoneNumberFromString(`${item.code} ${item.phoneNumber}`);
+                    let phoneNumber = formattedPhoneNumber ? formattedPhoneNumber.formatInternational().replace(/[\s+]/g, ''): '';
+                    console.log(phoneNumber)
                     btn = {
                         type: 'PHONE_NUMBER',
                         text: item.buttonText,
-                        phone_number: item.phone_number,
+                        phone_number: phoneNumber,
                     };
                 }
                 else if(item?.type =='Quick Reply') {
