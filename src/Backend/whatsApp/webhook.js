@@ -338,7 +338,15 @@ async function saveIncommingMessages(from, firstMessage, phone_number_id, displa
   if (message_text.length > 0 || message_media.length > 0) {
     let myUTCString = new Date().toUTCString();
     const created_at = moment.utc(myUTCString).format('YYYY-MM-DD HH:mm:ss');
-    var saveMessage = await db.excuteQuery(process.env.query, [phoneNo, 'IN', message_text, message_media, Message_template_id, Quick_reply_id, Type, ExternalMessageId, display_phone_number, contactName, media_type, 'NULL', 'WA API', message_time, countryCode]);
+
+    let countryCodeObj;
+    if (phoneNo) {
+      countryCodeObj = mapCountryCode.mapCountryCode(phoneNo);
+    }
+       let EcPhonewithoutcountryCode = countryCodeObj?.localNumber; 
+       countryCode = countryCodeObj?.country + " +" + countryCodeObj?.countryCode;
+
+    var saveMessage = await db.excuteQuery(process.env.query, [phoneNo, 'IN', message_text, message_media, Message_template_id, Quick_reply_id, Type, ExternalMessageId, display_phone_number, contactName, media_type, 'NULL', 'WA API', message_time, countryCode, EcPhonewithoutcountryCode]);
 
     console.log("====SAVED MESSAGE====" + " replyValue length  " + JSON.stringify(saveMessage));
     logger.info(`====SAVED MESSAGE====   ${JSON.stringify(saveMessage)}`)
