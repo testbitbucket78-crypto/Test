@@ -790,7 +790,7 @@ const addUser = async (req, res) => {
             var addNotifyFourstatus = await db.excuteQuery(val.addNotification,[[[User?.insertId,4,1,0,0,created_at]]])
             
             const referer = req.get('Referer')
-            let loginPageURL = referer+"login";
+            let loginPageURL = referer+"#/login";
             inviteUser(email_id, name, SP_ID, registerPhone, RoleName, randomstring,loginPageURL)
             res.status(200).send({
                 msg: "user details has been sent",
@@ -986,7 +986,7 @@ const editUser = async (req, res) => {
         if (currentUser?.length > 0 && currentUser[0].IsActive == 3) {
             const hash = await bcrypt.hash(randomstring, 10);
             const referer = req.get('Referer')
-            let loginPageURL = referer+"login";
+            let loginPageURL = referer+"#/login";
             inviteUser(email_id, name, SP_ID, registerPhone, RoleName, randomstring,loginPageURL);
             let updatePass = await db.excuteQuery('UPDATE user set password=? where uid=? ', [hash, uid])
         }

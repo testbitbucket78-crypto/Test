@@ -586,12 +586,14 @@ async function isClientActive(spid) {
 
 async function isContactBlocked(phone, spid) {
   try {
-    let contactDetails = await db.excuteQuery('select * from EndCustomer where  Phone_Number =? AND SP_ID=? and isBlocked !=1', [phone, spid])
+    let contactDetails = await db.excuteQuery('select * from EndCustomer where  Phone_Number =? AND SP_ID=? and isDeleted !=1', [phone, spid])
     // if contact not block then length greater thea zero
-    if (contactDetails?.length > 0) {
-      return false;
-    } else {
+    if (contactDetails?.length > 0 && contactDetails[0]?.isBlocked == 1) {
+      logger.info(`Is isBlocked ${phone} ,${spid} ${new Date()}`);
       return true;
+    } else {
+      logger.info(`Not isBlocked ${phone} ,${spid} ${new Date()}`);
+      return false;
     }
   } catch (err) {
     logger.error(`isContactBlocked  error ${err}`)
@@ -631,6 +633,7 @@ async function messageThroughselectedchannel(spid, from, type, text, media, phon
       }
     } if (channelType == 'WhatsApp Web' || channelType == 2 || channelType == 'WA Web') {
       if (!isBlockedContact) {
+        logger.info(`Not BlockedContact ${from} ,${spid} ${new Date()}`);
         let clientReady = await isClientActive(spid);
         //console.log("clientReady",clientReady)
         if (clientReady?.status) {
@@ -653,6 +656,7 @@ async function messageThroughselectedchannel(spid, from, type, text, media, phon
           return { status: 404 };
         }
       } else {
+        logger.info(`Block ${from} ,${spid} ${new Date()}`);
         let saveSendedMessage = await saveMessage(from, spid, '', message_content, media, type, type, 'WA Web', "Web campaign message",9)
         let saveInCampaignMessage = await sendMessages(from, text, campaignId, message, 403, text, '', 'WA Web', '', 'This contact is blocked')
       }

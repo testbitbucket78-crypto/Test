@@ -169,7 +169,7 @@ const register = async function (req, res) {
             sendMessage(data)
 
             const referer = req.get('Referer')
-            let loginPageURL = referer+"login";
+            let loginPageURL = referer+"#/login";
             
             var mailOptions = {
                 from: val.email, // Use the sender's email address here
@@ -258,7 +258,7 @@ const forgotPassword = async (req, res) => {
             // Encrypt
             var cipherdata = CryptoJS.AES.encrypt(JSON.stringify(uid), 'secretkey123').toString();
             const referer = req.get('Referer')
-            let ResetPageURL = referer+`reset-password?uid=${cipherdata}`;
+            let ResetPageURL = referer+`#/reset-password?uid=${cipherdata}`;
             
             var mailOptions = {
                 from: val.email,
