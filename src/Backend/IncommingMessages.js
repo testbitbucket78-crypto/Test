@@ -31,15 +31,15 @@ WHERE M.interaction_id = ?
   AND I.interaction_status = 'Open'
   AND I.is_deleted != 1 order by M.updated_at desc limit 1`;
 
-  checkResolve = `select * from Interaction where  InteractionId = ? and SP_ID=? and IsTemporary !=1 and is_deleted !=1 `
+checkResolve = `select * from Interaction where  InteractionId = ? and SP_ID=? and IsTemporary !=1 and is_deleted !=1 `
 var insertMessageQuery = "INSERT INTO Message (SPID,Type,ExternalMessageId, interaction_id, Agent_id, message_direction,message_text,message_media,media_type,Message_template_id,Quick_reply_id,created_at,updated_at,system_message_type_id,assignAgent,msg_status) VALUES ?";
 
-async function sReplyActionOnlostMessage(message_text, sid, channelType, phone_number_id, from, custid, agid, newId,display_phone_number) {
+async function sReplyActionOnlostMessage(message_text, sid, channelType, phone_number_id, from, custid, agid, newId, display_phone_number) {
   try {
     var replymessage = await matchSmartReplies(message_text, sid, channelType)
     if (replymessage?.length > 0) {
-console.log("replymessage",replymessage)
-      let isSReply = await iterateSmartReplies(replymessage, phone_number_id, from, sid, custid, agid, newId, channelType,display_phone_number);
+      console.log("replymessage", replymessage)
+      let isSReply = await iterateSmartReplies(replymessage, phone_number_id, from, sid, custid, agid, newId, channelType, display_phone_number);
       console.log("iterateSmartReplies replymessage.length", isSReply)
       return isSReply;
     }
@@ -49,8 +49,8 @@ console.log("replymessage",replymessage)
   }
 }
 
-async function getOutMessageAfterIn(newId,sid){
-  try{
+async function getOutMessageAfterIn(newId, sid) {
+  try {
     let isAgentReplyQuery = `SELECT * 
 FROM Message m
 JOIN Interaction i ON m.interaction_id = i.InteractionId
@@ -59,20 +59,20 @@ WHERE m.interaction_id = ?
   AND m.message_direction = 'Out' and m.msg_status != 9 AND m.msg_status != 10
   AND m.created_at >= i.updated_at;`
 
-  let isAgentReply = await db.excuteQuery(isAgentReplyQuery,[newId,sid]);
-  if(isAgentReply?.length){
-   return false;
-  }
-  return true;
+    let isAgentReply = await db.excuteQuery(isAgentReplyQuery, [newId, sid]);
+    if (isAgentReply?.length) {
+      return false;
+    }
+    return true;
 
-  }catch(err){
-    console.log("Err getOutMessageAfterIn",err)
+  } catch (err) {
+    console.log("Err getOutMessageAfterIn", err)
   }
 }
 
 
 
-async function autoReplyDefaultAction(isAutoReply, autoReplyTime, isAutoReplyDisable, message_text, phone_number_id, contactName, from, sid, custid, agid, replystatus, newId, msg_id, newlyInteractionId, channelType, isContactPreviousDeleted, inactiveAgent, inactiveTimeOut, newiN,display_phone_number) {
+async function autoReplyDefaultAction(isAutoReply, autoReplyTime, isAutoReplyDisable, message_text, phone_number_id, contactName, from, sid, custid, agid, replystatus, newId, msg_id, newlyInteractionId, channelType, isContactPreviousDeleted, inactiveAgent, inactiveTimeOut, newiN, display_phone_number) {
   console.log("isAutoReply, autoReplyTime, isAutoReplyDisable")
   console.log(isAutoReply, autoReplyTime, isAutoReplyDisable)
   let assignAgent = await db.excuteQuery('select * from InteractionMapping where InteractionId =? order by created_at desc limit 1', [newId]);
@@ -82,42 +82,42 @@ async function autoReplyDefaultAction(isAutoReply, autoReplyTime, isAutoReplyDis
   console.log(timeoutDuration, inactiveTimeOut)
   // Set timeout to trigger inactivity check after the specified period
 
-  let isChatReplied = await getOutMessageAfterIn(newId,sid);
-  if(isChatReplied == true){
+  let isChatReplied = await getOutMessageAfterIn(newId, sid);
+  if (isChatReplied == true) {
     setTimeout(() => {
       inActiveAgentTimeOut(inactiveAgent, inactiveTimeOut, sid, newId, agid);
     }, timeoutDuration)
   }
 
   if (newiN == 'If not exist') {
-    let defautWlcMsg = await getWelcomeGreetingData(sid, msg_id, newId, phone_number_id, from, channelType, agid, isContactPreviousDeleted,custid);
+    let defautWlcMsg = await getWelcomeGreetingData(sid, msg_id, newId, phone_number_id, from, channelType, agid, isContactPreviousDeleted, custid);
     console.log("defautWlcMsg", defautWlcMsg)
   }
   if (isAutoReply != 1) {
-    let sendSReply = await sendSmartReply(message_text, phone_number_id, contactName, from, sid, custid, agid, replystatus, newId, msg_id, newlyInteractionId, channelType, isContactPreviousDeleted, newiN,display_phone_number)
+    let sendSReply = await sendSmartReply(message_text, phone_number_id, contactName, from, sid, custid, agid, replystatus, newId, msg_id, newlyInteractionId, channelType, isContactPreviousDeleted, newiN, display_phone_number)
     return sendSReply;
   }
   else {
 
     let currentTime = new Date(); // new Date(new Date().toUTCString().replace('GMT',''))
 
-   
+
     //const autoReplyVal = new Date(currentTime)   // autoReplyTime when auto reply start
     console.log("currentTime,autoReplyVal ,autoReplyTime", currentTime, autoReplyTime)
-    console.log( (autoReplyTime <= currentTime),"(autoReplyTime != null && (autoReplyTime <= currentTime) && autoReplyTime != undefined ",(autoReplyTime != null && (autoReplyTime <= currentTime) && autoReplyTime != undefined ))
-    if (autoReplyTime != null && (autoReplyTime <= currentTime) && autoReplyTime != undefined && autoReplyTime !=0 && isAutoReplyDisable != 1) {
-      let sendSReply = await sendSmartReply(message_text, phone_number_id, contactName, from, sid, custid, agid, replystatus, newId, msg_id, newlyInteractionId, channelType, isContactPreviousDeleted, newiN,display_phone_number)
+    console.log((autoReplyTime <= currentTime), "(autoReplyTime != null && (autoReplyTime <= currentTime) && autoReplyTime != undefined ", (autoReplyTime != null && (autoReplyTime <= currentTime) && autoReplyTime != undefined))
+    if (autoReplyTime != null && (autoReplyTime <= currentTime) && autoReplyTime != undefined && autoReplyTime != 0 && isAutoReplyDisable != 1) {
+      let sendSReply = await sendSmartReply(message_text, phone_number_id, contactName, from, sid, custid, agid, replystatus, newId, msg_id, newlyInteractionId, channelType, isContactPreviousDeleted, newiN, display_phone_number)
       return sendSReply;
     }
     else if (isAutoReplyDisable == 1 && ((assignAgent?.length == 0 || (assignAgent[0].AgentId == -1 && interactionStatus[0]?.interaction_status == 'Resolved')) || (assignAgent[0].AgentId == -1 && interactionStatus[0]?.interaction_status == 'Open'))) {
 
       const currentTime = new Date();
       const autoReplyVal = new Date(autoReplyTime)   // autoReplyTime when auto reply start
-      let sendSReply = await sendSmartReply(message_text, phone_number_id, contactName, from, sid, custid, agid, replystatus, newId, msg_id, newlyInteractionId, channelType, isContactPreviousDeleted ,newiN,display_phone_number)
+      let sendSReply = await sendSmartReply(message_text, phone_number_id, contactName, from, sid, custid, agid, replystatus, newId, msg_id, newlyInteractionId, channelType, isContactPreviousDeleted, newiN, display_phone_number)
       return sendSReply;
 
-    }else if(autoReplyTime == '0000-00-00 00:00:00' &&  isAutoReplyDisable != 1){
-      let sendSReply = await sendSmartReply(message_text, phone_number_id, contactName, from, sid, custid, agid, replystatus, newId, msg_id, newlyInteractionId, channelType, isContactPreviousDeleted, newiN,display_phone_number)
+    } else if (autoReplyTime == '0000-00-00 00:00:00' && isAutoReplyDisable != 1) {
+      let sendSReply = await sendSmartReply(message_text, phone_number_id, contactName, from, sid, custid, agid, replystatus, newId, msg_id, newlyInteractionId, channelType, isContactPreviousDeleted, newiN, display_phone_number)
       return sendSReply;
     }
 
@@ -147,7 +147,7 @@ async function inActiveAgentTimeOut(inactiveAgent, inactiveTimeOut, sid, newId, 
   }
 }
 
-async function sendSmartReply(message_text, phone_number_id, contactName, from, sid, custid, agid, replystatus, newId, msg_id, newlyInteractionId, channelType, isContactPreviousDeleted, newiN,display_phone_number) {
+async function sendSmartReply(message_text, phone_number_id, contactName, from, sid, custid, agid, replystatus, newId, msg_id, newlyInteractionId, channelType, isContactPreviousDeleted, newiN, display_phone_number) {
   console.log("***********", replystatus, "____Send SMART REPLIESS______")
   const currentTime = new Date();
   const replystatus1 = new Date(replystatus);  //replystatus  is pauseTill 
@@ -159,7 +159,7 @@ async function sendSmartReply(message_text, phone_number_id, contactName, from, 
   // }
   // if (replystatus == null || replystatus == undefined || replystatus == "") {
   // console.log("replystatus == null" + message_text)
-  var response = await getSmartReplies(message_text, phone_number_id, contactName, from, sid, custid, agid, replystatus, newId, msg_id, newlyInteractionId, channelType, isContactPreviousDeleted, newiN,display_phone_number);
+  var response = await getSmartReplies(message_text, phone_number_id, contactName, from, sid, custid, agid, replystatus, newId, msg_id, newlyInteractionId, channelType, isContactPreviousDeleted, newiN, display_phone_number);
   console.log("____Send SMART REPLIESS______" + response);
   return response;
   // }
@@ -234,27 +234,27 @@ WHERE ? LIKE CONCAT('%', t3.Keyword , '%')AND t1.SP_ID=? and t1.ID=?  and (t1.is
   return reply;
 }
 
-async function getSmartReplies(message_text, phone_number_id, contactname, from, sid, custid, agid, replystatus, newId, msg_id, newlyInteractionId, channelType, isContactPreviousDeleted, newiN,display_phone_number) {
+async function getSmartReplies(message_text, phone_number_id, contactname, from, sid, custid, agid, replystatus, newId, msg_id, newlyInteractionId, channelType, isContactPreviousDeleted, newiN, display_phone_number) {
   try {
     console.log("in side getSmartReplies method", message_text, phone_number_id, contactname, from, sid, custid, agid, replystatus, newId, msg_id, newlyInteractionId, channelType)
 
 
     var replymessage = await matchSmartReplies(message_text, sid, channelType)
-   
-    let defultOutOfOfficeMsg = await workingHoursDetails(sid, phone_number_id, from, msg_id, newId, channelType, agid,custid,replymessage);
-    console.log("defultOutOfOfficeMsg",defultOutOfOfficeMsg)
+
+    let defultOutOfOfficeMsg = await workingHoursDetails(sid, phone_number_id, from, msg_id, newId, channelType, agid, custid, replymessage);
+    console.log("defultOutOfOfficeMsg", defultOutOfOfficeMsg)
     if (replymessage?.length > 0) {
 
-      let isSReply = await iterateSmartReplies(replymessage, phone_number_id, from, sid, custid, agid, newId, channelType,display_phone_number);
+      let isSReply = await iterateSmartReplies(replymessage, phone_number_id, from, sid, custid, agid, newId, channelType, display_phone_number);
       console.log("iterateSmartReplies replymessage.length", isSReply)
       return isSReply;
     } else if (defultOutOfOfficeMsg === false && replymessage?.length <= 0) {
-      let getOutOfOfficeResult = await getOutOfOfficeMsg(sid, phone_number_id, from, msg_id, newId, channelType, agid,custid);
+      let getOutOfOfficeResult = await getOutOfOfficeMsg(sid, phone_number_id, from, msg_id, newId, channelType, agid, custid);
       console.log("getOutOfOfficeResult", defultOutOfOfficeMsg, "getOutOfOfficeResult", getOutOfOfficeResult)
       return 'false' // getOutOfOfficeResult;  comment this is because routing rules only disable for smartreply or flow
     } else if ((defultOutOfOfficeMsg === 'Agents Offline' || defultOutOfOfficeMsg === 'working hour and holidays') && replymessage?.length <= 0) {
       return 'false';    //changed this is because routing rules only disable for smartreply or flow
-    } else if (defultOutOfOfficeMsg === true && replymessage?.length <= 0)  {
+    } else if (defultOutOfOfficeMsg === true && replymessage?.length <= 0) {
       return 'false';
     }
 
@@ -265,7 +265,7 @@ async function getSmartReplies(message_text, phone_number_id, contactname, from,
   }
 }
 
-async function iterateSmartReplies(replymessage, phone_number_id, from, sid, custid, agid, newId, channelType,display_phone_number) {
+async function iterateSmartReplies(replymessage, phone_number_id, from, sid, custid, agid, newId, channelType, display_phone_number) {
   try {
     var messageToSend = [];
     var isActionAddded = -1;
@@ -276,7 +276,16 @@ async function iterateSmartReplies(replymessage, phone_number_id, from, sid, cus
       var actionId = message.ActionID;  // Assuming the 'ActionID' property contains the action ID
       var msgVar = message.message_variables;
       var media_type = message.media_type;
-      let PerformingActions = await PerformingSReplyActions(actionId, value, sid, custid, agid, newId,display_phone_number);
+
+      var isTemplate = message?.isTemplate
+      var laungage = message?.laungage
+      var templateName = message?.templateName
+      var headerVar = message?.headerVar
+      var bodyVar = message?.bodyVar
+
+
+
+      let PerformingActions = await PerformingSReplyActions(actionId, value, sid, custid, agid, newId, display_phone_number);
       let content = await removeTags.removeTagsFromMessages(testMessage);
       if (actionId == 2) {
         isActionAddded = isActionAddded + 1;
@@ -314,6 +323,11 @@ async function iterateSmartReplies(replymessage, phone_number_id, from, sid, cus
           const replacement = result && result[placeholder] !== undefined ? result[placeholder] : null;
           content = content.replace(`{{${placeholder}}}`, replacement);
         });
+
+        let bodyVar
+        if(results && results.length) {
+          bodyVar = results.map(item => Object.values(item)[0]);
+        }
       }
 
       var type = determineMediaType(media_type);
@@ -334,7 +348,12 @@ async function iterateSmartReplies(replymessage, phone_number_id, from, sid, cus
         "agentId": agid,
         "interactionId": newId,
         "testMessage": testMessage,
-        "media_type": media_type
+        "media_type": media_type,
+        "isTemplate": isTemplate,
+        "laungage": laungage,
+        "templateName": templateName,
+        "headerVar": headerVar,
+        "bodyVar": bodyVar
       };
       console.log(message.replyId, "replysms", relyMsg);
       messageToSend.push(relyMsg);
@@ -364,7 +383,12 @@ async function iterateSmartReplies(replymessage, phone_number_id, from, sid, cus
           message.interactionId,
           message.testMessage,
           message.media_type,
-          display_phone_number
+          display_phone_number,
+          message.isTemplate,
+          message.laungage,
+          message.templateName,
+          message.headerVar,
+          message.bodyVar
         );
         // console.log(type,"SreplyThroughselectedchannel response:", respose);
       }
@@ -516,7 +540,7 @@ function determineMediaType(mediaType) {
   }
 }
 
-async function getExtraxtedMessage(message_text,SPID,customerId) {
+async function getExtraxtedMessage(message_text, SPID, customerId) {
   try {
     let content = await removeTags.removeTagsFromMessages(message_text);
     // Parse the message template to get placeholders
@@ -539,7 +563,7 @@ async function getExtraxtedMessage(message_text,SPID,customerId) {
   }
 }
 
-async function PerformingSReplyActions(actionId, value, sid, custid, agid, newId,display_phone_number) {
+async function PerformingSReplyActions(actionId, value, sid, custid, agid, newId, display_phone_number) {
   // Perform actions based on the Action ID
   switch (actionId) {
     case 1:
@@ -547,7 +571,7 @@ async function PerformingSReplyActions(actionId, value, sid, custid, agid, newId
 
       break;
     case 2:
-      let assignActionRes = await assignAction(value, agid, newId, custid,sid,display_phone_number)
+      let assignActionRes = await assignAction(value, agid, newId, custid, sid, display_phone_number)
       break;
     case 3:
       let removedTagRes = await removeTag(value, custid);
@@ -569,23 +593,23 @@ async function PerformingSReplyActions(actionId, value, sid, custid, agid, newId
 
 
 
-async function assignAction(value, agid, newId, custid,sid,display_phone_number) {
+async function assignAction(value, agid, newId, custid, sid, display_phone_number) {
   //console.log(`Performing action 1 for  Assign Conversation: ${value}`);
   is_active = 1
   var values = [[is_active, newId, value, agid]]
   let activeUser = await isAgentActive(value)
-  console.log(activeUser,"activeUser")
-  if(activeUser){
-    console.log("iffffffffff","activeUser")
+  console.log(activeUser, "activeUser")
+  if (activeUser) {
+    console.log("iffffffffff", "activeUser")
     var assignCon = await db.excuteQuery(updateInteractionMapping, [values])
-  }else{
-    defaultRoutingRules(sid, newId, agid, custid,display_phone_number)
+  } else {
+    defaultRoutingRules(sid, newId, agid, custid, display_phone_number)
   }
-  
+
   // console.log("assignAction",assignCon)
 }
 
-async function defaultRoutingRules(sid, newId, agid, custid,display_phone_number) {
+async function defaultRoutingRules(sid, newId, agid, custid, display_phone_number) {
   console.log("RoutingRules ------", sid, newId, agid, custid)
   let RoutingRulesVaues = await Routing.AssignToContactOwner(sid, newId, agid, custid)  //CALL Default Routing Rules
   console.log("RoutingRulesVaues", RoutingRulesVaues)
@@ -595,8 +619,8 @@ async function defaultRoutingRules(sid, newId, agid, custid,display_phone_number
     let myUTCString = new Date().toUTCString();
     const utcTimestamp = moment.utc(myUTCString).format('YYYY-MM-DD HH:mm:ss');
     const currentAssignedUser = await commonFun.currentlyAssigned(newId);
-    const check = await commonFun.notifiactionsToBeSent(currentAssignedUser,2);
-    if(check){
+    const check = await commonFun.notifiactionsToBeSent(currentAssignedUser, 2);
+    if (check) {
       let notifyvalues = [[sid, 'New Chat Assigned to You', 'A new Chat has been Assigned to you', agid, 'Routing rules', currentAssignedUser, utcTimestamp]];
       let mentionRes = await db.excuteQuery(`INSERT INTO Notification(sp_id,subject,message,sent_to,module_name,uid,created_at) values ?`, [notifyvalues]);
     }
@@ -665,7 +689,7 @@ async function removeTag(value, custid) {
 
 
 
-async function getWelcomeGreetingData(sid, msg_id, newlyInteractionId, phone_number_id, from, channelType, agid, isContactPreviousDeleted,custid) {
+async function getWelcomeGreetingData(sid, msg_id, newlyInteractionId, phone_number_id, from, channelType, agid, isContactPreviousDeleted, custid) {
   try {
     let response = false;
     var wlcMessage = await db.excuteQuery(defaultMessageQuery, [sid, 'Welcome Greeting']);
@@ -676,8 +700,8 @@ async function getWelcomeGreetingData(sid, msg_id, newlyInteractionId, phone_num
       console.log("welcome messageInterval?.length", messageInterval?.length)
       if (messageInterval?.length <= 1) {
         // console.log("messageInterval" ,newId)
-        let message_text = await getExtraxtedMessage(wlcMessage[0]?.value,sid,custid)
-        let result = await messageThroughselectedchannel(sid, from, wlcMessage[0].message_type, message_text, wlcMessage[0].link, phone_number_id, channelType, agid, newlyInteractionId, wlcMessage[0].message_type,wlcMessage[0]?.value)
+        let message_text = await getExtraxtedMessage(wlcMessage[0]?.value, sid, custid)
+        let result = await messageThroughselectedchannel(sid, from, wlcMessage[0].message_type, message_text, wlcMessage[0].link, phone_number_id, channelType, agid, newlyInteractionId, wlcMessage[0].message_type, wlcMessage[0]?.value)
         // console.log("result---------", result)
         response = result
         let myUTCString = new Date().toUTCString();
@@ -693,31 +717,31 @@ async function getWelcomeGreetingData(sid, msg_id, newlyInteractionId, phone_num
 }
 
 
-async function getOutOfOfficeMsg(sid, phone_number_id, from, msg_id, newId, channelType, agid,custid) {
+async function getOutOfOfficeMsg(sid, phone_number_id, from, msg_id, newId, channelType, agid, custid) {
   try {
     let result = 'false';
 
     var outOfOfficeMessage = await db.excuteQuery(defaultMessageQuery, [sid, 'Out of Office']);
-   //  console.log(outOfOfficeMessage)
+    //  console.log(outOfOfficeMessage)
     // resolve condition
     if (outOfOfficeMessage.length > 0 && outOfOfficeMessage[0].Is_disable == 1) {
       console.log("outOfOfficeMessage Is_disable")
       let messageInterval = await db.excuteQuery(msgBetweenOneHourQuery, [newId, 2])
-      console.log(messageInterval.length,"messageInterval.length",messageInterval[0]?.updated_at >= messageInterval[0]?.updateTime,messageInterval[0]?.updated_at ,messageInterval[0]?.updateTime)
-      let resolvedInteraction = await db.excuteQuery(checkResolve,[newId,sid]);
-    // if(resolvedInteraction[0]?.interaction_status != 'Resolved'){
+      console.log(messageInterval.length, "messageInterval.length", messageInterval[0]?.updated_at >= messageInterval[0]?.updateTime, messageInterval[0]?.updated_at, messageInterval[0]?.updateTime)
+      let resolvedInteraction = await db.excuteQuery(checkResolve, [newId, sid]);
+      // if(resolvedInteraction[0]?.interaction_status != 'Resolved'){
       if (messageInterval.length <= 0 || !(messageInterval[0].updated_at >= messageInterval[0].updateTime)) {
         console.log("messageInterval", newId)
         //result = await sendDefultMsg(outOfOfficeMessage[0].link, outOfOfficeMessage[0].value, outOfOfficeMessage[0].message_type, phone_number_id, from)
-        let message_text = await getExtraxtedMessage(outOfOfficeMessage[0]?.value,sid,custid)
-        result = await messageThroughselectedchannel(sid, from, outOfOfficeMessage[0].message_type, message_text, outOfOfficeMessage[0].link, phone_number_id, channelType, agid, newId, outOfOfficeMessage[0].message_type,outOfOfficeMessage[0]?.value,sid,custid)
-       // console.log(sid, from, outOfOfficeMessage[0].message_type, outOfOfficeMessage[0].value, outOfOfficeMessage[0].link, phone_number_id, channelType, agid, newId)
+        let message_text = await getExtraxtedMessage(outOfOfficeMessage[0]?.value, sid, custid)
+        result = await messageThroughselectedchannel(sid, from, outOfOfficeMessage[0].message_type, message_text, outOfOfficeMessage[0].link, phone_number_id, channelType, agid, newId, outOfOfficeMessage[0].message_type, outOfOfficeMessage[0]?.value, sid, custid)
+        // console.log(sid, from, outOfOfficeMessage[0].message_type, outOfOfficeMessage[0].value, outOfOfficeMessage[0].link, phone_number_id, channelType, agid, newId)
 
         let myUTCString = new Date().toUTCString();
         const time = moment.utc(myUTCString).format('YYYY-MM-DD HH:mm:ss');
         let updateSmsRes = await db.excuteQuery(updateSms, [2, time, msg_id]);
       }
-   // }
+      // }
     }
     return result;
   } catch (err) {
@@ -727,25 +751,25 @@ async function getOutOfOfficeMsg(sid, phone_number_id, from, msg_id, newId, chan
 }
 
 
-async function workingHoursDetails(sid, phone_number_id, from, msg_id, newId, channelType, agid,custid,smartReplyTrigger) {
+async function workingHoursDetails(sid, phone_number_id, from, msg_id, newId, channelType, agid, custid, smartReplyTrigger) {
   const currentTime = new Date();
   let workingHourQuery = `select * from WorkingTimeDetails where SP_ID=? and isDeleted !=1`;
   var workingData = await db.excuteQuery(workingHourQuery, [sid]);
-  console.log(currentTime,"working",(isWorkingTime(workingData, currentTime)));
+  console.log(currentTime, "working", (isWorkingTime(workingData, currentTime)));
   let isWorkingHour = isWorkingTime(workingData, currentTime)
   let isTodayHoliday = await isHolidays(sid);
- // console.log(isTodayHoliday,"(isWorkingTime(workingData, currentTime)) && isTodayHoliday == true",(isWorkingTime(workingData, currentTime)) && isTodayHoliday == true)
-  if ((isWorkingTime(workingData, currentTime)) && smartReplyTrigger?.length <=0 && isTodayHoliday == false) {
-    let agentofflinestatus = await AllAgentsOffline(sid, phone_number_id, from, msg_id, newId, channelType, agid,custid);
+  // console.log(isTodayHoliday,"(isWorkingTime(workingData, currentTime)) && isTodayHoliday == true",(isWorkingTime(workingData, currentTime)) && isTodayHoliday == true)
+  if ((isWorkingTime(workingData, currentTime)) && smartReplyTrigger?.length <= 0 && isTodayHoliday == false) {
+    let agentofflinestatus = await AllAgentsOffline(sid, phone_number_id, from, msg_id, newId, channelType, agid, custid);
     console.log('It is currently  within working hours.' + msg_id);
     if (agentofflinestatus == true) {
       return 'Agents Offline'
     }
     //return true;
-  } 
-  if ((isWorkingTime(workingData, currentTime)) && isTodayHoliday == true && smartReplyTrigger?.length <=0){
+  }
+  if ((isWorkingTime(workingData, currentTime)) && isTodayHoliday == true && smartReplyTrigger?.length <= 0) {
     console.log("else ******* ",)
-    let getOutOfOfficeResult = await getOutOfOfficeMsg(sid, phone_number_id, from, msg_id, newId, channelType, agid,custid);
+    let getOutOfOfficeResult = await getOutOfOfficeMsg(sid, phone_number_id, from, msg_id, newId, channelType, agid, custid);
     return 'working hour and holidays';
   }
   // console.log('It is currently not within working hours.');
@@ -757,7 +781,7 @@ async function workingHoursDetails(sid, phone_number_id, from, msg_id, newId, ch
 async function isHolidays(spid) {
   // Execute the query to get holidays for the given SP_ID
   let getHolidays = await db.excuteQuery('SELECT id, SP_ID, month, DATE_FORMAT(holiday_date,"%Y-%m-%d") as holiday_date FROM holidays WHERE SP_ID = ? AND isDeleted != 1', [spid]);
-  
+
 
   // Check if today is a holiday
   const isTodayHoliday = (getHolidays) => {
@@ -795,7 +819,7 @@ function isWorkingTime(data, currentTime) {
     const end_time = (item.end_time).replace(/\s*(AM|PM)/, "");
     const startTime = start_time.split(':');
     const endTime = end_time.split(':');
-     console.log(startTime + " " + endTime + workingDays.includes(currentDay))
+    console.log(startTime + " " + endTime + workingDays.includes(currentDay))
     // console.log(endTime[0] + " " + date + endTime[1] + "| " + getMin)
     if (workingDays.includes(currentDay) && (((startTime[0] < date) || (date === startTime[0] && startTime[1] <= getMin)) && ((endTime[0] > date) || ((endTime[1] === getMin) && (endTime[1] >= getMin))))) {
       console.log("data===========")
@@ -813,7 +837,7 @@ function isWorkingTime(data, currentTime) {
 
 
 
-async function AllAgentsOffline(sid, phone_number_id, from, msg_id, newId, channelType, agid,custid) {
+async function AllAgentsOffline(sid, phone_number_id, from, msg_id, newId, channelType, agid, custid) {
   //console.log("AllAgentsOffline");
   let response = false;
   var activeAgentQuery = "select *from user where  IsActive=1 and SP_ID=? and isDeleted !=1"; // comment this because now i have to take sp also (and UserType !=(select UserType from user where uid=?))
@@ -827,13 +851,13 @@ async function AllAgentsOffline(sid, phone_number_id, from, msg_id, newId, chann
     if (AgentsOfflineMessage.length > 0 && AgentsOfflineMessage[0].Is_disable == 1) {
       let messageInterval = await db.excuteQuery(msgBetweenOneHourQuery, [newId, 3])
       console.log("inactive above   length", messageInterval.length)
-      console.log(messageInterval[0]?.updated_at <= messageInterval[0]?.updateTime,messageInterval[0]?.updated_at ,messageInterval[0]?.updateTime)
-      let resolvedInteraction = await db.excuteQuery(checkResolve,[newId,sid])
+      console.log(messageInterval[0]?.updated_at <= messageInterval[0]?.updateTime, messageInterval[0]?.updated_at, messageInterval[0]?.updateTime)
+      let resolvedInteraction = await db.excuteQuery(checkResolve, [newId, sid])
       //if(resolvedInteraction[0]?.interaction_status != 'Resolved'){
       if (messageInterval.length <= 0 || (messageInterval[0].updated_at <= messageInterval[0].updateTime)) {
         //sendDefultMsg(AgentsOfflineMessage[0].link, AgentsOfflineMessage[0].value, AgentsOfflineMessage[0].message_type, phone_number_id, from)
-        let message_text = await getExtraxtedMessage(AgentsOfflineMessage[0]?.value,sid,custid)
-        let allAgentsmessage = await messageThroughselectedchannel(sid, from, AgentsOfflineMessage[0].message_type, message_text, AgentsOfflineMessage[0].link, phone_number_id, channelType, agid, newId, AgentsOfflineMessage[0].message_type,AgentsOfflineMessage[0]?.value)
+        let message_text = await getExtraxtedMessage(AgentsOfflineMessage[0]?.value, sid, custid)
+        let allAgentsmessage = await messageThroughselectedchannel(sid, from, AgentsOfflineMessage[0].message_type, message_text, AgentsOfflineMessage[0].link, phone_number_id, channelType, agid, newId, AgentsOfflineMessage[0].message_type, AgentsOfflineMessage[0]?.value)
         response = allAgentsmessage
         // console.log("response",response)
         if (response == true) {
@@ -850,7 +874,7 @@ async function AllAgentsOffline(sid, phone_number_id, from, msg_id, newId, chann
         const time = moment.utc(myUTCString).format('YYYY-MM-DD HH:mm:ss');
         let updateSmsRes = await db.excuteQuery(updateSms, [3, time, msg_id]);
       }
-    //}
+      //}
     }
 
   }
@@ -858,7 +882,7 @@ async function AllAgentsOffline(sid, phone_number_id, from, msg_id, newId, chann
 }
 
 
-async function messageThroughselectedchannel(spid, from, type, text, media, phone_number_id, channelType, agentId, interactionId, media_type,Message_text) {
+async function messageThroughselectedchannel(spid, from, type, text, media, phone_number_id, channelType, agentId, interactionId, media_type, Message_text) {
   let getMediaType = determineMediaType(media_type); //media_type  
   console.log("phone_number_id,channelType,spid, from, getMediaType, text")
   console.log(phone_number_id, channelType, spid, from, getMediaType, text)
@@ -866,7 +890,7 @@ async function messageThroughselectedchannel(spid, from, type, text, media, phon
     let response = false;
     let myUTCString = new Date().toUTCString();
     const time = moment.utc(myUTCString).format('YYYY-MM-DD HH:mm:ss');
-    let result = await middleWare.sendDefultMsg(media, text, getMediaType, phone_number_id, from,spid);
+    let result = await middleWare.sendDefultMsg(media, text, getMediaType, phone_number_id, from, spid);
     // console.log("messageThroughselectedchannel", result?.status)
     if (result?.status == 200) {
       let messageValu = [[spid, 'text', "", interactionId, agentId, 'Out', Message_text, (media ? media : 'text'), media_type, result.message.messages[0].id, "", time, time, "", -2, 1]]
@@ -892,13 +916,24 @@ async function messageThroughselectedchannel(spid, from, type, text, media, phon
   }
 }
 
-async function SreplyThroughselectedchannel(spid, from, type, text, media, phone_number_id, channelType, agentId, interactionId, testMessage, media_type,display_phone_number) {
+async function SreplyThroughselectedchannel(spid, from, type, text, media, phone_number_id, channelType, agentId, interactionId, testMessage, media_type, display_phone_number,
+  isTemplate,
+  laungage,
+  templateName,
+  headerVar,
+  bodyVar) {
   if (channelType == 'WhatsApp Official' || channelType == 1 || channelType == 'WA API') {
     let response = false;
     let myUTCString = new Date().toUTCString();
     const time = moment.utc(myUTCString).format('YYYY-MM-DD HH:mm:ss');
-    let sReply = await middleWare.sendDefultMsg(media, text, type, phone_number_id, from,spid);
-    console.log(type,"sReply?.status ", sReply?.status,media_type)
+    let sReply = '';
+    if(isTemplate){
+      sReply = await middleWare.createWhatsAppPayload(type, from, templateName, laungage, [], bodyVar, media, spid);
+    }else{
+      sReply = await middleWare.sendDefultMsg(media, text, type, phone_number_id, from, spid);
+    }
+    
+    console.log(type, "sReply?.status ", sReply?.status, media_type)
     if (sReply?.status == 200) {
 
 
