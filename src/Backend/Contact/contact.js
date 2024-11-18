@@ -480,7 +480,7 @@ app.post('/importContact', authenticateToken, async (req, res) => {
 
   try {
 
-    var result = req.body;
+     var result = req.body;
     var fields = result.field
     var CSVdata = result.importedData
     var identifier = result.identifier
@@ -825,7 +825,7 @@ app.post('/verifyData', authenticateToken, async (req, res) => {
   try {
     const { importedData, identifier, purpose, SP_ID } = req.body;
     const identity = identifier;
-
+ 
     let errData = [];
     let importData = [];
     let queryData = [];
@@ -1044,8 +1044,8 @@ async function writeErrFile(errData, res, headersArray) {
       });
 
       fields.push(...reasonColumns);
-
-      const json2csvParser = new Parser({ fields });
+      const filteredFields = fields.map(field => (typeof field === 'string' ? field : String(field))); //for int data its crashing changing int to string if found 
+      const json2csvParser = new Parser({ filteredFields });
       const csv = json2csvParser.parse(formattedErrData);
 
       fs.writeFile("CSVerr.csv", csv, function (err) {
