@@ -6,6 +6,10 @@ export interface agentMessageList{
     Media:any;
     MessageVariables: string;
     media_type: string;
+    isTemplate:boolean;
+	name: string;
+	language: string;
+	buttons: any;
 }
 
 export interface repliesList {
