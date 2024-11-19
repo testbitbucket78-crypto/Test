@@ -373,7 +373,7 @@ function ClientInstance(spid, authStr, phoneNo) {
             if (repliedMessage && repliedMessage.fromMe) {
               // Notify about the reply
               const repliedNumber = (message.from).replace(/@c\.us$/, "");
-              var d = new Date(message.timestamp * 1000).toUTCString();
+              let d = new Date(message.timestamp * 1000).toUTCString();
 
               const message_time = moment.utc(d).format('YYYY-MM-DD HH:mm:ss');
               console.log(repliedMessage?._data?.id?.id, "reply ___________________", message.body)
@@ -483,9 +483,10 @@ function ClientInstance(spid, authStr, phoneNo) {
         try {
           let phoneNumber = (message.to).replace(/@c\.us$/, "");
           if (ack == '1') {
-            var d = new Date(message.timestamp * 1000).toUTCString();
-
+            let d = new Date(message.timestamp * 1000).toUTCString();
+            
             const message_time = moment.utc(d).format('YYYY-MM-DD HH:mm:ss');
+            logger.info(`send message ${d} ,${message_time}`)
             let campaignDeliveredQuery = 'UPDATE CampaignMessages set status=1 , SentTime=? where phone_number =?  and messageTemptateId =?'
             let campaignDelivered = await db.excuteQuery(campaignDeliveredQuery, [message_time, phoneNumber, message._data.id.id])
             if (message._data.id.id) {
@@ -507,11 +508,14 @@ WHERE customerId IN (SELECT customerId FROM EndCustomer WHERE Phone_number = ? a
 
 
           } else if (ack == '2') {
-            var d = new Date(message.timestamp * 1000).toUTCString();
+            let d = new Date(message.timestamp * 1000).toUTCString();
 
             const message_time = moment.utc(d).format('YYYY-MM-DD HH:mm:ss');
+            let myUTCString = new Date().toUTCString();
+            const LastModifiedDate = moment.utc(myUTCString).format('YYYY-MM-DD HH:mm:ss');  // update with utc time because message json gives same time for each ack
+            logger.info(`delivered message  ${d} ,${message_time} ,${LastModifiedDate}`)
             let campaignDeliveredQuery = 'UPDATE CampaignMessages set status=2, DeliveredTime=? where phone_number =? and messageTemptateId=?'
-            let campaignDelivered = await db.excuteQuery(campaignDeliveredQuery, [message_time, phoneNumber, message?._data?.id?.id])
+            let campaignDelivered = await db.excuteQuery(campaignDeliveredQuery, [LastModifiedDate, phoneNumber, message?._data?.id?.id])
             const smsdelupdate = `UPDATE Message
 SET msg_status = 2 
 WHERE interaction_id IN (
@@ -526,11 +530,14 @@ WHERE customerId IN (SELECT customerId FROM EndCustomer WHERE Phone_number = ? a
             notify.NotifyServer(phoneNo, false, ack2InId[0]?.InteractionId, 'Out', 2, 0)
           } else if (ack == '3') {
             //  console.log("read")
-            var d = new Date(message.timestamp * 1000).toUTCString();
+            let d = new Date(message.timestamp * 1000).toUTCString();
 
             const message_time = moment.utc(d).format('YYYY-MM-DD HH:mm:ss');
+            let myUTCString = new Date().toUTCString();
+            const LastModifiedDate = moment.utc(myUTCString).format('YYYY-MM-DD HH:mm:ss');
+            logger.info(`read message ${d} ,${message_time} ,${LastModifiedDate}`)
             let campaignReadQuery = 'UPDATE CampaignMessages set status=3 , SeenTime=? where phone_number =? and messageTemptateId=?';
-            let campaignRead = await db.excuteQuery(campaignReadQuery, [message_time, phoneNumber, message?._data?.id?.id])
+            let campaignRead = await db.excuteQuery(campaignReadQuery, [LastModifiedDate, phoneNumber, message?._data?.id?.id])
             const smsupdate = `UPDATE Message
 SET msg_status = 3 
 WHERE interaction_id IN (
@@ -1042,7 +1049,7 @@ async function savelostChats(message, spPhone, spid, currentIndex, lastIndex) {
 
 
 
-      if (from != 'status@broadcast'  && from !== '0' && Type !== 'e2e_notification') {
+      if (from != 'status@broadcast' && from !== '0' && Type !== 'e2e_notification') {
         console.log("endCustomer", endCustomer, "Type", Type, "message_text", message_text, "****************", currentIndex, lastIndex, message.timestamp)
         //  console.log("lost messages time", d)
         let saveMessage = await saveIncommingMessages(message_direction, from, message_text, phone_number_id, display_phone_number, endCustomer, message_text, message_media, "Message_template_id", "Quick_reply_id", Type, "ExternalMessageId", contactName, ackStatus, message_time, countryCode);
@@ -1199,11 +1206,11 @@ async function saveIncommingMessages(message_direction, from, firstMessage, phon
   if (phoneNo) {
     countryCodeObj = mapCountryCode.mapCountryCode(phoneNo);
   }
-    let EcPhonewithoutcountryCode = countryCodeObj?.localNumber; 
-    countryCode = countryCodeObj?.country + " +" + countryCodeObj?.countryCode;
+  let EcPhonewithoutcountryCode = countryCodeObj?.localNumber;
+  countryCode = countryCodeObj?.country + " +" + countryCodeObj?.countryCode;
 
   if ((message_text.length > 0 || message_media.length > 0) && Type != 'e2e_notification') {
-     let query = "CALL webhook_2(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)"
+    let query = "CALL webhook_2(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)"
     // console.log([phoneNo, message_direction, message_text, message_media, Message_template_id, Quick_reply_id, Type, ExternalMessageId, display_phone_number, contactName, media_type, ackStatus, 'WA Web', timestramp, countryCode])
     var saveMessage = await db.excuteQuery(query, [phoneNo, message_direction, message_text, message_media, Message_template_id, Quick_reply_id, Type, ExternalMessageId, display_phone_number, contactName, media_type, ackStatus, 'WA Web', timestramp, countryCode, EcPhonewithoutcountryCode]);
     notify.NotifyServer(display_phone_number, true);
@@ -1319,93 +1326,94 @@ async function getDetatilsOfSavedMessage(saveMessage, message_text, phone_number
       let mentionRes = await db.excuteQuery(`INSERT INTO Notification(sp_id,subject,message,sent_to,module_name,uid,created_at) values ?`, [notifyvalues]);
     }
     let contactDefaultPauseTime = await db.excuteQuery('select * from EndCustomer where customerId=? and SP_ID=?', [custid, sid])
-    let defaultQuery = 'select * from defaultActions where spid=?';
-    let defaultAction = await db.excuteQuery(defaultQuery, [sid]);
-    //console.log(defaultAction)You have a new message in you current Open Chat
-    if (defaultAction.length > 0) {
-      //console.log(defaultAction[0].isAutoReply + " isAutoReply " + defaultAction[0].autoReplyTime + " autoReplyTime " + defaultAction[0].isAutoReplyDisable + " isAutoReplyDisable ")
-      var isAutoReply = defaultAction[0].isAutoReply
-      var autoReplyTime = contactDefaultPauseTime[0].defaultAction_PauseTime
-      var isAutoReplyDisable = defaultAction[0].isAutoReplyDisable
-      var pausedTill = defaultAction[0]?.pausedTill
-      var inactiveAgent = defaultAction[0].isAgentActive
-      var inactiveTimeOut = defaultAction[0].pauseAgentActiveTime
-    }
-    let defaultReplyAction = await incommingmsg.autoReplyDefaultAction(isAutoReply, autoReplyTime, isAutoReplyDisable, message_text, phone_number_id, contactName, from, sid, custid, agid, replystatus, newId, msg_id, newlyInteractionId, 'WA Web', isContactPreviousDeleted, inactiveAgent, inactiveTimeOut, ifgot, display_phone_number)
-
-
-    console.log("defaultReplyAction-->>> boolean", defaultReplyAction)
-    if (defaultReplyAction >= -1) {
-      let myUTCString = new Date().toUTCString();
-      const updated_at = moment.utc(myUTCString).format('YYYY-MM-DD HH:mm:ss');
-      if (ifgot == 'If not exist') {
-
-        let updateInteraction = await db.excuteQuery('UPDATE Interaction SET interaction_status=?,updated_at=? WHERE InteractionId=?', ['Resolved', updated_at, newId]);
-        if (updateInteraction?.affectedRows > 0) {
-          notify.NotifyServer(display_phone_number, false, newId, 0, 'IN', 'Status changed')
-          let updateMapping = await db.excuteQuery(`update InteractionMapping set AgentId='-1' where InteractionId =?`, [newId]);
-          if (updateMapping?.affectedRows > 0) {
-            notify.NotifyServer(display_phone_number, false, newId, 0, 'IN', 'Assign Agent')
-          }
-        }
-      } else {
-        let getIntractionStatus = await db.excuteQuery('select * from Interaction WHERE InteractionId=? and SP_ID=?', [newId, sid]);
-        //check if assignment trigger and chat is ressolve then open 
-        if (defaultReplyAction >= 0) {
-          let isEmptyInteraction = await commonFun.isStatusEmpty(newId, sid, custid)
-          let ResolveOpenChat = await db.excuteQuery('UPDATE Interaction SET interaction_status =? WHERE InteractionId !=? and customerId=?', ['Resolved', newId, custid]);
-          console.log("ResolveOpenChat (((((((((((", ResolveOpenChat)
-          let updateInteraction = await db.excuteQuery('UPDATE Interaction SET interaction_status=? WHERE InteractionId=?', ['Open', newId])
-          if (isEmptyInteraction == 1) {
-            updateInteraction = await db.excuteQuery('UPDATE Interaction SET interaction_status=?,updated_at=? WHERE InteractionId=?', ['Open', updated_at, newId])
-          }
-
-          if (updateInteraction?.affectedRows > 0) {
-            notify.NotifyServer(display_phone_number, false, newId, 0, 'IN', 'Status changed')
-          }
-          notify.NotifyServer(display_phone_number, false, newId, 0, 'IN', 'Assign Agent')
-        } else {
-          let updateInteraction = await db.excuteQuery('UPDATE Interaction SET interaction_status=?,updated_at=? WHERE InteractionId=?', [getIntractionStatus[0]?.interaction_status, updated_at, newId])
-          if (updateInteraction?.affectedRows > 0) {
-            notify.NotifyServer(display_phone_number, false, newId, 0, 'IN', 'Status changed')
-          }
-        }
-
-
+    if (contactDefaultPauseTime[0]?.isBlocked != 1) {
+      let defaultQuery = 'select * from defaultActions where spid=?';
+      let defaultAction = await db.excuteQuery(defaultQuery, [sid]);
+      //console.log(defaultAction)You have a new message in you current Open Chat
+      if (defaultAction.length > 0) {
+        //console.log(defaultAction[0].isAutoReply + " isAutoReply " + defaultAction[0].autoReplyTime + " autoReplyTime " + defaultAction[0].isAutoReplyDisable + " isAutoReplyDisable ")
+        var isAutoReply = defaultAction[0].isAutoReply
+        var autoReplyTime = contactDefaultPauseTime[0].defaultAction_PauseTime
+        var isAutoReplyDisable = defaultAction[0].isAutoReplyDisable
+        var pausedTill = defaultAction[0]?.pausedTill
+        var inactiveAgent = defaultAction[0].isAgentActive
+        var inactiveTimeOut = defaultAction[0].pauseAgentActiveTime
       }
-    }
-    if (defaultReplyAction == 'false' && replystatus != "Open") {
-      let myUTCString = new Date().toUTCString();
-      const updated_at = moment.utc(myUTCString).format('YYYY-MM-DD HH:mm:ss');
-      let isEmptyInteraction = await commonFun.isStatusEmpty(newId, sid, custid)
-      let ResolveOpenChat = await db.excuteQuery('UPDATE Interaction SET interaction_status =? WHERE InteractionId !=? and customerId=?', ['Resolved', newId, custid]);
-      console.log("ResolveOpenChat *********************", ResolveOpenChat)
-      let updateInteraction = await db.excuteQuery('UPDATE Interaction SET interaction_status=? WHERE InteractionId=?', ['Open', newId])
-      if (isEmptyInteraction == 1) {
-        updateInteraction = await db.excuteQuery('UPDATE Interaction SET interaction_status=?,updated_at=? WHERE InteractionId=?', ['Open', updated_at, newId])
-      }
-      if (updateInteraction?.affectedRows > 0) {
-        logger.info(`Status changed notify gone *********************`)
-        notify.NotifyServer(display_phone_number, false, newId, 0, 'IN', 'Status changed')
-      }
-      let RoutingRulesVaues = await Routing.AssignToContactOwner(sid, newId, agid, custid)  //CALL Default Routing Rules
-      logger.info(`RoutingRulesVaues ________________ ${RoutingRulesVaues}`)
-      if (RoutingRulesVaues == 'broadcast' || RoutingRulesVaues == true) {
-        notify.NotifyServer(display_phone_number, false, newId, 0, 'IN', 'Assign Agent')
+      let defaultReplyAction = await incommingmsg.autoReplyDefaultAction(isAutoReply, autoReplyTime, isAutoReplyDisable, message_text, phone_number_id, contactName, from, sid, custid, agid, replystatus, newId, msg_id, newlyInteractionId, 'WA Web', isContactPreviousDeleted, inactiveAgent, inactiveTimeOut, ifgot, display_phone_number)
 
+
+      console.log("defaultReplyAction-->>> boolean", defaultReplyAction)
+      if (defaultReplyAction >= -1) {
         let myUTCString = new Date().toUTCString();
-        const utcTimestamp = moment.utc(myUTCString).format('YYYY-MM-DD HH:mm:ss');
-        const currentAssignedUser = await currentlyAssigned(newId);
-        const check = await commonFun.notifiactionsToBeSent(currentAssignedUser, 2);
-        // if (check) {
-        //   let notifyvalues = [[sid, 'New Chat Assigned to You', 'A new Chat has been Assigned to you', agid, 'Routing rules', currentAssignedUser, utcTimestamp]];
-        //   let mentionRes = await db.excuteQuery(`INSERT INTO Notification(sp_id,subject,message,sent_to,module_name,uid,created_at) values ?`, [notifyvalues]);
-        // }
+        const updated_at = moment.utc(myUTCString).format('YYYY-MM-DD HH:mm:ss');
+        if (ifgot == 'If not exist') {
+
+          let updateInteraction = await db.excuteQuery('UPDATE Interaction SET interaction_status=?,updated_at=? WHERE InteractionId=?', ['Resolved', updated_at, newId]);
+          if (updateInteraction?.affectedRows > 0) {
+            notify.NotifyServer(display_phone_number, false, newId, 0, 'IN', 'Status changed')
+            let updateMapping = await db.excuteQuery(`update InteractionMapping set AgentId='-1' where InteractionId =?`, [newId]);
+            if (updateMapping?.affectedRows > 0) {
+              notify.NotifyServer(display_phone_number, false, newId, 0, 'IN', 'Assign Agent')
+            }
+          }
+        } else {
+          let getIntractionStatus = await db.excuteQuery('select * from Interaction WHERE InteractionId=? and SP_ID=?', [newId, sid]);
+          //check if assignment trigger and chat is ressolve then open 
+          if (defaultReplyAction >= 0) {
+            let isEmptyInteraction = await commonFun.isStatusEmpty(newId, sid, custid)
+            let ResolveOpenChat = await db.excuteQuery('UPDATE Interaction SET interaction_status =? WHERE InteractionId !=? and customerId=?', ['Resolved', newId, custid]);
+            console.log("ResolveOpenChat (((((((((((", ResolveOpenChat)
+            let updateInteraction = await db.excuteQuery('UPDATE Interaction SET interaction_status=? WHERE InteractionId=?', ['Open', newId])
+            if (isEmptyInteraction == 1) {
+              updateInteraction = await db.excuteQuery('UPDATE Interaction SET interaction_status=?,updated_at=? WHERE InteractionId=?', ['Open', updated_at, newId])
+            }
+
+            if (updateInteraction?.affectedRows > 0) {
+              notify.NotifyServer(display_phone_number, false, newId, 0, 'IN', 'Status changed')
+            }
+            notify.NotifyServer(display_phone_number, false, newId, 0, 'IN', 'Assign Agent')
+          } else {
+            let updateInteraction = await db.excuteQuery('UPDATE Interaction SET interaction_status=?,updated_at=? WHERE InteractionId=?', [getIntractionStatus[0]?.interaction_status, updated_at, newId])
+            if (updateInteraction?.affectedRows > 0) {
+              notify.NotifyServer(display_phone_number, false, newId, 0, 'IN', 'Status changed')
+            }
+          }
+
+
+        }
       }
-      //Here i have to check if any routing rules addded then send websocket
+      if (defaultReplyAction == 'false' && replystatus != "Open") {
+        let myUTCString = new Date().toUTCString();
+        const updated_at = moment.utc(myUTCString).format('YYYY-MM-DD HH:mm:ss');
+        let isEmptyInteraction = await commonFun.isStatusEmpty(newId, sid, custid)
+        let ResolveOpenChat = await db.excuteQuery('UPDATE Interaction SET interaction_status =? WHERE InteractionId !=? and customerId=?', ['Resolved', newId, custid]);
+        console.log("ResolveOpenChat *********************", ResolveOpenChat)
+        let updateInteraction = await db.excuteQuery('UPDATE Interaction SET interaction_status=? WHERE InteractionId=?', ['Open', newId])
+        if (isEmptyInteraction == 1) {
+          updateInteraction = await db.excuteQuery('UPDATE Interaction SET interaction_status=?,updated_at=? WHERE InteractionId=?', ['Open', updated_at, newId])
+        }
+        if (updateInteraction?.affectedRows > 0) {
+          logger.info(`Status changed notify gone *********************`)
+          notify.NotifyServer(display_phone_number, false, newId, 0, 'IN', 'Status changed')
+        }
+        let RoutingRulesVaues = await Routing.AssignToContactOwner(sid, newId, agid, custid)  //CALL Default Routing Rules
+        logger.info(`RoutingRulesVaues ________________ ${RoutingRulesVaues}`)
+        if (RoutingRulesVaues == 'broadcast' || RoutingRulesVaues == true) {
+          notify.NotifyServer(display_phone_number, false, newId, 0, 'IN', 'Assign Agent')
+
+          let myUTCString = new Date().toUTCString();
+          const utcTimestamp = moment.utc(myUTCString).format('YYYY-MM-DD HH:mm:ss');
+          const currentAssignedUser = await currentlyAssigned(newId);
+          const check = await commonFun.notifiactionsToBeSent(currentAssignedUser, 2);
+          // if (check) {
+          //   let notifyvalues = [[sid, 'New Chat Assigned to You', 'A new Chat has been Assigned to you', agid, 'Routing rules', currentAssignedUser, utcTimestamp]];
+          //   let mentionRes = await db.excuteQuery(`INSERT INTO Notification(sp_id,subject,message,sent_to,module_name,uid,created_at) values ?`, [notifyvalues]);
+          // }
+        }
+        //Here i have to check if any routing rules addded then send websocket
+      }
     }
   }
-
 }
 
 

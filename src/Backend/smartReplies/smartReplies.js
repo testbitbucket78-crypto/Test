@@ -55,7 +55,7 @@ app.post('/addNewReply', async (req, res) => {
 
     //db.runQuery(req, res, val.addNewReply, [req.body.SP_ID, req.body.Title, req.body.Description, req.body.MatchingCriteria, params.strings.value, jsonData])
     var saveReply = await db.excuteQuery(val.addNewReply, [req.body.SP_ID, req.body.Title, req.body.Description, req.body.MatchingCriteria, params.strings.value, jsonData,Channel])
-    //onsole.log(saveReply)
+   // console.log(saveReply)
     res.status(200).send({
       msg: "Smart Reply added",
       status: 200

@@ -643,8 +643,8 @@ async function messageThroughselectedchannel(spid, from, type, text, media, phon
           if (response.status == 200) {
             let saveInCampaignMessage = await sendMessages(from, text, campaignId, message, response.status, text, response.msgId, 'WA Web', '', '');
           } else {
-            console.log("else of webJS", from, spid)
-            let updateMessage = await db.excuteQuery('update Message set msg_status=? where Message_id=?', [9, saveSendedMessage])
+            let updateMessage = await db.excuteQuery('update Message set msg_status=? where Message_id=?', [9, saveSendedMessage]);
+            logger.info(`else of webJS failed icon issue msgId ${saveSendedMessage} , ${JSON.stringify(updateMessage)}`)
             let saveInCampaignMessage = await sendMessages(from, text, campaignId, message, response.status, text, response.msgId, 'WA Web', response.status, response.msgId);
           }
           return response;
@@ -746,7 +746,9 @@ async function saveMessage(PhoneNo, spid, msgTemplateId, text, media, type, medi
 
   let msgQuery = `insert into Message (interaction_id,message_direction,message_text,message_media,Type,SPID,media_type,Agent_id,assignAgent,msg_status,Message_template_id) values ?`
   let savedMessage = await db.excuteQuery(msgQuery, [[[InteractionId[0]?.InteractionId, 'Out', text, media, 'text', spid, mediaType, '', -1, msg_status, msgTemplateId]]]);
-  let insertedMsgId = saveMessage?.insertId
+  logger.info(`saved message id  ,${savedMessage?.insertId}`)
+  let insertedMsgId = savedMessage?.insertId
+  return insertedMsgId;
 }
 
 async function insertInteractionAndRetrieveId(phoneNo, sid, channel) {

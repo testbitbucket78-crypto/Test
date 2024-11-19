@@ -1879,3 +1879,12 @@ input[type="radio"]:checked + label::before {
     border-radius: 12px;
     margin-top: 6px;
 }
+
+.language-scroll{
+    overflow-y: scroll;
+    height: 100%;
+}
+
+.filter-popup{
+    max-height: 200px !important;
+}

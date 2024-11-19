@@ -107,7 +107,8 @@ m.Message,
 m.Value ,
 m.media_type,
 m.Media,
-n.Name 
+n.Name,
+m.buttons
 from
 SmartReply t
 left join SmartReplyAction m ON m.SmartReplyID = t.ID
