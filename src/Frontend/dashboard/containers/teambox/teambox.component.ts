@@ -1908,6 +1908,7 @@ console.log(getMimeTypePrefix);
 					}
 				})
 				item['allmessages'].push(...val1);
+				item.message_text = val1[0]?.message_text;
 		});
 	}
 
@@ -3491,6 +3492,7 @@ sendMessage(isTemplate:boolean=false,templateTxt:string=''){
 									this.getMessagesById(insertId);
 									let idx =  this.interactionList.findIndex((items:any) => items.InteractionId == this.selectedInteraction.InteractionId);
 									if(idx >0){
+										this.interactionList[idx].message_text = bodyData?.message_text
 										this.interactionList = this.moveItemToFirstPosition(this.interactionList,idx);
 										this.interactionListMain = JSON.parse(JSON.stringify(this.interactionList));
 									}
