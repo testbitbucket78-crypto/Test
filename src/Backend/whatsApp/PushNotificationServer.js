@@ -193,7 +193,7 @@ const server = http.createServer(app);
 const io = new Server(server);
 
 let clients = {};
-let spAgentMapping = {}; 
+let spAgentMapping = {};
 function parseJSONObject(jsonString) {
   try {
     return JSON.parse(jsonString);
@@ -236,6 +236,15 @@ io.on('connection', (socket) => {
         const uniquePhone = msgjson.UniqueSPPhonenumber;
         clients[socket.id] = uniquePhone;
 
+        // Initialize spAgentMapping array if not already present
+        if (!spAgentMapping[msgjson.spPhoneNumber]) {
+          spAgentMapping[msgjson.spPhoneNumber] = [];
+        }
+
+        // Avoid duplicates in spAgentMapping for the given spPhoneNumber
+        if (!spAgentMapping[msgjson.spPhoneNumber].includes(uniquePhone)) {
+          spAgentMapping[msgjson.spPhoneNumber].push(uniquePhone);
+        }
         console.log(`Client connected with phone: ${uniquePhone}`);
         console.log('Active clients after connection:', JSON.stringify(clients, null, 2));
       } else if (msgjson.displayPhoneNumber) {
@@ -272,7 +281,13 @@ io.on('connection', (socket) => {
     if (clients[socket.id]) {
       const disconnectedUniquePhone = clients[socket.id];
       delete clients[socket.id]; // Remove the client from the active clients list
-
+     
+     // Use the `spPhoneNumber` stored in the socket
+     if (socket.spPhoneNumber && spAgentMapping[socket.spPhoneNumber]) {
+      spAgentMapping[socket.spPhoneNumber] = spAgentMapping[socket.spPhoneNumber].filter(
+        phone => phone !== disconnectedUniquePhone
+      );
+    }
       console.log(`Client ${disconnectedUniquePhone} disconnected`);
     }
 
