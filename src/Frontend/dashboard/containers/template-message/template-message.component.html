@@ -304,7 +304,7 @@
                 </button>
             </div>
             <div class="modal-body px-5 pt-0">
-                <div class="container d-flex">
+                <div class="container d-flex filter-popup">
 
                 
                 <div *ngIf="selectedTab==1" class="d-flex flex-column filter-cateegory" >
@@ -378,7 +378,7 @@
                         <label class="custom-control-label" for="Category{{i}}"><span class="ml-2">{{Category?.label}}</span></label>
                       </div>
                     </div>
-                    <div *ngIf="selectedCategory == 3">
+                    <div *ngIf="selectedCategory == 3" class="language-scroll">
                       <div *ngFor="let Language of filterListLanguage; let i = index" class="py-2 custom-control custom-checkbox user-dropdown">
                         <input type="checkbox" class="custom-control-input" [(ngModel)]="Language.checked" value="{{Language.value}}" (click)="updateFilter($event,Language)"
                         id="Language{{i}}">
