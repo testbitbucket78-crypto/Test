@@ -280,10 +280,13 @@ async function iterateSmartReplies(replymessage, phone_number_id, from, sid, cus
       var isTemplate = message?.isTemplate
       var laungage = message?.laungage
       var templateName = message?.templateName
-      var headerVar = message?.headerVar
-      var bodyVar = message?.bodyVar
+      var header = message?.headerText
+      var body = message?.bodyText
 
-
+ 
+      //get header and body variable 
+      let headerVar = await commonFun.getTemplateVariables(msgVar, header, sid, custid);
+      let bodyVar = await commonFun.getTemplateVariables(msgVar, body, sid, custid);
 
       let PerformingActions = await PerformingSReplyActions(actionId, value, sid, custid, agid, newId, display_phone_number);
       let content = await removeTags.removeTagsFromMessages(testMessage);
@@ -324,10 +327,7 @@ async function iterateSmartReplies(replymessage, phone_number_id, from, sid, cus
           content = content.replace(`{{${placeholder}}}`, replacement);
         });
 
-        let bodyVar
-        if(results && results.length) {
-          bodyVar = results.map(item => Object.values(item)[0]);
-        }
+      
       }
 
       var type = determineMediaType(media_type);
@@ -928,7 +928,7 @@ async function SreplyThroughselectedchannel(spid, from, type, text, media, phone
     const time = moment.utc(myUTCString).format('YYYY-MM-DD HH:mm:ss');
     let sReply = '';
     if(isTemplate){
-      sReply = await middleWare.createWhatsAppPayload(type, from, templateName, laungage, [], bodyVar, media, spid);
+      sReply = await middleWare.createWhatsAppPayload(type, from, templateName, laungage, headerVar, bodyVar, media, spid);
     }else{
       sReply = await middleWare.sendDefultMsg(media, text, type, phone_number_id, from, spid);
     }

@@ -373,7 +373,7 @@ function ClientInstance(spid, authStr, phoneNo) {
             if (repliedMessage && repliedMessage.fromMe) {
               // Notify about the reply
               const repliedNumber = (message.from).replace(/@c\.us$/, "");
-              var d = new Date(message.timestamp * 1000).toUTCString();
+              let d = new Date(message.timestamp * 1000).toUTCString();
 
               const message_time = moment.utc(d).format('YYYY-MM-DD HH:mm:ss');
               console.log(repliedMessage?._data?.id?.id, "reply ___________________", message.body)
@@ -483,9 +483,10 @@ function ClientInstance(spid, authStr, phoneNo) {
         try {
           let phoneNumber = (message.to).replace(/@c\.us$/, "");
           if (ack == '1') {
-            var d = new Date(message.timestamp * 1000).toUTCString();
-
+            let d = new Date(message.timestamp * 1000).toUTCString();
+            
             const message_time = moment.utc(d).format('YYYY-MM-DD HH:mm:ss');
+            logger.info(`send message ${d} ,${message_time}`)
             let campaignDeliveredQuery = 'UPDATE CampaignMessages set status=1 , SentTime=? where phone_number =?  and messageTemptateId =?'
             let campaignDelivered = await db.excuteQuery(campaignDeliveredQuery, [message_time, phoneNumber, message._data.id.id])
             if (message._data.id.id) {
@@ -507,11 +508,14 @@ WHERE customerId IN (SELECT customerId FROM EndCustomer WHERE Phone_number = ? a
 
 
           } else if (ack == '2') {
-            var d = new Date(message.timestamp * 1000).toUTCString();
+            let d = new Date(message.timestamp * 1000).toUTCString();
 
             const message_time = moment.utc(d).format('YYYY-MM-DD HH:mm:ss');
+            let myUTCString = new Date().toUTCString();
+            const LastModifiedDate = moment.utc(myUTCString).format('YYYY-MM-DD HH:mm:ss');  // update with utc time because message json gives same time for each ack
+            logger.info(`delivered message  ${d} ,${message_time} ,${LastModifiedDate}`)
             let campaignDeliveredQuery = 'UPDATE CampaignMessages set status=2, DeliveredTime=? where phone_number =? and messageTemptateId=?'
-            let campaignDelivered = await db.excuteQuery(campaignDeliveredQuery, [message_time, phoneNumber, message?._data?.id?.id])
+            let campaignDelivered = await db.excuteQuery(campaignDeliveredQuery, [LastModifiedDate, phoneNumber, message?._data?.id?.id])
             const smsdelupdate = `UPDATE Message
 SET msg_status = 2 
 WHERE interaction_id IN (
@@ -526,11 +530,14 @@ WHERE customerId IN (SELECT customerId FROM EndCustomer WHERE Phone_number = ? a
             notify.NotifyServer(phoneNo, false, ack2InId[0]?.InteractionId, 'Out', 2, 0)
           } else if (ack == '3') {
             //  console.log("read")
-            var d = new Date(message.timestamp * 1000).toUTCString();
+            let d = new Date(message.timestamp * 1000).toUTCString();
 
             const message_time = moment.utc(d).format('YYYY-MM-DD HH:mm:ss');
+            let myUTCString = new Date().toUTCString();
+            const LastModifiedDate = moment.utc(myUTCString).format('YYYY-MM-DD HH:mm:ss');
+            logger.info(`read message ${d} ,${message_time} ,${LastModifiedDate}`)
             let campaignReadQuery = 'UPDATE CampaignMessages set status=3 , SeenTime=? where phone_number =? and messageTemptateId=?';
-            let campaignRead = await db.excuteQuery(campaignReadQuery, [message_time, phoneNumber, message?._data?.id?.id])
+            let campaignRead = await db.excuteQuery(campaignReadQuery, [LastModifiedDate, phoneNumber, message?._data?.id?.id])
             const smsupdate = `UPDATE Message
 SET msg_status = 3 
 WHERE interaction_id IN (
