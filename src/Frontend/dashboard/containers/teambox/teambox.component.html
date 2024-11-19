@@ -723,7 +723,7 @@ popupWidth='250px' popupHeight='200px'>
 				
 					<div class="profile pl-2 flex-row" *ngIf="selectedInteraction.InteractionId && showAttachedMedia">
 						
-						<div class="attached_media_list" *ngFor="let file of selectedInteraction.allmedia;let m = index">
+						<div class="attached_media_list" *ngFor="let file of selectedInteraction.allmedia | filterMedia;let m = index">
 				
 							<p *ngIf="(file?.message_media != '0' && file?.message_media != 'text')" class="preview_media">				
 									<img class="preview_icon" *ngIf="file.media_type == 'video/mp4'"
@@ -1480,9 +1480,9 @@ popupWidth='250px' popupHeight='200px'>
 			<div class="attached_media_list">
 				<div class="container">
 
-					<div *ngFor="let file of selectedInteraction.allmedia;let k = index" class="mySlides"
+					<div *ngFor="let file of selectedInteraction.allmedia | filterMedia;let k = index" class="mySlides"
 						[ngClass]="slideIndex==k ? 'mySlides active' : 'mySlides'">
-						<div *ngIf="file.message_media!=='0'">
+						<div *ngIf="(file?.message_media != '0' && file?.message_media != 'text')">
 
 						<img class="preview_icon" *ngIf="file.media_type == 'video/mp4'"
 							src="/assets/img/teambox/video_preview.png" (click)="downloadFile(file.message_media)">
@@ -1501,7 +1501,7 @@ popupWidth='250px' popupHeight='200px'>
 
 				</div>
 			</div>
-			<div class="attached_media_list_right" *ngIf="slideIndex<selectedInteraction.allmedia.length-1">
+			<div class="attached_media_list_right" *ngIf="slideIndex<(selectedInteraction?.allmedia | filterMedia)?.length-1">
 				<img (click)="showNextSlides(slideIndex)" src="assets/img/teambox/next.svg">
 			</div>
 		</div>

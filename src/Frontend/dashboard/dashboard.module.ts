@@ -42,6 +42,7 @@ import { TimepickerComponent } from './containers/common/timepicker/timepicker.c
 import { LoaderComponent } from './containers/common/loader/loader.component';
 import { LinkifyPipe } from './containers/linkify/linkify.pipe';
 import { ParseJsonPipe } from './containers/parseJSON/parseJSON.pipe';
+import { FilterMediaPipe } from './pipe/filter-media.pipe';
 
 @NgModule({
     imports: [
@@ -78,7 +79,8 @@ import { ParseJsonPipe } from './containers/parseJSON/parseJSON.pipe';
             TimepickerComponent,
             LoaderComponent,
             LinkifyPipe,
-            ParseJsonPipe
+            ParseJsonPipe,
+            FilterMediaPipe
         ],
     exports: [...dashboardContainers.containers,
               ...dashboardComponents.components,
