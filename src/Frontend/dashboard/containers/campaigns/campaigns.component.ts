@@ -943,6 +943,7 @@ constructor(config: NgbModalConfig, private modalService: NgbModal,private datep
 		}
 		this.apiService.getCampaign(bodyData).subscribe(allCampaign =>{
 			this.isLoading = false;
+			this.showCampaignDetail = false;
 			var allCampaignList:any=allCampaign;
 			if(allCampaignList){
 			this.mapCampaignData(allCampaignList)
@@ -2309,19 +2310,35 @@ testinfo(){
 				const worksheet = workbook.Sheets[sheetName];
       
 				const csvData = XLSX.utils.sheet_to_csv(worksheet);
-				const results = csvData.split("\n");
+				// const results = csvData.split("\n");
 				let tableHeader: any[] = [];
 				let tableRows: any[] = [];
+				let results: any[];
+				let jsonSheetData = XLSX.utils.sheet_to_json(worksheet, {defval: null,
+					raw: false });
+
+				jsonSheetData = jsonSheetData.map((row: any) => {
+					Object.keys(row).forEach((key) => {
+						const value = row[key];
+						if (typeof value === "string" && /^[0-9]\.[0-9]+E\+[0-9]+$/.test(value)) {
+							row[key] = BigInt(Number(value)).toString();
+						}
+					});
+					return row;
+				});
+				results  = jsonSheetData;
+				tableHeader = Object.keys(results[0]);
 				let i = 0;
 				results.map((row: any) => {
 					if (row) {
-						const rowCol = row.split(",");
-						if (i == 0) {
-							tableHeader = rowCol;
-						} else {
-							tableRows.push(rowCol);
-						}
-						i++;
+						// const rowCol = row.split(",");
+						// if (i == 0) {
+						// 	tableHeader = rowCol;
+						// } else {
+						// 	tableRows.push(rowCol);
+						// }
+						// i++;
+						tableRows.push(Object.values(row));
 					}
 				});
 				this.csvContactColmuns = tableHeader;
