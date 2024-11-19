@@ -643,8 +643,8 @@ async function messageThroughselectedchannel(spid, from, type, text, media, phon
           if (response.status == 200) {
             let saveInCampaignMessage = await sendMessages(from, text, campaignId, message, response.status, text, response.msgId, 'WA Web', '', '');
           } else {
-            console.log("else of webJS", from, spid)
-            let updateMessage = await db.excuteQuery('update Message set msg_status=? where Message_id=?', [9, saveSendedMessage])
+            let updateMessage = await db.excuteQuery('update Message set msg_status=? where Message_id=?', [9, saveSendedMessage]);
+            logger.info(`else of webJS failed icon issue msgId ${saveSendedMessage} , ${JSON.stringify(updateMessage)}`)
             let saveInCampaignMessage = await sendMessages(from, text, campaignId, message, response.status, text, response.msgId, 'WA Web', response.status, response.msgId);
           }
           return response;
