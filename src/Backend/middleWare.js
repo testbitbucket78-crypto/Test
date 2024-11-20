@@ -345,7 +345,7 @@ const WHATSAPPOptions = {
 
 
 
-async function createWhatsAppPayload(type, to, templateName, languageCode, headerVariables = [], bodyVariables = [], mediaLink = null, spid) {
+async function createWhatsAppPayload(type, to, templateName, languageCode, headerVariables = [], bodyVariables = [], mediaLink = null, spid, button = []) {
     let WAdetails = await getWAdetails(spid);
     let payload = {
         messaging_product: "whatsapp",
@@ -356,7 +356,8 @@ async function createWhatsAppPayload(type, to, templateName, languageCode, heade
             name: templateName,
             language: {
                 code: languageCode
-            }
+            },
+            components: []
         }
     };
 
@@ -384,7 +385,7 @@ async function createWhatsAppPayload(type, to, templateName, languageCode, heade
         }
 
         payload.template.components = components;
-    } else if (['image', 'video', 'doc'].includes(type)) {
+    } else if (['image', 'video', 'document'].includes(type)) {
         let headerComponent = {
             type: "header",
             parameters: [{
@@ -408,6 +409,31 @@ async function createWhatsAppPayload(type, to, templateName, languageCode, heade
             payload.template.components = [headerComponent];
         }
     }
+    if (button.length > 0) {
+        let buttonComponents = button.map(btn => {
+            if (btn.type === 'Copy offer Code') {
+                return {
+                    type: "button",
+                    sub_type: "copy_code",
+                    index: 0,
+                    parameters: [
+                        {
+                            type: "coupon_code",
+                            coupon_code: btn.code
+                        }
+                    ]
+                };
+            }
+        }).filter(Boolean);
+
+        if (buttonComponents.length > 0) {
+            if (!payload.template.components) {
+                payload.template.components = [];
+            }
+            payload.template.components = [...payload.template.components, ...buttonComponents];
+        }
+    }
+
     const response = await axios({
         method: "POST",
         url: `https://graph.facebook.com/v19.0/${WAdetails[0].phoneNumber_id}/messages?access_token=${WAdetails[0].token}`,

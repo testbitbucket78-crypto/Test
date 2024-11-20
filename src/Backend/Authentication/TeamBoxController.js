@@ -753,7 +753,7 @@ const insertMessage = async (req, res) => {
                              valuesArray = results.map(item => Object.values(item)[0]);
                         }
 
-                        middlewareresult = await middleWare.createWhatsAppPayload(mediaType, req?.body?.messageTo, req?.body?.name, req?.body?.language, [], valuesArray, message_media, SPID);
+                        middlewareresult = await middleWare.createWhatsAppPayload(mediaType, req?.body?.messageTo, req?.body?.name, req?.body?.language, [], valuesArray, message_media, SPID, req?.body?.buttons);
                        // middlewareresult = await middleWare.channelssetUp(SPID, channel, mediaType, req.body.messageTo, content, message_media, interaction_id, msg_id.insertId, spNumber);
                     } else {
                        if (req.body.message_media !='text') {
