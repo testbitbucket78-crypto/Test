@@ -2,6 +2,7 @@ const teamboxController = require('./Authentication/TeamBoxController');
 const removeTags = require('./removeTagsFromRichTextEditor')
 const http = require("https");
 const axios = require('axios');
+const commonFun = require('./common/resuableFunctions')
 const token = 'EAAQTkLZBFFR8BOxmMdkw15j53ZCZBhwSL6FafG1PCR0pyp11EZCP5EO8o1HNderfZCzbZBZBNXiEFWgIrwslwoSXjQ6CfvIdTgEyOxCazf0lWTLBGJsOqXnQcURJxpnz3i7fsNbao0R8tc3NlfNXyN9RdDAm8s6CxUDSZCJW9I5kSmJun0Prq21QeOWqxoZAZC0ObXSOxM3pK0KfffXZC5S';
 const db = require("./dbhelper");
 
@@ -345,8 +346,10 @@ const WHATSAPPOptions = {
 
 
 
-async function createWhatsAppPayload(type, to, templateName, languageCode, headerVariables = [], bodyVariables = [], mediaLink = null, spid, button = []) {
+async function createWhatsAppPayload(type, to, templateName, languageCode, headerVariables , bodyVariables, mediaLink, spid, button = []) {
+    try{
     let WAdetails = await getWAdetails(spid);
+    let Ln_code = commonFun.getCodeByLabel(languageCode);
     let payload = {
         messaging_product: "whatsapp",
         recipient_type: "individual",
@@ -355,7 +358,7 @@ async function createWhatsAppPayload(type, to, templateName, languageCode, heade
         template: {
             name: templateName,
             language: {
-                code: languageCode
+                code: Ln_code
             },
             components: []
         }
@@ -440,12 +443,19 @@ async function createWhatsAppPayload(type, to, templateName, languageCode, heade
         data: payload, // Use the video message structure
         headers: { "Content-Type": "application/json" },
     })
-    //console.log("****META APIS****", response.data);
+    console.log("****META APIS****",payload );
     return {
         status: 200,
         message: response.data
     };
    // return payload;
+}catch(err){
+    console.log("error", err.response ? err.response.data : err.message);
+    return {
+        status: 500,
+        message: err.message
+    };
+}
 }
 
 // const headerVariables = ['Header Text']; // Variables for header in 'text' type

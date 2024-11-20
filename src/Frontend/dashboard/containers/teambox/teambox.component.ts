@@ -150,6 +150,8 @@ public  fieldsData: { [key: string]: string } = { text: 'name' };
 	SIPmaxMessageLimt=100;
 	SIPthreasholdMessages=1;
 	isTemplate: boolean = false;
+	headerText:string = '';
+	bodyText:string = '';
 	showFullProfile=false;
 	showAttachedMedia=false;
 	showattachmentbox=false;
@@ -680,6 +682,8 @@ public  fieldsData: { [key: string]: string } = { text: 'name' };
 		//this.chatEditor.value =htmlcontent
 		this.isAttachmentMedia = false;
 		this.isTemplate = true;
+		this.headerText = item?.Header;
+		this.bodyText = item?.BodyText;
 		this.templateName= item?.TemplateName;
 		this.templatelanguage = this.settingService?.filterListLanguage.find((lang: any) => lang.label === item?.Language)?.code || '';
 		this.mediaType = item?.media_type;
@@ -1216,6 +1220,8 @@ console.log(getMimeTypePrefix);
 								this.mediaType='';
 								this.SIPthreasholdMessages=this.SIPthreasholdMessages-1;
 								this.isTemplate = false;
+								this.headerText = '';
+								this.bodyText = '';
 							}
 				
 				
@@ -1908,6 +1914,7 @@ console.log(getMimeTypePrefix);
 					}
 				})
 				item['allmessages'].push(...val1);
+				item.message_text = val1[0]?.message_text;
 		});
 	}
 
@@ -3435,6 +3442,8 @@ sendMessage(isTemplate:boolean=false,templateTxt:string=''){
 			mediaSize:this.mediaSize,
 			spNumber: this.spNumber,
 			isTemplate:this.isTemplate,
+			headerText: this.headerText,
+			bodyText: this.bodyText,
 			MessageVariables: this.allVariables,
 			action:'edited by ' + agentName,
 			action_at:new Date(),
@@ -3491,6 +3500,7 @@ sendMessage(isTemplate:boolean=false,templateTxt:string=''){
 									this.getMessagesById(insertId);
 									let idx =  this.interactionList.findIndex((items:any) => items.InteractionId == this.selectedInteraction.InteractionId);
 									if(idx >0){
+										this.interactionList[idx].message_text = bodyData?.message_text
 										this.interactionList = this.moveItemToFirstPosition(this.interactionList,idx);
 										this.interactionListMain = JSON.parse(JSON.stringify(this.interactionList));
 									}
@@ -3514,6 +3524,8 @@ sendMessage(isTemplate:boolean=false,templateTxt:string=''){
 								this.mediaType='';
 								this.SIPthreasholdMessages=this.SIPthreasholdMessages-1;
 								this.isTemplate = false
+								this.headerText = '';
+								this.bodyText = '';
 							}
 				
 				

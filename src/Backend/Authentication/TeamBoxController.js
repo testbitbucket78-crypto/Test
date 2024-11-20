@@ -195,23 +195,23 @@ const updateTags = (req, res) => {
     //   logger.info('Received request for updateTags', { updateQueryQuery });
     db.runQuery(req, res, updateQueryQuery, [])
     updateActionTagUpdation(req)
-    
+
     //   .then(() => logger.info('Tags updated successfully', { customerId: req.body.customerId }))
     //  .catch(err => logger.error('Error updating tags', { error: err.message, stack: err.stack }));
 };
 async function updateActionTagUpdation(req) {
     try {
-      let getInteraction = await db.excuteQuery(`SELECT  InteractionId FROM Interaction WHERE customerId = ? and SP_ID=? ORDER BY InteractionId DESC`, [req.body.customerId, req.body?.SP_ID])
-      let myUTCString = new Date().toUTCString();
-      const utcTimestamp = moment.utc(myUTCString).format('YYYY-MM-DD HH:mm:ss');
-      var interactionId = getInteraction[0].InteractionId; 
-      let actionQuery = `insert into InteractionEvents (interactionId, action, action_at, action_by, created_at, SP_ID, Type) values (?,?,?,?,?,?,?)`;
-      let actiond = await db.excuteQuery(actionQuery, [interactionId, req.body?.action, req.body?.action_at, req.body?.action_by, utcTimestamp, 78, 'text']);
-      console.log("updateStatus", updateStatus)
+        let getInteraction = await db.excuteQuery(`SELECT  InteractionId FROM Interaction WHERE customerId = ? and SP_ID=? ORDER BY InteractionId DESC`, [req.body.customerId, req.body?.SP_ID])
+        let myUTCString = new Date().toUTCString();
+        const utcTimestamp = moment.utc(myUTCString).format('YYYY-MM-DD HH:mm:ss');
+        var interactionId = getInteraction[0].InteractionId;
+        let actionQuery = `insert into InteractionEvents (interactionId, action, action_at, action_by, created_at, SP_ID, Type) values (?,?,?,?,?,?,?)`;
+        let actiond = await db.excuteQuery(actionQuery, [interactionId, req.body?.action, req.body?.action_at, req.body?.action_by, utcTimestamp, 78, 'text']);
+        console.log("updateStatus", updateStatus)
     } catch (err) {
-      console.log("err", err)
+        console.log("err", err)
     }
-  }
+}
 const blockCustomer = async (req, res) => {
     customerId = req.body.customerId;
     isBlocked = req.body.isBlocked;
@@ -307,7 +307,7 @@ const createInteraction = async (req, res) => {
 };
 
 const updateInteraction = async (req, res) => {
-    logger.info(`Received request for updateInteraction ${ req.body }`);
+    logger.info(`Received request for updateInteraction ${req.body}`);
     try {
         let updateQuery;
         if (req.body?.IsTemporary && req.body?.IsTemporary != '') {
@@ -320,8 +320,8 @@ const updateInteraction = async (req, res) => {
 
             await db.excuteQuery(actionQuery, [req.body.InteractionId, req.body?.action, req.body?.action_at, req.body?.action_by, utcTimestamp, req.body?.SP_ID, 'text']);
             updateQuery = "UPDATE Interaction SET interaction_status ='" + req.body.Status + "' ,updated_at ='" + utcTimestamp + "' WHERE InteractionId =" + req.body.InteractionId;
-            if(req.body.Status == 'Open'){
-                let ResolveOpenChat = await db.excuteQuery('UPDATE Interaction SET interaction_status =? WHERE InteractionId !=? and customerId=?',['Resolved',req.body.InteractionId,req.body?.customerId]) ;
+            if (req.body.Status == 'Open') {
+                let ResolveOpenChat = await db.excuteQuery('UPDATE Interaction SET interaction_status =? WHERE InteractionId !=? and customerId=?', ['Resolved', req.body.InteractionId, req.body?.customerId]);
                 logger.info(`ResolveOpenChat if previous is open already ${req.body?.customerId}`)
             }
         }
@@ -674,7 +674,11 @@ const insertMessage = async (req, res) => {
             let mediaSize = req.body.mediaSize;
             let spNumber = req.body?.spNumber;
             let assignAgent = req.body?.assignAgent;
-            var msgVar = req.body?.MessageVariables;;
+            var msgVar = req.body?.MessageVariables;
+
+            var header = req.body?.headerText
+            var body = req.body?.bodyText
+
             let agentName = await db.excuteQuery('select name from user where uid=?', [Agent_id]);
             let channelType = await db.excuteQuery('select * from EndCustomer where customerId=? and SP_ID=?', [customerId, SPID]);
             let spchannel = await db.excuteQuery('select channel_id from WhatsAppWeb where spid=? limit 1', [SPID]);
@@ -685,7 +689,7 @@ const insertMessage = async (req, res) => {
             var values = [[SPID, Type, ExternalMessageId, interaction_id, Agent_id, message_direction, message_text, message_media, media_type, Message_template_id, Quick_reply_id, created_at, created_at, mediaSize, assignAgent, buttons]];
             let msg_id = await db.excuteQuery(messageQuery, [values]);
             //  logger.debug('Message ID:', msg_id);
-            let updateInteraction = await db.excuteQuery(val.updateTempInteractionQuery,[0,interaction_id])
+            let updateInteraction = await db.excuteQuery(val.updateTempInteractionQuery, [0, interaction_id])
             if (agentName.length >= 0) {
                 let mentionQuery = "SELECT * FROM Message WHERE ? LIKE ?";
                 let messageTextParameter = `%${message_text}%`; // assuming message_text is the text you want to search
@@ -699,7 +703,7 @@ const insertMessage = async (req, res) => {
                 const utcTimestamp = moment.utc(myUTCString).format('YYYY-MM-DD HH:mm:ss');
                 await Promise.all(
                     uidMentioned.map(async (element) => {
-                        const check = await commonFun.notifiactionsToBeSent(element,4);
+                        const check = await commonFun.notifiactionsToBeSent(element, 4);
                         if (check) {
                             let notifyvalues = [
                                 [SPID, '@Mention in the Notes', 'You have a been mentioned in the Notes', element, 'teambox', element, utcTimestamp]
@@ -718,7 +722,7 @@ const insertMessage = async (req, res) => {
             let results;
             if (placeholders.length > 0) {
 
-                
+
                 // console.log(msgVar != null,"msgVar",msgVar,msgVar !='')
                 if (msgVar != null && msgVar != '') {
 
@@ -746,29 +750,28 @@ const insertMessage = async (req, res) => {
             let middlewareresult = "";
             if (Type != 'notes') {
                 if (channelType[0].isBlocked != 1) {
-                    if(req?.body?.isTemplate == true){
+                    if (req?.body?.isTemplate == true && channel == 'WA API') {
                         const mediaType = determineMediaType(media_type);
-                        let valuesArray
-                        if(results && results.length) {
-                             valuesArray = results.map(item => Object.values(item)[0]);
-                        }
+                        //get header and body variable 
+                        let headerVar = await commonFun.getTemplateVariables(msgVar, header, SPID, customerId);
+                        let bodyVar = await commonFun.getTemplateVariables(msgVar, body, SPID, customerId);
 
-                        middlewareresult = await middleWare.createWhatsAppPayload(mediaType, req?.body?.messageTo, req?.body?.name, req?.body?.language, [], valuesArray, message_media, SPID, req?.body?.buttons);
+                        middlewareresult = await middleWare.createWhatsAppPayload(mediaType, req?.body?.messageTo, req?.body?.name, req?.body?.language, headerVar, bodyVar, message_media, SPID, req?.body?.buttons);
                        // middlewareresult = await middleWare.channelssetUp(SPID, channel, mediaType, req.body.messageTo, content, message_media, interaction_id, msg_id.insertId, spNumber);
                     } else {
-                       if (req.body.message_media !='text') {
+                        if (req.body.message_media != 'text') {
                             const mediaType = determineMediaType(media_type);
                             middlewareresult = await middleWare.channelssetUp(SPID, channel, mediaType, req.body.messageTo, content, message_media, interaction_id, msg_id.insertId, spNumber);
                         } else {
                             middlewareresult = await middleWare.channelssetUp(SPID, channel, 'text', req.body.messageTo, content, message_media, interaction_id, msg_id.insertId, spNumber);
                         }
-                       // autoReplyPauseTime(SPID, interaction_id);
+                        // autoReplyPauseTime(SPID, interaction_id);
                     }
                     if (middlewareresult?.status != 200) {
                         let NotSendedMessage = await db.excuteQuery('UPDATE Message set msg_status=9 where Message_id=?', [msg_id.insertId]);
                     };
                     if (middlewareresult?.status == 200) {
-                        let UpdatePauseTime  = await getDefaultActionTimeandUpdatePauseTime(SPID,customerId)
+                        let UpdatePauseTime = await getDefaultActionTimeandUpdatePauseTime(SPID, customerId)
                         let NotSendedMessage = await db.excuteQuery('UPDATE Message set Message_template_id=? where Message_id=?', [middlewareresult?.message?.messages[0]?.id, msg_id.insertId]);
                     }
 
@@ -793,21 +796,21 @@ const insertMessage = async (req, res) => {
     }
 };
 
-async function getDefaultActionTimeandUpdatePauseTime(spid,customerId) {
+async function getDefaultActionTimeandUpdatePauseTime(spid, customerId) {
     try {
         let getDefaultAction = await db.excuteQuery(val.defaultQuery, [spid]);
-        let timePause = getDefaultAction[0]?.pauseAutoReplyTime ? getDefaultAction[0]?.pauseAutoReplyTime :0;
+        let timePause = getDefaultAction[0]?.pauseAutoReplyTime ? getDefaultAction[0]?.pauseAutoReplyTime : 0;
         let currentTime = new Date(); // Its default gives utc on server and i have to use it to compare only server time so not changed into UTC.
-        let autoReplyVal =0;
-        if(timePause !=0){
+        let autoReplyVal = 0;
+        if (timePause != 0) {
             autoReplyVal = new Date(currentTime.getTime() + timePause * 60000); // Clone the UTC time
         }
-      
-      
-      //  console.log("currentTime,autoReplyVal ,timePause----", new Date(),  autoReplyVal,timePause,autoReplyVal.toISOString())
- 
+
+
+        //  console.log("currentTime,autoReplyVal ,timePause----", new Date(),  autoReplyVal,timePause,autoReplyVal.toISOString())
+
         let updatePauseTime = await db.excuteQuery(val.updateContactDefaultQuery, [autoReplyVal, customerId, spid])
-        console.log(timePause,spid,"Teambox updatePauseTime", updatePauseTime.affectedRows)
+        console.log(timePause, spid, "Teambox updatePauseTime", updatePauseTime.affectedRows)
     } catch (err) {
 
         logger.error(`Error in getDefaultActionTimeandUpdatePauseTime ${err}`);
@@ -828,7 +831,7 @@ function determineMediaType(mediaType) {
         case '':
             return 'text';
         default:
-            return 'unknown'; // Optional: handle other cases
+            return 'text'; // Optional: handle other cases
     }
 }
 
@@ -958,11 +961,11 @@ const updateInteractionMapping = async (req, res) => {
 
             const myUTCString = new Date().toUTCString();
             const utcTimestamp = moment.utc(myUTCString).format('YYYY-MM-DD HH:mm:ss');
-            const check = await commonFun.notifiactionsToBeSent(AgentId,2);
-            if(check){
-            const notifyvalues = [[nameData[0].SP_ID, 'New Chat Assigned to You', 'A new Chat has been Assigned to you', AgentId, 'teambox', AgentId, utcTimestamp]];
-            const notifyRes = await db.excuteQuery(val.addNotification, [notifyvalues]);
-            logger.debug('Notification Result:', notifyRes);
+            const check = await commonFun.notifiactionsToBeSent(AgentId, 2);
+            if (check) {
+                const notifyvalues = [[nameData[0].SP_ID, 'New Chat Assigned to You', 'A new Chat has been Assigned to you', AgentId, 'teambox', AgentId, utcTimestamp]];
+                const notifyRes = await db.excuteQuery(val.addNotification, [notifyvalues]);
+                logger.debug('Notification Result:', notifyRes);
             }
         }
 

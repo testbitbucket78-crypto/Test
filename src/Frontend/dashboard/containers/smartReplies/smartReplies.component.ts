@@ -186,6 +186,9 @@ export class SmartRepliesComponent implements OnInit,OnDestroy {
 		channelOption : any = [];
 		
 		lastCursorPosition: Range | null = null;
+		templateName:string='';
+		templatelanguage:string ='';
+		templateButton:any =[];
 		// channelOption:any=[
 		// 	{value:1,label:'WhatsApp Official',checked:false},
 		// 	{value:2,label:'WhatsApp Web',checked:false}];
@@ -1020,7 +1023,10 @@ showAddSmartRepliesModal() {
 		if(item.Links) this.messageMeidaFile = item.Links
 		this.chatEditor.value =htmlcontent
 		this.isAttachmentMedia = false;
-		this.addMessage(true,htmlcontent);
+		this.templateName =item?.TemplateName;
+		this.templatelanguage =item?.Language;
+		this.templateButton  =item?.buttons;
+		this.addMessage(true,htmlcontent,item?.Header,item?.BodyText);
 	}
 
 	searchTemplate(event:any){
@@ -1139,7 +1145,7 @@ showAddSmartRepliesModal() {
 
 	/****** Add , Edit and Remove Messages on Reply Action ******/ 
 
-	addMessage(isTemplate:boolean=false,templateTxt:string='') {
+	addMessage(isTemplate:boolean=false,templateTxt:string='',headerText:string='',bodyText:string='') {
 		// var tempDivElement = document.createElement("div");   
 		// tempDivElement.innerHTML = this.chatEditor.value;
 		// let val = tempDivElement.textContent || tempDivElement.innerText || "";
@@ -1172,7 +1178,13 @@ showAddSmartRepliesModal() {
 				ValueUuid: '',
 				Media: this.messageMeidaFile,
 				MessageVariables: this.allVariables,
-				media_type : mediaType
+				media_type : mediaType,
+				isTemplate:isTemplate,
+				headerText: headerText,
+				bodyText: bodyText,
+				name: this.templateName,
+				language: this.templatelanguage,
+				buttons: this.templateButton
 			});
 		}
 		this.messageMeidaFile = '';
@@ -1391,9 +1403,9 @@ stopPropagation(event: Event) {
 		if(!isExist) {
 			this.isAssigned = true;
 			if(this.isEditAssigned){
-				this.assignedAgentList[this.AssignedIndex] = { Message: '', ActionID: 2, Value: this.agentsList[index].name,ValueUuid: this.agentsList[index].uuid, Media: '', MessageVariables: '', media_type : ''}
+				this.assignedAgentList[this.AssignedIndex] = { Message: '', ActionID: 2, Value: this.agentsList[index].name,ValueUuid: this.agentsList[index].uuid, Media: '', MessageVariables: '', media_type : '',isTemplate:false,headerText: '',bodyText: '',buttons:[],language:'',name:''}
 			}else{
-				this.assignedAgentList.push({ Message: '', ActionID: 2, Value: this.agentsList[index].name,ValueUuid: this.agentsList[index].uuid, Media: '', MessageVariables: '', media_type: ''})
+				this.assignedAgentList.push({ Message: '', ActionID: 2, Value: this.agentsList[index].name,ValueUuid: this.agentsList[index].uuid, Media: '', MessageVariables: '', media_type: '',isTemplate:false,headerText: '',bodyText: '',buttons:[],language:'',name:''})
 			}
 		}
 			
@@ -1428,7 +1440,7 @@ stopPropagation(event: Event) {
 			this.assignedTagList = [];
 			this.assignedTagList.push(this.addTagList[index].TagName);
 			this.assignedTagListUuid.push(this.addTagList[index].ID);
-			this.assignedAgentList.push({ Message: '', ActionID: 1, Value: this.assignedTagList,ValueUuid: this.assignedTagListUuid,Media: '', MessageVariables: '', media_type: '',});
+			this.assignedAgentList.push({ Message: '', ActionID: 1, Value: this.assignedTagList,ValueUuid: this.assignedTagListUuid,Media: '', MessageVariables: '', media_type: '',isTemplate:false,headerText: '',bodyText: '',buttons:[],language:'',name:''});
 			console.log('new value');
 		}
 		console.log(this.assignedAgentList);
@@ -1879,7 +1891,13 @@ stopPropagation(event: Event) {
 					ValueUuid: uuid,
 					Media: this.data[i].Media,
 					MessageVariables: this.allVariables,
-					media_type: this.data[i].media_type
+					media_type: this.data[i].media_type,					
+					isTemplate:this.data[i]?.isTemplate,
+					headerText: this.data[i]?.headerText,
+					bodyText: this.data[i]?.bodyText,
+					name: this.data[i]?.templateName,
+					language: this.data[i]?.templatelanguage,
+					buttons: this.data[i]?.templateButton
 				});
 		}
 		console.log(this.assignedAgentList,'MESSAGE DATA')

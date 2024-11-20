@@ -109,6 +109,18 @@
                     <video *ngIf="isVideo(item.Media)" [src]="item.Media" controls style="max-width: 100%; height: auto;"></video>
 				    </div>
 					<p [innerHTML]="item.Message | sanitizeHtml"></p>
+					<div *ngIf="item?.buttons && item?.buttons?.length >0" class="w-70">
+						<div *ngFor="let it of item?.buttons let i = index" >
+						<div  class="text-center" *ngIf="it?.buttonText && i<3"><button class="template-btn"  [ngClass]="{'btn-radius': ((item?.buttons?.length-1)== i || (item?.buttons?.length >2 && i==2))}">
+							<img class="btn-preview-img" *ngIf="it.type =='Quick Reply' && !(i==2 && item?.buttons?.length>3)" src="../../../../assets/img/settings/reply-arrow.svg"> 
+							<img class="btn-preview-img" *ngIf="it.type =='Call Phone' && !(i==2 && item?.buttons?.length>3)" src="../../../../assets/img/settings/phone-call.svg"> 
+								<img class="btn-preview-img" *ngIf="it.type =='Copy offer Code' && !(i==2 && item?.buttons?.length>3)" src="../../../../assets/img/settings/copy.svg"> 
+							<img class="btn-preview-img" *ngIf="it.type =='Visit Website' && !(i==2 && item?.buttons?.length>3)" src="../../../../assets/img/settings/open-in-new.svg"> 
+							<img class="btn-preview-img" *ngIf="it.type =='Complete Flow' && ! (i==2 && item?.buttons?.length>3)" src="../../../../assets/img/settings/form.svg"> 
+							<img class="btn-preview-img" *ngIf="(i==2 && item?.buttons?.length>3)" src="../../../../assets/img/settings/options-lines.svg">  
+							{{(i==2 && item?.buttons?.length>3) ? 'Show All Buttons' : it?.buttonText }}</button> </div>
+						</div>
+					</div>
 				</div>
 				<div *ngIf="item.Name =='Assign Conversation' && item.Name" class="sidebar-assign-conversation">
 					<p class="m-0 py-1 px-2" id="msgbox-head1">Action</p>
@@ -321,6 +333,18 @@
 										  <video *ngIf="isVideo(message.Media)" [src]="message.Media" controls style="max-width: 100%; height: auto;"></video>
 
 										  <p *ngIf="message.Message" id="msgbox-body{{i}}" [innerHTML]="message.Message | sanitizeHtml"></p>
+										  <div *ngIf="message?.buttons && message?.buttons?.length >0" class="w-100">
+											<div *ngFor="let item of message?.buttons let i = index" >
+											<div  class="text-center" *ngIf="item?.buttonText && i<3"><button class="template-btn"  [ngClass]="{'btn-radius': ((message?.buttons?.length-1)== i || (message?.buttons?.length >2 && i==2))}">
+												<img class="btn-preview-img" *ngIf="item.type =='Quick Reply' && !(i==2 && message?.buttons?.length>3)" src="../../../../assets/img/settings/reply-arrow.svg"> 
+											<img class="btn-preview-img" *ngIf="item.type =='Call Phone' && !(i==2 && message?.buttons?.length>3)" src="../../../../assets/img/settings/phone-call.svg"> 
+											<img class="btn-preview-img" *ngIf="item.type =='Copy offer Code' && !(i==2 && message?.buttons?.length>3)" src="../../../../assets/img/settings/copy.svg"> 
+											<img class="btn-preview-img" *ngIf="item.type =='Visit Website' && !(i==2 && message?.buttons?.length>3)" src="../../../../assets/img/settings/open-in-new.svg"> 
+											<img class="btn-preview-img" *ngIf="item.type =='Complete Flow' && ! (i==2 && message?.buttons?.length>3)" src="../../../../assets/img/settings/form.svg"> 
+											<img class="btn-preview-img" *ngIf="(i==2 && message?.buttons?.length>3)" src="../../../../assets/img/settings/options-lines.svg"> 
+												{{(i==2 && message?.buttons?.length>3) ? 'Show All Buttons' : item?.buttonText }}</button> </div>
+											</div>
+										</div>
 										</div>
 					  
 										<div class="col-6 message-buttons">
