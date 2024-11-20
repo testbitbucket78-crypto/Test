@@ -831,7 +831,7 @@ function determineMediaType(mediaType) {
         case '':
             return 'text';
         default:
-            return 'unknown'; // Optional: handle other cases
+            return 'text'; // Optional: handle other cases
     }
 }
 
