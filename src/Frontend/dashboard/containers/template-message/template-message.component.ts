@@ -163,9 +163,9 @@ export class TemplateMessageComponent implements OnInit {
       ]
     filterListStatus = [
         { value: 0, label: 'draft', checked: false },
-        { value: 1, label: 'approved', checked: false },
-        { value: 2, label: 'pending', checked: false },
-        { value: 3, label: 'rejected', checked: false },
+        { value: 1, label: 'APPROVED', checked: false },
+        { value: 2, label: 'PENDING', checked: false },
+        { value: 3, label: 'REJECTED', checked: false },
         { value: 4, label: 'saved', checked: false },
     ];
     selectedCategory = 1;
