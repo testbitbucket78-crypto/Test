@@ -1026,7 +1026,7 @@ showAddSmartRepliesModal() {
 		this.templateName =item?.TemplateName;
 		this.templatelanguage =item?.Language;
 		this.templateButton  =item?.buttons;
-		this.addMessage(true,htmlcontent);
+		this.addMessage(true,htmlcontent,item?.Header,item?.BodyText);
 	}
 
 	searchTemplate(event:any){
@@ -1145,7 +1145,7 @@ showAddSmartRepliesModal() {
 
 	/****** Add , Edit and Remove Messages on Reply Action ******/ 
 
-	addMessage(isTemplate:boolean=false,templateTxt:string='') {
+	addMessage(isTemplate:boolean=false,templateTxt:string='',headerText:string='',bodyText:string='') {
 		// var tempDivElement = document.createElement("div");   
 		// tempDivElement.innerHTML = this.chatEditor.value;
 		// let val = tempDivElement.textContent || tempDivElement.innerText || "";
@@ -1180,6 +1180,8 @@ showAddSmartRepliesModal() {
 				MessageVariables: this.allVariables,
 				media_type : mediaType,
 				isTemplate:isTemplate,
+				headerText: headerText,
+				bodyText: bodyText,
 				name: this.templateName,
 				language: this.templatelanguage,
 				buttons: this.templateButton
@@ -1401,9 +1403,9 @@ stopPropagation(event: Event) {
 		if(!isExist) {
 			this.isAssigned = true;
 			if(this.isEditAssigned){
-				this.assignedAgentList[this.AssignedIndex] = { Message: '', ActionID: 2, Value: this.agentsList[index].name,ValueUuid: this.agentsList[index].uuid, Media: '', MessageVariables: '', media_type : '',isTemplate:false,buttons:[],language:'',name:''}
+				this.assignedAgentList[this.AssignedIndex] = { Message: '', ActionID: 2, Value: this.agentsList[index].name,ValueUuid: this.agentsList[index].uuid, Media: '', MessageVariables: '', media_type : '',isTemplate:false,headerText: '',bodyText: '',buttons:[],language:'',name:''}
 			}else{
-				this.assignedAgentList.push({ Message: '', ActionID: 2, Value: this.agentsList[index].name,ValueUuid: this.agentsList[index].uuid, Media: '', MessageVariables: '', media_type: '',isTemplate:false,buttons:[],language:'',name:''})
+				this.assignedAgentList.push({ Message: '', ActionID: 2, Value: this.agentsList[index].name,ValueUuid: this.agentsList[index].uuid, Media: '', MessageVariables: '', media_type: '',isTemplate:false,headerText: '',bodyText: '',buttons:[],language:'',name:''})
 			}
 		}
 			
@@ -1438,7 +1440,7 @@ stopPropagation(event: Event) {
 			this.assignedTagList = [];
 			this.assignedTagList.push(this.addTagList[index].TagName);
 			this.assignedTagListUuid.push(this.addTagList[index].ID);
-			this.assignedAgentList.push({ Message: '', ActionID: 1, Value: this.assignedTagList,ValueUuid: this.assignedTagListUuid,Media: '', MessageVariables: '', media_type: '',isTemplate:false,buttons:[],language:'',name:''});
+			this.assignedAgentList.push({ Message: '', ActionID: 1, Value: this.assignedTagList,ValueUuid: this.assignedTagListUuid,Media: '', MessageVariables: '', media_type: '',isTemplate:false,headerText: '',bodyText: '',buttons:[],language:'',name:''});
 			console.log('new value');
 		}
 		console.log(this.assignedAgentList);
@@ -1891,6 +1893,8 @@ stopPropagation(event: Event) {
 					MessageVariables: this.allVariables,
 					media_type: this.data[i].media_type,					
 					isTemplate:this.data[i]?.isTemplate,
+					headerText: this.data[i]?.headerText,
+					bodyText: this.data[i]?.bodyText,
 					name: this.data[i]?.templateName,
 					language: this.data[i]?.templatelanguage,
 					buttons: this.data[i]?.templateButton

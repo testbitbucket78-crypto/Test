@@ -9,6 +9,8 @@ export interface agentMessageList{
     isTemplate:boolean;
 	name: string;
 	language: string;
+    headerText: string;
+    bodyText:string;
 	buttons: any;
 }
 
