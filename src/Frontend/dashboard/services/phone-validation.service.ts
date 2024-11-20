@@ -112,4 +112,9 @@ phoneNumberValidator(countryControl: AbstractControl | null): ValidatorFn {
   };
 }
 
+getPhoneNumberLength(code:any){
+  const expectedLength = this.countryCodes.filter((item)=> item.countryCode == code)[0]?.length;
+  return expectedLength;
+}
+
 }

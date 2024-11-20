@@ -7,6 +7,7 @@ import { parsePhoneNumberFromString } from 'libphonenumber-js';
 import { ToolbarService, LinkService, ImageService, EmojiPickerService, CountService} from '@syncfusion/ej2-angular-richtexteditor';
 import { RichTextEditorComponent, HtmlEditorService } from '@syncfusion/ej2-angular-richtexteditor';
 import { faSmileWink } from '@fortawesome/free-solid-svg-icons';
+import { PhoneValidationService } from 'Frontend/dashboard/services/phone-validation.service';
 
 declare var $: any;
 @Component({
@@ -243,6 +244,7 @@ export class TemplateMessageComponent implements OnInit {
 
     constructor(public apiService: SettingsService,
         private renderer: Renderer2,
+        private phoneValidationService: PhoneValidationService,
         public settingsService: SettingsService, private _teamboxService: TeamboxService) {}
 
     errorMessage = '';
@@ -1425,6 +1427,12 @@ openButtonPopUp() {
         }
         if (!item.phoneNumber) {
           validationErrors = validationErrors + '<br>'+ `Button ${index + 1}: 'Phone Number' is required for Call Phone button.`;
+        }
+        if(item.code && item.phoneNumber){
+            let phoneLength = this.phoneValidationService?.getPhoneNumberLength(item?.code);
+            if(phoneLength != item?.phoneNumber?.length){
+                validationErrors = validationErrors + '<br>'+ `Button ${index + 1}: 'Phone Number' Length is incorrect`;
+            }
         }
       }
       if (item.type === 'Copy offer Code' && !item.code) {
