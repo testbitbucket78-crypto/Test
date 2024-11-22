@@ -755,6 +755,7 @@ constructor(config: NgbModalConfig, private modalService: NgbModal,private datep
 				item['reportSeenLength'] =item?.report_seen?JSON.parse(item?.report_seen)?.length:0
 				item['reportRepliedLength'] =item?.report_replied?JSON.parse(item?.report_replied)?.length:0
                 this.statusUpdate(CampaignID, item.status_label);
+				item.buttons = JSON.parse(item?.buttons);
 				this.selectedCampaign = item;
 				this.isLoading = false;
 				if(item?.status>1){
@@ -1675,7 +1676,13 @@ formateDate(dateTime:string){
 			end_time: end_Time,
 			day: day,
 			csv_contacts:this.csvContactList?.length>0?JSON.stringify(this.csvContactList):[],
-			segments_contacts:this.segmentsContactList?.length>0?JSON.stringify(this.segmentsContactList):[]
+			segments_contacts:this.segmentsContactList?.length>0?JSON.stringify(this.segmentsContactList):[],
+			isTemplate:this.selectedTemplate?.isTemplate,
+			bodyText:this.selectedTemplate?.BodyText,
+			headerText:this.selectedTemplate?.Header,
+			name: this.selectedTemplate?.TemplateName,
+			language: this.selectedTemplate?.Language,
+			buttons: this.selectedTemplate?.buttons
 		}
 		if(action=='save'){
 			BodyData['status']=2;

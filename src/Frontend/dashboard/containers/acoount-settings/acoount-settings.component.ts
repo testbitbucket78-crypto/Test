@@ -418,7 +418,7 @@ async subscribeToNotifications() {
       console.log("Seems like some message update from webhook");
       console.log(message);
       try {
-        let msgjson = JSON.parse(message);
+        let msgjson = message;
         console.log(msgjson);
         if (msgjson.displayPhoneNumber) {
           this.qrcode = msgjson.message;
@@ -442,8 +442,7 @@ async subscribeToNotifications() {
             this.hideModal();
           }
 
-          if (msgjson.message == 'QR generation timed out. Plese re-open account settings and generate QR code') {
-           
+          if (msgjson.message == 'QR generation timed out. Plese re-open account settings and generate QR code') {           
             this.channel_status = 0; 
             this.saveWhatsappWebDetails(id);
             this.showToaster('QR generation timed out. Plese re-open account settings and generate QR code', 'error');
