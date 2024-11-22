@@ -187,7 +187,7 @@ server.listen(port, () => {
 const express = require('express');
 const http = require('http');
 const { Server } = require('socket.io');
-
+const logger = require('../common/logger.log');
 const app = express();
 const server = http.createServer(app);
 const io = new Server(server);
@@ -250,13 +250,15 @@ io.on('connection', (socket) => {
       } else if (msgjson.displayPhoneNumber) {
         // Handle messages intended for specific SPIDs
         const targetPhone = msgjson.displayPhoneNumber;
-
+        logger.info(`1111 msgjson.display ____spAgentMapping ${spAgentMapping} , msgjson,${msgjson} ,spAgentMapping[targetPhone],${ spAgentMapping[targetPhone]}`)
         if (spAgentMapping[targetPhone]) {
+          logger.info(`2222 if.display _pAgentMapping, msgjson,${msgjson} ,spAgentMapping[targetPhone],${ spAgentMapping[targetPhone]}`)
           spAgentMapping[targetPhone].forEach((uniqueSPPhone) => {
             const targetSocketId = Object.keys(clients).find(
               id => clients[id] === uniqueSPPhone
             );
             if (targetSocketId) {
+              logger.info(`3333 targetSocketId.display, msgjson,${msgjson} ,spAgentMapping[targetPhone],${ spAgentMapping[targetPhone]}`)
               io.sockets.sockets.get(targetSocketId)?.emit('message', msgjson);
             } else {
               console.log(`Socket for ${uniqueSPPhone} is undefined`);
