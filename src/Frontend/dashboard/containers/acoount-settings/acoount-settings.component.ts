@@ -529,11 +529,13 @@ saveWhatsappAPIDetails() {
     user_uid : this.uid,
     phoneNumber_id : this.phoneId,
     waba_id : this.wabaId,
+    phoneNo: this.SPPhonenumber,
   }
   this.apiService.addWhatsAppAPIDetails(data).subscribe
   ((resopnse :any) => {
     if(resopnse.status === 200) {
       console.log(this.whatAppDetails)
+      this.getwhatsapp();
       console.log(resopnse)
     }
 

@@ -221,5 +221,14 @@ export class DashboardComponent implements OnInit {
     routeToPage(link:string) {
         this.router.navigate([link]);
     }
-  
+    getMediaType(val:any){
+		if(val?.includes('image'))
+			return 'Image';
+		else if(val?.includes('video'))
+			return 'Video';
+		else if(val?.includes('application'))
+			return 'Document';
+		else
+		return '';
+	  }
 }
