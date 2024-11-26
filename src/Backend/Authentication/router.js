@@ -12,19 +12,127 @@ const indexController=require('./index.js');
 const awsHelper = require('../awsHelper');
 const path = require("path");
 const authenticateToken = require('../Authorize');
-
+/**
+ * @swagger
+ * tags:
+ *   - name: Authentication
+ */
 router.get('/users',authenticateToken,userController.getUser);
 router.get('/users/:id',authenticateToken,userController.getUserById);
 router.delete('/users/:id',authenticateToken,authenticateToken,userController.deletUserById);
+/**
+ * @swagger
+ * /users:
+ *   post:
+ *     tags:
+ *       - Authentication
+ *     summary: Create a new user
+ *     description: Adds a new user to the database with the provided details.
+ *     security:
+ *       - bearerAuth: []  # Requires Bearer Token Authorization
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - password
+ *               - email_id
+ *               - name
+ *             properties:
+ *               password:
+ *                 type: string
+ *                 description: The user's password.
+ *                 example: "StrongPassword123!"
+ *               email_id:
+ *                 type: string
+ *                 description: The user's email address.
+ *                 example: "mailto:user@example.com"
+ *               address:
+ *                 type: string
+ *                 description: The user's address.
+ *                 example: "123 Main Street"
+ *               name:
+ *                 type: string
+ *                 description: The user's name.
+ *                 example: "John Doe"
+ *               mobile_number:
+ *                 type: string
+ *                 description: The user's mobile number.
+ *                 example: "+1234567890"
+ *               country:
+ *                 type: string
+ *                 description: The user's country.
+ *                 example: "USA"
+ *               timezone:
+ *                 type: string
+ *                 description: The user's timezone.
+ *                 example: "UTC-5"
+ *               CreatedDate:
+ *                 type: string
+ *                 format: date-time
+ *                 description: The creation date of the user.
+ *                 example: "2024-11-22T12:00:00Z"
+ *               LastModifiedDate:
+ *                 type: string
+ *                 format: date-time
+ *                 description: The last modification date of the user.
+ *                 example: "2024-11-22T12:00:00Z"
+ *               PasswordHint:
+ *                 type: string
+ *                 description: A hint for the user's password.
+ *                 example: "My first pet's name"
+ *               securityquestion:
+ *                 type: string
+ *                 description: A security question for account recovery.
+ *                 example: "What is your mother's maiden name?"
+ *               Securityanswer:
+ *                 type: string
+ *                 description: The answer to the security question.
+ *                 example: "Smith"
+ *               ParentId:
+ *                 type: integer
+ *                 description: ID of the parent account, if applicable.
+ *                 example: 1
+ *               UserType:
+ *                 type: string
+ *                 description: The type of user.
+ *                 example: "Admin"
+ *               IsDeleted:
+ *                 type: boolean
+ *                 description: Whether the user account is deleted.
+ *                 example: false
+ *               IsActive:
+ *                 type: boolean
+ *                 description: Whether the user account is active.
+ *                 example: true
+ *     responses:
+ *       201:
+ *         description: User successfully created.
+ *       400:
+ *         description: Bad request, invalid input.
+ *       401:
+ *         description: Unauthorized, invalid token.
+ *       500:
+ *         description: Internal server error.
+ */
+
+
+router.post('/users', authenticateToken, userController.insertUser);
+
 router.post('/users',authenticateToken,userController.insertUser);
 router.put('/users/:id',authenticateToken,userController.updateUser);
 router.get('/getAllRegisteredUser',authenticateToken,indexController.allregisterdUser);
+// ********* singn up star *********//
 router.post('/register',indexController.register);
 router.post('/login',indexController.login);
 router.post('/forgotPassword',authenticateToken,indexController.forgotPassword);
 router.post('/sendOtp',indexController.sendOtp)
 router.post('/verifyOtp',indexController.verifyOtp)
 router.post('/resetPassword/:uid',authenticateToken,indexController.resetPassword)
+
+//________sign up end_______________//
 router.post('/allAgents',authenticateToken,userController.getAllAgents)
 router.post('/isActiveAgents',authenticateToken,userController.getisActiveAgents)
 router.post('/verifyPhoneOtp',indexController.verifyPhoneOtp)
