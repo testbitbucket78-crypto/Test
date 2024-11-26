@@ -733,7 +733,7 @@ constructor(config: NgbModalConfig, private modalService: NgbModal,private datep
 					item['category_label'] =item.category
 				}
 
-				
+				if(item?.buttons) item['buttons'] = JSON.parse(item.buttons);
 				if(item.segments_contacts){
 				item['AllContactsLength'] =item.segments_contacts?JSON.parse(item?.segments_contacts).length:JSON.parse(item?.csv_contacts)?.length
 				item['AudienceType']='Segment Audience'
@@ -1546,6 +1546,10 @@ formateDate(dateTime:string){
 		if(template){
 			console.log(template)
 		this.selectedTemplate = template;
+		if(this.isValidDateTime(this.selectedCampaign?.start_datetime)) this.selecteScheduleTime = this.formatTime(this.selectedCampaign?.start_datetime);
+		if(this.isValidDateTime(this.selectedCampaign?.start_datetime)) this.selecteScheduleDate = this.convertToDateFormat(this.selectedCampaign?.start_datetime)
+		this.selectedTemplate['Links']=this.selectedCampaign?.message_media;
+		this.selectedTemplate['buttons']=this.selectedCampaign?.buttons;
 		}
 		this.selectedTemplate['allVariables'] =this.selectedCampaign?.allVariables;
 		this.closeAllModal()
@@ -1605,6 +1609,7 @@ formateDate(dateTime:string){
 	resetFormState() {
 		this.resetSchedule();
 		this.resetSelectedContactList();
+		this.removecontact('');
 	}
 	resetSchedule() {
 		this.scheduled = 0;
@@ -1675,7 +1680,8 @@ formateDate(dateTime:string){
 			end_time: end_Time,
 			day: day,
 			csv_contacts:this.csvContactList?.length>0?JSON.stringify(this.csvContactList):[],
-			segments_contacts:this.segmentsContactList?.length>0?JSON.stringify(this.segmentsContactList):[]
+			segments_contacts:this.segmentsContactList?.length>0?JSON.stringify(this.segmentsContactList):[],
+			buttons: JSON.stringify(this.selectedTemplate?.buttons)
 		}
 		if(action=='save'){
 			BodyData['status']=2;
@@ -2665,7 +2671,7 @@ console.log(this.allTemplatesMain);
 	}
 		 // })
 		}
-		this.selectedTemplate['buttons'] = buttons;	  
+		this.selectedTemplate['buttons'] = template?.buttons ?? [];	  
 		  this.selectedTemplate['allVariables'] = allVariablesList;
 		  console.log(this.selectedTemplate, '-----selectedTemplate');
 		  console.log(JSON.parse(this.selectedTemplate?.template_json), '-----selectedTemplatexddsfg');
@@ -3110,6 +3116,20 @@ console.log(this.allTemplatesMain);
 		return val.includes(type);
 	}
 
+	isImageType(mediaType: string | undefined): boolean {
+		if (!mediaType) return false;
+		return ['image', 'image/jpeg', 'image/png'].includes(mediaType || '');
+	}
+
+	formatTime(datetime: string | undefined | null): string | null {
+		if (!datetime) return null;
+		const date = new Date(datetime);
+		if (isNaN(date.getTime())) return null; 
+		return date.toISOString().slice(11, 16); 
+	};
+	convertToDateFormat(datetime: string): string {
+		return datetime ? new Date(datetime).toISOString().split('T')[0] : '';
+	  }
 
 	getActualName(val:any){
 		let filt = this.contactFilterBy.filter((item:any)=> item.value == val)
@@ -3117,5 +3137,10 @@ console.log(this.allTemplatesMain);
 			return filt[0]?.label;
 		} else
 			return val;
+	}
+	isValidDateTime(datetime: string | null | undefined): boolean {
+		if (!datetime || datetime === '0000-00-00 00:00:00') return false;
+		const date = new Date(datetime);
+		return !isNaN(date.getTime());
 	}
 }
