@@ -714,12 +714,12 @@ const addTemplate = async (req, res) => {
         let statusCode = 200;
         let buttons = req.body?.buttons
         let categoryChange = req.body?.categoryChange
-        console.log(ID, status, Channel)
+        console.log(ID, status, Channel,req.body?.categoryChange)
         if (ID == 0) {
             let templateStatus;
             let addedtem;
             if (Channel == 'WhatsApp Official' || Channel == 'WA API') {
-                if(isTemplate == 1 && isCopied != 1){
+                if(isTemplate == 1 && isCopied != 1 && status != 'draft'){
                     templateStatus = await Createtemplate(template_json,spid);
                     console.log("templateStatus", templateStatus)
     
@@ -749,8 +749,7 @@ const addTemplate = async (req, res) => {
         else {
             let updatedTemplate;
             if (Channel == 'WhatsApp Official' || Channel == 'WA API') {
-               
-                if (isTemplate == 1) {
+                if (isTemplate == 1  && isCopied != 1 && status != 'draft') {
                      updatedTemplate = await Createtemplate(template_json,spid);
                     console.log("edittemplateStatus", updatedTemplate);
                     status = updatedTemplate.status
@@ -761,13 +760,14 @@ const addTemplate = async (req, res) => {
                     }else{
                         statusCode = 400;
                     }
-                }else if(isTemplate == 0){
-                    let updatedTemplateValues = [TemplateName, Channel, Category, Language, media_type, Header, BodyText, image, FooterText, JSON.stringify(template_json), status, spid, created_By, created_at, isTemplate, industry, category_id,'',buttons,'', ID]
+                }else {
+                   
+                    let updatedTemplateValues = [TemplateName, Channel, Category, Language, media_type, Header, BodyText, image, FooterText, JSON.stringify(template_json), status, spid, created_By, created_at, isTemplate, industry, category_id,'',buttons,categoryChange, ID]
                     updatedTemplate = await db.excuteQuery(val.updateTemplate, updatedTemplateValues)
                     console.log(Channel, status, "updatedTemplate", updatedTemplate)
                 }
             } else if (Channel == 'WhatsApp Web' || Channel == 'WA Web') {
-                let updatedTemplateValues = [TemplateName, Channel, Category, Language, media_type, Header, BodyText, image, FooterText, JSON.stringify(template_json), req.body.status, spid, created_By, created_at, isTemplate, industry, category_id,'','','', ID]
+                let updatedTemplateValues = [TemplateName, Channel, Category, Language, media_type, Header, BodyText, image, FooterText, JSON.stringify(template_json), req.body.status, spid, created_By, created_at, isTemplate, industry, category_id,'',buttons,categoryChange,ID]
                 updatedTemplate = await db.excuteQuery(val.updateTemplate, updatedTemplateValues)
                 console.log(Channel, "updatedTemplate", updatedTemplate)
             }

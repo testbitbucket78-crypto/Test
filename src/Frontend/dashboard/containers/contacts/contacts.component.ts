@@ -997,6 +997,12 @@ deletContactByID(data: any) {
         console.log(val);
         this.productForm.get(prop)?.setValue(val)
       }
+      else if(idx>-1 &&  this.filteredCustomFields[idx] && (this.filteredCustomFields[idx].type == 'Switch')){
+        if(value?.length >1){
+        let val = value.charAt(0).toUpperCase() + value.slice(1).toLowerCase();
+        this.productForm.get(prop)?.setValue(val);
+        }
+      }
       else if(idx>-1 &&  this.filteredCustomFields[idx] && (this.filteredCustomFields[idx].type == 'Multi Select')){
         if(value){
         let val = value.split(':');

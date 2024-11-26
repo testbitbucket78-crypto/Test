@@ -51,7 +51,7 @@ const addCampaign = async (req, res) => {
         let templateId = req.body.templateId
         var header = req.body?.headerText
         var body = req.body?.bodyText
-        let buttons = req.body?.buttons
+        var buttons = req.body?.buttons
         message_variables = (message_variables?.length <= 0) ? '' : message_variables;
         csv_contacts = (csv_contacts?.length <= 0) ? '' : csv_contacts;
         segments_contacts = (segments_contacts?.length <= 0) ? '' : segments_contacts;
