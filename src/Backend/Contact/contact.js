@@ -930,7 +930,7 @@ app.post('/verifyData', authenticateToken, async (req, res) => {
     }
 
     if (importData.length > 0) {
-      const verifyQuery = 'SELECT * FROM EndCustomer WHERE ' + identity + ' IN (?) AND SP_ID=? AND (isDeleted IS NULL OR isDeleted = 0)';
+      const verifyQuery = 'SELECT * FROM EndCustomer WHERE ' + identity + ' IN (?) AND SP_ID=? AND isDeleted !=1 and IsTemporary !=1';
       const result = await db.excuteQuery(verifyQuery, [queryData, SP_ID]);
       console.log(result, "************")
       let newCon = 0;

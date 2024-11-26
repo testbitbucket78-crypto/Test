@@ -1025,7 +1025,7 @@ searchTemplate(event:any){
 	}
 	this.allTemplates = FilteredArray
 	}else{
-		this.allTemplates = this.allTemplatesMain
+		this.allTemplates = this.allTemplatesMain;
 	}
 }
 
@@ -1438,7 +1438,10 @@ console.log(getMimeTypePrefix);
 								else{
 									if(msgjson.msg_status=="IN" || msgjson?.status =="IN"){
 										//this.updateMessages();
-										this.getMessagesById(msgjson?.msg_id)
+										this.getMessagesById(msgjson?.msg_id);
+										setTimeout(() => {
+											this.chatSection?.nativeElement.scroll({top:this.chatSection?.nativeElement.scrollHeight})
+										}, 600);
 										}else{
 											// if(msgjson.msg_status == 1){
 											// this.getMessageData(this.selectedInteraction,true)
@@ -1783,7 +1786,7 @@ console.log(getMimeTypePrefix);
 					  if(idx != -1){
 						this.interactionList[idx].message_text = childObj.items[0].message_text;
 						this.interactionList[idx].LastMessageDate = childObj.items[0].created_at;
-						this.interactionList[idx].message_media = 'text';
+						//this.interactionList[idx].message_media = 'text';
 					}
 					} else {
 					  item['messageList']?.push(childObj);
@@ -1914,7 +1917,9 @@ console.log(getMimeTypePrefix);
 					}
 				})
 				item['allmessages'].push(...val1);
-				item.message_text = val1[0]?.message_text;
+				item.message_text = val1[0]?.message_text;				
+				item.message_media= val1[0]?.message_media;
+				item.media_type = val1[0]?.media_type;
 		});
 	}
 
@@ -3500,7 +3505,9 @@ sendMessage(isTemplate:boolean=false,templateTxt:string=''){
 									this.getMessagesById(insertId);
 									let idx =  this.interactionList.findIndex((items:any) => items.InteractionId == this.selectedInteraction.InteractionId);
 									if(idx >0){
-										this.interactionList[idx].message_text = bodyData?.message_text
+										this.interactionList[idx].message_text = bodyData?.message_text;
+										this.interactionList[idx].message_media= this.messageMeidaFile ? this.messageMeidaFile :'text';
+										this.interactionList[idx].media_type = this.mediaType;
 										this.interactionList = this.moveItemToFirstPosition(this.interactionList,idx);
 										this.interactionListMain = JSON.parse(JSON.stringify(this.interactionList));
 									}
@@ -3970,6 +3977,11 @@ sendMessage(isTemplate:boolean=false,templateTxt:string=''){
 			let val = value ? value.split(':')[0] : '';
 			console.log(val);
 			this.editContact.get(prop)?.setValue(val);
+		  }else if(idx>-1 &&  this.filteredCustomFields[idx] && (this.filteredCustomFields[idx].type == 'Switch')){
+			if(value?.length >1){
+			let val = value.charAt(0).toUpperCase() + value.slice(1).toLowerCase();
+			this.editContact.get(prop)?.setValue(val);
+			}
 		  }
 		  else if( idx>-1 &&  this.filteredCustomFields[idx] && this.filteredCustomFields[idx].type == 'Time'){
 			let val =this.settingsService.convertTimeFormat(value,true);
