@@ -420,13 +420,15 @@ const addWAAPIDetails = async (req, res) => {
             }
         });
 
+        const isUpdated = await updateIfAlreadyExists(spid, phoneNumber_id, waba_id);
+        
         const { access_token } = response.data;
         // Store access_token for future API calls or redirect to your app
         if (response.data) {
             let myUTCString = new Date().toUTCString();
             const created_at = moment.utc(myUTCString).format('YYYY-MM-DD HH:mm:ss');
             let addToken = await db.excuteQuery('insert into WA_API_Details (token,spid,phoneNo,user_uid,phoneNumber_id,waba_id,created_at) VALUES(?,?,?,?,?,?,?)', [access_token, spid, phoneNo,user_uid,phoneNumber_id,waba_id, created_at])
-            let addwhatsappDetails = await db.excuteQuery('insert into WhatsAppWeb (channel_id,channel_status,spid,WABA_ID,phone_number_id,is_deleted,connected_id) values(?,?,?,?,?,?)',['WA API',1,spid,waba_id,phoneNumber_id,0,phoneNo])
+            let addwhatsappDetails = await db.excuteQuery('insert into WhatsAppWeb (channel_id,channel_status,spid,WABA_ID,phone_number_id,is_deleted,connected_id) values(?,?,?,?,?,?,?)',['WA API',1,spid,waba_id,phoneNumber_id,0,phoneNo])
         }
         
         res.status(200).send({
@@ -439,6 +441,41 @@ const addWAAPIDetails = async (req, res) => {
             err: err,
             status: 500
         })
+    }
+}
+async function checkIfAlreadyExist(spid, phoneNumber_id, waba_id) {
+    try {
+        const query = `
+            SELECT COUNT(*) AS count
+            FROM WA_API_Details
+            WHERE spid = ? AND phoneNumber_id = ? AND waba_id = ?
+        `;
+
+        const result = await db.excuteQuery(query, [spid, phoneNumber_id, waba_id]);
+        return result[0]?.count > 0;
+    } catch (error) {
+        console.error("Error checking existence:", error);
+        return false;
+    }
+}
+async function updateIfAlreadyExists(spid, phoneNumber_id, waba_id){
+    try {
+        const exists = await checkIfAlreadyExist(spid, phoneNumber_id, waba_id);
+        if (exists) {
+            const query = `
+                UPDATE WA_API_Details
+                SET isDeleted = 1
+                WHERE spid = ? AND phoneNumber_id = ? AND waba_id = ? AND isDeleted = 0
+            `;
+
+            const result = await db.excuteQuery(query, [spid, phoneNumber_id, waba_id]);
+
+            return true; 
+        } else {
+            return false; 
+        }
+    } catch (error) {
+        return false;
     }
 }
 
