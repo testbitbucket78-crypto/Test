@@ -169,9 +169,9 @@ router.post('/deleteContactList',authenticateToken,CampaignsController.deleteCon
 router.post('/applyFilterOnEndCustomer',authenticateToken,CampaignsController.applyFilterOnEndCustomer);
 router.get('/getAdditiionalAttributes/:SPID',authenticateToken,CampaignsController.getAdditiionalAttributes);
 router.get('/getEndCustomerDetail/:customerId',authenticateToken,CampaignsController.getEndCustomerDetail);
-router.get('/getContactAttributesByCustomer/:customerId',authenticateToken,authenticateToken,CampaignsController.getContactAttributesByCustomer);
-router.post('/sendCampinMessage',authenticateToken,CampaignsController.sendCampinMessage);
-router.post('/saveCampaignMessages',authenticateToken,CampaignsController.saveCampaignMessages);
+router.get('/getContactAttributesByCustomer/:customerId',authenticateToken,authenticateToken,CampaignsController.getContactAttributesByCustomer)//unused
+router.post('/sendCampinMessage',authenticateToken,CampaignsController.sendCampinMessage);//unused
+router.post('/saveCampaignMessages',authenticateToken,CampaignsController.saveCampaignMessages);//unused
 
 router.get('/getCampaignMessages/:CampaignId',authenticateToken,CampaignsController.getCampaignMessages);
 router.get('/copyCampaign/:CampaignId/:spid',authenticateToken,CampaignsController.copyCampaign);
