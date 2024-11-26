@@ -14,10 +14,76 @@ const { exec } = require('child_process');
 const logger = require('../common/logger.log');
 var processSet = new Set();
 // const { MessageMedia, Location, Contact } = require('whatsapp-web.js');
+/**
+ * @swagger
+ * tags:
+ *   - name: webJS
+ */
 app.get('/get', (req, res) => {
     res.send("webjs is working")
 })
-
+/**
+ * @swagger
+ * /createQRcode:
+ *   post:
+ *     tags:
+ *       - webJS
+ *     summary: Create a QR Code for a client
+ *     description: Generates a QR Code for the given SPID and phone number. If a process is already running for the SPID, the request will be rejected until the previous request is processed.
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               spid:
+ *                 type: string
+ *                 description: The SPID of the client.
+ *               phoneNo:
+ *                 type: string
+ *                 description: The phone number associated with the client.
+ *             required:
+ *               - spid
+ *               - phoneNo
+ *     responses:
+ *       200:
+ *         description: QR Code successfully created.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: integer
+ *                   example: 200
+ *                 QRcode:
+ *                   type: string
+ *                   example: "https://example.com/qrcode123"
+ *       409:
+ *         description: A process is already running for the given SPID.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 value:
+ *                   type: string
+ *                   example: "Please wait for 60 seconds as the previous request is closing down"
+ *       500:
+ *         description: Internal server error.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: integer
+ *                   example: 500
+ *                 err:
+ *                   type: string
+ *                   example: "Error message here"
+ */
 app.post('/craeteQRcode', async (req, res) => {
 
     try {
@@ -68,7 +134,74 @@ function processStart(spId) {
     }, 60000); 
     return true;
   }
-
+/**
+ * @swagger
+ * /sendMessage:
+ *   post:
+ *     tags:
+ *       - webJS
+ *     summary: Send a message to a client
+ *     description: Sends a message of a specified type (text, link, etc.) to a client's phone number using the provided SPID and other optional parameters.
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               spid:
+ *                 type: string
+ *                 description: The SPID of the sender.
+ *               type:
+ *                 type: string
+ *                 description: The type of the message (e.g., text, link).
+ *               link:
+ *                 type: string
+ *                 description: A link to be included in the message, if applicable.
+ *               text:
+ *                 type: string
+ *                 description: The text content of the message.
+ *               phoneNo:
+ *                 type: string
+ *                 description: The recipient's phone number.
+ *               interaction_id:
+ *                 type: string
+ *                 description: Optional interaction ID for tracking purposes.
+ *               msg_id:
+ *                 type: string
+ *                 description: Optional message ID for tracking purposes.
+ *               spNumber:
+ *                 type: string
+ *                 description: The service provider's number, if applicable.
+ *             required:
+ *               - spid
+ *               - type
+ *               - phoneNo
+ *     responses:
+ *       200:
+ *         description: Message sent successfully.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: integer
+ *                   example: 200
+ *                 msgId:
+ *                   type: string
+ *                   example: "msg12345"
+ *       500:
+ *         description: Internal server error.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: integer
+ *                   example: 500
+ */
 app.post('/sendMessage', async (req, res) => {
     try {
         spid = req.body.spid
@@ -107,7 +240,83 @@ app.post('/sendFunnelMessage', async (req, res) => {
         return res.send({ status: 500 })
     }
 })
-
+/**
+ * @swagger
+ * /IsClientReady:
+ *   post:
+ *     tags:
+ *       - webJS
+ *     summary: Check if the client is ready
+ *     description: Validates the SPID and checks if the client is ready to use the WA API.
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               spid:
+ *                 type: string
+ *                 description: The SPID of the client to check.
+ *             required:
+ *               - spid
+ *     responses:
+ *       200:
+ *         description: Client is ready.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: integer
+ *                   example: 200
+ *                 message:
+ *                   type: string
+ *                   example: "Client is ready !"
+ *                 result:
+ *                   type: array
+ *                   items:
+ *                     type: object
+ *                     properties:
+ *                       channel_id:
+ *                         type: string
+ *                         example: "WA API"
+ *       404:
+ *         description: Client is not ready.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: integer
+ *                   example: 404
+ *                 message:
+ *                   type: string
+ *                   example: "Please go to settings and Scan the QR Code !"
+ *                 result:
+ *                   type: array
+ *                   items:
+ *                     type: object
+ *                     properties:
+ *                       channel_id:
+ *                         type: string
+ *                         example: "WA API"
+ *       500:
+ *         description: Internal server error.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: integer
+ *                   example: 500
+ *                 err:
+ *                   type: string
+ *                   example: "Error message here"
+ */
 
 app.post('/IsClientReady', async (req, res) => {
     try {

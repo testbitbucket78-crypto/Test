@@ -603,13 +603,13 @@ export class TemplateMessageComponent implements OnInit {
         this.showCampaignDetail = !this.showCampaignDetail;
         if (this.showCampaignDetail) {
             this.templatesMessageData = data;
-            if(this.templatesMessageData?.buttons)
-            this.templatesMessageData.buttons = JSON.parse(this.templatesMessageData?.buttons)
             this.status = this.templatesMessageData.status;
             this.BodyText = this.templatesMessageData.BodyText;
             this.selectedType= this.templatesMessageData.media_type;
             this.selectedPreview = this.templatesMessageData.Links;
             this.templatesMessageDataById = data;
+            if(this.templatesMessageData?.buttons)
+            this.templatesMessageData.buttons = JSON.parse(this.templatesMessageData?.buttons)
         } else {
             this.templatesMessageDataById = null;
             this.status= 'saved';
@@ -988,7 +988,7 @@ checkTemplateName(e:any){
     
     patchFormValue() {
         const data = this.templatesMessageData;
-        const databyid = this.templatesMessageDataById;
+        const databyid = this.templatesMessageData;
         let ID = databyid.ID;
         for (let prop in data) {
             let value = data[prop as keyof typeof data];
@@ -999,6 +999,10 @@ checkTemplateName(e:any){
         }
         this.selectedType = this.templatesMessageData?.media_type;
         this.selectedPreview = this.templatesMessageData.Links;
+        this.buttonsArray = this.templatesMessageData?.buttons;
+        if(this.templatesMessageData?.Links){
+            this.fileName = this.extractActualFileName(this.templatesMessageData?.Links);
+        }
         this.onCategoryChange('');
     }
     // for gallery form
@@ -1522,4 +1526,10 @@ return true
         this.showToaster('Please fill all variable values','error');
   }
 
+  extractActualFileName(url: string): string {
+    if (!url) return '';
+    const lastSegment = url.substring(url.lastIndexOf('/') + 1);
+    const parts = lastSegment.split('-');
+    return parts.slice(6).join('-');
+  }
 }
