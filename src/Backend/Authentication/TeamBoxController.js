@@ -756,8 +756,8 @@ const insertMessage = async (req, res) => {
                         let headerVar = await commonFun.getTemplateVariables(msgVar, header, SPID, customerId);
                         let bodyVar = await commonFun.getTemplateVariables(msgVar, body, SPID, customerId);
 
-                        middlewareresult = await middleWare.createWhatsAppPayload(mediaType, req?.body?.messageTo, req?.body?.name, req?.body?.language, headerVar, bodyVar, message_media, SPID);
-                        // middlewareresult = await middleWare.channelssetUp(SPID, channel, mediaType, req.body.messageTo, content, message_media, interaction_id, msg_id.insertId, spNumber);
+                        middlewareresult = await middleWare.createWhatsAppPayload(mediaType, req?.body?.messageTo, req?.body?.name, req?.body?.language, headerVar, bodyVar, message_media, SPID, req?.body?.buttons);
+                       // middlewareresult = await middleWare.channelssetUp(SPID, channel, mediaType, req.body.messageTo, content, message_media, interaction_id, msg_id.insertId, spNumber);
                     } else {
                         if (req.body.message_media != 'text') {
                             const mediaType = determineMediaType(media_type);

@@ -40,9 +40,6 @@ isLoading!:boolean;
 errorMessage = '';
 successMessage = '';
 warnMessage = '';
-
-
-
 campaignAlertData:any;
 campaignTestData:any;
   timming!: boolean;
@@ -107,9 +104,7 @@ campaignTestData:any;
     .subscribe((result:any) =>{
       if(result){
         this.campaignAlertData = result?.getCampaignAlerts;  
-
-      }
-  
+      }  
     })
   }
 
