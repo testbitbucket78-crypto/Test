@@ -755,7 +755,7 @@ constructor(config: NgbModalConfig, private modalService: NgbModal,private datep
 				item['reportSeenLength'] =item?.report_seen?JSON.parse(item?.report_seen)?.length:0
 				item['reportRepliedLength'] =item?.report_replied?JSON.parse(item?.report_replied)?.length:0
                 this.statusUpdate(CampaignID, item.status_label);
-				item.buttons = JSON.parse(item?.buttons);
+				//item.buttons = JSON.parse(item?.buttons);
 				this.selectedCampaign = item;
 				this.isLoading = false;
 				if(item?.status>1){
