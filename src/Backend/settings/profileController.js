@@ -916,7 +916,7 @@ const invoicePdf = async (req, res) => {
     pdfDoc.end();
     var mailOptions = {
         from: val.email,
-        to: 'raunakriya816@gmail.com',
+        to: '', //to be added
         subject: "Request for Download",
         html: '<p>Please find  the attachment of exported Contact_Data, kindly use  this file to see your contacts</p>',
         attachments: [
