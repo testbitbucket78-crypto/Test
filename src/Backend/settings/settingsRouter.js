@@ -23,13 +23,13 @@ router.get('/companyDetail/:spID',authenticateToken,organizationController.getco
 router.get('/localDetails/:spID',authenticateToken,organizationController.getlocalDetails)
 router.get('/billingDetails/:spID',authenticateToken,organizationController.getbillingDetails)
 
-router.post('/workingDetails',authenticateToken,organizationController.saveworkingDetails)
+router.post('/workingDetails',authenticateToken,organizationController.saveworkingDetails)//for add and update
 router.get('/workingDetails/:spID',authenticateToken,organizationController.getworkingDetails)
-router.post('/updateWorkingHours',authenticateToken,organizationController.updateWorkingHours)
+router.post('/updateWorkingHours',authenticateToken,organizationController.updateWorkingHours)//unused
 
 router.post('/holidays',authenticateToken,organizationController.addholidays)
 router.get('/holidays/:spID/:dateFrom/:dateTo',authenticateToken,organizationController.getHolidays)
-router.post('/removeHolidays',authenticateToken,organizationController.removeHolidays)
+router.post('/removeHolidays',authenticateToken,organizationController.removeHolidays)//unused
 
 router.get('/subrights',authenticateToken,organizationController.subrights)
 router.get('/rights',authenticateToken,organizationController.rights)
@@ -46,17 +46,17 @@ router.post('/editUser',authenticateToken,organizationController.editUser)
 router.get('/getActiveUser/:spid/:IsActive',authenticateToken,organizationController.getUserByspid)
 router.get('/getUserByuid/:spid/:uid',authenticateToken,organizationController.getUserByuid)
 router.get('/getUsers/:spid',authenticateToken,organizationController.getUsers)
-router.post('/addTeam',authenticateToken,organizationController.addTeam)
-router.post('/deleteTeam',authenticateToken,organizationController.deleteTeam)
-router.post('/editTeam',authenticateToken,organizationController.editTeam)
-router.get('/teamsList/:spid',authenticateToken,organizationController.teamsListByspid)
+router.post('/addTeam',authenticateToken,organizationController.addTeam)//unused 
+router.post('/deleteTeam',authenticateToken,organizationController.deleteTeam)//unused
+router.post('/editTeam',authenticateToken,organizationController.editTeam)//unused
+router.get('/teamsList/:spid',authenticateToken,organizationController.teamsListByspid)//unused
 
 
 //____________________________Profile Sttings_____________________________________//
 
 router.get('/teamName/:uid',authenticateToken,profileController.teamName)
 router.get('/roleName/:uid',authenticateToken,profileController.roleName)
-router.post('/userProfileImg',authenticateToken,profileController.userProfile)
+router.post('/userProfileImg',authenticateToken,profileController.userProfile)//unused
 router.post('/changePassword',authenticateToken,profileController.changePassword)
 router.post('/userActiveStatus',authenticateToken,profileController.userActiveStatus)
 
@@ -92,7 +92,7 @@ router.post('/updateNotifications/:spid/:uid',authenticateToken,notification.upd
 //_________________________Campaign Settings__________________//
 
 router.post('/addCampaignTimings',authenticateToken,campaignController.addCampaignTimings)
-router.post('/updateCampaignTiming',authenticateToken,campaignController.updateCampaignTimings)
+router.post('/updateCampaignTiming',authenticateToken,campaignController.updateCampaignTimings)//unused
 router.get('/selectCampaignTimings/:sid',authenticateToken,campaignController.selectCampaignTimings)
 router.get('/getCampaignAlertUserList/:sid',authenticateToken,campaignController.getUserList)
 router.post('/addAndUpdateCampaign',authenticateToken,campaignController.addAndUpdateCampaign)
@@ -122,7 +122,7 @@ router.post('/addTemplate',authenticateToken,campaignController.addTemplate)  //
 router.get('/getTemplate/:spid/:isTemplate',authenticateToken,campaignController.getTemplate)
 router.get('/getApprovedTemplate/:spid/:isTemplate',authenticateToken,campaignController.getApprovedTemplate)
 router.post('/deleteTemplates',authenticateToken,campaignController.deleteTemplates)
-router.post('/addGallery',authenticateToken,campaignController.addGallery)
+router.post('/addGallery',authenticateToken,campaignController.addGallery)//unused
 router.get('/getGallery/:spid/:isTemplate',authenticateToken,campaignController.getGallery)  // pass spid=0,isTemplate=2
 router.get('/exitTemplate/:spid/:isTemplate/:name',authenticateToken,campaignController.isExistTemplate);  // istemplate=1
 router.get('/getFlows/:spid',authenticateToken,campaignController.getFlows)
@@ -206,15 +206,15 @@ router.get('/getWhatsAppDetails/:spid',authenticateToken,accountController.selec
 router.post('/addWAapiDetails',authenticateToken,accountController.addWAAPIDetails)
 router.get('/getQualityRating/:phoneNo/:phone_number_id/:WABA_ID/:spid',authenticateToken,accountController.getQualityRating)
 
-router.post('/addToken',authenticateToken,accountController.addToken)
-router.post('/editToken',authenticateToken,accountController.editToken)
-router.get('/deleteToken/:id',authenticateToken,accountController.deleteToken)
-router.post('/isEnableToken',authenticateToken,accountController.enableToken)
-router.get('/selectToken/:spid',authenticateToken,accountController.selectToken)
-router.get('/createInstanceID',authenticateToken,accountController.createInstance)
-router.post('/qrCodeData',authenticateToken,accountController.getQRcode)
-router.post('/generateQRcode',authenticateToken,accountController.generateQRcode)
-router.post('/testwebhook',authenticateToken,accountController.testWebhook)
+router.post('/addToken',authenticateToken,accountController.addToken)//unused
+router.post('/editToken',authenticateToken,accountController.editToken)//unused
+router.get('/deleteToken/:id',authenticateToken,accountController.deleteToken)//unused
+router.post('/isEnableToken',authenticateToken,accountController.enableToken)//unused
+router.get('/selectToken/:spid',authenticateToken,accountController.selectToken)//unused
+router.get('/createInstanceID',authenticateToken,accountController.createInstance)//unused
+router.post('/qrCodeData',authenticateToken,accountController.getQRcode)//unused
+router.post('/generateQRcode',authenticateToken,accountController.generateQRcode)//unused
+router.post('/testwebhook',authenticateToken,accountController.testWebhook)//unused
 
 //__________________________General Settings____________________________//
 
@@ -224,7 +224,7 @@ router.get('/generalcontroller/:spid',authenticateToken,generalcontroller.getdef
 router.get('/getdefaultmessages/:spid',authenticateToken,generalcontroller.getdefaultmessages)
 router.post('/Abledisable',authenticateToken,generalcontroller.Abledisable)
 router.post('/savedefaultmessages',authenticateToken,generalcontroller.savedefaultmessages)
-router.post('/uploadimg',authenticateToken,generalcontroller.uploadimg)
+router.post('/uploadimg',authenticateToken,generalcontroller.uploadimg)//unused
 router.post('/addAndUpdateDefaultMsg',authenticateToken,generalcontroller.addAndUpdateDefaultMsg)
 router.post('/deletedefaultactions',authenticateToken,generalcontroller.deletedefaultactions)
 
