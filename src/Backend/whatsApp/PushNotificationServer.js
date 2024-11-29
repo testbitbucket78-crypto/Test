@@ -233,11 +233,6 @@ io.on('connection', (socket) => {
   
       if (msgjson.UniqueSPPhonenumber) {
         // Handle new connection
-        if (clients[msgjson["UniqueSPPhonenumber"]]) {
-          clients[msgjson["UniqueSPPhonenumber"]].close();
-          delete clients[msgjson["UniqueSPPhonenumber"]];
-        }
-  
         const uniquePhone = msgjson.UniqueSPPhonenumber;
         clients[socket.id] = uniquePhone;
   
