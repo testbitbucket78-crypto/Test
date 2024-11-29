@@ -199,7 +199,7 @@ export class DashboardComponent implements OnInit {
     }
     
 
-    getLimitedMessageText(message: string) {
+    SanitizeHtmlMessage(message: string) {
         // let maxLength = 70;
         // if (message?.length <= maxLength) {
         // return message;

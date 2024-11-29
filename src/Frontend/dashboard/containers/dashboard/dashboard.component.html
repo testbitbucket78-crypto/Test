@@ -165,7 +165,7 @@
                 <div class="text-capitalize initials"> {{ items?.nameInitials }} </div>
                 <div class="col-md-8 rc-body">
                   <p class="text-capitalize" id="item-name" [innerHTML]="items?.Name"></p>
-                  <p id="item-message" class="ellipsis-1"  *ngIf="!['Document', 'Video', 'Image'].includes(getMediaType(items.media_type))" [innerHTML]="getLimitedMessageText(items?.message_text)"></p>
+                  <p id="item-message" class="ellipsis-1"  *ngIf="!['Document', 'Video', 'Image'].includes(getMediaType(items.media_type))" [innerHTML]=" SanitizeHtmlMessage(items?.message_text)"></p>
                   <p id="item-message" class="ellipsis-1" *ngIf="items.media_type != 'text'">
                     <img src="/assets/img/teambox/document-icon.svg" class="mr-2 item-message-media" *ngIf="getMediaType(items.media_type) == 'Document'">
                     <img src="/assets/img/teambox/video-icon.svg" class="mr-2 item-message-media" *ngIf="getMediaType(items.media_type) == 'Video'">
