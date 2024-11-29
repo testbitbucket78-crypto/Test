@@ -21,6 +21,11 @@ const logger = require('../common/logger.log');
 const { formatterDateTime, formatterDate, formatterTime } = require('./utils.js');
 const commonFun = require('../common/resuableFunctions.js')
 
+/**
+ * @swagger
+ * tags:
+ *   - name: Contact
+ */
 app.get('/columns/:spid', authenticateToken, async (req, res) => {
   try {
 
@@ -55,6 +60,84 @@ app.get('/columns/:spid', authenticateToken, async (req, res) => {
 //     })
 //   }
 // })
+/**
+ * @swagger
+ * /getFilteredList:
+ *   post:
+ *     tags:
+ *       - Contact
+ *     summary: Retrieve filtered or complete contact list
+ *     description: Fetches the complete contact list for a given SP_ID or a filtered list based on the custom query provided in the request body.
+ *     security:
+ *       - BearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               SP_ID:
+ *                 type: string
+ *                 description: The Service Provider ID used to fetch the contact list.
+ *                 example: "12345"
+ *               Query:
+ *                 type: string
+ *                 description: Optional custom SQL query to filter the contact list. If not provided, the complete contact list is returned.
+ *                 example: "SELECT * FROM Contacts WHERE status = 'active'"
+ *             required:
+ *               - SP_ID
+ *     responses:
+ *       200:
+ *         description: Contact list successfully retrieved.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: integer
+ *                   description: HTTP status code.
+ *                   example: 200
+ *                 result:
+ *                   type: array
+ *                   description: The contact list (filtered or complete) based on the query.
+ *                   items:
+ *                     type: object
+ *                     properties:
+ *                       id:
+ *                         type: integer
+ *                         example: 1
+ *                       name:
+ *                         type: string
+ *                         example: "John Doe"
+ *                       phone:
+ *                         type: string
+ *                         example: "1234567890"
+ *                       status:
+ *                         type: string
+ *                         example: "active"
+ *                 IsFilteredList:
+ *                   type: boolean
+ *                   description: Indicates if the returned list is filtered (`true`) or complete (`false`).
+ *                   example: true
+ *       500:
+ *         description: Internal server error.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: integer
+ *                   description: HTTP status code.
+ *                   example: 500
+ *                 msg:
+ *                   type: string
+ *                   description: Error message describing the issue.
+ *                   example: "An unexpected error occurred."
+ */
+
 app.post('/getFilteredList', authenticateToken, async (req, res) => {
   logger.info('Received request for /getFilteredList');
   try {
@@ -82,6 +165,103 @@ app.post('/getFilteredList', authenticateToken, async (req, res) => {
     });
   }
 });
+/**
+ * @swagger
+ * /addCustomContact:
+ *   post:
+ *     tags:
+ *       - Contact
+ *     summary: Add or update a custom contact
+ *     description: Adds a new contact or updates an existing contact in the database. Handles cases for temporary or deleted contacts.
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               SP_ID:
+ *                 type: string
+ *                 description: The Service Provider ID associated with the contact.
+ *                 example: "12345"
+ *               result:
+ *                 type: array
+ *                 description: Array of objects containing contact field details.
+ *                 items:
+ *                   type: object
+ *                   properties:
+ *                     ActuallName:
+ *                       type: string
+ *                       description: The actual database column name for the field.
+ *                       example: "Phone_number"
+ *                     displayName:
+ *                       type: string
+ *                       description: The value to be inserted or updated for the field.
+ *                       example: "9876543210"
+ *             required:
+ *               - SP_ID
+ *               - result
+ *     responses:
+ *       200:
+ *         description: Contact added or updated successfully.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   description: Success message.
+ *                   example: "Contact updated successfully"
+ *                 result:
+ *                   type: object
+ *                   description: Details of the added or updated contact.
+ *                 status:
+ *                   type: integer
+ *                   example: 200
+ *       400:
+ *         description: Bad request due to missing or invalid input.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   description: Error message.
+ *                   example: "Please add Name and Phone number"
+ *                 status:
+ *                   type: integer
+ *                   example: 400
+ *       409:
+ *         description: Conflict due to an existing phone number.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   description: Conflict error message.
+ *                   example: "Phone number already exists"
+ *                 status:
+ *                   type: integer
+ *                   example: 409
+ *       500:
+ *         description: Internal server error.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: integer
+ *                   description: HTTP status code.
+ *                   example: 500
+ *                 err:
+ *                   type: object
+ *                   description: Error details.
+ */
 
 app.post('/addCustomContact', async (req, res) => {
   try {
@@ -205,6 +385,108 @@ app.post('/addCustomContact', async (req, res) => {
   }
 });
 
+/**
+ * @swagger
+ * /editCustomContact:
+ *   post:
+ *     tags:
+ *       - Contact
+ *     summary: Edit an existing custom contact
+ *     description: Updates the details of a specific customer in the database and optionally logs interactions if triggered by an event.
+ *     parameters:
+ *       - in: query
+ *         name: customerId
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: The unique identifier of the customer.
+ *         example: "45678"
+ *       - in: query
+ *         name: SP_ID
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: The Service Provider ID associated with the customer.
+ *         example: "12345"
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               result:
+ *                 type: array
+ *                 description: Array of objects containing contact field details to be updated.
+ *                 items:
+ *                   type: object
+ *                   properties:
+ *                     ActuallName:
+ *                       type: string
+ *                       description: The actual database column name to be updated.
+ *                       example: "Phone_number"
+ *                     displayName:
+ *                       type: string
+ *                       description: The updated value for the column.
+ *                       example: "9876543210"
+ *               event:
+ *                 type: string
+ *                 description: Event type triggering the update (e.g., 'teamBox').
+ *                 example: "teamBox"
+ *               action:
+ *                 type: string
+ *                 description: Action performed in response to the event.
+ *                 example: "update"
+ *               action_at:
+ *                 type: string
+ *                 format: date-time
+ *                 description: Timestamp for the action performed.
+ *                 example: "2024-11-28T10:30:00Z"
+ *               action_by:
+ *                 type: string
+ *                 description: The user or system performing the action.
+ *                 example: "admin"
+ *     responses:
+ *       200:
+ *         description: Contact updated successfully.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: integer
+ *                   description: HTTP status code.
+ *                   example: 200
+ *                 result:
+ *                   type: object
+ *                   description: Details of the update operation.
+ *       400:
+ *         description: Bad request due to missing or invalid input.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   description: Error message.
+ *                   example: "Invalid customerId or SP_ID"
+ *                 status:
+ *                   type: integer
+ *                   example: 400
+ *       500:
+ *         description: Internal server error.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: integer
+ *                   description: HTTP status code.
+ *                   example: 500
+ */
 
 app.post('/editCustomContact', authenticateToken, async (req, res) => {
   try {
@@ -325,6 +607,88 @@ async function processData(data) {
   }
 }
 
+/**
+ * @swagger
+ * /exportCheckedContact:
+ *   post:
+ *     tags:
+ *       - Contact
+ *     summary: Export selected contacts as a CSV file
+ *     description: Processes and exports selected contact data into a CSV file, attaches it to an email, and sends it to the specified recipient.
+ *     parameters:
+ *       - in: query
+ *         name: SP_ID
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: The Service Provider ID associated with the contacts.
+ *         example: "12345"
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               data:
+ *                 type: array
+ *                 description: Array of contact details to be exported.
+ *                 items:
+ *                   type: object
+ *                   properties:
+ *                     contactField:
+ *                       type: string
+ *                       description: A field of the contact.
+ *                       example: "John Doe"
+ *               loginData:
+ *                 type: string
+ *                 description: Email address to send the exported CSV.
+ *                 example: "user@example.com"
+ *               Name:
+ *                 type: string
+ *                 description: Name of the recipient for personalization in the email.
+ *                 example: "John"
+ *     responses:
+ *       200:
+ *         description: Contacts exported and email sent successfully.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 msg:
+ *                   type: string
+ *                   description: Confirmation message.
+ *                   example: "Contacts exported successfully!"
+ *       400:
+ *         description: Bad request due to missing or invalid input.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   description: Error message.
+ *                   example: "Invalid SP_ID or missing data array."
+ *                 status:
+ *                   type: integer
+ *                   example: 400
+ *       500:
+ *         description: Internal server error.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   description: Error message.
+ *                   example: "Unexpected error occurred."
+ *                 status:
+ *                   type: integer
+ *                   example: 500
+ */
 
 
 app.post('/exportCheckedContact', async (req, res) => {
@@ -475,12 +839,125 @@ app.put('/editContact', authenticateToken, (req, res) => {
   }
 })
 
+/**
+ * @swagger
+ * /importContact:
+ *   post:
+ *     tags:
+ *       - Contact
+ *     summary: Import and manage contacts
+ *     description: Allows adding, updating, or a combination of both for imported contacts. The operation is determined by the `purpose` field. 
+ *     security:
+ *       - BearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               field:
+ *                 type: array
+ *                 description: List of specific fields to update (optional for adding new contacts).
+ *                 items:
+ *                   type: string
+ *                   example: "email"
+ *               importedData:
+ *                 type: array
+ *                 description: Array of contact data objects to import.
+ *                 items:
+ *                   type: array
+ *                   items:
+ *                     type: object
+ *                     properties:
+ *                       displayName:
+ *                         type: string
+ *                         description: The display name of the contact field.
+ *                       ActuallName:
+ *                         type: string
+ *                         description: The actual name of the contact field.
+ *               identifier:
+ *                 type: string
+ *                 description: Unique identifier to determine duplicate records, such as "Phone_number".
+ *                 example: "Phone_number"
+ *               purpose:
+ *                 type: string
+ *                 description: Specifies the operation type (Add, Update, or Both).
+ *                 enum:
+ *                   - Add new contact only
+ *                   - Update Existing Contacts Only
+ *                   - Add and Update Contacts
+ *               SP_ID:
+ *                 type: string
+ *                 description: Service Provider ID for the operation.
+ *                 example: "12345"
+ *               emailId:
+ *                 type: string
+ *                 description: Email ID to send notifications after processing.
+ *                 example: "user@example.com"
+ *               user:
+ *                 type: string
+ *                 description: Username associated with the request.
+ *                 example: "admin"
+ *               messageOptIn:
+ *                 type: string
+ *                 description: Opt-in status for the contacts.
+ *                 example: "true"
+ *             required:
+ *               - importedData
+ *               - identifier
+ *               - purpose
+ *               - SP_ID
+ *     responses:
+ *       200:
+ *         description: Contacts processed successfully based on the specified purpose.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 msg:
+ *                   type: string
+ *                   description: Success message.
+ *                   example: "Contact Added Successfully"
+ *                 data:
+ *                   type: object
+ *                   description: Details of the processed contacts.
+ *                   properties:
+ *                     count:
+ *                       type: integer
+ *                       description: Number of new contacts added.
+ *                       example: 5
+ *                     updated:
+ *                       type: integer
+ *                       description: Number of existing contacts updated.
+ *                       example: 3
+ *                 status:
+ *                   type: integer
+ *                   description: HTTP status code.
+ *                   example: 200
+ *       500:
+ *         description: Internal server error.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 msg:
+ *                   type: string
+ *                   description: Error message.
+ *                   example: "An unexpected error occurred."
+ *                 status:
+ *                   type: integer
+ *                   description: HTTP status code.
+ *                   example: 500
+ */
 
 app.post('/importContact', authenticateToken, async (req, res) => {
 
   try {
 
-     var result = req.body;
+    var result = req.body;
     var fields = result.field
     var CSVdata = result.importedData
     var identifier = result.identifier
@@ -619,17 +1096,37 @@ function sendMailAfterImport(emailId, user, noOfContact) {
   }
 }
 
-async function findTagId(TagName, spid) {
-  try {
-    let tagId = await db.excuteQuery('select * from EndCustomerTagMaster where SP_ID =? and TagName=? and isDeleted !=1', [spid, TagName]);
+async function findTagId(TagNames, spid) {
 
-    let ID = tagId[0]?.ID;
-    console.log("tagId[0]?.ID", ID);
-    return ID;
+ try {
+   
+    const tagNameArray = TagNames.split(',').map(tag => tag.trim());
+
+    
+    const placeholders = tagNameArray.map(() => '?').join(',');
+
+    const query = `
+        SELECT * 
+        FROM EndCustomerTagMaster 
+        WHERE SP_ID = ? 
+          AND LOWER(TagName) IN (${placeholders})
+          AND isDeleted != 1
+      `;
+
+    
+    const tagIdResults = await db.excuteQuery(query, [spid, ...tagNameArray.map(tag => tag.toLowerCase())]);
+
+    // Extract IDs of matching tags
+    const ids = tagIdResults.map(row => row.ID).join(',');
+    console.log("Matching Tag IDs:", ids);
+
+    return ids;
   } catch (err) {
-    console.log("find tag err", err);
+    console.error("Error in findTagIds:", err);
     return err;
+
   }
+
 }
 
 async function addOnlynewContact(CSVdata, identifier, SP_ID) {
@@ -648,7 +1145,7 @@ async function addOnlynewContact(CSVdata, identifier, SP_ID) {
       // Replace tag value with tag ID
       for (let field of set) {
         if (field.ActuallName === 'tag') {
-          field.displayName = await findTagId(field.displayName, SP_ID);
+           field.displayName = await findTagId(field.displayName, SP_ID);
         }
       }
 
@@ -656,13 +1153,13 @@ async function addOnlynewContact(CSVdata, identifier, SP_ID) {
       SELECT * FROM EndCustomer 
       WHERE ${identifier} = ? 
       AND SP_ID = ? 
-      AND isDeleted = 1
+      AND  (isDeleted = 1 or IsTemporary =1);
     `;
       const checkResult = await db.excuteQuery(checkDeletedQuery, [identifierValue, SP_ID]);
       if (checkResult && checkResult.length > 0) {
         let resetContactFields = await commonFun.resetContactFields(identifierValue, SP_ID)
         const updateQuery = `
-        UPDATE EndCustomer SET ${fieldNames.replace(/,/g, ' = ?, ')} = ?, isDeleted = 0, created_at = NOW() 
+        UPDATE EndCustomer SET ${fieldNames.replace(/,/g, ' = ?, ')} = ?, isDeleted = 0,IsTemporary =0, created_at = NOW() 
         WHERE ${identifier} = ? AND SP_ID = ?
       `;
         const updateValues = set.map((field) => field.displayName).concat([identifierValue, SP_ID]);
@@ -671,7 +1168,7 @@ async function addOnlynewContact(CSVdata, identifier, SP_ID) {
       else {
         let query = `INSERT INTO EndCustomer (${fieldNames}) SELECT ? WHERE NOT EXISTS (SELECT * FROM EndCustomer WHERE ${identifier}=? and SP_ID=? AND (isDeleted IS NULL OR isDeleted = 0) AND (isBlocked IS NULL OR isBlocked = 0));`;
         const values = set.map((field) => field.displayName);
-        console.log(values, fieldNames);
+      //  console.log(values, fieldNames);
 
         // Ensure db.executeQuery returns a promise
         result = await db.excuteQuery(query, [values, identifierValue, SP_ID]);
@@ -820,12 +1317,109 @@ async function getHeadersArray(spid) {
 
   }
 }
+/**
+ * @swagger
+ * /verifyData:
+ *   post:
+ *     tags:
+ *       - Contact
+ *     summary: Verify imported data
+ *     description: Verifies and processes imported data based on specified criteria for the given SP_ID. Checks for duplicates, validates formats, and updates or adds contacts as per the provided purpose.
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               importedData:
+ *                 type: array
+ *                 description: Array of data objects to be verified.
+ *                 items:
+ *                   type: array
+ *                   items:
+ *                     type: object
+ *                     properties:
+ *                       ActuallName:
+ *                         type: string
+ *                         description: The actual name of the data column.
+ *                       displayName:
+ *                         type: string
+ *                         description: The display value of the data column.
+ *               identifier:
+ *                 type: string
+ *                 description: Unique identifier to match records, such as "Phone_number".
+ *               purpose:
+ *                 type: string
+ *                 description: Operation purpose (Add, Update, or Both).
+ *                 enum:
+ *                   - Add new contact only
+ *                   - Update Existing Contacts Only
+ *                   - Add and Update Contacts
+ *               SP_ID:
+ *                 type: string
+ *                 description: Service Provider ID for the operation.
+ *             required:
+ *               - importedData
+ *               - identifier
+ *               - purpose
+ *               - SP_ID
+ *     responses:
+ *       200:
+ *         description: Data verification and processing completed successfully.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 newCon:
+ *                   type: integer
+ *                   description: Number of new contacts added.
+ *                   example: 10
+ *                 upCont:
+ *                   type: integer
+ *                   description: Number of existing contacts updated.
+ *                   example: 5
+ *                 skipCont:
+ *                   type: integer
+ *                   description: Number of contacts skipped due to errors.
+ *                   example: 2
+ *                 importData:
+ *                   type: array
+ *                   description: Array of successfully processed data.
+ *                   items:
+ *                     type: array
+ *                     items:
+ *                       type: object
+ *                       properties:
+ *                         ActuallName:
+ *                           type: string
+ *                           example: "Phone_number"
+ *                         displayName:
+ *                           type: string
+ *                           example: "+123456789"
+ *       500:
+ *         description: Internal server error.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 msg:
+ *                   type: string
+ *                   description: Error message.
+ *                   example: "An unexpected error occurred."
+ *                 status:
+ *                   type: integer
+ *                   description: HTTP status code.
+ *                   example: 500
+ */
 
 app.post('/verifyData', authenticateToken, async (req, res) => {
   try {
     const { importedData, identifier, purpose, SP_ID } = req.body;
     const identity = identifier;
- 
+
     let errData = [];
     let importData = [];
     let queryData = [];
@@ -860,7 +1454,7 @@ app.post('/verifyData', authenticateToken, async (req, res) => {
         }
         if (allColumnsData.get(ActuallName) === 'Multi Select') {
           const { exists, value } = await MultiSelectValues(ActuallName, SP_ID, displayName);
-           console.log(exists, "Multi", value)
+          console.log(exists, "Multi", value)
           if (exists) {
             currentData[i].displayName = value;
             existMultiselect = true
@@ -932,7 +1526,7 @@ app.post('/verifyData', authenticateToken, async (req, res) => {
     if (importData.length > 0) {
       const verifyQuery = 'SELECT * FROM EndCustomer WHERE ' + identity + ' IN (?) AND SP_ID=? AND isDeleted !=1 and IsTemporary !=1';
       const result = await db.excuteQuery(verifyQuery, [queryData, SP_ID]);
-      console.log(result, "************")
+      //console.log(result, "************")
       let newCon = 0;
       let upCont = 0;
 
@@ -1001,7 +1595,7 @@ async function writeErrFile(errData, res, headersArray) {
         const formattedEntry = {};
         error.data.forEach(entry => {
           const matchedHeader = headersArray.find(header => header.ActuallName === entry.ActuallName);
-          
+
           // Process displayName to remove prefix if it contains a colon
           let displayName = entry.displayName;
           if (typeof displayName === 'string' && displayName.includes(":")) {
@@ -1010,11 +1604,13 @@ async function writeErrFile(errData, res, headersArray) {
               .map(item => item.includes(':') ? item.split(':')[1] : item) // Remove prefix before the colon if present
               .join(',');                        // Join back to a single string
           }
-          
+
           if (matchedHeader) {
+            // logger.info(`if matchedHeader ${matchedHeader.displayName}`)
             formattedEntry[matchedHeader.displayName] = displayName;
           } else {
-            formattedEntry[entry.displayName] = displayName;
+            logger.info(`else matchedHeader ${entry.ActuallName},${entry.displayName}`)
+            // formattedEntry[entry.displayName] = displayName;
           }
         });
         if (Array.isArray(error.reason)) {
@@ -1036,8 +1632,10 @@ async function writeErrFile(errData, res, headersArray) {
         if (entry.ActuallName !== 'SP_ID' && entry.ActuallName !== 'displayPhoneNumber' && entry.ActuallName !== 'countryCode') {
           const matchedHeader = headersArray.find(header => header.ActuallName === entry.ActuallName);
           if (matchedHeader) {
+            //   logger.info(`exclude spid if matchedHeader ${matchedHeader.displayName}`)
             fields.push(matchedHeader.displayName);
           } else {
+            logger.info(`exclude spid else matchedHeader ${matchedHeader.displayName}`)
             fields.push(entry.displayName);
           }
         }
@@ -1177,16 +1775,23 @@ async function isDataInCorrectFormat(columnDataType, actuallName, displayName, u
         if (displayName) {
           if (actuallName === 'tag') {
             if (Array.isArray(displayName)) {
-              // If displayName is an array, check if the first element is in tagsList
-              convertedValue = tagsList.includes(displayName[0]);
+
+              const normalizedTagsList = tagsList.map(tag => tag.toLowerCase());
+              convertedValue = normalizedTagsList.includes(displayName[0].toLowerCase());
             } else if (typeof displayName === 'string') {
-              // Split displayName into an array of individual tags
+
               const displayNameTags = displayName.split(',');
 
-              // Check if every tag in displayNameTags exists in tagsList
-              convertedValue = displayNameTags.every(tag => tagsList.includes(tag.trim()));
+
+              const normalizedTagsList = tagsList.map(tag => tag.toLowerCase());
+
+              // Check if every tag in displayNameTags exists in normalizedTagsList
+              convertedValue = displayNameTags.every(tag =>
+                normalizedTagsList.includes(tag.trim().toLowerCase())
+              );
             }
-          } else {
+          }
+          else {
             convertedValue = existSelect;
           }
           return { isError: !convertedValue, reason: `${fieldDisplayName} does not exist in the list` };
@@ -1294,7 +1899,7 @@ function formatDateTime(date) {
 async function getTags(SP_ID) {
   try {
     const tags = await db.excuteQuery('SELECT TagName FROM EndCustomerTagMaster WHERE SP_ID=? AND isDeleted != 1', [SP_ID]);
-    console.log(tags.map(row => row.TagName).flat())
+    // console.log(tags.map(row => row.TagName).flat())
     return tags.map(row => row.TagName).flat();
   } catch (error) {
     console.error("Error in getTagList:", error);
@@ -1337,7 +1942,7 @@ async function SelectValues(ActualName, SP_ID, colValue) {
     let exists = false;
 
     options.flat().forEach(item => {
-      if (item.optionName === colValue) {
+      if (item.optionName.toLowerCase() === colValue.toLowerCase()) {
         updatedColValue = `${item.id}:${item.optionName}`;
         //   console.log("get function of sel;ect")
         exists = true;
@@ -1366,7 +1971,7 @@ async function MultiSelectValues(ActualName, SP_ID, colValue) {
       let updatedValue = value;
       let exists = false;
       options.flat().forEach(item => {
-        if (item.optionName === value) {
+        if (item.optionName.toLowerCase() === value.toLowerCase()) {
           updatedValue = `${item.id}:${item.optionName}`;
           // console.log("mulllllllllllll function of sel;ect")
 
