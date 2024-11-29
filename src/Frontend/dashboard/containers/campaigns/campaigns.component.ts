@@ -1958,10 +1958,10 @@ testinfo(){
 	}
 	
 	
-	nextStep(){
+	async nextStep(){
 
 	   if(this.newCampaignDetail.value.channel_label) this.selectedChannel = this.newCampaignDetail.value.channel_label;
-		this.CampaignNameAlreadyExist();
+		
 
 		if(this.activeStep < 3){
 			//this.selectedTemplate=''
@@ -1972,10 +1972,11 @@ testinfo(){
 		if(this.activeStep == 1){
 			if (this.newCampaignDetail.value.title !== '') {
 				if(this.newCampaignDetail.value.channel_label != 'Select Channel'){
-				setTimeout(() => {
+					await this.CampaignNameAlreadyExist();
+					console.log(this.activeStep,'this.activeStep')
 				if (!this.isCampaignAlreadyExist) {
-					this.activeStep = this.activeStep + 1;
-				} }, 500);
+					this.activeStep = 2;
+				} 
 			}else{
 				this.newCampaignDetail.controls.channel_label.markAsTouched();
 				this.isNextClicked = true;

@@ -339,7 +339,7 @@ export class TemplateMessageComponent implements OnInit {
             Header: new FormControl(null,this.noEmojiValidator),
             Links: new FormControl(null),
             BodyText: new FormControl('', [Validators.required]),
-            FooterText: new FormControl(''),
+            FooterText: new FormControl('',this.noEmojiValidator),
             buttonType: new FormControl(''),
             buttonText: new FormControl(''),
             quickreply1: new FormControl(''),
@@ -1169,8 +1169,8 @@ insertAtCursor(selectedValue: any) {
 		if (isVariableValue) {
 		  this.allVariablesList = this.getVariables(isVariableValue, "{{", "}}");
           let dynamicWeb= this.buttonsArray.filter((item:any)=> (item?.type =='Visit Website' && item?.webType !='Static'))
-          if(dynamicWeb?.length > 0)
-            this.allVariablesList.push('{{url}}');
+        //   if(dynamicWeb?.length > 0)
+        //     this.allVariablesList.push('{{url}}');
           this.allVariablesList.forEach((item:any)=>{
             this.allVariablesValueList.push({var:item,val:''});
           })

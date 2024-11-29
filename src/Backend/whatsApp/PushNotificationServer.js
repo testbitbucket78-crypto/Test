@@ -233,9 +233,10 @@ io.on('connection', (socket) => {
 
       // If the message contains a phone number, store it
       if (msgjson.UniqueSPPhonenumber) {
+        
         const uniquePhone = msgjson.UniqueSPPhonenumber;
         clients[socket.id] = uniquePhone;
-
+        
         // Initialize spAgentMapping array if not already present
         if (!spAgentMapping[msgjson.spPhoneNumber]) {
           spAgentMapping[msgjson.spPhoneNumber] = [];
