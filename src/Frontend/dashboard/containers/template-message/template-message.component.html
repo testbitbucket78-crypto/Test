@@ -628,7 +628,7 @@
                     <h6>Footer Text<span>(Optional)</span></h6><div> <span class="characters-count">{{ newTemplateForm?.get('FooterText')?.value?.length }}</span><span>/60 Characters</span></div>
                 </div>
                 <div class="sel-type-text">
-                    <textarea name="text-editor" formControlName="FooterText" maxlength="60"rows="4" placeholder="Enter" (input)="updateCharacterCount($event,5)"></textarea>
+                    <textarea name="text-editor" id = "headerText" formControlName="FooterText" maxlength="60"rows="4" placeholder="Enter" (input)="updateCharacterCount($event,5)"></textarea>
                 </div>
             </div>
             </div>    
@@ -868,11 +868,11 @@
                             <div class="flex-grow-1 ml-2" >
                                 <div class="d-flex justify-content-between align-items-center pt-3  msg-head">
                                     <h6>Website URL</h6>
-                                    <div><span class="characters-count">{{ item?.webUrl?.length }}</span><span>/20 Characters</span>
+                                    <div><span class="characters-count">{{ item?.webUrl?.length }}</span><span>/2000 Characters</span>
                                     </div>
                                 </div>
                                 <div class="sel-type-link">
-                                    <input type="text" placeholder="e.g. https://www.example.com" [(ngModel)]="item.webUrl" [ngModelOptions]="{standalone: true}">
+                                    <input type="text" placeholder="e.g. https://www.example.com"  maxlength="2000" [(ngModel)]="item.webUrl" [ngModelOptions]="{standalone: true}">
                                 </div>
                             </div>
                         </div>

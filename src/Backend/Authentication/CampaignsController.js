@@ -82,10 +82,10 @@ const addCampaign = async (req, res) => {
             updateQuery += " media_type= '" + req.body?.media_type + "',";
             updateQuery += " message_footer= '" + req.body?.message_footer + "',";
             updateQuery += " OptInStatus= '" + req.body?.OptInStatus + "',";
-            updateQuery += " templateId= '" + req.body?.templateId + "'";
-            updateQuery += " headerText= '" + req.body?.headerText + "'";
-            updateQuery += " bodyText= '" + req.body?.bodyText + "'";
-            updateQuery += " buttons= '" + req.body?.bodyText + "'";
+            updateQuery += " templateId= '" + req.body?.templateId + "',";
+            updateQuery += " headerText= '" + req.body?.headerText + "',";
+            updateQuery += " bodyText= '" + req.body?.bodyText + "',";
+            updateQuery += " buttons= '" + req.body?.buttons + "'";
             updateQuery += " WHERE Id =" + req.body.Id
             let editedCampaign = await db.excuteQuery(updateQuery, [])
             let editCampaign = {
@@ -821,10 +821,10 @@ const copyCampaign = async (req, res) => {
     let CopyQuery;
     let campaignTitle = await db.excuteQuery("SELECT * from Campaign  where title=? and is_deleted !=1 and sp_id=?", ['copy of ' + existCampaign[0].title, req.params.spid])
     if (campaignTitle?.length == 0) {
-        CopyQuery = "INSERT INTO Campaign (sp_id,title,channel_id,message_heading,message_content,message_media,message_variables,button_yes,button_no,button_exp,category,time_zone,start_datetime,end_datetime,csv_contacts,segments_contacts,media_type,templateId) SELECT sp_id, CONCAT('copy of ',title),channel_id,message_heading,message_content,message_media,message_variables,button_yes,button_no,button_exp,category,time_zone,' ',' ',csv_contacts,segments_contacts,media_type,templateId FROM Campaign WHERE Id = " + req.params.CampaignId
+        CopyQuery = "INSERT INTO Campaign (sp_id,title,channel_id,message_heading,message_content,message_media,message_variables,button_yes,button_no,button_exp,category,time_zone,start_datetime,end_datetime,csv_contacts,segments_contacts,media_type,templateId,buttons) SELECT sp_id, CONCAT('copy of ',title),channel_id,message_heading,message_content,message_media,message_variables,button_yes,button_no,button_exp,category,time_zone,' ',' ',csv_contacts,segments_contacts,media_type,templateId,buttons FROM Campaign WHERE Id = " + req.params.CampaignId
 
     } else {
-        CopyQuery = `INSERT INTO Campaign (sp_id,title,channel_id,message_heading,message_content,message_media,message_variables,button_yes,button_no,button_exp,category,time_zone,start_datetime,end_datetime,csv_contacts,segments_contacts,media_type,templateId) SELECT sp_id, CONCAT('copy of ${existCampaign[0].title} ', ${randomName}),channel_id,message_heading,message_content,message_media,message_variables,button_yes,button_no,button_exp,category,time_zone,' ',' ',csv_contacts,segments_contacts,media_type,templateId FROM Campaign WHERE Id = ` + req.params.CampaignId
+        CopyQuery = `INSERT INTO Campaign (sp_id,title,channel_id,message_heading,message_content,message_media,message_variables,button_yes,button_no,button_exp,category,time_zone,start_datetime,end_datetime,csv_contacts,segments_contacts,media_type,templateId,buttons) SELECT sp_id, CONCAT('copy of ${existCampaign[0].title} ', ${randomName}),channel_id,message_heading,message_content,message_media,message_variables,button_yes,button_no,button_exp,category,time_zone,' ',' ',csv_contacts,segments_contacts,media_type,templateId,buttons FROM Campaign WHERE Id = ` + req.params.CampaignId
     }
     //  console.log(CopyQuery)
     let campaignCopied = await db.excuteQuery(CopyQuery, []);

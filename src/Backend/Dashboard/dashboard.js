@@ -135,7 +135,7 @@ app.get('/recentConversation/:spid', async (req, res) => {
 
   // db.runQuery(req,res,val.conversationQuery,[req.query.spid])
   try {
-    const users = await db.excuteQuery(val.conversationQuery, [req.query.spid]);
+    const users = await db.excuteQuery(val.recentConversationQuery, [req.query.spid,req.query.spid]);
     res.send(users);
   } catch (err) {
     console.error(err);
