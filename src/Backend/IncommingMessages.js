@@ -32,7 +32,7 @@ WHERE M.interaction_id = ?
   AND I.is_deleted != 1 order by M.updated_at desc limit 1`;
 
 checkResolve = `select * from Interaction where  InteractionId = ? and SP_ID=? and IsTemporary !=1 and is_deleted !=1 `
-var insertMessageQuery = "INSERT INTO Message (SPID,Type,ExternalMessageId, interaction_id, Agent_id, message_direction,message_text,message_media,media_type,Message_template_id,Quick_reply_id,created_at,updated_at,system_message_type_id,assignAgent,msg_status) VALUES ?";
+var insertMessageQuery = "INSERT INTO Message (SPID,Type,ExternalMessageId, interaction_id, Agent_id, message_direction,message_text,message_media,media_type,Message_template_id,Quick_reply_id,created_at,updated_at,system_message_type_id,assignAgent,msg_status,button) VALUES ?";
 
 async function sReplyActionOnlostMessage(message_text, sid, channelType, phone_number_id, from, custid, agid, newId, display_phone_number) {
   try {
@@ -282,7 +282,7 @@ async function iterateSmartReplies(replymessage, phone_number_id, from, sid, cus
       var templateName = message?.templateName
       var header = message?.headerText
       var body = message?.bodyText
-
+      var buttons = message?.buttons
  
       //get header and body variable 
       let headerVar = await commonFun.getTemplateVariables(msgVar, header, sid, custid);
@@ -353,7 +353,8 @@ async function iterateSmartReplies(replymessage, phone_number_id, from, sid, cus
         "laungage": laungage,
         "templateName": templateName,
         "headerVar": headerVar,
-        "bodyVar": bodyVar
+        "bodyVar": bodyVar,
+        "buttons" : buttons
       };
       console.log(message.replyId, "replysms", relyMsg);
       messageToSend.push(relyMsg);
@@ -388,7 +389,8 @@ async function iterateSmartReplies(replymessage, phone_number_id, from, sid, cus
           message.laungage,
           message.templateName,
           message.headerVar,
-          message.bodyVar
+          message.bodyVar,
+          message.buttons
         );
         // console.log(type,"SreplyThroughselectedchannel response:", respose);
       }
@@ -893,7 +895,7 @@ async function messageThroughselectedchannel(spid, from, type, text, media, phon
     let result = await middleWare.sendDefultMsg(media, text, getMediaType, phone_number_id, from, spid);
     // console.log("messageThroughselectedchannel", result?.status)
     if (result?.status == 200) {
-      let messageValu = [[spid, 'text', "", interactionId, agentId, 'Out', Message_text, (media ? media : 'text'), media_type, result.message.messages[0].id, "", time, time, "", -2, 1]]
+      let messageValu = [[spid, 'text', "", interactionId, agentId, 'Out', Message_text, (media ? media : 'text'), media_type, result.message.messages[0].id, "", time, time, "", -2, 1,'']]
       let saveMessage = await db.excuteQuery(insertMessageQuery, [messageValu]);
       response = true;
     }
@@ -908,7 +910,7 @@ async function messageThroughselectedchannel(spid, from, type, text, media, phon
 
       let myUTCString = new Date().toUTCString();
       const time = moment.utc(myUTCString).format('YYYY-MM-DD HH:mm:ss');
-      let messageValu = [[spid, 'text', "", interactionId, agentId, 'Out', Message_text, (media ? media : 'text'), media_type, "", "", time, time, "", -2, 1]]
+      let messageValu = [[spid, 'text', "", interactionId, agentId, 'Out', Message_text, (media ? media : 'text'), media_type, "", "", time, time, "", -2, 1,'']]
       let saveMessage = await db.excuteQuery(insertMessageQuery, [messageValu]);
       return true;
     }
@@ -921,23 +923,23 @@ async function SreplyThroughselectedchannel(spid, from, type, text, media, phone
   laungage,
   templateName,
   headerVar,
-  bodyVar) {
+  bodyVar,buttons) {
   if (channelType == 'WhatsApp Official' || channelType == 1 || channelType == 'WA API') {
     let response = false;
     let myUTCString = new Date().toUTCString();
     const time = moment.utc(myUTCString).format('YYYY-MM-DD HH:mm:ss');
     let sReply = '';
-    if(isTemplate){
-      sReply = await middleWare.createWhatsAppPayload(type, from, templateName, laungage, headerVar, bodyVar, media, spid);
+    if(isTemplate == 'true'){
+       sReply = await middleWare.createWhatsAppPayload(type, from, templateName, laungage, headerVar, bodyVar, media, spid);
     }else{
       sReply = await middleWare.sendDefultMsg(media, text, type, phone_number_id, from, spid);
     }
-    
+   
     console.log(type, "sReply?.status ", sReply?.status, media_type)
     if (sReply?.status == 200) {
 
 
-      let messageValu = [[spid, 'text', "", interactionId, agentId, 'Out', testMessage, (media ? media : 'text'), media_type, sReply.message.messages[0].id, "", time, time, "", -2, 1]]
+      let messageValu = [[spid, 'text', "", interactionId, agentId, 'Out', testMessage, (media ? media : 'text'), media_type, sReply.message.messages[0].id, "", time, time, "", -2, 1,buttons]]
       let saveMessage = await db.excuteQuery(insertMessageQuery, [messageValu]);
       notify.NotifyServer(display_phone_number, false, interactionId, 0, 'Out', 'Smartreply')
       response = true;
@@ -951,7 +953,7 @@ async function SreplyThroughselectedchannel(spid, from, type, text, media, phone
 
       let myUTCString = new Date().toUTCString();
       const time = moment.utc(myUTCString).format('YYYY-MM-DD HH:mm:ss');
-      let messageValu = [[spid, 'text', "", interactionId, agentId, 'Out', testMessage, (media ? media : 'text'), media_type, "", "", time, time, "", -2, 1]]
+      let messageValu = [[spid, 'text', "", interactionId, agentId, 'Out', testMessage, (media ? media : 'text'), media_type, "", "", time, time, "", -2, 1,'']]
       let saveMessage = await db.excuteQuery(insertMessageQuery, [messageValu]);
       notify.NotifyServer(display_phone_number, false, interactionId, 0, 'Out', 'Smartreply')
       return true;

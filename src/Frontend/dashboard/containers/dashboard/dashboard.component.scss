@@ -653,3 +653,11 @@ font-size: 14px;
     align-items: center;
     height: 75vh;
 }
+
+.ellipsis-1 {
+    overflow: hidden;
+    -webkit-box-orient: vertical;
+    display: -webkit-box;
+    height: max-content !important; 
+    -webkit-line-clamp: 1;
+}

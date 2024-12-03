@@ -339,7 +339,7 @@ export class TemplateMessageComponent implements OnInit {
             Header: new FormControl(null,this.noEmojiValidator),
             Links: new FormControl(null),
             BodyText: new FormControl('', [Validators.required]),
-            FooterText: new FormControl(''),
+            FooterText: new FormControl('',this.noEmojiValidator),
             buttonType: new FormControl(''),
             buttonText: new FormControl(''),
             quickreply1: new FormControl(''),
@@ -911,11 +911,21 @@ checkTemplateName(e:any){
                     };
                 }                
                 else if(item?.type =='Visit Website') {
+                    if(item?.webType != 'Static'){
+                    btn = {
+                        type: 'URL',
+                        text: item.buttonText,
+                        url: item.webUrl +'{{1}}',
+                        example: [item.webUrlSample]
+                    };
+                }
+                    else{
                     btn = {
                         type: 'URL',
                         text: item.buttonText,
                         url: item.webUrl,
                     };
+                }
                 }
                 buttons.push(btn);
             }
@@ -1169,8 +1179,8 @@ insertAtCursor(selectedValue: any) {
 		if (isVariableValue) {
 		  this.allVariablesList = this.getVariables(isVariableValue, "{{", "}}");
           let dynamicWeb= this.buttonsArray.filter((item:any)=> (item?.type =='Visit Website' && item?.webType !='Static'))
-          if(dynamicWeb?.length > 0)
-            this.allVariablesList.push('{{url}}');
+        //   if(dynamicWeb?.length > 0)
+        //     this.allVariablesList.push('{{url}}');
           this.allVariablesList.forEach((item:any)=>{
             this.allVariablesValueList.push({var:item,val:''});
           })
@@ -1420,9 +1430,10 @@ openButtonPopUp() {
       if (item.type === 'Visit Website') {
         if (!item.webUrl) {
             validationErrors= validationErrors + '<br>'+ `Button ${index + 1}: 'webUrl' is required for Visit Website button.`;
-          } else if (!urlPattern.test(item.webUrl)) {
-            validationErrors= validationErrors + '<br>'+ `Button ${index + 1}: 'webUrl' must start with http:// or https:// and end with a valid TLD.`;
-          }
+          } 
+        //   else if (!urlPattern.test(item.webUrl)) {
+        //     validationErrors= validationErrors + '<br>'+ `Button ${index + 1}: 'webUrl' must start with http:// or https:// and end with a valid TLD.`;
+        //   }
       }
       if (item.type === 'Call Phone') {
         console.log(item);

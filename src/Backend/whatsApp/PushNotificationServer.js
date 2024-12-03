@@ -226,54 +226,68 @@ io.on('connection', (socket) => {
 
   socket.on('message', (msg) => {
     try {
-      const message = typeof msg === 'string' ? msg : JSON.stringify(msg); // Convert msg to a string if it's not already
+      const message = typeof msg === 'string' ? msg : JSON.stringify(msg);
       const msgjson = parseJSONObject(message);
-
+  
       if (!msgjson) return;
-
-      // If the message contains a phone number, store it
+  
       if (msgjson.UniqueSPPhonenumber) {
+        for (let key in clients) {
+          if (clients.hasOwnProperty(key)) {
+            if (clients[key]== msgjson["UniqueSPPhonenumber"]) {
+              //clients[key].close();
+              delete clients[key];
+          }
+          }
+        }
+        
         const uniquePhone = msgjson.UniqueSPPhonenumber;
         clients[socket.id] = uniquePhone;
-
-        // Initialize spAgentMapping array if not already present
+  
         if (!spAgentMapping[msgjson.spPhoneNumber]) {
           spAgentMapping[msgjson.spPhoneNumber] = [];
         }
-
-        // Avoid duplicates in spAgentMapping for the given spPhoneNumber
+  
+        // Avoid duplicates in `spAgentMapping`
         if (!spAgentMapping[msgjson.spPhoneNumber].includes(uniquePhone)) {
           spAgentMapping[msgjson.spPhoneNumber].push(uniquePhone);
         }
+  
         console.log(`Client connected with phone: ${uniquePhone}`);
         console.log('Active clients after connection:', JSON.stringify(clients, null, 2));
       } else if (msgjson.displayPhoneNumber) {
-        // Handle messages intended for specific SPIDs
+        // Handle messages for a specific `displayPhoneNumber`
         const targetPhone = msgjson.displayPhoneNumber;
-        logger.info(`1111 msgjson.display ____spAgentMapping ${spAgentMapping} , msgjson,${msgjson} ,spAgentMapping[targetPhone],${ spAgentMapping[targetPhone]}`)
+  
         if (spAgentMapping[targetPhone]) {
-          logger.info(`2222 if.display _pAgentMapping, msgjson,${msgjson} ,spAgentMapping[targetPhone],${ spAgentMapping[targetPhone]}`)
+          // Create a set to ensure unique socket IDs
+          const uniqueSocketIds = new Set();
+  
           spAgentMapping[targetPhone].forEach((uniqueSPPhone) => {
             const targetSocketId = Object.keys(clients).find(
               id => clients[id] === uniqueSPPhone
             );
+  
             if (targetSocketId) {
-              logger.info(`3333 targetSocketId.display, msgjson,${msgjson} ,spAgentMapping[targetPhone],${ spAgentMapping[targetPhone]}`)
-              io.sockets.sockets.get(targetSocketId)?.emit('message', msgjson);
+              uniqueSocketIds.add(targetSocketId);
             } else {
               console.log(`Socket for ${uniqueSPPhone} is undefined`);
             }
           });
+  
+          // Emit message only once to each unique socket ID
+          uniqueSocketIds.forEach((socketId) => {
+            io.sockets.sockets.get(socketId)?.emit('message', msgjson);
+          });
         }
       } else {
-        console.log("Received unrecognized message:", message); //Received unrecognized message: {"displayPhoneNumber":"911724610945","message":2873,"status":"Out","msg_status":1,"msg_id":0}
-        // Received unrecognized message: {"displayPhoneNumber":"911724610945","message":2873,"status":"Out","msg_status":2,"msg_id":0}
-
+        console.log("Received unrecognized message:", message);
       }
     } catch (error) {
       console.log("Error processing message:", error);
     }
   });
+  
 
 
   socket.on('disconnect', () => {
@@ -283,13 +297,13 @@ io.on('connection', (socket) => {
     if (clients[socket.id]) {
       const disconnectedUniquePhone = clients[socket.id];
       delete clients[socket.id]; // Remove the client from the active clients list
-     
-     // Use the `spPhoneNumber` stored in the socket
-     if (socket.spPhoneNumber && spAgentMapping[socket.spPhoneNumber]) {
-      spAgentMapping[socket.spPhoneNumber] = spAgentMapping[socket.spPhoneNumber].filter(
-        phone => phone !== disconnectedUniquePhone
-      );
-    }
+
+      // Use the `spPhoneNumber` stored in the socket
+      if (socket.spPhoneNumber && spAgentMapping[socket.spPhoneNumber]) {
+        spAgentMapping[socket.spPhoneNumber] = spAgentMapping[socket.spPhoneNumber].filter(
+          phone => phone !== disconnectedUniquePhone
+        );
+      }
       console.log(`Client ${disconnectedUniquePhone} disconnected`);
     }
 

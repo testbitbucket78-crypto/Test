@@ -1,3 +1,4 @@
+import { DatePipe } from '@angular/common';
 import { Component, EventEmitter, Input, OnInit, Output, TemplateRef, ViewChild } from '@angular/core';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { SettingsService } from 'Frontend/dashboard/services/settings.service';
@@ -40,7 +41,8 @@ export class ContactFilterComponent implements OnInit {
 	@Output() closeFilterPopup = new EventEmitter<string>();
 	@Output() contactFilterList = new EventEmitter<any>();
 	
-  constructor(private modalService: NgbModal,private _settingsService:SettingsService) {
+  constructor(private modalService: NgbModal,private _settingsService:SettingsService,
+	private datePipe:DatePipe) {
 	
     }
 	ngOnInit(): void {
@@ -78,7 +80,7 @@ export class ContactFilterComponent implements OnInit {
 			{label:'Is equal to',checked:false,type:'text'},
 			{label:'Is not equal to',checked:false,type:'text'},
 			]},
-			{value:'emailId',label:'emailId',checked:false,addeFilter:[],
+			{value:'emailId',label:'Email',checked:false,addeFilter:[],
 			option:[
 				{label:'Contains',checked:false,type:'text'},
 				{label:'Does Not Contain',checked:false,type:'text'},
@@ -99,8 +101,8 @@ export class ContactFilterComponent implements OnInit {
 			
 			{value:'OptInStatus',label:'Message Opt-in',checked:false,addeFilter:[],
 			option:[
-				{label:'True',checked:false,type:'switch'},
-				{label:'False',checked:false,type:'switch'},
+				{label:'Yes',checked:false,type:'switch'},
+				{label:'No',checked:false,type:'switch'},
 				{label:'Is empty',checked:false,type:'none'},
 				{label:'Is not empty',checked:false,type:'none'},
 			]},		
@@ -121,6 +123,13 @@ export class ContactFilterComponent implements OnInit {
 						{label:'Is equal to',checked:false,type:'date',filterPrefixType:'date'},
 						{label:'Is not equal to',checked:false,type:'date',filterPrefixType:'date'},
 			]},
+			{value:'ContactOwner',label:'Contact Owner',checked:false,addeFilter:[],
+			option:[
+				{label:'Is empty',checked:false,type:'none'},
+				{label:'Is not empty',checked:false,type:'none'},
+				{label:'Is equal to',checked:false,type:'user'},
+				{label:'Is not equal to',checked:false,type:'user'}
+			]},
 			{value:'Last Conversation With',label:'Last Conversation With',checked:false,addeFilter:[],
 			option:[
 				{label:'Is empty',checked:false,type:'none'},
@@ -139,8 +148,8 @@ export class ContactFilterComponent implements OnInit {
 			option:[
 				{label:'Is empty',checked:false,type:'none'},
 				{label:'Is not empty',checked:false,type:'none'},
-			{label:'true',checked:false,type:'none'},
-			{label:'false',checked:false,type:'none'}
+			{label:'True',checked:false,type:'none'},
+			{label:'False',checked:false,type:'none'}
 			]},
 			{value:'Conversation Assigned to',label:'Conversation Assigned to',checked:false,addeFilter:[],
 			option:[
@@ -210,7 +219,7 @@ export class ContactFilterComponent implements OnInit {
 					];
 					break;
 				}
-				case 'text':{
+				case 'Text':{
 					 options =[
 						{label:'Is empty',checked:false,type:'none'},
 						{label:'Is not empty',checked:false,type:'none'},
@@ -439,7 +448,7 @@ export class ContactFilterComponent implements OnInit {
       };
       });  
   
-      let contactFilter ="SELECT EC.*, IFNULL(GROUP_CONCAT(ECTM.TagName ORDER BY FIND_IN_SET(ECTM.ID, REPLACE(EC.tag, ' ', ''))), '') AS tag_names,maxInteraction.maxInteractionId,Interaction.interaction_status,Message.*,user.uid,user.name,IM.latestCreatedAt AS lastAssistedAgent,IM.AgentId,IM.* FROM EndCustomer AS EC LEFT JOIN EndCustomerTagMaster AS ECTM ON FIND_IN_SET(ECTM.ID, REPLACE(EC.tag, ' ', '')) > 0 AND ECTM.isDeleted != 1 LEFT JOIN (SELECT customerId,MAX(InteractionId) AS maxInteractionId FROM Interaction WHERE is_deleted != 1 AND IsTemporary != 1 GROUP BY customerId) AS maxInteraction ON maxInteraction.customerId = EC.customerId LEFT JOIN Interaction AS Interaction ON maxInteraction.maxInteractionId = Interaction.InteractionId LEFT JOIN Message AS Message ON Message.interaction_id = Interaction.InteractionId AND Message.is_deleted != 1 LEFT JOIN user AS user ON EC.uid = user.uid LEFT JOIN (SELECT interactionId, MAX(created_at) AS latestCreatedAt,AgentId, lastAssistedAgent FROM InteractionMapping GROUP BY interactionId) AS IM ON IM.InteractionId = Interaction.InteractionId WHERE EC.SP_ID ="+this.SPID +" AND EC.isDeleted != 1 AND EC.IsTemporary != 1";
+      let contactFilter ="SELECT EC.*, IFNULL(GROUP_CONCAT(DISTINCT ECTM.TagName ORDER BY FIND_IN_SET(ECTM.ID, REPLACE(EC.tag, ' ', ''))), '') AS tag_names,maxInteraction.maxInteractionId,Interaction.interaction_status,Message.*,user.uid,user.name,IM.latestCreatedAt AS lastAssistedAgent,IM.AgentId,IM.* FROM EndCustomer AS EC LEFT JOIN EndCustomerTagMaster AS ECTM ON FIND_IN_SET(ECTM.ID, REPLACE(EC.tag, ' ', '')) > 0 AND ECTM.isDeleted != 1 LEFT JOIN (SELECT customerId,MAX(InteractionId) AS maxInteractionId FROM Interaction WHERE is_deleted != 1 AND IsTemporary != 1 GROUP BY customerId) AS maxInteraction ON maxInteraction.customerId = EC.customerId LEFT JOIN Interaction AS Interaction ON maxInteraction.maxInteractionId = Interaction.InteractionId LEFT JOIN Message AS Message ON Message.interaction_id = Interaction.InteractionId AND Message.is_deleted != 1 LEFT JOIN user AS user ON EC.uid = user.uid LEFT JOIN (SELECT interactionId, MAX(created_at) AS latestCreatedAt,AgentId, lastAssistedAgent FROM InteractionMapping GROUP BY interactionId) AS IM ON IM.InteractionId = Interaction.InteractionId WHERE EC.SP_ID ="+this.SPID +" AND EC.isDeleted != 1 AND EC.IsTemporary != 1";
       if(groupArrays.length>0){
         
         groupArrays.map((filters:any,idx)=>{
@@ -448,7 +457,7 @@ export class ContactFilterComponent implements OnInit {
           
 			let colName = filters.filterPrefix;
 		  if(colName =="Conversation Resolved"){
-			if(filters?.items[0].filterBy == 'true')
+			if(filters?.items[0].filterBy == 'True')
 				contactFilter = contactFilter + " and ((Interaction.interaction_status='Resolved')";
 			else
 				contactFilter = contactFilter + " and (Interaction.interaction_status !='Resolved')";
@@ -487,10 +496,26 @@ export class ContactFilterComponent implements OnInit {
             filterOper = "LIKE '"+filter.filterValue+"%'";
           }
           if(filter.filterBy=="Is equal to"){
-            filterOper = '='+filter.filterValue;
+			if(filter.filterType =="date"){
+				const currentDate = new Date(filter.filterValue)
+				const nextDate = new Date(currentDate)
+				nextDate.setDate(currentDate.getDate() + 1)
+				console.log(nextDate);
+				let update = this.datePipe.transform(nextDate, 'yyyy-MM-dd');
+				filterOper = '>= "' + filter.filterValue.toString() + '" AND EC.' + filter.filterPrefix + ' < "' +update?.toString() + '"';				
+			}else
+            	filterOper = '='+filter.filterValue;
           }
           if(filter.filterBy=="Is not equal to"){
-            filterOper = '!='+filter.filterValue;
+			if(filter.filterType =="date"){
+				const currentDate = new Date(filter.filterValue)
+				const nextDate = new Date(currentDate)
+				nextDate.setDate(currentDate.getDate() + 1)
+				console.log(nextDate);
+				let update = this.datePipe.transform(nextDate, 'yyyy-MM-dd');
+				filterOper = '< "' + filter.filterValue + '" AND EC.' + filter.filterPrefix + ' >= "' +update + '"';				
+			}else
+            	filterOper = '!='+filter.filterValue;
           }
   
           if(filter.filterBy=="Contains"){
@@ -505,12 +530,18 @@ export class ContactFilterComponent implements OnInit {
             filterOper = "LIKE '%No%'";
           }
 		  
-          if(filter.filterBy=="true"){
-            filterOper = "LIKE '%true%'";
+          if(filter.filterBy=="True"){
+			if(filter.filterPrefix == "isBlocked")
+				filterOper = "= '1'";
+			else
+            	filterOper = "LIKE '%true%'";
           }
   
-          if(filter.filterBy=="false"){
-            filterOper = "LIKE '%false%'";
+          if(filter.filterBy=="False"){
+			if(filter.filterPrefix == "isBlocked")
+				filterOper = "= '0'";
+			else
+            	filterOper = "LIKE '%false%'";
           }
   
           if(filter.filterBy=="Is empty"){
