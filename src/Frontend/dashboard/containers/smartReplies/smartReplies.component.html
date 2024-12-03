@@ -853,6 +853,22 @@
 										placeholder="Input payload value">
 									</div>
 								  </div> -->
+								  <div *ngFor="let item of buttonsVariable; let ith = index" class="form_row">
+									<div>
+										<label style="font-weight: bold;">Dynamic URL</label>
+										<label>{{settingsService.truncateLength(item?.label)}}</label>
+									</div>
+									<div class="form-control-wrapper">
+										<p class="form-control">
+											<input type="text" [(ngModel)]="item.value" class="form-control inner" (keyup)="UpdateButtonsVariableState($event, ith)"
+											 placeholder="Input value or add attribute" [ngClass]="{'input-custom-color': item.isAttribute == true}">
+											 <span style="cursor: pointer;" (click)="openVariableOptionDynamicURL(ith)" class="map_attribute_img">
+												<img src="/assets/img/campaign/attribute.svg">
+											</span>
+										</p>
+										<div *ngIf="item?.Fallback" class="fallback-value">fallbackValue : {{item?.Fallback}}</div>
+									</div>
+								</div>
 								  </div>
 								</div>
 							 
