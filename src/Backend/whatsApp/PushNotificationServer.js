@@ -232,7 +232,15 @@ io.on('connection', (socket) => {
       if (!msgjson) return;
   
       if (msgjson.UniqueSPPhonenumber) {
-        // Handle new connection
+        for (let key in clients) {
+          if (clients.hasOwnProperty(key)) {
+            if (clients[key]== msgjson["UniqueSPPhonenumber"]) {
+              //clients[key].close();
+              delete clients[key];
+          }
+          }
+        }
+        
         const uniquePhone = msgjson.UniqueSPPhonenumber;
         clients[socket.id] = uniquePhone;
   

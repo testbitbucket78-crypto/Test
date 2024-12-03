@@ -191,7 +191,7 @@ export class CampaignsComponent implements OnInit {
 	userEmail: string = '';
 	downloadBtnLoad!: boolean;
 
-constructor(config: NgbModalConfig, private modalService: NgbModal,private datepipe: DatePipe,private dashboardService: DashboardService,
+constructor(config: NgbModalConfig, private modalService: NgbModal,private datepipe: DatePipe,private datePipe: DatePipe,private dashboardService: DashboardService,
 	private apiService: TeamboxService,public settingsService:SettingsService,private _settingsService:SettingsService,
 	private fb: FormBuilder,private router: Router,private el: ElementRef) {
 		// customize default values of modals used by this component tree
@@ -399,8 +399,8 @@ constructor(config: NgbModalConfig, private modalService: NgbModal,private datep
 			
 			{value:'OptInStatus',label:'Message Opt-in',checked:false,addeFilter:[],
 			option:[
-				{label:'True',checked:false,type:'switch'},
-				{label:'False',checked:false,type:'switch'},
+				{label:'Yes',checked:false,type:'switch'},
+				{label:'No',checked:false,type:'switch'},
 				{label:'Is empty',checked:false,type:'none'},
 				{label:'Is not empty',checked:false,type:'none'},
 			]},		
@@ -439,8 +439,8 @@ constructor(config: NgbModalConfig, private modalService: NgbModal,private datep
 			option:[
 				{label:'Is empty',checked:false,type:'none'},
 				{label:'Is not empty',checked:false,type:'none'},
-			{label:'true',checked:false,type:'none'},
-			{label:'false',checked:false,type:'none'}
+			{label:'True',checked:false,type:'none'},
+			{label:'False',checked:false,type:'none'}
 			]},
 			{value:'Conversation Assigned to',label:'Conversation Assigned to',checked:false,addeFilter:[],
 			option:[
@@ -510,7 +510,7 @@ constructor(config: NgbModalConfig, private modalService: NgbModal,private datep
 					];
 					break;
 				}
-				case 'text':{
+				case 'Text':{
 					 options =[
 						{label:'Is empty',checked:false,type:'none'},
 						{label:'Is not empty',checked:false,type:'none'},
@@ -995,12 +995,12 @@ formateDate(dateTime:string){
 		// 	this.ContactListNewFilters.push(addeFilter[i])
 		// }
 		// }
-		this.ContactListNewFilters[index]['filterPrefix'] = filter?.label;
+		this.ContactListNewFilters[index]['filterPrefix'] = filter?.value;
 		// let newFilter:any=[];
 		this.ContactListNewFilters[index]['filterBy'] = filter['option']['0']?.label
 		this.ContactListNewFilters[index]['filterType'] = filter['option']['0']?.type
 		this.ContactListNewFilters[index]['selectedOptions'] = filter['option']['0']?.options
-		this.ContactListNewFilters[index]['filterPrefix'] = filter?.label
+		this.ContactListNewFilters[index]['filterPrefix'] = filter?.value
 		this.ContactListNewFilters[index]['filterValue']='';
 		// if(addeFilter.length>0){
 		// newFilter['filterOperator']='AND';
@@ -1036,7 +1036,7 @@ formateDate(dateTime:string){
 		this.ContactListNewFilters[index]['filterBy'] = filter?.label
 		this.ContactListNewFilters[index]['filterType'] = filter?.type
 		this.ContactListNewFilters[index]['selectedOptions'] = filter?.options
-		this.ContactListNewFilters[index]['filterPrefix'] = selectedcontactFilterBy?.label
+		this.ContactListNewFilters[index]['filterPrefix'] = selectedcontactFilterBy?.value
 		this.ContactListNewFilters[index]['filterValue']='';		
 	  }
 	  selectFilterValue(index:any,event:any){
@@ -1063,7 +1063,7 @@ formateDate(dateTime:string){
 		newFilter['filterBy'] = this.selectedcontactFilterBy['option']['0']?.label
 		newFilter['filterType'] = this.selectedcontactFilterBy['option']['0']?.type
 		newFilter['selectedOptions'] = this.selectedcontactFilterBy['option']['0']?.options
-		newFilter['filterPrefix'] = this.selectedcontactFilterBy.label
+		newFilter['filterPrefix'] = this.selectedcontactFilterBy.value
 		newFilter['filterValue']='';
 		newFilter['filterOperator']='AND';
 		this.ContactListNewFilters.push(newFilter)
@@ -1091,10 +1091,10 @@ formateDate(dateTime:string){
      	
 	}
 	getContactFilterQuery(addeFilter:any){
-		console.log('///////////getContactFilterQuery',addeFilter)
+
 		const groups = addeFilter.reduce((groups:any, filter:any) => {
 		  
-		  if (!groups[filter?.filterPrefix]) {
+		  if (!groups[filter.filterPrefix]) {
 			groups[filter.filterPrefix] = [];
 		  }
 	
@@ -1107,31 +1107,29 @@ formateDate(dateTime:string){
 		  filterPrefix,
 		  items: groups[filterPrefix]
 		};
-		});
-		console.log('/////groupArrays/////')
-		console.log(addeFilter)
-		console.log(this.ContactListNewFilters)
-		console.log(groupArrays)
-	
+		});  
 	
 		let contactFilter ="SELECT EC.*, IFNULL(GROUP_CONCAT(DISTINCT ECTM.TagName ORDER BY FIND_IN_SET(ECTM.ID, REPLACE(EC.tag, ' ', ''))), '') AS tag_names,maxInteraction.maxInteractionId,Interaction.interaction_status,Message.*,user.uid,user.name,IM.latestCreatedAt AS lastAssistedAgent,IM.AgentId,IM.* FROM EndCustomer AS EC LEFT JOIN EndCustomerTagMaster AS ECTM ON FIND_IN_SET(ECTM.ID, REPLACE(EC.tag, ' ', '')) > 0 AND ECTM.isDeleted != 1 LEFT JOIN (SELECT customerId,MAX(InteractionId) AS maxInteractionId FROM Interaction WHERE is_deleted != 1 AND IsTemporary != 1 GROUP BY customerId) AS maxInteraction ON maxInteraction.customerId = EC.customerId LEFT JOIN Interaction AS Interaction ON maxInteraction.maxInteractionId = Interaction.InteractionId LEFT JOIN Message AS Message ON Message.interaction_id = Interaction.InteractionId AND Message.is_deleted != 1 LEFT JOIN user AS user ON EC.uid = user.uid LEFT JOIN (SELECT interactionId, MAX(created_at) AS latestCreatedAt,AgentId, lastAssistedAgent FROM InteractionMapping GROUP BY interactionId) AS IM ON IM.InteractionId = Interaction.InteractionId WHERE EC.SP_ID ="+this.SPID +" AND EC.isDeleted != 1 AND EC.IsTemporary != 1";
 		if(groupArrays.length>0){
 		  
 		  groupArrays.map((filters:any,idx)=>{
-			  console.log(idx);
+  
 			if(filters.items.length>0){
-		   // filters.items[0]['filterOperator']='';	
 			
-			let colName = 'EC.'+filters.filterPrefix
+			  let colName = filters.filterPrefix;
 			if(colName =="Conversation Resolved"){
-			  if(filters?.items[0].filterBy == 'true')
+			  if(filters?.items[0].filterBy == 'True')
 				  contactFilter = contactFilter + " and ((Interaction.interaction_status='Resolved')";
 			  else
 				  contactFilter = contactFilter + " and (Interaction.interaction_status !='Resolved')";
 			}else if(colName =="Last Conversation With"){
-			  contactFilter = contactFilter + `and  (((  Message.Agent_id LIKE '%${380}%' ))`;
+			  let userId = this.userList.filter((item:any)=> item.name ==filters.items[0].filterValue)[0]?.uid ;
+			  userId = userId ? userId : -1;
+			  contactFilter = contactFilter + `and  (((  Message.Agent_id LIKE '%${userId}%' ))`;
 			}else if(colName =="Conversation Assigned to"){
-			  contactFilter = contactFilter + `(and IM.AgentId='${380}')`;
+			  let userId = this.userList.filter((item:any)=> item.name ==filters.items[0].filterValue)[0]?.uid;
+			  userId = userId ? userId : -1;
+			  contactFilter = contactFilter + `(and IM.AgentId='${userId}')`;
 			}else if(colName =="Last Message Received At"){
 			  contactFilter = contactFilter + `and (Message.message_direction ='out' and Message.created_at=?)`;
 			}else if(colName =="Last Message Sent At"){
@@ -1139,15 +1137,16 @@ formateDate(dateTime:string){
 			}else if(colName =="Creator"){
 			  contactFilter = contactFilter + `and  ((  user.name LIKE '%${filters.items[0].filterValue}%' ))`;
 			} else{
+			  let colName = 'EC.'+filters.filterPrefix;
 			
 			if(colName =='Phone_number'){
-			  colName = "REGEXP_REPLACE(EC.Phone_number, '[^0-9]', '')"
+			  colName = "REGEXP_REPLACE(Phone_number, '[^0-9]', '')"
 			}
 	
 			contactFilter += idx == 0 ?' and ((' :  filters.items[0]['filterOperator'] == '' ? ' and ('  : filters.items[0]['filterOperator'] + ' (';
 			filters.items.map((filter:any,index:any)=>{
 	
-			//this.applylistFiltersWidth =parseInt(this.applylistFiltersWidth)+100	
+  
 			let filterOper = "='"+filter.filterValue+"'";
 				let QueryOperator ='';
 			QueryOperator = index == 0 ? '':filter.filterOperator?filter.filterOperator:''
@@ -1157,17 +1156,63 @@ formateDate(dateTime:string){
 			if(filter.filterBy=="Starts with"){
 			  filterOper = "LIKE '"+filter.filterValue+"%'";
 			}
-			if(filter.filterBy=="Is"){
-			  filterOper = '=='+filter.filterValue;
-			  filterOper = "LIKE '%"+filter.filterValue+"%'";
+			if(filter.filterBy=="Is equal to"){
+			  if(filter.filterType =="date"){
+				  const currentDate = new Date(filter.filterValue)
+				  const nextDate = new Date(currentDate)
+				  nextDate.setDate(currentDate.getDate() + 1)
+				  console.log(nextDate);
+				  let update = this.datePipe.transform(nextDate, 'yyyy-MM-dd');
+				  filterOper = '>= "' + filter.filterValue.toString() + '" AND EC.' + filter.filterPrefix + ' < "' +update?.toString() + '"';				
+			  }else
+				  filterOper = '='+filter.filterValue;
 			}
-			if(filter.filterBy=="Is not"){
-			  filterOper = '!='+filter.filterValue;
-			  filterOper = "NOT LIKE '"+filter.filterValue+"'";
+			if(filter.filterBy=="Is not equal to"){
+			  if(filter.filterType =="date"){
+				  const currentDate = new Date(filter.filterValue)
+				  const nextDate = new Date(currentDate)
+				  nextDate.setDate(currentDate.getDate() + 1)
+				  console.log(nextDate);
+				  let update = this.datePipe.transform(nextDate, 'yyyy-MM-dd');
+				  filterOper = '< "' + filter.filterValue + '" AND EC.' + filter.filterPrefix + ' >= "' +update + '"';				
+			  }else
+				  filterOper = '!='+filter.filterValue;
 			}
 	
 			if(filter.filterBy=="Contains"){
 			  filterOper = "LIKE '%"+filter.filterValue+"%'";
+			}
+	
+			if(filter.filterBy=="Yes"){
+			  filterOper = "LIKE '%Yes%'";
+			}
+	
+			if(filter.filterBy=="No"){
+			  filterOper = "LIKE '%No%'";
+			}
+			
+			if(filter.filterBy=="True"){
+			  if(filter.filterPrefix == "isBlocked")
+				  filterOper = "= '1'";
+			  else
+				  filterOper = "LIKE '%true%'";
+			}
+	
+			if(filter.filterBy=="False"){
+			  if(filter.filterPrefix == "isBlocked")
+				  filterOper = "= '0'";
+			  else
+				  filterOper = "LIKE '%false%'";
+			}
+	
+			if(filter.filterBy=="Is empty"){
+			  filterOper = "LIKE '%No%'";
+			  filterOper = "='' OR EC."+filter.filterPrefix+" IS NULL";
+			}
+	
+			if(filter.filterBy=="Is not empty"){
+			  filterOper = "LIKE '%No%'";
+			  filterOper = "!=''";
 			}
 			if(filter.filterBy=="Does Not Contain"){
 			  filterOper = "NOT LIKE '"+filter.filterValue+"'";
@@ -1198,6 +1243,9 @@ formateDate(dateTime:string){
 			if(filter.filterBy=="Exclude extension"){
 			  filterOper = "NOT LIKE '."+filter.filterValue+"'";
 			}
+			if(filter?.filterPrefixType =="Date"){
+			  filterOper = this.applyDateCondition(filter);
+			}
 			
 			contactFilter += ' '+QueryOperator +' '+colName+' '+filterOper
 			  })
@@ -1207,12 +1255,34 @@ formateDate(dateTime:string){
 			})
 			contactFilter += ' ) Group by EC.customerId';
 		  
-		  } else {
-			contactFilter += ' Group by EC.customerId';
+		  } else{
+			  contactFilter += ' Group by EC.customerId';
 		  }
-		  console.log(contactFilter)
+  
 		  return contactFilter;
 	  }
+
+
+	  applyDateCondition(filter:any):string{
+		let filterOper='';
+		if(filter.filterBy=="Before" || filter.filterBy =="Less than"){
+			filterOper = `(CASE WHEN STR_TO_DATE(${filter.filterPrefix}, '%Y-%m-%d') IS NOT NULL THEN STR_TO_DATE(${filter.filterPrefix}, '%Y-%m-%d') WHEN STR_TO_DATE(${filter.filterPrefix}, '%b %d, %Y') IS NOT NULL THEN STR_TO_DATE(${filter.filterPrefix}, '%b %d, %Y') WHEN STR_TO_DATE(${filter.filterPrefix}, '%M %d, %Y') IS NOT NULL THEN STR_TO_DATE(${filter.filterPrefix}, '%M %d, %Y') ELSE NULL END > CAST(${filter.filterValue} AS DATE))`;
+		}
+		if(filter.filterBy=="After" || filter.filterBy =="Greater than"){
+			filterOper = `(CASE WHEN STR_TO_DATE(${filter.filterPrefix}, '%Y-%m-%d') IS NOT NULL THEN STR_TO_DATE(${filter.filterPrefix}, '%Y-%m-%d') WHEN STR_TO_DATE(${filter.filterPrefix}, '%b %d, %Y') IS NOT NULL THEN STR_TO_DATE(${filter.filterPrefix}, '%b %d, %Y') WHEN STR_TO_DATE(${filter.filterPrefix}, '%M %d, %Y') IS NOT NULL THEN STR_TO_DATE(${filter.filterPrefix}, '%M %d, %Y') ELSE NULL END > CAST(${filter.filterValue} AS DATE))`;
+		}
+		if(filter.filterBy=="Between"){
+			filterOper = `(CASE WHEN STR_TO_DATE(${filter.filterPrefix}, '%Y-%m-%d') IS NOT NULL THEN STR_TO_DATE(${filter.filterPrefix}, '%Y-%m-%d') WHEN STR_TO_DATE(${filter.filterPrefix}, '%b %d, %Y') IS NOT NULL THEN STR_TO_DATE(${filter.filterPrefix}, '%b %d, %Y') WHEN STR_TO_DATE(${filter.filterPrefix}, '%M %d, %Y') IS NOT NULL THEN STR_TO_DATE(${filter.filterPrefix}, '%M %d, %Y') ELSE NULL END > CAST(${filter.filterValue} AS DATE))`;
+		}
+		if(filter.filterBy=="Is equal to"){
+			filterOper = `(CASE WHEN STR_TO_DATE(${filter.filterPrefix}, '%Y-%m-%d') IS NOT NULL THEN STR_TO_DATE(${filter.filterPrefix}, '%Y-%m-%d') WHEN STR_TO_DATE(${filter.filterPrefix}, '%b %d, %Y') IS NOT NULL THEN STR_TO_DATE(${filter.filterPrefix}, '%b %d, %Y') WHEN STR_TO_DATE(${filter.filterPrefix}, '%M %d, %Y') IS NOT NULL THEN STR_TO_DATE(${filter.filterPrefix}, '%M %d, %Y') ELSE NULL END = CAST(${filter.filterValue} AS DATE))`;
+		}
+		if(filter.filterBy=="Is not equal to"){
+			filterOper = `(CASE WHEN STR_TO_DATE(${filter.filterPrefix}, '%Y-%m-%d') IS NOT NULL THEN STR_TO_DATE(${filter.filterPrefix}, '%Y-%m-%d') WHEN STR_TO_DATE(${filter.filterPrefix}, '%b %d, %Y') IS NOT NULL THEN STR_TO_DATE(${filter.filterPrefix}, '%b %d, %Y') WHEN STR_TO_DATE(${filter.filterPrefix}, '%M %d, %Y') IS NOT NULL THEN STR_TO_DATE(${filter.filterPrefix}, '%M %d, %Y') ELSE NULL END != CAST(${filter.filterValue} AS DATE))`;
+		}
+
+		  return filterOper;
+	}
 
 
 
@@ -1752,6 +1822,12 @@ formateDate(dateTime:string){
 	openAddNewItem(addNewItem:any){
 		this.closeAllModal();
 		this.addNewFilters(this.contactFilterBy);
+		this.modalReference = this.modalService.open(addNewItem,{size: 'xl', windowClass:'white-bg'});
+	}
+	
+	backFilterItem(addNewItem:any){
+		this.closeAllModal();
+		//this.addNewFilters(this.contactFilterBy);
 		this.modalReference = this.modalService.open(addNewItem,{size: 'xl', windowClass:'white-bg'});
 	}
 	openImportantContact(mpcampaign:any){
