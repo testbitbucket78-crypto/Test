@@ -158,7 +158,7 @@ app.put('/updateSmartReply', async (req, res) => {
   // const jsonData = JSON.stringify(req.body.ReplyActions);
   try{
 
-  const myStringArray = req.body.Keywords;
+  const myStringArray = Array.isArray(req.body.Keywords) ? req.body.Keywords : [];
   //console.log(req.body.Keywords)
   const params = {
     strings: {
@@ -193,7 +193,7 @@ app.put('/updateSmartReply', async (req, res) => {
 
 
 
-//________________ Smart Reply Action API's_______________//
+//________________ Smart Reply Action API's_______________ This is covered in IncommingMessage.js Not in use here//
 
 app.post('/updateInteractionMapping', async (req, res) => {
   logger.info('SmartReply ******* updateInteractionMapping');

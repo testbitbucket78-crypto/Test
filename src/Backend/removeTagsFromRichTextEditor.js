@@ -207,6 +207,38 @@ async function getDefaultAttribue(message_variables, spid, customerId) {
   }
 }
 
+async function getDynamicURLToBESent(message_variables, spid, customerId) {
+  let result = [];
+  const endCustomerColumnsQuery = `SHOW COLUMNS FROM EndCustomer`;
+  let endCustomerColumns = await db.excuteQuery(endCustomerColumnsQuery);
+  endCustomerColumns = endCustomerColumns.map(column => `{{${column.Field}}}`);
+
+
+  for (let i = 0; i < message_variables.length; i++) {
+     const message_variable = message_variables[i];
+      let value = message_variable.value.trim();
+      if (!/^{{.*}}$/.test(value) && message_variable?.value) {
+         result.push(message_variable?.value)
+      } else {
+      const fallback = message_variable?.Fallback;
+      let toCheckDataExist = value.replace(/{{|}}/g, '').trim();
+
+      if (endCustomerColumns.includes(value)) {
+
+        const endCustomerQuery = `SELECT ${toCheckDataExist} FROM EndCustomer WHERE customerId=? AND isDeleted != 1 AND SP_ID=?`;
+        let endCustomerResult = await db.excuteQuery(endCustomerQuery, [customerId, spid]);
+        if (endCustomerResult.length > 0 && endCustomerResult[0][toCheckDataExist]) {
+          result.push(endCustomerResult[0][toCheckDataExist]);
+        } else {
+          result.push(fallback);
+        }
+      }else {
+        result.push(fallback);
+      }
+    }
+  }
+  return result;
+}
 
 // const value = setTimeout(async () => {
 //     const results = await getDefaultAttribue(['Name','CountryCode','displayPhoneNumber'], 35,4931);
@@ -708,4 +740,4 @@ try {
   console.error(error.message);
 }
 
-module.exports = { removeTagsFromMessages, getDefaultAttribue,getDefaultAttribueWithoutFallback }
+module.exports = { removeTagsFromMessages, getDefaultAttribue,getDefaultAttribueWithoutFallback,getDynamicURLToBESent }

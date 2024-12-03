@@ -377,10 +377,14 @@ async function sendScheduledCampaign(batch, sp_id, type, message_content, messag
 
     }
 
-
+    let DynamicURLToBESent;
+    let buttonsVariable = typeof message?.buttonsVariable === 'string' ? JSON.parse(message?.buttonsVariable) : message?.buttonsVariable;
+    if (!commonFun.isInvalidParam(message?.buttonsVariable) && buttonsVariable.length > 0) {
+      DynamicURLToBESent = await removeTags.getDynamicURLToBESent(buttonsVariable, sp_id, batch[i].customerId);
+    }
     var response;
     setTimeout(async () => {
-      response = await messageThroughselectedchannel(sp_id, Phone_number, type, textMessage, message_media, phone_number_id, channel_id, message.Id, message, message_text,headerVar,bodyVar,templateId,message.buttons);
+      response = await messageThroughselectedchannel(sp_id, Phone_number, type, textMessage, message_media, phone_number_id, channel_id, message.Id, message, message_text,headerVar,bodyVar,templateId,message.buttons,DynamicURLToBESent);
       //console.log("response",response)     
     }, 10)
 
@@ -626,9 +630,10 @@ async function isContactBlocked(phone, spid) {
 
 //_________________________COMMON METHOD FOR SEND MESSAGE___________________________//
 
-async function messageThroughselectedchannel(spid, from, type, text, media, phone_number_id, channelType, campaignId, message, message_content,headerVar,bodyVar,templateId,buttons) {
+async function messageThroughselectedchannel(spid, from, type, text, media, phone_number_id, channelType, campaignId, message, message_content,headerVar,bodyVar,templateId,buttons,DynamicURLToBESent) {
   //console.log("messageThroughselectedchannel", spid, from, type, channelType,web.isActiveSpidClient(spid))
   try {
+     let button = typeof buttons === 'string' ? JSON.parse(buttons) : buttons;
     let isBlockedContact = await isContactBlocked(from, spid)
 
     let getMediaType = determineMediaType(type);
@@ -636,7 +641,7 @@ async function messageThroughselectedchannel(spid, from, type, text, media, phon
     if (channelType == 'WhatsApp Official' || channelType == 1 || channelType == 'WA API') {
       if (!isBlockedContact) {
         let template = await db.excuteQuery('select * from templateMessages where ID=? and spid=?',[templateId,spid])
-        let response = await middleWare.createWhatsAppPayload(getMediaType, from, template[0]?.TemplateName, template[0]?.Language, headerVar, bodyVar, media, spid);
+        let response = await middleWare.createWhatsAppPayload(getMediaType, from, template[0]?.TemplateName, template[0]?.Language, headerVar, bodyVar, media, spid, button, DynamicURLToBESent);
        // await middleWare.sendDefultMsg(media, text, getMediaType, metaPhoneNumberID, from, spid);
         console.log("Official response", JSON.stringify(response?.status));
 

@@ -346,7 +346,7 @@ const WHATSAPPOptions = {
 
 
 
-async function createWhatsAppPayload(type, to, templateName, languageCode, headerVariables , bodyVariables, mediaLink, spid, button = []) {
+async function createWhatsAppPayload(type, to, templateName, languageCode, headerVariables , bodyVariables, mediaLink, spid, button = [], DynamicURLToBESent = []) {
     try{
     let WAdetails = await getWAdetails(spid);
     let Ln_code = commonFun.getCodeByLabel(languageCode);
@@ -413,16 +413,29 @@ async function createWhatsAppPayload(type, to, templateName, languageCode, heade
         }
     }
     if (button.length > 0) {
-        let buttonComponents = button.map(btn => {
-            if (btn.type === 'Copy offer Code') {
+        let buttonComponents = button.map((btn,idx) => {
+            if (btn?.type === 'Copy offer Code') {
                 return {
                     type: "button",
                     sub_type: "copy_code",
-                    index: 0,
+                    index: idx,
                     parameters: [
                         {
                             type: "coupon_code",
                             coupon_code: btn.code
+                        }
+                    ]
+                };
+            }
+            if (btn.webType === 'Dynamic' && DynamicURLToBESent[idx]) {
+                return {
+                    type: "button",
+                    sub_type: "url",
+                    index: idx,
+                    parameters: [
+                        {
+                            type: "text",
+                            text: DynamicURLToBESent[idx].trim()
                         }
                     ]
                 };
