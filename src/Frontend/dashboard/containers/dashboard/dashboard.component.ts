@@ -182,7 +182,7 @@ export class DashboardComponent implements OnInit {
         var SP_ID = sessionStorage.getItem('SP_ID')
 
         this.apiService.dashboardRecentConversation(SP_ID).subscribe((data: any) => {
-            this.recentConversation = data[0];
+            this.recentConversation = data;
         
             this.recentConversation.forEach((item: { Name: string; nameInitials: string; }) => {
                 const nameParts = item.Name.split(' ');
@@ -199,14 +199,15 @@ export class DashboardComponent implements OnInit {
     }
     
 
-    getLimitedMessageText(message: string) {
-        let maxLength = 70;
-        if (message?.length <= maxLength) {
-        return message;
-        } else {
-        return message?.substring(0, maxLength) + '...';
-        }
-
+    SanitizeHtmlMessage(message: string) {
+        // let maxLength = 70;
+        // if (message?.length <= maxLength) {
+        // return message;
+        // } else {
+        // return message?.substring(0, maxLength) + '...';
+        // }
+        message = message.replace(/<p>/g, "<span>").replace(/<\/p>/g, "</span>");
+        return message
     }
 
     getAvailableAmount() {

@@ -731,12 +731,12 @@ const addTemplate = async (req, res) => {
                         statusCode = 400;
                     }
                 }else if (isTemplate == 0 || isCopied == 1  || status == 'draft') {
-                    let temValues = [[TemplateName, Channel, Category, Language, media_type, Header, BodyText, image, FooterText, JSON.stringify(template_json), req.body.status, spid, created_By, created_at, isTemplate, industry, category_id,'',buttons,'','UNKNOWN']]
+                    let temValues = [[TemplateName, Channel, Category, Language, media_type, Header, BodyText, image, FooterText, JSON.stringify(template_json), req.body.status, spid, created_By, created_at, isTemplate, industry, category_id,'',buttons,categoryChange,'UNKNOWN']]
                     addedtem = await db.excuteQuery(val.addTemplates, [temValues])
                 }
             } else if (Channel == 'WhatsApp Web' || Channel == 'WA Web') {
 
-                let temValues = [[TemplateName, Channel, Category, Language, media_type, Header, BodyText, image, FooterText, JSON.stringify(template_json), status, spid, created_By, created_at, isTemplate, industry, category_id,'','','','UNKNOWN']]
+                let temValues = [[TemplateName, Channel, Category, Language, media_type, Header, BodyText, image, FooterText, JSON.stringify(template_json), status, spid, created_By, created_at, isTemplate, industry, category_id,'','',categoryChange,'UNKNOWN']]
                 addedtem = await db.excuteQuery(val.addTemplates, [temValues])
             }
             res.status(200).send({

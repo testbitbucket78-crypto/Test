@@ -27,7 +27,7 @@ const swaggerOptions = {
     servers: [
       {
         url: 'https://authapi.stacknize.com',
-        description: 'Stagging Server',
+        description: 'Preprod Server',
       },
       {
         url: 'http://localhost:3003',
@@ -39,7 +39,14 @@ const swaggerOptions = {
       },
       {
         url: 'http://localhost:3009',
+        description: 'Preprod Server',
+      },{
+        url: 'https://contactapi.stacknize.com/',
         description: 'Stagging Server',
+      },
+      {
+        url: 'http://localhost:3002',
+        description: 'Preprod Server',
       }
     ],
     components: {
@@ -59,13 +66,15 @@ const swaggerOptions = {
 
     tags: [
       { name: 'Authentication' },
-      {name: 'webJS'}
+      {name: 'webJS'},
+      {name: 'Contact'}
 
     ],
   },
   apis: [
     './router.js',
-    '../webJS/whatsAppWeb.js'
+    '../webJS/whatsAppWeb.js',
+    '../Contact/contact.js'
 
   ]
 };
