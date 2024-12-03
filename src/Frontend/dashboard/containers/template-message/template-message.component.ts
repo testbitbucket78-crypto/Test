@@ -911,11 +911,21 @@ checkTemplateName(e:any){
                     };
                 }                
                 else if(item?.type =='Visit Website') {
+                    if(item?.webType != 'Static'){
+                    btn = {
+                        type: 'URL',
+                        text: item.buttonText,
+                        url: item.webUrl +'{{1}}',
+                        example: [item.webUrlSample]
+                    };
+                }
+                    else{
                     btn = {
                         type: 'URL',
                         text: item.buttonText,
                         url: item.webUrl,
                     };
+                }
                 }
                 buttons.push(btn);
             }
@@ -1420,9 +1430,10 @@ openButtonPopUp() {
       if (item.type === 'Visit Website') {
         if (!item.webUrl) {
             validationErrors= validationErrors + '<br>'+ `Button ${index + 1}: 'webUrl' is required for Visit Website button.`;
-          } else if (!urlPattern.test(item.webUrl)) {
-            validationErrors= validationErrors + '<br>'+ `Button ${index + 1}: 'webUrl' must start with http:// or https:// and end with a valid TLD.`;
-          }
+          } 
+        //   else if (!urlPattern.test(item.webUrl)) {
+        //     validationErrors= validationErrors + '<br>'+ `Button ${index + 1}: 'webUrl' must start with http:// or https:// and end with a valid TLD.`;
+        //   }
       }
       if (item.type === 'Call Phone') {
         console.log(item);
