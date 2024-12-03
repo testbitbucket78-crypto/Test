@@ -14,6 +14,8 @@ const { error } = require('console');
 const logger = require('../common/logger.log');
 const moment = require('moment');
 const SECRET_KEY = 'RAUNAK'
+const mapCountryCode = require('../Contact/utils.js');
+
 app.use(bodyParser.json());
 
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -154,8 +156,16 @@ const register = async function (req, res) {
                 res.status(400).json({ error: 'Passwords do not match', status: 400 });
             }
             // Hash the password before storing it in the database
+            let countryData, countryName, currency, timezone;
+            if(registerPhone){
+                let countryObj = mapCountryCode.mapCountryCode(registerPhone)
+                countryData = mapCountryCode.getCountryDetails(countryObj?.country)
+                countryName = countryData?.country;
+                currency = countryData?.currency;
+                timezone = countryData?.timezone;
+            }
             const hash = await bcrypt.hash(password, 10);
-            var values = [name,registerPhone, email_id, hash, LoginIP, countryCode, display_mobile_number,Channel]  // pending add countryCode in stored procedure
+            var values = [name,registerPhone, email_id, hash, LoginIP, countryCode, display_mobile_number,Channel,countryName,currency,timezone]  // pending add countryCode in stored procedure
             var registeredUser = await db.excuteQuery(val.registerQuery, values)   //need to change LoginIP in signup stored procedure
             const token = jwt.sign({ email_id: registeredUser.email_id }, SECRET_KEY);
 

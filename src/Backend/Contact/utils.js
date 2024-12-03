@@ -184,4 +184,100 @@ async function formatterTime(Time, FormatSettings){
   }
 
 }
-module.exports = {formatterDate, formatterTime, mapCountryCode, formatterDateTime};
+function getCountryDetails(countryCode) {
+  const countryMap = {
+      AD: { name: 'Andorra', currency: 'EUR', timezone: 'UTC+1:00' },
+      AE: { name: 'United Arab Emirates', currency: 'AED', timezone: 'UTC+4:00' },
+      AF: { name: 'Afghanistan', currency: 'AFN', timezone: 'UTC+4:30' },
+      AG: { name: 'Antigua and Barbuda', currency: 'XCD', timezone: 'UTC-4:00' },
+      AI: { name: 'Anguilla', currency: 'XCD', timezone: 'UTC-4:00' },
+      AL: { name: 'Albania', currency: 'ALL', timezone: 'UTC+1:00' },
+      AM: { name: 'Armenia', currency: 'AMD', timezone: 'UTC+4:00' },
+      AO: { name: 'Angola', currency: 'AOA', timezone: 'UTC+1:00' },
+      AR: { name: 'Argentina', currency: 'ARS', timezone: 'UTC-3:00' },
+      AT: { name: 'Austria', currency: 'EUR', timezone: 'UTC+1:00' },
+      AU: { name: 'Australia', currency: 'AUD', timezone: 'UTC+10:00' },
+      AZ: { name: 'Azerbaijan', currency: 'AZN', timezone: 'UTC+4:00' },
+      BD: { name: 'Bangladesh', currency: 'BDT', timezone: 'UTC+6:00' },
+      BE: { name: 'Belgium', currency: 'EUR', timezone: 'UTC+1:00' },
+      BF: { name: 'Burkina Faso', currency: 'XOF', timezone: 'UTC+0:00' },
+      BG: { name: 'Bulgaria', currency: 'BGN', timezone: 'UTC+2:00' },
+      BH: { name: 'Bahrain', currency: 'BHD', timezone: 'UTC+3:00' },
+      BI: { name: 'Burundi', currency: 'BIF', timezone: 'UTC+2:00' },
+      BJ: { name: 'Benin', currency: 'XOF', timezone: 'UTC+1:00' },
+      BR: { name: 'Brazil', currency: 'BRL', timezone: 'UTC-3:00' },
+      BT: { name: 'Bhutan', currency: 'BTN', timezone: 'UTC+6:00' },
+      BW: { name: 'Botswana', currency: 'BWP', timezone: 'UTC+2:00' },
+      BY: { name: 'Belarus', currency: 'BYN', timezone: 'UTC+3:00' },
+      CA: { name: 'Canada', currency: 'CAD', timezone: 'UTC-5:00 to UTC-8:00' },
+      CH: { name: 'Switzerland', currency: 'CHF', timezone: 'UTC+1:00' },
+      CL: { name: 'Chile', currency: 'CLP', timezone: 'UTC-4:00' },
+      CN: { name: 'China', currency: 'CNY', timezone: 'UTC+8:00' },
+      CO: { name: 'Colombia', currency: 'COP', timezone: 'UTC-5:00' },
+      CR: { name: 'Costa Rica', currency: 'CRC', timezone: 'UTC-6:00' },
+      CU: { name: 'Cuba', currency: 'CUP', timezone: 'UTC-5:00' },
+      CZ: { name: 'Czech Republic', currency: 'CZK', timezone: 'UTC+1:00' },
+      DE: { name: 'Germany', currency: 'EUR', timezone: 'UTC+1:00' },
+      DK: { name: 'Denmark', currency: 'DKK', timezone: 'UTC+1:00' },
+      DO: { name: 'Dominican Republic', currency: 'DOP', timezone: 'UTC-4:00' },
+      DZ: { name: 'Algeria', currency: 'DZD', timezone: 'UTC+1:00' },
+      EG: { name: 'Egypt', currency: 'EGP', timezone: 'UTC+2:00' },
+      ES: { name: 'Spain', currency: 'EUR', timezone: 'UTC+1:00' },
+      ET: { name: 'Ethiopia', currency: 'ETB', timezone: 'UTC+3:00' },
+      FI: { name: 'Finland', currency: 'EUR', timezone: 'UTC+2:00' },
+      FR: { name: 'France', currency: 'EUR', timezone: 'UTC+1:00' },
+      GA: { name: 'Gabon', currency: 'XAF', timezone: 'UTC+1:00' },
+      GB: { name: 'United Kingdom', currency: 'GBP', timezone: 'UTC+0:00' },
+      GH: { name: 'Ghana', currency: 'GHS', timezone: 'UTC+0:00' },
+      GM: { name: 'Gambia', currency: 'GMD', timezone: 'UTC+0:00' },
+      GR: { name: 'Greece', currency: 'EUR', timezone: 'UTC+2:00' },
+      GT: { name: 'Guatemala', currency: 'GTQ', timezone: 'UTC-6:00' },
+      HK: { name: 'Hong Kong', currency: 'HKD', timezone: 'UTC+8:00' },
+      HN: { name: 'Honduras', currency: 'HNL', timezone: 'UTC-6:00' },
+      HR: { name: 'Croatia', currency: 'EUR', timezone: 'UTC+1:00' },
+      HU: { name: 'Hungary', currency: 'HUF', timezone: 'UTC+1:00' },
+      ID: { name: 'Indonesia', currency: 'IDR', timezone: 'UTC+7:00' },
+      IE: { name: 'Ireland', currency: 'EUR', timezone: 'UTC+0:00' },
+      IL: { name: 'Israel', currency: 'ILS', timezone: 'UTC+2:00' },
+      IN: { name: 'India', currency: 'INR', timezone: 'UTC+5:30' },
+      IT: { name: 'Italy', currency: 'EUR', timezone: 'UTC+1:00' },
+      JP: { name: 'Japan', currency: 'JPY', timezone: 'UTC+9:00' },
+      KE: { name: 'Kenya', currency: 'KES', timezone: 'UTC+3:00' },
+      KR: { name: 'South Korea', currency: 'KRW', timezone: 'UTC+9:00' },
+      MX: { name: 'Mexico', currency: 'MXN', timezone: 'UTC-6:00' },
+      NG: { name: 'Nigeria', currency: 'NGN', timezone: 'UTC+1:00' },
+      NO: { name: 'Norway', currency: 'NOK', timezone: 'UTC+1:00' },
+      NZ: { name: 'New Zealand', currency: 'NZD', timezone: 'UTC+12:00' },
+      PH: { name: 'Philippines', currency: 'PHP', timezone: 'UTC+8:00' },
+      PK: { name: 'Pakistan', currency: 'PKR', timezone: 'UTC+5:00' },
+      RU: { name: 'Russia', currency: 'RUB', timezone: 'UTC+3:00 to UTC+12:00' },
+      SA: { name: 'Saudi Arabia', currency: 'SAR', timezone: 'UTC+3:00' },
+      SE: { name: 'Sweden', currency: 'SEK', timezone: 'UTC+1:00' },
+      SG: { name: 'Singapore', currency: 'SGD', timezone: 'UTC+8:00' },
+      TH: { name: 'Thailand', currency: 'THB', timezone: 'UTC+7:00' },
+      TR: { name: 'Turkey', currency: 'TRY', timezone: 'UTC+3:00' },
+      US: { name: 'United States', currency: 'USD', timezone: 'UTC-5:00 to UTC-10:00' },
+      ZA: { name: 'South Africa', currency: 'ZAR', timezone: 'UTC+2:00' },
+      ZW: { name: 'Zimbabwe', currency: 'ZWL', timezone: 'UTC+2:00' },
+      NP: { name: 'Nepal', currency: 'NPR', timezone: 'UTC+5:45' },
+  };
+
+  const countryDetails = countryMap[countryCode.toUpperCase()];
+  if (countryDetails) {
+      return {
+          country: countryDetails.name,
+          currency: countryDetails.currency,
+          timezone: countryDetails.timezone,
+      };
+  } else {
+      return {
+          country:  'N/A',
+          currency: 'N/A',
+          timezone: 'N/A',
+      };
+  }
+}
+
+
+
+module.exports = {formatterDate, formatterTime, mapCountryCode, formatterDateTime,getCountryDetails};
