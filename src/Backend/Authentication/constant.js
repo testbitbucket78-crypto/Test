@@ -24,7 +24,7 @@ var activeAgent = "select *from user where ParentId=? and UserType=? and IsActiv
 //Query for index.js pages
 
 var loginQuery = "SELECT * FROM user WHERE (email_id =? OR registerPhone=?) and isDeleted !=1 and IsActive !=2"
-var registerQuery = "call signUp(?,?,?,?,?,?,?,?)";
+var registerQuery = "call signUp(?,?,?,?,?,?,?,?,?,?,?)";
 var uidresetEmailQuery = "select uid from user where email_id=?"
 var verifyUid = "select uid from user where uid=?"
 var updatePassword = "UPDATE user SET password=? WHERE uid=?";
