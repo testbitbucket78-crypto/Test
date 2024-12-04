@@ -434,9 +434,10 @@ let  filterListLanguage = [
   { label: 'Zulu', code: 'zu', checked: false }
 ]
 
+const isInvalidParam = (value) => value === null || value === undefined || value === 0 || value === '0' || value === 'undefined';
 const getCodeByLabel = (label) => {
   const language = filterListLanguage.find(lang => lang.label === label);
   return language ? language.code : label; // Return the code if found, otherwise return null
 };
 
-module.exports = { isStatusEmpty,getCodeByLabel, getDefaultAttribue, isHolidays, isWorkingTime, resetContactFields, determineMediaFromLink, notifiactionsToBeSent, currentlyAssigned, updateHealthStatus, convertMessagingLimitTier, updateCurrentLimit, getTemplateVariables }
+module.exports = { isStatusEmpty,getCodeByLabel, getDefaultAttribue, isHolidays, isWorkingTime, resetContactFields, determineMediaFromLink, notifiactionsToBeSent, currentlyAssigned, updateHealthStatus, convertMessagingLimitTier, updateCurrentLimit, getTemplateVariables, isInvalidParam }

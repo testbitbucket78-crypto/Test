@@ -678,6 +678,11 @@ const insertMessage = async (req, res) => {
 
             var header = req.body?.headerText
             var body = req.body?.bodyText
+            let DynamicURLToBESent;
+            let buttonsVariable = typeof req.body?.buttonsVariable === 'string' ? JSON.parse(req.body?.buttonsVariable) : req.body?.buttonsVariable;
+            if(!commonFun.isInvalidParam(req.body?.buttonsVariable) && buttonsVariable.length > 0) {
+               DynamicURLToBESent = await removeTags.getDynamicURLToBESent(buttonsVariable, SPID, customerId);
+            }
 
             let agentName = await db.excuteQuery('select name from user where uid=?', [Agent_id]);
             let channelType = await db.excuteQuery('select * from EndCustomer where customerId=? and SP_ID=?', [customerId, SPID]);
@@ -756,7 +761,7 @@ const insertMessage = async (req, res) => {
                         let headerVar = await commonFun.getTemplateVariables(msgVar, header, SPID, customerId);
                         let bodyVar = await commonFun.getTemplateVariables(msgVar, body, SPID, customerId);
 
-                        middlewareresult = await middleWare.createWhatsAppPayload(mediaType, req?.body?.messageTo, req?.body?.name, req?.body?.language, headerVar, bodyVar, message_media, SPID, req?.body?.buttons);
+                        middlewareresult = await middleWare.createWhatsAppPayload(mediaType, req?.body?.messageTo, req?.body?.name, req?.body?.language, headerVar, bodyVar, message_media, SPID, req?.body?.buttons, DynamicURLToBESent);
                        // middlewareresult = await middleWare.channelssetUp(SPID, channel, mediaType, req.body.messageTo, content, message_media, interaction_id, msg_id.insertId, spNumber);
                     } else {
                         if (req.body.message_media != 'text') {
