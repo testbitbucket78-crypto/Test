@@ -190,6 +190,9 @@ export class CampaignsComponent implements OnInit {
 	userName: string = '';
 	userEmail: string = '';
 	downloadBtnLoad!: boolean;
+	buttonsVariable: { label: string; value: string; isAttribute: boolean; Fallback: string }[] = [];
+    indexSelectedForDynamicURL: number = 0;
+	isDynamicURLClicked! :boolean;
 
 constructor(config: NgbModalConfig, private modalService: NgbModal,private datepipe: DatePipe,private datePipe: DatePipe,private dashboardService: DashboardService,
 	private apiService: TeamboxService,public settingsService:SettingsService,private _settingsService:SettingsService,
@@ -1757,7 +1760,8 @@ formateDate(dateTime:string){
 			headerText:this.selectedTemplate?.Header,
 			name: this.selectedTemplate?.TemplateName,
 			language: this.selectedTemplate?.Language,
-			buttons: JSON.stringify(this.selectedTemplate?.buttons)
+			buttons: JSON.stringify(this.selectedTemplate?.buttons),
+			buttonsVariable: JSON.stringify(this.buttonsVariable)
 		}
 		if(action=='save'){
 			BodyData['status']=2;
@@ -2184,6 +2188,15 @@ testinfo(){
 			this.closeAllModal()
 			this.modalReference = this.modalService.open(AttributeOption,{size: 'ml', windowClass:'pink-bg'});
 	}
+	openVariableOptionDynamicURL(indexSelected: number,AttributeOption: any){
+		this.indexSelectedForDynamicURL = indexSelected;
+		this.isDynamicURLClicked = true;
+		this.attributesoptionFilters = this.attributesoption;
+		this.closeAllModal()
+		this.modalReference = this.modalService.open(AttributeOption,{size: 'ml', windowClass:'pink-bg'});
+	}
+
+
 	updateAttributeValue(event:any,variable:any){
 		let currentValue = event?.target?.value;
 		const forbiddenKeys = ['{', '}'];
@@ -2203,6 +2216,26 @@ testinfo(){
         variable['isAttribute'] = this.isCustomValue(currentValue);
         variable['value']=event.target.value
 		console.log(this.selectedTemplate)
+	}
+
+     UpdateButtonsVariableState(event: any, index: number) {
+		let currentValue = event?.target?.value;
+		const forbiddenKeys = ['{', '}'];
+		if (forbiddenKeys.some(key => currentValue.includes(key))) {
+			currentValue = currentValue.replace(/[{}]/g, '');
+			event.target.value = currentValue;
+		}
+
+		if (this.buttonsVariable[index].isAttribute == true) {
+			event.target.value = ''
+			currentValue = '';
+			this.buttonsVariable[index].value = "";
+			this.buttonsVariable[index].Fallback = "";
+		}
+		this.buttonsVariable[index].isAttribute = this.isCustomValue(currentValue);
+		if (!this.buttonsVariable[index].isAttribute) {
+			this.buttonsVariable[index].Fallback = "";
+		}
 	}
 
 	isCustomValue(value: string): boolean {
@@ -2234,9 +2267,15 @@ testinfo(){
 		this.selectedAttribute = attribute;
 		this.selectedAddNewCampaign = addNewCampaign;
 	}
-	closeAttributeOption(status: any, addNewCampaign: any) {	
+	closeAttributeOption(status: any, addNewCampaign: any) {
 		if (status != 'save') {
 			this.selecetdVariable['value'] = '';
+		}
+		else if(this.isDynamicURLClicked){
+			this.buttonsVariable[this.indexSelectedForDynamicURL].value = '{{'+this.selectedAttribute+'}}';
+			this.buttonsVariable[this.indexSelectedForDynamicURL].isAttribute = this.isCustomValue('{{'+this.selectedAttribute+'}}');
+			this.buttonsVariable[this.indexSelectedForDynamicURL].Fallback = this.selectedFallback;
+			this.isDynamicURLClicked = false;
 		}
 		else {
 			this.selecetdVariable['value'] = '{{'+this.selectedAttribute +'}}';
@@ -2758,6 +2797,17 @@ console.log(this.allTemplatesMain);
 		  this.selectedTemplate['allVariables'] = allVariablesList;
 		  console.log(this.selectedTemplate, '-----selectedTemplate');
 		  console.log(JSON.parse(this.selectedTemplate?.template_json), '-----selectedTemplatexddsfg');
+		}
+		this.buttonsVariable=[];
+		if (this.selectedTemplate?.buttons.length) {
+			this.buttonsVariable = this.selectedTemplate.buttons
+				.filter((button: any) => button?.webType === 'Dynamic')
+				.map((button: any, index: any) => ({
+					label: button?.webUrl,
+					value: '',
+					Fallback: '',
+					isAttribute: ''
+				}));
 		}
 	  }
 	  

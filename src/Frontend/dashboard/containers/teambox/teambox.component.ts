@@ -242,6 +242,9 @@ public  fieldsData: { [key: string]: string } = { text: 'name' };
 	hourLeft:number = 0;
 	userList:any;
 	allVariablesList:string[] =[];
+	buttonsVariable: { label: string; value: string; isAttribute: boolean; Fallback: string }[] = [];
+	indexSelectedForDynamicURL: number = 0;
+	isDynamicURLClicked! :boolean;
 	showInfo:boolean = false;
 	selected:boolean=false;
 	filterChannel:string = '';
@@ -500,6 +503,13 @@ public  fieldsData: { [key: string]: string } = { text: 'name' };
 		this.isShowAttributes = true;
 		$("#editTemplate").modal('hide'); 
 	}
+	openVariableOptionDynamicURL(indexSelected: number) {
+		this.indexSelectedForDynamicURL = indexSelected;
+		this.isDynamicURLClicked = true;
+		$("#showvariableoption").modal('show'); 
+		this.isShowAttributes = true;
+		$("#editTemplate").modal('hide'); 
+	}
 	closeVariableOption() {
 		this.attributesearch=''; 
 		$("#showvariableoption").modal('hide');
@@ -507,9 +517,16 @@ public  fieldsData: { [key: string]: string } = { text: 'name' };
 		$("#editTemplate").modal('show'); 
 	}
 	SaveVariableOption() {
-		this.variableValues[this.indexSelected] = '{{'+this.selectedAttribute+'}}';;
-		this.fallbackvalue[this.indexSelected] = this.attribute;
-		this.isFallback[this.indexSelected] = this.isCustomValue('{{'+this.selectedAttribute+'}}');
+		if(this.isDynamicURLClicked){
+			this.buttonsVariable[this.indexSelectedForDynamicURL].value = '{{'+this.selectedAttribute+'}}';
+			this.buttonsVariable[this.indexSelectedForDynamicURL].isAttribute = this.isCustomValue('{{'+this.selectedAttribute+'}}');
+			this.buttonsVariable[this.indexSelectedForDynamicURL].Fallback = this.attribute;
+			this.isDynamicURLClicked = false;
+		}else{
+		    this.variableValues[this.indexSelected] = '{{'+this.selectedAttribute+'}}';
+		    this.fallbackvalue[this.indexSelected] = this.attribute;
+		    this.isFallback[this.indexSelected] = this.isCustomValue('{{'+this.selectedAttribute+'}}');
+		}
 		this.resetAttributeSelection();
 		$("#showvariableoption").modal('hide'); 
 		this.isShowAttributes = false;
@@ -845,7 +862,25 @@ UpdateVariable(event: any, index: number) {
 			this.fallbackvalue[index] = "";
 		}
 }
+	UpdateButtonsVariableState(event: any, index: number) {
+		let currentValue = event?.target?.value;
+		const forbiddenKeys = ['{', '}'];
+		if (forbiddenKeys.some(key => currentValue.includes(key))) {
+			currentValue = currentValue.replace(/[{}]/g, '');
+			event.target.value = currentValue;
+		}
 
+		if (this.buttonsVariable[index].isAttribute == true) {
+			event.target.value = ''
+			currentValue = '';
+			this.buttonsVariable[index].value = "";
+			this.buttonsVariable[index].Fallback = "";
+		}
+		this.buttonsVariable[index].isAttribute = this.isCustomValue(currentValue);
+		if (!this.buttonsVariable[index].isAttribute) {
+			this.buttonsVariable[index].Fallback = "";
+		}
+	}
 
 selectAttributes(item:any) {
 	const selectedValue = item;
@@ -3456,7 +3491,8 @@ sendMessage(isTemplate:boolean=false,templateTxt:string=''){
 			uidMentioned: uidMentioned,
 			name: this.templateName,
 			language: this.templatelanguage,
-			buttons: this.templateButton
+			buttons: this.templateButton,
+			buttonsVariable: JSON.stringify(this.buttonsVariable)
 		}
 		console.log(bodyData,'Bodydata')
 		let input = {
@@ -3736,6 +3772,17 @@ sendMessage(isTemplate:boolean=false,templateTxt:string=''){
 				if (isVariableValue) {
 				  this.allVariablesList = this.getVariables(isVariableValue, "{{", "}}");
 			  };
+			    this.buttonsVariable=[];
+				if (this.selectedTemplate?.buttons.length) {
+					this.buttonsVariable = this.selectedTemplate.buttons
+						.filter((button: any) => button?.webType === 'Dynamic')
+						.map((button: any, index: any) => ({
+							label: button?.webUrl,
+							value: '',
+							Fallback: '',
+							isAttribute: ''
+						}));
+				}
 		
 			}
 
