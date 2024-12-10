@@ -636,7 +636,7 @@ It is determined by a combination of user feedback signals like blocks, reports 
 							</div>
 							
 							
-							<div *ngIf="this.newCampaignDetail.get('channel_id').value ==1 && (selectedTemplate?.buttons?.length>1 || selectedTemplate?.buttons?.length ==1)">
+							<div *ngIf="this.newCampaignDetail.get('channel_id').value ==1 && (selectedTemplate?.buttons?.length>1 || selectedTemplate?.buttons?.length ==1) && selectedCampaign?.status !== 0 && selectedCampaign.status !== 1">
 							
 							<p class="mt-2">Button Payload <span>(Optional)</span><img class="icon sm" src="/assets/img/campaign/Info.svg"></p>
 							<div class="form_row" *ngIf="selectedTemplate?.buttons.length>1 || selectedTemplate?.buttons.length ==1">
@@ -766,7 +766,7 @@ It is determined by a combination of user feedback signals like blocks, reports 
 							<p><span>Start Now</span></p>
 						</label>
 						<label class="container" (click)="selectScheduled(1)">
-							<input type="radio" name="schedule" value="1">
+							<input type="radio" name="schedule" value="1" [checked]="isScheduled === 1" >
 							<span class="checkmark radio"></span>
 							<p><span>Schedule Later</span></p>
 						</label>
@@ -1024,8 +1024,9 @@ It is determined by a combination of user feedback signals like blocks, reports 
 											<span>1. Use only EXCEL or CSV file format.</span>
 											<span>2. Maximum file size allowed 10 MB.</span>
 											<span>3. Phone number must include country code, e.g. 91 for India - 919876543210.</span>
-											<span>4. Message template to be selected in the next step may include variables, so include the variable values against each phone number to personalize your message.</span>
-											<span>5. Data in first row is not imported. Ensure first row contains ONLY column headings with proper labels to help in variables mapping</span>
+											<span>4. If you see the phone number in the cell, e.g. "8.5265E+10", please right click "Format" and change the data cell to "numbers" with zero decimal place.</span>
+											<span>5. Message template to be selected in the next step may include variables, so include the variable values against each phone number to personalize your message.</span>
+											<span>6. Data in first row is not imported. Ensure first row contains ONLY column headings with proper labels to help in variables mapping</span>
 										</p>
 									</div>
 									

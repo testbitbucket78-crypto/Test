@@ -83,7 +83,7 @@
 													class="uploadFile-btn mb-4 d-flex align-items-center justify-content-center"
 														(click)="download()">
 														<img src="../../../../assets/img/profile/download-file.svg" />
-														<label class="m-0 uploadFile pl-2" for="uploadFile">
+														<label class="m-0 uploadFile pl-2">
 															Download sample file
 														</label>
 													</button>
@@ -104,8 +104,9 @@
 														<span>1. Use only EXCEL or CSV file format.</span>
 														<span>2. Maximum file size allowed 10 MB.</span>
 														<span>3. Phone number must include country code, e.g. 91 for India - 919876543210</span>
-														<span>4. Each row in the file represents a contact and each column represents a contact field (attribute).</span>
-														<span>5. Data in first row is not imported. Ensure first row contains ONLY column headings with proper labels to help in attributes mapping.</span>
+														<span>4. If you see the phone number in the cell, e.g. "8.5265E+10", please right click "Format" and change the data cell to "numbers" with zero decimal place.</span>
+														<span>5. Each row in the file represents a contact and each column represents a contact field (attribute).</span>
+														<span>6. Data in first row is not imported. Ensure first row contains ONLY column headings with proper labels to help in attributes mapping.</span>
 													</p>
 												</div>
 											</div>
