@@ -20,6 +20,8 @@ const authenticateToken = require('../Authorize');
 const logger = require('../common/logger.log');
 const { formatterDateTime, formatterDate, formatterTime } = require('./utils.js');
 const commonFun = require('../common/resuableFunctions.js')
+const XLSX = require('xlsx');
+
 
 /**
  * @swagger
@@ -706,13 +708,13 @@ app.post('/exportCheckedContact', async (req, res) => {
     const json2csvParser = new Parser();
     const csv = json2csvParser.parse(data)
     const filePath = path.join(__dirname, 'data.csv');
-    fs.writeFile(filePath, csv, function (err) {
+    fs.writeFileSync(filePath, csv, function (err) {
       if (err) {
         res.send(err);
       }
       console.log('File Saved')
     })
-
+    const xlsxPath = await convertCsvToXlsx(csv, path.join(__dirname, 'data.xlsx'));
     res.attachment("data.csv")
     const timestamp = Date.now();
     const randomNumber = Math.floor(Math.random() * 10000);
@@ -728,8 +730,8 @@ app.post('/exportCheckedContact', async (req, res) => {
       `,
       attachments: [
         {
-          filename: `${timestamp}-${randomNumber}.csv`,
-          path: filePath,
+          filename: `${timestamp}-${randomNumber}.xlsx`,
+          path: xlsxPath,
         },
       ]
     };
@@ -752,7 +754,30 @@ app.post('/exportCheckedContact', async (req, res) => {
   }
 
 })
+function convertCsvToXlsx(fileBuffer, outputFileName = 'Converted_File.xlsx') {
+  // using utf-8 encodign to avoid edge cases of CSV
+  return new Promise((resolve, reject) => {
+    try {
+      const csvString = typeof fileBuffer === 'string' ? fileBuffer : fileBuffer.toString('utf-8');
+      if (!csvString.trim()) {
+        return reject(new Error('Input CSV is empty.'));
+      }
 
+      const workbook = XLSX.read(csvString, { type: 'string', codepage: 65001 });
+      const worksheet = workbook.Sheets[workbook.SheetNames[0]] || XLSX.utils.aoa_to_sheet([]);
+
+      const newWorkbook = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(newWorkbook, worksheet, 'Sheet1');
+      XLSX.writeFile(newWorkbook, outputFileName);
+
+      console.log(`XLSX file created successfully: ${outputFileName}`);
+      resolve(outputFileName);
+    } catch (error) {
+      console.error(`Error during conversion: ${error.message}`);
+      reject(error);
+    }
+  });
+}
 
 app.post('/deletContact', authenticateToken, (req, res) => {
   try {
@@ -1633,9 +1658,9 @@ async function writeErrFile(errData, res, headersArray) {
           const matchedHeader = headersArray.find(header => header.ActuallName === entry.ActuallName);
           if (matchedHeader) {
             //   logger.info(`exclude spid if matchedHeader ${matchedHeader.displayName}`)
-            fields.push(matchedHeader.displayName);
+            fields.push(matchedHeader?.displayName);
           } else {
-            logger.info(`exclude spid else matchedHeader ${matchedHeader.displayName}`)
+            logger.info(`exclude spid else matchedHeader ${matchedHeader?.displayName}`)
             fields.push(entry.displayName);
           }
         }
@@ -1765,11 +1790,14 @@ async function isDataInCorrectFormat(columnDataType, actuallName, displayName, u
         break;
 
       case 'User':
-        if (displayName) {
-          convertedValue = userList.includes(displayName);
-          return { isError: !convertedValue, reason: `${fieldDisplayName} is invalid contact owner` };
-        }
-        break;
+      if (displayName) {
+        const convertedValue = userList.some(user => user.toLowerCase() === displayName.toLowerCase());
+        return {
+          isError: !convertedValue,
+          reason: `${fieldDisplayName} is an invalid contact owner`,
+        };
+      }
+      break;
 
       case 'Select':
         if (displayName) {
