@@ -269,13 +269,13 @@ export class ContactFilterComponent implements OnInit {
 				}				
 				case 'Time':{
 					options =[
-						{label:'Is empty',checked:false,type:'none',filterPrefixType:'date'},
-						{label:'Is not empty',checked:false,type:'none',filterPrefixType:'date'},
-						{label:'Between',checked:false,type:'d_date',filterPrefixType:'date'},
-						{label:'After',checked:false,type:'date',filterPrefixType:'date'},
-						{label:'Before',checked:false,type:'date',filterPrefixType:'date'},
-						{label:'Is equal to',checked:false,type:'date',filterPrefixType:'date'},
-						{label:'Is not equal to',checked:false,type:'date',filterPrefixType:'date'},
+						{label:'Is empty',checked:false,type:'none',filterPrefixType:'time'},
+						{label:'Is not empty',checked:false,type:'none',filterPrefixType:'time'},
+						{label:'Between',checked:false,type:'d_time',filterPrefixType:'time'},
+						{label:'After',checked:false,type:'time',filterPrefixType:'time'},
+						{label:'Before',checked:false,type:'time',filterPrefixType:'time'},
+						{label:'Is equal to',checked:false,type:'time',filterPrefixType:'time'},
+						{label:'Is not equal to',checked:false,type:'time',filterPrefixType:'time'},
 						];
 					break;
 				}
@@ -319,7 +319,7 @@ export class ContactFilterComponent implements OnInit {
 		this.showContactFilter=!this.showContactFilter
 	  }
 	  selectContactFilter(index:any,filter:any){
-
+		console.log(filter);
 
 		this.selectedcontactFilterBy = filter;
 		this.showContactFilter=false;
@@ -351,7 +351,17 @@ export class ContactFilterComponent implements OnInit {
 		}
 		}
 	})
-		this.addNewFilter();
+	// let newFilter:any=[];
+	// 	newFilter['filterBy'] = this.selectedcontactFilterBy['option']['0'].label
+	// 	newFilter['filterType'] = this.selectedcontactFilterBy['option']['0'].type
+	// 	newFilter['selectedOptions'] = this.selectedcontactFilterBy['option']['0'].options
+	// 	newFilter['filterPrefix'] = this.selectedcontactFilterBy.value
+	// 	newFilter['filterValue']='';
+	// 	newFilter['filterOperator']='';
+	// 	if(this.contactFilterBy[0]['addeFilter']?.length == 0)
+	// 		this.contactFilterBy[0]['addeFilter'].push(newFilter);	
+	this.addNewFilter();
+		this.selectedcontactFilterBy = filter[0];
 	}
 
 	  toggleFilterByOption(){
@@ -362,6 +372,7 @@ export class ContactFilterComponent implements OnInit {
 		this.showFilterTagOption=!this.showFilterTagOption
 	  }
 	  selectFilterBy(index:any,selectedcontactFilterBy:any,filter:any){
+		console.log(index,selectedcontactFilterBy,filter);
 		this.showFilterByOption=false
 		this.ContactListNewFilters[index]['filterBy'] = filter.label
 		this.ContactListNewFilters[index]['filterType'] = filter.type
@@ -370,7 +381,7 @@ export class ContactFilterComponent implements OnInit {
 		this.ContactListNewFilters[index]['filterValue']='';
 		if(filter['filterPrefixType'])
 			this.ContactListNewFilters[index]['filterValue']=filter['filterPrefixType'];
-
+		console.log(this.contactFilterBy);
 		
 	  }
 	  selectFilterValue(index:any,event:any){
@@ -419,7 +430,13 @@ export class ContactFilterComponent implements OnInit {
 		if(this.ContactListNewFilters.length == 0) this.addNewFilter();
 	  }
 	  addFilter(){
-		this.selectedcontactFilterBy['addeFilter']=this.ContactListNewFilters
+		console.log(this.ContactListNewFilters);
+		console.log(this.selectedcontactFilterBy);
+		this.selectedcontactFilterBy['addeFilter']=this.ContactListNewFilters;
+		let idx = this.contactFilterBy.findIndex((item:any)=> item.value == this.selectedcontactFilterBy?.value);
+		if(idx >-1){
+			this.contactFilterBy[idx] = this.selectedcontactFilterBy;
+		}
 
 	  }
 
@@ -448,7 +465,7 @@ export class ContactFilterComponent implements OnInit {
       };
       });  
   
-      let contactFilter ="SELECT EC.*, IFNULL(GROUP_CONCAT(DISTINCT ECTM.TagName ORDER BY FIND_IN_SET(ECTM.ID, REPLACE(EC.tag, ' ', ''))), '') AS tag_names,maxInteraction.maxInteractionId,Interaction.interaction_status,Message.*,user.uid,user.name,IM.latestCreatedAt AS lastAssistedAgent,IM.AgentId,IM.* FROM EndCustomer AS EC LEFT JOIN EndCustomerTagMaster AS ECTM ON FIND_IN_SET(ECTM.ID, REPLACE(EC.tag, ' ', '')) > 0 AND ECTM.isDeleted != 1 LEFT JOIN (SELECT customerId,MAX(InteractionId) AS maxInteractionId FROM Interaction WHERE is_deleted != 1 AND IsTemporary != 1 GROUP BY customerId) AS maxInteraction ON maxInteraction.customerId = EC.customerId LEFT JOIN Interaction AS Interaction ON maxInteraction.maxInteractionId = Interaction.InteractionId LEFT JOIN Message AS Message ON Message.interaction_id = Interaction.InteractionId AND Message.is_deleted != 1 LEFT JOIN user AS user ON EC.uid = user.uid LEFT JOIN (SELECT interactionId, MAX(created_at) AS latestCreatedAt,AgentId, lastAssistedAgent FROM InteractionMapping GROUP BY interactionId) AS IM ON IM.InteractionId = Interaction.InteractionId WHERE EC.SP_ID ="+this.SPID +" AND EC.isDeleted != 1 AND EC.IsTemporary != 1";
+      let contactFilter ="SELECT EC.*, IFNULL(GROUP_CONCAT(DISTINCT ECTM.TagName ORDER BY FIND_IN_SET(ECTM.ID, REPLACE(EC.tag, ' ', ''))), '') AS tag_names,maxInteraction.maxInteractionId,Interaction.interaction_status,Message.*,user.uid,user.name,IM.latestCreatedAt AS lastAssistedAgent,IM.AgentId,IM.* FROM EndCustomer AS EC LEFT JOIN EndCustomerTagMaster AS ECTM ON FIND_IN_SET(ECTM.ID, REPLACE(EC.tag, ' ', '')) > 0 AND ECTM.isDeleted != 1 LEFT JOIN (SELECT customerId,MAX(InteractionId) AS maxInteractionId FROM Interaction WHERE is_deleted != 1 AND IsTemporary != 1 GROUP BY customerId) AS maxInteraction ON maxInteraction.customerId = EC.customerId LEFT JOIN Interaction AS Interaction ON maxInteraction.maxInteractionId = Interaction.InteractionId LEFT JOIN Message AS Message ON Message.interaction_id = Interaction.InteractionId AND Message.is_deleted != 1 LEFT JOIN user AS user ON EC.uid = user.uid LEFT JOIN ( SELECT MAX(interactionId) AS IMInteractionID, MAX(created_at) AS latestCreatedAt,AgentId	FROM InteractionMapping GROUP BY interactionId) AS IM ON IM.IMInteractionID = Interaction.InteractionId WHERE EC.SP_ID ="+this.SPID +" AND EC.isDeleted != 1 AND EC.IsTemporary != 1";
       if(groupArrays.length>0){
         
         groupArrays.map((filters:any,idx)=>{
@@ -504,18 +521,21 @@ export class ContactFilterComponent implements OnInit {
 				let update = this.datePipe.transform(nextDate, 'yyyy-MM-dd');
 				filterOper = '>= "' + filter.filterValue.toString() + '" AND EC.' + filter.filterPrefix + ' < "' +update?.toString() + '"';				
 			}else
-            	filterOper = '='+filter.filterValue;
+            	filterOper = '= "'+filter.filterValue + '"';
           }
           if(filter.filterBy=="Is not equal to"){
 			if(filter.filterType =="date"){
-				const currentDate = new Date(filter.filterValue)
-				const nextDate = new Date(currentDate)
-				nextDate.setDate(currentDate.getDate() + 1)
-				console.log(nextDate);
-				let update = this.datePipe.transform(nextDate, 'yyyy-MM-dd');
-				filterOper = '< "' + filter.filterValue + '" AND EC.' + filter.filterPrefix + ' >= "' +update + '"';				
-			}else
-            	filterOper = '!='+filter.filterValue;
+				colName = "date("+ colName +")";
+			}
+			// if(filter.filterType =="date"){
+			// 	const currentDate = new Date(filter.filterValue)
+			// 	const nextDate = new Date(currentDate)
+			// 	nextDate.setDate(currentDate.getDate() + 1)
+			// 	console.log(nextDate);
+			// 	let update = this.datePipe.transform(nextDate, 'yyyy-MM-dd');
+			// 	filterOper = '< "' + filter.filterValue + '" AND EC.' + filter.filterPrefix + ' >= "' +update + '"';				
+			// }else
+            	filterOper = '!= "'+filter.filterValue + '"';
           }
   
           if(filter.filterBy=="Contains"){
