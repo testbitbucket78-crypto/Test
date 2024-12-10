@@ -269,7 +269,12 @@ convertTimeFormat(time: string | null | undefined, isStaticFormat: boolean = fal
 		if(!text) return '';
 		return text.trim().replace(/\s+/g, ' ');
 	  }
-  
+
+    truncateLength(url:any, maxLength = 23) {
+      if (url.length <= maxLength) return url;
+      const trimmedLength = maxLength - 4; 
+      return url.slice(0, trimmedLength) + ".../";
+    }
   getQualityRatingClass(rating: string): string {
     if (!rating) return '';
     switch (rating) {

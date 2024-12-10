@@ -190,6 +190,9 @@ export class CampaignsComponent implements OnInit {
 	userName: string = '';
 	userEmail: string = '';
 	downloadBtnLoad!: boolean;
+	buttonsVariable: { label: string; value: string; isAttribute: boolean; Fallback: string }[] = [];
+    indexSelectedForDynamicURL: number = 0;
+	isDynamicURLClicked! :boolean;
 
 constructor(config: NgbModalConfig, private modalService: NgbModal,private datepipe: DatePipe,private datePipe: DatePipe,private dashboardService: DashboardService,
 	private apiService: TeamboxService,public settingsService:SettingsService,private _settingsService:SettingsService,
@@ -560,13 +563,13 @@ constructor(config: NgbModalConfig, private modalService: NgbModal,private datep
 				}				
 				case 'Time':{
 					options =[
-						{label:'Is empty',checked:false,type:'none',filterPrefixType:'date'},
-						{label:'Is not empty',checked:false,type:'none',filterPrefixType:'date'},
-						{label:'Between',checked:false,type:'d_date',filterPrefixType:'date'},
-						{label:'After',checked:false,type:'date',filterPrefixType:'date'},
-						{label:'Before',checked:false,type:'date',filterPrefixType:'date'},
-						{label:'Is equal to',checked:false,type:'date',filterPrefixType:'date'},
-						{label:'Is not equal to',checked:false,type:'date',filterPrefixType:'date'},
+						{label:'Is empty',checked:false,type:'none',filterPrefixType:'time'},
+						{label:'Is not empty',checked:false,type:'none',filterPrefixType:'time'},
+						{label:'Between',checked:false,type:'d_time',filterPrefixType:'time'},
+						{label:'After',checked:false,type:'time',filterPrefixType:'time'},
+						{label:'Before',checked:false,type:'time',filterPrefixType:'time'},
+						{label:'Is equal to',checked:false,type:'time',filterPrefixType:'time'},
+						{label:'Is not equal to',checked:false,type:'time',filterPrefixType:'time'},
 						];
 					break;
 				}
@@ -1107,9 +1110,9 @@ formateDate(dateTime:string){
 		  filterPrefix,
 		  items: groups[filterPrefix]
 		};
-		});  
+		});
 	
-		let contactFilter ="SELECT EC.*, IFNULL(GROUP_CONCAT(DISTINCT ECTM.TagName ORDER BY FIND_IN_SET(ECTM.ID, REPLACE(EC.tag, ' ', ''))), '') AS tag_names,maxInteraction.maxInteractionId,Interaction.interaction_status,Message.*,user.uid,user.name,IM.latestCreatedAt AS lastAssistedAgent,IM.AgentId,IM.* FROM EndCustomer AS EC LEFT JOIN EndCustomerTagMaster AS ECTM ON FIND_IN_SET(ECTM.ID, REPLACE(EC.tag, ' ', '')) > 0 AND ECTM.isDeleted != 1 LEFT JOIN (SELECT customerId,MAX(InteractionId) AS maxInteractionId FROM Interaction WHERE is_deleted != 1 AND IsTemporary != 1 GROUP BY customerId) AS maxInteraction ON maxInteraction.customerId = EC.customerId LEFT JOIN Interaction AS Interaction ON maxInteraction.maxInteractionId = Interaction.InteractionId LEFT JOIN Message AS Message ON Message.interaction_id = Interaction.InteractionId AND Message.is_deleted != 1 LEFT JOIN user AS user ON EC.uid = user.uid LEFT JOIN (SELECT interactionId, MAX(created_at) AS latestCreatedAt,AgentId, lastAssistedAgent FROM InteractionMapping GROUP BY interactionId) AS IM ON IM.InteractionId = Interaction.InteractionId WHERE EC.SP_ID ="+this.SPID +" AND EC.isDeleted != 1 AND EC.IsTemporary != 1";
+		let contactFilter ="SELECT EC.*, IFNULL(GROUP_CONCAT(DISTINCT ECTM.TagName ORDER BY FIND_IN_SET(ECTM.ID, REPLACE(EC.tag, ' ', ''))), '') AS tag_names,maxInteraction.maxInteractionId,Interaction.interaction_status,Message.*,user.uid,user.name,IM.latestCreatedAt AS lastAssistedAgent,IM.AgentId,IM.* FROM EndCustomer AS EC LEFT JOIN EndCustomerTagMaster AS ECTM ON FIND_IN_SET(ECTM.ID, REPLACE(EC.tag, ' ', '')) > 0 AND ECTM.isDeleted != 1 LEFT JOIN (SELECT customerId,MAX(InteractionId) AS maxInteractionId FROM Interaction WHERE is_deleted != 1 AND IsTemporary != 1 GROUP BY customerId) AS maxInteraction ON maxInteraction.customerId = EC.customerId LEFT JOIN Interaction AS Interaction ON maxInteraction.maxInteractionId = Interaction.InteractionId LEFT JOIN Message AS Message ON Message.interaction_id = Interaction.InteractionId AND Message.is_deleted != 1 LEFT JOIN user AS user ON EC.uid = user.uid LEFT JOIN ( SELECT MAX(interactionId) AS IMInteractionID, MAX(created_at) AS latestCreatedAt,AgentId	FROM InteractionMapping GROUP BY interactionId) AS IM ON IM.IMInteractionID = Interaction.InteractionId WHERE EC.SP_ID ="+this.SPID +" AND EC.isDeleted != 1 AND EC.IsTemporary != 1";
 		if(groupArrays.length>0){
 		  
 		  groupArrays.map((filters:any,idx)=>{
@@ -1165,18 +1168,21 @@ formateDate(dateTime:string){
 				  let update = this.datePipe.transform(nextDate, 'yyyy-MM-dd');
 				  filterOper = '>= "' + filter.filterValue.toString() + '" AND EC.' + filter.filterPrefix + ' < "' +update?.toString() + '"';				
 			  }else
-				  filterOper = '='+filter.filterValue;
+				  filterOper = '= "'+filter.filterValue + '"';
 			}
 			if(filter.filterBy=="Is not equal to"){
 			  if(filter.filterType =="date"){
-				  const currentDate = new Date(filter.filterValue)
-				  const nextDate = new Date(currentDate)
-				  nextDate.setDate(currentDate.getDate() + 1)
-				  console.log(nextDate);
-				  let update = this.datePipe.transform(nextDate, 'yyyy-MM-dd');
-				  filterOper = '< "' + filter.filterValue + '" AND EC.' + filter.filterPrefix + ' >= "' +update + '"';				
-			  }else
-				  filterOper = '!='+filter.filterValue;
+				  colName = "date("+ colName +")";
+			  }
+			  // if(filter.filterType =="date"){
+			  // 	const currentDate = new Date(filter.filterValue)
+			  // 	const nextDate = new Date(currentDate)
+			  // 	nextDate.setDate(currentDate.getDate() + 1)
+			  // 	console.log(nextDate);
+			  // 	let update = this.datePipe.transform(nextDate, 'yyyy-MM-dd');
+			  // 	filterOper = '< "' + filter.filterValue + '" AND EC.' + filter.filterPrefix + ' >= "' +update + '"';				
+			  // }else
+				  filterOper = '!= "'+filter.filterValue + '"';
 			}
 	
 			if(filter.filterBy=="Contains"){
@@ -1757,7 +1763,8 @@ formateDate(dateTime:string){
 			headerText:this.selectedTemplate?.Header,
 			name: this.selectedTemplate?.TemplateName,
 			language: this.selectedTemplate?.Language,
-			buttons: JSON.stringify(this.selectedTemplate?.buttons)
+			buttons: JSON.stringify(this.selectedTemplate?.buttons),
+			buttonsVariable: JSON.stringify(this.buttonsVariable)
 		}
 		if(action=='save'){
 			BodyData['status']=2;
@@ -2184,6 +2191,15 @@ testinfo(){
 			this.closeAllModal()
 			this.modalReference = this.modalService.open(AttributeOption,{size: 'ml', windowClass:'pink-bg'});
 	}
+	openVariableOptionDynamicURL(indexSelected: number,AttributeOption: any){
+		this.indexSelectedForDynamicURL = indexSelected;
+		this.isDynamicURLClicked = true;
+		this.attributesoptionFilters = this.attributesoption;
+		this.closeAllModal()
+		this.modalReference = this.modalService.open(AttributeOption,{size: 'ml', windowClass:'pink-bg'});
+	}
+
+
 	updateAttributeValue(event:any,variable:any){
 		let currentValue = event?.target?.value;
 		const forbiddenKeys = ['{', '}'];
@@ -2203,6 +2219,26 @@ testinfo(){
         variable['isAttribute'] = this.isCustomValue(currentValue);
         variable['value']=event.target.value
 		console.log(this.selectedTemplate)
+	}
+
+     UpdateButtonsVariableState(event: any, index: number) {
+		let currentValue = event?.target?.value;
+		const forbiddenKeys = ['{', '}'];
+		if (forbiddenKeys.some(key => currentValue.includes(key))) {
+			currentValue = currentValue.replace(/[{}]/g, '');
+			event.target.value = currentValue;
+		}
+
+		if (this.buttonsVariable[index].isAttribute == true) {
+			event.target.value = ''
+			currentValue = '';
+			this.buttonsVariable[index].value = "";
+			this.buttonsVariable[index].Fallback = "";
+		}
+		this.buttonsVariable[index].isAttribute = this.isCustomValue(currentValue);
+		if (!this.buttonsVariable[index].isAttribute) {
+			this.buttonsVariable[index].Fallback = "";
+		}
 	}
 
 	isCustomValue(value: string): boolean {
@@ -2234,9 +2270,15 @@ testinfo(){
 		this.selectedAttribute = attribute;
 		this.selectedAddNewCampaign = addNewCampaign;
 	}
-	closeAttributeOption(status: any, addNewCampaign: any) {	
+	closeAttributeOption(status: any, addNewCampaign: any) {
 		if (status != 'save') {
 			this.selecetdVariable['value'] = '';
+		}
+		else if(this.isDynamicURLClicked){
+			this.buttonsVariable[this.indexSelectedForDynamicURL].value = '{{'+this.selectedAttribute+'}}';
+			this.buttonsVariable[this.indexSelectedForDynamicURL].isAttribute = this.isCustomValue('{{'+this.selectedAttribute+'}}');
+			this.buttonsVariable[this.indexSelectedForDynamicURL].Fallback = this.selectedFallback;
+			this.isDynamicURLClicked = false;
 		}
 		else {
 			this.selecetdVariable['value'] = '{{'+this.selectedAttribute +'}}';
@@ -2758,6 +2800,17 @@ console.log(this.allTemplatesMain);
 		  this.selectedTemplate['allVariables'] = allVariablesList;
 		  console.log(this.selectedTemplate, '-----selectedTemplate');
 		  console.log(JSON.parse(this.selectedTemplate?.template_json), '-----selectedTemplatexddsfg');
+		}
+		this.buttonsVariable=[];
+		if (this.selectedTemplate?.buttons.length) {
+			this.buttonsVariable = this.selectedTemplate.buttons
+				.filter((button: any) => button?.webType === 'Dynamic')
+				.map((button: any, index: any) => ({
+					label: button?.webUrl,
+					value: '',
+					Fallback: '',
+					isAttribute: ''
+				}));
 		}
 	  }
 	  

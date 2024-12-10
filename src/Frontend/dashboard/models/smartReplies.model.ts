@@ -12,6 +12,7 @@ export interface agentMessageList{
     headerText: string;
     bodyText:string;
 	buttons: any;
+    buttonsVariable: any;
 }
 
 export interface repliesList {
@@ -34,5 +35,6 @@ export interface actionData {
     Name:string;
     Value:any;
     Media:any;
+    buttons: any;
 }
 

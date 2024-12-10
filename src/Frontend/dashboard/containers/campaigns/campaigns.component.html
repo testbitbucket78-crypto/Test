@@ -598,7 +598,7 @@ It is determined by a combination of user feedback signals like blocks, reports 
 								<button id="radio-close-btn" (click)="vartip=false">X</button>
 								<div *ngIf="vartip" class="overlay" (click)="closeUtility()"></div>
 							  </div>
-							
+							  <div *ngIf="selectedTemplate?.allVariables?.length ==0">No variable available in this message</div>
 							<div class="form_row" *ngFor='let variable of selectedTemplate?.allVariables ;let i = index'>
 								<label>{{variable.label}}</label>
 								<div>
@@ -620,7 +620,21 @@ It is determined by a combination of user feedback signals like blocks, reports 
 									</div>
 								</div>
 							</div>
-							<div *ngIf="selectedTemplate?.allVariables?.length ==0">No variable available in this message</div>
+							<div *ngFor="let item of buttonsVariable; let ith = index" class="form_row">
+								<div>
+									<label style="font-weight: bold;">Dynamic URL</label>
+									<label>{{settingsService.truncateLength(item?.label)}}</label>
+								</div>
+								<div class="form-control-wrapper">
+									<p class="form-control">
+										<input type="text" [(ngModel)]="item.value" class="form-control inner" (keyup)="UpdateButtonsVariableState($event, ith)"
+										 placeholder="Input value or add attribute" [ngClass]="{'input-custom-color': item.isAttribute == true}">
+										 <span style="cursor: pointer;" (click)="openVariableOptionDynamicURL(ith, AttributeOption)" class="toggle_attribute"></span>
+									</p>
+									<div *ngIf="item?.Fallback" class="fallback-value">fallbackValue : {{item?.Fallback}}</div>
+								</div>
+							</div>
+							
 							
 							<div *ngIf="this.newCampaignDetail.get('channel_id').value ==1 && (selectedTemplate?.buttons?.length>1 || selectedTemplate?.buttons?.length ==1)">
 							

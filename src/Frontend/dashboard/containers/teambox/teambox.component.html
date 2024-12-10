@@ -1186,7 +1186,24 @@ popupWidth='250px' popupHeight='200px'>
 										</div> -->
 									</div>
 								  </form>
-
+                                    
+								<div *ngFor="let item of buttonsVariable; let ith = index" class="form_row">
+									<div>
+										<label style="font-weight: bold;">Dynamic URL</label>
+										<label>{{settingService.truncateLength(item?.label)}}</label>
+									</div>
+									
+									<div class="form-control-wrapper">
+										<p class="form-control">
+											<input type="text" [(ngModel)]="item.value" class="form-control inner" (keyup)="UpdateButtonsVariableState($event, ith)"
+											 placeholder="Input value or add attribute" [ngClass]="{'input-custom-color': item.isAttribute == true}">
+											 <span style="cursor: pointer;" (click)="openVariableOptionDynamicURL(ith)" class="map_attribute_img">
+												<img src="/assets/img/campaign/attribute.svg">
+											</span>
+										</p>
+										<div *ngIf="item?.Fallback" class="fallback-value">fallbackValue : {{item?.Fallback}}</div>
+									</div>
+								</div>
 								<!-- <div *ngIf="selectedTemplate.Channel === 'WA API'" >
 								<p class="mt-2">Button Payload <span>(Optional)</span><img class="px-2 icon sm"
 										src="/assets/img/campaign/Info.svg"></p>

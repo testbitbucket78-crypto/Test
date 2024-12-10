@@ -174,6 +174,9 @@ export class SmartRepliesComponent implements OnInit,OnDestroy {
 		searchKey:string='';
 		attributesearch!:string;
 		allVariablesList:string[]=[];
+		buttonsVariable: { label: string; value: string; isAttribute: boolean; Fallback: string }[] = [];
+		indexSelectedForDynamicURL: number = 0;
+	    isDynamicURLClicked! :boolean;
 		variableValues:string[]=[];
 		isLoading!: boolean;
 		attributesList!:any;
@@ -708,7 +711,14 @@ showAddSmartRepliesModal() {
 		this.indexSelected = indexSelected;
 		this.attribute = '';
 	$("#showvariableoption").modal('show'); 
-	$("#editTemplate").modal('hide'); 
+	$("#editTemplate").modal('hide');
+	}
+
+	openVariableOptionDynamicURL(indexSelected: number) {
+		this.indexSelectedForDynamicURL = indexSelected;
+		this.isDynamicURLClicked = true;
+		$("#showvariableoption").modal('show'); 
+		$("#editTemplate").modal('hide'); 
 	}
 	closeVariableOption() {
 		this.attributesearch=''; 
@@ -736,6 +746,26 @@ showAddSmartRepliesModal() {
 		}
 		console.log(this.selectedTemplate)
 	}
+
+	UpdateButtonsVariableState(event: any, index: number) {
+		let currentValue = event?.target?.value;
+		const forbiddenKeys = ['{', '}'];
+		if (forbiddenKeys.some(key => currentValue.includes(key))) {
+			currentValue = currentValue.replace(/[{}]/g, '');
+			event.target.value = currentValue;
+		}
+
+		if (this.buttonsVariable[index].isAttribute == true) {
+			event.target.value = ''
+			currentValue = '';
+			this.buttonsVariable[index].value = "";
+			this.buttonsVariable[index].Fallback = "";
+		}
+		this.buttonsVariable[index].isAttribute = this.isCustomValue(currentValue);
+		if (!this.buttonsVariable[index].isAttribute) {
+			this.buttonsVariable[index].Fallback = "";
+		}
+	}
 	isCustomValue(value: string): boolean {
 		if(value){
 			let isMatched = false
@@ -753,6 +783,12 @@ showAddSmartRepliesModal() {
 		}
 	  }
 	SaveVariableOption() {
+		if(this.isDynamicURLClicked){
+			this.buttonsVariable[this.indexSelectedForDynamicURL].value = '{{'+this.selectedAttribute+'}}';
+			this.buttonsVariable[this.indexSelectedForDynamicURL].isAttribute = this.isCustomValue('{{'+this.selectedAttribute+'}}');
+			this.buttonsVariable[this.indexSelectedForDynamicURL].Fallback = this.attribute;
+			this.isDynamicURLClicked = false;
+		}
 		this.variableValues[this.indexSelected] = '{{'+this.selectedAttribute+'}}';
 		this.fallbackvalue[this.indexSelected] = this.attribute;
 		this.isFallback[this.indexSelected] = this.isCustomValue('{{'+this.selectedAttribute+'}}');
@@ -1184,7 +1220,8 @@ showAddSmartRepliesModal() {
 				bodyText: bodyText,
 				name: this.templateName,
 				language: this.templatelanguage,
-				buttons: this.templateButton
+				buttons: this.templateButton,
+				buttonsVariable: this.buttonsVariable
 			});
 		}
 		this.messageMeidaFile = '';
@@ -1403,9 +1440,9 @@ stopPropagation(event: Event) {
 		if(!isExist) {
 			this.isAssigned = true;
 			if(this.isEditAssigned){
-				this.assignedAgentList[this.AssignedIndex] = { Message: '', ActionID: 2, Value: this.agentsList[index].name,ValueUuid: this.agentsList[index].uuid, Media: '', MessageVariables: '', media_type : '',isTemplate:false,headerText: '',bodyText: '',buttons:[],language:'',name:''}
+				this.assignedAgentList[this.AssignedIndex] = { Message: '', ActionID: 2, Value: this.agentsList[index].name,ValueUuid: this.agentsList[index].uuid, Media: '', MessageVariables: '', media_type : '',isTemplate:false,headerText: '',bodyText: '',buttons:[],language:'',name:'',buttonsVariable:[]}
 			}else{
-				this.assignedAgentList.push({ Message: '', ActionID: 2, Value: this.agentsList[index].name,ValueUuid: this.agentsList[index].uuid, Media: '', MessageVariables: '', media_type: '',isTemplate:false,headerText: '',bodyText: '',buttons:[],language:'',name:''})
+				this.assignedAgentList.push({ Message: '', ActionID: 2, Value: this.agentsList[index].name,ValueUuid: this.agentsList[index].uuid, Media: '', MessageVariables: '', media_type: '',isTemplate:false,headerText: '',bodyText: '',buttons:[],language:'',name:'',buttonsVariable:[]})
 			}
 		}
 			
@@ -1440,7 +1477,7 @@ stopPropagation(event: Event) {
 			this.assignedTagList = [];
 			this.assignedTagList.push(this.addTagList[index].TagName);
 			this.assignedTagListUuid.push(this.addTagList[index].ID);
-			this.assignedAgentList.push({ Message: '', ActionID: 1, Value: this.assignedTagList,ValueUuid: this.assignedTagListUuid,Media: '', MessageVariables: '', media_type: '',isTemplate:false,headerText: '',bodyText: '',buttons:[],language:'',name:''});
+			this.assignedAgentList.push({ Message: '', ActionID: 1, Value: this.assignedTagList,ValueUuid: this.assignedTagListUuid,Media: '', MessageVariables: '', media_type: '',isTemplate:false,headerText: '',bodyText: '',buttons:[],language:'',name:'',buttonsVariable:[]});
 			console.log('new value');
 		}
 		console.log(this.assignedAgentList);
@@ -1749,6 +1786,18 @@ stopPropagation(event: Event) {
 				if (isVariableValue) {
 				  this.allVariablesList = this.getVariables(isVariableValue, "{{", "}}");
 			  }
+
+			  this.buttonsVariable=[];
+			  if (this.selectedTemplate?.buttons.length) {
+				  this.buttonsVariable = this.selectedTemplate?.buttons
+					  .filter((button: any) => button?.webType === 'Dynamic')
+					  .map((button: any, index: any) => ({
+						  label: button?.webUrl,
+						  value: '',
+						  Fallback: '',
+						  isAttribute: ''
+					  }));
+			  }
 			}
 
 		// replaceVariableInTemplate() {
@@ -1829,7 +1878,8 @@ stopPropagation(event: Event) {
 							Message: this.data[i].Message,
 							Name: this.data[i].Name, 
 							Value: this.data[i].Value,
-							Media: this.data[i].Media
+							Media: this.data[i].Media,
+							buttons: JSON.parse(this.data[i].buttons),
 						});
 				   }
 			}
@@ -1897,7 +1947,8 @@ stopPropagation(event: Event) {
 					bodyText: this.data[i]?.bodyText,
 					name: this.data[i]?.templateName,
 					language: this.data[i]?.templatelanguage,
-					buttons: this.data[i]?.templateButton
+					buttons: this.data[i]?.buttons? JSON.parse(this.data[i]?.buttons) : this.data[i]?.templateButton,
+					buttonsVariable: this.data[i]?.buttonsVariable
 				});
 		}
 		console.log(this.assignedAgentList,'MESSAGE DATA')
