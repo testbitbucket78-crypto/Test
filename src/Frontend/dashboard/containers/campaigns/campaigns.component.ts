@@ -2909,14 +2909,17 @@ console.log(this.allTemplatesMain);
 		// 		window.URL.revokeObjectURL(url);
 		// 	})
 		// }
-		download() {
-			this.apiService.download(this.SPID).subscribe((data: any) => {
-			  const blob = new Blob([data], { type: 'text/csv' });
-			  convertCsvToXlsx(blob, 'Sample_Contacts_Import_File.xlsx')
+	download() {
+		this.apiService.download(this.SPID).subscribe((data: any) => {
+			const blob = new Blob([data], { type: 'text/csv' });
+			convertCsvToXlsx(blob, 'Sample_Contacts_Import_File.xlsx')
 				.then(() => console.log('File downloaded successfully'))
-				.catch(error => console.error('Error converting CSV to XLSX:', error));
-			});
-		  }
+				.catch(error => {
+					console.error('Error converting CSV to XLSX:', error);
+					this.showToaster('Something Went Wrong while downloading. Please try again!', 'error');
+				});
+		});
+	}
 		downloadERRfile() {
 			this.apiService.downloadErrFile().subscribe((data: any) => {
 				const blob = new Blob([data], { type: 'text/csv' });
