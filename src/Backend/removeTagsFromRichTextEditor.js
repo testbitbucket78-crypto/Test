@@ -222,9 +222,10 @@ async function getDynamicURLToBESent(message_variables, spid, customerId) {
       } else {
       const fallback = message_variable?.Fallback;
       let toCheckDataExist = value.replace(/{{|}}/g, '').trim();
-
-      if (endCustomerColumns.includes(value)) {
-
+      const customColumValue = await getCustomColumns(value, fallback, spid, customerId);
+      if(customColumValue){
+        result.push(customColumValue);
+      } else if (endCustomerColumns.includes(value)) {
         const endCustomerQuery = `SELECT ${toCheckDataExist} FROM EndCustomer WHERE customerId=? AND isDeleted != 1 AND SP_ID=?`;
         let endCustomerResult = await db.excuteQuery(endCustomerQuery, [customerId, spid]);
         if (endCustomerResult.length > 0 && endCustomerResult[0][toCheckDataExist]) {
@@ -239,7 +240,63 @@ async function getDynamicURLToBESent(message_variables, spid, customerId) {
   }
   return result;
 }
+async function getCustomColumns(value, fallback, spid, customerId) {
+  try {
+    if (!value || !spid || !customerId) {
+      throw new Error("Invalid input: Missing required parameters.");
+    }
 
+    const spidCustomColumnsQuery = `
+      SELECT ColumnName, CustomColumn, Type 
+      FROM SPIDCustomContactFields 
+      WHERE SP_ID = ? AND isDeleted != 1
+    `;
+    const spidCustomColumns = await db.excuteQuery(spidCustomColumnsQuery, [spid]);
+
+    if (!spidCustomColumns || spidCustomColumns.length === 0) {
+      return fallback;
+    }
+
+    const spidCustomColumnsMap = new Map();
+    spidCustomColumns.forEach(column => {
+      if (column.ColumnName && column.CustomColumn) {
+        spidCustomColumnsMap.set(`{{${column.ColumnName}}}`, column.CustomColumn);
+      }
+    });
+
+    if (spidCustomColumnsMap.has(value)) {
+      const customColumn = spidCustomColumnsMap.get(value);
+
+      const endCustomerQuery = `
+        SELECT ${customColumn} 
+        FROM EndCustomer 
+        WHERE customerId = ? AND isDeleted != 1 AND SP_ID = ?
+      `;
+      const endCustomerResult = await db.excuteQuery(endCustomerQuery, [customerId, spid]);
+
+      if (endCustomerResult?.length > 0 && endCustomerResult[0]?.[customColumn]) {
+        const typeFound = spidCustomColumns.find(item => `{{${item?.ColumnName}}}` === value);
+        if (typeFound) {
+          let columnValue = endCustomerResult[0][customColumn];
+          if (typeFound.Type === "Multi Select" || typeFound.Type === "Select") {
+            const processedValues = columnValue
+              .split(",")
+              .map(part => part.split(":")[1]?.trim())
+              .filter(Boolean); 
+            columnValue = processedValues.join(", ");
+          }
+          return columnValue;
+        }
+      } else {
+        return fallback;
+      }
+    } else {
+      return fallback;
+    }
+  } catch (error) {
+    return fallback;
+  }
+}
 // const value = setTimeout(async () => {
 //     const results = await getDefaultAttribue(['Name','CountryCode','displayPhoneNumber'], 35,4931);
 //     console.log(results);
