@@ -381,7 +381,7 @@ constructor(config: NgbModalConfig, private modalService: NgbModal,private datep
 			{label:'Is equal to',checked:false,type:'text'},
 			{label:'Is not equal to',checked:false,type:'text'},
 			]},
-			{value:'emailId',label:'emailId',checked:false,addeFilter:[],
+			{value:'emailId',label:'Email',checked:false,addeFilter:[],
 			option:[
 				{label:'Contains',checked:false,type:'text'},
 				{label:'Does Not Contain',checked:false,type:'text'},
@@ -423,6 +423,13 @@ constructor(config: NgbModalConfig, private modalService: NgbModal,private datep
 						{label:'Before',checked:false,type:'date',filterPrefixType:'date'},
 						{label:'Is equal to',checked:false,type:'date',filterPrefixType:'date'},
 						{label:'Is not equal to',checked:false,type:'date',filterPrefixType:'date'},
+			]},
+			{value:'ContactOwner',label:'Contact Owner',checked:false,addeFilter:[],
+			option:[
+				{label:'Is empty',checked:false,type:'none'},
+				{label:'Is not empty',checked:false,type:'none'},
+				{label:'Is equal to',checked:false,type:'user'},
+				{label:'Is not equal to',checked:false,type:'user'}
 			]},
 			{value:'Last Conversation With',label:'Last Conversation With',checked:false,addeFilter:[],
 			option:[
@@ -714,7 +721,7 @@ constructor(config: NgbModalConfig, private modalService: NgbModal,private datep
 				else{
 					item['status_label'] ='draft'
 				}
-				item['start_datetime_formated']=this.formateDate(item?.start_datetime)
+				item['start_datetime_formated']=this.formattedDate(item?.start_datetime)
 				item['created_datetime_formated']=this.formattedDate(item?.created_at)
 
 				if(item.channel_id==1){
@@ -1702,7 +1709,7 @@ formateDate(dateTime:string){
 	
 		let content ='<p>'+ BodyText+'</p>';
 		if (this.selectedTemplate?.FooterText && this.selectedTemplate?.FooterText.trim() !== '') {
-		  content += '<p>'+this.selectedTemplate?.FooterText+'</p>';
+		  content += '<p class="temp-footer">'+this.selectedTemplate?.FooterText+'</p>';
 		}
 		return content;
 	  }
@@ -1714,12 +1721,12 @@ formateDate(dateTime:string){
 		let sratdatetime:any='';
 		if(this.scheduled==1){
 		let start_datetime =this.selecteScheduleDate+' '+this.selecteScheduleTime;
-		 sratdatetime = (new Date ((new Date((new Date(new Date(start_datetime))).toISOString() )).getTime() - ((new Date()).getTimezoneOffset()*60000))).toISOString().slice(0, 19).replace('T', ' ');
+		 sratdatetime = (new Date ((new Date((new Date(new Date(start_datetime))).toUTCString() )).getTime() - ((new Date()).getTimezoneOffset()*60000))).toUTCString().slice(0, 19).replace('T', ' ');
 		}else{
 			let getMin =new Date().getMinutes();
 			getMin = (getMin % 5) ? 5 - (getMin % 5): 0;
 			let startTime = new Date(new Date(new Date().setMinutes(new Date().getMinutes() + getMin)).setSeconds(0));
-			sratdatetime = (new Date((new Date((new Date(startTime)).toISOString())).getTime() - ((new Date()).getTimezoneOffset()*60000))).toISOString().slice(0, 19).replace('T', ' ');
+			sratdatetime = (new Date((new Date((new Date(startTime)).toUTCString())).getTime() - ((new Date()).getTimezoneOffset()*60000))).toUTCString().slice(0, 19).replace('T', ' ');
 		}		
 		let daysList=['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
 		let day =  daysList[new Date(sratdatetime).getDay()];

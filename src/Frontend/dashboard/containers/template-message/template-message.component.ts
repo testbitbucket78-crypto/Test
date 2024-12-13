@@ -1003,13 +1003,19 @@ checkTemplateName(e:any){
         for (let prop in data) {
             let value = data[prop as keyof typeof data];
             if (this.newTemplateForm.get(prop)){
+                console.log(prop)
+                if(prop == 'categoryChange'){
+
+                    console.log('1')
+                }
              this.newTemplateForm.get(prop)?.setValue(value);
             }
             this.id = ID;
         }
+        console.log('2')
         this.selectedType = this.templatesMessageData?.media_type;
         this.selectedPreview = this.templatesMessageData.Links;
-        this.buttonsArray = this.templatesMessageData?.buttons;
+        this.buttonsArray = this.templatesMessageData?.buttons ? this.templatesMessageData?.buttons : [];
         if(this.templatesMessageData?.Links){
             this.fileName = this.extractActualFileName(this.templatesMessageData?.Links);
         }
@@ -1524,11 +1530,20 @@ return true
 //     return str;
 //   }
   get hasQuickReplyButtons(): boolean {
-    return this.buttonsArray.some(item => item.type === 'Quick Reply');
+    console.log(this.buttonsArray);
+    if(this.buttonsArray){
+        return this.buttonsArray?.some(item => item.type === 'Quick Reply');
+    } else{
+        return false;
+    }
   }
   
   get hasNonQuickReplyButtons(): boolean {
-    return this.buttonsArray.some(item => item.type !== 'Quick Reply');
+    if(this.buttonsArray){
+    return this.buttonsArray?.some(item => item.type !== 'Quick Reply');
+} else{
+    return true;
+}
   }
 
   showVariableValidation(){

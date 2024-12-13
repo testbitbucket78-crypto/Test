@@ -1054,10 +1054,10 @@ showAddSmartRepliesModal() {
 	
 		htmlcontent +='<p>'+ item.BodyText+'</p>';
 		if (item.FooterText) {
-			htmlcontent+='<p>'+item.FooterText+'</p>';
+			htmlcontent+='<p class="temp-footer">'+item.FooterText+'</p>';
 		}
 		if(item.Links) this.messageMeidaFile = item.Links
-		this.chatEditor.value =htmlcontent
+		this.chatEditor.value =htmlcontent;
 		this.isAttachmentMedia = false;
 		this.templateName =item?.TemplateName;
 		this.templatelanguage =item?.Language;
@@ -1226,7 +1226,8 @@ showAddSmartRepliesModal() {
 		}
 		this.messageMeidaFile = '';
 		console.log(this.assignedAgentList,'ADDED MESSAGE DATA')
-
+		this.templateButton = [];
+		this.buttonsVariable = [];
 			this.chatEditor.value = '';
 
 			setTimeout(() => {
