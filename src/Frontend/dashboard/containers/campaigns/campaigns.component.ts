@@ -1726,7 +1726,7 @@ formateDate(dateTime:string){
 			let getMin =new Date().getMinutes();
 			getMin = (getMin % 5) ? 5 - (getMin % 5): 0;
 			let startTime = new Date(new Date(new Date().setMinutes(new Date().getMinutes() + getMin)).setSeconds(0));
-			sratdatetime = (new Date((new Date((new Date(startTime)).toUTCString())).getTime() - ((new Date()).getTimezoneOffset()*60000))).toUTCString().slice(0, 19).replace('T', ' ');
+			sratdatetime = (new Date(startTime)).toUTCString();
 		}		
 		let daysList=['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
 		let day =  daysList[new Date(sratdatetime).getDay()];
@@ -1748,7 +1748,7 @@ formateDate(dateTime:string){
 			message_heading:this.selectedTemplate?.Header,
 			message_content: this.constructMessageContent(this.selectedTemplate?.BodyText),
 			message_footer: this.selectedTemplate?.FooterText,
-			message_media:this.selectedTemplate?.Links,
+			message_media:this.selectedTemplate?.Links ? this.selectedTemplate?.Links :'text',
 			media_type:this.selectedTemplate?.media_type,
 			message_variables:this.selectedTemplate?.allVariables.length>0?JSON.stringify(this.selectedTemplate?.allVariables):[],
 			button_yes:this.selectedTemplate?.button_yes,
