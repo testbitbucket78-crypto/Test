@@ -694,7 +694,7 @@ public  fieldsData: { [key: string]: string } = { text: 'name' };
 	
 		htmlcontent +='<p>'+ item?.BodyText+'</p>';
 		if (item?.FooterText) {
-			htmlcontent+='<p>'+item?.FooterText+'</p>';
+			htmlcontent+='<p class="temp-footer">'+item?.FooterText+'</p>';
 		}
 		//this.chatEditor.value =htmlcontent
 		this.isAttachmentMedia = false;
@@ -1257,6 +1257,8 @@ console.log(getMimeTypePrefix);
 								this.isTemplate = false;
 								this.headerText = '';
 								this.bodyText = '';
+								this.templateButton = [];
+								this.buttonsVariable =[];
 							}
 				
 				
@@ -1568,6 +1570,7 @@ console.log(getMimeTypePrefix);
 
 	async getTemplates(channel:any) {
 		let spid = Number(this.SPID)
+		
 		this.settingService.getApprovedTemplate(spid,1).subscribe(allTemplates =>{
 			allTemplates?.templates.forEach((item:any) => {
 				item.buttons = JSON.parse(item?.buttons ? item?.buttons :'[]');
@@ -3569,6 +3572,8 @@ sendMessage(isTemplate:boolean=false,templateTxt:string=''){
 								this.isTemplate = false
 								this.headerText = '';
 								this.bodyText = '';
+								this.templateButton = [];
+								this.buttonsVariable =[];
 							}
 				
 				
@@ -4114,7 +4119,9 @@ sendMessage(isTemplate:boolean=false,templateTxt:string=''){
 
   closeTemplatePopup(){
 	this.messageMeidaFile = '';
-	this.messageMediaFile ='';
+	this.messageMediaFile ='';	
+	this.templateButton = [];
+	this.buttonsVariable =[];
   }
   ensureSpaceBeforeTags(htmlString: string): string {
 	const tags = ['strong', 'em', 'span'];
