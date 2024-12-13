@@ -6,6 +6,7 @@ import { ColumnMapping, importCSVData } from 'Frontend/dashboard/models';
 import Stepper from 'bs-stepper';
 import { Router } from '@angular/router';
 import * as XLSX from 'xlsx'; 
+import { convertCsvToXlsx } from '../common/Utils/file-utils';
 declare var $: any;
 
 
@@ -500,29 +501,50 @@ importDataLoader! : boolean;
 
 
 
+	// download() {
+	// 	this one was for CSV 
+	// 	this.apiService.download(this.spid).subscribe((data: any) => {
+	// 		const blob = new Blob([data], { type: 'text/csv' });
+	// 		const url = window.URL.createObjectURL(blob);
+	// 		const fileName = document.createElement('a');
+	// 		fileName.href = url;
+	// 		fileName.download = 'Sample_Contacts_Import_File.csv'; 
+	// 		document.body.appendChild(fileName);
+	// 		fileName.click();
+	// 		document.body.removeChild(fileName);
+	// 		window.URL.revokeObjectURL(url);
+	// 	})
+	// }
+	
 	download() {
 		this.apiService.download(this.spid).subscribe((data: any) => {
-			const blob = new Blob([data], { type: 'text/csv' });
-			const url = window.URL.createObjectURL(blob);
-			const fileName = document.createElement('a');
-			fileName.href = url;
-			fileName.download = 'Sample_Contacts_Import_File.csv'; 
-			document.body.appendChild(fileName);
-			fileName.click();
-			document.body.removeChild(fileName);
-			window.URL.revokeObjectURL(url);
-		})
-	}
-
+		const blob = new Blob([data], { type: 'text/csv' });
+		  convertCsvToXlsx(blob, 'Sample_Contacts_Import_File.xlsx')
+			.then(() => console.log('File downloaded successfully'))
+			.catch(error => {
+				console.error('Error converting CSV to XLSX:', error);
+				this.showToaster('Something Went Wrong while downloading. Please try again!', 'error');
+			});
+		});
+	  }
+	// downloadERRfile() {
+	// 	this.apiService.downloadErrFile().subscribe((data: any) => {
+	// 		const blob = new Blob([data], { type: 'text/csv' });
+	// 		const url = window.URL.createObjectURL(blob);
+	// 		window.open(url);
+	// 	})
+	// }
 	downloadERRfile() {
 		this.apiService.downloadErrFile().subscribe((data: any) => {
-			const blob = new Blob([data], { type: 'text/csv' });
-			const url = window.URL.createObjectURL(blob);
-			window.open(url);
-		})
-	}
-
-
+		const blob = new Blob([data], { type: 'text/csv' });
+		convertCsvToXlsx(blob, 'Error_File.xlsx')
+			.then(() => console.log('Error file downloaded successfully'))
+			.catch(error => {
+				console.error('Error converting CSV to XLSX:', error);
+				this.showToaster('Something Went Wrong while downloading. Please try again!', 'error');
+			});
+		});
+	  }
 
 	getHeaderArray(csvRecordsArr: any) {
 		let headers = (<string>csvRecordsArr[0]).split(',');

@@ -6,6 +6,7 @@ import { SettingsService } from 'Frontend/dashboard/services/settings.service';
 import { DashboardService, TeamboxService } from './../../services';
 import { DatePipe } from '@angular/common';
 import * as XLSX from 'xlsx'; 
+import { convertCsvToXlsx } from '../common/Utils/file-utils';
 declare var $: any;
 
 @Component({
@@ -193,6 +194,7 @@ export class CampaignsComponent implements OnInit {
 	buttonsVariable: { label: string; value: string; isAttribute: boolean; Fallback: string }[] = [];
     indexSelectedForDynamicURL: number = 0;
 	isDynamicURLClicked! :boolean;
+	isScheduled : number = 0;
 
 constructor(config: NgbModalConfig, private modalService: NgbModal,private datepipe: DatePipe,private datePipe: DatePipe,private dashboardService: DashboardService,
 	private apiService: TeamboxService,public settingsService:SettingsService,private _settingsService:SettingsService,
@@ -1625,6 +1627,11 @@ formateDate(dateTime:string){
 		this.selectedTemplate = template;
 		if(this.isValidDateTime(this.selectedCampaign?.start_datetime)) this.selecteScheduleTime = this.formatTime(this.selectedCampaign?.start_datetime);
 		if(this.isValidDateTime(this.selectedCampaign?.start_datetime)) this.selecteScheduleDate = this.convertToDateFormat(this.selectedCampaign?.start_datetime)
+		this.isScheduled = 0;
+		if(this.selectedCampaign?.status == 1) {
+			this.selectScheduled(1);
+			this.isScheduled = 1;
+		}
 		this.selectedTemplate['Links']=this.selectedCampaign?.message_media;
 		this.selectedTemplate['buttons']=this.selectedCampaign?.buttons;
 		}
@@ -2889,20 +2896,30 @@ console.log(this.allTemplatesMain);
     
 		//*********Download Sample file****************/
 
-		download() {
-			this.apiService.download(this.SPID).subscribe((data: any) => {
-				const blob = new Blob([data], { type: 'text/csv' });
-				const url = window.URL.createObjectURL(blob);
-				const fileName = document.createElement('a');
-				fileName.href = url;
-				fileName.download = 'Sample_Import_Audience_File'; 
-				document.body.appendChild(fileName);
-				fileName.click();
-				document.body.removeChild(fileName);
-				window.URL.revokeObjectURL(url);
-			})
-		}
-	
+		// download() {
+		// 	this.apiService.download(this.SPID).subscribe((data: any) => {
+		// 		const blob = new Blob([data], { type: 'text/csv' });
+		// 		const url = window.URL.createObjectURL(blob);
+		// 		const fileName = document.createElement('a');
+		// 		fileName.href = url;
+		// 		fileName.download = 'Sample_Import_Audience_File'; 
+		// 		document.body.appendChild(fileName);
+		// 		fileName.click();
+		// 		document.body.removeChild(fileName);
+		// 		window.URL.revokeObjectURL(url);
+		// 	})
+		// }
+	download() {
+		this.apiService.download(this.SPID).subscribe((data: any) => {
+			const blob = new Blob([data], { type: 'text/csv' });
+			convertCsvToXlsx(blob, 'Sample_Contacts_Import_File.xlsx')
+				.then(() => console.log('File downloaded successfully'))
+				.catch(error => {
+					console.error('Error converting CSV to XLSX:', error);
+					this.showToaster('Something Went Wrong while downloading. Please try again!', 'error');
+				});
+		});
+	}
 		downloadERRfile() {
 			this.apiService.downloadErrFile().subscribe((data: any) => {
 				const blob = new Blob([data], { type: 'text/csv' });

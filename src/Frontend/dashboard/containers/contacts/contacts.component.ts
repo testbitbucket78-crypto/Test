@@ -1087,38 +1087,45 @@ deletContactByID(data: any) {
 
     const fieldToHeaderMap:any = {};
       this.columnDefs.forEach((item:any) => {
-        fieldToHeaderMap[item?.field] = item.headerName;
+        fieldToHeaderMap[item?.field] = item?.headerName;
     });
 
     const exportContact = this.checkedConatct.map(obj => {
       const newObj:any = {};
       fields.forEach(field => {
-          const headerName = fieldToHeaderMap[field]; 
+        try {
+          const headerName = fieldToHeaderMap[field];
           if (obj.hasOwnProperty(field) && headerName) {
             if(field =="displayPhoneNumber"){
-              newObj[headerName] = obj['Phone_number'];
+              newObj[headerName] = obj['Phone_number'] ?? '';
             }else{
-              let types = this.filteredCustomFields.filter((item:any)=>item.ActuallName == field)
+              let types = this.filteredCustomFields.filter((item:any) => item.ActuallName == field)
               if(types && types[0]?.type =='Select'){
-                let selectName =  obj[field].split(':');
-                newObj[headerName] = selectName[1] ?  selectName[1] : '';
+                let selectName =  obj[field]?.split(':') || [];
+                newObj[headerName] = selectName[1] ?? '';
               } else if(types && types[0]?.type =='Multi Select'){
-                let selectName =  obj[field].split(',');
-                  let names ='';
-                  selectName.forEach((it:any)=>{
-                    let name = it.split(':');
-
-                    names = (names ? names + ',' :'') + (name[1] ?  name[1] : '');
-                  })
-                  newObj[headerName] = names;
+                let selectName =  obj[field]?.split(',') || [];
+                let names ='';
+                selectName.forEach((it:any)=>{
+                  try {
+                    let name = it?.split(':') || [];
+                    names = (names ? names + ',' :'') + (name[1] ?? '');
+                  } catch (error) {
+                    console.error(`Error processing Multi Select value: ${it}`, error);
+                  }
+                });
+                newObj[headerName] = names;
               }else{
-                newObj[headerName] = obj[field];
+                newObj[headerName] = obj[field] ?? '';
               }
             }
           }
+        } catch (error) {
+          console.error(`Error processing field: ${field}`, error);
+        }
       });
       return newObj;
-  });
+    });
 
     var exContact = {
       data: exportContact,
