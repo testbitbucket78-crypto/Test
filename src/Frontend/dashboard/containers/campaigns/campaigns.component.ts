@@ -893,7 +893,7 @@ constructor(config: NgbModalConfig, private modalService: NgbModal,private datep
 				}else{
 					item['status_label'] ='draft'
 				}
-				item['start_datetime_formated']=this.formateDate(item?.start_datetime)
+				item['start_datetime_formated']=this.formattedDate(item?.start_datetime)
 				item['created_datetime_formated']=this.formateDate(item?.created_at)
 
 				if(item?.channel_id==1){
@@ -1728,13 +1728,14 @@ formateDate(dateTime:string){
 		let sratdatetime:any='';
 		if(this.scheduled==1){
 		let start_datetime =this.selecteScheduleDate+' '+this.selecteScheduleTime;
-		 sratdatetime = (new Date ((new Date((new Date(new Date(start_datetime))).toUTCString() )).getTime() - ((new Date()).getTimezoneOffset()*60000))).toUTCString().slice(0, 19).replace('T', ' ');
+		 //sratdatetime = (new Date ((new Date((new Date(new Date(start_datetime))).toUTCString() )).getTime() - ((new Date()).getTimezoneOffset()*60000))).toUTCString().slice(0, 19).replace('T', ' ');
+		 sratdatetime = new Date(new Date(start_datetime).setSeconds(0)).toUTCString();
 		}else{
 			let getMin =new Date().getMinutes();
 			getMin = (getMin % 5) ? 5 - (getMin % 5): 0;
 			let startTime = new Date(new Date(new Date().setMinutes(new Date().getMinutes() + getMin)).setSeconds(0));
-			sratdatetime = (new Date(startTime)).toUTCString();
-		}		
+			sratdatetime = new Date(startTime).toUTCString();
+		}	
 		let daysList=['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
 		let day =  daysList[new Date(sratdatetime).getDay()];
 		let start_Time = '';
@@ -1745,6 +1746,8 @@ formateDate(dateTime:string){
 					end_Time = item.end_time;
 				}
 			});
+			
+		sratdatetime = this.datePipe.transform(sratdatetime,'yyyy-MM-dd HH:mm:ss','UTC');	
 		this.processMediaType(this.selectedTemplate?.media_type, this.selectedTemplate?.Links)
 		let BodyData:any={
 			Id:this.newCampaignDetail.Id?this.newCampaignDetail.Id:'',
