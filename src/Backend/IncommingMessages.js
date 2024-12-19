@@ -287,7 +287,11 @@ async function iterateSmartReplies(replymessage, phone_number_id, from, sid, cus
       //get header and body variable 
       let headerVar = await commonFun.getTemplateVariables(msgVar, header, sid, custid);
       let bodyVar = await commonFun.getTemplateVariables(msgVar, body, sid, custid);
-
+      let buttonsVariable;
+      let buttonsVar = typeof message?.buttonsVariable === 'string' ? JSON.parse(message?.buttonsVariable) : message?.buttonsVariable;
+      if(!commonFun.isInvalidParam(buttonsVar) && buttonsVar.length > 0) {
+        buttonsVariable = await removeTags.getDynamicURLToBESent(buttonsVar, sid, custid);
+      }
       let PerformingActions = await PerformingSReplyActions(actionId, value, sid, custid, agid, newId, display_phone_number);
       let content = await removeTags.removeTagsFromMessages(testMessage);
       if (actionId == 2) {
@@ -354,7 +358,8 @@ async function iterateSmartReplies(replymessage, phone_number_id, from, sid, cus
         "templateName": templateName,
         "headerVar": headerVar,
         "bodyVar": bodyVar,
-        "buttons" : buttons
+        "buttons" : buttons,
+        "buttonsVariable" : buttonsVariable
       };
       console.log(message.replyId, "replysms", relyMsg);
       messageToSend.push(relyMsg);
@@ -390,7 +395,8 @@ async function iterateSmartReplies(replymessage, phone_number_id, from, sid, cus
           message.templateName,
           message.headerVar,
           message.bodyVar,
-          message.buttons
+          message.buttons,
+          message.buttonsVariable
         );
         // console.log(type,"SreplyThroughselectedchannel response:", respose);
       }
@@ -923,14 +929,15 @@ async function SreplyThroughselectedchannel(spid, from, type, text, media, phone
   laungage,
   templateName,
   headerVar,
-  bodyVar,buttons) {
+  bodyVar,buttons,DynamicURLToBESent) {
+    let buttonsArray = typeof buttons === 'string' ? JSON.parse(buttons) : buttons;
   if (channelType == 'WhatsApp Official' || channelType == 1 || channelType == 'WA API') {
     let response = false;
     let myUTCString = new Date().toUTCString();
     const time = moment.utc(myUTCString).format('YYYY-MM-DD HH:mm:ss');
     let sReply = '';
     if(isTemplate == 'true'){
-       sReply = await middleWare.createWhatsAppPayload(type, from, templateName, laungage, headerVar, bodyVar, media, spid);
+       sReply = await middleWare.createWhatsAppPayload(type, from, templateName, laungage, headerVar, bodyVar, media, spid, buttonsArray, DynamicURLToBESent);
     }else{
       sReply = await middleWare.sendDefultMsg(media, text, type, phone_number_id, from, spid);
     }
