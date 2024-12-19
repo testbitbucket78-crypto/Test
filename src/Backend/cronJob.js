@@ -19,6 +19,8 @@ const logger = require('./common/logger.log');
 const commonFun = require('./common/resuableFunctions')
 const mapCountryCode = require('./Contact/utils.js');
 let metaPhoneNumberID = 211544555367892
+const { sendEmail }= require('./Services/EmailService');
+const { EmailTemplateProvider }= require('./common/template')
 // Function to check if the schedule_datetime is within 1-2 minutes from the current time
 function isWithinTimeWindow(scheduleDatetime) {
   const currentTime = moment();
@@ -171,7 +173,7 @@ async function parseMessage(testMessage, custid, sid, msgVar) {
 async function parseMessageForCSV(message_content, contact, messageVariable) {
   // Replace placeholders in the content with values from message_variables
 
-  let content ;
+  let content = '';
   if(message_content?.length >0){
      content = await removeTags.removeTagsFromMessages(message_content);
   }
@@ -458,15 +460,31 @@ async function campaignAlerts(message, updatedStatus) {
 JOIN user u ON u.uid=c.uid
  where c.SP_ID=? and c.isDeleted !=1 `;
 
-
     let user = await db.excuteQuery(alertUser, [message.sp_id]);
+    for (let i = 0; i < user.length; i++) {
+      let { subject, body, emailSender } = await EmailTemplateProvider(message, updatedStatus, user[i]?.Channel, user[i].name);
 
+      const emailOptions = {
+        to: user[i]?.email_id,
+        subject,
+        html: body,
+        fromChannel: emailSender,
+      };
+      try {
+        let emailSent = await sendEmail(emailOptions);
+        console.log(`Email sent to ${user[i]?.email}:`, emailSent);
+      } catch (error) {
+        console.error(`Failed to send email to ${user[i]?.email}:`, error.message);
+      }
+    }
+    
+    
     var type = 'image';
     if (message.message_media == null || message.message_media == "") {
       type = 'text';
     }
 
-    sendBatchMessage(user, message.sp_id, message.media_type, alertmessages, message.message_media, message.phone_number_id, message.channel_id, message.CampaignId, updatedStatus,message.buttons)
+    // whats app messages to whats app sendBatchMessage(user, message.sp_id, message.media_type, alertmessages, message.message_media, message.phone_number_id, message.channel_id, message.CampaignId, updatedStatus,message.buttons)
 
 
     //batchofAlertUsers(user, alert.sp_id, type, message, alert.message_media, '101714466262650', alert.channel_id)

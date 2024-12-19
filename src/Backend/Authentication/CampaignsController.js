@@ -11,6 +11,8 @@ const moment = require('moment');
 const ExcelJS = require('exceljs');
 app.use(bodyParser.json());
 const path = require("path");
+const { EmailConfigurations } =  require('../Authentication/constant');
+const { MessagingName }= require('../enum');
 
 app.use(bodyParser.urlencoded({ extended: true }));
 
@@ -550,10 +552,26 @@ async function campaignAlerts(TemplateData, insertId, statusToUpdate) {
 
 
     let user = await db.excuteQuery(alertUser, [TemplateData.SP_ID]);
+    for (let i = 0; i < user.length; i++) {
+        let { subject, body, emailSender } = await EmailTemplateProvider(TemplateData, updatedStatus, user[i]?.Channel, user[i]?.name);
+  
+        const emailOptions = {
+          to: user[i]?.email_id,
+          subject,
+          html: body,
+          fromChannel: emailSender,
+        };
+        try {
+          let emailSent = await sendEmail(emailOptions);
+          console.log(`Email sent to ${user[i]?.email}:`, emailSent);
+        } catch (error) {
+          console.error(`Failed to send email to ${user[i]?.email}:`, error.message);
+        }
+      }
 
     var type = TemplateData.media_type;
 
-    sendBatchMessage(user, TemplateData.SP_ID, TemplateData.media_type, alertmessages, message_media, phone_number_id, channel_id, insertId, statusToUpdate)
+    // whats app messages to whats app sendBatchMessage(user, TemplateData.SP_ID, TemplateData.media_type, alertmessages, message_media, phone_number_id, channel_id, insertId, statusToUpdate)
 
 }
 
@@ -1002,7 +1020,10 @@ const campaignReport = async (req, res) => {
         const afterLinkText = "and search for the relevant error code.";
         const workbook = new ExcelJS.Workbook();
         const worksheet = workbook.addWorksheet('Campaign Report');
-
+        let Channel = (await db.excuteQuery('select Channel from user where SP_ID = ? limit 1', [spid]))[0]?.Channel;
+        let emailSender = MessagingName[Channel];
+        const transporter = getTransporter(emailSender);
+        const senderConfig = EmailConfigurations[emailSender];
         /// Add cells with separate parts of the message
         worksheet.addRow([headerMessageText, linkText, afterLinkText]);
 
@@ -1048,14 +1069,14 @@ const campaignReport = async (req, res) => {
         const timestamp = Date.now();
         const randomNumber = Math.floor(Math.random() * 10000);
         var mailOptions = {
-            from: val.email,
+            from: senderConfig.email,
             to: emailId,
-            subject: "Engagekart - Campaign Messages report",
+            subject: `${emailSender} - Campaign Messages report`,
             html: `
             <p>Dear ${userName},</p>
-            <p>Please find attached here the detail report for your campaign ${campaignName} from your Engagekart account.</p>
+            <p>Please find attached here the detail report for your campaign ${campaignName} from your ${emailSender} account.</p>
             <p>Thank you,</p>
-            <p>Team Engagekart</p>
+            <p>Team ${emailSender}</p>
             `,
             attachments: [
                 {
@@ -1088,17 +1109,32 @@ const campaignReport = async (req, res) => {
 
 
 //common method for send email through node mailer
-let transporter = nodemailer.createTransport({
-    //service: 'gmail',
-    host: val.emailHost,
-    port: val.port,
-    secure: true,
-    auth: {
-        user: val.email,
-        pass: val.appPassword
-    },
-});
+// let transporter = nodemailer.createTransport({
+//     //service: 'gmail',
+//     host: val.emailHost,
+//     port: val.port,
+//     secure: true,
+//     auth: {
+//         user: val.email,
+//         pass: val.appPassword
+//     },
+// });
+function getTransporter(channel) {
+    const senderConfig = EmailConfigurations[channel];
+    if (!senderConfig) {
+        throw new Error(`Invalid channel: ${channel}`);
+    }
 
+    return nodemailer.createTransport({
+        host: senderConfig.emailHost,
+        port: senderConfig.port,
+        secure: true,
+        auth: {
+            user: senderConfig.email,
+            pass: senderConfig.appPassword,
+        },
+    });
+}
 
 
 module.exports = { copyCampaign, getCampaignMessages, sendCampinMessage, saveCampaignMessages, getContactAttributesByCustomer, getEndCustomerDetail, getAdditiionalAttributes, deleteCampaign, addCampaign, getCampaigns, getCampaignDetail, getFilteredCampaign, getContactList, updatedContactList, addNewContactList, applyFilterOnEndCustomer, campaignAlerts, deleteContactList, isExistCampaign, processContactQueries, download, campaignReport };
