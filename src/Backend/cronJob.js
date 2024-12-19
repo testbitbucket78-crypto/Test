@@ -33,7 +33,8 @@ function isWithinTimeWindow(scheduleDatetime) {
 async function fetchScheduledMessages() {
   try {
 
-    var messagesData = await db.excuteQuery(`select * from Campaign where (status=1 or status=2) and is_deleted != 1`, [])
+   // var messagesData = await db.excuteQuery(`select * from Campaign where (status=1 or status=2) and is_deleted != 1`, [])
+    var messagesData = await db.excuteQuery(`SELECT *, DATE_FORMAT(start_datetime, '%Y-%m-%d %H:%i:%s') AS formatted_date  FROM Campaign WHERE (status = 1 OR status = 2) AND is_deleted != 1`, [])
     var remaingMessage = [];
     //console.log(messagesData)
     logger.info(`fetchScheduledMessages ${messagesData?.length}`)
@@ -46,6 +47,7 @@ async function fetchScheduledMessages() {
 
     // HAVE TO CHANGE THIS IN ASYNC FOR EACH SPID
     for (const message of messagesData) {
+      message?.start_datetime = message?.formatted_date + 'Z';
       console.log(message.sp_id, new Date(currentDateTime), new Date(message.start_datetime), message.Id, message.start_datetime)
       //  let campaignTime = await getCampTime(message.sp_id)  // same as below loop
       // console.log(message.sp_id, "campaignTime", isWorkingTime(message), new Date(message.start_datetime) < new Date(currentDateTime), new Date(message.start_datetime), new Date(), new Date(currentDateTime))
@@ -331,23 +333,42 @@ async function getCampTime(spid) {
 }
 
 
+// async function batchofScheduledCampaign(users, sp_id, type, message_content, message_media, phone_number_id, channel_id, message, list,header,body,templateId) {
+//   //console.log("batchofScheduledCampaign" ,message_content)
+//   for (let i = 0; i < users.length; i += batchSize) {
+//     const batch = users.slice(i, i + batchSize);
+//     console.log("batch i", i, batch.length)
+//     sendScheduledCampaign(batch, sp_id, type, message_content, message_media, phone_number_id, channel_id, message, list,header,body,templateId)
+
+//     if (i + batchSize < users.length) {
+//       setTimeout(() => {
+//         batchofScheduledCampaign(users.slice(i + batchSize), sp_id, type, message_content, message_media, phone_number_id, channel_id, message, list,header,body,templateId);
+//       }, delayBetweenBatches);
+//     }
+//   }
+//   setTimeout(() => {
+//     campaignCompletedAlert(message)
+//   }, 10000)
+// }
+
+
+
 async function batchofScheduledCampaign(users, sp_id, type, message_content, message_media, phone_number_id, channel_id, message, list,header,body,templateId) {
-  //console.log("batchofScheduledCampaign" ,message_content)
+  let t = 0;
   for (let i = 0; i < users.length; i += batchSize) {
     const batch = users.slice(i, i + batchSize);
-    console.log("batch i", i, batch.length)
-    sendScheduledCampaign(batch, sp_id, type, message_content, message_media, phone_number_id, channel_id, message, list,header,body,templateId)
-
-    if (i + batchSize < users.length) {
-      setTimeout(() => {
-        batchofScheduledCampaign(users.slice(i + batchSize), sp_id, type, message_content, message_media, phone_number_id, channel_id, message, list,header,body,templateId);
-      }, delayBetweenBatches);
-    }
+  setTimeout(()=>{
+    sendScheduledCampaign(batch, sp_id, type, message_content, message_media, phone_number_id, channel_id, message, list,header,body,templateId);
+  },t);
+  const randomdelay = Math.random()
+  t = t+10000;
   }
   setTimeout(() => {
     campaignCompletedAlert(message)
   }, 10000)
 }
+
+
 
 async function campaignCompletedAlert(message) {
   let updateQuery = `UPDATE Campaign SET status=3,updated_at=? where Id=?`;
@@ -385,6 +406,7 @@ async function sendScheduledCampaign(batch, sp_id, type, message_content, messag
       DynamicURLToBESent = await removeTags.getDynamicURLToBESent(buttonsVariable, sp_id, batch[i].customerId);
     }
     var response;
+
     setTimeout(async () => {
       response = await messageThroughselectedchannel(sp_id, Phone_number, type, textMessage, message_media, phone_number_id, channel_id, message.Id, message, message_text,headerVar,bodyVar,templateId,message.buttons,DynamicURLToBESent);
       //console.log("response",response)     
