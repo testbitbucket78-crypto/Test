@@ -15,6 +15,8 @@ const logger = require('../common/logger.log');
 const moment = require('moment');
 const SECRET_KEY = 'RAUNAK'
 const mapCountryCode = require('../Contact/utils.js');
+const { EmailConfigurations } =  require('./constant');
+const { MessagingName }= require('../enum');
 
 app.use(bodyParser.json());
 
@@ -168,11 +170,13 @@ const register = async function (req, res) {
             var values = [name,registerPhone, email_id, hash, LoginIP, countryCode, display_mobile_number,Channel,countryName,currency,timezone]  // pending add countryCode in stored procedure
             var registeredUser = await db.excuteQuery(val.registerQuery, values)   //need to change LoginIP in signup stored procedure
             const token = jwt.sign({ email_id: registeredUser.email_id }, SECRET_KEY);
-
+            let emailSender = MessagingName[Channel];
+            const transporter = getTransporter(emailSender);
+            const senderConfig = EmailConfigurations[emailSender];
             let body = `
-            Welcome to Engagekart, ${name}!
+            Welcome to ${emailSender}, ${name}!
             Your account is all set and ready to go. Start exploring your new features and make the most out of our platform today!
-            - Team Engagekart
+            - Team ${emailSender}
           `;
             var data = getTextMessageInput(registerPhone, body);
 
@@ -182,21 +186,21 @@ const register = async function (req, res) {
             let loginPageURL = referer+"#/login";
             
             var mailOptions = {
-                from: val.email, // Use the sender's email address here
+                from: senderConfig.email, // Use the sender's email address here
                 to: req.body.email_id, // Recipient's email address from the request body
-                subject: `Hello ${req.body.name}! Getting started with Engagekart`, // Email subject
+                subject: `Hello ${req.body.name}! Getting started with ${emailSender}`, // Email subject
 
                 html: `<p>Dear ${req.body.name},</p>
-           <p>Welcome to Engagekart!</p>
+           <p>Welcome to ${emailSender}!</p>
            <p>We are delighted to have you onboard and can't wait to see you automate your business operations effortlessly with our platform. So get going and explore all the features on Engagekart to engage with your customers while converting new leads.</p>
-           <p>Here are your account details on Engagekart:</p>
+           <p>Here are your account details on ${emailSender}:</p>
            <p><a href="${loginPageURL}">${loginPageURL}</a></p>
            <p>User ID: ${req.body.email_id}<br>
            Mobile: ${req.body.registerPhone}<br>
            Role: Admin</p>
-           <p>Thank you for choosing Engagekart!</p>
+           <p>Thank you for choosing ${emailSender}!</p>
            <p>Best regards,<br>
-           Team Engagekart</p>`
+           Team ${emailSender}</p>`
             };
 
 
@@ -231,18 +235,34 @@ const register = async function (req, res) {
 
 
 //common method for send email through node mailer
-let transporter = nodemailer.createTransport({
-    // service: 'SMTP',
-    host: val.emailHost,
-    port: val.port,
-    secure: true,
-    auth: {
-        user: val.email,
-        pass: val.appPassword
-    },
-    port: val.port,
-    host: val.emailHost
-});
+// let transporter = nodemailer.createTransport({
+//     // service: 'SMTP',
+//     host: val.emailHost,
+//     port: val.port,
+//     secure: true,
+//     auth: {
+//         user: val.email,
+//         pass: val.appPassword
+//     },
+//     port: val.port,
+//     host: val.emailHost
+// });
+function getTransporter(channel) {
+    const senderConfig = EmailConfigurations[channel];
+    if (!senderConfig) {
+        throw new Error(`Invalid channel: ${channel}`);
+    }
+
+    return nodemailer.createTransport({
+        host: senderConfig.emailHost,
+        port: senderConfig.port,
+        secure: true,
+        auth: {
+            user: senderConfig.email,
+            pass: senderConfig.appPassword,
+        },
+    });
+}
 
 //Post api for forget password
 const forgotPassword = async (req, res) => {
@@ -485,7 +505,10 @@ const sendOtp = async function (req, res) {
 
         email_id = req.body.email_id;
         mobile_number = req.body.mobile_number;
-
+        channel = req?.body?.Channel;
+        let emailSender = MessagingName[channel];
+        const transporter = getTransporter(emailSender);
+        const senderConfig = EmailConfigurations[emailSender];
         let otp = Math.floor(100000 + Math.random() * 900000);
         let phoneOtp = Math.floor(100000 + Math.random() * 900000);
         let otpFor = req.body?.otpFor;
@@ -494,17 +517,17 @@ const sendOtp = async function (req, res) {
         let headerVar =[]
         // send mail with defined transport object
         var mailOptions = {
-            from: val.email,
+            from: senderConfig.email,
             to: req.body.email_id,
-            subject: "Verify your email - Engagekart",
+            subject: `Verify your email - ${emailSender}`,
             //html: "<h3>OTP for account verification is </h3>" + "<h1 style='font-weight:bold;'>" + otp + "</h1>" // html body
             html: `
             <p>Dear ${req.body?.name},</p>
-            <p>To complete your Engagekart account activation, please use the below provided One-Time Password (OTP) to validate your email address on the sign up page.</p>
+            <p>To complete your ${emailSender} account activation, please use the below provided One-Time Password (OTP) to validate your email address on the sign up page.</p>
             <P>OTP for account verification is</P>
             <h5 style="font-weight:bold;">${otp}</h5>
             <p>Best regards,</p>
-            <p>Team Engagekart</p> `
+            <p>Team ${emailSender}</p> `
         };
 
 
@@ -543,11 +566,11 @@ const sendOtp = async function (req, res) {
             });
 
             let text = `Hi ${req.body?.name}!
-        Just one more step to get started with Engagekart.
+        Just one more step to get started with ${emailSender}.
         Here's your verification code: ${otp}.
         Enter it on the signup page to verify your Phone Number.
         Let's make magic happen!
-        - Team Engagekart`
+        - Team ${emailSender}`
 
             // var data = getTextMessageInput(mobile_number, text);
 

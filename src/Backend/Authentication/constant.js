@@ -61,7 +61,20 @@ var camQuery = "Select * from Campaign"
 //Query For automation
 var selectQuery = "Select * from AutomatedCampaign"
 
-
+const EmailConfigurations = {
+    Engagekart: {
+      email: "notification@engagekart.com",
+      appPassword: "Notification@123",
+      emailHost: "mail.engagekart.com",
+      port: 465,
+    },
+    Engagezilla: {
+      email: "notification@engagezilla.com",
+      appPassword: "Notification@123",
+      emailHost: "mail.engagezilla.com",
+      port: 465,
+    },
+  };
 
 
 
@@ -71,5 +84,5 @@ module.exports = {
     updateQuery,allAgents,activeAgent, loginQuery, registerQuery, 
     email, appPassword, emailHost, port, 
      updatePassword, uidresetEmailQuery, verifyUid, camQuery, selectQuery,insertOtp,verifyOtp,
-     access_token,url,content_type,crachlogQuery,awsaccessKeyId,awssecretAccessKey,awsregion,awsbucket
+     access_token,url,content_type,crachlogQuery,awsaccessKeyId,awssecretAccessKey,awsregion,awsbucket,EmailConfigurations
 }

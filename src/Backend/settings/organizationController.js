@@ -11,6 +11,9 @@ const nodemailer = require('nodemailer');
 const bcrypt = require('bcrypt');
 const awsHelper = require('../awsHelper');
 const moment = require('moment');
+const { EmailConfigurations } =  require('../Authentication/constant');
+const { MessagingName }= require('../enum');
+
 app.use(bodyParser.json());
 app.use(cors());
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -722,18 +725,34 @@ const deleteRoleByroleIDspid = async (req, res) => {
 //_______________________ User API __________________________________//
 
 //common method for send email through node mailer
-let transporter = nodemailer.createTransport({
-    // service: 'SMTP',
-    host: val.emailHost,
-    port: val.port,
-    secure: true,
-    auth: {
-        user: val.email,
-        pass: val.appPassword
-    },
-    port: val.port,
-    host: val.emailHost
-});
+// let transporter = nodemailer.createTransport({
+//     // service: 'SMTP',
+//     host: val.emailHost,
+//     port: val.port,
+//     secure: true,
+//     auth: {
+//         user: val.email,
+//         pass: val.appPassword
+//     },
+//     port: val.port,
+//     host: val.emailHost
+// });
+function getTransporter(channel) {
+    const senderConfig = EmailConfigurations[channel];
+    if (!senderConfig) {
+        throw new Error(`Invalid channel: ${channel}`);
+    }
+
+    return nodemailer.createTransport({
+        host: senderConfig.emailHost,
+        port: senderConfig.port,
+        secure: true,
+        auth: {
+            user: senderConfig.email,
+            pass: senderConfig.appPassword,
+        },
+    });
+}
 
 const addUser = async (req, res) => {
     try {
@@ -791,7 +810,7 @@ const addUser = async (req, res) => {
             
             const referer = req.get('Referer')
             let loginPageURL = referer+"#/login";
-            inviteUser(email_id, name, SP_ID, registerPhone, RoleName, randomstring,loginPageURL)
+            inviteUser(email_id, name, SP_ID, registerPhone, RoleName, randomstring,loginPageURL,Channel)
             res.status(200).send({
                 msg: "user details has been sent",
 
@@ -806,8 +825,10 @@ const addUser = async (req, res) => {
     }
 }
 
-async function inviteUser(email_id, name, SP_ID, mobile_number, RoleName, randomstring,loginURL) {
-
+async function inviteUser(email_id, name, SP_ID, mobile_number, RoleName, randomstring,loginURL,channel) {
+    let emailSender = MessagingName[channel];
+    const transporter = getTransporter(emailSender);
+    const senderConfig = EmailConfigurations[emailSender];
     var getData = await db.excuteQuery(val.selectByIdQuery, [SP_ID])
 
     if (getData.length >= 0) {
@@ -815,12 +836,12 @@ async function inviteUser(email_id, name, SP_ID, mobile_number, RoleName, random
         var logo = getData[0]?.profile_img
     }
     var mailOptions = {
-        from: val.email,
+        from: senderConfig.email,
         to: email_id,
-        subject: 'Welcome to EngageKart!',
+        subject: `Welcome to ${emailSender}!`,
         text: `Dear ${name},
     
-    Welcome to ${Company_Name}'s account on Engagekart!
+    Welcome to ${Company_Name}'s account on ${emailSender}!
     
     Please find your account details below:
     
@@ -829,7 +850,7 @@ async function inviteUser(email_id, name, SP_ID, mobile_number, RoleName, random
     Role: ${RoleName}
     Temporary Password:  ` + JSON.stringify(randomstring) + `
     
-    To access your Engagekart account, follow these steps:
+    To access your ${emailSender} account, follow these steps:
     
     1. Go to ${loginURL}
     2. Enter your Email ID
@@ -842,7 +863,7 @@ async function inviteUser(email_id, name, SP_ID, mobile_number, RoleName, random
     We're excited to see your contributions. Welcome once again!
     
     Best regards,
-    Team Engagekart`
+    Team ${emailSender}`
     };
     transporter.sendMail(mailOptions, (error, info) => {
          console.log(info)
@@ -948,7 +969,9 @@ const editUser = async (req, res) => {
 
 
 
-
+         let emailSender = MessagingName[Channel];
+        const transporter = getTransporter(emailSender);
+        const senderConfig = EmailConfigurations[emailSender];
 
 
         if (changes.length > 0 && currentUser[0]?.IsActive != 3) {
@@ -956,21 +979,21 @@ const editUser = async (req, res) => {
             let emailBody = `
           Dear ${currentUser[0].name},
   
-          Here are changes made to your Engagekart User details by your account Admin.
+          Here are changes made to your ${emailSender} User details by your account Admin.
   
           ${changes.join('\n')}
   
           If you find any details not correct, please contact your admin for changes.
   
           Thank you,
-          Team Engagekart
+          Team ${emailSender}
         `;
 
             // Setup email options
             var mailOptions = {
-                from: val.email, // Sender address
+                from: senderConfig.email, // Sender address
                 to: email_id, // Recipient's email
-                subject: "Engagekart - Users Details Updated",
+                subject: `${emailSender} - Users Details Updated`,
                 text: emailBody
             };
 
@@ -987,7 +1010,7 @@ const editUser = async (req, res) => {
             const hash = await bcrypt.hash(randomstring, 10);
             const referer = req.get('Referer')
             let loginPageURL = referer+"#/login";
-            inviteUser(email_id, name, SP_ID, registerPhone, RoleName, randomstring,loginPageURL);
+            inviteUser(email_id, name, SP_ID, registerPhone, RoleName, randomstring,loginPageURL,Channel);
             let updatePass = await db.excuteQuery('UPDATE user set password=? where uid=? ', [hash, uid])
         }
 

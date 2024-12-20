@@ -6,5 +6,10 @@ const MessagingLimitTiers = {
     TIER_100K: 100000,
     TIER_UNLIMITED: 'Unlimited',
 };
+const MessagingName = {
+    api: "Engagekart",
+    web: "Engagezilla",
 
-module.exports = { MessagingLimitTiers }
+};
+
+module.exports = { MessagingLimitTiers, MessagingName }

@@ -14,6 +14,8 @@ const moment = require('moment');
 //const puppeteer = require('puppeteer');
 var pdfMake = require('pdfmake');
 const pdfFonts = require('pdfmake/build/vfs_fonts');
+const { EmailConfigurations } =  require('../Authentication/constant');
+const { MessagingName }= require('../enum');
 
 app.use(bodyParser.json());
 app.use(cors());
@@ -71,6 +73,10 @@ const changePassword = async (req, res) => {
         oldPass = req.body.oldPass
         newPass = req.body.newPass
         confirmPass = req.body.confirmPass
+        channel = req?.body?.channel
+        let emailSender = MessagingName[channel];
+        const transporter = getTransporter(emailSender);
+        const senderConfig = EmailConfigurations[emailSender];
 
         let myUTCString = new Date().toUTCString();
         const date = moment.utc(myUTCString).format('YYYY-MM-DD HH:mm:ss');
@@ -95,18 +101,18 @@ const changePassword = async (req, res) => {
                 var insertRes = await db.excuteQuery(val.updatePasswordQuery, [hasedPass, date, uid]);
                 // send mail with defined transport object
                 var mailOptions = {
-                    from: val.email,
+                    from: senderConfig.email,
                     to: req.body?.email_id,
-                    subject: "Engagekart Password Reset",
+                    subject: `${emailSender} Password Reset`,
                     //html: "<h3>OTP for account verification is </h3>" + "<h1 style='font-weight:bold;'>" + otp + "</h1>" // html body
                     html: `
             <p>Dear ${req.body?.name},</p>
    
-            <p>You have successfully reset your Engagekart account password.</p?
+            <p>You have successfully reset your ${emailSender} account password.</p?
             <p>If you find anything fishy, immediately contact your business admin manager.</p>
 
             <p>Thank you,</p>
-            <p>Team Engagekart</p> `
+            <p>Team ${emailSender}</p> `
                 };
 
                 transporter.sendMail(mailOptions, (error, info) => {
@@ -121,7 +127,7 @@ const changePassword = async (req, res) => {
                 });
 
                 let text = `You've successfully reset your password. Keep your new password safe, and contact your account Admin immediately if you didn't initiate this change.
-- Team Engagekart`
+- Team ${emailSender}`
 
                 var data = getTextMessageInput(req.body?.mobile_number, text);
 
@@ -349,18 +355,34 @@ const getBillingDetails = async (req, res) => {
 }
 
 
-let transporter = nodemailer.createTransport({
-    // service: 'SMTP',
-    host: val.emailHost,
-    port: val.port,
-    secure: true,
-    auth: {
-        user: val.email,
-        pass: val.appPassword
-    },
-    port: val.port,
-    host: val.emailHost
-});
+// let transporter = nodemailer.createTransport({
+//     // service: 'SMTP',
+//     host: val.emailHost,
+//     port: val.port,
+//     secure: true,
+//     auth: {
+//         user: val.email,
+//         pass: val.appPassword
+//     },
+//     port: val.port,
+//     host: val.emailHost
+// });
+function getTransporter(channel) {
+    const senderConfig = EmailConfigurations[channel];
+    if (!senderConfig) {
+        throw new Error(`Invalid channel: ${channel}`);
+    }
+
+    return nodemailer.createTransport({
+        host: senderConfig.emailHost,
+        port: senderConfig.port,
+        secure: true,
+        auth: {
+            user: senderConfig.email,
+            pass: senderConfig.appPassword,
+        },
+    });
+}
 const invoicePdf = async (req, res) => {
     // const browser = await puppeteer.launch();
     // const page = await browser.newPage();

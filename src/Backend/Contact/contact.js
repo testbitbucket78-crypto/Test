@@ -21,7 +21,8 @@ const logger = require('../common/logger.log');
 const { formatterDateTime, formatterDate, formatterTime } = require('./utils.js');
 const commonFun = require('../common/resuableFunctions.js')
 const XLSX = require('xlsx');
-
+const { EmailConfigurations } =  require('../Authentication/constant');
+const { MessagingName }= require('../enum');
 
 /**
  * @swagger
@@ -698,6 +699,11 @@ app.post('/exportCheckedContact', async (req, res) => {
     console.log(req.body)
     var data = req.body.data
     let SP_ID = req.query.SP_ID
+    let Channel = req?.body?.Channel
+    let emailSender = MessagingName[Channel];
+    const transporter = getTransporter(emailSender);
+    const senderConfig = EmailConfigurations[emailSender];
+
     let isDateTime = await processData(data)
     if (data.length > 0 && isDateTime) {
       let result = await formatterDateTime(data, SP_ID);
@@ -725,14 +731,14 @@ app.post('/exportCheckedContact', async (req, res) => {
     const timestamp = Date.now();
     const randomNumber = Math.floor(Math.random() * 10000);
     var mailOptions = {
-      from: val.email,
+      from: senderConfig.email,
       to: req.body.loginData,
-      subject: "Engagekart - Contacts export report",
+      subject: `${emailSender} - Contacts export report`,
       html: `
         <p>Dear ${req.body?.Name},</p>
-        <p>Please find attached here the file containing your exported contacts from your Engagekart account.</p>
+        <p>Please find attached here the file containing your exported contacts from your ${emailSender} account.</p>
         <p>Thank you,</p>
-        <p>Team Engagekart</p>
+        <p>Team ${emailSender}</p>
       `,
       attachments: [
         {
@@ -1000,6 +1006,8 @@ app.post('/importContact', authenticateToken, async (req, res) => {
     let emailId = result?.emailId
     let user = result?.user
     let OptInStatus = req.body.messageOptIn
+    let Channel = (await db.excuteQuery('select Channel from user where SP_ID = ? limit 1', [SP_ID]))[0]?.Channel;
+    
     CSVdata.forEach(subArray => {
       subArray.push({ "displayName": OptInStatus, "ActuallName": "OptInStatus" });
     });
@@ -1009,7 +1017,7 @@ app.post('/importContact', authenticateToken, async (req, res) => {
 
         let addNewUserOnly = await addOnlynewContact(CSVdata, identifier, SP_ID)
 
-        sendMailAfterImport(emailId, user, addNewUserOnly?.count)
+        sendMailAfterImport(emailId, user, addNewUserOnly?.count,Channel)
         res.status(200).send({
           msg: "Contact Added Successfully",
           data: addNewUserOnly,
@@ -1038,7 +1046,7 @@ app.post('/importContact', authenticateToken, async (req, res) => {
         else {
           var upExistContOnlyWithFields = await updateSelectedField(CSVdata, identifier, fields, SP_ID);
         }
-        sendMailAfterImport(emailId, user, 0)
+        sendMailAfterImport(emailId, user, 0,Channel)
         res.status(200).send({
           msg: "Existing Contact Updated Successfully",
           upExistContOnly: upExistContOnly,
@@ -1074,7 +1082,7 @@ app.post('/importContact', authenticateToken, async (req, res) => {
 
         }
 
-        sendMailAfterImport(emailId, user, addAndUpdateCont?.count)
+        sendMailAfterImport(emailId, user, addAndUpdateCont?.count,Channel)
         res.status(200).send({
           msg: "Add and Updated Contact Successfully",
           addAndUpdatewithFields: addAndUpdatewithFields,
@@ -1098,21 +1106,24 @@ app.post('/importContact', authenticateToken, async (req, res) => {
   }
 })
 
-function sendMailAfterImport(emailId, user, noOfContact) {
+function sendMailAfterImport(emailId, user, noOfContact,Channel) {
   try {
+    let emailSender = MessagingName[Channel];
+    const transporter = getTransporter(emailSender);
+    const senderConfig = EmailConfigurations[emailSender];
 
     let text = `
     <p>Dear ` + user + `,</p>
-    <p>The Contacts import initiated by you has been successfully processed. You can check your Engagekart account and start engaging with these newly added contacts.</p>
+    <p>The Contacts import initiated by you has been successfully processed. You can check your ${emailSender} account and start engaging with these newly added contacts.</p>
     <p>Happy Engaging!</p>
     <p>Thank you,</p>
-    <p>Team Engagekart</p>
+    <p>Team ${emailSender}</p>
   `
 
     var mailOptions = {
-      from: val.email,
+      from: senderConfig.email,
       to: emailId,
-      subject: "Engagekart - Contacts import successful",
+      subject: `${emailSender} - Contacts import successful`,
       html: text,
 
     };
@@ -2161,16 +2172,32 @@ WHERE InteractionId = (SELECT  InteractionId FROM Interaction WHERE customerId =
 }
 
 //common method for send email through node mailer
-let transporter = nodemailer.createTransport({
-  //service: 'gmail',
-  host: val.emailHost,
-  port: val.port,
-  secure: true,
-  auth: {
-    user: val.email,
-    pass: val.appPassword
-  },
-});
+// let transporter = nodemailer.createTransport({
+//   //service: 'gmail',
+//   host: val.emailHost,
+//   port: val.port,
+//   secure: true,
+//   auth: {
+//     user: val.email,
+//     pass: val.appPassword
+//   },
+// });
+function getTransporter(channel) {
+  const senderConfig = EmailConfigurations[channel];
+  if (!senderConfig) {
+      throw new Error(`Invalid channel: ${channel}`);
+  }
+
+  return nodemailer.createTransport({
+      host: senderConfig.emailHost,
+      port: senderConfig.port,
+      secure: true,
+      auth: {
+          user: senderConfig.email,
+          pass: senderConfig.appPassword,
+      },
+  });
+}
 
 
 app.post('/addProfileImg', authenticateToken, async (req, res) => {
@@ -2336,7 +2363,8 @@ const countryCodeMap = parseCountryCodes(countryCodes);
 // Function to check length of phone numbers and validate country code
 const checkPhoneNumbersLength = (phoneNumbers, countryCodeMap, expectedLengths) => {
   return phoneNumbers.map(phone => {
-    const result = separatePhoneNumber(phone, countryCodeMap);
+    const phoneString = typeof phone === "string" ? phone : phone.toString();
+    const result = separatePhoneNumber(phoneString, countryCodeMap);
 
     if (result) {
       let country = result.country.replace(/\D/g, '');
@@ -2349,7 +2377,7 @@ const checkPhoneNumbersLength = (phoneNumbers, countryCodeMap, expectedLengths) 
         isValidLength
       };
     } else {
-      return { phone, error: "Invalid country code or phone number" };
+      return { phoneString, error: "Invalid country code or phone number" };
     }
   });
 };

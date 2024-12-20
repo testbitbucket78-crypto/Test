@@ -25,6 +25,8 @@ const commonFun = require('../common/resuableFunctions.js')
 const { exec } = require('child_process');
 const fs = require('fs')
 const path = require("path");
+const { EmailConfigurations } =  require('../Authentication/constant');
+const { MessagingName }= require('../enum');
 let clientSpidMapping = {};
 let clientPidMapping = {};
 let clientSpidInprogress = {};
@@ -575,38 +577,58 @@ WHERE customerId IN (SELECT customerId FROM EndCustomer WHERE Phone_number =? an
   })
 }
 
-let transporter = nodemailer.createTransport({
-  // service: 'SMTP',
-  host: val.emailHost,
-  port: val.port,
-  secure: true,
-  auth: {
-    user: val.email,
-    pass: val.appPassword
-  },
-  port: val.port,
-  host: val.emailHost
-});
+// let transporter = nodemailer.createTransport({
+//   // service: 'SMTP',
+//   host: val.emailHost,
+//   port: val.port,
+//   secure: true,
+//   auth: {
+//     user: val.email,
+//     pass: val.appPassword
+//   },
+//   port: val.port,
+//   host: val.emailHost
+// });
+function getTransporter(channel) {
+  const senderConfig = EmailConfigurations[channel];
+  if (!senderConfig) {
+      throw new Error(`Invalid channel: ${channel}`);
+  }
+
+  return nodemailer.createTransport({
+      host: senderConfig.emailHost,
+      port: senderConfig.port,
+      secure: true, 
+      auth: {
+          user: senderConfig.email,
+          pass: senderConfig.appPassword,
+      },
+  });
+}
 async function sendMailOnDisconnection(phoneNo, spid) {
   try {
-    const userData = await db.excuteQuery('SELECT name, mobile_number, email_id FROM user WHERE SP_ID = ? AND mobile_number = ? AND isDeleted != 1', [spid, phoneNo]);
+    const userData = await db.excuteQuery('SELECT name, mobile_number, email_id, Channel FROM user WHERE SP_ID = ? AND mobile_number = ? AND isDeleted != 1', [spid, phoneNo]);
     if (userData.length > 0) {
       const userName = userData[0].name;
       const number = userData[0].mobile_number;
       const email_id = userData[0].email_id;
+      const Channel = userData[0].Channel;
+      let emailSender = MessagingName[Channel];
+      const transporter = getTransporter(emailSender);
+      const senderConfig = EmailConfigurations[emailSender];
 
       var mailOptions = {
-        from: val.email,
+        from: senderConfig.email,
         to: email_id,
-        subject: 'Alert! Engagekart Channel Disconnected',
+        subject: `Alert! ${senderConfig} Channel Disconnected`,
         text: `Dear ${userName},
 
-Your Engagekart Channel ${userName} and ${number} is logged out. Your immediate action is required to ensure seamless flow of services and that messages from customers are received.
+Your ${senderConfig} Channel ${userName} and ${number} is logged out. Your immediate action is required to ensure seamless flow of services and that messages from customers are received.
 
-Please login to your Engagekart Account > Settings > Account Settings > Channels and connect your channel again to ensure no interruption to your scheduled campaigns, automated customer replies, or other automations.
+Please login to your ${senderConfig} Account > Settings > Account Settings > Channels and connect your channel again to ensure no interruption to your scheduled campaigns, automated customer replies, or other automations.
 
 Best regards,
-Team Engagekart`
+Team ${senderConfig}`
       };
       transporter.sendMail(mailOptions, (error, info) => {
         if (error) {
