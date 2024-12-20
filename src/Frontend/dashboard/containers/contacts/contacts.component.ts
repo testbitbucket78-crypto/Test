@@ -12,6 +12,7 @@ import { GridService } from '../../services/ag-grid.service';
 import { PhoneValidationService } from 'Frontend/dashboard/services/phone-validation.service';
 import {ContactFilterComponent} from '../contact-filter/contact-filter.component';
 import { DatePipe } from '@angular/common';
+import { environment } from 'environments/environment';
 
 declare var $: any;
 @Component({
@@ -261,6 +262,7 @@ countryCodes = [
    contactOwnerTooltip!: boolean;
    isLoading!: boolean;
    isLoadingOnInit!:boolean;
+   public channelDomain:string = environment?.chhanel;
  constructor(config: NgbModalConfig, private modalService: NgbModal,
   public phoneValidator:PhoneValidationService,
      public settingsService: SettingsService, private apiService: DashboardService,
@@ -1130,7 +1132,8 @@ deletContactByID(data: any) {
     var exContact = {
       data: exportContact,
       loginData: (JSON.parse(sessionStorage.loginDetails)).email_id,
-      Name: (JSON.parse(sessionStorage.loginDetails)).name
+      Name: (JSON.parse(sessionStorage.loginDetails)).name,
+      Channel: this.channelDomain
     }
     this.apiService.exportCheckedContact(exContact,this.spid).subscribe(response => {
 

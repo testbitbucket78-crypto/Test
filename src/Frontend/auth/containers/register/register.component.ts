@@ -5,6 +5,7 @@ import { Router } from '@angular/router';
 import { Validators } from '@angular/forms';
 import { parsePhoneNumberFromString } from 'libphonenumber-js';
 import { PhoneValidationService } from 'Frontend/dashboard/services/phone-validation.service';
+import { environment } from 'environments/environment';
 
 @Component({
     selector: 'sb-register',
@@ -32,6 +33,7 @@ export class RegisterComponent implements OnInit {
     isVerifiedEmail!: boolean;
     emailVerified!: boolean;
     errorMessage: string ='';
+    public channelDomain:string = environment?.chhanel;
     countryCodes = [
         'AD +376', 'AE +971', 'AF +93', 'AG +1268', 'AI +1264', 'AL +355', 'AM +374', 'AO +244', 'AR +54', 'AS +1684',
         'AT +43', 'AU +61', 'AW +297', 'AX +358', 'AZ +994', 'BA +387', 'BB +1 246', 'BD +880', 'BE +32', 'BF +226',
@@ -213,7 +215,8 @@ formatPhoneNumber() {
             country_code:this.registerForm.get('country_code')?.value, 
             email_id:this.registerForm.get('email_id')?.value, 
             password:this.registerForm.get('password')?.value, 
-            confirmPassword:this.registerForm.get('confirmPassword')?.value 
+            confirmPassword:this.registerForm.get('confirmPassword')?.value,
+            Channel: this.channelDomain
         }
        let checkBox = {
         checkbox2Checked: this.checkbox2Checked,
@@ -241,7 +244,8 @@ formatPhoneNumber() {
                 "email_id":registerData.email_id,
                 "mobile_number":registerData.mobile_number,
                 "name": registerData.name,
-                "otpFor" : this.otpFor
+                "otpFor" : this.otpFor,
+                "Channel" : this.channelDomain
             }
             if(this.VerificationData[0].email_id == registerData.email_id && this.VerificationData[1].mobile_number == registerData.mobile_number){
               sessionStorage.setItem('verificationDataEmail', JSON.stringify(this.VerificationData[0]));

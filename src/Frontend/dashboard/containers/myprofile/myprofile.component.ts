@@ -7,6 +7,7 @@ import { SettingsService } from 'Frontend/dashboard/services/settings.service';
 import { NotificationService } from 'Frontend/dashboard/services/notification.service';
 import { addFundsData, profilePicData, teamboxNotifications } from 'Frontend/dashboard/models/profile.model';
 import { isNullOrUndefined } from 'is-what';
+import { environment } from 'environments/environment';
 declare var $:any;
 
 @Component({
@@ -58,6 +59,7 @@ export class MyprofileComponent implements OnInit,OnDestroy {
   notificationData:any = [];
   notification:any;
   body: any;
+  public channelDomain:string = environment?.chhanel;
   private notificationIntervalSubscription: any;
 
   NotificationData = [
@@ -341,7 +343,8 @@ toggleActiveState(checked: boolean) {
       confirmPass: this.changePasswordValue?.confirmPass,
       name: this.Name,
       email_id: this.EmailId,
-      mobile_number: this.PhoneNumber
+      mobile_number: this.PhoneNumber,
+      channel : this.channelDomain
     }
     if (this.changepassword.valid) {
       this.apiService.changePass(this.body).subscribe(
