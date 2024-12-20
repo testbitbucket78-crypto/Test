@@ -13,7 +13,8 @@ app.use(bodyParser.json());
 const path = require("path");
 const { EmailConfigurations } =  require('../Authentication/constant');
 const { MessagingName }= require('../enum');
-
+const {EmailTemplateProvider}= require('../common/template')
+const { sendEmail }= require('../Services/EmailService');
 app.use(bodyParser.urlencoded({ extended: true }));
 
 const getCampaigns = (req, res) => {

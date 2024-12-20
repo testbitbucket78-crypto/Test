@@ -2363,7 +2363,8 @@ const countryCodeMap = parseCountryCodes(countryCodes);
 // Function to check length of phone numbers and validate country code
 const checkPhoneNumbersLength = (phoneNumbers, countryCodeMap, expectedLengths) => {
   return phoneNumbers.map(phone => {
-    const result = separatePhoneNumber(phone, countryCodeMap);
+    const phoneString = typeof phone === "string" ? phone : phone.toString();
+    const result = separatePhoneNumber(phoneString, countryCodeMap);
 
     if (result) {
       let country = result.country.replace(/\D/g, '');
@@ -2376,7 +2377,7 @@ const checkPhoneNumbersLength = (phoneNumbers, countryCodeMap, expectedLengths) 
         isValidLength
       };
     } else {
-      return { phone, error: "Invalid country code or phone number" };
+      return { phoneString, error: "Invalid country code or phone number" };
     }
   });
 };

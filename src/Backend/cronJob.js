@@ -47,7 +47,7 @@ async function fetchScheduledMessages() {
 
     // HAVE TO CHANGE THIS IN ASYNC FOR EACH SPID
     for (const message of messagesData) {
-      message?.start_datetime = message?.formatted_date + 'Z';
+      message.start_datetime = message.formatted_date + 'Z';
       console.log(message.sp_id, new Date(currentDateTime), new Date(message.start_datetime), message.Id, message.start_datetime)
       //  let campaignTime = await getCampTime(message.sp_id)  // same as below loop
       // console.log(message.sp_id, "campaignTime", isWorkingTime(message), new Date(message.start_datetime) < new Date(currentDateTime), new Date(message.start_datetime), new Date(), new Date(currentDateTime))
