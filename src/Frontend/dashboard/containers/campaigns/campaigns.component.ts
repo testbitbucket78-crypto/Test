@@ -2463,17 +2463,8 @@ testinfo(){
 				let tableRows: any[] = [];
 				let results: any[];
 				let jsonSheetData = XLSX.utils.sheet_to_json(worksheet, {defval: null,
-					raw: false });
+					raw: true });
 
-				jsonSheetData = jsonSheetData.map((row: any) => {
-					Object.keys(row).forEach((key) => {
-						const value = row[key];
-						if (typeof value === "string" && /^[0-9]\.[0-9]+E\+[0-9]+$/.test(value)) {
-							row[key] = BigInt(Number(value)).toString();
-						}
-					});
-					return row;
-				});
 				results  = jsonSheetData;
 				tableHeader = Object.keys(results[0]);
 				let i = 0;

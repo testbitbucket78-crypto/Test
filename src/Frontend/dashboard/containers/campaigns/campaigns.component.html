@@ -221,8 +221,8 @@ It is determined by a combination of user feedback signals like blocks, reports 
 
 					<!--If running end-->
 					
-					<p class="sub_title_sm mb-1" ><img *ngIf="selectedCampaign.status==1 || selectedCampaign.status==0" (click)="editCampaign(addNewCampaign,2)" class="icon_sm" src="../../../../assets/img/teambox/edit-icon.svg"> Traget Audience</p>
-					<p>{{selectedCampaign?.AllContactsLength}} <span>( {{selectedCampaign?.AudienceType}})</span></p>
+					<p class="sub_title_sm mb-1" ><img *ngIf="selectedCampaign.status==1 || selectedCampaign.status==0" (click)="editCampaign(addNewCampaign,2)" class="icon_sm" src="../../../../assets/img/teambox/edit-icon.svg"> Target Audience</p>
+					<p>{{selectedCampaign?.AllContactsLength}} <span>( {{ selectedCampaign?.AudienceType === 'CSV Imported' ? 'Manually Imported' : selectedCampaign?.AudienceType }} )</span></p>
 					<p class="sub_title_sm" ><img *ngIf="selectedCampaign?.status==1 || selectedCampaign.status==0" (click)="editCampaign(addNewCampaign,3.1)" class="icon_sm" src="../../../../assets/img/teambox/edit-icon.svg"> Message</p>
 					<p class="sub_title_sm blackcolor mb-1">Category</p>
 					<p>{{selectedCampaign?.category_label}}</p>
@@ -719,7 +719,7 @@ It is determined by a combination of user feedback signals like blocks, reports 
 								<div *ngIf="!selectedTemplate?.media_type" class="template_img_placeholder"></div>
 							</div>
 							<div class="template_text">
-								<p *ngIf="selectedTemplate?.TemplateName" [innerHTML]="selectedTemplate?.Header |sanitizeHtml" class="name"></p>
+								<p *ngIf="selectedTemplate?.Header" [innerHTML]="selectedTemplate?.Header |sanitizeHtml" class="name"></p>
 								<p [innerHTML]="selectedTemplate?.BodyText |sanitizeHtml" class="description"></p>
 								<p class="temp-footer" *ngIf="selectedTemplate?.FooterText" [innerHTML]="selectedTemplate?.FooterText |sanitizeHtml" class="footer" style="font-style: italic;"></p>
 							</div>
