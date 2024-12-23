@@ -232,6 +232,7 @@ convertTimeFormat(time: string | null | undefined, isStaticFormat: boolean = fal
     return `${hours.padStart(2, '0')}:${minutes.padStart(2, '0')}`;
 
   } else { // Convert to 12-hour format
+    const [timePart, originalModifier] = trimmedTime.split(' ');
     let [hours, minutes] = trimmedTime.split(':');
 
     if (!hours || !minutes) {
@@ -241,7 +242,7 @@ convertTimeFormat(time: string | null | undefined, isStaticFormat: boolean = fal
     minutes = minutes.split(' ')[0] || '00'; 
     const hourNumber = parseInt(hours, 10);
 
-    const modifier = hourNumber >= 12 ? 'PM' : 'AM';
+    const modifier = originalModifier || (hourNumber >= 12 ? 'PM' : 'AM');
     if (hourNumber === 0) {
       hours = '12';
     } else if (hourNumber > 12) {

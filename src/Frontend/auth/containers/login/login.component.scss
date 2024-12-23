@@ -23,7 +23,26 @@
     margin-bottom: -4rem;
 
 }
+.tag-line {
+    position: absolute;
+    left: 75px;
+    top: 100px;
+    font-size: 32px;
+    text-align: center;
+    color: #ffffff;
+    letter-spacing: -0.46px;
+    font-family: Manrope;
+    font-weight: bold;
+}
 
+.copyright-text{
+    position: absolute;
+    bottom: 60px;
+    left: 30px;
+    font-family: Manrope;
+    font-size: 14px;
+    color: #171414;
+}
 // .btn:disabled{
 
 // }
@@ -51,6 +70,9 @@
     line-height: 23px;
     font-weight: regular;
     margin-top: 1.3rem;
+}
+.custom-control-label a{
+    color: blue !important;
 }
 #row1{
     margin-left: -1.4rem;

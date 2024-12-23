@@ -196,7 +196,7 @@ async function parseMessageForCSV(message_content, contact, messageVariable) {
           return contact[value];
         } else {
           logger.info(`else var ${value} ,${contact.hasOwnProperty(value)}`) 
-          extractedValues.push(value);
+          extractedValues.push('');
           return value;
         }
       });
