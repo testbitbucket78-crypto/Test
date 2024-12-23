@@ -699,8 +699,9 @@ public  fieldsData: { [key: string]: string } = { text: 'name' };
 		//this.chatEditor.value =htmlcontent
 		this.isAttachmentMedia = false;
 		this.isTemplate = true;
-		this.headerText = item?.Header;
-		this.bodyText = item?.BodyText;
+		let temp = this.allTemplatesMain.filter((it:any) => it.ID == item.ID)[0];
+		this.headerText = temp?.Header;
+		this.bodyText = temp?.BodyText;
 		this.templateName= item?.TemplateName;
 		this.templatelanguage = this.settingService?.filterListLanguage.find((lang: any) => lang.label === item?.Language)?.code || '';
 		this.mediaType = item?.media_type;
