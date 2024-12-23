@@ -1027,12 +1027,12 @@ const campaignReport = async (req, res) => {
         const transporter = getTransporter(emailSender);
         const senderConfig = EmailConfigurations[emailSender];
         /// Add cells with separate parts of the message
-        worksheet.addRow([headerMessageText, linkText, afterLinkText]);
+       // worksheet.addRow([headerMessageText, linkText, afterLinkText]);
 
         // Set hyperlink on the "link" cell 
-        const linkCell = worksheet.getCell('B1');
-        linkCell.value = { text: linkText, hyperlink: headerMessageLink };
-        linkCell.font = { color: { argb: 'FF0000FF' }, underline: true }; // Blue color and underline to indicate a hyperlink
+       // const linkCell = worksheet.getCell('B1');
+        //linkCell.value = { text: linkText, hyperlink: headerMessageLink };
+        //linkCell.font = { color: { argb: 'FF0000FF' }, underline: true }; // Blue color and underline to indicate a hyperlink
 
         // Adjust column widths for better readability 
         worksheet.getColumn(1).width = 50;
