@@ -191,7 +191,7 @@ async function getDefaultAttribue(message_variables, spid, customerId) {
         } else {
           result[value] = fallback;
         }
-      } else if(message_variable?.isAttribute == false){
+      } else if(message_variable?.isAttribute == false || message_variable?.isFallback == false){
         result[label] = message_variable?.value;
       } else {
         console.log(`[${value}] not found in EndCustomer table or SPIDCustomContactFields.`);
