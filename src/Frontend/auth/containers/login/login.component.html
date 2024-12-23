@@ -1,7 +1,8 @@
 <sb-layout-auth>
     <div class="container col-lg-12 d-flex ">
         <div class="col-lg-6">
-        <img src="assets/img/img-reg.png" class="float-left"  >
+        <img *ngIf="channelDomain == 'api'" src="assets/img/img-reg.png" class="float-left"  >
+        <img *ngIf="channelDomain == 'web'" src="../../../../assets/img/Engagezilla-Login-Signup.png" class="float-left"  >
     </div>
         <div class="row col-lg-6 "  >
             <sb-loader [isLoading]="isLoading"></sb-loader>
@@ -27,18 +28,18 @@
                                   <span class="eyeicon col-xs-1 2mt-6 "(click)="viewpass()"><i [ngClass]="visible?'fa fa-eye-slash':'fa fa-eye'"></i></span>
                         </div>
                     </div>
-                    <div class="form-group row col-xs-6 col-md-3" id="row1">
+                    <div class="form-group row col-xs-6 col-md-6" id="row1">
                         <div class="col-sm-1 "></div>
                         <div class="custom-control custom-checkbox">
-                            <input class="custom-control-input" id="rememberPasswordCheck" type="checkbox" />
-                            <label class="custom-control-label" for="rememberPasswordCheck">Remember Me</label>
+                            <input class="custom-control-input" formControlName="agree" id="rememberPasswordCheck" type="checkbox" />
+                            <label class="custom-control-label" for="rememberPasswordCheck">I accept the <a href="https://engagekart.com/terms-and-conditions/" target="_blank">Terms & Conditions</a> and <a href="https://engagekart.com/privacy-policy/" target="_blank">Privacy Policy</a></label>
                         </div>
                     </div>
 
                     <div class="col-sm-12 text-center" ><a class="small" routerLink="/forgot-password" >Forgot
                             Password?</a></div>
                     <div class="form-group  text-center col-sm-12 ">
-                        <button class="btn btn" id="butto" type="submit">Log In</button>
+                        <button class="btn btn" id="butto" type="submit" [disabled]="!loginForm.get('agree')?.value">Log In</button>
                         
                     </div>
                     
@@ -54,7 +55,6 @@
         </div>
         
     </div>
-
 
   
 </sb-layout-auth>

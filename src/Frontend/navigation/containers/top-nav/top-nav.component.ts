@@ -7,6 +7,7 @@ import { Router } from '@angular/router';
 import { interval } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
 import { NotificationService } from 'Frontend/dashboard/services/notification.service';
+import { environment } from 'environments/environment';
 
 @HostListener('window:scroll', ['$event'])
 
@@ -19,7 +20,7 @@ import { NotificationService } from 'Frontend/dashboard/services/notification.se
 export class TopNavComponent implements OnInit {
     @Input() title: string = '';
     showNav: boolean = true;
-    
+    chhanel:string =environment.chhanel;
     onWindowScroll(event:any) {
         const scrollTop = event.target.documentElement.scrollTop;
         this.showNav = scrollTop < 50;

@@ -9,7 +9,7 @@
     border: none;
 }
 
-.btn:not(:disabled):not(.disabled) {
+.btn {
     cursor: pointer;
     width: 220px;
     border-radius: 22px;
@@ -23,6 +23,10 @@
     margin-bottom: -4rem;
 
 }
+
+// .btn:disabled{
+
+// }
 .log{
     margin: 11rem 0px 0px 0px;
 }
@@ -170,3 +174,4 @@ input::-ms-clear {
   }
 
 }
+

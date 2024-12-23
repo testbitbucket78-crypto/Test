@@ -20,6 +20,7 @@ export class RegisterComponent implements OnInit {
 
 
     buttonColor = 'grey';
+    public channelDomain:string = environment?.chhanel;
     visible:boolean = true;
     visible1:boolean = true;
     changetype:boolean = true;

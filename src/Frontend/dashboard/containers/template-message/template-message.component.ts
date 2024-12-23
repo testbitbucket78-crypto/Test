@@ -8,6 +8,7 @@ import { ToolbarService, LinkService, ImageService, EmojiPickerService, CountSer
 import { RichTextEditorComponent, HtmlEditorService } from '@syncfusion/ej2-angular-richtexteditor';
 import { faSmileWink } from '@fortawesome/free-solid-svg-icons';
 import { PhoneValidationService } from 'Frontend/dashboard/services/phone-validation.service';
+import { environment } from 'environments/environment';
 
 declare var $: any;
 @Component({
@@ -60,6 +61,7 @@ export class TemplateMessageComponent implements OnInit {
     countValue: number = 1;
     customValue: string = "var1";
     public placeholderText = 'Enter full URL for https://www.example.com/{{1}}';
+    public channelDomain:string = environment?.chhanel;
     isLoading!:boolean;
     valuesMap: Map<number, string> = new Map();
     filterListTopic = [
@@ -1124,9 +1126,9 @@ checkTemplateName(e:any){
             this.insertAtCursor(selectedValue);
             }
             // this.insertAtCursor(selectedValue);
-            // setTimeout(() => {
-            //     this.onContentChange();
-            // }, 50); 
+            setTimeout(() => {
+                this.onContentChange();
+            }, 100); 
         }
         this.closeAtrrModal();
     }
@@ -1149,7 +1151,23 @@ insertAtCursor(selectedValue: any) {
 	const newNode = document.createElement('span');
 	newNode.innerHTML =  '<span contenteditable="false" class="e-mention-chip"><a _ngcontent-yyb-c67="" title="">{{'+selectedValue+'}}</a></span>';
 	this.lastCursorPosition?.insertNode(newNode);
+    setTimeout(()=>{
+        this.triggerRichTextEditorChange()
+        // this.chatEditor.refresh(); 
+    this.chatEditor.trigger('change');
+    },200)
 }
+
+triggerRichTextEditorChange() {
+    const editorElement = this.chatEditor?.element;
+    if (editorElement) {
+      console.log('Triggering change event');
+      const changeEvent = new Event('change', { bubbles: true, cancelable: true });
+      editorElement.dispatchEvent(changeEvent);
+    } else {
+      console.error('Editor element not found');
+    }
+  }
 
      /* GET VARIABLE VALUES */
     getVariables(sentence: string, first: string, last: string, isTempateJson:boolean =false) {
@@ -1236,9 +1254,9 @@ insertAtCursor(selectedValue: any) {
 
     
 onContentChange() {
-   
     const container = document.createElement('div');
     container.innerHTML = this.chatEditor?.value;
+    console.log(this.chatEditor?.value);
     const text = container.innerText;
     //this.processText(text);
     const emojiRegex = /[\uD800-\uDBFF][\uDC00-\uDFFF]/g; 
@@ -1492,9 +1510,7 @@ return true
     this.allVariablesValueList.forEach((item:any)=>{
         repArray.push({word:item?.var,replaceWord:item?.val})
     })
-    console.log(repArray);
     const updatedString = this.replaceWordsInSequence(val, repArray);
-    console.log(updatedString);
     return updatedString
   }
 
