@@ -30,6 +30,6 @@ export class AppComponent {
 
     setFavicon(): void {
         const favicon = this.renderer.selectRootElement('#app-favicon', true);
-        this.renderer.setAttribute(favicon, 'href', 'Engagezilla Favicon 96 x 96');
+        this.renderer.setAttribute(favicon, 'href', 'favicon1.ico');
       }
 }

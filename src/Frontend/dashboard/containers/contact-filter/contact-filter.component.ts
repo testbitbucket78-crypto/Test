@@ -11,6 +11,7 @@ import { SettingsService } from 'Frontend/dashboard/services/settings.service';
 export class ContactFilterComponent implements OnInit {
   
 	contactFilterBy:any=[];
+	initContactFilterBy:any=[];
 	
 	newContactListFilters:any=[]
 	@Input() ContactListNewFilters:any=[];
@@ -28,6 +29,7 @@ export class ContactFilterComponent implements OnInit {
   showContactFilter:any=false;
   showFilterByOption:any=false;
   showFilterTagOption:any=false;
+  isUpdate:any=false;
   filteredEndCustomer:any=[];
   filteredEndCustomerOrigional:any=[];
   modalReference: any;
@@ -39,6 +41,7 @@ export class ContactFilterComponent implements OnInit {
 	@ViewChild('addNewItemss', { static: true }) modalContent: TemplateRef<any> | undefined;
 	@Output() query = new EventEmitter<string> () ;
 	@Output() closeFilterPopup = new EventEmitter<string>();
+	@Output() clearFilters = new EventEmitter<string>();
 	@Output() contactFilterList = new EventEmitter<any>();
 	
   constructor(private modalService: NgbModal,private _settingsService:SettingsService,
@@ -281,10 +284,10 @@ export class ContactFilterComponent implements OnInit {
 				}
 			}			
 			this.contactFilterBy.push({value:item?.ActuallName,label:item?.displayName,checked:false,addeFilter:[],option:options});
-
-		  })
-		}
 		})
+		this.initContactFilterBy = JSON.parse(JSON.stringify(this.contactFilterBy));
+	}
+})
 	  }
 
 	  getTagData() {
@@ -431,7 +434,7 @@ export class ContactFilterComponent implements OnInit {
 	  }
 	  addFilter(){
 		console.log(this.ContactListNewFilters);
-		console.log(this.selectedcontactFilterBy);
+		console.log(this.selectedcontactFilterBy);		
 		this.selectedcontactFilterBy['addeFilter']=this.ContactListNewFilters;
 		let idx = this.contactFilterBy.findIndex((item:any)=> item.value == this.selectedcontactFilterBy?.value);
 		if(idx >-1){
@@ -447,7 +450,7 @@ export class ContactFilterComponent implements OnInit {
          
     }
     getContactFilterQuery(addeFilter:any){
-
+		this.isUpdate = true;
       const groups = addeFilter.reduce((groups:any, filter:any) => {
         
         if (!groups[filter.filterPrefix]) {
@@ -695,6 +698,12 @@ export class ContactFilterComponent implements OnInit {
     }
 
 	closeFilter(){
+		console.log(this.initContactFilterBy);
+		console.log(this.contactFilterBy);
+		if(!this.isUpdate){
+			this.clearFilters.emit();
+		}
+			
 		this.modalReference.close();		
 		this.modalService.dismissAll();
 		this.closeFilterPopup.emit();
