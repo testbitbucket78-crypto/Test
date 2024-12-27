@@ -1128,7 +1128,7 @@ checkTemplateName(e:any){
             // this.insertAtCursor(selectedValue);
             setTimeout(() => {
                 this.onContentChange();
-            }, 100); 
+            }, 300); 
         }
         this.closeAtrrModal();
     }
@@ -1152,9 +1152,8 @@ insertAtCursor(selectedValue: any) {
 	newNode.innerHTML =  '<span contenteditable="false" class="e-mention-chip"><a _ngcontent-yyb-c67="" title="">{{'+selectedValue+'}}</a></span>';
 	this.lastCursorPosition?.insertNode(newNode);
     setTimeout(()=>{
-        this.triggerRichTextEditorChange()
-        // this.chatEditor.refresh(); 
-    this.chatEditor.trigger('change');
+        document.execCommand('bold');
+        //document.execCommand('bold');
     },200)
 }
 

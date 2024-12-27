@@ -313,6 +313,37 @@ io.on('connection', (socket) => {
 });
 
 
+async function sendDataToWebSocket(webSocketUrl, data) {
+  try {
+      const socket = io(webSocketUrl, {
+          transports: ['websocket'], 
+          reconnectionAttempts: 3,  
+      });
+
+      socket.on('connect', () => {
+          console.log('Connected to WebSocket:', webSocketUrl);
+
+          socket.emit('message', data);
+          console.log('Data sent:', data);
+
+          setTimeout(() => {
+              socket.disconnect();
+              console.log('Disconnected from WebSocket');
+          }, 1000); 
+      });
+
+      socket.on('connect_error', (err) => {
+          console.error('Connection error:', err.message);
+      });
+
+      socket.on('disconnect', () => {
+          console.log('WebSocket disconnected');
+      });
+  } catch (error) {
+      console.error('Error sending data to WebSocket:', error.message);
+  }
+}
+
 const port = 3010;
 server.listen(port, () => {
   console.log(`Socket.IO server started on port ${port}`);

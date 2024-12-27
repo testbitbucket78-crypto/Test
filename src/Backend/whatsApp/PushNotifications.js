@@ -97,7 +97,7 @@ socket.on('message', (message) => {
   console.log("Received:", message);
 });
 
-function NotifyServer(display_phone_number, updatemessage, message, status, msg_status, msg_id) {
+async function NotifyServer(display_phone_number, updatemessage, message, status, msg_status, msg_id) {
   try {
     let notificationMsg = {};
     if (updatemessage) {
@@ -110,6 +110,10 @@ function NotifyServer(display_phone_number, updatemessage, message, status, msg_
         msg_status: msg_status,
         msg_id: msg_id
       };
+      let spid = await db.excuteQuery('select SPID from Message where Message_id =?', msg_id);
+      let websocketurl = await db.excuteQuery('select webhook_url from UserAPIKeys where spid =?', spid);
+      //select SPID from Message where Message_id = 34911
+      sendDataToWebSocket(websocketurl,notificationMsg)
     }
 
     if (!socket.connected) {
@@ -120,6 +124,37 @@ function NotifyServer(display_phone_number, updatemessage, message, status, msg_
     socket.emit('message', notificationMsg);
   } catch (err) {
     console.error("Notify Error:", err);
+  }
+}
+
+async function sendDataToWebSocket(webSocketUrl, data) {
+  try {
+      const socket = io(webSocketUrl, {
+          transports: ['websocket'], 
+          reconnectionAttempts: 3,  
+      });
+
+      socket.on('connect', () => {
+          console.log('Connected to WebSocket:', webSocketUrl);
+
+          socket.emit('message', data);
+          console.log('Data sent:', data);
+
+          setTimeout(() => {
+              socket.disconnect();
+              console.log('Disconnected from WebSocket');
+          }, 1000); 
+      });
+
+      socket.on('connect_error', (err) => {
+          console.error('Connection error:', err.message);
+      });
+
+      socket.on('disconnect', () => {
+          console.log('WebSocket disconnected');
+      });
+  } catch (error) {
+      console.error('Error sending data to WebSocket:', error.message);
   }
 }
 

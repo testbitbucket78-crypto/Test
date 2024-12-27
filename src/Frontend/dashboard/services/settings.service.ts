@@ -528,7 +528,22 @@ const headers = new HttpHeaders({
     return this.http.post<any>(`${this.API_URL}/addWhatsAppDetails`,tagData);
   } 
 
+  getApiKeyData(tagData:any): Observable<any> {
+    return this.http.post<any>(`${this.API_URL}/addGetAPIKeys`,tagData);
+  } 
+
+  testWebhook(tagData:any): Observable<any> {
+    return this.http.post<any>(`${this.API_URL}/testwebhook`,tagData);
+  } 
+
+  saveWebhook(tagData:any): Observable<any> {
+    return this.http.post<any>(`${this.API_URL}/saveWebhookUrl`,tagData);
+  } 
   
+  apiKeyState(tagData:any): Observable<any> {
+    return this.http.post<any>(`${this.API_URL}/APIkeysState`,tagData);
+  } 
+
   addWhatsAppAPIDetails(data:any): Observable<any> {
     return this.http.post<any>(`${this.API_URL}/addWAapiDetails`,data);
   } 

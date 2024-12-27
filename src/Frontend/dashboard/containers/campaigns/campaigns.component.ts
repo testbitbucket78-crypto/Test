@@ -1481,6 +1481,7 @@ formateDate(dateTime:string){
 	  selectScheduleDate(event: any) {
 	  
 		   this.selecteScheduleDate = event?.target?.value;
+		   //T00:00:00
 		   this.selScheduleDate = new Date(new Date(this.selecteScheduleDate).toDateString());
 		   this.currDate = new Date(new Date().toDateString());
 		 }
