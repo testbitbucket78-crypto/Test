@@ -651,6 +651,158 @@ async function autoReplyPauseTime(spid, newId) {
 
 
 const insertMessage = async (req, res) => {
+    await insertMessageAndSend(req, res, middleWare)
+    // try {
+        // logger.info('Starting insertMessage function');
+        //     logger.debug('Request Body:', req.body);
+        
+    //     if (req.body.Message_id == '') {
+    //         var messageQuery = val.insertMessageQuery;
+
+    //         let SPID = req.body.SPID;
+    //         let interaction_id = req.body.InteractionId;
+    //         let customerId = req.body.CustomerId;
+    //         let Agent_id = req.body.AgentId;
+    //         let message_direction = "Out";
+    //         let message_text = req.body.message_text;
+    //         let message_media = req.body.message_media;
+    //         let media_type = req.body.media_type;
+    //         let Message_template_id = req.body.template_id;
+    //         let Quick_reply_id = req.body.quick_reply_id;
+    //         let Type = req.body.message_type;
+    //         let created_at = req.body.created_at;  //send time in utc
+    //         let ExternalMessageId = '';
+    //         let mediaSize = req.body.mediaSize;
+    //         let spNumber = req.body?.spNumber;
+    //         let assignAgent = req.body?.assignAgent;
+    //         var msgVar = req.body?.MessageVariables;
+
+    //         var header = req.body?.headerText
+    //         var body = req.body?.bodyText
+    //         let DynamicURLToBESent;
+    //         let buttonsVariable = typeof req.body?.buttonsVariable === 'string' ? JSON.parse(req.body?.buttonsVariable) : req.body?.buttonsVariable;
+    //         if(!commonFun.isInvalidParam(req.body?.buttonsVariable) && buttonsVariable.length > 0) {
+    //            DynamicURLToBESent = await removeTags.getDynamicURLToBESent(buttonsVariable, SPID, customerId);
+    //         }
+
+    //         let agentName = await db.excuteQuery('select name from user where uid=?', [Agent_id]);
+    //         let channelType = await db.excuteQuery('select * from EndCustomer where customerId=? and SP_ID=?', [customerId, SPID]);
+    //         let spchannel = await db.excuteQuery('select channel_id from WhatsAppWeb where spid=? limit 1', [SPID]);
+    //         let uidMentioned = Array.isArray(req.body?.uidMentioned) ? req.body.uidMentioned : [];
+    //         let buttons = JSON.stringify(req?.body?.buttons);
+    //         const channel = channelType.length > 0 ? channelType[0].channel : spchannel[0]?.channel_id;
+
+    //         var values = [[SPID, Type, ExternalMessageId, interaction_id, Agent_id, message_direction, message_text, message_media, media_type, Message_template_id, Quick_reply_id, created_at, created_at, mediaSize, assignAgent, buttons]];
+    //         let msg_id = await db.excuteQuery(messageQuery, [values]);
+    //         //  logger.debug('Message ID:', msg_id);
+    //         let updateInteraction = await db.excuteQuery(val.updateTempInteractionQuery, [0, interaction_id])
+    //         if (agentName.length >= 0) {
+    //             let mentionQuery = "SELECT * FROM Message WHERE ? LIKE ?";
+    //             let messageTextParameter = `%${message_text}%`; // assuming message_text is the text you want to search
+    //             let agentNameParameter = `@${agentName[0].name}`; // assuming agentName is an array and you want to search for the first agent's name
+
+    //             var mentionedNotification = await db.excuteQuery(mentionQuery, [messageTextParameter, agentNameParameter]);
+    //         }
+
+    //         if (Type == 'notes') {
+    //             let myUTCString = new Date().toUTCString();
+    //             const utcTimestamp = moment.utc(myUTCString).format('YYYY-MM-DD HH:mm:ss');
+    //             await Promise.all(
+    //                 uidMentioned.map(async (element) => {
+    //                     const check = await commonFun.notifiactionsToBeSent(element, 4);
+    //                     if (check) {
+    //                         let notifyvalues = [
+    //                             [SPID, '@Mention in the Notes', 'You have a been mentioned in the Notes', element, 'teambox', element, utcTimestamp]
+    //                         ];
+    //                         let mentionRes = await db.excuteQuery(val.addNotification, [notifyvalues]);
+    //                     } else {
+    //                         console.log(`Notification disabled for UID: ${element}`);
+    //                     }
+    //                 })
+    //             );
+    //         }
+
+    //         let content = await removeTags.removeTagsFromMessages(message_text);
+    //         const placeholders = parseMessageTemplate(content);
+    //         console.log(placeholders)
+    //         let results;
+    //         if (placeholders.length > 0) {
+
+
+    //             // console.log(msgVar != null,"msgVar",msgVar,msgVar !='')
+    //             if (msgVar != null && msgVar != '') {
+
+    //                 results = await removeTags.getDefaultAttribue(msgVar, SPID, customerId);
+    //                 console.log("atribute result ", results)
+    //                 placeholders.forEach(placeholder => {
+    //                     const result = results.find(result => result.hasOwnProperty(placeholder));
+    //                     //  console.log(placeholder,"place foreach",results)
+    //                     const replacement = result && result[placeholder] !== undefined ? result[placeholder] : null;
+    //                     console.log(replacement, "replacement placeholder ", placeholder)
+    //                     content = content.replace(`{{${placeholder}}}`, replacement);
+    //                 });
+    //             } else {
+
+    //                 results = await removeTags.getDefaultAttribueWithoutFallback(placeholders, SPID, customerId);
+    //             }
+
+    //             placeholders.forEach(placeholder => {
+    //                 const result = results.find(result => result.hasOwnProperty(placeholder));
+    //                 const replacement = result && result[placeholder] !== undefined ? result[placeholder] : null;
+    //                 content = content.replace(`{{${placeholder}}}`, replacement);
+    //             });
+    //         }
+
+    //         let middlewareresult = "";
+    //         if (Type != 'notes') {
+    //             if (channelType[0].isBlocked != 1) {
+    //                 if (req?.body?.isTemplate == true && channel == 'WA API') {
+    //                     const mediaType = determineMediaType(media_type);
+    //                     //get header and body variable 
+    //                     let headerVar = await commonFun.getTemplateVariables(msgVar, header, SPID, customerId);
+    //                     let bodyVar = await commonFun.getTemplateVariables(msgVar, body, SPID, customerId);
+
+    //                     middlewareresult = await middleWare.createWhatsAppPayload(mediaType, req?.body?.messageTo, req?.body?.name, req?.body?.language, headerVar, bodyVar, message_media, SPID, req?.body?.buttons, DynamicURLToBESent);
+    //                    // middlewareresult = await middleWare.channelssetUp(SPID, channel, mediaType, req.body.messageTo, content, message_media, interaction_id, msg_id.insertId, spNumber);
+    //                 } else {
+    //                     if (req.body.message_media != 'text') {
+    //                         const mediaType = determineMediaType(media_type);
+    //                         middlewareresult = await middleWare.channelssetUp(SPID, channel, mediaType, req.body.messageTo, content, message_media, interaction_id, msg_id.insertId, spNumber);
+    //                     } else {
+    //                         middlewareresult = await middleWare.channelssetUp(SPID, channel, 'text', req.body.messageTo, content, message_media, interaction_id, msg_id.insertId, spNumber);
+    //                     }
+    //                     // autoReplyPauseTime(SPID, interaction_id);
+    //                 }
+    //                 if (middlewareresult?.status != 200) {
+    //                     let NotSendedMessage = await db.excuteQuery('UPDATE Message set msg_status=9 where Message_id=?', [msg_id.insertId]);
+    //                 };
+    //                 if (middlewareresult?.status == 200) {
+    //                     let UpdatePauseTime = await getDefaultActionTimeandUpdatePauseTime(SPID, customerId)
+    //                     let NotSendedMessage = await db.excuteQuery('UPDATE Message set Message_template_id=? where Message_id=?', [middlewareresult?.message?.messages[0]?.id, msg_id.insertId]);
+    //                 }
+
+    //                 //  logger.debug('Middleware Result:', middlewareresult);
+    //             } else {
+    //                 let NotSendedMessage = await db.excuteQuery('UPDATE Message set msg_status=10 where Message_id=?', [msg_id.insertId]);
+    //             }
+    //         }
+    //         res.send({ middlewareresult: middlewareresult, status: middlewareresult?.status, insertId: msg_id.insertId });
+    //         logger.info('insertMessage function completed successfully');
+    //     } else {
+    //         let message_text = req.body.message_text;
+    //         let Message_id = req.body.Message_id;
+    //         var values = [[message_text, Message_id]];
+    //         var messageQuery = "UPDATE Message SET updated_at ='" + created_at + "', message_text ='" + message_text + "' WHERE Message_id =" + Message_id;
+    //         db.runQuery(req, res, messageQuery, [values]);
+    //         // logger.info('insertMessage function completed successfully with message update');
+    //     }
+    // } catch (err) {
+    //     logger.error('Error in insertMessage:', err);
+    //     res.send({ status: 500, error: err });
+    // }
+};
+
+async function insertMessageAndSend(req, res, middleWares) {
     try {
         // logger.info('Starting insertMessage function');
         //     logger.debug('Request Body:', req.body);
@@ -761,14 +913,14 @@ const insertMessage = async (req, res) => {
                         let headerVar = await commonFun.getTemplateVariables(msgVar, header, SPID, customerId);
                         let bodyVar = await commonFun.getTemplateVariables(msgVar, body, SPID, customerId);
 
-                        middlewareresult = await middleWare.createWhatsAppPayload(mediaType, req?.body?.messageTo, req?.body?.name, req?.body?.language, headerVar, bodyVar, message_media, SPID, req?.body?.buttons, DynamicURLToBESent);
+                        middlewareresult = await middleWares.createWhatsAppPayload(mediaType, req?.body?.messageTo, req?.body?.name, req?.body?.language, headerVar, bodyVar, message_media, SPID, req?.body?.buttons, DynamicURLToBESent);
                        // middlewareresult = await middleWare.channelssetUp(SPID, channel, mediaType, req.body.messageTo, content, message_media, interaction_id, msg_id.insertId, spNumber);
                     } else {
                         if (req.body.message_media != 'text') {
                             const mediaType = determineMediaType(media_type);
-                            middlewareresult = await middleWare.channelssetUp(SPID, channel, mediaType, req.body.messageTo, content, message_media, interaction_id, msg_id.insertId, spNumber);
+                            middlewareresult = await middleWares.channelssetUp(SPID, channel, mediaType, req.body.messageTo, content, message_media, interaction_id, msg_id.insertId, spNumber);
                         } else {
-                            middlewareresult = await middleWare.channelssetUp(SPID, channel, 'text', req.body.messageTo, content, message_media, interaction_id, msg_id.insertId, spNumber);
+                            middlewareresult = await middleWares.channelssetUp(SPID, channel, 'text', req.body.messageTo, content, message_media, interaction_id, msg_id.insertId, spNumber);
                         }
                         // autoReplyPauseTime(SPID, interaction_id);
                     }
@@ -1103,7 +1255,7 @@ module.exports = {
     createInteraction, resetInteractionMapping, updateInteraction, updateTags, getAllInteraction, getInteractionById, getFilteredInteraction, checkInteractionPinned, getSearchInteraction,
     getAllMessageByInteractionId, insertMessage, deleteMessage, updateMessageRead,
     updateInteractionMapping, deleteInteraction, getInteractionMapping, updatePinnedStatus,
-    getsavedMessages, getquickReply, getTemplates, sendTextOnWhatsApp, sendMediaOnWhatsApp, updateNotes, addAction, getMessagesByMsgId, searchConatct, getInteraction
+    getsavedMessages, getquickReply, getTemplates, sendTextOnWhatsApp, sendMediaOnWhatsApp, updateNotes, addAction, getMessagesByMsgId, searchConatct, getInteraction, insertMessageAndSend
 };
 
 

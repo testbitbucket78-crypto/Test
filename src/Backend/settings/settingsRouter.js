@@ -205,6 +205,12 @@ router.post('/addWhatsAppDetails',authenticateToken,accountController.insertAndE
 router.get('/getWhatsAppDetails/:spid',authenticateToken,accountController.selectDetails)
 router.post('/addWAapiDetails',authenticateToken,accountController.addWAAPIDetails)
 router.get('/getQualityRating/:phoneNo/:phone_number_id/:WABA_ID/:spid',authenticateToken,accountController.getQualityRating)
+router.post('/addGetAPIKeys',authenticateToken,accountController.addGetAPIKey)
+router.post('/APIkeysState',authenticateToken,accountController.APIkeysState)
+router.post('/saveWebhookUrl',authenticateToken,accountController.saveWebhookUrl)
+router.post('/sendMessage' ,authenticateToken,accountController.sendMessage)
+
+
 
 router.post('/addToken',authenticateToken,accountController.addToken)//unused
 router.post('/editToken',authenticateToken,accountController.editToken)//unused
@@ -214,7 +220,7 @@ router.get('/selectToken/:spid',authenticateToken,accountController.selectToken)
 router.get('/createInstanceID',authenticateToken,accountController.createInstance)//unused
 router.post('/qrCodeData',authenticateToken,accountController.getQRcode)//unused
 router.post('/generateQRcode',authenticateToken,accountController.generateQRcode)//unused
-router.post('/testwebhook',authenticateToken,accountController.testWebhook)//unused
+router.post('/testwebhook',authenticateToken,accountController.testWebhook)
 
 //__________________________General Settings____________________________//
 
