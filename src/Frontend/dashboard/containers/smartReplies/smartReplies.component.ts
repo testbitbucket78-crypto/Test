@@ -866,7 +866,8 @@ showAddSmartRepliesModal() {
 			mediaContent=''
 		}
 		if(item.Links) this.messageMeidaFile = item.Links
-		var htmlcontent = mediaName+item.BodyText;
+
+		var htmlcontent = mediaName ? mediaName : ''+item.BodyText;
 		this.chatEditor.value = htmlcontent;
 		this.addingStylingToMedia(item);	
 	}

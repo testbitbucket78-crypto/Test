@@ -361,7 +361,7 @@ onButtonClick(data:any, event: any) {
     this.getTagData();
     this.getCustomFieldsData();
     this.getPhoneNumberValidation()
-    
+    console.log(this.settingsService.convertTimeFormat('3:12'));
   
 } 
 clearFilterChild() {

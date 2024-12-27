@@ -196,7 +196,7 @@ async function parseMessageForCSV(message_content, contact, messageVariable) {
           return contact[value];
         } else {
           logger.info(`else var ${value} ,${contact.hasOwnProperty(value)}`) 
-          extractedValues.push(value);
+          extractedValues.push('');
           return value;
         }
       });
@@ -332,41 +332,40 @@ async function getCampTime(spid) {
   return CampaignTimings;
 }
 
-
-// async function batchofScheduledCampaign(users, sp_id, type, message_content, message_media, phone_number_id, channel_id, message, list,header,body,templateId) {
-//   //console.log("batchofScheduledCampaign" ,message_content)
-//   for (let i = 0; i < users.length; i += batchSize) {
-//     const batch = users.slice(i, i + batchSize);
-//     console.log("batch i", i, batch.length)
-//     sendScheduledCampaign(batch, sp_id, type, message_content, message_media, phone_number_id, channel_id, message, list,header,body,templateId)
-
-//     if (i + batchSize < users.length) {
-//       setTimeout(() => {
-//         batchofScheduledCampaign(users.slice(i + batchSize), sp_id, type, message_content, message_media, phone_number_id, channel_id, message, list,header,body,templateId);
-//       }, delayBetweenBatches);
-//     }
-//   }
-//   setTimeout(() => {
-//     campaignCompletedAlert(message)
-//   }, 10000)
-// }
-
-
+function wait(delay) {
+  return new Promise(resolve => {
+     setTimeout(() => {
+                  resolve("done");
+    }, delay);
+  });
+}
 
 async function batchofScheduledCampaign(users, sp_id, type, message_content, message_media, phone_number_id, channel_id, message, list,header,body,templateId) {
-  let t = 0;
   for (let i = 0; i < users.length; i += batchSize) {
-    const batch = users.slice(i, i + batchSize);
-  setTimeout(()=>{
-    sendScheduledCampaign(batch, sp_id, type, message_content, message_media, phone_number_id, channel_id, message, list,header,body,templateId);
-  },t);
-  const randomdelay = Math.random()
-  t = t+10000;
+    const batch = users.slice(i, i + batchSize);  
+    await sendScheduledCampaign(batch, sp_id, type, message_content, message_media, phone_number_id, channel_id, message, list,header,body,templateId);
+    const randomdelay = Math.floor(Math.random() * (12000 - 8000 + 1)) + 8000;
+    await wait(randomdelay)
   }
   setTimeout(() => {
     campaignCompletedAlert(message)
   }, 10000)
 }
+
+// async function batchofScheduledCampaign(users, sp_id, type, message_content, message_media, phone_number_id, channel_id, message, list,header,body,templateId) {
+//   let t = 0;
+//   for (let i = 0; i < users.length; i += batchSize) {
+//     const batch = users.slice(i, i + batchSize);
+//   setTimeout(()=>{
+//      sendScheduledCampaign(batch, sp_id, type, message_content, message_media, phone_number_id, channel_id, message, list,header,body,templateId);
+//   },t);
+//   const randomdelay = Math.floor(Math.random() * (12000 - 8000 + 1)) + 8000;
+//   t = t+randomdelay;
+//   }
+//   setTimeout(() => {
+//     campaignCompletedAlert(message)
+//   }, 10000)
+// }
 
 
 
@@ -407,11 +406,12 @@ async function sendScheduledCampaign(batch, sp_id, type, message_content, messag
     }
     var response;
 
-    setTimeout(async () => {
-      response = await messageThroughselectedchannel(sp_id, Phone_number, type, textMessage, message_media, phone_number_id, channel_id, message.Id, message, message_text,headerVar,bodyVar,templateId,message.buttons,DynamicURLToBESent);
-      //console.log("response",response)     
-    }, 10)
-
+    // setTimeout(async () => {
+    //   //console.log("response",response)     
+    // }, 10)
+    response = await messageThroughselectedchannel(sp_id, Phone_number, type, textMessage, message_media, phone_number_id, channel_id, message.Id, message, message_text,headerVar,bodyVar,templateId,message.buttons,DynamicURLToBESent);
+    const randomdelay = Math.floor(Math.random() * (800 - 200 + 1)) + 200;
+    await wait(randomdelay)
   }
 }
 

@@ -1,9 +1,10 @@
 <sb-layout-auth>
     <div class="row mr-0" id="con">
       <div class="col-lg-5">
-        <span class="tag-line">An effective tool for<br /> advertising with WhatsApp</span>
+        <span *ngIf="channelDomain =='web'" class="tag-line">An effective tool for<br /> marketing with WhatsApp</span>
+        <span *ngIf="channelDomain !='web'" class="tag-line">Supercharge Your Marketing<br /> and Customer Engagement</span>
       <img src="assets/img/img-reg.png" class="float-left">
-      <span class="copyright-text">&copy;Copyright 2023</span>
+      <span class="copyright-text">&copy; Copyright 2024 {{channelDomain =='web' ? 'Engagezilla' : 'Engagekart'}}</span>
     </div>
     <div class="toaster" (click)="errorMessage=''">
       <p *ngIf="errorMessage" class="error">{{errorMessage}}</p>
@@ -91,7 +92,7 @@
                 <div class="custom-control custom-checkbox">
                   <input class="custom-control-input" type="checkbox" id="custom-control-input1" [checked]="checkboxChecked" (change)="onCheckboxChange($event.target.checked)">
                   <label class="custom-control-label" for="custom-control-input1" [ngClass]="{'bgwhite': checkboxChecked}">
-                   I accept the <a href="https://engagekart.com/terms-and-conditions/" target="_blank">Terms & Conditions</a> 
+                    I accept the <a href="https://engagekart.com/terms-and-conditions/" target="_blank">Terms & Conditions</a> and <a href="https://engagekart.com/privacy-policy/" target="_blank">Privacy Policy</a>
                   </label>
                   </div>
                  

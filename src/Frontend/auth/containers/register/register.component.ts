@@ -20,6 +20,7 @@ export class RegisterComponent implements OnInit {
 
 
     buttonColor = 'grey';
+    public channelDomain:string = environment?.chhanel;
     visible:boolean = true;
     visible1:boolean = true;
     changetype:boolean = true;
@@ -33,7 +34,6 @@ export class RegisterComponent implements OnInit {
     isVerifiedEmail!: boolean;
     emailVerified!: boolean;
     errorMessage: string ='';
-    public channelDomain:string = environment?.chhanel;
     countryCodes = [
         'AD +376', 'AE +971', 'AF +93', 'AG +1268', 'AI +1264', 'AL +355', 'AM +374', 'AO +244', 'AR +54', 'AS +1684',
         'AT +43', 'AU +61', 'AW +297', 'AX +358', 'AZ +994', 'BA +387', 'BB +1 246', 'BD +880', 'BE +32', 'BF +226',

@@ -1895,8 +1895,9 @@ formateDate(dateTime:string){
 	}
 	async selectCsvContactCol(item:any){
 		if(this.validateCsv(item)){
+			let colName = item?.trim()?.replace(/\s+/g, '')
 		this.csvContactList.forEach((obj:any) => {
-				obj.Contacts_Column = obj[item];
+				obj.Contacts_Column = obj[colName];
 				//delete obj[item];
 		});
 
@@ -2153,7 +2154,7 @@ testinfo(){
 	}
 	mapImportantContact(mpcampaign:any){
 		if(!this.selecetdCSV || !this.checkboxChecked) {
-			this.showToaster('Please Select csv file and check the checkbox...', 'error');
+			this.showToaster('Please Select file and check the checkbox...', 'error');
 			return;
 		}
 		this.closeAllModal()
@@ -2321,7 +2322,7 @@ testinfo(){
 		console.log(this.selecetdVariable)
 	}
 	updatedCSVAttributeOption(attribute:any,){
-		this.selecetdVariable['value']=attribute
+		this.selecetdVariable['value']=attribute?.trim()?.replace(/\s+/g, '');
 		this.selecetdVariable['selected']=false
 	}
 
@@ -2395,7 +2396,7 @@ testinfo(){
 			let fileName:any = files[0].name
 			
 			var FileExt:any = fileName.substring(fileName.lastIndexOf('.') + 1);
-
+			this.isLoading=  true;
 		if(FileExt =="csv") {
 				let file =files[0];
 				let reader: FileReader = new FileReader();
@@ -2499,10 +2500,12 @@ testinfo(){
 			fileReader.readAsArrayBuffer(file);
 
 				fileReader.readAsArrayBuffer(this.file);
-			}
+			}			
 		else {
 			this.showToaster('Please Upload csv file only...','error')
 		}
+
+		this.isLoading=  false;
 		}
 	  }
 	
@@ -3243,6 +3246,7 @@ console.log(this.allTemplatesMain);
 		});		
 		let obj = {phones:phoneArray};
 		let verifiedContactList:any[] =[];
+		this.isLoading = true;
 		this.dashboardService.getContactVerified(obj).subscribe((data:any)=>{
 			let verifiedData =  data?.results;			
 		$("#dagdropmodal").modal('hide');
@@ -3251,7 +3255,8 @@ console.log(this.allTemplatesMain);
 				if(data?.length >0 && item.phone){
 					verifiedContactList.push(data[0]);
 				}
-			});
+			});			
+		this.isLoading = false;
 			if(verifiedContactList.length > 0){
 				this.newListName=false;
 				this.csvContactList = verifiedContactList;

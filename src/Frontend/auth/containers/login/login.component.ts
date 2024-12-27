@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, OnInit, ChangeDetectorRef} from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit, ChangeDetectorRef, Renderer2, ViewChild, ElementRef} from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 import { FormGroup } from '@angular/forms';
 import { FormControl } from '@angular/forms';
@@ -21,6 +21,7 @@ export class LoginComponent implements OnInit {
     loginForm = new FormGroup({
          email_id: new FormControl('', Validators.compose([Validators.compose([Validators.required, Validators.pattern('^[^\\s@]+@[^\\s@]+\\.[^\\s@]{2,}$'), Validators.minLength(1)])])),
          password: new FormControl('', Validators.compose([Validators.required,Validators.minLength(8)])),
+         agree: new FormControl(false),
          flash: new FormControl(this.checked)
     })
     title = 'formValidation';
@@ -31,7 +32,9 @@ export class LoginComponent implements OnInit {
     changetype: boolean = true;
     public channelDomain:string = environment?.chhanel;
 
-    constructor(private apiService: AuthService, private router: Router, private formBuilder: FormBuilder, private settingsService:SettingsService,private cdr: ChangeDetectorRef) {
+    constructor(private apiService: AuthService,
+        private renderer: Renderer2,
+         private router: Router, private formBuilder: FormBuilder, private settingsService:SettingsService,private cdr: ChangeDetectorRef) {
 
     }
     ngOnInit() {
@@ -145,4 +148,6 @@ export class LoginComponent implements OnInit {
         this.visible = !this.visible;
         this.changetype = !this.changetype;
     }
-}
+   
+    }
+
