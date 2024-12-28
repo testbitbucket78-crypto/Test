@@ -16,8 +16,6 @@ const middleWare = require('../middleWare')
 const commonFun = require('../common/resuableFunctions');
 const { APIKeyManager, sendMessageBody }= require('./model/accountModel');
 const { WebSocketManager } = require("../whatsApp/PushNotifications")
-const web = require("../webJS/web")
-const { insertMessageAndSend } = require('../Authentication/TeamBoxController')
 const {mapCountryCode} = require('../Contact/utils')
 const insertAndEditWhatsAppWeb = async (req, res) => {
     try {
@@ -502,10 +500,19 @@ const sendMessage = async (req, res) => {
             throw new Error(`API Key ${APIKeyManagerInstance?.apiKey} is not authorized.`);
         }
         if(APIKeyManagerInstance.spId){
-            let result = await web.isActiveSpidClient(APIKeyManagerInstance.spId);
-            if (!result?.isActiveSpidClient) {
-                throw new Error(`Please go to settings and Scan the QR Code !`);
-            }
+            try {
+                 const apiUrl = 'https://waweb.stacknize.com/IsClientReady';
+                const dataToSend = {
+                  spid: APIKeyManagerInstance.spId
+                };
+          
+                const response = await axios.post(apiUrl, dataToSend);
+                if(response?.data?.message != 'Client is ready !'){
+                    throw new Error(`Please go to settings and Scan the QR Code !`);
+                }
+              } catch (error) {
+                throw new Error(`Error While Authenticating client !`);
+              }
         }
     } else {
          throw new Error("No data found for the given spId.");
@@ -525,10 +532,11 @@ const sendMessage = async (req, res) => {
   sendMessageInstance.InteractionId = InteractionId;
   sendMessageInstance.CustomerId = custid;
   sendMessageInstance.AgentId = AgentId;
-  req.body = { ...sendMessageInstance };
-  await insertMessageAndSend(req, res, middleWare);
+        const apiUrl = 'https://authapi.stacknize.com/newmessage';
+        const response = await axios.post(apiUrl, sendMessageInstance);
+        const responseData = response?.data; 
+        return res.status(200).json(responseData);
 
-    
 }catch (err) {
     db.errlog(err);
     res.status(403).send({
