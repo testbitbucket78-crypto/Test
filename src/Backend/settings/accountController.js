@@ -17,6 +17,7 @@ const commonFun = require('../common/resuableFunctions');
 const { APIKeyManager, sendMessageBody }= require('./model/accountModel');
 const { WebSocketManager } = require("../whatsApp/PushNotifications")
 const {mapCountryCode} = require('../Contact/utils')
+const variables = require('../common/constant')
 const insertAndEditWhatsAppWeb = async (req, res) => {
     try {
         // Extracting request body parameters
@@ -501,7 +502,7 @@ const sendMessage = async (req, res) => {
         }
         if(APIKeyManagerInstance.spId){
             try {
-                 const apiUrl = 'https://waweb.stacknize.com/IsClientReady';
+                const apiUrl = `${variables.ENV_URL.waweb}/IsClientReady`;
                 const dataToSend = {
                   spid: APIKeyManagerInstance.spId
                 };
@@ -532,7 +533,7 @@ const sendMessage = async (req, res) => {
   sendMessageInstance.InteractionId = InteractionId;
   sendMessageInstance.CustomerId = custid;
   sendMessageInstance.AgentId = AgentId;
-        const apiUrl = 'https://authapi.stacknize.com/newmessage';
+        const apiUrl = `${variables.ENV_URL.auth}/newmessage`;
         const response = await axios.post(apiUrl, sendMessageInstance);
         const responseData = response?.data; 
         return res.status(200).json(responseData);
