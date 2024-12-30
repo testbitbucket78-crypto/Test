@@ -463,37 +463,16 @@ const testWebhook = async (req, res) => {
             const result = APIKeyManagerInstance.mapResponse(Data[0]);
 
             if (result.webhookURL) {
-                let urlType = checkUrlType(result.webhookURL)
-                if(urlType == 'websocket'){
-                    const wsManager = new WebSocketManager(result.webhookURL);
-                    try {
-                        const successMessage = await wsManager.connect();
-                        wsManager.emit("ping", { message: "Ping alive from Backend 123" });
-                        wsManager.disconnect();
-                        if(successMessage == 'WebSocket connected successfully!'){
-                            resDiscription = successMessage;
-                        }
-                    } catch (error) {
-                        console.error("WebSocket Connection Error:", error.message);
-                        res.status(500).send({
-                            msg: "Webhook tested successfully!",
-                            status: 500,
-                            error: error.message,
-                        });
-                    }
-
-                } else if (urlType == 'webhook'){
                         try {
                           const response = await axios.post(result.webhookURL, 'connecting webhook', {
                             headers: {
                               'Content-Type': 'application/json',
                             },
                           });
-                          console.log('Data sent to Webhook:', response.status, response.data);
+                          resDiscription = response?.data;
                         } catch (err) {
                           throw new Error('error in webhook')
                         }
-                } else throw new Error('Invalid URL Please try again ');
             } else {
                 throw new Error("Webhook URL is missing for the given spId.");
             }
@@ -516,20 +495,7 @@ const testWebhook = async (req, res) => {
         });
     }
 };
-function checkUrlType(url) {
-    try {
-      const parsedUrl = new URL(url);
-      if (parsedUrl.protocol === 'ws:' || parsedUrl.protocol === 'wss:') {
-        return 'websocket';
-      } else if (parsedUrl.protocol === 'http:' || parsedUrl.protocol === 'https:') {
-        return 'webhook';
-      } else {
-        return 'invalid';
-      }
-    } catch (error) {
-      return 'invalid';
-    }
-}
+
 const sendMessage = async (req, res) => {
     try {
     const APIKeyManagerInstance = new APIKeyManager(req?.body);
