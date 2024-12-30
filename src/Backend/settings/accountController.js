@@ -207,7 +207,11 @@ const addGetAPIKey = async (req, res) => {
 
         if (!APIKeyManagerInstance.isSave) {
             let result = await SaveOrUpdate(APIKeyManagerInstance);
-            return res?.status(200).json(result);
+            let resResult = await GetAPIKeyData(APIKeyManagerInstance);
+            if (resResult && resResult.length > 0) {
+                const response = APIKeyManagerInstance.mapResponse(resResult[0]);
+                return res?.status(200).json(response);
+            }
         } else {
             let result = await GetAPIKeyData(APIKeyManagerInstance);
             if (result && result.length > 0) {
@@ -449,6 +453,7 @@ const generateQRcode = async (req, res) => {
 
 const testWebhook = async (req, res) => {
     try {
+        let resDiscription;
          const APIKeyManagerInstance = new APIKeyManager(req?.body);
         APIKeyManagerInstance.validate();
 
@@ -458,9 +463,16 @@ const testWebhook = async (req, res) => {
             const result = APIKeyManagerInstance.mapResponse(Data[0]);
 
             if (result.webhookURL) {
-                const wsManager = new WebSocketManager("testing");
-                wsManager.connect();
-                wsManager.emit("ping", { message: "Ping alive from Backend" });
+                        try {
+                          const response = await axios.post(result.webhookURL, 'connecting webhook', {
+                            headers: {
+                              'Content-Type': 'application/json',
+                            },
+                          });
+                          resDiscription = response?.data;
+                        } catch (err) {
+                          throw new Error('error in webhook')
+                        }
             } else {
                 throw new Error("Webhook URL is missing for the given spId.");
             }
@@ -470,12 +482,12 @@ const testWebhook = async (req, res) => {
         res.status(200).send({
             msg: "Webhook tested successfully!",
             status: 200,
+            Discription: resDiscription
         });
     } catch (err) {
         console.error(err);
         db.errlog(err);
 
-        // Send error response
         res.status(500).send({
             msg: "Error testing webhook",
             status: 500,
@@ -515,6 +527,14 @@ const sendMessage = async (req, res) => {
                 throw new Error(`Error While Authenticating client !`);
               }
         }
+        const countOfMessages = await db.excuteQuery(val.getRateLimit, [APIKeyManagerInstance.spId]);
+        if( countOfMessages && countOfMessages.length > 0){
+            const count = countOfMessages[0].Count;
+            if(count > 30){
+                throw new Error(`Rate limit exceeded. Please try again later.`);
+            }
+        }
+
     } else {
          throw new Error("No data found for the given spId.");
     }
