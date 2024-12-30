@@ -442,6 +442,15 @@ var insertIPAddress=`INSERT INTO APIIPAddress (spid,token_id,IPAddress,created_a
 var insertHealthStatus = `INSERT INTO businessHealth (phone_number_id, channel_phone_number, balance_limit_today, quality_rating, created_at, fb_verification, SP_ID) VALUES (?, ?, ?, ?, ?, ?, ?)`;
 var selectHealthStatus = `SELECT * FROM businessHealth WHERE phone_number_id = ? and SP_ID = ?`
 
+//---------------------------------UserAPIKeys-----------------------------------//
+var insertUserAPIKeys = `INSERT INTO UserAPIKeys (spid,api_key,ips) values (?,?,?)`
+var updateUserAPIKeys = `UPDATE UserAPIKeys SET ips = ?, updated_at = CURRENT_TIMESTAMP WHERE spid = ?`
+var getUserAPIKeys = `select * from UserAPIKeys where spid = ?`
+var updateAPIkeysState = `UPDATE UserAPIKeys SET is_enabled = ?, updated_at = CURRENT_TIMESTAMP WHERE spid = ?`
+var updateWebhookUrl = `UPDATE UserAPIKeys  SET webhook_url = ?, updated_at = CURRENT_TIMESTAMP WHERE spid = ?`
+var getAgentId = `select * from user where SP_ID = ? and ParentId is null`
+var getChannel = `SELECT channel_id, connected_id FROM WhatsAppWeb WHERE spid = ?`
+
 module.exports = {
     host, user, password, database, insertCompanyDetails, insertlocalDetails, insertBillingDetails, selectCompanyDetails, selectlocalDetails, selectBillingDetails,
     updateCompanyDetails, updatelocalDetails, updateBillingDetails, insertWork, selectWork, deleteWork, insertHoliday, selectHoliday, removeHoliday, updateWork, getSubRight, getRights,
@@ -456,5 +465,6 @@ module.exports = {
     addtag, updatetag, deletetag, selecttag, addTemplates, selectTemplate, updateTemplate, deleteTemplate, insertWhatsappdetails, updateWhatsappdetails, selectChannelCount,
     Whatsappdetails,addTokenQuery,updateTokenQuery,deleteTokenQuery,selectTokenQuery,isEnableQuery,baseURL,accessToken,deleteIPQuery,insertIPAddress,updateNotification,
     getColCount,addcolumn,getcolumn,deletecolumn,getcolumnid,enableMandatory,enablestatus,editfield ,selectApprovedTemplate ,addGallery ,getGallery,selectUserByIdQuery,
-    content_type,access_token,url,selectActiveQuery,getAllUserQuery,checkDeletedColumn,getCustomColumnById,permanentDeleteColumn,selectHealthStatus,insertHealthStatus
+    content_type,access_token,url,selectActiveQuery,getAllUserQuery,checkDeletedColumn,getCustomColumnById,permanentDeleteColumn,selectHealthStatus,insertHealthStatus, insertUserAPIKeys, updateUserAPIKeys
+    ,getUserAPIKeys, updateAPIkeysState, updateWebhookUrl, getAgentId, getChannel
 }

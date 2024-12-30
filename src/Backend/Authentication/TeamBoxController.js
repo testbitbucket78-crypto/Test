@@ -651,10 +651,11 @@ async function autoReplyPauseTime(spid, newId) {
 
 
 const insertMessage = async (req, res) => {
-    try {
-        // logger.info('Starting insertMessage function');
-        //     logger.debug('Request Body:', req.body);
 
+    try {
+        logger.info('Starting insertMessage function');
+            logger.debug('Request Body:', req.body);
+        
         if (req.body.Message_id == '') {
             var messageQuery = val.insertMessageQuery;
 
@@ -800,6 +801,7 @@ const insertMessage = async (req, res) => {
         res.send({ status: 500, error: err });
     }
 };
+
 
 async function getDefaultActionTimeandUpdatePauseTime(spid, customerId) {
     try {

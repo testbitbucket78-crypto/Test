@@ -14,8 +14,10 @@ const path = require('path');
 const axios = require('axios');
 const middleWare = require('../middleWare')
 const commonFun = require('../common/resuableFunctions');
-
-
+const { APIKeyManager, sendMessageBody }= require('./model/accountModel');
+const { WebSocketManager } = require("../whatsApp/PushNotifications")
+const {mapCountryCode} = require('../Contact/utils')
+const variables = require('../common/constant')
 const insertAndEditWhatsAppWeb = async (req, res) => {
     try {
         // Extracting request body parameters
@@ -197,6 +199,73 @@ const getQualityRating = async (req, res) => {
         res.send(err)
     }
 }
+
+const addGetAPIKey = async (req, res) => {
+    try {
+        const APIKeyManagerInstance = new APIKeyManager(req?.body);
+        APIKeyManagerInstance.validate();
+
+        if (!APIKeyManagerInstance.isSave) {
+            let result = await SaveOrUpdate(APIKeyManagerInstance);
+            return res?.status(200).json(result);
+        } else {
+            let result = await GetAPIKeyData(APIKeyManagerInstance);
+            if (result && result.length > 0) {
+                const response = APIKeyManagerInstance.mapResponse(result[0]);
+                return res?.status(200).json(response);
+            }
+        }
+    } catch (err) {
+        console.log(err)
+        res.send(err)
+    }
+}
+async function SaveOrUpdate(APIKeyManagerInstance) {
+    const keyGenerated = APIKeyManagerInstance.generateKey();
+    let checkIfAlreadyExists = await GetAPIKeyData(APIKeyManagerInstance);
+    let ips = APIKeyManagerInstance.ip;
+    if (typeof ips !== 'string') {
+        ips = JSON.stringify(ips);
+    }
+    if (checkIfAlreadyExists && checkIfAlreadyExists.length > 0) {
+        await db.excuteQuery(val.updateUserAPIKeys, [ips, APIKeyManagerInstance.spId]);
+        return { success: true, data: { spid: APIKeyManagerInstance.spId, ips } };
+    } else {
+        await db.excuteQuery(val.insertUserAPIKeys, [APIKeyManagerInstance.spId, keyGenerated, ips]);
+        return { success: true, data: { spid: APIKeyManagerInstance.spId, ips } };
+    }
+}
+async function GetAPIKeyData(APIKeyManagerInstance) {
+    let result = await db.excuteQuery(val.getUserAPIKeys, [APIKeyManagerInstance.spId]);
+    return result;
+}
+
+
+const APIkeysState = async (req, res) => {
+    try {
+        const APIKeyManagerInstance = new APIKeyManager(req?.body);
+        let result = await db.excuteQuery(val.updateAPIkeysState, [APIKeyManagerInstance.isEnabled, APIKeyManagerInstance.spId]);
+        return res?.status(200).json(result);
+
+    } catch (err) {
+        console.log(err)
+        res.send(err)
+    }
+}
+
+const saveWebhookUrl = async (req, res) => {
+    try {
+        const APIKeyManagerInstance = new APIKeyManager(req?.body);
+        let result = await db.excuteQuery(val.updateWebhookUrl, [APIKeyManagerInstance.webhookURL, APIKeyManagerInstance.spId]);
+        return res?.status(200).json(result);
+
+    } catch (err) {
+        console.log(err)
+        res.send(err)
+    }
+}
+
+
 
 const addToken = async (req, res) => {
     try {
@@ -380,18 +449,155 @@ const generateQRcode = async (req, res) => {
 
 const testWebhook = async (req, res) => {
     try {
-        console.log("testWebhook");
+         const APIKeyManagerInstance = new APIKeyManager(req?.body);
+        APIKeyManagerInstance.validate();
+
+        // Fetch data from the database
+        const Data = await db.excuteQuery(val.getUserAPIKeys, [APIKeyManagerInstance.spId]);
+        if (Data && Data.length > 0) {
+            const result = APIKeyManagerInstance.mapResponse(Data[0]);
+
+            if (result.webhookURL) {
+                const wsManager = new WebSocketManager("testing");
+                wsManager.connect();
+                wsManager.emit("ping", { message: "Ping alive from Backend" });
+            } else {
+                throw new Error("Webhook URL is missing for the given spId.");
+            }
+        } else {
+            throw new Error("No data found for the given spId.");
+        }
         res.status(200).send({
-            msg: "testwebhook ! ",
-            status: 200
-        })
+            msg: "Webhook tested successfully!",
+            status: 200,
+        });
     } catch (err) {
-        console.log(err)
+        console.error(err);
         db.errlog(err);
-        res.send(err)
+
+        // Send error response
+        res.status(500).send({
+            msg: "Error testing webhook",
+            status: 500,
+            error: err.message,
+        });
     }
+};
+
+const sendMessage = async (req, res) => {
+    try {
+    const APIKeyManagerInstance = new APIKeyManager(req?.body);
+    APIKeyManagerInstance.validate();
+    const clientIp = req.headers['x-forwarded-for'] || req?.connection.remoteAddress;
+    const ip = clientIp?.startsWith('::ffff:') ? clientIp?.substring(7) : clientIp;
+    
+    const Data = await db.excuteQuery(val.getUserAPIKeys, [APIKeyManagerInstance.spId]);
+    if (Data && Data.length > 0) {
+        const result = APIKeyManagerInstance.mapResponse(Data[0]);
+        if (result?.ips.length === 0 || !result?.ips.includes(ip)) {
+            throw new Error(`IP address ${ip} is not authorized.`);
+        }
+        if(result?.apiKey != APIKeyManagerInstance?.apiKey){
+            throw new Error(`API Key ${APIKeyManagerInstance?.apiKey} is not authorized.`);
+        }
+        if(APIKeyManagerInstance.spId){
+            try {
+                const apiUrl = `${variables.ENV_URL.waweb}/IsClientReady`;
+                const dataToSend = {
+                  spid: APIKeyManagerInstance.spId
+                };
+          
+                const response = await axios.post(apiUrl, dataToSend);
+                if(response?.data?.message != 'Client is ready !'){
+                    throw new Error(`Please go to settings and Scan the QR Code !`);
+                }
+              } catch (error) {
+                throw new Error(`Error While Authenticating client !`);
+              }
+        }
+    } else {
+         throw new Error("No data found for the given spId.");
+    }
+
+  const sendMessageInstance = new sendMessageBody(req?.body);
+  const channelData = await db.excuteQuery(val.getChannel, [APIKeyManagerInstance.spId]);
+  let channel, phoneNo, AgentId;
+  if (channelData && channelData.length > 0) {
+      channel = channelData[0]?.channel_id;
+      phoneNo = channelData[0]?.connected_id;
+  }
+
+  let { InteractionId, custid } = await insertInteractionAndRetrieveId(phoneNo, sendMessageInstance.SPID, channel);
+  const AgentIdData = await db.excuteQuery(val.getAgentId, [APIKeyManagerInstance.spId]);
+  if(AgentIdData && AgentIdData.length > 0) AgentId = AgentIdData[0]?.uid;
+  sendMessageInstance.InteractionId = InteractionId;
+  sendMessageInstance.CustomerId = custid;
+  sendMessageInstance.AgentId = AgentId;
+        const apiUrl = `${variables.ENV_URL.auth}/newmessage`;
+        const response = await axios.post(apiUrl, sendMessageInstance);
+        const responseData = response?.data; 
+        return res.status(200).json(responseData);
+
+}catch (err) {
+    db.errlog(err);
+    res.status(403).send({
+        msg: "Sending Message failed.",
+        status: 403,
+        error: err?.message,
+    });
+}
 }
 
+
+async function insertInteractionAndRetrieveId(phoneNo, sid, channel) {
+    try {
+        let customerId = await db.excuteQuery(`select * from EndCustomer where Phone_Number =? AND SP_ID=?  ORDER BY created_at desc limit 1`, [phoneNo, sid]);
+
+        let custid = customerId[0]?.customerId;
+        if (!custid) {
+
+            let countryCodeObj;
+            if (phoneNo) {
+                countryCodeObj = mapCountryCode(phoneNo);
+            }
+            let countryCode = countryCodeObj.country + " +" + countryCodeObj.countryCode
+            let displayPhoneNumber = countryCodeObj.localNumber
+            let addTempContact = await db.excuteQuery(`INSERT into EndCustomer(Phone_Number,SP_ID,channel,Name,OptInStatus,countryCode,displayPhoneNumber,IsTemporary) values (?,?,?,?,?,?,?,?)`, [phoneNo, sid, channel, phoneNo, 'Yes', countryCode, displayPhoneNumber, 1]);
+
+            custid = addTempContact?.insertId
+        } else if (customerId[0]?.channel == null) {
+            let updateContactChannel = await db.excuteQuery(`update EndCustomer set channel=? where customerId=?`, [channel, custid])
+        }
+        console.log(phoneNo, sid, custid)
+        let rows = await db.excuteQuery(
+            'SELECT InteractionId FROM Interaction WHERE customerId = ? and is_deleted !=1 and SP_ID=? ',
+            [custid, sid]
+        );
+
+        if (rows.length == 0) {
+
+            await db.excuteQuery(
+                'INSERT INTO Interaction (customerId, interaction_status, SP_ID, interaction_type) VALUES (?, ?, ?, ?)',
+                [custid, 'Resolved', sid, 'User Initiated']
+            );
+
+        }
+
+        let InteractionId = await db.excuteQuery(
+            'SELECT InteractionId FROM Interaction WHERE customerId = ? and is_deleted !=1 and SP_ID=? ORDER BY created_at DESC LIMIT 1',
+            [custid, sid]
+        );
+
+
+        return {
+            InteractionId: InteractionId.length > 0 ? InteractionId[0]?.InteractionId : null,
+            custid: custid
+        };
+    } catch (error) {
+        console.error('Error:', error);
+        return error;
+    }
+}
 const addWAAPIDetails = async (req, res) => {
     try {
         const spid = req.body.spid
@@ -488,5 +694,5 @@ async function updateIfAlreadyExists(phoneNumber_id, waba_id){
 
 module.exports = {
     insertAndEditWhatsAppWeb, selectDetails, addToken, deleteToken, enableToken, selectToken,
-    createInstance, getQRcode, generateQRcode, editToken, testWebhook,getQualityRating, addWAAPIDetails
+    createInstance, getQRcode, generateQRcode, editToken, testWebhook,getQualityRating, addWAAPIDetails, addGetAPIKey, APIkeysState, saveWebhookUrl, sendMessage
 }

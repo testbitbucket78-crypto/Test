@@ -205,6 +205,122 @@ router.post('/addWhatsAppDetails',authenticateToken,accountController.insertAndE
 router.get('/getWhatsAppDetails/:spid',authenticateToken,accountController.selectDetails)
 router.post('/addWAapiDetails',authenticateToken,accountController.addWAAPIDetails)
 router.get('/getQualityRating/:phoneNo/:phone_number_id/:WABA_ID/:spid',authenticateToken,accountController.getQualityRating)
+router.post('/addGetAPIKeys',authenticateToken,accountController.addGetAPIKey)
+router.post('/APIkeysState',authenticateToken,accountController.APIkeysState)
+router.post('/saveWebhookUrl',authenticateToken,accountController.saveWebhookUrl)
+
+/**
+ * @swagger
+ * /sendMessage:
+ *   post:
+ *     summary: Send a message
+ *     tags:
+ *       - Messaging
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               MessageVariables:
+ *                 type: string
+ *                 example: ""
+ *               Message_id:
+ *                 type: string
+ *                 example: ""
+ *               spId:
+ *                 type: string
+ *                 example: "55"
+ *               action:
+ *                 type: string
+ *                 example: "edited by EngageKart"
+ *               action_at:
+ *                 type: string
+ *                 format: date-time
+ *                 example: "2024-12-26T16:18:25.161Z"
+ *               action_by:
+ *                 type: string
+ *                 example: ""
+ *               bodyText:
+ *                 type: string
+ *                 example: ""
+ *               buttons:
+ *                 type: array
+ *                 items:
+ *                   type: object
+ *                 example: []
+ *               buttonsVariable:
+ *                 type: string
+ *                 example: "[]"
+ *               created_at:
+ *                 type: string
+ *                 format: date-time
+ *                 example: "2024-12-26T16:18:25.161Z"
+ *               headerText:
+ *                 type: string
+ *                 example: ""
+ *               isTemplate:
+ *                 type: boolean
+ *                 example: false
+ *               language:
+ *                 type: string
+ *                 example: ""
+ *               media_type:
+ *                 type: string
+ *                 example: ""
+ *               messageTo:
+ *                 type: string
+ *                 example: "91940000000000"
+ *               message_media:
+ *                 type: string
+ *                 example: "text"
+ *               message_text:
+ *                 type: string
+ *                 example: "<p>hey</p>"
+ *               message_type:
+ *                 type: string
+ *                 example: "text"
+ *               name:
+ *                 type: string
+ *                 example: ""
+ *               quick_reply_id:
+ *                 type: string
+ *                 example: ""
+ *               spNumber:
+ *                 type: string
+ *                 example: "911724610945"
+ *               template_id:
+ *                 type: string
+ *                 example: ""
+ *               uidMentioned:
+ *                 type: array
+ *                 items:
+ *                   type: object
+ *                 example: []
+ *               apiKey:
+ *                 type: string
+ *                 example: "key-e8dihe8e3u-1735230342734"
+ *     responses:
+ *       200:
+ *         description: Successful response
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: string
+ *                   example: "success"
+ *                 data:
+ *                   type: object
+ *                   example: {}
+ *       400:
+ *         description: Invalid request
+ */
+router.post('/sendMessage' ,authenticateToken,accountController.sendMessage)
+
+
 
 router.post('/addToken',authenticateToken,accountController.addToken)//unused
 router.post('/editToken',authenticateToken,accountController.editToken)//unused
@@ -214,7 +330,7 @@ router.get('/selectToken/:spid',authenticateToken,accountController.selectToken)
 router.get('/createInstanceID',authenticateToken,accountController.createInstance)//unused
 router.post('/qrCodeData',authenticateToken,accountController.getQRcode)//unused
 router.post('/generateQRcode',authenticateToken,accountController.generateQRcode)//unused
-router.post('/testwebhook',authenticateToken,accountController.testWebhook)//unused
+router.post('/testwebhook',authenticateToken,accountController.testWebhook)
 
 //__________________________General Settings____________________________//
 
