@@ -97,7 +97,7 @@ socket.on('message', (message) => {
   console.log("Received:", message);
 });
 
-function NotifyServer(display_phone_number, updatemessage, message, status, msg_status, msg_id) {
+async function NotifyServer(display_phone_number, updatemessage, message, status, msg_status, msg_id) {
   try {
     let notificationMsg = {};
     if (updatemessage) {
@@ -110,6 +110,9 @@ function NotifyServer(display_phone_number, updatemessage, message, status, msg_
         msg_status: msg_status,
         msg_id: msg_id
       };
+      let spid = await db.excuteQuery('select SPID from Message where Message_id =?', msg_id);
+      let websocketurl = await db.excuteQuery('select webhook_url from UserAPIKeys where spid =?', spid);   
+        sendDataToWebHook(websocketurl,notificationMsg);
     }
 
     if (!socket.connected) {
@@ -202,5 +205,17 @@ class WebSocketManager {
 }
 
 
+async function sendDataToWebHook(webhookUrl, data){
+  try {
+      const response = await axios.post(webhookUrl, data, {
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+      console.log('Data sent to Webhook:', response.status, response.data);
+    } catch (err) {
+      console.error('Failed to send data to Webhook:', err.message);
+    }
+  }
 
 module.exports = { NotifyServer, WebSocketManager };

@@ -3,7 +3,8 @@
       <div class="col-lg-5">
         <span *ngIf="channelDomain =='web'" class="tag-line">An effective tool for<br /> marketing with WhatsApp</span>
         <span *ngIf="channelDomain !='web'" class="tag-line">Supercharge Your Marketing<br /> and Customer Engagement</span>
-      <img src="assets/img/img-reg.png" class="float-left">
+      <img *ngIf="channelDomain == 'api'" src="assets/img/img-reg.png" class="float-left"  >
+        <img *ngIf="channelDomain == 'web'" src="../../../../assets/img/Engagezilla-Login-Signup.png" class="float-left"  >
       <span class="copyright-text">&copy; Copyright 2024 {{channelDomain =='web' ? 'Engagezilla' : 'Engagekart'}}</span>
     </div>
     <div class="toaster" (click)="errorMessage=''">

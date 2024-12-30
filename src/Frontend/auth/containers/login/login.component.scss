@@ -43,9 +43,9 @@
     font-size: 14px;
     color: #171414;
 }
-// .btn:disabled{
-
-// }
+.btn:disabled{
+    opacity: 0.4;
+}
 .log{
     margin: 11rem 0px 0px 0px;
 }

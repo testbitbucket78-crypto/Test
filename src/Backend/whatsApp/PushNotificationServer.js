@@ -306,12 +306,9 @@ io.on('connection', (socket) => {
       }
       console.log(`Client ${disconnectedUniquePhone} disconnected`);
     }
-
-
     console.log('Active clients after disconnection:', JSON.stringify(clients, null, 2));
   });
 });
-
 
 const port = 3010;
 server.listen(port, () => {

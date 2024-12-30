@@ -1481,6 +1481,7 @@ formateDate(dateTime:string){
 	  selectScheduleDate(event: any) {
 	  
 		   this.selecteScheduleDate = event?.target?.value;
+		   //T00:00:00
 		   this.selScheduleDate = new Date(new Date(this.selecteScheduleDate).toDateString());
 		   this.currDate = new Date(new Date().toDateString());
 		 }
@@ -2497,6 +2498,8 @@ testinfo(){
 				this.csvContactList = contactsData;
 				this.selecetdCSV = file.name;
 			};
+			
+		this.isLoading=  false;
 			fileReader.readAsArrayBuffer(file);
 
 				fileReader.readAsArrayBuffer(this.file);
@@ -2504,7 +2507,7 @@ testinfo(){
 		else {
 			this.showToaster('Please Upload csv file only...','error')
 		}
-
+		
 		this.isLoading=  false;
 		}
 	  }

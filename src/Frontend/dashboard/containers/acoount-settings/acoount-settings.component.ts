@@ -6,6 +6,7 @@ import { WebsocketService } from '../../services/websocket.service';
 import { WebSocketSubject } from 'rxjs/webSocket';
 import { FacebookService } from 'Frontend/dashboard/services/facebook-embedded.service';
 import { environment } from 'environments/environment';
+import { Clipboard } from '@angular/cdk/clipboard';
 
 declare var $:any;
 declare var FB: any; 
@@ -84,7 +85,14 @@ Authcode:any='';
 phoneId:any='';
 wabaId:any='';
 uid = (JSON.parse(sessionStorage.getItem('loginDetails')!)).uid;
+apiName:string='Send Message Api';
+
+//-------------
+isEnabled:boolean = false;
+webSocketUrl:string= '';
+apiKeyData:any;
   constructor( private apiService:SettingsService,
+    private clipboard: Clipboard,
     public facebookService:FacebookService,
     public settingsService:SettingsService,
     private renderer: Renderer2,
@@ -103,6 +111,7 @@ uid = (JSON.parse(sessionStorage.getItem('loginDetails')!)).uid;
     this.subscribeToNotifications();
     this.loadFacebookSDK();
     this.fetchLastName();
+    this.getApiKeyData(false);
     this.sessionInfoListener = (event: MessageEvent) => {
       if (!event.origin || !event.origin.endsWith("facebook.com")) {
         return;
@@ -545,6 +554,111 @@ saveWhatsappAPIDetails() {
       this.showToaster('An error occurred please contact adminintrator', 'error');
     }
   })
+}
+
+saveWebhook(){
+  if(this.webSocketUrl){
+  let data = {
+    spId : this.spid,
+    webhookURL: this.webSocketUrl
+  }
+  this.apiService.saveWebhook(data).subscribe((response) => {
+    if(response?.status ==200){
+      this.showToaster('Web socket saved successfully','success');
+    } else{
+      this.showToaster(response?.msg,'error');
+    }
+});
+  }
+  else
+    this.showToaster('web socket url should not be empty','error');
+}
+
+getApiKeyData(isSave:boolean){
+  //isSave = !isSave;
+  let data: { spId: number; ip: string[]; isSave: boolean } = {
+    spId : this.spid,
+    ip:[],
+    isSave :!isSave 
+  }
+  if(isSave){
+    console.log(this.ipAddress);
+    let flag:boolean = false;
+    this.ipAddress.forEach((item:any)=>{
+      if(item == '' || item.trim() == '' || !item){
+        this.showToaster('ip address should not be empty','error');
+        flag = true;
+        return '';
+      }
+    })
+    if(flag)
+    return '';
+    data['ip'] = this.ipAddress;
+  }
+  this.apiService.getApiKeyData(data).subscribe((response) => {
+    console.log(response + JSON.stringify(this.accoountsetting));
+    if(response){
+      if(isSave){
+        $("#createTokenModal").modal('hide');
+        $("#apiConfirmationModal").modal('show');
+      }
+      this.apiKeyData = response;
+      this.webSocketUrl = response?.webhookURL;
+      this.ipAddress = this.apiKeyData?.ips
+      //apiKey
+    }
+});
+}
+
+regenrateApiKey(){
+  this.getApiKeyData(true);
+}
+
+
+testWebhook(){
+  let data = {
+    spId : this.spid
+  }
+  this.apiService.testWebhook(data).subscribe((response) => {
+    if(response?.status ==200){
+      this.showToaster('Request has been sent to your Web socket','success');
+    } else{
+      this.showToaster(response?.msg,'error');
+    }
+});
+}
+
+disableApiKeyData(){
+  let data = {
+    spId : this.spid,
+    isEnabled: this.isEnabled ? 0 : 1
+  }
+  this.apiService.apiKeyState(data).subscribe((response) => {
+    console.log(response + JSON.stringify(this.accoountsetting));
+});
+}
+
+editToken(){
+  $("#createTokenModal").modal('show');
+  this.ipAddress = this.apiKeyData?.ips
+}
+
+copyToClipboard(): void {
+  const textToCopy = this.apiKeyData?.apiKey;
+      navigator.clipboard.writeText(textToCopy).then(
+        () => {
+          console.log('Text copied to clipboard');
+         // alert('Text copied successfully!');
+        },
+        (err) => {
+          console.error('Failed to copy text: ', err);
+          //alert('Failed to copy text');
+        }
+      );
+}
+
+trackByIndex(index: number): number {
+  return index;
 }
 
 }
