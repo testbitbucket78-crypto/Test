@@ -379,10 +379,10 @@
             <div class="account-card-header">
                 <div>
                     <span class="api-card-desc">{{apiName}}</span>
-                    <p>{{apiKeyData?.ip}}</p>
+                    <p>{{apiKeyData?.ips}}</p>
                 </div>
                 <div>
-                    <button class="account-white-btn mx-1">
+                    <button class="account-white-btn mx-1" (click)="editToken()">
                         <img class="p-0" src="../../../../assets/img/edit.png">
                     </button>
                     <!-- <button class="account-white-btn mx-1" data-bs-toggle="modal" data-bs-target="#deleteModal">
@@ -405,7 +405,7 @@
                 </div>
             </div>
             <div class="account-card-header">
-                <p class="api-time">10:55 Am, 27 Mar 2023</p>
+                <p class="api-time">{{settingsService?.getDateTimeFormate(apiKeyData?.updatedAt)}}</p>
                 <button class="account-btn" (click)="regenrateApiKey()">Regenrate</button>
             </div>
             </div>
@@ -429,7 +429,7 @@
                 </div>
             </div>
             <div class="account-card-header">
-                <p class="api-time m-0">10:55 Am, 27 Mar 2023</p>
+                <p class="api-time m-0">{{settingsService?.getDateTimeFormate(apiKeyData?.updatedAt)}}</p>
             </div>
             </div>
         </div>
@@ -500,17 +500,17 @@
                         <span class="token-heading">API Token Sucessfully Created</span>
                        <p>Kindly copy and keep the API token securely, we will not able to display the API Token again once this window is closed</p>
                        <div class="d-flex justify-content-center">
-                           <input type="text" class="token-input-form">
-                           <img class="copy-btn" src="../../../../assets/img/settings/attribute-button.svg">
+                           <input type="text" class="token-input-form" [value]="apiKeyData?.apiKey" readonly>
+                           <img class="copy-btn" (click)="copyToClipboard()" src="../../../../assets/img/settings/attribute-button.svg">
                        </div><br>
                        <div class="token-checkbox">
-                           <input type="checkbox" class="checkbox">
+                           <input type="checkbox" class="checkbox" #confirmCheckbox>
                            <p>&nbsp;&nbsp;Please check this before close button</p>
                        </div>
                     </div>
                 </div>
                 <div class="modal-footer justify-content-center">
-                    <button type="button" class="account-btn"  data-bs-dismiss="modal" aria-label="Close">close</button>
+                    <button type="button" class="account-btn"  data-bs-dismiss="modal" [disabled]="!confirmCheckbox.checked" aria-label="Close">close</button>
                 </div>
             </div>
         </div>

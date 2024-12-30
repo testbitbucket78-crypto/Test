@@ -6,6 +6,7 @@ import { WebsocketService } from '../../services/websocket.service';
 import { WebSocketSubject } from 'rxjs/webSocket';
 import { FacebookService } from 'Frontend/dashboard/services/facebook-embedded.service';
 import { environment } from 'environments/environment';
+import { Clipboard } from '@angular/cdk/clipboard';
 
 declare var $:any;
 declare var FB: any; 
@@ -91,6 +92,7 @@ isEnabled:boolean = false;
 webSocketUrl:string= '';
 apiKeyData:any;
   constructor( private apiService:SettingsService,
+    private clipboard: Clipboard,
     public facebookService:FacebookService,
     public settingsService:SettingsService,
     private renderer: Renderer2,
@@ -573,10 +575,11 @@ saveWebhook(){
 }
 
 getApiKeyData(isSave:boolean){
+  //isSave = !isSave;
   let data: { spId: number; ip: string[]; isSave: boolean } = {
     spId : this.spid,
     ip:[],
-    isSave :isSave 
+    isSave :!isSave 
   }
   if(isSave){
     console.log(this.ipAddress);
@@ -595,13 +598,20 @@ getApiKeyData(isSave:boolean){
   this.apiService.getApiKeyData(data).subscribe((response) => {
     console.log(response + JSON.stringify(this.accoountsetting));
     if(response){
-      $("#apiConfirmationModal").modal('show');
-      this.apiKeyData = response.data;
+      if(isSave){
+        $("#createTokenModal").modal('hide');
+        $("#apiConfirmationModal").modal('show');
+      }
+      this.apiKeyData = response;
+      this.webSocketUrl = response?.webhookURL;
+      this.ipAddress = this.apiKeyData?.ips
+      //apiKey
     }
 });
 }
+
 regenrateApiKey(){
-  
+  this.getApiKeyData(true);
 }
 
 
@@ -621,11 +631,30 @@ testWebhook(){
 disableApiKeyData(){
   let data = {
     spId : this.spid,
-    isEnabled: this.isEnabled
+    isEnabled: this.isEnabled ? 0 : 1
   }
   this.apiService.apiKeyState(data).subscribe((response) => {
     console.log(response + JSON.stringify(this.accoountsetting));
 });
+}
+
+editToken(){
+  $("#createTokenModal").modal('show');
+  this.ipAddress = this.apiKeyData?.ips
+}
+
+copyToClipboard(): void {
+  const textToCopy = this.apiKeyData?.apiKey;
+      navigator.clipboard.writeText(textToCopy).then(
+        () => {
+          console.log('Text copied to clipboard');
+         // alert('Text copied successfully!');
+        },
+        (err) => {
+          console.error('Failed to copy text: ', err);
+          //alert('Failed to copy text');
+        }
+      );
 }
 
 trackByIndex(index: number): number {
