@@ -113,7 +113,11 @@ async function NotifyServer(display_phone_number, updatemessage, message, status
       let spid = await db.excuteQuery('select SPID from Message where Message_id =?', msg_id);
       let websocketurl = await db.excuteQuery('select webhook_url from UserAPIKeys where spid =?', spid);
       //select SPID from Message where Message_id = 34911
-      sendDataToWebSocket(websocketurl,notificationMsg)
+      if(checkUrlType(websocketurl) == 'websocket'){
+        sendDataToWebSocket(websocketurl,notificationMsg);
+      }else{
+        sendDataToWebHook(websocketurl,notificationMsg);
+      }
     }
 
     if (!socket.connected) {
@@ -155,6 +159,34 @@ async function sendDataToWebSocket(webSocketUrl, data) {
       });
   } catch (error) {
       console.error('Error sending data to WebSocket:', error.message);
+  }
+}
+
+async function sendDataToWebHook(webhookUrl, data){
+  try {
+      const response = await axios.post(webhookUrl, data, {
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+      console.log('Data sent to Webhook:', response.status, response.data);
+    } catch (err) {
+      console.error('Failed to send data to Webhook:', err.message);
+    }
+  }
+
+async function checkUrlType(url) {
+  try {
+    const parsedUrl = new URL(url);
+    if (parsedUrl.protocol === 'ws:' || parsedUrl.protocol === 'wss:') {
+      return 'websocket';
+    } else if (parsedUrl.protocol === 'http:' || parsedUrl.protocol === 'https:') {
+      return 'webhook';
+    } else {
+      return 'invalid';
+    }
+  } catch (error) {
+    return 'invalid';
   }
 }
 
