@@ -111,13 +111,8 @@ async function NotifyServer(display_phone_number, updatemessage, message, status
         msg_id: msg_id
       };
       let spid = await db.excuteQuery('select SPID from Message where Message_id =?', msg_id);
-      let websocketurl = await db.excuteQuery('select webhook_url from UserAPIKeys where spid =?', spid);
-      //select SPID from Message where Message_id = 34911
-      if(checkUrlType(websocketurl) == 'websocket'){
-        sendDataToWebSocket(websocketurl,notificationMsg);
-      }else{
+      let websocketurl = await db.excuteQuery('select webhook_url from UserAPIKeys where spid =?', spid);   
         sendDataToWebHook(websocketurl,notificationMsg);
-      }
     }
 
     if (!socket.connected) {
@@ -210,37 +205,6 @@ class WebSocketManager {
 }
 
 
-async function sendDataToWebSocket(webSocketUrl, data) {
-  try {
-      const socket = io(webSocketUrl, {
-          transports: ['websocket'], 
-          reconnectionAttempts: 3,  
-      });
-
-      socket.on('connect', () => {
-          console.log('Connected to WebSocket:', webSocketUrl);
-
-          socket.emit('message', data);
-          console.log('Data sent:', data);
-
-          setTimeout(() => {
-              socket.disconnect();
-              console.log('Disconnected from WebSocket');
-          }, 1000); 
-      });
-
-      socket.on('connect_error', (err) => {
-          console.error('Connection error:', err.message);
-      });
-
-      socket.on('disconnect', () => {
-          console.log('WebSocket disconnected');
-      });
-  } catch (error) {
-      console.error('Error sending data to WebSocket:', error.message);
-  }
-}
-
 async function sendDataToWebHook(webhookUrl, data){
   try {
       const response = await axios.post(webhookUrl, data, {
@@ -253,20 +217,5 @@ async function sendDataToWebHook(webhookUrl, data){
       console.error('Failed to send data to Webhook:', err.message);
     }
   }
-
-async function checkUrlType(url) {
-  try {
-    const parsedUrl = new URL(url);
-    if (parsedUrl.protocol === 'ws:' || parsedUrl.protocol === 'wss:') {
-      return 'websocket';
-    } else if (parsedUrl.protocol === 'http:' || parsedUrl.protocol === 'https:') {
-      return 'webhook';
-    } else {
-      return 'invalid';
-    }
-  } catch (error) {
-    return 'invalid';
-  }
-}
 
 module.exports = { NotifyServer, WebSocketManager };

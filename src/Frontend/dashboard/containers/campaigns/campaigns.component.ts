@@ -2498,6 +2498,8 @@ testinfo(){
 				this.csvContactList = contactsData;
 				this.selecetdCSV = file.name;
 			};
+			
+		this.isLoading=  false;
 			fileReader.readAsArrayBuffer(file);
 
 				fileReader.readAsArrayBuffer(this.file);
@@ -2505,7 +2507,7 @@ testinfo(){
 		else {
 			this.showToaster('Please Upload csv file only...','error')
 		}
-
+		
 		this.isLoading=  false;
 		}
 	  }
