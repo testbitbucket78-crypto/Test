@@ -192,7 +192,7 @@ const register = async function (req, res) {
 
                 html: `<p>Dear ${req.body.name},</p>
            <p>Welcome to ${emailSender}!</p>
-           <p>We are delighted to have you onboard and can't wait to see you automate your business operations effortlessly with our platform. So get going and explore all the features on Engagekart to engage with your customers while converting new leads.</p>
+           <p>We are delighted to have you onboard and can't wait to see you automate your business operations effortlessly with our platform. So get going and explore all the features on ${emailSender} to engage with your customers while converting new leads.</p>
            <p>Here are your account details on ${emailSender}:</p>
            <p><a href="${loginPageURL}">${loginPageURL}</a></p>
            <p>User ID: ${req.body.email_id}<br>
@@ -269,9 +269,11 @@ const forgotPassword = async (req, res) => {
     try {
 
         email_id = req.body.email_id;
-
+        let sp_id;
         var results = await db.excuteQuery('SELECT * FROM user WHERE email_id =? and isDeleted !=1 and IsActive !=2', [req.body.email_id])
-
+        if(results && results.length > 0) {
+            sp_id = results[0].SP_ID;
+        }
         // Send Email for For forget password varification
 
         if (Object.keys(results).length === 0) {
@@ -284,26 +286,29 @@ const forgotPassword = async (req, res) => {
         else {
 
             var uid = results[0].uid
-
+            let Channel = (await db.excuteQuery('select Channel from user where SP_ID = ? limit 1', [sp_id]))[0]?.Channel;
+            let emailSender = MessagingName[Channel];
+            const transporter = getTransporter(emailSender);
+            const senderConfig = EmailConfigurations[emailSender];
             // Encrypt
             var cipherdata = CryptoJS.AES.encrypt(JSON.stringify(uid), 'secretkey123').toString();
             const referer = req.get('Referer')
             let ResetPageURL = referer+`#/reset-password?uid=${cipherdata}`;
             
             var mailOptions = {
-                from: val.email,
+                from: senderConfig.email,
                 to: req.body.email_id,
-                subject: "Engagekart Forgot Password Request",
+                subject: `${emailSender} Forgot Password Request`,
                 //html: '<p>You requested for reset password, kindly use this <a href="https://cip.stacknize.com/#/reset-password?uid=' + cipherdata + '">  link  </a>to reset your password</p>'
                 html: `<p>Hello,</p>
 
-                <p>We have received a Forgot Password request for your Engagekart account. Please use this link provided below to proceed with the reset.<br>
+                <p>We have received a Forgot Password request for your ${emailSender} account. Please use this link provided below to proceed with the reset.<br>
                 <a href="${ResetPageURL}">${ResetPageURL}</a></p>
                 
                 <p>If you did not initiate this request, you may ignore this email and we suggest you report this to your business admin manager.</p>
 
                 <p>Thank you </p>
-                <p>Team Engagekart</p>`
+                <p>Team ${emailSender}</p>`
 
 
             };
@@ -524,8 +529,7 @@ const sendOtp = async function (req, res) {
             html: `
             <p>Dear ${req.body?.name},</p>
             <p>To complete your ${emailSender} account activation, please use the below provided One-Time Password (OTP) to validate your email address on the sign up page.</p>
-            <P>OTP for account verification is</P>
-            <h5 style="font-weight:bold;">${otp}</h5>
+            <P>OTP : ${otp}</P>
             <p>Best regards,</p>
             <p>Team ${emailSender}</p> `
         };

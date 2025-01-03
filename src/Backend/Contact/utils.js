@@ -1,6 +1,9 @@
 const db = require("../dbhelper");
 const moment = require('moment');
 function mapCountryCode(phoneNumber){
+  if (typeof phoneNumber === 'number') {
+    phoneNumber = String(phoneNumber);
+  }
   // Map the country code to the respective country pass number in this function eg: '919000000000'
     const expectedLengths = {
         '376': 6, '971': 9, '93': 9, '1268': 7, '1264': 7, '355': 9, '374': 8, '244': 9, '54': 10, '1684': 10,

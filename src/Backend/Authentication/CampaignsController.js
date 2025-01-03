@@ -53,7 +53,7 @@ const addCampaign = async (req, res) => {
         let end_time = req.body?.end_time
         let message_footer = req.body?.message_footer
         let templateId = req.body.templateId
-        var header = req.body?.headerText
+        var header = req.body?.headerText ? req.body?.headerText : '';
         var body = req.body?.bodyText
         var buttons = req.body?.buttons
         var buttonsVariable = req.body?.buttonsVariable
@@ -552,10 +552,17 @@ async function campaignAlerts(TemplateData, insertId, statusToUpdate) {
     JOIN user u ON u.uid=c.uid
      where c.SP_ID=? and c.isDeleted !=1 `;
 
-
+     let querry = `SELECT mobile_number 
+     FROM user 
+     WHERE SP_ID = ? AND ParentId IS NULL`
+    const spData = await  db.excuteQuery(querry, [TemplateData.SP_ID]);
+    let spNumber
+    if(spData.length > 0) {
+        spNumber = spData[0].mobile_number
+    }
     let user = await db.excuteQuery(alertUser, [TemplateData.SP_ID]);
     for (let i = 0; i < user.length; i++) {
-        let { subject, body, emailSender } = await EmailTemplateProvider(TemplateData, updatedStatus, user[i]?.Channel, user[i]?.name);
+        let { subject, body, emailSender } = await EmailTemplateProvider(TemplateData, updatedStatus, user[i]?.Channel, user[i]?.name, spNumber);
   
         const emailOptions = {
           to: user[i]?.email_id,
@@ -1073,7 +1080,7 @@ const campaignReport = async (req, res) => {
         var mailOptions = {
             from: senderConfig.email,
             to: emailId,
-            subject: `${emailSender} - Campaign Messages report`,
+            subject: `${emailSender} - Campaign Detail report`,
             html: `
             <p>Dear ${userName},</p>
             <p>Please find attached here the detail report for your campaign ${campaignName} from your ${emailSender} account.</p>
