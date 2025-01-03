@@ -1,8 +1,9 @@
-const { MessagingName }= require('../enum');
-async function EmailTemplateProvider(alert, status, emailwhomToSent, name) {
+const { MessagingName, channelName }= require('../enum');
+async function EmailTemplateProvider(alert, status, emailwhomToSent, name, spMobileNumber) {
     let subject = '';
     let body = '';
     let emailSender = MessagingName[emailwhomToSent];
+    const channelname = channelName[emailwhomToSent]
     let msgStatus = status === '3' ? await find_message_status(alert) : null;
   
     let audience = alert.segments_contacts.length > 0
@@ -20,7 +21,7 @@ async function EmailTemplateProvider(alert, status, emailwhomToSent, name) {
           <li><strong>Campaign Name:</strong> ${alert.title}</li>
           <li><strong>Scheduled Time:</strong> ${alert.start_datetime}</li>
           <li><strong>Target Audience:</strong> ${audience}</li>
-          <li><strong>Channel:</strong> WhatsApp, ${alert.channel_id}</li>
+          <li><strong>Channel:</strong> ${channelname}, ${spMobileNumber}</li>
         </ul>
   
         <p>Your campaign will go live as per the scheduled time, ensuring you reach your audience right on time. 🚀</p>
@@ -31,13 +32,14 @@ async function EmailTemplateProvider(alert, status, emailwhomToSent, name) {
       subject = `Your ${emailSender} Campaign Has Started!`;
       body = `
         <p>Dear <strong>${name}</strong>,</p>
-  
+
         <p>We’re excited to inform you that your <strong>${emailSender}</strong> campaign has started successfully! 🎉</p>
-        
+        <p><strong>Here are the campaign details:</strong></p>
+
         <ul>
           <li><strong>Campaign Name:</strong> ${alert.title}</li>
           <li><strong>Target Audience:</strong> ${audience}</li>
-          <li><strong>Channel:</strong> WhatsApp, ${alert.channel_id}</li>
+          <li><strong>Channel:</strong> ${channelname}, ${spMobileNumber}</li>
         </ul>
   
         <p>Your campaign is now live and reaching your audience as planned.</p>
@@ -54,7 +56,7 @@ async function EmailTemplateProvider(alert, status, emailwhomToSent, name) {
         <ul>
           <li><strong>Campaign Name:</strong> ${alert.title}</li>
           <li><strong>Target Audience:</strong> ${audience}</li>
-          <li><strong>Channel:</strong> WhatsApp, ${alert.channel_id}</li>
+          <li><strong>Channel:</strong> ${channelname}, ${spMobileNumber}</li>
           <li><strong>Sent:</strong> ${msgStatus?.Sent || 0}</li>
           <li><strong>Failed:</strong> ${msgStatus?.Failed || 0}</li>
         </ul>

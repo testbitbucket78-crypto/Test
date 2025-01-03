@@ -482,9 +482,17 @@ async function campaignAlerts(message, updatedStatus) {
 JOIN user u ON u.uid=c.uid
  where c.SP_ID=? and c.isDeleted !=1 `;
 
+    let querry = `SELECT mobile_number 
+     FROM user 
+     WHERE SP_ID = ? AND ParentId IS NULL`
     let user = await db.excuteQuery(alertUser, [message.sp_id]);
+        const spData = await  db.excuteQuery(querry, [TemplateData.SP_ID]);
+        let spNumber
+        if(spData.length > 0) {
+            spNumber = spData[0].mobile_number
+        }
     for (let i = 0; i < user.length; i++) {
-      let { subject, body, emailSender } = await EmailTemplateProvider(message, updatedStatus, user[i]?.Channel, user[i].name);
+      let { subject, body, emailSender } = await EmailTemplateProvider(message, updatedStatus, user[i]?.Channel, user[i].name, spNumber);
 
       const emailOptions = {
         to: user[i]?.email_id,

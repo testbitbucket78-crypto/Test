@@ -36,6 +36,9 @@ function postDataToAPI(spid, phoneNo, type, text, link, interaction_id, msg_id, 
 
 
 function removePlusFromPhoneNumber(phoneNumber) {
+    if (typeof phoneNumber !== "string") {
+        return phoneNumber;
+    }
     if (phoneNumber.includes("+")) {
         return phoneNumber.replace(/\+/g, "");
     }

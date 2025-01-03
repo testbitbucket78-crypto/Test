@@ -34,7 +34,8 @@ const swagger = swaggerJSDoc({
         ],
     },
     apis: [
-        'src/Backend/settings/settingsRouter.js'
+         //src/Backend/settings/settingsRouter.js  local path
+       '../settings/settingsRouter.js'
     ],
 });
 

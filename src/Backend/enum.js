@@ -11,5 +11,9 @@ const MessagingName = {
     web: "Engagezilla",
 
 };
+const channelName = {
+    api: "WhatsApp API",
+    web: "WhatsApp Web",
+}
 
-module.exports = { MessagingLimitTiers, MessagingName }
+module.exports = { MessagingLimitTiers, MessagingName, channelName }

@@ -26,7 +26,7 @@ const { exec } = require('child_process');
 const fs = require('fs')
 const path = require("path");
 const { EmailConfigurations } =  require('../Authentication/constant');
-const { MessagingName }= require('../enum');
+const { MessagingName, channelName }= require('../enum');
 let clientSpidMapping = {};
 let clientPidMapping = {};
 let clientSpidInprogress = {};
@@ -614,21 +614,22 @@ async function sendMailOnDisconnection(phoneNo, spid) {
       const email_id = userData[0].email_id;
       const Channel = userData[0].Channel;
       let emailSender = MessagingName[Channel];
+      const channel_name = channelName[Channel];
       const transporter = getTransporter(emailSender);
       const senderConfig = EmailConfigurations[emailSender];
 
       var mailOptions = {
         from: senderConfig.email,
         to: email_id,
-        subject: `Alert! ${senderConfig} Channel Disconnected`,
+        subject: `Alert! ${emailSender} Channel Disconnected`,
         text: `Dear ${userName},
+Urgent Warning!
+Your ${emailSender} Channel ${channel_name}, ${number} is logged out. Your immediate action is required to ensure seamless flow of services and that messages from customers are received.
 
-Your ${senderConfig} Channel ${userName} and ${number} is logged out. Your immediate action is required to ensure seamless flow of services and that messages from customers are received.
-
-Please login to your ${senderConfig} Account > Settings > Account Settings > Channels and connect your channel again to ensure no interruption to your scheduled campaigns, automated customer replies, or other automations.
+Please login to your ${emailSender} Account > Settings > Account Settings > Channels and connect your channel again to ensure no interruption to your scheduled campaigns, automated customer replies, or other automations.
 
 Best regards,
-Team ${senderConfig}`
+Team ${emailSender}`
       };
       transporter.sendMail(mailOptions, (error, info) => {
         if (error) {

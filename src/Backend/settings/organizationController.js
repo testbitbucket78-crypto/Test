@@ -848,13 +848,13 @@ async function inviteUser(email_id, name, SP_ID, mobile_number, RoleName, random
     Login ID: ${email_id}
     Mobile: ${mobile_number}
     Role: ${RoleName}
-    Temporary Password:  ` + JSON.stringify(randomstring) + `
+    Password:  ` + JSON.stringify(randomstring) + `
     
     To access your ${emailSender} account, follow these steps:
     
     1. Go to ${loginURL}
     2. Enter your Email ID
-    3. Use the temporary password provided above.
+    3. Use the password provided above.
     
     Do not forget to change your password once logged in.
     
