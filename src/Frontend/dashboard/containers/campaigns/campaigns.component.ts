@@ -7,6 +7,7 @@ import { DashboardService, TeamboxService } from './../../services';
 import { DatePipe } from '@angular/common';
 import * as XLSX from 'xlsx'; 
 import { convertCsvToXlsx } from '../common/Utils/file-utils';
+const moment = require('moment');
 declare var $: any;
 
 @Component({
@@ -1479,8 +1480,8 @@ formateDate(dateTime:string){
 
 	  
 	  selectScheduleDate(event: any) {
-	  
-		   this.selecteScheduleDate = event?.target?.value;
+	
+		   this.selecteScheduleDate = event?.target?.value ? event?.target?.value : event;
 		   //T00:00:00
 		   this.selScheduleDate = new Date(new Date(this.selecteScheduleDate).toDateString());
 		   this.currDate = new Date(new Date().toDateString());
@@ -1603,6 +1604,7 @@ formateDate(dateTime:string){
 		this.modalReference = this.modalService.open(addNewCampaign,{size: 'xl', windowClass:'white-bg'});
 	}
 	editCampaign(addNewCampaign:any,step:any){
+		this.resetSchedule()
 		console.log(this.selectedCampaign?.csv_contacts,'this.selectedCampaign?.csv_contacts')
 		this.newCampaignDetail.Id = this.selectedCampaign.Id;
 		this.isEditCampaign = true;
@@ -1633,8 +1635,18 @@ formateDate(dateTime:string){
 		if(template){
 			console.log(template)
 		this.selectedTemplate = template;
-		if(this.isValidDateTime(this.selectedCampaign?.start_datetime)) this.selecteScheduleTime = this.formatTime(this.selectedCampaign?.start_datetime);
-		if(this.isValidDateTime(this.selectedCampaign?.start_datetime)) this.selecteScheduleDate = this.convertToDateFormat(this.selectedCampaign?.start_datetime)
+		let selectedTime, dateObject;
+		if(this.isValidDateTime(this.selectedCampaign?.start_datetime)) selectedTime = this.settingsService?.getDateTimeFormate(this.selectedCampaign?.start_datetime);
+        if(selectedTime){
+          let getDateFromFormat =  new Date(selectedTime);
+		  dateObject = moment(selectedTime, 'MMM D, YYYY hh:mm A').toDate();
+		  this.selecteScheduleTime = moment(dateObject).format('HH:mm');
+		}
+		if(this.isValidDateTime(this.selectedCampaign?.start_datetime)){
+			this.selecteScheduleDate = this.convertToDateFormat(this.selectedCampaign?.start_datetime)
+			this.selectScheduleDate(this.selecteScheduleDate);
+		} 
+
 		this.isScheduled = 0;
 		if(this.selectedCampaign?.status == 1) {
 			this.selectScheduled(1);
@@ -3283,9 +3295,9 @@ console.log(this.allTemplatesMain);
 		return ['image', 'image/jpeg', 'image/png'].includes(mediaType || '');
 	}
 
-	formatTime(datetime: string | undefined | null): string | null {
+	formatTime(datetime: Date | undefined | null): string | null {
 		if (!datetime) return null;
-		const date = new Date(datetime);
+		const date = datetime;
 		if (isNaN(date.getTime())) return null; 
 		return date.toISOString().slice(11, 16); 
 	};

@@ -748,12 +748,12 @@ It is determined by a combination of user feedback signals like blocks, reports 
 							<div class="btn_group" *ngFor='let variable of selectedTemplate?.allVariables ;let i = index' >
 								<input type="text" value={{variable.label}} /> {{variable.value}}
 							</div>
-							<div *ngIf="this.newCampaignDetail.get('channel_id').value ==1 && (selectedTemplate?.buttons?.length>1 || selectedTemplate?.buttons?.length ==1)">
+							<!-- <div *ngIf="this.newCampaignDetail.get('channel_id').value ==1 && (selectedTemplate?.buttons?.length>1 || selectedTemplate?.buttons?.length ==1)">
 							<p class="sub_title_sm blackcolor mt-2 mb-2">Button Payload</p>
 							<div class="btn_group"><input type="text" value="YES" /> {{selectedTemplate?.button_yes}}</div>
 							<div class="btn_group"><input type="text" value="No" /> {{selectedTemplate?.button_no}}</div>
 							<div class="btn_group"><input type="text" value="EXPLORE" /> {{selectedTemplate?.button_exp}}</div>
-						</div>
+						</div> -->
 							</div>
 
 					</div>
