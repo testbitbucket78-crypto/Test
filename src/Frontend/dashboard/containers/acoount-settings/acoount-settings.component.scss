@@ -253,6 +253,9 @@
    .new-token-btn:disabled{
     opacity: 0.6 !important;
    }
+   .account-btn:disabled{
+    opacity: 0.6 !important;
+   }
 
    .left-col{
     width: 33%;
@@ -429,6 +432,7 @@
     position: relative;
     width: 26px;
     margin-left: -10%;
+    cursor: pointer;
    }
 
    .checkbox{
