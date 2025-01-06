@@ -110,9 +110,6 @@ async function NotifyServer(display_phone_number, updatemessage, message, status
         msg_status: msg_status,
         msg_id: msg_id
       };
-      let spid = await db.excuteQuery('select SPID from Message where Message_id =?', msg_id);
-      let websocketurl = await db.excuteQuery('select webhook_url from UserAPIKeys where spid =?', spid);   
-        sendDataToWebHook(websocketurl,notificationMsg);
     }
 
     if (!socket.connected) {
