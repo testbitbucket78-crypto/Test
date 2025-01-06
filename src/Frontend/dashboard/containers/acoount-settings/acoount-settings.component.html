@@ -370,11 +370,11 @@
     <div class="setting-card api-card" *ngIf="selectedTab==2 && !settingsService.checkRoleExist('46')">
         <div class="account-card-header">
             <h4>API Token</h4>
-            <button class="new-token-btn" data-bs-toggle="modal" data-bs-target="#createTokenModal">
+            <button class="new-token-btn" data-bs-toggle="modal" data-bs-target="#createTokenModal" [disabled]="apiKeyData">
                 <img src="../../../../assets/img/teambox/add.svg" class="pr-1">
                 New API Token</button>
         </div>
-        <div>
+        <div *ngIf="apiKeyData">
             <div class="connection-card tokens-card" >
             <div class="account-card-header">
                 <div>
@@ -518,7 +518,7 @@
 
 
 
-    <div class="setting-card " *ngIf="selectedTab==3 && !settingsService.checkRoleExist('47')">
+    <div class="setting-card " *ngIf="selectedTab==4 && !settingsService.checkRoleExist('47')">
         <div class="account-card-header">
             <h4>Integration</h4>            
         </div>

@@ -250,6 +250,9 @@
     border: 1px;
     width: auto;
    }
+   .new-token-btn:disabled{
+    opacity: 0.6 !important;
+   }
 
    .left-col{
     width: 33%;

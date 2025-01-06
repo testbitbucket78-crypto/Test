@@ -563,7 +563,7 @@ saveWebhook(){
     webhookURL: this.webSocketUrl
   }
   this.apiService.saveWebhook(data).subscribe((response) => {
-    if(response?.status ==200){
+    if(response){
       this.showToaster('Web socket saved successfully','success');
     } else{
       this.showToaster(response?.msg,'error');
@@ -603,8 +603,9 @@ getApiKeyData(isSave:boolean){
         $("#apiConfirmationModal").modal('show');
       }
       this.apiKeyData = response;
+      this.isEnabled = this.apiKeyData?.isEnabled;
       this.webSocketUrl = response?.webhookURL;
-      this.ipAddress = this.apiKeyData?.ips
+      this.ipAddress = this.apiKeyData?.ips ? this.apiKeyData?.ips : [];
       //apiKey
     }
 });
@@ -647,7 +648,7 @@ copyToClipboard(): void {
   const textToCopy = this.apiKeyData?.apiKey;
       navigator.clipboard.writeText(textToCopy).then(
         () => {
-          console.log('Text copied to clipboard');
+          this.showToaster('Text copied to clipboard','success');
          // alert('Text copied successfully!');
         },
         (err) => {
