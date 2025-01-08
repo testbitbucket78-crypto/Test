@@ -95,7 +95,7 @@ export class MyprofileComponent implements OnInit,OnDestroy {
   ngOnInit(): void {
     this.Name = (JSON.parse(sessionStorage.getItem('loginDetails')!))?.name;
     this.EmailId = (JSON.parse(sessionStorage.getItem('loginDetails')!))?.email_id;
-    this.PhoneNumber = (JSON.parse(sessionStorage.getItem('loginDetails')!))?.mobile_number;
+    this.PhoneNumber = (JSON.parse(sessionStorage.getItem('loginDetails')!))?.registerPhone;
     this.uid = (JSON.parse(sessionStorage.getItem('loginDetails')!))?.uid
     const nameParts = this.Name.split(' ');
     const firstName = nameParts[0] || '';

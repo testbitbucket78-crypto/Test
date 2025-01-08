@@ -410,7 +410,7 @@ async function sendScheduledCampaign(batch, sp_id, type, message_content, messag
     //   //console.log("response",response)     
     // }, 10)
     response = await messageThroughselectedchannel(sp_id, Phone_number, type, textMessage, message_media, phone_number_id, channel_id, message.Id, message, message_text,headerVar,bodyVar,templateId,message.buttons,DynamicURLToBESent);
-    const randomdelay = Math.floor(Math.random() * (800 - 200 + 1)) + 200;
+    const randomdelay = Math.floor(Math.random() * (2000 - 1000 + 1)) + 1000;
     await wait(randomdelay)
   }
 }

@@ -1483,7 +1483,8 @@ formateDate(dateTime:string){
 	
 		   this.selecteScheduleDate = event?.target?.value ? event?.target?.value : event;
 		   //T00:00:00
-		   this.selScheduleDate = new Date(new Date(this.selecteScheduleDate).toDateString());
+			let selectedDate = this.selecteScheduleDate +'T00:00:00';
+		   this.selScheduleDate = new Date(new Date(selectedDate).toDateString());
 		   this.currDate = new Date(new Date().toDateString());
 		 }
 
@@ -1745,7 +1746,7 @@ formateDate(dateTime:string){
 		 sratdatetime = new Date(new Date(start_datetime).setSeconds(0)).toUTCString();
 		}else{
 			let getMin =new Date().getMinutes();
-			getMin = (getMin % 5) ? 5 - (getMin % 5): 0;
+			getMin = (getMin % 5) ? 5 - (getMin % 5): 5;
 			let startTime = new Date(new Date(new Date().setMinutes(new Date().getMinutes() + getMin)).setSeconds(0));
 			sratdatetime = new Date(startTime).toUTCString();
 		}	

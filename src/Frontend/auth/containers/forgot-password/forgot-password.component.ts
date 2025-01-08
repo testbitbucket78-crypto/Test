@@ -3,6 +3,7 @@ import { FormGroup, FormControl, FormBuilder} from '@angular/forms';
 import { AuthService } from './../../services';
 import { Router } from '@angular/router';
 import { Validators } from '@angular/forms';
+import { environment } from 'environments/environment';
 declare var $:any;
 
 @Component({
@@ -19,7 +20,8 @@ export class ForgotPasswordComponent implements OnInit {
     title = 'formValidation';
     submitted = false;
     submittedValue:any;
-    isLoading!:boolean;
+    isLoading!:boolean;    
+    public channelDomain:string = environment?.chhanel;
     constructor(private apiService :AuthService ,private router: Router,  private formBuilder: FormBuilder) { }
     ngOnInit() {
       

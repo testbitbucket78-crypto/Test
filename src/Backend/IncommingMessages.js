@@ -335,7 +335,7 @@ async function iterateSmartReplies(replymessage, phone_number_id, from, sid, cus
       }
 
       var type = determineMediaType(media_type);
-      var delay = 2000;
+      var delay = 3000;
       if (type == 'video') {
         delay = 7000
       }

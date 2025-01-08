@@ -33,16 +33,19 @@
                     </div>
                     <div class="form-group row col-md-8 ml-1" id="row1">
                         <div class="custom-control custom-checkbox">
-                            <input class="custom-control-input" formControlName="agree" id="rememberPasswordCheck" type="checkbox" />
-                            <label class="custom-control-label" for="rememberPasswordCheck">I accept the <a href="https://engagekart.com/terms-and-conditions/" target="_blank">Terms & Conditions</a> and <a href="https://engagekart.com/privacy-policy/" target="_blank">Privacy Policy</a></label>
+                            <!-- <input class="custom-control-input" formControlName="agree" id="rememberPasswordCheck" type="checkbox" />
+                            <label class="custom-control-label" for="rememberPasswordCheck">I accept the <a href="https://engagekart.com/terms-and-conditions/" target="_blank">Terms & Conditions</a> and <a href="https://engagekart.com/privacy-policy/" target="_blank">Privacy Policy</a></label> -->
+
+                            <input class="custom-control-input" id="rememberPasswordCheck" type="checkbox" />
+                            <label class="custom-control-label" for="rememberPasswordCheck">Remember Me</label>
                         </div>
                     </div>
 
                     <div class="col-sm-12 text-center" ><a class="small" routerLink="/forgot-password" >Forgot
                             Password?</a></div>
                     <div class="form-group  text-center col-sm-12 ">
-                        <button class="btn btn" id="butto" type="submit" [disabled]="!loginForm.get('agree')?.value">Log In</button>
-                        
+                        <button class="btn btn" id="butto" type="submit" >Log In</button>
+                        <!-- [disabled]="!loginForm.get('agree')?.value" -->
                     </div>
                     
                       <div id="error-message"></div>

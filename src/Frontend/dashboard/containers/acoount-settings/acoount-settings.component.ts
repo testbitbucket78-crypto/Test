@@ -89,8 +89,12 @@ apiName:string='Send Message Api';
 
 //-------------
 isEnabled:boolean = false;
+isEdit:boolean = false;
+isSaveEnabled:boolean = false;
 webSocketUrl:string= '';
 apiKeyData:any;
+ipRegex: string ='^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?))$|^(([0-9a-fA-F]{1,4}:){7,7}[0-9a-fA-F]{1,4}|([0-9a-fA-F]{1,4}:){1,7}:|([0-9a-fA-F]{1,4}:){1,6}:[0-9a-fA-F]{1,4}|([0-9a-fA-F]{1,4}:){1,5}(:[0-9a-fA-F]{1,4}){1,2}|([0-9a-fA-F]{1,4}:){1,4}(:[0-9a-fA-F]{1,4}){1,3}|([0-9a-fA-F]{1,4}:){1,3}(:[0-9a-fA-F]{1,4}){1,4}|([0-9a-fA-F]{1,4}:){1,2}(:[0-9a-fA-F]{1,4}){1,5}|[0-9a-fA-F]{1,4}:((:[0-9a-fA-F]{1,4}){1,6})|:((:[0-9a-fA-F]{1,4}){1,7}|:)|fe80:(:[0-9a-fA-F]{0,4}){0,4}%[0-9a-zA-Z]{1,}|::(ffff(:0{1,4}){0,1}:){0,1}((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?))|([0-9a-fA-F]{1,4}:){1,4}:((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)))$';
+ipRegexTs = /^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?))$|^(([0-9a-fA-F]{1,4}:){7,7}[0-9a-fA-F]{1,4}|([0-9a-fA-F]{1,4}:){1,7}:|([0-9a-fA-F]{1,4}:){1,6}:[0-9a-fA-F]{1,4}|([0-9a-fA-F]{1,4}:){1,5}(:[0-9a-fA-F]{1,4}){1,2}|([0-9a-fA-F]{1,4}:){1,4}(:[0-9a-fA-F]{1,4}){1,3}|([0-9a-fA-F]{1,4}:){1,3}(:[0-9a-fA-F]{1,4}){1,4}|([0-9a-fA-F]{1,4}:){1,2}(:[0-9a-fA-F]{1,4}){1,5}|[0-9a-fA-F]{1,4}:((:[0-9a-fA-F]{1,4}){1,6})|:((:[0-9a-fA-F]{1,4}){1,7}|:)|fe80:(:[0-9a-fA-F]{0,4}){0,4}%[0-9a-zA-Z]{1,}|::(ffff(:0{1,4}){0,1}:){0,1}((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?))|([0-9a-fA-F]{1,4}:){1,4}:((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)))$/;
   constructor( private apiService:SettingsService,
     private clipboard: Clipboard,
     public facebookService:FacebookService,
@@ -584,11 +588,21 @@ getApiKeyData(isSave:boolean){
   if(isSave){
     console.log(this.ipAddress);
     let flag:boolean = false;
+    if(this.apiName.trim() ==''){
+      this.showToaster('Token Name should not be empty','error');
+        flag = true;
+        return '';
+    }
     this.ipAddress.forEach((item:any)=>{
       if(item == '' || item.trim() == '' || !item){
         this.showToaster('ip address should not be empty','error');
         flag = true;
         return '';
+      }
+      if (!this.ipRegexTs.test(item)) {
+        this.showToaster(`Invalid IP address format: ${item}`, 'error');
+        flag = true;
+        return;
       }
     })
     if(flag)
@@ -600,8 +614,10 @@ getApiKeyData(isSave:boolean){
     if(response){
       if(isSave){
         $("#createTokenModal").modal('hide');
-        $("#apiConfirmationModal").modal('show');
+        if(!this.isEdit)
+          $("#apiConfirmationModal").modal('show');
       }
+      this.isEdit = false;
       this.apiKeyData = response;
       this.isEnabled = this.apiKeyData?.isEnabled;
       this.webSocketUrl = response?.webhookURL;
@@ -621,7 +637,7 @@ testWebhook(){
     spId : this.spid
   }
   this.apiService.testWebhook(data).subscribe((response) => {
-    if(response?.status ==200){
+    if(response){
       this.showToaster('Request has been sent to your Web socket','success');
     } else{
       this.showToaster(response?.msg,'error');
@@ -636,10 +652,15 @@ disableApiKeyData(){
   }
   this.apiService.apiKeyState(data).subscribe((response) => {
     console.log(response + JSON.stringify(this.accoountsetting));
+    if(this.isEnabled){
+      this.showToaster('API Token Enabled successfully','success');
+    }else
+      this.showToaster('API Token Disabled successfully','success');
 });
 }
 
 editToken(){
+  this.isEdit = true;
   $("#createTokenModal").modal('show');
   this.ipAddress = this.apiKeyData?.ips
 }
@@ -661,5 +682,6 @@ copyToClipboard(): void {
 trackByIndex(index: number): number {
   return index;
 }
+
 
 }

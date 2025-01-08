@@ -1621,7 +1621,7 @@ It is determined by a combination of user feedback signals like blocks, reports 
 							<div *ngIf="scheduled==1 && !isCampaignTiming">
 								<p><img src="../../../../assets/img/campaign/sch-o.svg"></p>
 								<p>You are about to schedule</p>
-								<p><span>Please confirm the <b class="title-value camp-heading">{{newCampaignDetail?.value?.title}}</b> campaign will take place on <b  class="title-value camp-heading">{{settingsService?.getDateTimeFormate(selecteScheduleDate,true)}} at {{settingsService?.convertTimeFormat(selectedScheduleTime)}}.</b></span></p>
+								<p><span>Please confirm the <b class="title-value camp-heading">{{newCampaignDetail?.value?.title}}</b> campaign will take place on <b  class="title-value camp-heading">{{settingsService?.getDateTimeFormate((selecteScheduleDate +'T00:00:00'),true)}} at {{settingsService?.convertTimeFormat(selectedScheduleTime)}}.</b></span></p>
 								<p><button type="button" class="submit-btn mt-3" aria-label="Close" (click)="ConfirmScheduleClose('confirm')">Confirm</button>
 								</p>
 							</div>

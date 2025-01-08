@@ -92,19 +92,22 @@
                 <div class=""></div>
                 <div class="custom-control custom-checkbox">
                   <input class="custom-control-input" type="checkbox" id="custom-control-input1" [checked]="checkboxChecked" (change)="onCheckboxChange($event.target.checked)">
-                  <label class="custom-control-label" for="custom-control-input1" [ngClass]="{'bgwhite': checkboxChecked}">
+                  <label *ngIf="channelDomain !='web'" class="custom-control-label" for="custom-control-input1" [ngClass]="{'bgwhite': checkboxChecked}">
                     I accept the <a href="https://engagekart.com/terms-and-conditions/" target="_blank">Terms & Conditions</a> and <a href="https://engagekart.com/privacy-policy/" target="_blank">Privacy Policy</a>
+                  </label>
+                  <label *ngIf="channelDomain =='web'" class="custom-control-label" for="custom-control-input1" [ngClass]="{'bgwhite': checkboxChecked}">
+                    I accept the Terms & Conditions and Privacy Policy
                   </label>
                   </div>
                  
-                <div class="checkbox2" id="chbo">
+                <!-- <div class="checkbox2" id="chbo">
                   <div class="custom-control custom-checkbox">
                   <input class="custom-control-input" type="checkbox" id="custom-control-input2" [checked]="checkbox2Checked" (change)="onCheckbox2Change($event.target.checked)">
                   <label class="custom-control-label" [ngClass]="{'bgwhite': checkbox2Checked}" for="custom-control-input2">Remember Me</label>
-                </div>
+                </div> 
               
             
-                </div>
+                </div> -->
               </div>
               <!-- <p *ngIf="!checkboxChecked"> Please check the checkbox .</p> -->
               <div class="form row">

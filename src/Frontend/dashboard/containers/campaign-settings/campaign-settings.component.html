@@ -28,7 +28,7 @@
             <div *ngIf="workingData" class=" modal-body pt-0"> 
                 <div *ngFor="let item of workingData;let idx=index" class="pt-4">
                     <div class="working-days">{{item?.day}}</div>
-                    <div class="working-time">{{item?.start_time}} - {{item?.end_time}}</div>
+                    <div class="working-time">{{_settingsService?.convertTimeFormat(item?.start_time)}} - {{_settingsService?.convertTimeFormat(item?.end_time)}}</div>
                 </div>
                 
                 <div *ngIf="workingData.length ==0" class="empty-working-time">
