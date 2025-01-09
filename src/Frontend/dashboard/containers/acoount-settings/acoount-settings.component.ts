@@ -578,17 +578,19 @@ saveWebhook(){
     this.showToaster('web socket url should not be empty','error');
 }
 
-getApiKeyData(isSave:boolean){
+getApiKeyData(isSave:boolean,isRegenrate:boolean=false){
   //isSave = !isSave;
-  let data: { spId: number; ip: string[]; isSave: boolean } = {
+  let data: { spId: number; ip: string[]; isSave: boolean; isRegenerate: boolean,tokenName:string } = {
     spId : this.spid,
     ip:[],
-    isSave :!isSave 
+    isSave :!isSave ,
+    isRegenerate: this.isEdit ? false :isRegenrate,
+    tokenName:this.apiName
   }
   if(isSave){
     console.log(this.ipAddress);
     let flag:boolean = false;
-    if(this.apiName.trim() ==''){
+    if(this.apiName?.trim() ==''){
       this.showToaster('Token Name should not be empty','error');
         flag = true;
         return '';
@@ -620,6 +622,7 @@ getApiKeyData(isSave:boolean){
       this.isEdit = false;
       this.apiKeyData = response;
       this.isEnabled = this.apiKeyData?.isEnabled;
+      this.apiName = this.apiKeyData?.tokenName;
       this.webSocketUrl = response?.webhookURL;
       this.ipAddress = this.apiKeyData?.ips ? this.apiKeyData?.ips : [];
       //apiKey
@@ -635,7 +638,7 @@ disableSaveBtn(){
 }
 
 regenrateApiKey(){
-  this.getApiKeyData(true);
+  this.getApiKeyData(true,true);
 }
 
 
