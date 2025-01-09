@@ -24,7 +24,7 @@
                     <h3 class="font-weight-light">Verify Email & Phone No.</h3>
                 </div>
                 <div>
-                        <h5>Please enter verification code sent to your phone no. & email. </h5>
+                        <h5>Please enter verification code sent to your phone via <strong>WhatsApp & </strong>email. </h5>
                     </div>
                 <form [formGroup]="otpForm">
                     <div class="">
@@ -41,7 +41,7 @@
                         </div>
                         <div class="disc"><a style="display: inline-flex ">
                                 <h6>Did not receive the code? </h6>
-                                <h6 (click)="resendOtp('phone'); startOtpTimer('phone', 30)" class="ml-1" [class.disabled]="phoneOtpTimer > 0 || isverifyphoneOtp"
+                                <h6 (click)="resendOtp('phone'); startOtpTimer('phone', 30); openWarningPoup()" class="ml-1" [class.disabled]="phoneOtpTimer > 0 || isverifyphoneOtp"
                                     [style.pointer-events]="(phoneOtpTimer > 0 || isverifyphoneOtp )? 'none' : 'auto'"
                                     [style.cursor]="(phoneOtpTimer > 0 || isverifyphoneOtp)? 'default' : 'pointer'"> Resend {{ phoneOtpTimer > 0 ? ' (' + phoneOtpTimer + 's)' : '' }}</h6>
                             </a></div>
@@ -107,6 +107,21 @@
             </div>
             <div class="deletefile d-flex">
                 <button type="button" class="btn99 btn-primary" data-bs-dismiss="modal" routerLink="">Login</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="openWarningPoup" tabindex="-1" aria-labelledby="exampleModalLabel" 
+    data-bs-backdrop="static" aria-hidden="true">
+    <div class="modal-dialog deletesmartreplies-dialog w-360">
+        <div class="modal-content deletesmartreplies-content" style="width: 360px !important;">
+
+            <div class="modal-body deletesmartreplies-body">
+                Please note we have sent you OTP via WhatsApp on the provided phone number. Please ensure you have provided a WhatsApp enabled phone no.
+            </div>
+            <div class="deletefile d-flex">
+                <button type="button" class="btn99 btn-primary" data-bs-dismiss="modal">Ok</button>
             </div>
         </div>
     </div>
