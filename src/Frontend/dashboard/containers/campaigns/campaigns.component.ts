@@ -1104,179 +1104,192 @@ formateDate(dateTime:string){
      	
 	}
 	getContactFilterQuery(addeFilter:any){
+      const groups = addeFilter.reduce((groups:any, filter:any) => {
+        
+        if (!groups[filter.filterPrefix]) {
+          groups[filter.filterPrefix] = [];
+        }
+  
+        groups[filter.filterPrefix].push(filter);
+        return groups;
+      }, {});
+  
+      const groupArrays = Object.keys(groups).map((filterPrefix) => {
+      return {
+        filterPrefix,
+        items: groups[filterPrefix]
+      };
+      });  
+  
+      let contactFilter ="SELECT EC.*, IFNULL(GROUP_CONCAT(DISTINCT ECTM.TagName ORDER BY FIND_IN_SET(ECTM.ID, REPLACE(EC.tag, ' ', ''))), '') AS tag_names,maxInteraction.maxInteractionId,Interaction.interaction_status,Message.*,user.uid,user.name,IM.* FROM EndCustomer AS EC LEFT JOIN EndCustomerTagMaster AS ECTM ON FIND_IN_SET(ECTM.ID, REPLACE(EC.tag, ' ', '')) > 0 AND ECTM.isDeleted != 1 LEFT JOIN (SELECT customerId,MAX(InteractionId) AS maxInteractionId FROM Interaction WHERE is_deleted != 1 AND IsTemporary != 1 GROUP BY customerId) AS maxInteraction ON maxInteraction.customerId = EC.customerId LEFT JOIN Interaction AS Interaction ON maxInteraction.maxInteractionId = Interaction.InteractionId LEFT JOIN Message AS Message ON Message.interaction_id = Interaction.InteractionId AND Message.is_deleted != 1 LEFT JOIN user AS user ON EC.uid = user.uid LEFT JOIN InteractionMapping AS IM ON IM.InteractionID = Interaction.InteractionId and IM.is_active =  1 WHERE EC.SP_ID ="+this.SPID +" AND EC.isDeleted != 1 AND EC.IsTemporary != 1";
+      if(groupArrays.length>0){
+        
+        groupArrays.map((filters:any,idx)=>{
 
-		const groups = addeFilter.reduce((groups:any, filter:any) => {
-		  
-		  if (!groups[filter.filterPrefix]) {
-			groups[filter.filterPrefix] = [];
-		  }
-	
-		  groups[filter.filterPrefix].push(filter);
-		  return groups;
-		}, {});
-	
-		const groupArrays = Object.keys(groups).map((filterPrefix) => {
-		return {
-		  filterPrefix,
-		  items: groups[filterPrefix]
-		};
-		});
-	
-		let contactFilter ="SELECT EC.*, IFNULL(GROUP_CONCAT(DISTINCT ECTM.TagName ORDER BY FIND_IN_SET(ECTM.ID, REPLACE(EC.tag, ' ', ''))), '') AS tag_names,maxInteraction.maxInteractionId,Interaction.interaction_status,Message.*,user.uid,user.name,IM.latestCreatedAt AS lastAssistedAgent,IM.AgentId,IM.* FROM EndCustomer AS EC LEFT JOIN EndCustomerTagMaster AS ECTM ON FIND_IN_SET(ECTM.ID, REPLACE(EC.tag, ' ', '')) > 0 AND ECTM.isDeleted != 1 LEFT JOIN (SELECT customerId,MAX(InteractionId) AS maxInteractionId FROM Interaction WHERE is_deleted != 1 AND IsTemporary != 1 GROUP BY customerId) AS maxInteraction ON maxInteraction.customerId = EC.customerId LEFT JOIN Interaction AS Interaction ON maxInteraction.maxInteractionId = Interaction.InteractionId LEFT JOIN Message AS Message ON Message.interaction_id = Interaction.InteractionId AND Message.is_deleted != 1 LEFT JOIN user AS user ON EC.uid = user.uid LEFT JOIN ( SELECT MAX(interactionId) AS IMInteractionID, MAX(created_at) AS latestCreatedAt,AgentId	FROM InteractionMapping GROUP BY interactionId) AS IM ON IM.IMInteractionID = Interaction.InteractionId WHERE EC.SP_ID ="+this.SPID +" AND EC.isDeleted != 1 AND EC.IsTemporary != 1";
-		if(groupArrays.length>0){
-		  
-		  groupArrays.map((filters:any,idx)=>{
-  
-			if(filters.items.length>0){
-			
-			  let colName = filters.filterPrefix;
-			if(colName =="Conversation Resolved"){
-			  if(filters?.items[0].filterBy == 'True')
-				  contactFilter = contactFilter + " and ((Interaction.interaction_status='Resolved')";
-			  else
-				  contactFilter = contactFilter + " and (Interaction.interaction_status !='Resolved')";
-			}else if(colName =="Last Conversation With"){
-			  let userId = this.userList.filter((item:any)=> item.name ==filters.items[0].filterValue)[0]?.uid ;
-			  userId = userId ? userId : -1;
-			  contactFilter = contactFilter + `and  (((  Message.Agent_id LIKE '%${userId}%' ))`;
-			}else if(colName =="Conversation Assigned to"){
-			  let userId = this.userList.filter((item:any)=> item.name ==filters.items[0].filterValue)[0]?.uid;
-			  userId = userId ? userId : -1;
-			  contactFilter = contactFilter + `(and IM.AgentId='${userId}')`;
-			}else if(colName =="Last Message Received At"){
-			  contactFilter = contactFilter + `and (Message.message_direction ='out' and Message.created_at=?)`;
-			}else if(colName =="Last Message Sent At"){
-			  contactFilter = contactFilter + `and (Message.message_direction ='IN' and Message.created_at=?) `;
-			}else if(colName =="Creator"){
-			  contactFilter = contactFilter + `and  ((  user.name LIKE '%${filters.items[0].filterValue}%' ))`;
-			} else{
-			  let colName = 'EC.'+filters.filterPrefix;
-			
-			if(colName =='Phone_number'){
-			  colName = "REGEXP_REPLACE(Phone_number, '[^0-9]', '')"
-			}
-	
-			contactFilter += idx == 0 ?' and ((' :  filters.items[0]['filterOperator'] == '' ? ' and ('  : filters.items[0]['filterOperator'] + ' (';
-			filters.items.map((filter:any,index:any)=>{
-	
-  
-			let filterOper = "='"+filter.filterValue+"'";
-				let QueryOperator ='';
-			QueryOperator = index == 0 ? '':filter.filterOperator?filter.filterOperator:''
-			if(filter.filterBy=="End with"){
-			  filterOper = "LIKE '%"+filter.filterValue+"'";
-			}
-			if(filter.filterBy=="Starts with"){
-			  filterOper = "LIKE '"+filter.filterValue+"%'";
-			}
-			if(filter.filterBy=="Is equal to"){
-			  if(filter.filterType =="date"){
-				  const currentDate = new Date(filter.filterValue)
-				  const nextDate = new Date(currentDate)
-				  nextDate.setDate(currentDate.getDate() + 1)
-				  console.log(nextDate);
-				  let update = this.datePipe.transform(nextDate, 'yyyy-MM-dd');
-				  filterOper = '>= "' + filter.filterValue.toString() + '" AND EC.' + filter.filterPrefix + ' < "' +update?.toString() + '"';				
-			  }else
-				  filterOper = '= "'+filter.filterValue + '"';
-			}
-			if(filter.filterBy=="Is not equal to"){
-			  if(filter.filterType =="date"){
-				  colName = "date("+ colName +")";
-			  }
-			  // if(filter.filterType =="date"){
-			  // 	const currentDate = new Date(filter.filterValue)
-			  // 	const nextDate = new Date(currentDate)
-			  // 	nextDate.setDate(currentDate.getDate() + 1)
-			  // 	console.log(nextDate);
-			  // 	let update = this.datePipe.transform(nextDate, 'yyyy-MM-dd');
-			  // 	filterOper = '< "' + filter.filterValue + '" AND EC.' + filter.filterPrefix + ' >= "' +update + '"';				
-			  // }else
-				  filterOper = '!= "'+filter.filterValue + '"';
-			}
-	
-			if(filter.filterBy=="Contains"){
-			  filterOper = "LIKE '%"+filter.filterValue+"%'";
-			}
-	
-			if(filter.filterBy=="Yes"){
-			  filterOper = "LIKE '%Yes%'";
-			}
-	
-			if(filter.filterBy=="No"){
-			  filterOper = "LIKE '%No%'";
-			}
-			
-			if(filter.filterBy=="True"){
-			  if(filter.filterPrefix == "isBlocked")
-				  filterOper = "= '1'";
-			  else
-				  filterOper = "LIKE '%true%'";
-			}
-	
-			if(filter.filterBy=="False"){
-			  if(filter.filterPrefix == "isBlocked")
-				  filterOper = "= '0'";
-			  else
-				  filterOper = "LIKE '%false%'";
-			}
-	
-			if(filter.filterBy=="Is empty"){
-			  filterOper = "LIKE '%No%'";
-			  filterOper = "='' OR EC."+filter.filterPrefix+" IS NULL";
-			}
-	
-			if(filter.filterBy=="Is not empty"){
-			  filterOper = "LIKE '%No%'";
-			  filterOper = "!=''";
-			}
-			if(filter.filterBy=="Does Not Contain"){
-			  filterOper = "NOT LIKE '"+filter.filterValue+"'";
-			}
-			if(filter.filterBy=="After" || filter.filterBy =="Greater than"){
-			  filterOper = "> '"+filter.filterValue+"'";
-			}
-			if(filter.filterBy=="Before" || filter.filterBy =="Less than"){
-			  filterOper = "< '"+filter.filterValue+"'";
-			}
-			
-			if(filter.filterBy=="Between"){
-			  let valueArray = filter.filterValue.split('/')
-			  filterOper = "Between '"+valueArray[0]+"' AND '"+valueArray[1]+"'" 
-			}
-	
-			if(filter.filterBy=="Includes domain"){
-			  filterOper = "LIKE '%"+filter.filterValue+"%'";
-			}
-			if(filter.filterBy=="Exclude domain"){
-			  filterOper = "NOT LIKE '%"+filter.filterValue+"%'";
-			  
-			}
-	
-			if(filter.filterBy=="Includes extension"){
-			  filterOper = "LIKE '%."+filter.filterValue+"'";
-			}
-			if(filter.filterBy=="Exclude extension"){
-			  filterOper = "NOT LIKE '."+filter.filterValue+"'";
-			}
-			if(filter?.filterPrefixType =="Date"){
-			  filterOper = this.applyDateCondition(filter);
-			}
-			
-			contactFilter += ' '+QueryOperator +' '+colName+' '+filterOper
-			  })
-			contactFilter += ' )';
-		  }
-			}
-			})
-			contactFilter += ' ) Group by EC.customerId';
-		  
+          if(filters.items.length>0){
+          
+			let colName = filters.filterPrefix;
+		  if(colName =="Conversation Resolved"){
+			if(filters?.items[0].filterBy == 'True')
+				contactFilter = contactFilter + " and ((Interaction.interaction_status='Resolved')";
+			else
+				contactFilter = contactFilter + " and (Interaction.interaction_status !='Resolved')";
+		  }else if(colName =="Last Conversation With"){
+			let userId = this.userList.filter((item:any)=> item.name ==filters.items[0].filterValue)[0]?.uid ;
+			userId = userId ? userId : -1;
+			contactFilter = contactFilter + ` and  (((  Message.Agent_id LIKE '%${userId}%' ))`;
+		  }else if(colName =="Conversation Assigned to"){
+			let userId = this.userList.filter((item:any)=> item.name ==filters.items[0].filterValue)[0]?.uid;
+			userId = userId ? userId : -1;
+			contactFilter = contactFilter + ` and ((IM.AgentId='${userId}')`;
+		  }else if(colName =="Last Message Received At"){
+			if(filters.items[0].filterBy =='After')
+				contactFilter = contactFilter + ` and ((Message.message_direction ='out' and Message.created_at> ${filters.items[0].filterValue})`;
+			else if(filters.items[0].filterBy =='Before')
+				contactFilter = contactFilter + ` and ((Message.message_direction ='out' and Message.created_at< ${filters.items[0].filterValue})`;
+			else if(filters.items[0].filterBy =='Is equal to')
+				contactFilter = contactFilter + ` and ((Message.message_direction ='out' and Message.created_at= ${filters.items[0].filterValue})`;
+			else if(filters.items[0].filterBy =='Is not equal to')
+				contactFilter = contactFilter + ` and ((Message.message_direction ='out' and Message.created_at != ${filters.items[0].filterValue})`;
+		  }else if(colName =="Last Message Sent At"){
+			if(filters.items[0].filterBy =='After')
+				contactFilter = contactFilter + ` and ((Message.message_direction ='IN' and Message.created_at> ${filters.items[0].filterValue})`;
+			else if(filters.items[0].filterBy =='Before')
+				contactFilter = contactFilter + ` and ((Message.message_direction ='IN' and Message.created_at< ${filters.items[0].filterValue})`;
+			else if(filters.items[0].filterBy =='Is equal to')
+				contactFilter = contactFilter + ` and ((Message.message_direction ='IN' and Message.created_at= ${filters.items[0].filterValue})`;
+			else if(filters.items[0].filterBy =='Is not equal to')
+				contactFilter = contactFilter + ` and ((Message.message_direction ='IN' and Message.created_at != ${filters.items[0].filterValue})`;
+		  }else if(colName =="Creator"){
+			contactFilter = contactFilter + ` and  ((  user.name LIKE '%${filters.items[0].filterValue}%' ))`;
 		  } else{
-			  contactFilter += ' Group by EC.customerId';
-		  }
+			let colName = 'EC.'+filters.filterPrefix;
+		  
+          if(colName =='Phone_number'){
+            colName = "REGEXP_REPLACE(Phone_number, '[^0-9]', '')"
+          }
   
-		  return contactFilter;
-	  }
+          contactFilter += idx == 0 ?' and ((' :  filters.items[0]['filterOperator'] == '' ? ' and ('  : filters.items[0]['filterOperator'] + ' (';
+          filters.items.map((filter:any,index:any)=>{
+  
+
+          let filterOper = "='"+filter.filterValue+"'";
+              let QueryOperator ='';
+          QueryOperator = index == 0 ? '':filter.filterOperator?filter.filterOperator:''
+          if(filter.filterBy=="End with"){
+            filterOper = "LIKE '%"+filter.filterValue+"'";
+          }
+          if(filter.filterBy=="Starts with"){
+            filterOper = "LIKE '"+filter.filterValue+"%'";
+          }
+          if(filter.filterBy=="Is equal to"){
+			if(filter.filterType =="date"){
+				const currentDate = new Date(filter.filterValue)
+				const nextDate = new Date(currentDate)
+				nextDate.setDate(currentDate.getDate() + 1)
+				console.log(nextDate);
+				let update = this.datePipe.transform(nextDate, 'yyyy-MM-dd');
+				filterOper = '>= "' + filter.filterValue.toString() + '" AND EC.' + filter.filterPrefix + ' < "' +update?.toString() + '"';				
+			}else
+            	filterOper = '= "'+filter.filterValue + '"';
+          }
+          if(filter.filterBy=="Is not equal to"){
+			if(filter.filterType =="date"){
+				colName = "date("+ colName +")";
+			}
+			// if(filter.filterType =="date"){
+			// 	const currentDate = new Date(filter.filterValue)
+			// 	const nextDate = new Date(currentDate)
+			// 	nextDate.setDate(currentDate.getDate() + 1)
+			// 	console.log(nextDate);
+			// 	let update = this.datePipe.transform(nextDate, 'yyyy-MM-dd');
+			// 	filterOper = '< "' + filter.filterValue + '" AND EC.' + filter.filterPrefix + ' >= "' +update + '"';				
+			// }else
+            	filterOper = '!= "'+filter.filterValue + '"';
+          }
+  
+          if(filter.filterBy=="Contains"){
+            filterOper = "LIKE '%"+filter.filterValue+"%'";
+          }
+  
+          if(filter.filterBy=="Yes"){
+            filterOper = "LIKE '%Yes%'";
+          }
+  
+          if(filter.filterBy=="No"){
+            filterOper = "LIKE '%No%'";
+          }
+		  
+          if(filter.filterBy=="True"){
+			if(filter.filterPrefix == "isBlocked")
+				filterOper = "= '1'";
+			else
+            	filterOper = "LIKE '%true%'";
+          }
+  
+          if(filter.filterBy=="False"){
+			if(filter.filterPrefix == "isBlocked")
+				filterOper = "= '0'";
+			else
+            	filterOper = "LIKE '%false%'";
+          }
+  
+          if(filter.filterBy=="Is empty"){
+            filterOper = "LIKE '%No%'";
+            filterOper = "='' OR EC."+filter.filterPrefix+" IS NULL";
+          }
+  
+          if(filter.filterBy=="Is not empty"){
+            filterOper = "LIKE '%No%'";
+            filterOper = "!=''";
+          }
+          if(filter.filterBy=="Does Not Contain"){
+            filterOper = "NOT LIKE '"+filter.filterValue+"'";
+          }
+          if(filter.filterBy=="After" || filter.filterBy =="Greater than"){
+            filterOper = "> '"+filter.filterValue+"'";
+          }
+          if(filter.filterBy=="Before" || filter.filterBy =="Less than"){
+            filterOper = "< '"+filter.filterValue+"'";
+          }
+          
+          if(filter.filterBy=="Between"){
+            let valueArray = filter.filterValue.split('/')
+            filterOper = "Between '"+valueArray[0]+"' AND '"+valueArray[1]+"'" 
+          }
+  
+          if(filter.filterBy=="Includes domain"){
+            filterOper = "LIKE '%"+filter.filterValue+"%'";
+          }
+          if(filter.filterBy=="Exclude domain"){
+            filterOper = "NOT LIKE '%"+filter.filterValue+"%'";
+            
+          }
+  
+          if(filter.filterBy=="Includes extension"){
+            filterOper = "LIKE '%."+filter.filterValue+"'";
+          }
+          if(filter.filterBy=="Exclude extension"){
+            filterOper = "NOT LIKE '."+filter.filterValue+"'";
+          }
+		  if(filter?.filterPrefixType =="Date"){
+			filterOper = this.applyDateCondition(filter);
+		  }
+          
+          contactFilter += ' '+QueryOperator +' '+colName+' '+filterOper
+            })
+          contactFilter += ' )';
+		}
+          }
+          })
+		  contactFilter += ' ) Group by EC.customerId';
+        
+        } else{
+			contactFilter += ' Group by EC.customerId';
+		}
+
+        return contactFilter;
+    }
 
 
 	  applyDateCondition(filter:any):string{
