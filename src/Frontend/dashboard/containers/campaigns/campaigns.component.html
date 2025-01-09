@@ -991,7 +991,7 @@ It is determined by a combination of user feedback signals like blocks, reports 
 								<div class="important_contact_left dragAreaClass"> 
 								
 									<img class="icon xl" src="assets/img/campaign/image-a@2x.png">
-									<p>Drag & Drop files</p>
+									<p>Drag & Drop files  {{this.isLoading}}</p>
 									<p><span>or</span></p>
 									<label *ngIf="!selecetdCSV" class="custom-file-upload w-190">
 										<input type="file"
@@ -1293,7 +1293,7 @@ It is determined by a combination of user feedback signals like blocks, reports 
 									<div class="d-flex">
 									<div class="formrow form-filter-type w-100">
 										<p class="form-control">
-											{{addedF?.filterPrefix}}
+											{{getActualName(addedF?.filterPrefix)}}
 										</p>
 									</div>
 									<div class="formrow form-filter-type w-100">
@@ -1488,7 +1488,7 @@ It is determined by a combination of user feedback signals like blocks, reports 
 					<div *ngFor='let item of contactFilterBy ;let j = index' >
 						<div class="item" *ngFor='let item of item?.addeFilter ;let k = index' (click)="removeAddedFilter(j,k)">
 							<span *ngIf="item?.filterOperator">{{item?.filterOperator}}</span>
-							<p>{{item?.filterPrefix}} {{item?.filterBy}} {{item?.filterValue}}</p>
+							<p>{{getActualName(item?.filterPrefix)}} {{item?.filterBy}} {{item?.filterValue}}</p>
 						</div>
 					</div>
 

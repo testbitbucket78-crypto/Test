@@ -120,9 +120,11 @@ async function NotifyServer(display_phone_number, updatemessage, message, status
     socket.emit('message', notificationMsg);
 
     if(message){
-      let spid = await db.excuteQuery('select SPID from Message where Message_id =?', msg_id);
-      let websocketurl = await db.excuteQuery('select webhook_url from UserAPIKeys where spid =?', spid);   
+      let data = await db.excuteQuery('select SPID,assignAgent from Message where Message_id =?', msg_id);
+      if(data?.assignAgent == -3){
+      let websocketurl = await db.excuteQuery('select webhook_url from UserAPIKeys where spid =?', data?.spid);   
         sendDataToWebHook(websocketurl,notificationMsg);
+      }
     }
   } catch (err) {
     console.error("Notify Error:", err);

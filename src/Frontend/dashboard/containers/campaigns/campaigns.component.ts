@@ -1697,8 +1697,10 @@ formateDate(dateTime:string){
 		this.modalReference = this.modalService.open(addNewCampaign,{size: 'xl', windowClass:'white-bg'});
 	}
 	 async ConfirmCampaignSchedule(ConfirmCampaign:any){
+		this.isLoading = true;
        await this.CampaignNameAlreadyExist()
 		if(this.isCampaignAlreadyExist){
+			this.isLoading = false;
 			return 
 		}
 		if(this.scheduled ==1 && this.selecteScheduleDate==''){
@@ -1709,6 +1711,7 @@ formateDate(dateTime:string){
 		this.checkCampignTiming();
 			this.modalReference2 = this.modalService.open(ConfirmCampaign, { size: 'sm', windowClass: 'pink-bg-sm background-blur' });
 		}
+		setTimeout(()=>{this.isLoading = false},100);
 	}
 
 	resetFormState() {
@@ -2398,19 +2401,26 @@ testinfo(){
 		this.CSVPrefix['value'] =event?.target?.value
 	}
 	
-	saveFiles(files: FileList) {
+	async saveFiles(files: FileList) {
 		this.segmentsContactList=[]
 	    this.csvContactList=[]
 		if (files.length > 1){
 			console.log("Only one file at time allow");
 		}
-		else {
-		  //console.log(files[0].size,files[0].name,files[0].type);
-            
-			let fileName:any = files[0].name
+		else {		  
+			this.isLoading=  true;
+			console.log('enter')
+			await this.saveExclFile(files);
+			console.log('exit')
+		this.isLoading=  false;
+		}
+	  }
+
+	  async saveExclFile(files: FileList){
+		return new Promise((resolve, reject) => {
+		let fileName:any = files[0].name
 			
 			var FileExt:any = fileName.substring(fileName.lastIndexOf('.') + 1);
-			this.isLoading=  true;
 		if(FileExt =="csv") {
 				let file =files[0];
 				let reader: FileReader = new FileReader();
@@ -2462,7 +2472,8 @@ testinfo(){
 					console.log(contactsData)
 					this.csvContactList = contactsData
 					this.selecetdCSV = fileName
-       			}
+       			}				
+				   resolve('');
 	    } else if(FileExt == "xlsx"){
 			let file =files[0];
 			const fileReader = new FileReader();
@@ -2510,19 +2521,19 @@ testinfo(){
 				});
 				this.csvContactList = contactsData;
 				this.selecetdCSV = file.name;
+				resolve('');
 			};
 			
-		this.isLoading=  false;
+			console.log('process')
 			fileReader.readAsArrayBuffer(file);
 
-				fileReader.readAsArrayBuffer(this.file);
+				//fileReader.readAsArrayBuffer(this.file);
 			}			
 		else {
-			this.showToaster('Please Upload csv file only...','error')
+			this.showToaster('Please Upload csv file only...','error');			
+			resolve('');
 		}
-		
-		this.isLoading=  false;
-		}
+	});
 	  }
 	
 	  toggleContactOption(){

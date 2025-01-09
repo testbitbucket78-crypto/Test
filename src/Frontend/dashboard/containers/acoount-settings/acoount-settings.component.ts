@@ -627,6 +627,13 @@ getApiKeyData(isSave:boolean){
 });
 }
 
+disableSaveBtn(){
+  if((this.ipAddress == this.apiKeyData?.ips))
+    return true;
+  else 
+    return false;
+}
+
 regenrateApiKey(){
   this.getApiKeyData(true);
 }

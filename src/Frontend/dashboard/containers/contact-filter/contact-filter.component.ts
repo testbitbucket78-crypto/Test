@@ -468,7 +468,7 @@ export class ContactFilterComponent implements OnInit {
       };
       });  
   
-      let contactFilter ="SELECT EC.*, IFNULL(GROUP_CONCAT(DISTINCT ECTM.TagName ORDER BY FIND_IN_SET(ECTM.ID, REPLACE(EC.tag, ' ', ''))), '') AS tag_names,maxInteraction.maxInteractionId,Interaction.interaction_status,Message.*,user.uid,user.name,IM.latestCreatedAt AS lastAssistedAgent,IM.AgentId,IM.* FROM EndCustomer AS EC LEFT JOIN EndCustomerTagMaster AS ECTM ON FIND_IN_SET(ECTM.ID, REPLACE(EC.tag, ' ', '')) > 0 AND ECTM.isDeleted != 1 LEFT JOIN (SELECT customerId,MAX(InteractionId) AS maxInteractionId FROM Interaction WHERE is_deleted != 1 AND IsTemporary != 1 GROUP BY customerId) AS maxInteraction ON maxInteraction.customerId = EC.customerId LEFT JOIN Interaction AS Interaction ON maxInteraction.maxInteractionId = Interaction.InteractionId LEFT JOIN Message AS Message ON Message.interaction_id = Interaction.InteractionId AND Message.is_deleted != 1 LEFT JOIN user AS user ON EC.uid = user.uid LEFT JOIN ( SELECT MAX(interactionId) AS IMInteractionID, MAX(created_at) AS latestCreatedAt,AgentId	FROM InteractionMapping GROUP BY interactionId) AS IM ON IM.IMInteractionID = Interaction.InteractionId WHERE EC.SP_ID ="+this.SPID +" AND EC.isDeleted != 1 AND EC.IsTemporary != 1";
+      let contactFilter ="SELECT EC.*, IFNULL(GROUP_CONCAT(DISTINCT ECTM.TagName ORDER BY FIND_IN_SET(ECTM.ID, REPLACE(EC.tag, ' ', ''))), '') AS tag_names,maxInteraction.maxInteractionId,Interaction.interaction_status,Message.*,user.uid,user.name,IM.* FROM EndCustomer AS EC LEFT JOIN EndCustomerTagMaster AS ECTM ON FIND_IN_SET(ECTM.ID, REPLACE(EC.tag, ' ', '')) > 0 AND ECTM.isDeleted != 1 LEFT JOIN (SELECT customerId,MAX(InteractionId) AS maxInteractionId FROM Interaction WHERE is_deleted != 1 AND IsTemporary != 1 GROUP BY customerId) AS maxInteraction ON maxInteraction.customerId = EC.customerId LEFT JOIN Interaction AS Interaction ON maxInteraction.maxInteractionId = Interaction.InteractionId LEFT JOIN Message AS Message ON Message.interaction_id = Interaction.InteractionId AND Message.is_deleted != 1 LEFT JOIN user AS user ON EC.uid = user.uid LEFT JOIN InteractionMapping AS IM ON IM.InteractionID = Interaction.InteractionId and IM.is_active =  1 WHERE EC.SP_ID ="+this.SPID +" AND EC.isDeleted != 1 AND EC.IsTemporary != 1";
       if(groupArrays.length>0){
         
         groupArrays.map((filters:any,idx)=>{
@@ -484,17 +484,31 @@ export class ContactFilterComponent implements OnInit {
 		  }else if(colName =="Last Conversation With"){
 			let userId = this.userList.filter((item:any)=> item.name ==filters.items[0].filterValue)[0]?.uid ;
 			userId = userId ? userId : -1;
-			contactFilter = contactFilter + `and  (((  Message.Agent_id LIKE '%${userId}%' ))`;
+			contactFilter = contactFilter + ` and  (((  Message.Agent_id LIKE '%${userId}%' ))`;
 		  }else if(colName =="Conversation Assigned to"){
 			let userId = this.userList.filter((item:any)=> item.name ==filters.items[0].filterValue)[0]?.uid;
 			userId = userId ? userId : -1;
-			contactFilter = contactFilter + `(and IM.AgentId='${userId}')`;
+			contactFilter = contactFilter + ` and ((IM.AgentId='${userId}')`;
 		  }else if(colName =="Last Message Received At"){
-			contactFilter = contactFilter + `and (Message.message_direction ='out' and Message.created_at=?)`;
+			if(filters.items[0].filterBy =='After')
+				contactFilter = contactFilter + ` and ((Message.message_direction ='out' and Message.created_at> ${filters.items[0].filterValue})`;
+			else if(filters.items[0].filterBy =='Before')
+				contactFilter = contactFilter + ` and ((Message.message_direction ='out' and Message.created_at< ${filters.items[0].filterValue})`;
+			else if(filters.items[0].filterBy =='Is equal to')
+				contactFilter = contactFilter + ` and ((Message.message_direction ='out' and Message.created_at= ${filters.items[0].filterValue})`;
+			else if(filters.items[0].filterBy =='Is not equal to')
+				contactFilter = contactFilter + ` and ((Message.message_direction ='out' and Message.created_at != ${filters.items[0].filterValue})`;
 		  }else if(colName =="Last Message Sent At"){
-			contactFilter = contactFilter + `and (Message.message_direction ='IN' and Message.created_at=?) `;
+			if(filters.items[0].filterBy =='After')
+				contactFilter = contactFilter + ` and ((Message.message_direction ='IN' and Message.created_at> ${filters.items[0].filterValue})`;
+			else if(filters.items[0].filterBy =='Before')
+				contactFilter = contactFilter + ` and ((Message.message_direction ='IN' and Message.created_at< ${filters.items[0].filterValue})`;
+			else if(filters.items[0].filterBy =='Is equal to')
+				contactFilter = contactFilter + ` and ((Message.message_direction ='IN' and Message.created_at= ${filters.items[0].filterValue})`;
+			else if(filters.items[0].filterBy =='Is not equal to')
+				contactFilter = contactFilter + ` and ((Message.message_direction ='IN' and Message.created_at != ${filters.items[0].filterValue})`;
 		  }else if(colName =="Creator"){
-			contactFilter = contactFilter + `and  ((  user.name LIKE '%${filters.items[0].filterValue}%' ))`;
+			contactFilter = contactFilter + ` and  ((  user.name LIKE '%${filters.items[0].filterValue}%' ))`;
 		  } else{
 			let colName = 'EC.'+filters.filterPrefix;
 		  
