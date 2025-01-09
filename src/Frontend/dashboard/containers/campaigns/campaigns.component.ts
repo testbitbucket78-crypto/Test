@@ -1001,8 +1001,10 @@ formateDate(dateTime:string){
 	  selectContactFilter(index:any,filter:any){
 		// this.ContactListNewFilters=[]
 		// let addeFilter = filter.addeFilter
+		console.log('testing abcd');
 		this.selectedcontactFilterBy = filter;
 		this.showContactFilter=false;
+		console.log('testing abcd 2');
 		// if(addeFilter.length>0){
 		// for(var i=0;i<addeFilter.length;i++){
 		// 	this.ContactListNewFilters.push(addeFilter[i])
@@ -1353,10 +1355,10 @@ formateDate(dateTime:string){
 
 	}
 
-	removeAllAddedFilter(){
+	removeAllAddedFilter() {
 		this.filteredEndCustomer=[]
 		this.contactFilterBy.map((item:any)=>{
-			item.addeFilter=[]
+			item.addeFilter=[];
 		})
 		this.getFilterOnEndCustomer()
 	}
@@ -1364,6 +1366,9 @@ formateDate(dateTime:string){
 		this.contactFilterBy[mainIndex]['addeFilter'].splice(filterIndex, 1)
 		if(this.contactFilterBy[mainIndex]['addeFilter']?.length>0){
 			this.contactFilterBy[mainIndex]['addeFilter'][0]['filterOperator']='';
+		} else {
+			this.removeAllAddedFilter();
+			this.addNewFilter();
 		}
 		this.getFilterOnEndCustomer()
 	}
@@ -1579,14 +1584,15 @@ formateDate(dateTime:string){
 
 	selectStep2Option(option:any,modalname:any,step2Option:any){
 		this.step2Option = option;
+		console.log(this.selectedcontactFilterBy);
 		this.selectedcontactFilterBy['addeFilter'] = '';
-		if(step2Option ==option && this.step2Option ==='ImportContacts'){
-			this.closeAllModal()
-			this.openImportantContact(modalname)
+		if(step2Option == option && this.step2Option ==='ImportContacts'){
+			this.closeAllModal();
+			this.openImportantContact(modalname);
 		}
-		if(step2Option ==option && this.step2Option ==='AddSegmentAudience'){
-			this.closeAllModal()
-			this.openSegmentAudience(modalname)
+		if(step2Option == option && this.step2Option ==='AddSegmentAudience'){
+			this.closeAllModal();
+			this.openSegmentAudience(modalname);
 		}
 	}
 
