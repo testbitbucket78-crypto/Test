@@ -204,6 +204,7 @@ var selectCampaignTest = `select c.uid,u.* from CampaignTest c
 JOIN user u ON u.uid=c.uid
  where c.SP_ID=? and c.isDeleted !=1`
 
+ var getCampaignId = `select * from EndCustomer where Phone_Number =? AND SP_ID=?  ORDER BY created_at desc limit 1`
 //_______________________________CONTACT SETTINGS________________________//
 
 var addtag = `INSERT INTO EndCustomerTagMaster(TagName,TagColour,SP_ID,created_at,updated_at) values ?`
@@ -467,5 +468,5 @@ module.exports = {
     Whatsappdetails,addTokenQuery,updateTokenQuery,deleteTokenQuery,selectTokenQuery,isEnableQuery,baseURL,accessToken,deleteIPQuery,insertIPAddress,updateNotification,
     getColCount,addcolumn,getcolumn,deletecolumn,getcolumnid,enableMandatory,enablestatus,editfield ,selectApprovedTemplate ,addGallery ,getGallery,selectUserByIdQuery,
     content_type,access_token,url,selectActiveQuery,getAllUserQuery,checkDeletedColumn,getCustomColumnById,permanentDeleteColumn,selectHealthStatus,insertHealthStatus, insertUserAPIKeys, updateUserAPIKeys
-    ,getUserAPIKeys, updateAPIkeysState, updateWebhookUrl, getAgentId, getChannel, getRateLimit
+    ,getUserAPIKeys, updateAPIkeysState, updateWebhookUrl, getAgentId, getChannel, getRateLimit, getCampaignId
 }
