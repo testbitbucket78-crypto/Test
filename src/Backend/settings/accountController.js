@@ -232,7 +232,11 @@ async function SaveOrUpdate(APIKeyManagerInstance) {
         ips = JSON.stringify(ips);
     }
     if (checkIfAlreadyExists && checkIfAlreadyExists.length > 0) {
-        await db.excuteQuery(val.updateUserAPIKeys, [ips, APIKeyManagerInstance.spId]);
+        if(APIKeyManagerInstance.isRegenerate){
+            await db.excuteQuery(val.updateUserAPIKeysAndKeyGenerate, [keyGenerated, ips, APIKeyManagerInstance.spId]);
+        } else{
+            await db.excuteQuery(val.updateUserAPIKeysAndTokenName, [APIKeyManagerInstance.tokenName ,ips, APIKeyManagerInstance.spId]);
+        }
         return { success: true, data: { spid: APIKeyManagerInstance.spId, ips } };
     } else {
         await db.excuteQuery(val.insertUserAPIKeys, [APIKeyManagerInstance.spId, keyGenerated, ips]);
@@ -506,8 +510,10 @@ const sendMessage = async (req, res) => {
     const Data = await db.excuteQuery(val.getUserAPIKeys, [APIKeyManagerInstance.spId]);
     if (Data && Data.length > 0) {
         const result = APIKeyManagerInstance.mapResponse(Data[0]);
-        if (result?.ips.length === 0 || !result?.ips.includes(ip)) {
-            throw new Error(`IP address ${ip} is not authorized.`);
+        if(result?.ips.length > 0) {
+            if (result?.ips.length === 0 || !result?.ips.includes(ip)) {
+                throw new Error(`IP address ${ip} is not authorized.`);
+            }
         }
         if(result?.apiKey != APIKeyManagerInstance?.apiKey){
             throw new Error(`API Key ${APIKeyManagerInstance?.apiKey} is not authorized.`);
@@ -541,13 +547,13 @@ const sendMessage = async (req, res) => {
 
   const sendMessageInstance = new sendMessageBody(req?.body);
   const channelData = await db.excuteQuery(val.getChannel, [APIKeyManagerInstance.spId]);
-  let channel, phoneNo, AgentId;
+  let channel, AgentId;
   if (channelData && channelData.length > 0) {
       channel = channelData[0]?.channel_id;
-      phoneNo = channelData[0]?.connected_id;
+      //phoneNo = channelData[0]?.connected_id;
   }
 
-  let { InteractionId, custid } = await insertInteractionAndRetrieveId(phoneNo, sendMessageInstance.SPID, channel);
+  let { InteractionId, custid } = await insertInteractionAndRetrieveId(sendMessageInstance.messageTo, sendMessageInstance.SPID, channel);
   const AgentIdData = await db.excuteQuery(val.getAgentId, [APIKeyManagerInstance.spId]);
   if(AgentIdData && AgentIdData.length > 0) AgentId = AgentIdData[0]?.uid;
   sendMessageInstance.InteractionId = InteractionId;

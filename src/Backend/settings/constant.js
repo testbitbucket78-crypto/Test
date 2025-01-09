@@ -444,7 +444,8 @@ var selectHealthStatus = `SELECT * FROM businessHealth WHERE phone_number_id = ?
 
 //---------------------------------UserAPIKeys-----------------------------------//
 var insertUserAPIKeys = `INSERT INTO UserAPIKeys (spid,api_key,ips) values (?,?,?)`
-var updateUserAPIKeys = `UPDATE UserAPIKeys SET ips = ?, updated_at = CURRENT_TIMESTAMP WHERE spid = ?`
+var updateUserAPIKeysAndTokenName = `UPDATE UserAPIKeys SET tokenName = ?, ips = ?, updated_at = CURRENT_TIMESTAMP WHERE spid = ?`
+var updateUserAPIKeysAndKeyGenerate = `UPDATE UserAPIKeys SET api_key = ?, ips = ?, updated_at = CURRENT_TIMESTAMP WHERE spid = ?`
 var getUserAPIKeys = `select * from UserAPIKeys where spid = ?`
 var updateAPIkeysState = `UPDATE UserAPIKeys SET is_enabled = ?, updated_at = CURRENT_TIMESTAMP WHERE spid = ?`
 var updateWebhookUrl = `UPDATE UserAPIKeys  SET webhook_url = ?, updated_at = CURRENT_TIMESTAMP WHERE spid = ?`
@@ -466,6 +467,6 @@ module.exports = {
     addtag, updatetag, deletetag, selecttag, addTemplates, selectTemplate, updateTemplate, deleteTemplate, insertWhatsappdetails, updateWhatsappdetails, selectChannelCount,
     Whatsappdetails,addTokenQuery,updateTokenQuery,deleteTokenQuery,selectTokenQuery,isEnableQuery,baseURL,accessToken,deleteIPQuery,insertIPAddress,updateNotification,
     getColCount,addcolumn,getcolumn,deletecolumn,getcolumnid,enableMandatory,enablestatus,editfield ,selectApprovedTemplate ,addGallery ,getGallery,selectUserByIdQuery,
-    content_type,access_token,url,selectActiveQuery,getAllUserQuery,checkDeletedColumn,getCustomColumnById,permanentDeleteColumn,selectHealthStatus,insertHealthStatus, insertUserAPIKeys, updateUserAPIKeys
-    ,getUserAPIKeys, updateAPIkeysState, updateWebhookUrl, getAgentId, getChannel, getRateLimit
+    content_type,access_token,url,selectActiveQuery,getAllUserQuery,checkDeletedColumn,getCustomColumnById,permanentDeleteColumn,selectHealthStatus,insertHealthStatus, insertUserAPIKeys, updateUserAPIKeysAndTokenName
+    ,getUserAPIKeys, updateAPIkeysState, updateWebhookUrl, getAgentId, getChannel, getRateLimit, getCampaignId, updateUserAPIKeysAndKeyGenerate
 }
