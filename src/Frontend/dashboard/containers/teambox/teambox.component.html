@@ -258,11 +258,12 @@
 										'flex-start': message?.message_direction == 'IN',
 										'flex-end':  message?.message_direction != 'IN'
 									  }">
-									<label *ngIf="message.message_direction !='IN' && message.assignAgent !=-1 && message.assignAgent !=-2">{{message.AgentName}}</label>
+									<label *ngIf="message.message_direction !='IN' && message.assignAgent !=-1 && message.assignAgent !=-2 && message.assignAgent !=-3">{{message.AgentName}}</label>
 									<div class="d-flex align-items-center justify-content-end">
 										<div class="image-wrapper">
 											<img *ngIf="message.message_direction !='IN' && message.assignAgent ==-2" class="hover-image" src="/assets/img/teambox/automotion-chat-stamp.svg" style="cursor:pointer;">
-											<div class="hover-text" >{{message.assignAgent ==-2 ?'Automation':'Campaign'}}</div>
+											<img *ngIf="message.message_direction !='IN' && message.assignAgent ==-3" class="hover-image" src="/assets/img/teambox/api.svg" style="cursor:pointer; width: 24px; height: 24px">
+											<div class="hover-text" >{{message.assignAgent ==-2 ?'Automation': message.assignAgent ==-3 ? 'Send&nbsp;API': 'Campaign'}}</div>
 											<img *ngIf="message.message_direction !='IN' && message.assignAgent ==-1" class="hover-image" src="/assets/img/teambox/campaign-chat-stamp.svg" style="cursor:pointer;">
 										</div>
 								</div>
