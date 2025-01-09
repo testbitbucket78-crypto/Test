@@ -443,7 +443,7 @@ var insertHealthStatus = `INSERT INTO businessHealth (phone_number_id, channel_p
 var selectHealthStatus = `SELECT * FROM businessHealth WHERE phone_number_id = ? and SP_ID = ?`
 
 //---------------------------------UserAPIKeys-----------------------------------//
-var insertUserAPIKeys = `INSERT INTO UserAPIKeys (spid,api_key,ips) values (?,?,?)`
+var insertUserAPIKeys = `INSERT INTO UserAPIKeys (spid,api_key,ips,tokenName) values (?,?,?,?)`
 var updateUserAPIKeysAndTokenName = `UPDATE UserAPIKeys SET tokenName = ?, ips = ?, updated_at = CURRENT_TIMESTAMP WHERE spid = ?`
 var updateUserAPIKeysAndKeyGenerate = `UPDATE UserAPIKeys SET api_key = ?, ips = ?, updated_at = CURRENT_TIMESTAMP WHERE spid = ?`
 var getUserAPIKeys = `select * from UserAPIKeys where spid = ?`

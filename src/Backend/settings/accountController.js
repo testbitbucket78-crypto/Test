@@ -239,7 +239,7 @@ async function SaveOrUpdate(APIKeyManagerInstance) {
         }
         return { success: true, data: { spid: APIKeyManagerInstance.spId, ips } };
     } else {
-        await db.excuteQuery(val.insertUserAPIKeys, [APIKeyManagerInstance.spId, keyGenerated, ips]);
+        await db.excuteQuery(val.insertUserAPIKeys, [APIKeyManagerInstance.spId, keyGenerated, ips, APIKeyManagerInstance.tokenName]);
         return { success: true, data: { spid: APIKeyManagerInstance.spId, ips } };
     }
 }

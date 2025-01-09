@@ -38,6 +38,7 @@ class APIKeyManager {
             ips: typeof data.ips === 'string' ? JSON.parse(data.ips) : data.ips || [],
             createdAt: data.created_at ? new Date(data.created_at) : null,
             updatedAt: data.updated_at ? new Date(data.updated_at) : null,
+            tokenName: data.tokenName || null,
         };
     }
   }
