@@ -15,7 +15,7 @@ const { EmailConfigurations } =  require('../Authentication/constant');
 const { MessagingName }= require('../enum');
 const {EmailTemplateProvider}= require('../common/template')
 const { sendEmail }= require('../Services/EmailService');
-
+const mysql = require('mysql');
 app.use(bodyParser.urlencoded({ extended: true }));
 
 const getCampaigns = (req, res) => {
@@ -68,7 +68,7 @@ const addCampaign = async (req, res) => {
             updateQuery += " title='" + req.body.title + "',";
             updateQuery += " channel_id='" + req.body.channel_id + "',";
             updateQuery += " message_heading='" + req.body.message_heading + "',";
-            updateQuery += " message_content='" + req.body.message_content + "',";
+            updateQuery += " message_content=" + mysql.escape(req.body.message_content) + ",";
             updateQuery += " message_media='" + req.body.message_media + "',";
             updateQuery += " message_variables='" + req.body.message_variables + "',";
             updateQuery += " button_yes='" + req.body.button_yes + "',";
@@ -89,7 +89,7 @@ const addCampaign = async (req, res) => {
             updateQuery += " OptInStatus= '" + req.body?.OptInStatus + "',";
             updateQuery += " templateId= '" + req.body?.templateId + "',";
             updateQuery += " headerText= '" + req.body?.headerText + "',";
-            updateQuery += " bodyText= '" + req.body?.bodyText + "',";
+            updateQuery += " bodyText= " + mysql.escape(req.body?.bodyText) + ",";
             updateQuery += " buttons= '" + req.body?.buttons + "',";
             updateQuery += " buttonsVariable= '" + req.body?.buttonsVariable + "'";
             updateQuery += " WHERE Id =" + req.body.Id

@@ -1,10 +1,13 @@
 const { MessagingName, channelName }= require('../enum');
+const db = require('../dbhelper')
+const {formatDateTimeAccToTimeZone} = require('../Contact/utils')
+
 async function EmailTemplateProvider(alert, status, emailwhomToSent, name, spMobileNumber) {
     let subject = '';
     let body = '';
     let emailSender = MessagingName[emailwhomToSent];
     const channelname = channelName[emailwhomToSent]
-    let msgStatus = status === '3' ? await find_message_status(alert) : null;
+    let msgStatus = status == '3' ? await find_message_status(alert) : null;
   
     let audience = alert.segments_contacts.length > 0
       ? JSON.parse(alert.segments_contacts).length
@@ -19,7 +22,7 @@ async function EmailTemplateProvider(alert, status, emailwhomToSent, name, spMob
         
         <ul>
           <li><strong>Campaign Name:</strong> ${alert.title}</li>
-          <li><strong>Scheduled Time:</strong> ${alert.start_datetime}</li>
+          <li><strong>Scheduled Time:</strong> ${formatDateTimeAccToTimeZone(alert.start_datetime, alert.time_zone)}</li>
           <li><strong>Target Audience:</strong> ${audience}</li>
           <li><strong>Channel:</strong> ${channelname}, ${spMobileNumber}</li>
         </ul>
@@ -82,4 +85,37 @@ async function EmailTemplateProvider(alert, status, emailwhomToSent, name, spMob
     return { subject, body, emailSender };
   }
 
+  
+async function find_message_status(alert) {
+  let Sent = 0;
+  let Failed = 0;
+  let msgStatusquery = `SELECT
+  
+  CM.status,
+ COUNT( CM.status) AS Status_Count
+ FROM
+  CampaignMessages AS CM
+ JOIN
+  Campaign AS C ON CM.CampaignId = C.Id
+ WHERE
+  C.is_deleted != 1 and C.status=3
+ AND C.sp_id =${alert.sp_id} AND C.Id=${alert.Id}
+ GROUP BY
+ CM.status;`
+
+  let msgStatus = await db.excuteQuery(msgStatusquery, []);
+  for (const item of msgStatus) {
+    console.log("item.status", item.status)
+    if (item.status != 0) {
+      Sent += item.Status_Count;
+    } else if (item.status === 0) {
+      Failed += item.Status_Count;
+    }
+  }
+
+  return {
+    Sent: Sent,
+    Failed: Failed,
+  };
+}
   module.exports = { EmailTemplateProvider };

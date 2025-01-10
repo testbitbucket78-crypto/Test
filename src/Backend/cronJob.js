@@ -486,7 +486,7 @@ JOIN user u ON u.uid=c.uid
      FROM user 
      WHERE SP_ID = ? AND ParentId IS NULL`
     let user = await db.excuteQuery(alertUser, [message.sp_id]);
-        const spData = await  db.excuteQuery(querry, [TemplateData.SP_ID]);
+        const spData = await  db.excuteQuery(querry, [message.sp_id]);
         let spNumber
         if(spData.length > 0) {
             spNumber = spData[0].mobile_number

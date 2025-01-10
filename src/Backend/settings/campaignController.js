@@ -17,6 +17,8 @@ const logger = require('../common/logger.log');
 let fs = require('fs-extra');
 const path = require("path");
 const FormData = require('form-data');
+const { channelForSendingMessage } = require("../enum")
+const commonFun = require('../common/resuableFunctions.js')
 const addCampaignTimings = async (req, res) => {
     try {
         console.log(req.body)
@@ -970,19 +972,30 @@ const deleteTemplates = async (req, res) => {
 
 const testCampaign = async (req, res) => {
     try {
-
-
         var TemplateData = req.body
         let customerID = "";
-
         var messateText = TemplateData.message_content
-
         let channel = TemplateData.channel_id
         let media = TemplateData.message_media
-
-
         let content = await removeTags.removeTagsFromMessages(messateText)
         let message_variables = req.body.message_variables && req.body.message_variables.length > 0 ? JSON.parse(req.body.message_variables) : undefined;
+        let buttons = TemplateData?.buttons;
+        let language = TemplateData?.language
+        let isTemplate = TemplateData?.isTemplate
+            let message_text = req.body.message_text;
+            let message_media = req.body.message_media;
+            let media_type = req.body.media_type;
+            let Message_template_id = req.body.template_id;
+            let Quick_reply_id = req.body.quick_reply_id;
+            let Type = req.body.message_type;
+            let assignAgent = req.body?.assignAgent;
+            var msgVar = req.body?.message_variables;
+            var header = req.body?.headerText
+            let templateName = req.body?.name
+            var body = req.body?.bodyText
+            const mediaType = determineMediaType(media_type);
+            let DynamicURLToBESent;
+            buttons = typeof buttons === 'string' ? JSON.parse(buttons) : buttons
 
         if (message_variables) {
             message_variables.forEach(variable => {
@@ -996,18 +1009,18 @@ const testCampaign = async (req, res) => {
 
             customerID = JSON.parse(TemplateData.segments_contacts)[0];
             // Parse the message template to get placeholders
-            const placeholders = parseMessageTemplate(content);
-            if (placeholders.length > 0) {
-                console.log(placeholders)
-                const results = await removeTags.getDefaultAttribue(placeholders, TemplateData.sp_id, customerID);
-                console.log("results", results)
+            var placeholders = parseMessageTemplate(content);
+            // if (placeholders.length > 0) {
+            //     console.log(placeholders)
+            //     const results = await removeTags.getDefaultAttribue(placeholders, TemplateData.sp_id, customerID);
+            //     console.log("results", results)
 
-                placeholders.forEach(placeholder => {
-                    const result = results.find(result => result.hasOwnProperty(placeholder));
-                    const replacement = result && result[placeholder] !== undefined ? result[placeholder] : null;
-                    content = content.replace(`{{${placeholder}}}`, replacement);
-                });
-            }
+            //     placeholders.forEach(placeholder => {
+            //         const result = results.find(result => result.hasOwnProperty(placeholder));
+            //         const replacement = result && result[placeholder] !== undefined ? result[placeholder] : null;
+            //         content = content.replace(`{{${placeholder}}}`, replacement);
+            //     });
+            // }
 
         } else if (TemplateData.csv_contacts?.length) {
             let contact = JSON.parse(TemplateData.csv_contacts)[0];
@@ -1030,9 +1043,32 @@ const testCampaign = async (req, res) => {
         }
 
         for (let phone_number of testNo) {
-            message_status = await middleWare.channelssetUp(TemplateData.sp_id, channel, type, phone_number.mobile_number, content, media)
-            console.log(message_status)
+            const customerID = await db.excuteQuery(val.getCampaignId, [phone_number?.mobile_number, phone_number?.SP_ID]);
+            let headerVar = await commonFun.getTemplateVariables(msgVar, header, phone_number?.SP_ID, customerID[0]?.customerId);
+            let bodyVar = await commonFun.getTemplateVariables(msgVar, body, phone_number?.SP_ID, customerID[0]?.customerId);
+            let userChannel = channelForSendingMessage[phone_number?.Channel];
+            
+          if (placeholders.length > 0) {
+                const results = await removeTags.getDynamicURLToBESent(message_variables, phone_number?.SP_ID, customerID[0]?.customerId);
+                placeholders.forEach((placeholder, index) => {
+                    const result = results[index];
+                    const replacement = result;
+                    content = content.replace(`{{${placeholder}}}`, replacement);
+                });
+            }
 
+             let buttonsVariable = typeof req.body?.buttonsVariable === 'string' ? JSON.parse(req.body?.buttonsVariable) : req.body?.buttonsVariable;
+             if(!commonFun.isInvalidParam(req.body?.buttonsVariable) && buttonsVariable.length > 0) {
+                DynamicURLToBESent = await removeTags.getDynamicURLToBESent(buttonsVariable, phone_number?.SP_ID, customerID[0]?.customerId);
+             }
+             if(isTemplate == true && userChannel == 'WhatsApp Official'){
+                message_status = await middleWare.createWhatsAppPayload(mediaType, phone_number.mobile_number, templateName, language, headerVar, bodyVar, message_media, phone_number?.SP_ID, buttons, DynamicURLToBESent)
+             }
+             else{
+                let spNumber = await db.excuteQuery(val.getAgentId, [phone_number?.SP_ID]);
+
+                message_status = await middleWare.channelssetUp(TemplateData.sp_id, userChannel, type, phone_number.mobile_number, content, media, "", "", spNumber)
+             }
         }
 
         res.send({
@@ -1047,7 +1083,24 @@ const testCampaign = async (req, res) => {
         res.send(err)
     }
 }
-
+function determineMediaType(mediaType) {
+    switch (mediaType) {
+        case 'video/mp4':
+        case 'video':
+            return 'video';
+        case 'application/pdf':
+            return 'document';
+        case 'image/jpeg':
+        case 'image/jpg':
+        case 'image/png':
+         case 'image':
+            return 'image';
+        case '':
+            return 'text';
+        default:
+            return 'text';
+    }
+}
 
 // Function to parse the message template and retrieve placeholders
 function parseMessageTemplate(template) {

@@ -453,6 +453,26 @@ function getCountryDetails(countryCode) {
   }
 }
 
+function formatDateTimeAccToTimeZone(dateString, gmtOffset){
+  if (!dateString || !gmtOffset) {
+    console.error("Invalid date or GMT offset provided.");
+    return "Invalid time";
+}
+
+try {
+    const offset = gmtOffset.replace("GMT", "").trim(); 
+    const inputTime = moment(dateString, "YYYY-MM-DD HH:mm:ss");
+    const [hours, minutes] = offset.split(":");
+    const totalMinutesOffset = parseInt(hours) * 60 + parseInt(minutes);
+    const localTime = inputTime.utcOffset(totalMinutesOffset);
+    const formattedDate = moment(localTime._d, 'ddd MMM DD YYYY HH:mm:ss [GMT]ZZ (z)').format('YYYY-MM-DD HH:mm:ss');
+
+    return formattedDate;
+} catch (error) {
+    console.error("Error converting date:", error);
+    return "Invalid time";
+}
+}
 
 
-module.exports = {formatterDate, formatterTime, mapCountryCode, formatterDateTime,getCountryDetails};
+module.exports = {formatterDate, formatterTime, mapCountryCode, formatterDateTime,getCountryDetails, formatDateTimeAccToTimeZone};
