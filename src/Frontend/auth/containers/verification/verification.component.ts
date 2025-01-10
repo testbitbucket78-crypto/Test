@@ -32,7 +32,7 @@ export class VerificationComponent implements OnInit {
     isverfyEmailOtp!: boolean;
     phoneOtpTimer: number = 0;
     emailotpTimer: number = 0;
-
+    countsPoup: number = 0;
     otpFormValue:any;
     otpForm:any;
     title = 'formValidation';
@@ -323,7 +323,8 @@ export class VerificationComponent implements OnInit {
             "email_id":this.email_id,
             "mobile_number": this.phone,
             "name": this.name,
-            "otpFor" : otPFor
+            "otpFor" : otPFor,
+            "Channel" : this.channelDomain
         }
         this.apiService.sendOtp(values).subscribe(
             (response: any) => {
@@ -339,6 +340,12 @@ export class VerificationComponent implements OnInit {
               }
             }
           );
+    }
+    openWarningPoup(){
+        if(this.countsPoup == 0){
+            $("#openWarningPoup").modal('show'); 
+            this.countsPoup =  this.countsPoup + 1;
+        }
     }
 
     // isBothButtonsClicked() {
