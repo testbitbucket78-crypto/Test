@@ -506,7 +506,7 @@ WHERE customerId IN (SELECT customerId FROM EndCustomer WHERE Phone_number = ? a
             let sended = await db.excuteQuery(smsdelupdate, [phoneNumber, spid])
             //  console.log("send", sended?.affectedRows)
             logger.info(`send ============== ${sended?.affectedRows}`)
-            notify.NotifyServer(phoneNo, false, ack1InId[0]?.InteractionId, 'Out', 1, 0)
+            notify.NotifyServer(phoneNo, false, ack1InId[0]?.InteractionId, 'Out', 1, 0, message?.id?.id ? message?.id?.id : 0)
 
 
           } else if (ack == '2') {
@@ -529,7 +529,7 @@ WHERE customerId IN (SELECT customerId FROM EndCustomer WHERE Phone_number = ? a
             // notify.NotifyServer(phoneNo, true)
             logger.info(`deliver ============== ${deded?.affectedRows}`)
             let ack2InId = await db.excuteQuery(notifyInteraction, [phoneNumber, spid])
-            notify.NotifyServer(phoneNo, false, ack2InId[0]?.InteractionId, 'Out', 2, 0)
+            notify.NotifyServer(phoneNo, false, ack2InId[0]?.InteractionId, 'Out', 2, 0, message?.id?.id ? message?.id?.id : 0)
           } else if (ack == '3') {
             //  console.log("read")
             let d = new Date(message.timestamp * 1000).toUTCString();
@@ -551,7 +551,7 @@ WHERE customerId IN (SELECT customerId FROM EndCustomer WHERE Phone_number =? an
             // notify.NotifyServer(phoneNo, true)
             logger.info(`Read ============== ${resd?.affectedRows}`)
             let ack3InId = await db.excuteQuery(notifyInteraction, [phoneNumber, spid])
-            notify.NotifyServer(phoneNo, false, ack3InId[0]?.InteractionId, 'Out', 3, 0)
+            notify.NotifyServer(phoneNo, false, ack3InId[0]?.InteractionId, 'Out', 3, 0, message?.id?.id ? message?.id?.id : 0)
           }
 
 
