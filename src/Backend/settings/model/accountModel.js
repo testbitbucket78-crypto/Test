@@ -1,11 +1,13 @@
 class APIKeyManager {
-    constructor({ spId, ip, isSave, isEnabled, webhookURL, apiKey}) {
+    constructor({ spId, ip, isSave, isEnabled, webhookURL, apiKey, isRegenerate, tokenName}) {
         this.spId = spId || null;
         this.ip = ip || null;
         this.isSave = isSave || false;
         this.isEnabled = typeof isEnabled === "number" ? isEnabled : 0;
         this.webhookURL = webhookURL || null;
         this.apiKey = apiKey || null;
+        this.isRegenerate = isRegenerate || false;
+        this.tokenName = tokenName || null;
     }
   
     validate() {
@@ -36,6 +38,7 @@ class APIKeyManager {
             ips: typeof data.ips === 'string' ? JSON.parse(data.ips) : data.ips || [],
             createdAt: data.created_at ? new Date(data.created_at) : null,
             updatedAt: data.updated_at ? new Date(data.updated_at) : null,
+            tokenName: data.tokenName || null,
         };
     }
   }
@@ -58,10 +61,10 @@ class sendMessageBody {
     this.template_id = template_id;
     this.quick_reply_id = quick_reply_id;
     this.message_type = message_type;
-    this.created_at = created_at;
+    this.created_at = new Date();
     this.mediaSize = mediaSize;
     this.spNumber = spNumber;
-    this.assignAgent = assignAgent;
+    this.assignAgent = -3;
     this.MessageVariables = typeof MessageVariables == 'string' ? MessageVariables : JSON.stringify(MessageVariables);
     this.headerText = headerText;
     this.bodyText = bodyText;
