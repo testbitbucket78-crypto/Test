@@ -204,6 +204,7 @@ var selectCampaignTest = `select c.uid,u.* from CampaignTest c
 JOIN user u ON u.uid=c.uid
  where c.SP_ID=? and c.isDeleted !=1`
 
+ var getCampaignId = `select * from EndCustomer where Phone_Number =? AND SP_ID=?  ORDER BY created_at desc limit 1`
 //_______________________________CONTACT SETTINGS________________________//
 
 var addtag = `INSERT INTO EndCustomerTagMaster(TagName,TagColour,SP_ID,created_at,updated_at) values ?`

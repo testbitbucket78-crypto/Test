@@ -239,6 +239,11 @@ export class ImportComponent implements OnInit {
 		this.file = event.target.files[0];
 		this.fileName = this.truncateFileName(this.file.name, 25);
 		const fileExtension = this.getFileExtension(this.file.name);
+		if(!(fileExtension == "xlsx" || fileExtension == "csv")){
+            this.showToaster("Please attach only .xlsx or .csv file and try again.", "error")
+			this.removeFile();
+			return;
+		}
 		if(fileExtension == "xlsx"){
 			const fileReader = new FileReader();
 			fileReader.onload = (e: any) => {
@@ -255,13 +260,15 @@ export class ImportComponent implements OnInit {
 					this.csvfieldValues = Object.values(data);
 				}
 				if(Object.keys(data).length>this.csvfieldHeaders.length){
-					this.csvfieldHeaders = Object.keys(data);
+					this.csvfieldHeaders = Object.keys(data).filter(header => !header.startsWith('__EMPTY'));
 				}
 				this.toggleOverride = Array(this.csvfieldHeaders.length).fill(false);
 				this.displayNameChecked= Array(this.csvfieldHeaders.length).fill(false);
 			});
 			this.csvfieldHeaders.forEach((x: any) => {
-				this.selectedCustomFields.push('');
+				if (!x.startsWith("__EMPTY")) {
+					this.selectedCustomFields.push('');
+				} 
 			});
 			};
 			fileReader.readAsArrayBuffer(this.file);

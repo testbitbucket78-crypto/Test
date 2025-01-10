@@ -515,8 +515,11 @@ const sendMessage = async (req, res) => {
                 throw new Error(`IP address ${ip} is not authorized.`);
             }
         }
+        if(!result.isEnabled){
+            throw new Error(`API is not Enabled, Please Enable it from settings.`);
+        }
         if(result?.apiKey != APIKeyManagerInstance?.apiKey){
-            throw new Error(`API Key ${APIKeyManagerInstance?.apiKey} is not authorized.`);
+            throw new Error(`API Key is not authorized.`);
         }
         if(APIKeyManagerInstance.spId){
             try {

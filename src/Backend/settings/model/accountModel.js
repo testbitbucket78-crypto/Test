@@ -46,7 +46,8 @@ class APIKeyManager {
 class sendMessageBody {
   constructor({ spId, PhoneNo, AgentId, CustomerId, InteractionId, message_text, media_type, message_media,
     template_id, quick_reply_id, message_type, created_at, mediaSize, spNumber, assignAgent, MessageVariables,
-    headerText, bodyText, buttonsVariable, Message_id, messageTo
+    headerText, bodyText, buttonsVariable, Message_id, messageTo, optInStatus, title, isTemplate, action, action_at
+    ,action_by, uidMentioned, name, language, buttons
    }) {
     this.SPID = spId || null;
     this.phoneNo = PhoneNo;
@@ -69,7 +70,17 @@ class sendMessageBody {
     this.bodyText = bodyText;
     this.buttonsVariable = buttonsVariable;
     this.Message_id = Message_id;
-    this.messageTo = messageTo
+    this.messageTo = messageTo;
+    this.optInStatus = optInStatus;
+    this.title = title;
+    this.isTemplate = isTemplate;
+    this.action = action;
+    this.action_at = action_at;
+    this.action_by = action_by;
+    this.uidMentioned = uidMentioned;
+    this.name = name;
+    this.language = language;
+    this.buttons = buttons;
   }
 }
   

@@ -15,5 +15,9 @@ const channelName = {
     api: "WhatsApp API",
     web: "WhatsApp Web",
 }
+const channelForSendingMessage = {
+    api: "WhatsApp Official",
+    web: "WhatsApp Web",
+}
 
-module.exports = { MessagingLimitTiers, MessagingName, channelName }
+module.exports = { MessagingLimitTiers, MessagingName, channelName, channelForSendingMessage }
