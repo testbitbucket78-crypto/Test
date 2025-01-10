@@ -1685,9 +1685,9 @@ formateDate(dateTime:string){
 			sp_id:this.SPID,
 			optInStatus:this.optInStatus,
 			title:this.newCampaignDetail.value.title,
-			channel_id:this.newCampaignDetail.value.channel_id,
+			channel_id:this.channelId(this.selectedChannel),
 			message_heading:this.selectedTemplate?.Header,
-			message_content:this.selectedTemplate?.BodyText,
+			message_content: this.constructMessageContent(this.selectedTemplate?.BodyText),
 			message_media:this.selectedTemplate?.Links,
 			message_variables:this.selectedTemplate?.allVariables.length>0?JSON.stringify(this.selectedTemplate?.allVariables):[],
 			button_yes:this.selectedTemplate?.button_yes,
@@ -1698,7 +1698,16 @@ formateDate(dateTime:string){
 			time_zone:this.selecteTimeZone,
 			end_datetime:'',
 			csv_contacts:this.csvContactList?.length>0?JSON.stringify(this.csvContactList):[],
-			segments_contacts:this.segmentsContactList?.length>0?JSON.stringify(this.segmentsContactList):[]
+			segments_contacts:this.segmentsContactList?.length>0?JSON.stringify(this.segmentsContactList):[],
+			templateId:this.selectedTemplate?.ID,
+			isTemplate:this.selectedTemplate?.isTemplate,
+			headerText:this.selectedTemplate?.Header,
+			name: this.selectedTemplate?.TemplateName,
+			language: this.selectedTemplate?.Language,
+			buttons: JSON.stringify(this.selectedTemplate?.buttons),
+			buttonsVariable: JSON.stringify(this.buttonsVariable),
+			bodyText:this.selectedTemplate?.BodyText,
+			media_type:this.selectedTemplate?.media_type,
 		}
 		this.apiService.testCampaign(BodyData).subscribe(responseData =>{
 			this.testNumbers=[];
@@ -1803,7 +1812,7 @@ formateDate(dateTime:string){
 			category:this.selectedTemplate?.Category,
 			category_id:this.selectedTemplate?.category_id,
 			templateId:this.selectedTemplate?.ID,
-			time_zone:this.selecteTimeZone,
+			time_zone:this.getDateTimeZoneOffset(),
 			start_datetime:sratdatetime,
 			end_datetime:'',
 			start_time: start_Time,
@@ -2440,6 +2449,12 @@ testinfo(){
 		let fileName:any = files[0].name
 			
 			var FileExt:any = fileName.substring(fileName.lastIndexOf('.') + 1);
+			if(!(FileExt == "xlsx" || FileExt == "csv")){
+				this.showToaster("Please attach only .xlsx or .csv file and try again.", "error")
+				this.removeFile();
+				return;
+			}
+			this.isLoading=  true;
 		if(FileExt =="csv") {
 				let file =files[0];
 				let reader: FileReader = new FileReader();
@@ -2511,7 +2526,7 @@ testinfo(){
 					raw: true });
 
 				results  = jsonSheetData;
-				tableHeader = Object.keys(results[0]);
+				tableHeader = Object.keys(results[0]).filter(key => !key.startsWith('__EMPTY'));
 				let i = 0;
 				results.map((row: any) => {
 					if (row) {

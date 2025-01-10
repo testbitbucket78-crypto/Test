@@ -1,11 +1,13 @@
 class APIKeyManager {
-    constructor({ spId, ip, isSave, isEnabled, webhookURL, apiKey}) {
+    constructor({ spId, ip, isSave, isEnabled, webhookURL, apiKey, isRegenerate, tokenName}) {
         this.spId = spId || null;
         this.ip = ip || null;
         this.isSave = isSave || false;
         this.isEnabled = typeof isEnabled === "number" ? isEnabled : 0;
         this.webhookURL = webhookURL || null;
         this.apiKey = apiKey || null;
+        this.isRegenerate = isRegenerate || false;
+        this.tokenName = tokenName || null;
     }
   
     validate() {
@@ -36,6 +38,7 @@ class APIKeyManager {
             ips: typeof data.ips === 'string' ? JSON.parse(data.ips) : data.ips || [],
             createdAt: data.created_at ? new Date(data.created_at) : null,
             updatedAt: data.updated_at ? new Date(data.updated_at) : null,
+            tokenName: data.tokenName || null,
         };
     }
   }
@@ -43,7 +46,8 @@ class APIKeyManager {
 class sendMessageBody {
   constructor({ spId, PhoneNo, AgentId, CustomerId, InteractionId, message_text, media_type, message_media,
     template_id, quick_reply_id, message_type, created_at, mediaSize, spNumber, assignAgent, MessageVariables,
-    headerText, bodyText, buttonsVariable, Message_id, messageTo
+    headerText, bodyText, buttonsVariable, Message_id, messageTo, optInStatus, title, isTemplate, action, action_at
+    ,action_by, uidMentioned, name, language, buttons
    }) {
     this.SPID = spId || null;
     this.phoneNo = PhoneNo;
@@ -57,16 +61,26 @@ class sendMessageBody {
     this.template_id = template_id;
     this.quick_reply_id = quick_reply_id;
     this.message_type = message_type;
-    this.created_at = created_at;
+    this.created_at = new Date();
     this.mediaSize = mediaSize;
     this.spNumber = spNumber;
-    this.assignAgent = assignAgent;
-    this.MessageVariables = MessageVariables;
+    this.assignAgent = -3;
+    this.MessageVariables = typeof MessageVariables == 'string' ? MessageVariables : JSON.stringify(MessageVariables);
     this.headerText = headerText;
     this.bodyText = bodyText;
     this.buttonsVariable = buttonsVariable;
     this.Message_id = Message_id;
-    this.messageTo = messageTo
+    this.messageTo = messageTo;
+    this.optInStatus = optInStatus;
+    this.title = title;
+    this.isTemplate = isTemplate;
+    this.action = action;
+    this.action_at = action_at;
+    this.action_by = action_by;
+    this.uidMentioned = uidMentioned;
+    this.name = name;
+    this.language = language;
+    this.buttons = buttons;
   }
 }
   

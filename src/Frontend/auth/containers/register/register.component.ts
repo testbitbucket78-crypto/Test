@@ -34,6 +34,7 @@ export class RegisterComponent implements OnInit {
     isVerifiedEmail!: boolean;
     emailVerified!: boolean;
     errorMessage: string ='';
+    defaultCountryCode="IN +91"
     countryCodes = [
         'AD +376', 'AE +971', 'AF +93', 'AG +1268', 'AI +1264', 'AL +355', 'AM +374', 'AO +244', 'AR +54', 'AS +1684',
         'AT +43', 'AU +61', 'AW +297', 'AX +358', 'AZ +994', 'BA +387', 'BB +1 246', 'BD +880', 'BE +32', 'BF +226',
@@ -123,6 +124,8 @@ export class RegisterComponent implements OnInit {
         }
         let email_id = this.registerForm.controls['email_id'].value;
         let mobile_number = this.registerForm.controls['mobile_number'].value;
+        this.defaultCountryCode = this.registerForm.controls['country_code'].value;
+
         if(email_id) this.VerificationData[0].email_id = email_id;
         if(mobile_number) this.VerificationData[1].mobile_number = mobile_number;
         sessionStorage.removeItem('verificationDataEmail');

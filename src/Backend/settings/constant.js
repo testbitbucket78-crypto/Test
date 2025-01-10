@@ -204,6 +204,7 @@ var selectCampaignTest = `select c.uid,u.* from CampaignTest c
 JOIN user u ON u.uid=c.uid
  where c.SP_ID=? and c.isDeleted !=1`
 
+ var getCampaignId = `select * from EndCustomer where Phone_Number =? AND SP_ID=?  ORDER BY created_at desc limit 1`
 //_______________________________CONTACT SETTINGS________________________//
 
 var addtag = `INSERT INTO EndCustomerTagMaster(TagName,TagColour,SP_ID,created_at,updated_at) values ?`
@@ -443,8 +444,9 @@ var insertHealthStatus = `INSERT INTO businessHealth (phone_number_id, channel_p
 var selectHealthStatus = `SELECT * FROM businessHealth WHERE phone_number_id = ? and SP_ID = ?`
 
 //---------------------------------UserAPIKeys-----------------------------------//
-var insertUserAPIKeys = `INSERT INTO UserAPIKeys (spid,api_key,ips) values (?,?,?)`
-var updateUserAPIKeys = `UPDATE UserAPIKeys SET ips = ?, updated_at = CURRENT_TIMESTAMP WHERE spid = ?`
+var insertUserAPIKeys = `INSERT INTO UserAPIKeys (spid,api_key,ips,tokenName) values (?,?,?,?)`
+var updateUserAPIKeysAndTokenName = `UPDATE UserAPIKeys SET tokenName = ?, ips = ?, updated_at = CURRENT_TIMESTAMP WHERE spid = ?`
+var updateUserAPIKeysAndKeyGenerate = `UPDATE UserAPIKeys SET api_key = ?, ips = ?, updated_at = CURRENT_TIMESTAMP WHERE spid = ?`
 var getUserAPIKeys = `select * from UserAPIKeys where spid = ?`
 var updateAPIkeysState = `UPDATE UserAPIKeys SET is_enabled = ?, updated_at = CURRENT_TIMESTAMP WHERE spid = ?`
 var updateWebhookUrl = `UPDATE UserAPIKeys  SET webhook_url = ?, updated_at = CURRENT_TIMESTAMP WHERE spid = ?`
@@ -466,6 +468,6 @@ module.exports = {
     addtag, updatetag, deletetag, selecttag, addTemplates, selectTemplate, updateTemplate, deleteTemplate, insertWhatsappdetails, updateWhatsappdetails, selectChannelCount,
     Whatsappdetails,addTokenQuery,updateTokenQuery,deleteTokenQuery,selectTokenQuery,isEnableQuery,baseURL,accessToken,deleteIPQuery,insertIPAddress,updateNotification,
     getColCount,addcolumn,getcolumn,deletecolumn,getcolumnid,enableMandatory,enablestatus,editfield ,selectApprovedTemplate ,addGallery ,getGallery,selectUserByIdQuery,
-    content_type,access_token,url,selectActiveQuery,getAllUserQuery,checkDeletedColumn,getCustomColumnById,permanentDeleteColumn,selectHealthStatus,insertHealthStatus, insertUserAPIKeys, updateUserAPIKeys
-    ,getUserAPIKeys, updateAPIkeysState, updateWebhookUrl, getAgentId, getChannel, getRateLimit
+    content_type,access_token,url,selectActiveQuery,getAllUserQuery,checkDeletedColumn,getCustomColumnById,permanentDeleteColumn,selectHealthStatus,insertHealthStatus, insertUserAPIKeys, updateUserAPIKeysAndTokenName
+    ,getUserAPIKeys, updateAPIkeysState, updateWebhookUrl, getAgentId, getChannel, getRateLimit, getCampaignId, updateUserAPIKeysAndKeyGenerate
 }

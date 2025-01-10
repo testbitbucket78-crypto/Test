@@ -42,19 +42,20 @@ async function fetchScheduledMessages() {
 
     const currentDay = currentDate.getDay();
 
-    let currentDateTime = new Date().toLocaleString(undefined, { timeZone: 'Asia/Kolkata' }); // UTC
-    // console.log("messagesData", messagesData)
+    let currentDateTime = new Date() //.toLocaleString(undefined, { timeZone: 'Asia/Kolkata' }); // UTC
+     // console.log("messagesData", messagesData)
 
     // HAVE TO CHANGE THIS IN ASYNC FOR EACH SPID
     for (const message of messagesData) {
       message.start_datetime = message.formatted_date + 'Z';
-      console.log(message.sp_id, new Date(currentDateTime), new Date(message.start_datetime), message.Id, message.start_datetime)
+      var stDateTime = new Date(message.start_datetime)
+      console.log(message.sp_id, currentDateTime, stDateTime, new Date(message.start_datetime), message.Id, message.start_datetime)
       //  let campaignTime = await getCampTime(message.sp_id)  // same as below loop
       // console.log(message.sp_id, "campaignTime", isWorkingTime(message), new Date(message.start_datetime) < new Date(currentDateTime), new Date(message.start_datetime), new Date(), new Date(currentDateTime))
       logger.info(`fetchScheduledMessages isWorkingTime ${isWorkingTime(message)}  time ${new Date(message.start_datetime) <= new Date(currentDateTime)}`)
       if (isWorkingTime(message)) {
 
-        if (new Date(message.start_datetime) <= new Date(currentDateTime)) {
+        if (stDateTime <= currentDateTime) {
           console.log(" isWorkingTime messagesData loop",)
           const phoneNumber = message.segments_contacts.length > 0 ? mapPhoneNumberfomList(message) : mapPhoneNumberfomCSV(message);
 
@@ -486,7 +487,7 @@ JOIN user u ON u.uid=c.uid
      FROM user 
      WHERE SP_ID = ? AND ParentId IS NULL`
     let user = await db.excuteQuery(alertUser, [message.sp_id]);
-        const spData = await  db.excuteQuery(querry, [TemplateData.SP_ID]);
+        const spData = await  db.excuteQuery(querry, [message.sp_id]);
         let spNumber
         if(spData.length > 0) {
             spNumber = spData[0].mobile_number

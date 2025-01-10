@@ -40,7 +40,7 @@
                   <label for="floatingInputGrid" id="la-ph">Phone Number</label> 
                   <div class="ss d-flex justify-content-start position-relative">
                   <select class="input-form" id="country_code" formControlName="country_code" (change)="formatPhoneNumber()">
-                    <option [selected]="countryCode === countryCodes[101]" *ngFor="let countryCode of countryCodes">
+                    <option [selected]="countryCode === defaultCountryCode" *ngFor="let countryCode of countryCodes">
                       {{ countryCode }}
                     </option>
                     </select>

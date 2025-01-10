@@ -16,6 +16,17 @@ export function convertCsvToXlsx(blob: Blob, fileName: string = 'Converted_File.
           const csvString = reader.result as string;
           const workbook = XLSX.read(csvString, { type: 'string', codepage: 65001 });
           const worksheet = workbook.Sheets[workbook.SheetNames[0]];
+          for (const cell in worksheet) {
+            if (cell[0] === "!") continue;
+            let value = worksheet[cell].v;
+            if (typeof value === 'number') {
+              worksheet[cell].v = value.toString();
+              worksheet[cell].z = '0'; 
+            }
+            if (typeof value !== 'number') {
+              worksheet[cell].z = '@'; 
+            }
+          }
           const newWorkbook = XLSX.utils.book_new();
           XLSX.utils.book_append_sheet(newWorkbook, worksheet, 'Sheet1');
           XLSX.writeFile(newWorkbook, fileName);
