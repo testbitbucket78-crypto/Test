@@ -70,7 +70,7 @@ module.exports = { NotifyServer }; */
 const { io } = require("socket.io-client");
 
 const socket = io('ws://52.66.172.213:3010/'); 
-
+const db = require("../dbhelper");
 const dataToSend = {
   "Ping": {
     message: "Ping alive from Backend"
@@ -97,7 +97,7 @@ socket.on('message', (message) => {
   console.log("Received:", message);
 });
 
-async function NotifyServer(display_phone_number, updatemessage, message, status, msg_status, msg_id) {
+async function NotifyServer(display_phone_number, updatemessage, message, status, msg_status, msg_id, whatsAppMessageId = 0) {
   try {
     let notificationMsg = {};
     if (updatemessage) {
@@ -110,6 +110,13 @@ async function NotifyServer(display_phone_number, updatemessage, message, status
         msg_status: msg_status,
         msg_id: msg_id
       };
+      if (whatsAppMessageId != 0){
+        let data = await db.excuteQuery('select SPID, assignAgent from Message where whatsAppMessageId =?', whatsAppMessageId);
+        if(data[0]?.assignAgent == -3){
+          let websocketurl = await db.excuteQuery('select webhook_url from UserAPIKeys where spid =?', data[0]?.SPID);   
+            sendDataToWebHook(websocketurl[0]?.webhook_url ,notificationMsg);
+          }
+      }
     }
 
     if (!socket.connected) {
