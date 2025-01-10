@@ -370,11 +370,11 @@
     <div class="setting-card api-card" *ngIf="selectedTab==2 && !settingsService.checkRoleExist('46')">
         <div class="account-card-header">
             <h4>API Token</h4>
-            <button class="new-token-btn" data-bs-toggle="modal" data-bs-target="#createTokenModal">
+            <button class="new-token-btn" data-bs-toggle="modal" data-bs-target="#createTokenModal" [disabled]="apiKeyData">
                 <img src="../../../../assets/img/teambox/add.svg" class="pr-1">
                 New API Token</button>
         </div>
-        <div>
+        <div *ngIf="apiKeyData">
             <div class="connection-card tokens-card" >
             <div class="account-card-header">
                 <div>
@@ -410,22 +410,29 @@
             </div>
             </div>
         </div>
+        <div *ngIf="!apiKeyData" class="save-empty-card">
+            <div>
+                <img class="p-0" src="../../../../assets/img/settings/image.png">
+                <br>
+                <span class="text-bold">Genrate New API Token</span>
+            </div>
+        </div>
     </div>
 
 
     <div class="setting-card api-card" *ngIf="selectedTab==3 ">
         <div class="account-card-header">
-            <h4>Web Socket</h4>
+            <h4>Webhook</h4>
         </div>
         <div>
             <div class="connection-card tokens-card">
             <div class="account-card-header">
                 <div class="w-70">
-                    <input type="text" class="token-input-form" [(ngModel)]="webSocketUrl" placeholder="Enter Web socket url">
+                    <input type="text" class="token-input-form" [(ngModel)]="webSocketUrl" (change)="isSaveEnabled = true" placeholder="Enter Web socket url">
                 </div>
                 <div>
-                    <button class="account-btn mx-1" (click)="saveWebhook()">Save</button>
-                    <button class="account-btn mx-1" (click)="testWebhook()">Test</button>
+                    <button class="account-btn mx-1" (click)="saveWebhook()" [disabled]="!webSocketUrl || !isSaveEnabled">Save</button>
+                    <button class="account-btn mx-1" (click)="testWebhook()" [disabled]="!webSocketUrl">Test</button>
                 </div>
             </div>
             <div class="account-card-header">
@@ -440,30 +447,34 @@
         <div class="modal-dialog create-token-modal" role="document">
             <div class="modal-content h-100">
                 <div class="modal-header">
-                    <h5 class="modal-title">Create API Token</h5>
+                    <h5 class="modal-title">{{isEdit ? 'Edit API Token' :'Create API Token'}}</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
                         <img src="../../../../assets/img/teambox/icon-close.svg">
                     </button>
                 </div>
-                <div class="modal-body px-5 pb-5 h-100">
+                <div class="modal-body token-scroll px-5 pb-5 h-100">
                     <div class="">
-                        <label>API Name</label><br>
-                        <input class="token-input-form" type="input" [(ngModel)]="apiName" placeholder="Enter API name">
+                        <label>Token Name</label><br>
+                        <input class="token-input-form" type="input" [(ngModel)]="apiName" placeholder="Enter Token name">
                     </div>
                     <div class="mt-2" *ngFor="let item of ipAddress; trackBy: trackByIndex;let idx=index">
-                        <label>IP Address</label><br>
+                        <label>IP Address<span class="optional">(optional)</span></label><br>
                         <input class="token-input-form" type="text" placeholder="Enter IP address"
-                            [(ngModel)]="ipAddress[idx]">
+                            [(ngModel)]="ipAddress[idx]" #ipField="ngModel"
+                            [pattern]="ipRegex">                           
+                          <div *ngIf="ipField.invalid && ipField.touched" class="error">
+                            <div class="error-val" *ngIf="ipField.errors?.pattern">Invalid IP Address format.</div>
+                          </div>
                         <div class="incoming-card">
                             <div>
-                            <a class="add-btn" (click)="addIP()" *ngIf="idx == (ipAddress.length-1)">+ Add</a>
+                            <a class="add-btn" (click)="addIP()" *ngIf="idx == (ipAddress?.length-1) && ipAddress?.length<5">+ Add</a>
                             </div>
-                            <a class="remove-btn" (click)="removeIP(idx)" *ngIf="ipAddress.length>1">- Remove</a>
+                            <a class="remove-btn" (click)="removeIP(idx)" *ngIf="ipAddress?.length>1">- Remove</a>
                         </div>
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button class="account-btn" (click)="getApiKeyData(true)">Genrate</button>
+                    <button class="account-btn" (click)="getApiKeyData(true)">{{isEdit ? 'Save' : 'Genrate'}}</button>
                 </div>
             </div>
         </div>
@@ -489,7 +500,7 @@
 
 
     
-    <div class="modal fade" tabindex="-1" id="apiConfirmationModal" role="dialog">
+    <div class="modal fade" tabindex="-1" id="apiConfirmationModal" role="dialog" data-bs-backdrop="static" aria-hidden="true">
         <div class="modal-dialog" role="document">
             <div class="modal-content api-confiormation-modal">
                 <div class="modal-header">
@@ -518,7 +529,7 @@
 
 
 
-    <div class="setting-card " *ngIf="selectedTab==3 && !settingsService.checkRoleExist('47')">
+    <div class="setting-card " *ngIf="selectedTab==4 && !settingsService.checkRoleExist('47')">
         <div class="account-card-header">
             <h4>Integration</h4>            
         </div>

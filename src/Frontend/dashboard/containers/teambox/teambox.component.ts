@@ -1396,7 +1396,6 @@ console.log(getMimeTypePrefix);
 		this.getCustomFieldsData();
 		//this.getAgents()
 		this.getUserList()
-		this.getAllInteraction()
 		this.getInteractionsOnScroll()
 		this.getContactOnScroll()
 		this.getCustomers()
@@ -3716,6 +3715,7 @@ sendMessage(isTemplate:boolean=false,templateTxt:string=''){
 			.subscribe(result =>{
 			  if(result){
 				this.userList =result?.getUser;
+				this.getAllInteraction()
 				for (const user of this.userList) {
 					if(this.AgentId == user.uid) {
 						this.loginAs = user.RoleName;

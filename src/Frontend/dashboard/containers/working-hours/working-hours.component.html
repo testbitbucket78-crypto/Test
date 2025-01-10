@@ -54,7 +54,6 @@
                     </div>
                 </div>
 
-
                 <!-- <img src="../../../../assets/img/settings/drag.svg" /> -->
                 <select class="holiday-dropdown multiselect" [(ngModel)]="selectedYear" (change)="selectYear()">
                     <option *ngFor="let item of yearList" [value]="item">{{item}}</option>
@@ -103,8 +102,6 @@
                         <ng-multiselect-dropdown class="multiselect dropdown" name="tag" [(ngModel)]="item.day" id="tag"
                             [settings]="dropdownSettings" [data]="daysList" [placeholder]="'Add Days'">
                         </ng-multiselect-dropdown>
-
-
                     </div>
                     <div class="d-flex">
                         <div class="billing-form-row d-flex flex-column  ">

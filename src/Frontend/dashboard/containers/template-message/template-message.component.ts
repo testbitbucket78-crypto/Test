@@ -705,11 +705,12 @@ checkTemplateName(e:any){
     saveNewTemplate() {
         if (this.newTemplateForm.valid) {
             const newTemplateFormData = this.createNewTemplateFormData();
+            this.isLoading = true;
             if ((this.templatesMessageDataById = null)) {
                 this.apiService
                     .saveNewTemplateData(newTemplateFormData, this.selectedPreview)
-                    .subscribe(response => {
-
+                    .subscribe(response => {                        
+                        this.isLoading = false;
                         if (response.status != 400) {
                             this.newTemplateForm.reset();
                             this.newTemplateForm.clearValidators();
@@ -730,7 +731,7 @@ checkTemplateName(e:any){
                 this.apiService
                     .saveNewTemplateData(newTemplateFormData, this.selectedPreview)
                     .subscribe(response => {
-                        
+                        this.isLoading = false;
                         if (response.status != 400) {
                             this.newTemplateForm.reset();
                             this.newTemplateForm.clearValidators();

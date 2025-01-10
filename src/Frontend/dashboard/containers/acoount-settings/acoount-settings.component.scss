@@ -4,6 +4,10 @@
   }
 }
 
+.token-scroll::-webkit-scrollbar {
+  display: block !important;
+}
+
 .toaster {
   float: left;
   width: auto;
@@ -250,6 +254,12 @@
     border: 1px;
     width: auto;
    }
+   .new-token-btn:disabled{
+    opacity: 0.6 !important;
+   }
+   .account-btn:disabled{
+    opacity: 0.6 !important;
+   }
 
    .left-col{
     width: 33%;
@@ -329,13 +339,23 @@
    .remove-btn {
     color: #FF3636;
     font-size: 14px;
+    cursor: pointer;
    }
 
    .add-btn {
     color: #6236FF;
     font-size: 14px;
+    cursor: pointer;
    }
 
+   .save-empty-card{
+    width: 100%;
+    justify-content: center;
+    display: flex;
+    text-align: center;
+    align-items: center;
+    height: 60vh;
+   }
    .delete-token-modal{
     width: 320px;
    }
@@ -426,6 +446,7 @@
     position: relative;
     width: 26px;
     margin-left: -10%;
+    cursor: pointer;
    }
 
    .checkbox{
@@ -725,4 +746,8 @@ input[type="radio"]:checked + label::before {
   border-radius: 19px;
   width: 100%;
   display: flex;
+}
+
+.error-val{
+  color: red !important;
 }

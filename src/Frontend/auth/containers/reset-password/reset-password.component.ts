@@ -4,6 +4,7 @@ import { Validators } from '@angular/forms';
 import { AuthService } from './../../services';
 import { Router } from '@angular/router';
 import { ActivatedRoute } from '@angular/router';
+import { environment } from 'environments/environment';
 
 @Component({
   selector: 'sb-reset-password',
@@ -23,6 +24,7 @@ export class ResetPasswordComponent implements OnInit {
   resetpassword:any;
   title = 'formValidation';
   submitted = false;
+  public channelDomain:string = environment?.chhanel;
   constructor(private formBuilder: FormBuilder, private router: Router, private apiService: AuthService, private active: ActivatedRoute) {
 
     this.resetpassword = this.formBuilder.group({

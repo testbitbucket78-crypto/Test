@@ -89,8 +89,12 @@ apiName:string='Send Message Api';
 
 //-------------
 isEnabled:boolean = false;
+isEdit:boolean = false;
+isSaveEnabled:boolean = false;
 webSocketUrl:string= '';
 apiKeyData:any;
+ipRegex: string ='^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?))$|^(([0-9a-fA-F]{1,4}:){7,7}[0-9a-fA-F]{1,4}|([0-9a-fA-F]{1,4}:){1,7}:|([0-9a-fA-F]{1,4}:){1,6}:[0-9a-fA-F]{1,4}|([0-9a-fA-F]{1,4}:){1,5}(:[0-9a-fA-F]{1,4}){1,2}|([0-9a-fA-F]{1,4}:){1,4}(:[0-9a-fA-F]{1,4}){1,3}|([0-9a-fA-F]{1,4}:){1,3}(:[0-9a-fA-F]{1,4}){1,4}|([0-9a-fA-F]{1,4}:){1,2}(:[0-9a-fA-F]{1,4}){1,5}|[0-9a-fA-F]{1,4}:((:[0-9a-fA-F]{1,4}){1,6})|:((:[0-9a-fA-F]{1,4}){1,7}|:)|fe80:(:[0-9a-fA-F]{0,4}){0,4}%[0-9a-zA-Z]{1,}|::(ffff(:0{1,4}){0,1}:){0,1}((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?))|([0-9a-fA-F]{1,4}:){1,4}:((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)))$';
+ipRegexTs = /^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?))$|^(([0-9a-fA-F]{1,4}:){7,7}[0-9a-fA-F]{1,4}|([0-9a-fA-F]{1,4}:){1,7}:|([0-9a-fA-F]{1,4}:){1,6}:[0-9a-fA-F]{1,4}|([0-9a-fA-F]{1,4}:){1,5}(:[0-9a-fA-F]{1,4}){1,2}|([0-9a-fA-F]{1,4}:){1,4}(:[0-9a-fA-F]{1,4}){1,3}|([0-9a-fA-F]{1,4}:){1,3}(:[0-9a-fA-F]{1,4}){1,4}|([0-9a-fA-F]{1,4}:){1,2}(:[0-9a-fA-F]{1,4}){1,5}|[0-9a-fA-F]{1,4}:((:[0-9a-fA-F]{1,4}){1,6})|:((:[0-9a-fA-F]{1,4}){1,7}|:)|fe80:(:[0-9a-fA-F]{0,4}){0,4}%[0-9a-zA-Z]{1,}|::(ffff(:0{1,4}){0,1}:){0,1}((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?))|([0-9a-fA-F]{1,4}:){1,4}:((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)))$/;
   constructor( private apiService:SettingsService,
     private clipboard: Clipboard,
     public facebookService:FacebookService,
@@ -563,7 +567,7 @@ saveWebhook(){
     webhookURL: this.webSocketUrl
   }
   this.apiService.saveWebhook(data).subscribe((response) => {
-    if(response?.status ==200){
+    if(response){
       this.showToaster('Web socket saved successfully','success');
     } else{
       this.showToaster(response?.msg,'error');
@@ -574,21 +578,33 @@ saveWebhook(){
     this.showToaster('web socket url should not be empty','error');
 }
 
-getApiKeyData(isSave:boolean){
+getApiKeyData(isSave:boolean,isRegenrate:boolean=false){
   //isSave = !isSave;
-  let data: { spId: number; ip: string[]; isSave: boolean } = {
+  let data: { spId: number; ip: string[]; isSave: boolean; isRegenerate: boolean,tokenName:string } = {
     spId : this.spid,
     ip:[],
-    isSave :!isSave 
+    isSave :!isSave ,
+    isRegenerate: this.isEdit ? false :isRegenrate,
+    tokenName:this.apiName ? this.apiName : ''
   }
   if(isSave){
     console.log(this.ipAddress);
     let flag:boolean = false;
+    if(this.apiName?.trim() ==''){
+      this.showToaster('Token Name should not be empty','error');
+        flag = true;
+        return '';
+    }
     this.ipAddress.forEach((item:any)=>{
       if(item == '' || item.trim() == '' || !item){
         this.showToaster('ip address should not be empty','error');
         flag = true;
         return '';
+      }
+      if (!this.ipRegexTs.test(item)) {
+        this.showToaster(`Invalid IP address format: ${item}`, 'error');
+        flag = true;
+        return;
       }
     })
     if(flag)
@@ -600,18 +616,29 @@ getApiKeyData(isSave:boolean){
     if(response){
       if(isSave){
         $("#createTokenModal").modal('hide');
-        $("#apiConfirmationModal").modal('show');
+        if(!this.isEdit)
+          $("#apiConfirmationModal").modal('show');
       }
+      this.isEdit = false;
       this.apiKeyData = response;
+      this.isEnabled = this.apiKeyData?.isEnabled;
+      this.apiName = this.apiKeyData?.tokenName;
       this.webSocketUrl = response?.webhookURL;
-      this.ipAddress = this.apiKeyData?.ips
+      this.ipAddress = this.apiKeyData?.ips ? this.apiKeyData?.ips : [];
       //apiKey
     }
 });
 }
 
+disableSaveBtn(){
+  if((this.ipAddress == this.apiKeyData?.ips))
+    return true;
+  else 
+    return false;
+}
+
 regenrateApiKey(){
-  this.getApiKeyData(true);
+  this.getApiKeyData(true,true);
 }
 
 
@@ -620,7 +647,7 @@ testWebhook(){
     spId : this.spid
   }
   this.apiService.testWebhook(data).subscribe((response) => {
-    if(response?.status ==200){
+    if(response){
       this.showToaster('Request has been sent to your Web socket','success');
     } else{
       this.showToaster(response?.msg,'error');
@@ -635,10 +662,15 @@ disableApiKeyData(){
   }
   this.apiService.apiKeyState(data).subscribe((response) => {
     console.log(response + JSON.stringify(this.accoountsetting));
+    if(this.isEnabled){
+      this.showToaster('API Token Enabled successfully','success');
+    }else
+      this.showToaster('API Token Disabled successfully','success');
 });
 }
 
 editToken(){
+  this.isEdit = true;
   $("#createTokenModal").modal('show');
   this.ipAddress = this.apiKeyData?.ips
 }
@@ -647,7 +679,7 @@ copyToClipboard(): void {
   const textToCopy = this.apiKeyData?.apiKey;
       navigator.clipboard.writeText(textToCopy).then(
         () => {
-          console.log('Text copied to clipboard');
+          this.showToaster('Text copied to clipboard','success');
          // alert('Text copied successfully!');
         },
         (err) => {
@@ -660,5 +692,6 @@ copyToClipboard(): void {
 trackByIndex(index: number): number {
   return index;
 }
+
 
 }

@@ -500,8 +500,18 @@ const testWebhook = async (req, res) => {
     }
 };
 
+function wait(delay) {
+    return new Promise(resolve => {
+       setTimeout(() => {
+                    resolve("done");
+      }, delay);
+    });
+  }
+
 const sendMessage = async (req, res) => {
     try {
+        const randomdelay = Math.floor(Math.random() * (3000 - 500 + 1)) + 500;
+        await wait(randomdelay)
     const APIKeyManagerInstance = new APIKeyManager(req?.body);
     APIKeyManagerInstance.validate();
     const clientIp = req.headers['x-forwarded-for'] || req?.connection.remoteAddress;
