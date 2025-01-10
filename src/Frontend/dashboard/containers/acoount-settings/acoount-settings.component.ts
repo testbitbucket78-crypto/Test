@@ -585,7 +585,7 @@ getApiKeyData(isSave:boolean,isRegenrate:boolean=false){
     ip:[],
     isSave :!isSave ,
     isRegenerate: this.isEdit ? false :isRegenrate,
-    tokenName:this.apiName
+    tokenName:this.apiName ? this.apiName : ''
   }
   if(isSave){
     console.log(this.ipAddress);
