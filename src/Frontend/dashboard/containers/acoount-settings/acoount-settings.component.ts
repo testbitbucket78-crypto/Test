@@ -7,6 +7,7 @@ import { WebSocketSubject } from 'rxjs/webSocket';
 import { FacebookService } from 'Frontend/dashboard/services/facebook-embedded.service';
 import { environment } from 'environments/environment';
 import { Clipboard } from '@angular/cdk/clipboard';
+import { json } from 'stream/consumers';
 
 declare var $:any;
 declare var FB: any; 
@@ -624,17 +625,26 @@ getApiKeyData(isSave:boolean,isRegenrate:boolean=false){
       this.isEnabled = this.apiKeyData?.isEnabled;
       this.apiName = this.apiKeyData?.tokenName;
       this.webSocketUrl = response?.webhookURL;
-      this.ipAddress = this.apiKeyData?.ips ? this.apiKeyData?.ips : [];
+      this.ipAddress = this.apiKeyData?.ips ? JSON.parse( JSON.stringify(this.apiKeyData?.ips)) : [];
       //apiKey
     }
 });
 }
 
 disableSaveBtn(){
-  if((this.ipAddress == this.apiKeyData?.ips))
+  console.log(this.ipAddress);
+  console.log(this.apiKeyData?.ips);
+  if(this.areArraysEqual(this.ipAddress, this.apiKeyData?.ips) && this.apiName == this.apiKeyData?.tokenName)
     return true;
   else 
     return false;
+}
+
+areArraysEqual(arr1: any[], arr2: any[]): boolean {
+  if (arr1.length !== arr2.length) {
+      return false;
+  }
+  return arr1.every((value, index) => value === arr2[index]);
 }
 
 regenrateApiKey(){
@@ -672,7 +682,7 @@ disableApiKeyData(){
 editToken(){
   this.isEdit = true;
   $("#createTokenModal").modal('show');
-  this.ipAddress = this.apiKeyData?.ips
+  this.ipAddress = JSON.parse( JSON.stringify(this.apiKeyData?.ips));
 }
 
 copyToClipboard(): void {

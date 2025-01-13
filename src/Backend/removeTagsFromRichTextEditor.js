@@ -339,6 +339,8 @@ async function getCustomColumns(value, fallback, spid, customerId) {
 function convertHTML(htmlString) {
 
   let result = htmlString.replace(/&nbsp;/g, ' ');
+  result = result.replace('<p class=\"custom-class-attachmentType\"></p><p><br></p>','')
+  result = result.replace('<p class=\"custom-class-attachmentType\"></p>','')
   // Replace <p> and <br> tags with newline characters
     result = result.replace(/<p>/g, '\n').replace(/<br>/g, '\n');
   
