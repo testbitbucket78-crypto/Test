@@ -11,6 +11,7 @@ import { agentMessageList } from 'Frontend/dashboard/models/smartReplies.model';
 import { SettingsService } from 'Frontend/dashboard/services/settings.service';
 import { ToolbarService, NodeSelection, LinkService, ImageService } from '@syncfusion/ej2-angular-richtexteditor';
 import { RichTextEditorComponent, HtmlEditorService,EmojiPickerService } from '@syncfusion/ej2-angular-richtexteditor';
+import { hasEmptyValues } from '../common/Utils/file-utils';
 
 declare var $: any;
 
@@ -389,6 +390,11 @@ showAddSmartRepliesModal() {
 	 }
 	showTemplatePreview() {
 		console.log(this.variableValues,'VARIBALE VALUES');
+		if (hasEmptyValues(this.buttonsVariable)) {
+            this.showToaster('Variable value should not be empty', 'error');
+            return;
+        }
+
 		if(this.variableValues.length!==0 && this.allVariablesList.length!==0) {
 			this.addVariable();
 			this.replaceVariableInTemplate();

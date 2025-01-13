@@ -41,3 +41,7 @@ export function convertCsvToXlsx(blob: Blob, fileName: string = 'Converted_File.
       reader.readAsText(blob);
     });
   }
+
+  export function hasEmptyValues(array: any[]): boolean {
+    return array.some((button: any) => button.value === "");
+  }
