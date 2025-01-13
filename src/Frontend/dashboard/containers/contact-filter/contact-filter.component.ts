@@ -542,7 +542,7 @@ export class ContactFilterComponent implements OnInit {
           }
           if(filter.filterBy=="Is not equal to"){
 			if(filter.filterType =="date"){
-				colName = "date("+ colName +")";
+				colName = 'date('+ colName +')';
 			}
 			// if(filter.filterType =="date"){
 			// 	const currentDate = new Date(filter.filterValue)
@@ -551,7 +551,7 @@ export class ContactFilterComponent implements OnInit {
 			// 	console.log(nextDate);
 			// 	let update = this.datePipe.transform(nextDate, 'yyyy-MM-dd');
 			// 	filterOper = '< "' + filter.filterValue + '" AND EC.' + filter.filterPrefix + ' >= "' +update + '"';				
-			// }else
+			//else
             	filterOper = '!= "'+filter.filterValue + '"';
           }
   
@@ -601,8 +601,17 @@ export class ContactFilterComponent implements OnInit {
           }
           
           if(filter.filterBy=="Between"){
-            let valueArray = filter.filterValue.split('/')
-            filterOper = "Between '"+valueArray[0]+"' AND '"+valueArray[1]+"'" 
+			let valueArray = filter.filterValue.split('/')
+			if(filter.filterType =="date"){
+				const currentDate = new Date(valueArray[0])
+				const nextDate = new Date(valueArray[1])
+				//nextDate.setDate(currentDate.getDate() + 1)
+				console.log(nextDate);
+				let update = this.datePipe.transform(nextDate, 'yyyy-MM-dd');
+				filterOper = '> "' + filter.filterValue.toString() + '" AND EC.' + filter.filterPrefix + ' < "' +update?.toString() + '"';				
+			}else{				
+            	filterOper = "Between '"+valueArray[0]+"' AND '"+valueArray[1]+"'" ;
+			}
           }
   
           if(filter.filterBy=="Includes domain"){

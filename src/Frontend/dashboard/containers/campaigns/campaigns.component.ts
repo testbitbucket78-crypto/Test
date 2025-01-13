@@ -1017,11 +1017,30 @@ formateDate(dateTime:string){
 		this.ContactListNewFilters[index]['selectedOptions'] = filter['option']['0']?.options
 		this.ContactListNewFilters[index]['filterPrefix'] = filter?.value
 		this.ContactListNewFilters[index]['filterValue']='';
+		if(filter['filterPrefixType'])
+			this.ContactListNewFilters[index]['filterValue']=filter['filterPrefixType'];
 		// if(addeFilter.length>0){
 		// newFilter['filterOperator']='AND';
 		// }
 		// this.ContactListNewFilters.push(newFilter)
 	  }
+	//   selectContactFilter(index:any,filter:any){
+	// 	console.log(filter);
+
+	// 	this.selectedcontactFilterBy = filter;
+	// 	this.showContactFilter=false;
+	// 	this.ContactListNewFilters[index]['filterPrefix'] = filter.value;
+	// 	this.ContactListNewFilters[index]['filterBy'] = filter['option']['0'].label
+	// 	this.ContactListNewFilters[index]['filterType'] = filter['option']['0'].type
+	// 	this.ContactListNewFilters[index]['selectedOptions'] = filter['option']['0'].options
+	// 	this.ContactListNewFilters[index]['filterPrefix'] = filter.value;
+	// 	this.ContactListNewFilters[index]['filterValue']='';
+	// 	if(filter['filterPrefixType'])
+	// 		this.ContactListNewFilters[index]['filterValue']=filter['filterPrefixType'];
+
+
+
+	//   }
 
 	addNewFilters(filter:any){
 		this.ContactListNewFilters=[];
@@ -1105,7 +1124,8 @@ formateDate(dateTime:string){
 		this.modalReference = this.modalService.open(applyList,{size: 'xl', windowClass:'white-bg'});
      	
 	}
-	getContactFilterQuery(addeFilter:any){
+    getContactFilterQuery(addeFilter:any){
+		
       const groups = addeFilter.reduce((groups:any, filter:any) => {
         
         if (!groups[filter.filterPrefix]) {
@@ -1123,7 +1143,7 @@ formateDate(dateTime:string){
       };
       });  
   
-      let contactFilter ="SELECT EC.*, IFNULL(GROUP_CONCAT(DISTINCT ECTM.TagName ORDER BY FIND_IN_SET(ECTM.ID, REPLACE(EC.tag, ' ', ''))), '') AS tag_names,maxInteraction.maxInteractionId,Interaction.interaction_status,Message.*,user.uid,user.name,IM.* FROM EndCustomer AS EC LEFT JOIN EndCustomerTagMaster AS ECTM ON FIND_IN_SET(ECTM.ID, REPLACE(EC.tag, ' ', '')) > 0 AND ECTM.isDeleted != 1 LEFT JOIN (SELECT customerId,MAX(InteractionId) AS maxInteractionId FROM Interaction WHERE is_deleted != 1 AND IsTemporary != 1 GROUP BY customerId) AS maxInteraction ON maxInteraction.customerId = EC.customerId LEFT JOIN Interaction AS Interaction ON maxInteraction.maxInteractionId = Interaction.InteractionId LEFT JOIN Message AS Message ON Message.interaction_id = Interaction.InteractionId AND Message.is_deleted != 1 LEFT JOIN user AS user ON EC.uid = user.uid LEFT JOIN InteractionMapping AS IM ON IM.InteractionID = Interaction.InteractionId and IM.is_active =  1 WHERE EC.SP_ID ="+this.SPID +" AND EC.isDeleted != 1 AND EC.IsTemporary != 1";
+      let contactFilter ="SELECT EC.*, IFNULL(GROUP_CONCAT(DISTINCT ECTM.TagName ORDER BY FIND_IN_SET(ECTM.ID, REPLACE(EC.tag, ' ', ''))), '') AS tag_names,maxInteraction.maxInteractionId,Interaction.interaction_status,Message.*,user.uid,user.name,IM.latestCreatedAt AS lastAssistedAgent,IM.AgentId,IM.* FROM EndCustomer AS EC LEFT JOIN EndCustomerTagMaster AS ECTM ON FIND_IN_SET(ECTM.ID, REPLACE(EC.tag, ' ', '')) > 0 AND ECTM.isDeleted != 1 LEFT JOIN (SELECT customerId,MAX(InteractionId) AS maxInteractionId FROM Interaction WHERE is_deleted != 1 AND IsTemporary != 1 GROUP BY customerId) AS maxInteraction ON maxInteraction.customerId = EC.customerId LEFT JOIN Interaction AS Interaction ON maxInteraction.maxInteractionId = Interaction.InteractionId LEFT JOIN Message AS Message ON Message.interaction_id = Interaction.InteractionId AND Message.is_deleted != 1 LEFT JOIN user AS user ON EC.uid = user.uid LEFT JOIN ( SELECT MAX(interactionId) AS IMInteractionID, MAX(created_at) AS latestCreatedAt,AgentId	FROM InteractionMapping GROUP BY interactionId) AS IM ON IM.IMInteractionID = Interaction.InteractionId WHERE EC.SP_ID ="+this.SPID +" AND EC.isDeleted != 1 AND EC.IsTemporary != 1";
       if(groupArrays.length>0){
         
         groupArrays.map((filters:any,idx)=>{
@@ -1139,31 +1159,17 @@ formateDate(dateTime:string){
 		  }else if(colName =="Last Conversation With"){
 			let userId = this.userList.filter((item:any)=> item.name ==filters.items[0].filterValue)[0]?.uid ;
 			userId = userId ? userId : -1;
-			contactFilter = contactFilter + ` and  (((  Message.Agent_id LIKE '%${userId}%' ))`;
+			contactFilter = contactFilter + `and  (((  Message.Agent_id LIKE '%${userId}%' ))`;
 		  }else if(colName =="Conversation Assigned to"){
 			let userId = this.userList.filter((item:any)=> item.name ==filters.items[0].filterValue)[0]?.uid;
 			userId = userId ? userId : -1;
-			contactFilter = contactFilter + ` and ((IM.AgentId='${userId}')`;
+			contactFilter = contactFilter + `(and IM.AgentId='${userId}')`;
 		  }else if(colName =="Last Message Received At"){
-			if(filters.items[0].filterBy =='After')
-				contactFilter = contactFilter + ` and ((Message.message_direction ='out' and Message.created_at> ${filters.items[0].filterValue})`;
-			else if(filters.items[0].filterBy =='Before')
-				contactFilter = contactFilter + ` and ((Message.message_direction ='out' and Message.created_at< ${filters.items[0].filterValue})`;
-			else if(filters.items[0].filterBy =='Is equal to')
-				contactFilter = contactFilter + ` and ((Message.message_direction ='out' and Message.created_at= ${filters.items[0].filterValue})`;
-			else if(filters.items[0].filterBy =='Is not equal to')
-				contactFilter = contactFilter + ` and ((Message.message_direction ='out' and Message.created_at != ${filters.items[0].filterValue})`;
+			contactFilter = contactFilter + `and (Message.message_direction ='out' and Message.created_at=?)`;
 		  }else if(colName =="Last Message Sent At"){
-			if(filters.items[0].filterBy =='After')
-				contactFilter = contactFilter + ` and ((Message.message_direction ='IN' and Message.created_at> ${filters.items[0].filterValue})`;
-			else if(filters.items[0].filterBy =='Before')
-				contactFilter = contactFilter + ` and ((Message.message_direction ='IN' and Message.created_at< ${filters.items[0].filterValue})`;
-			else if(filters.items[0].filterBy =='Is equal to')
-				contactFilter = contactFilter + ` and ((Message.message_direction ='IN' and Message.created_at= ${filters.items[0].filterValue})`;
-			else if(filters.items[0].filterBy =='Is not equal to')
-				contactFilter = contactFilter + ` and ((Message.message_direction ='IN' and Message.created_at != ${filters.items[0].filterValue})`;
+			contactFilter = contactFilter + `and (Message.message_direction ='IN' and Message.created_at=?) `;
 		  }else if(colName =="Creator"){
-			contactFilter = contactFilter + ` and  ((  user.name LIKE '%${filters.items[0].filterValue}%' ))`;
+			contactFilter = contactFilter + `and  ((  user.name LIKE '%${filters.items[0].filterValue}%' ))`;
 		  } else{
 			let colName = 'EC.'+filters.filterPrefix;
 		  
@@ -1197,7 +1203,7 @@ formateDate(dateTime:string){
           }
           if(filter.filterBy=="Is not equal to"){
 			if(filter.filterType =="date"){
-				colName = "date("+ colName +")";
+				colName = 'date('+ colName +')';
 			}
 			// if(filter.filterType =="date"){
 			// 	const currentDate = new Date(filter.filterValue)
@@ -1206,7 +1212,7 @@ formateDate(dateTime:string){
 			// 	console.log(nextDate);
 			// 	let update = this.datePipe.transform(nextDate, 'yyyy-MM-dd');
 			// 	filterOper = '< "' + filter.filterValue + '" AND EC.' + filter.filterPrefix + ' >= "' +update + '"';				
-			// }else
+			//else
             	filterOper = '!= "'+filter.filterValue + '"';
           }
   
@@ -1256,8 +1262,17 @@ formateDate(dateTime:string){
           }
           
           if(filter.filterBy=="Between"){
-            let valueArray = filter.filterValue.split('/')
-            filterOper = "Between '"+valueArray[0]+"' AND '"+valueArray[1]+"'" 
+			let valueArray = filter.filterValue.split('/')
+			if(filter.filterType =="date"){
+				const currentDate = new Date(valueArray[0])
+				const nextDate = new Date(valueArray[1])
+				//nextDate.setDate(currentDate.getDate() + 1)
+				console.log(nextDate);
+				let update = this.datePipe.transform(nextDate, 'yyyy-MM-dd');
+				filterOper = '> "' + filter.filterValue.toString() + '" AND EC.' + filter.filterPrefix + ' < "' +update?.toString() + '"';				
+			}else{				
+            	filterOper = "Between '"+valueArray[0]+"' AND '"+valueArray[1]+"'" ;
+			}
           }
   
           if(filter.filterBy=="Includes domain"){

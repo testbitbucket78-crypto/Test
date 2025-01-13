@@ -474,7 +474,7 @@
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button class="account-btn" (click)="getApiKeyData(true)">{{isEdit ? 'Save' : 'Genrate'}}</button>
+                    <button class="account-btn" (click)="getApiKeyData(true)" [disabled]="disableSaveBtn()">{{isEdit ? 'Save' : 'Genrate'}}</button>
                 </div>
             </div>
         </div>
