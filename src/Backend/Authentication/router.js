@@ -127,7 +127,7 @@ router.get('/getAllRegisteredUser',authenticateToken,indexController.allregister
 // ********* singn up star *********//
 router.post('/register',indexController.register);
 router.post('/login',indexController.login);
-router.post('/forgotPassword',authenticateToken,indexController.forgotPassword);
+router.post('/forgotPassword',indexController.forgotPassword);
 router.post('/sendOtp',indexController.sendOtp)
 router.post('/verifyOtp',indexController.verifyOtp)
 router.post('/resetPassword/:uid',authenticateToken,indexController.resetPassword)

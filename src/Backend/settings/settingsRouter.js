@@ -225,23 +225,10 @@ router.post('/saveWebhookUrl',authenticateToken,accountController.saveWebhookUrl
  *             properties:
  *               MessageVariables:
  *                 type: string
- *                 example: ""
- *               Message_id:
- *                 type: string
- *                 example: ""
+ *                 example: []
  *               spId:
  *                 type: string
  *                 example: "55"
- *               action:
- *                 type: string
- *                 example: "edited by EngageKart"
- *               action_at:
- *                 type: string
- *                 format: date-time
- *                 example: "2024-12-26T16:18:25.161Z"
- *               action_by:
- *                 type: string
- *                 example: ""
  *               bodyText:
  *                 type: string
  *                 example: ""
@@ -293,11 +280,6 @@ router.post('/saveWebhookUrl',authenticateToken,accountController.saveWebhookUrl
  *               template_id:
  *                 type: string
  *                 example: ""
- *               uidMentioned:
- *                 type: array
- *                 items:
- *                   type: object
- *                 example: []
  *               apiKey:
  *                 type: string
  *                 example: "key-e8dihe8e3u-1735230342734"
@@ -318,7 +300,7 @@ router.post('/saveWebhookUrl',authenticateToken,accountController.saveWebhookUrl
  *       400:
  *         description: Invalid request
  */
-router.post('/sendMessage' ,authenticateToken,accountController.sendMessage)
+router.post('/sendMessage' ,accountController.sendMessage)
 
 
 
