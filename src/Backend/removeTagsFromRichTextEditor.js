@@ -342,6 +342,7 @@ function convertHTML(htmlString) {
   result = result.replace('<p class=\"custom-class-attachmentType\"></p><p><br></p>','')
   result = result.replace('<p class=\"custom-class-attachmentType\"></p>','')
   // Replace <p> and <br> tags with newline characters
+  result = result.replace(/<p>/, '');
     result = result.replace(/<p>/g, '\n').replace(/<br>/g, '\n');
   
   // Replace <strong> tags with * (for bold) but ensure no extra spaces around asterisks
@@ -550,12 +551,15 @@ function modifyString(htmlString) {
 function removeEmptyTags(htmlString) {
   // Regular expression to find empty tags
   const emptyTagRegex = /<([a-z]+)[^>]*>(?:\s*|&nbsp;)*?<\/\1>/gi;
-
+  htmlString = htmlString.replace('<p class=\"custom-class-attachmentType\"></p><p><br></p>','')
+  htmlString = htmlString.replace('<p class=\"custom-class-attachmentType\"></p>','')
+  htmlString = htmlString.replace('<p class="custom-class-attachmentType"></p><p><br></p>','')
+  htmlString = htmlString.replace('<p class="custom-class-attachmentType"></p>','')
   return htmlString.replace(emptyTagRegex, '');
 }
 
 // Example usage
-const originalString = `<p><strong>efred</strong></p><p><br></p><p><br></p><p><span style="color: rgb(0, 0, 0);">Z&nbsp; &nbsp;&nbsp;<span style="color: rgb(0, 0, 0);">a&nbsp;&nbsp;<span style="color: rgb(0, 0, 0);">a</span></span></span></p><p><span style="color: rgb(0, 0, 0);"><span style="color: rgb(0, 0, 0);"><span style="color: rgb(0, 0, 0);"><strong>bold bold bold bold&nbsp; &nbsp;</strong><br><em>itallic itallic itallic&nbsp;</em><br></span></span></span></p><p><span style="color: rgb(0, 0, 0);"><span style="color: rgb(0, 0, 0);"><span style="color: rgb(0, 0, 0);"><span style="text-decoration: line-through;">strick THROUGH&nbsp;</span><br><br><br>Lasht thanlsadjxweos</span></span></span></p><p><br></p><p><br></p><p><br></p>`
+const originalString = `<p class=\"custom-class-attachmentType\"></p><p><br></p>`
 
 // '<p><strong>bold</strong>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; <em>italic&nbsp; &nbsp;<span style="text-decoration: line-through;">strickthrough&nbsp;</span>&nbsp; &nbsp; </em>,</p><p><strong>Hi This is testing of bold itallic strickthrough&nbsp;</strong><br><em>italic itallic dhsfjdjfvb wisdjisd dkiiehfnjikdhn</em><br><span style="text-decoration: line-through;">strickfjd wskdjxiswkhcndi hswjd</span></p><p></p>';
 const modifiedString = modifyString(originalString);
@@ -580,9 +584,10 @@ function fixBoldItalicSpacing(result) {
   result = result.replace(/_(.*?)_(?!\s|[.,!?])/g, '_$1_ ');
   return result;
 }
-// setTimeout(() => {
-//   removeTagsFromMessages(originalString);
-// }, 100);
+
+setTimeout(() => {
+  removeTagsFromMessages(originalString);
+}, 100);
 
 
 

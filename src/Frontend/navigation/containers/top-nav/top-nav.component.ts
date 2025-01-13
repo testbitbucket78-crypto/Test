@@ -62,7 +62,7 @@ export class TopNavComponent implements OnInit {
         this.uid = (JSON.parse(sessionStorage.getItem('loginDetails')!)).uid;
         this.Name = (JSON.parse(sessionStorage.getItem('loginDetails')!)).name;
         this.EmailId = (JSON.parse(sessionStorage.getItem('loginDetails')!)).email_id;
-        this.PhoneNumber = (JSON.parse(sessionStorage.getItem('loginDetails')!)).mobile_number;
+        this.PhoneNumber = (JSON.parse(sessionStorage.getItem('loginDetails')!)).registerPhone;
         // this.profilePicture = (JSON.parse(sessionStorage.getItem('loginDetails')!)).profile_img;
 
         this.profilePicture = this.apiService.getProfilePicture();

@@ -2466,7 +2466,8 @@ testinfo(){
 			var FileExt:any = fileName.substring(fileName.lastIndexOf('.') + 1);
 			if(!(FileExt == "xlsx" || FileExt == "csv")){
 				this.showToaster("Please attach only .xlsx or .csv file and try again.", "error")
-				this.removeFile();
+				this.removeFile();				
+				resolve('');
 				return;
 			}
 			this.isLoading=  true;
