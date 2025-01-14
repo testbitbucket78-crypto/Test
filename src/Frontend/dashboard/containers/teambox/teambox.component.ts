@@ -15,7 +15,7 @@ import { debounceTime, map } from 'rxjs/operators';
 import { Mention } from '@syncfusion/ej2-angular-dropdowns';
 import { DatePipe } from '@angular/common';
 import { PhoneValidationService } from 'Frontend/dashboard/services/phone-validation.service';
-
+import { hasEmptyValues } from '../common/Utils/file-utils';
 declare var $: any;
 @Component({
 selector: 'sb-teambox',
@@ -538,6 +538,11 @@ public  fieldsData: { [key: string]: string } = { text: 'name' };
 	}
 	showTemplatePreview() {
 		console.log(this.variableValues,'VARIBALE VALUES');
+		if(hasEmptyValues(this.buttonsVariable)) {
+			this.showToaster('Variable value should not be empty','error')
+			return
+		}
+
 		if (this.variableValues?.length!==0 && this.allVariablesList?.length!==0) {
 			this.addVariable();
 			this.replaceVariableInTemplate();
@@ -552,6 +557,7 @@ public  fieldsData: { [key: string]: string } = { text: 'name' };
 		else {
 			this.showToaster('Variable value should not be empty','error')
 		}
+		
 
 	}
 

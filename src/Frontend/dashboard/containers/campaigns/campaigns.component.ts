@@ -7,6 +7,7 @@ import { DashboardService, TeamboxService } from './../../services';
 import { DatePipe } from '@angular/common';
 import * as XLSX from 'xlsx'; 
 import { convertCsvToXlsx } from '../common/Utils/file-utils';
+import { hasEmptyValues } from '../common/Utils/file-utils';
 const moment = require('moment');
 declare var $: any;
 
@@ -2193,6 +2194,10 @@ testinfo(){
 			console.log(this.selectedTemplate)
 			console.log(this.newCampaignDetail)
 			console.log('checkVariableValue',this.checkVariableValue())
+			if (hasEmptyValues(this.buttonsVariable)) {
+                this.showToaster('Variable value should not be empty', 'error');
+                return;
+            }
 			if(this.checkVariableValue()){
 				this.activeStep=4;
 			}else{
