@@ -61,7 +61,7 @@ class sendMessageBody {
     this.template_id = template_id;
     this.quick_reply_id = quick_reply_id;
     this.message_type = message_type;
-    this.created_at = new Date();
+    this.created_at =  created_at ? created_at : new Date();
     this.mediaSize = mediaSize;
     this.spNumber = spNumber;
     this.assignAgent = -3;
@@ -69,7 +69,7 @@ class sendMessageBody {
     this.headerText = headerText;
     this.bodyText = bodyText;
     this.buttonsVariable = buttonsVariable;
-    this.Message_id = Message_id;
+    this.Message_id = "";
     this.messageTo = messageTo;
     this.optInStatus = optInStatus;
     this.title = title;
