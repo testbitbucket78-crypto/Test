@@ -216,7 +216,7 @@ campaignTestData:any;
   setUserList(){
     this.selectedUser =[];
     this.userList.forEach((item:any)=>{
-      this.selectedUser.push({uid:item.uid,isSelected:false,name:item.name,mobile_number:item.mobile_number,UserType:item.UserType,emailId:item.email_id});
+      this.selectedUser.push({uid:item.uid,isSelected:false,name:item.name,mobile_number:item?.registerPhone,UserType:item.UserType,emailId:item.email_id});
     })
   }
 
