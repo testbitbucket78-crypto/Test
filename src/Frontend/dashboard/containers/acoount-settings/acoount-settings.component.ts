@@ -578,6 +578,7 @@ saveWebhook(){
   }
   this.apiService.saveWebhook(data).subscribe((response) => {
     if(response){
+      this.isSaveEnabled = false;
       this.showToaster('Web socket saved successfully','success');
     } else{
       this.showToaster(response?.msg,'error');
