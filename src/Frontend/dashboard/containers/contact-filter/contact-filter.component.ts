@@ -587,8 +587,12 @@ export class ContactFilterComponent implements OnInit {
           }
   
           if(filter.filterBy=="Is not empty"){
-            filterOper = "LIKE '%No%'";
-            filterOper = "!=''";
+			if(filter?.filterPrefix =="created_at")
+				filterOper = "";
+			else{
+            	filterOper = "LIKE '%No%'";
+            	filterOper = "!=''";
+			}
           }
           if(filter.filterBy=="Does Not Contain"){
             filterOper = "NOT LIKE '"+filter.filterValue+"'";
@@ -602,7 +606,7 @@ export class ContactFilterComponent implements OnInit {
           
           if(filter.filterBy=="Between"){
 			let valueArray = filter.filterValue.split('/')
-			if(filter.filterType =="date"){
+			if(filter?.filterType =="date" || filter?.filterType =="d_date"){
 				const currentDate = new Date(valueArray[0])
 				const nextDate = new Date(valueArray[1])
 				//nextDate.setDate(currentDate.getDate() + 1)
@@ -672,7 +676,7 @@ export class ContactFilterComponent implements OnInit {
   
       getFilterOnEndCustomer(){
       let addedNewFilters:any=[];
-
+		console.log(this.ContactListNewFilters)
       this.contactFilterBy.map((item:any)=>{
         item.addeFilter.map((filter:any)=>{
           addedNewFilters.push({

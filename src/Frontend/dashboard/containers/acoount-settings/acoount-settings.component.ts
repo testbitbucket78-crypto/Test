@@ -1,4 +1,4 @@
-import { Component, OnInit, ChangeDetectorRef, Renderer2 } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef, Renderer2, ViewChild, ElementRef } from '@angular/core';
 import { SettingsService } from 'Frontend/dashboard/services/settings.service';
 import { repliesaccountList, whatsAppDetails, healthStatusData } from 'Frontend/dashboard/models/settings.model';
 import { accountmodel } from 'Frontend/dashboard/models/settings.model';
@@ -87,7 +87,7 @@ phoneId:any='';
 wabaId:any='';
 uid = (JSON.parse(sessionStorage.getItem('loginDetails')!)).uid;
 apiName:string='Send Message Api';
-
+@ViewChild('confirmCheckbox') confirmCheckbox!: ElementRef;
 //-------------
 isEnabled:boolean = false;
 isEdit:boolean = false;
@@ -417,6 +417,15 @@ openDiv() {
   }
 
   addIP(){
+    let flag:boolean = false
+    this.ipAddress.forEach((item:any)=>{
+      if(item == '' || item.trim() == '' || !item){
+        this.showToaster('please fill the previous ip first','error');
+        flag = true;
+        return '';
+      }
+    });
+    if(!flag)
     this.ipAddress.push('');
   }
 
@@ -597,12 +606,12 @@ getApiKeyData(isSave:boolean,isRegenrate:boolean=false){
         return '';
     }
     this.ipAddress.forEach((item:any)=>{
-      if(item == '' || item.trim() == '' || !item){
-        this.showToaster('ip address should not be empty','error');
-        flag = true;
-        return '';
-      }
-      if (!this.ipRegexTs.test(item)) {
+      // if(item == '' || item.trim() == '' || !item){
+      //   this.showToaster('ip address should not be empty','error');
+      //   flag = true;
+      //   return '';
+      // }
+      if (!this.ipRegexTs.test(item) && !(item == '' || item.trim() == '' || !item)) {
         this.showToaster(`Invalid IP address format: ${item}`, 'error');
         flag = true;
         return;
@@ -625,7 +634,9 @@ getApiKeyData(isSave:boolean,isRegenrate:boolean=false){
       this.isEnabled = this.apiKeyData?.isEnabled;
       this.apiName = this.apiKeyData?.tokenName;
       this.webSocketUrl = response?.webhookURL;
-      this.ipAddress = this.apiKeyData?.ips ? JSON.parse( JSON.stringify(this.apiKeyData?.ips)) : [];
+      this.ipAddress = this.apiKeyData?.ips ? JSON.parse( JSON.stringify(this.apiKeyData?.ips)) : [''];
+      if(this.ipAddress?.length == 0)
+      this.ipAddress =[''];
       //apiKey
     }
 });
@@ -697,6 +708,10 @@ copyToClipboard(): void {
           //alert('Failed to copy text');
         }
       );
+}
+
+resetCheckbox(checkbox: HTMLInputElement): void {
+  checkbox.checked = false; 
 }
 
 trackByIndex(index: number): number {
