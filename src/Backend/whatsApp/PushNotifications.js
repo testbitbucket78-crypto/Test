@@ -114,7 +114,14 @@ async function NotifyServer(display_phone_number, updatemessage, message, status
         let data = await db.excuteQuery('select SPID, assignAgent from Message where whatsAppMessageId =?', whatsAppMessageId);
         if(data[0]?.assignAgent == -3){
           let websocketurl = await db.excuteQuery('select webhook_url from UserAPIKeys where spid =?', data[0]?.SPID);   
-            sendDataToWebHook(websocketurl[0]?.webhook_url ,notificationMsg);
+          let webhookMsg = {
+            channel_Number: display_phone_number,
+            interaction_id: message,
+            msg_type: status,
+            msg_status: msg_status,
+            msg_id: whatsAppMessageId
+          };
+            sendDataToWebHook(websocketurl[0]?.webhook_url ,webhookMsg);
           }
       }
     }
