@@ -1281,7 +1281,7 @@ It is determined by a combination of user feedback signals like blocks, reports 
 				<div class="addnewitem-content-left filterby">
 					<div *ngIf="selectedcontactFilterBy">
 					
-					<p>Filter {{selectedcontactFilterBy.label}}</p>
+					<p>Filter {{selectedcontactFilterBy?.label}}</p>
 					
 					
 					<div *ngFor="let addedF of ContactListNewFilters; let i=index;let last = last;">
@@ -1326,7 +1326,7 @@ It is determined by a combination of user feedback signals like blocks, reports 
 								<div class="d-flex">
 								<div class="formrow w-100 form-filter-type">
 									<p (click)="toggleContactFilter()"  class="form-control select_box btn">
-										{{selectedcontactFilterBy.label}}
+										{{selectedcontactFilterBy?.label}}
 									</p>
 									<!-- *ngIf="showContactFilter"  -->                                 
 									<div *ngIf="showContactFilter" class="popup-dialog">
@@ -1343,7 +1343,7 @@ It is determined by a combination of user feedback signals like blocks, reports 
 										{{addedF?.filterBy}}
 									</p>
 									<div *ngIf="showFilterByOption" class="popup-dialog">
-										<p *ngFor="let option of selectedcontactFilterBy.option ;let k = index" (click)="selectFilterBy(i,selectedcontactFilterBy,option)">
+										<p *ngFor="let option of selectedcontactFilterBy?.option ;let k = index" (click)="selectFilterBy(i,selectedcontactFilterBy,option)">
 											<span>{{option?.label}}</span>
 										</p>
 									</div>
@@ -1454,7 +1454,7 @@ It is determined by a combination of user feedback signals like blocks, reports 
 					
 	
 					<div class="applied_filter_popup">
-						<div class="item" *ngFor="let filter of selectedcontactFilterBy.addeFilter; let i=index;let last = last;" title="Click to remove">
+						<div class="item" *ngFor="let filter of selectedcontactFilterBy?.addeFilter; let i=index;let last = last;" title="Click to remove">
 							<div class="d-flex">
 							<span *ngIf="filter?.filterOperator">{{filter.filterOperator}} </span>
 							<p>{{getActualName(filter?.filterPrefix)}} {{filter?.filterBy}} {{filter?.filterValue}}</p>

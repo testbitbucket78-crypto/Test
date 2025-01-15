@@ -1618,8 +1618,13 @@ formateDate(dateTime:string){
 
 	selectStep2Option(option:any,modalname:any,step2Option:any){
 		this.step2Option = option;
+		console.log(this.ContactListNewFilters);
 		console.log(this.selectedcontactFilterBy);
-		this.selectedcontactFilterBy['addeFilter'] = '';
+		
+		setTimeout(()=>{
+			this.getContactFilterBy();
+			this.selectedcontactFilterBy['addeFilter'] = '';
+		},100);
 		if(step2Option == option && this.step2Option ==='ImportContacts'){
 			this.closeAllModal();
 			this.openImportantContact(modalname);
