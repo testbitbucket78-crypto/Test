@@ -86,7 +86,7 @@ Authcode:any='';
 phoneId:any='';
 wabaId:any='';
 uid = (JSON.parse(sessionStorage.getItem('loginDetails')!)).uid;
-apiName:string='Send Message Api';
+apiName:string='';
 @ViewChild('confirmCheckbox') confirmCheckbox!: ElementRef;
 //-------------
 isEnabled:boolean = false;

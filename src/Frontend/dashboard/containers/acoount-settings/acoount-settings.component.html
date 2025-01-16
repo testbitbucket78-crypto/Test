@@ -379,9 +379,12 @@
             <div class="account-card-header">
                 <div>
                     <span class="api-card-desc">{{apiName}}</span>
-                    <p class="word-wrapper">{{apiKeyData?.ips}}</p>
+                    <div class="word-wrapper">
+                        
+                    <span *ngFor="let item of apiKeyData?.ips; trackBy: trackByIndex">"{{item}}", &nbsp;</span>
+                    </div>
                 </div>
-                <div>
+                <div class="min-button-width">
                     <button class="account-white-btn mx-1" (click)="editToken()">
                         <img class="p-0" src="../../../../assets/img/edit.png">
                     </button>
