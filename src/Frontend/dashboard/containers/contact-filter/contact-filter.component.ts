@@ -24,6 +24,13 @@ export class ContactFilterComponent implements OnInit {
 		this.getCustomFieldsData();
 		this.getUserList();
 		this.addNewFilters(this.contactFilterBy);
+		let val = JSON.parse(JSON.stringify(this.selectedcontactFilterBy))
+			console.log('this.selectedcontactFilterBy1',val);	
+		if(this.selectedcontactFilterBy?.addeFilter?.length >0){
+			console.log(this.ContactListNewFilters)
+			console.log('this.selectedcontactFilterBy2',this.selectedcontactFilterBy);	
+			this.addFilter();
+		}
 	  }
   selectedcontactFilterBy:any='';
   showContactFilter:any=false;
@@ -55,6 +62,7 @@ export class ContactFilterComponent implements OnInit {
 		//   this.getTagData();
 		// this.getCustomFieldsData();
 		// this.addNewFilters(this.contactFilterBy);
+	
 	}
 
 	getContactFilterBy(){
@@ -587,8 +595,12 @@ export class ContactFilterComponent implements OnInit {
           }
   
           if(filter.filterBy=="Is not empty"){
-            filterOper = "LIKE '%No%'";
-            filterOper = "!=''";
+			if(filter?.filterPrefix =="created_at")
+				filterOper = "";
+			else{
+            	filterOper = "LIKE '%No%'";
+            	filterOper = "!=''";
+			}
           }
           if(filter.filterBy=="Does Not Contain"){
             filterOper = "NOT LIKE '"+filter.filterValue+"'";
@@ -602,7 +614,7 @@ export class ContactFilterComponent implements OnInit {
           
           if(filter.filterBy=="Between"){
 			let valueArray = filter.filterValue.split('/')
-			if(filter.filterType =="date"){
+			if(filter?.filterType =="date" || filter?.filterType =="d_date"){
 				const currentDate = new Date(valueArray[0])
 				const nextDate = new Date(valueArray[1])
 				//nextDate.setDate(currentDate.getDate() + 1)
@@ -672,7 +684,8 @@ export class ContactFilterComponent implements OnInit {
   
       getFilterOnEndCustomer(){
       let addedNewFilters:any=[];
-
+		console.log(this.ContactListNewFilters)
+		console.log(this.selectedcontactFilterBy)
       this.contactFilterBy.map((item:any)=>{
         item.addeFilter.map((filter:any)=>{
           addedNewFilters.push({

@@ -751,3 +751,7 @@ input[type="radio"]:checked + label::before {
 .error-val{
   color: red !important;
 }
+
+.word-wrapper{
+  word-break: break-all !important;
+}

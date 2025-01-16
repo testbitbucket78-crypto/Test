@@ -12,7 +12,7 @@
                 (click)="selectedTab = 1">Channels</a>
             <a class="setting-field-link" [ngClass]="selectedTab==2 ? 'active' : ''" (click)="selectedTab = 2" *ngIf="!settingsService.checkRoleExist('46')">API
                 Token</a>
-            <a class="setting-field-link" [ngClass]="selectedTab==3 ? 'active' : ''" (click)="selectedTab = 3" *ngIf="!settingsService.checkRoleExist('46')">Web Socket</a>
+            <a class="setting-field-link" [ngClass]="selectedTab==3 ? 'active' : ''" (click)="selectedTab = 3" *ngIf="!settingsService.checkRoleExist('46')">Webhook</a>
              <!--<a class="setting-field-link" [ngClass]="selectedTab==3 ? 'active' : ''" *ngIf="!settingsService.checkRoleExist('47')"
                 (click)="selectedTab = 3">Integration</a> -->
         </div>
@@ -379,7 +379,7 @@
             <div class="account-card-header">
                 <div>
                     <span class="api-card-desc">{{apiName}}</span>
-                    <p>{{apiKeyData?.ips}}</p>
+                    <p class="word-wrapper">{{apiKeyData?.ips}}</p>
                 </div>
                 <div>
                     <button class="account-white-btn mx-1" (click)="editToken()">
@@ -428,7 +428,7 @@
             <div class="connection-card tokens-card">
             <div class="account-card-header">
                 <div class="w-70">
-                    <input type="text" class="token-input-form" [(ngModel)]="webSocketUrl" (change)="isSaveEnabled = true" placeholder="Enter Web socket url">
+                    <input type="text" class="token-input-form" [(ngModel)]="webSocketUrl" (change)="isSaveEnabled = true" placeholder="Enter Webhook url">
                 </div>
                 <div>
                     <button class="account-btn mx-1" (click)="saveWebhook()" [disabled]="!webSocketUrl || !isSaveEnabled">Save</button>
@@ -521,7 +521,7 @@
                     </div>
                 </div>
                 <div class="modal-footer justify-content-center">
-                    <button type="button" class="account-btn"  data-bs-dismiss="modal" [disabled]="!confirmCheckbox.checked" aria-label="Close">close</button>
+                    <button type="button" class="account-btn"  data-bs-dismiss="modal" (click)="resetCheckbox(confirmCheckbox)" [disabled]="!confirmCheckbox.checked" aria-label="Close">close</button>
                 </div>
             </div>
         </div>
