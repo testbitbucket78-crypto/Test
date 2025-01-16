@@ -110,6 +110,15 @@ async function NotifyServer(display_phone_number, updatemessage, message, status
         msg_status: msg_status,
         msg_id: msg_id
       };
+    }
+
+    if (!socket.connected) {
+      console.error("Socket is not connected");
+      return;
+    }
+    socket.emit('message', notificationMsg);
+
+    if(message){
       if (whatsAppMessageId != 0){
         let data = await db.excuteQuery('select SPID, assignAgent from Message where whatsAppMessageId =?', whatsAppMessageId);
         if(data[0]?.assignAgent == -3){
@@ -125,13 +134,6 @@ async function NotifyServer(display_phone_number, updatemessage, message, status
           }
       }
     }
-
-    if (!socket.connected) {
-      console.error("Socket is not connected");
-      return;
-    }
-
-    socket.emit('message', notificationMsg);
 
   } catch (err) {
     console.error("Notify Error:", err);

@@ -103,7 +103,7 @@ ipRegexTs = /^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]
     private renderer: Renderer2,
     private websocketService: WebsocketService,private changeDetector: ChangeDetectorRef) {}
 
-  private socket$: WebSocketSubject<any> = new WebSocketSubject('wss://notify.stacknize.com');
+  private socket$: WebSocketSubject<any> = new WebSocketSubject('wss://notify.engagekart.com');
 
 
   ngOnInit(): void {
@@ -620,7 +620,12 @@ getApiKeyData(isSave:boolean,isRegenrate:boolean=false){
     })
     if(flag)
     return '';
-    data['ip'] = this.ipAddress;
+    let arrIp:any = [];
+    this.ipAddress.forEach((item)=>{
+      if(item)
+        arrIp.push(item);
+    })
+    data['ip'] = arrIp;
   }
   this.apiService.getApiKeyData(data).subscribe((response) => {
     console.log(response + JSON.stringify(this.accoountsetting));
@@ -695,6 +700,8 @@ editToken(){
   this.isEdit = true;
   $("#createTokenModal").modal('show');
   this.ipAddress = JSON.parse( JSON.stringify(this.apiKeyData?.ips));
+  if(this.ipAddress?.length == 0)
+  this.ipAddress =[''];
 }
 
 copyToClipboard(): void {
