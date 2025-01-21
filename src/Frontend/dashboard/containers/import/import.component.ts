@@ -251,6 +251,15 @@ export class ImportComponent implements OnInit {
 			  const workbook = XLSX.read(data, { type: 'array' });
 			  const sheetName = workbook.SheetNames[0];
 			  const worksheet = workbook.Sheets[sheetName];
+
+			  Object.keys(worksheet).forEach((cell) => {
+				if (cell[0] === "!") return;
+				const cellValue = worksheet[cell].v;
+				if (typeof cellValue === "number") {
+				  worksheet[cell].w = cellValue.toString();
+				}
+			  });
+
 			  this.importedData = XLSX.utils.sheet_to_json(worksheet, { raw: false });
 
 			  // Processing the extracted Excel Data
