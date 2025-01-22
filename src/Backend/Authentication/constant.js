@@ -28,7 +28,7 @@ var registerQuery = "call signUp(?,?,?,?,?,?,?,?,?,?,?)";
 var uidresetEmailQuery = "select uid from user where email_id=?"
 var verifyUid = "select uid from user where uid=?"
 var updatePassword = "UPDATE user SET password=? WHERE uid=?";
-
+var getSPIDandChannel = `select * from user where email_id = ? and ParentId is null`
 
 insertOtp="CALL otpVerification(?,?,?)"
 verifyOtp=`SELECT  otp FROM otpVerify WHERE created_at > NOW() - INTERVAL 15 MINUTE and otpfieldvalue=? ORDER BY created_at DESC limit 1;`
@@ -76,7 +76,7 @@ const EmailConfigurations = {
     },
   };
 
-
+ var emailForSendingOtp = "engagezilla786@gmail.com"
 
 
 module.exports = {
@@ -84,5 +84,5 @@ module.exports = {
     updateQuery,allAgents,activeAgent, loginQuery, registerQuery, 
     email, appPassword, emailHost, port, 
      updatePassword, uidresetEmailQuery, verifyUid, camQuery, selectQuery,insertOtp,verifyOtp,
-     access_token,url,content_type,crachlogQuery,awsaccessKeyId,awssecretAccessKey,awsregion,awsbucket,EmailConfigurations
+     access_token,url,content_type,crachlogQuery,awsaccessKeyId,awssecretAccessKey,awsregion,awsbucket,EmailConfigurations,getSPIDandChannel, emailForSendingOtp
 }
