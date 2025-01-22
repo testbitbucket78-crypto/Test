@@ -349,7 +349,7 @@ const WHATSAPPOptions = {
 
 
 
-async function createWhatsAppPayload(type, to, templateName, languageCode, headerVariables , bodyVariables, mediaLink, spid, button = [], DynamicURLToBESent = []) {
+async function createWhatsAppPayload(type, to, templateName, languageCode, headerVariables = [], bodyVariables, mediaLink, spid, button = [], DynamicURLToBESent = []) {
     try{
     let WAdetails = await getWAdetails(spid);
     let Ln_code = commonFun.getCodeByLabel(languageCode);
