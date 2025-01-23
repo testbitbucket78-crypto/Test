@@ -198,7 +198,7 @@ getwhatsapp() {
       this.phoneNo =  this.whatsAppDetails[0]?.connected_id;
       this.phone_no_id = this.whatsAppDetails[0]?.phone_number_id;
       this.WABA_Id = this.whatsAppDetails[0]?.WABA_ID;
-      //this.getQualityRating();
+      if(this.channelDomain == 'api') this.getQualityRating();
     }
     this.mapHealthStatus({});
     if(this.whatsAppDataUpdated){

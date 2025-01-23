@@ -347,12 +347,13 @@ async function getTemplateVariables(msgVar, testMessage, sid, custid) {
     }, {});
 
     // Extract values corresponding to placeholders in the message
-    return placeholders
+    let returnRes = placeholders
       .filter(variable => testMessage.includes(variable)) // Include only variables present in testMessage
       .map(variable => {
         const cleanVariable = variable.replace(/{{|}}/g, ''); 
         return resultsMap[cleanVariable] || null; 
       });
+     return replaceEmptyValuesInArray(returnRes)
   } catch (error) {
     console.error("Error in getTemplateVariables:", error);
     return [];
@@ -439,5 +440,25 @@ const getCodeByLabel = (label) => {
   const language = filterListLanguage.find(lang => lang.label === label);
   return language ? language.code : label; // Return the code if found, otherwise return null
 };
+
+function replaceEmptyValuesInArray(array) {
+   //This helper function will replace values empty and null to "null"
+  return array.map((item) => {
+    if (Array.isArray(item)) {
+      return item.map((subItem) => {
+        return (subItem === undefined || subItem === null || subItem === '') ? "null" : subItem;
+      });
+    } else if (typeof item === 'object' && item !== null) {
+      const newItem = { ...item };
+      for (const key in newItem) {
+        if (newItem[key] === undefined || newItem[key] === null || newItem[key] === '') {
+          newItem[key] = "null";
+        }
+      }
+      return newItem;
+    }
+    return (item === undefined || item === null || item === '') ? "null" : item;
+  });
+}
 
 module.exports = { isStatusEmpty,getCodeByLabel, getDefaultAttribue, isHolidays, isWorkingTime, resetContactFields, determineMediaFromLink, notifiactionsToBeSent, currentlyAssigned, updateHealthStatus, convertMessagingLimitTier, updateCurrentLimit, getTemplateVariables, isInvalidParam }

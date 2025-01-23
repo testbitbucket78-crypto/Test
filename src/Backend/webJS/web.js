@@ -1342,6 +1342,26 @@ async function getDetatilsOfSavedMessage(saveMessage, message_text, phone_number
 
     let myUTCString = new Date().toUTCString();
     const utcTimestamp = moment.utc(myUTCString).format('YYYY-MM-DD HH:mm:ss');
+
+     //need to check if this current interaction has first insertion only
+     let checkIfFirstMessage = await db.excuteQuery(`
+      SELECT COUNT(*) AS totalMessages
+      FROM Message
+      WHERE interaction_id IN (
+          SELECT interactionId
+          FROM Interaction
+          WHERE customerId = (
+              SELECT customerId
+              FROM Interaction
+              WHERE interactionId = ?
+          )
+      )
+  `, [newId]);
+    let messageCount = checkIfFirstMessage[0]?.totalMessages || 0;
+    if (messageCount == 1 && newId) {
+        let updateInteraction = await db.excuteQuery('UPDATE Interaction SET interaction_status=? WHERE InteractionId=?', ['Open', newId])
+    }
+
     const currentAssignedUser = await currentlyAssigned(newId);
     const check = await commonFun.notifiactionsToBeSent(currentAssignedUser, 3);
     if (check) {

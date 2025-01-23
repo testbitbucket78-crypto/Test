@@ -1,4 +1,3 @@
-const teamboxController = require('./Authentication/TeamBoxController');
 const removeTags = require('./removeTagsFromRichTextEditor')
 const http = require("https");
 const axios = require('axios');
@@ -349,7 +348,7 @@ const WHATSAPPOptions = {
 
 
 
-async function createWhatsAppPayload(type, to, templateName, languageCode, headerVariables , bodyVariables, mediaLink, spid, button = [], DynamicURLToBESent = []) {
+async function createWhatsAppPayload(type, to, templateName, languageCode, headerVariables = [], bodyVariables, mediaLink, spid, button = [], DynamicURLToBESent = []) {
     try{
     let WAdetails = await getWAdetails(spid);
     let Ln_code = commonFun.getCodeByLabel(languageCode);
@@ -439,6 +438,21 @@ async function createWhatsAppPayload(type, to, templateName, languageCode, heade
                         {
                             type: "text",
                             text: DynamicURLToBESent[idx].trim()
+                        }
+                    ]
+                };
+            }
+            if (btn.type === 'Complete Flow') {
+                return {
+                    type: "button",
+                    sub_type: "flow",
+                    index: idx,
+                    parameters: [
+                        {
+                            type: "action",
+                            action: {
+                                flow_token: WAdetails[0].phoneNumber_id 
+                            }
                         }
                     ]
                 };
