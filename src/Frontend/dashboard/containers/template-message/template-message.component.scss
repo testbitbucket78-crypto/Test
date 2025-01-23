@@ -1583,6 +1583,11 @@ input[type="radio"]:checked + label::before {
     display: block !important;
     background:none !important;
 }
+
+.e-content::-webkit-scrollbar{
+    display: block !important;
+    background:none !important;
+}
 //   .preview-part .message_section .message_data::-webkit-scrollbar , .scrollBar-visible::-webkit-scrollbar{
 //     display: block !important;
 // }
@@ -1675,7 +1680,7 @@ input[type="radio"]:checked + label::before {
         padding: 6px 0px;
         border-top: 2px #e8edef solid !important;
         color: #0080ba;
-        font-weight: bold;
+        //font-weight: bold;
 }
 .w-70{
     width: 70%;
@@ -1714,7 +1719,7 @@ input[type="radio"]:checked + label::before {
 
 .btn-popup {
     position: absolute;
-    width: 140px;
+    width: 160px;
     left: 100px;
     background: white;
     padding: 10px;
@@ -1722,6 +1727,18 @@ input[type="radio"]:checked + label::before {
     z-index: 10;
     font-size: 14px;
     border-radius: 10px;
+  }
+
+  .btn-popup hr{
+    margin-top: 4px !important;
+    margin-bottom: 4px !important;
+    border: 0;
+    border-top: 2px solid black !important;
+  }
+
+  .btn-type-heading{
+    font-size: 13px;
+    font-weight: bold;
   }
 
   .add-btn{
@@ -1763,7 +1780,8 @@ input[type="radio"]:checked + label::before {
     border-top: 2px #e8edef solid !important;
     padding: 8px 7px;
     font-size: 14px;
-    font-weight: bold;
+    cursor: pointer;
+    text-align: center;
   }
 
   .btn-Name.disabled {
@@ -1887,4 +1905,8 @@ input[type="radio"]:checked + label::before {
 
 .filter-popup{
     max-height: 200px !important;
+}
+
+.font-sml{
+    font-size: 12px !important;
 }

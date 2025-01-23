@@ -918,6 +918,8 @@ insertAtCursor(selectedValue: any) {
 	this.lastCursorPosition?.insertNode(newNode);
 }
 
+
+
 isCustomValue(value: string): boolean {
 	if(value){
 		let isMatched = false
@@ -3115,6 +3117,7 @@ createCustomer() {
 	this.newContact.value.OptedIn = this.OptedIn;
 	var bodyData = this.newContact.value;
 	bodyData['isTemporary']=1;
+	bodyData['OptInStatus']=this.OptedIn;
 	console.log(bodyData);
 		if(this.newContact.valid) {
 			if(this.selectedChannel !=''){
@@ -4143,10 +4146,10 @@ sendMessage(isTemplate:boolean=false,templateTxt:string=''){
 	console.log(htmlString);
 	return htmlString;
 }
-updateValidation(controlName: any){
+updateValidation(controlName: any,isMandotry:any){
 	const control = this.editContact.get(controlName);
 	if (control) {
-	  if (!control.value) control.setErrors({ required: true });
+	  if (!control.value && (isMandotry == 1)) control.setErrors({ required: true });
 	  else control.setErrors(null);
 	  control.markAsTouched(); 
 	}

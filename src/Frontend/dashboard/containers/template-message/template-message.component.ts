@@ -336,7 +336,7 @@ export class TemplateMessageComponent implements OnInit {
             Channel: new FormControl(null, [Validators.required]),
             Category: new FormControl(null, [Validators.required]),
             categoryChange: new FormControl(null, [Validators.required]),
-            Language: new FormControl(null, [Validators.required]),
+            Language: new FormControl('English', [Validators.required]),
             media_type: new FormControl(null),
             Header: new FormControl(null,this.noEmojiValidator),
             Links: new FormControl(null),
@@ -681,6 +681,7 @@ export class TemplateMessageComponent implements OnInit {
       const Category =  this.newTemplateForm.get('Category')?.value;
       const categoryChange =  this.newTemplateForm.get('categoryChange')?.value;
       const Language = this.newTemplateForm.get('Language')?.value;
+      console.log(Language);
       console.log(this.newTemplateForm.get('categoryChange')?.value)
 
     if(this.TemplateName && Channel && Category && Language && categoryChange) {
@@ -722,6 +723,7 @@ checkTemplateName(e:any){
                             $('#newTemplateMessagePreview').modal('hide');
                             this.getTemplatesData();
                             this.removeFormValues();
+                            this.showToaster('Template saved successfully','success')
                         }
                         else{
                             this.showToaster('something went wrong','error')
@@ -1148,7 +1150,7 @@ insertAtCursor(selectedValue: any) {
 
         selection?.removeAllRanges();
         selection?.addRange(range);
-    }, 50);
+    }, 100);
 	const newNode = document.createElement('span');
 	newNode.innerHTML =  '<span contenteditable="false" class="e-mention-chip"><a _ngcontent-yyb-c67="" title="">{{'+selectedValue+'}}</a></span>';
 	this.lastCursorPosition?.insertNode(newNode);
@@ -1475,7 +1477,7 @@ openButtonPopUp() {
         }
       }
       if (item.type === 'Copy offer Code' && !item.code) {
-        validationErrors = validationErrors + '<br>'+ `Button ${index + 1}: 'code' is required for Copy offer Code buttomn.`;
+        validationErrors = validationErrors + '<br>'+ `Button ${index + 1}: 'code' is required for Copy offer Code button.`;
       }
       if (item.buttonText && buttonTextSet.has(item.buttonText)) {
         validationErrors = validationErrors + '<br>'+ `Button ${index + 1}: Duplicate 'buttonText' value '${item.buttonText}' detected.`;
@@ -1573,5 +1575,11 @@ return true
     const lastSegment = url.substring(url.lastIndexOf('/') + 1);
     const parts = lastSegment.split('-');
     return parts.slice(6).join('-');
+  }
+
+  ensureTrailingSlash(idx:number) {
+    if (this.buttonsArray[idx].webUrl && !this.buttonsArray[idx].webUrl.endsWith('/')) {
+        this.buttonsArray[idx].webUrl += '/';
+    }
   }
 }
