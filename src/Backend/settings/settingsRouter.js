@@ -8,6 +8,7 @@ const notification=require('./NotifyClients')
 const campaignController=require('./campaignController');
 const accountController=require('./accountController')
 const generalcontroller=require('./generalcontrolller');
+const dynamicRateLimiter = require('./ratelimitter');
 const {v4 : uuidv4} = require('uuid')
 //_____________________________Organization Settings_______________________//
 
@@ -300,7 +301,7 @@ router.post('/saveWebhookUrl',authenticateToken,accountController.saveWebhookUrl
  *       400:
  *         description: Invalid request
  */
-router.post('/sendMessage' ,accountController.sendMessage)
+router.post('/sendMessage' ,dynamicRateLimiter,accountController.sendMessage)
 
 
 

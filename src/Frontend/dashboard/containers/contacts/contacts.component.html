@@ -439,11 +439,11 @@
 				<div>
 					<div class="py-2 row-md" *ngFor="let item of filteredCustomFields">
 						<label for="tag">{{item.displayName}}<span class="text-danger" *ngIf="item.mandatory == 1">*</span></label>
-						<input type="text" class="form-control" [formControlName]="item.ActuallName" *ngIf="item.type == 'Text'" (input)="updateValidation(item?.ActuallName)">
-						<input type="number" class="form-control" [formControlName]="item.ActuallName" *ngIf="item.type == 'Number'" (input)="updateValidation(item?.ActuallName)">
-						<input type="datetime-local" class="form-control" [formControlName]="item.ActuallName" *ngIf="item.type == 'Date Time'" (input)="updateValidation(item?.ActuallName)">
-						<input type="time" class="form-control" [formControlName]="item.ActuallName" *ngIf="item.type == 'Time'" (input)="updateValidation(item?.ActuallName)">
-						<input type="date" class="form-control" [formControlName]="item.ActuallName" *ngIf="item.type == 'Date'" (input)="updateValidation(item?.ActuallName)">
+						<input type="text" class="form-control" [formControlName]="item.ActuallName" *ngIf="item.type == 'Text'" (input)="updateValidation(item?.ActuallName,item?.mandatory)">
+						<input type="number" class="form-control" [formControlName]="item.ActuallName" *ngIf="item.type == 'Number'" (input)="updateValidation(item?.ActuallName,item?.mandatory)">
+						<input type="datetime-local" class="form-control" [formControlName]="item.ActuallName" *ngIf="item.type == 'Date Time'" (input)="updateValidation(item?.ActuallName,item?.mandatory)">
+						<input type="time" class="form-control" [formControlName]="item.ActuallName" *ngIf="item.type == 'Time'" (input)="updateValidation(item?.ActuallName,item?.mandatory)">
+						<input type="date" class="form-control" [formControlName]="item.ActuallName" *ngIf="item.type == 'Date'" (input)="updateValidation(item?.ActuallName,item?.mandatory)">
 
 
 					   <select *ngIf="item?.type == 'Select'" class="form-control" [formControlName]="item.ActuallName">
@@ -457,7 +457,7 @@
 						<ng-multiselect-dropdown *ngIf="item?.type == 'Multi Select'" class="multiselect" [formControlName]="item?.ActuallName"
 												 [settings]="dynamicDropdownSettings" [data]="item?.options">
 						</ng-multiselect-dropdown>
-						<div *ngIf="productForm.get(item?.ActuallName)?.touched && productForm.get(item?.ActuallName)?.hasError('required')"
+						<div *ngIf="productForm.get(item?.ActuallName)?.touched && productForm.get(item?.ActuallName)?.hasError('required') && (item.mandatory == 1)"
 							 class="text-danger">
 							! {{item?.displayName}} is required.
 						</div>

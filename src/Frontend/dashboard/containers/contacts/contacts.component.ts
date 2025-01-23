@@ -1529,10 +1529,10 @@ timeFormatter(params: any): string {
       else 
        return true;
     }
-    updateValidation(controlName: any){
+    updateValidation(controlName: any,isMandotry:any){
       const control = this.productForm.get(controlName);
       if (control) {
-        if (!control.value) control.setErrors({ required: true });
+        if (!control.value && (isMandotry == 1)) control.setErrors({ required: true });
         else control.setErrors(null);
         control.markAsTouched(); 
       }

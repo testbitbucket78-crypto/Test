@@ -453,17 +453,23 @@
                     <h6 class="pt-1 pb-2">Language <span class="text-danger font-weight-bold">*</span></h6>
                     <select class="sel input-form" formControlName="Language">
                         <option [disabled]="true" [selected]="true" [hidden]="true" [value]="null">Select language</option>
-                        <option *ngFor="let item of filterListLanguage">{{item?.label}}</option>     
+                        <option *ngFor="let item of filterListLanguage" [value]="item.code">{{item?.label}}</option>     
                     </select>
                 </div>
                 <div class="p-1 msg-head">
-                    <div class="d-flex justify-content-between">
-                    <h6 class="pt-1 pb-2">Allow category change <span class="text-danger font-weight-bold">*</span></h6>
-                    <div>
-                        <img src="../../../../assets/img/info-icon.png" (click)="channelQualityTooltip = !channelQualityTooltip" style="width: 15px; height: 15px;cursor: pointer">
-                        <div *ngIf="channelQualityTooltip" class="showInfoFallback1 ">
+                    <div class="d-flex">
+                    <h6 class="pt-1 pb-2 pr-2">Allow category change <span class="text-danger font-weight-bold">*</span></h6>
+                    <div class="info-container">
+                        <div class="Info-Iconn">
+                            <img src="../../../../assets/img/info-icon.png" (click)="channelQualityTooltip = !channelQualityTooltip" style="width: 15px; height: 15px;cursor: pointer">
+                        </div>
+                        <!-- <div *ngIf="channelQualityTooltip" class="showInfoFallback1 ">
 							<p id="p-body">selecting this to 'yes' will prevent your template from being rejected for miscategorization</p>
 							<button id="radio-close-btn" (click)=" channelQualityTooltip= false">X</button>
+						</div> -->
+                        <div class="identfierTooltip" *ngIf="channelQualityTooltip">
+                            <p class="p-body">selecting this to 'yes' will prevent your template from being rejected for miscategorization</p>
+                            <button id="radio-close-btn" (click)="channelQualityTooltip = false">X</button>
 						</div>
                     </div>
                 </div>
@@ -616,7 +622,7 @@
                 <div class="d-flex justify-content-between align-items-center pt-3 pb-2 msg-head">
                     <h6>Body Text<span class="text-danger font-weight-bold"> *</span></h6> <div><span class="characters-count"></span><span>Characters</span></div>
                 </div>
-                <div class="sel-type-text">
+                <div class="sel-type-text scrollBar-visible">
                     <ejs-richtexteditor formControlName="BodyText" id='defaultRTE' #chatEditor [toolbarSettings]='tools' [height]="'200px'"
                     [maxLength]='1024' [showCharCount]='true' placeholder="Enter" (change)="onContentChange()" [pasteCleanupSettings]="pasteCleanupSettings">
                    </ejs-richtexteditor>
@@ -646,19 +652,28 @@
                         <option value="Call to Action">Complete Flow</option>
                         <option value="Call to Action">Copy offer Code</option>
                     </select> -->
-                    <button (click)="openButtonPopUp()" class="add-btn">+ Add Buttons</button>
-                    <div class="btn-popup" *ngIf="isPopupVisible">
-                        <div class="btn-Name" (click)="addButtons('Quick Reply')" [class.disabled]="isDisableButton('Quick Reply')">Quick Reply  </div>
-                        <div class="btn-Name" (click)="addButtons('Visit Website')" [class.disabled]="isDisableButton('Visit Website')">Visit Website <div class="font-small">2 buttons maximum</div></div>
-                        <div class="btn-Name" (click)="addButtons('Call Phone')" [class.disabled]="isDisableButton('Call Phone')">Call Phone <div class="font-small">1 button maximum</div></div>
-                        <div class="btn-Name" (click)="addButtons('Complete Flow')" [class.disabled]="isDisableButton('Complete Flow')">Complete Flow <div class="font-small">1 button maximum</div></div>
-                        <div class="btn-Name" (click)="addButtons('Copy offer Code')" [class.disabled]="isDisableButton('Copy offer Code')">Copy offer Code <div class="font-small">1 button maximum</div></div>
+                    <button (click)="openButtonPopUp()" class="add-btn">+ Add Buttons
+                        <img class="btn-preview-img" src="../../../../assets/img/drop-icon.png">
+                    </button>
+                    <div class="btn-popup" *ngIf="isPopupVisible"  tabindex="-1" data-bs-backdrop="static" role="dialog">
+                        <div class="btn-type-headings">Quick reply buttons</div>
+                        <div class="btn-Name" (click)="addButtons('Quick Reply')" [class.disabled]="isDisableButton('Quick Reply')">
+                            <img class="btn-preview-img" src="../../../../assets/img/settings/reply-arrow.svg"> Custom</div>
+                            <hr>
+                            <div class="btn-type-headings">Call to action buttons</div>
+                        <div class="btn-Name" (click)="addButtons('Visit Website')" [class.disabled]="isDisableButton('Visit Website')">
+                            <img class="btn-preview-img" src="../../../../assets/img/settings/open-in-new.svg"> URL<div class="font-small pl-4">2 buttons maximum</div></div>
+                        <div class="btn-Name" (click)="addButtons('Call Phone')" [class.disabled]="isDisableButton('Call Phone')">
+                            <img class="btn-preview-img" src="../../../../assets/img/settings/phone-call.svg"> Phone <div class="font-small pl-4">1 button maximum</div></div>
+                        <div class="btn-Name" (click)="addButtons('Copy offer Code')" [class.disabled]="isDisableButton('Copy offer Code')">
+                            <img class="btn-preview-img" src="../../../../assets/img/settings/copy.svg"> Coupon Code<div class="font-small pl-4">1 button maximum</div></div>
+                        <div class="btn-Name" (click)="addButtons('Complete Flow')" [class.disabled]="isDisableButton('Complete Flow')">
+                            <img class="btn-preview-img" src="../../../../assets/img/settings/form.svg">Flow<div class="font-small pl-4">1 button maximum</div></div>
                     </div>
                 </div>
 
                  <!-- <div class="quick-reply-btns" *ngIf="newTemplateForm.get('buttonType')?.value === 'Quick Reply'">
                    <span>You can add upto 3 quick replies buttons</span>
-
                   <div *ngFor="let quickReply of quickReplyButtons;let idx=index">
                     <div class="d-flex justify-content-between align-items-center msg-head">
                         <h6>Quick Reply {{ idx + 1 }}</h6><div><span class="characters-count">{{ getCharacterCount(idx) }}</span><span>/25 Characters</span></div>
@@ -673,7 +688,6 @@
                         <a class="remove-btn" (click)="removeQuickReplyButtons(idx)" *ngIf="quickReplyButtons?.length>1">- Remove</a>
                     </div>
                    </div> 
-                    
                 </div> -->
 
                 <div class="call-to-action-btns" >     
@@ -793,7 +807,7 @@
                                     <!-- (input)="updateCharacterCount($event, idx)" -->
                                     <!-- <input type="text" id="quickreply" maxlength="25" placeholder="Enter" [(ngModel)]="item.buttonText" [ngModelOptions]="{standalone: true}" > -->
                                     <select class="sel input-form" [(ngModel)]="item.flowId" [ngModelOptions]="{standalone: true}">
-                                        <option value="" selected disabled>Select</option>
+                                        <option value="" selected disabled>Select a WhatsApp flow</option>
                                         <option *ngFor="let flow of templateFlows" [value]="flow?.id">{{flow?.name}}</option>
                                     </select>
                                 </div>
@@ -872,7 +886,7 @@
                                     </div>
                                 </div>
                                 <div class="sel-type-link">
-                                    <input type="text" placeholder="e.g. https://www.example.com"  maxlength="2000" [(ngModel)]="item.webUrl" [ngModelOptions]="{standalone: true}">
+                                    <input type="text" placeholder="e.g. https://www.example.com" (blur)="ensureTrailingSlash(idx)"  maxlength="2000" [(ngModel)]="item.webUrl" [ngModelOptions]="{standalone: true}">
                                 </div>
                             </div>
                         </div>
@@ -887,7 +901,7 @@
                                 <div class="d-flex sel-type-link">
                                     <!-- (input)="updateCharacterCount($event, idx)" -->
                                     <div class="d-flex align-items-center px-2"ngNonBindable>{{1}}</div>
-                                    <input type="text" id="quickreply" maxlength="2000" [placeholder]="placeholderText" [(ngModel)]="item.webUrlSample" [ngModelOptions]="{standalone: true}" >
+                                    <input class="font-sml" type="text" id="quickreply" maxlength="2000" [placeholder]="placeholderText" [(ngModel)]="item.webUrlSample" [ngModelOptions]="{standalone: true}" >
                                 </div>
                             </div>
                         </div>

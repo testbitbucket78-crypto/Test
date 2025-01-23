@@ -162,7 +162,7 @@ async function extractDataFromMessage(body) {
     if (!isMessageAlreadyExist) {
       if (firstMessage.context) {
         if(Type == 'button'){
-          message_text = firstMessage.button.text
+          message_text = firstMessage.button.text;
         }
         let spid = await db.excuteQuery('select SP_ID from user where mobile_number =? limit 1', [display_phone_number])
         let campaignRepliedQuery = `UPDATE CampaignMessages set status=4,RepliedTime='${message_time}' where phone_number =${from} and (status = 3 OR status =2) and SP_ID = ${spid[0]?.SP_ID} AND messageTemptateId = '${firstMessage.context?.id}'` // will replace it withmessage id later
@@ -174,9 +174,12 @@ async function extractDataFromMessage(body) {
       // Conditional check to determine the filename based on type
       if (Type === 'image') {
         extension = '.jpg';
+        message_text = firstMessage?.image?.caption;
       } else if (Type === 'video') {
         extension = '.mp4';
+        message_text = firstMessage?.video?.caption;
       } else if (Type === 'document') {
+        message_text = firstMessage?.document?.caption;
         let filename = firstMessage.document.filename;
         extension = filename.substring(filename.lastIndexOf('.'));
       }
@@ -317,7 +320,8 @@ async function saveIncommingMessages(from, firstMessage, phone_number_id, displa
 
     message_media = imageurl.value;
 
-    message_text = " "
+   // message_text = " "
+   message_text = message_text?.length >0 ? message_text : ' ';
     var media_type = 'image/jpg'
   }
 
