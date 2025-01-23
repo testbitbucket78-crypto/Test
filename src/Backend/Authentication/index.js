@@ -17,7 +17,7 @@ const SECRET_KEY = 'RAUNAK'
 const mapCountryCode = require('../Contact/utils.js');
 const { EmailConfigurations } =  require('./constant');
 const { MessagingName }= require('../enum');
-
+const middleWare = require('../middleWare')
 app.use(bodyParser.json());
 
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -575,13 +575,18 @@ const sendOtp = async function (req, res) {
         Enter it on the signup page to verify your Phone Number.
         Let's make magic happen!
         - Team ${emailSender}`
-
+        var text2 = `Hi ${req.body?.name}!\n\nJust one more step to get started with ${emailSender}.\nHere's your verification code: ${phoneOtp}.\nEnter it on the signup page to verify your Phone Number.\n\nLet's make magic happen!\n- Team ${emailSender}`;
             // var data = getTextMessageInput(mobile_number, text);
+           
+            if (channel === 'web') {
+                    const result =  sendingOTPfromWeb(val.emailForSendingOtp, mobile_number, text2);
+            }
+            else {
+                let sendWAmsg =await createWhatsAppPayload('text', mobile_number, 'verify_opt_signin', 'en', headerVar, bodyVar, mediaLink = null)
+                let data = JSON.stringify(sendWAmsg, null, 2);
+                sendMessage(data)
+            }
 
-
-            let sendWAmsg =await createWhatsAppPayload('text', mobile_number, 'verify_opt_signin', 'en', headerVar, bodyVar, mediaLink = null)
-            let data = JSON.stringify(sendWAmsg, null, 2);
-            sendMessage(data)
             var storeEmailOtp = await db.excuteQuery(val.insertOtp, [req.body.email_id, otp, 'Email'])
             // console.log(storeEmailOtp)
 
@@ -636,11 +641,13 @@ const sendOtp = async function (req, res) {
                 })
 
             }else{
-
+                if (channel === 'web') {
+                    const result =  sendingOTPfromWeb(val.emailForSendingOtp, mobile_number, text2);
+            } else {
             let sendWAmsg =await createWhatsAppPayload('text', mobile_number, 'verify_opt_signin', 'en', headerVar,bodyVar , mediaLink = null)
             let data = JSON.stringify(sendWAmsg, null, 2);
             sendMessage(data)
-
+            }
             var storePhoneOtp = await db.excuteQuery('insert into otpVerify (otpfieldvalue,otp,fieldtype) values (?,?,?)', [mobile_number, phoneOtp, 'Mobile']);
             console.log("storePhoneOtp",storePhoneOtp?.insertId,mobile_number, phoneOtp)
 
@@ -661,7 +668,23 @@ const sendOtp = async function (req, res) {
 
 };
 
-
+async function sendingOTPfromWeb(email_id, messageTo, content){
+    let spId;
+    try {
+        const Data = (await db.excuteQuery(val.getSPIDandChannel, [email_id]))[0];
+        if (Data) {
+            spId = Data.SP_ID;
+        }
+       
+        if (spId) {
+            return middlewareresult = await middleWare.postDataToAPI(spId, messageTo, "text", content, "text");
+        } else {
+            return { connect: false, message: 'SP ID not found!' };
+        }
+    } catch (error) {
+        return { connect: false, message: error.message || 'Error while processing the request!' };
+    }
+}
 
 async function canSendOTP(mobile_number) {
     try {

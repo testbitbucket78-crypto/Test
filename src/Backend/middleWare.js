@@ -1,4 +1,3 @@
-const teamboxController = require('./Authentication/TeamBoxController');
 const removeTags = require('./removeTagsFromRichTextEditor')
 const http = require("https");
 const axios = require('axios');
@@ -439,6 +438,21 @@ async function createWhatsAppPayload(type, to, templateName, languageCode, heade
                         {
                             type: "text",
                             text: DynamicURLToBESent[idx].trim()
+                        }
+                    ]
+                };
+            }
+            if (btn.type === 'Complete Flow') {
+                return {
+                    type: "button",
+                    sub_type: "flow",
+                    index: idx,
+                    parameters: [
+                        {
+                            type: "action",
+                            action: {
+                                flow_token: WAdetails[0].phoneNumber_id 
+                            }
                         }
                     ]
                 };
