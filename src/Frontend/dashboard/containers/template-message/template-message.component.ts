@@ -336,7 +336,7 @@ export class TemplateMessageComponent implements OnInit {
             Channel: new FormControl(null, [Validators.required]),
             Category: new FormControl(null, [Validators.required]),
             categoryChange: new FormControl(null, [Validators.required]),
-            Language: new FormControl('English', [Validators.required]),
+            Language: new FormControl('en', [Validators.required]),
             media_type: new FormControl(null),
             Header: new FormControl(null,this.noEmojiValidator),
             Links: new FormControl(null),

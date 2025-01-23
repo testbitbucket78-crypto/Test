@@ -453,14 +453,16 @@
                     <h6 class="pt-1 pb-2">Language <span class="text-danger font-weight-bold">*</span></h6>
                     <select class="sel input-form" formControlName="Language">
                         <option [disabled]="true" [selected]="true" [hidden]="true" [value]="null">Select language</option>
-                        <option *ngFor="let item of filterListLanguage" [selected]="item.label">{{item?.label}}</option>     
+                        <option *ngFor="let item of filterListLanguage" [value]="item.code">{{item?.label}}</option>     
                     </select>
                 </div>
                 <div class="p-1 msg-head">
-                    <div class="d-flex justify-content-between">
-                    <h6 class="pt-1 pb-2">Allow category change <span class="text-danger font-weight-bold">*</span></h6>
-                    <div>
-                        <img src="../../../../assets/img/info-icon.png" (click)="channelQualityTooltip = !channelQualityTooltip" style="width: 15px; height: 15px;cursor: pointer">
+                    <div class="d-flex">
+                    <h6 class="pt-1 pb-2 pr-2">Allow category change <span class="text-danger font-weight-bold">*</span></h6>
+                    <div class="info-container">
+                        <div class="Info-Iconn">
+                            <img src="../../../../assets/img/info-icon.png" (click)="channelQualityTooltip = !channelQualityTooltip" style="width: 15px; height: 15px;cursor: pointer">
+                        </div>
                         <!-- <div *ngIf="channelQualityTooltip" class="showInfoFallback1 ">
 							<p id="p-body">selecting this to 'yes' will prevent your template from being rejected for miscategorization</p>
 							<button id="radio-close-btn" (click)=" channelQualityTooltip= false">X</button>
@@ -654,11 +656,11 @@
                         <img class="btn-preview-img" src="../../../../assets/img/drop-icon.png">
                     </button>
                     <div class="btn-popup" *ngIf="isPopupVisible"  tabindex="-1" data-bs-backdrop="static" role="dialog">
+                        <div class="btn-type-headings">Quick reply buttons</div>
                         <div class="btn-Name" (click)="addButtons('Quick Reply')" [class.disabled]="isDisableButton('Quick Reply')">
-                            <div class="btn-type-heading">Quick reply buttons</div>
                             <img class="btn-preview-img" src="../../../../assets/img/settings/reply-arrow.svg"> Custom</div>
                             <hr>
-                            <div class="btn-type-heading">Call to action buttons</div>
+                            <div class="btn-type-headings">Call to action buttons</div>
                         <div class="btn-Name" (click)="addButtons('Visit Website')" [class.disabled]="isDisableButton('Visit Website')">
                             <img class="btn-preview-img" src="../../../../assets/img/settings/open-in-new.svg"> URL<div class="font-small pl-4">2 buttons maximum</div></div>
                         <div class="btn-Name" (click)="addButtons('Call Phone')" [class.disabled]="isDisableButton('Call Phone')">
