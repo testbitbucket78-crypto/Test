@@ -1,3 +1,4 @@
+const db = require("../../dbhelper");
 class APIKeyManager {
     constructor({ spId, ip, isSave, isEnabled, webhookURL, apiKey, isRegenerate, tokenName}) {
         this.spId = spId || null;
@@ -82,6 +83,28 @@ class sendMessageBody {
     this.language = language;
     this.buttons = buttons;
   }
+
+  static async getBodyText(name) {
+  let BodyText = '', FooterText = '';
+    if (name) {
+      try {
+        const query = 'SELECT * FROM templateMessages WHERE TemplateName = ? AND isDeleted != 1';
+        const result = await db.excuteQuery(query, [name]);
+
+        if (result && result.length > 0) {
+          BodyText = result[0].BodyText; 
+          FooterText = result[0].FooterText;
+        } else {
+          throw new Error(`Template not found for Name: ${name}`);
+        }
+      } catch (err) {
+        console.error('Error fetching template:', err.message);
+      }
+    }
+
+    return { BodyText, FooterText };
+  }
 }
+
   
   module.exports = {APIKeyManager, sendMessageBody};

@@ -13,7 +13,7 @@ async function EmailTemplateProvider(alert, status, emailwhomToSent, name, spMob
       ? JSON.parse(alert.segments_contacts).length
       : JSON.parse(alert.csv_contacts).length;
   
-    if (status == '1') {
+    if (status == '-11') { // need to disable this message for now (1)
       subject = `Your ${emailSender} Campaign is Scheduled!`;
       body = `
         <p>Hello <strong>${name}</strong>,</p>
@@ -68,7 +68,7 @@ async function EmailTemplateProvider(alert, status, emailwhomToSent, name, spMob
   
         <p>Best regards,<br>Team ${emailSender}</p>
       `;
-    } else if (status == '0') {
+    } else if (status == '-11') { // need to disable this message for now (0)
       subject = `Alert! Your ${emailSender} Campaign Has Been Stopped / Paused`;
       body = `
         <p>Hello <strong>${name}</strong>,</p>

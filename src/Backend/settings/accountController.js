@@ -559,11 +559,16 @@ const sendMessage = async (req, res) => {
     }
 
   const sendMessageInstance = new sendMessageBody(req?.body);
+
+  if(sendMessageInstance.isTemplate == true){
+    const { BodyText, FooterText } = await sendMessageBody.getBodyText(sendMessageInstance.name);
+    sendMessageInstance.message_text = BodyText + FooterText;
+  }
+   
   const channelData = await db.excuteQuery(val.getChannel, [APIKeyManagerInstance.spId]);
   let channel, AgentId;
   if (channelData && channelData.length > 0) {
       channel = channelData[0]?.channel_id;
-      //phoneNo = channelData[0]?.connected_id;
   }
 
   let { InteractionId, custid } = await insertInteractionAndRetrieveId(sendMessageInstance.messageTo, sendMessageInstance.SPID, channel);

@@ -97,16 +97,14 @@ async function assignToLastAssistedAgent(sid, newId, agid, custid) {
     let RoutingRulesQuery = `SELECT * FROM routingrules WHERE SP_ID =?`;
     let RoutingRules = await db.excuteQuery(RoutingRulesQuery, [sid]);
 
-    let LastAssistedAgent = await db.excuteQuery('select * from InteractionMapping where InteractionId =? and AgentId != -1  order by created_at desc limit 1', [newId]);
+    let LastAssistedAgent = await db.excuteQuery('select * from InteractionMapping where InteractionId =?  order by created_at desc limit 1', [newId]);
     console.log(RoutingRules[0]?.broadcast == '1', LastAssistedAgent.length, new Date(), RoutingRules[0]?.broadcast == 1);
+    let isActiveStaus = await isAgentActive(sid, LastAssistedAgent[0].LastAssistedAgent);
+    if (LastAssistedAgent.length > 0 && RoutingRules[0]?.assignagent == '1' && isActiveStaus == true) {
 
-    if (LastAssistedAgent.length > 0 && RoutingRules[0]?.assignagent == '1') {
-
-      let isActiveStaus = await isAgentActive(sid, LastAssistedAgent[0].AgentId);
       console.log("if ----- LastAssistedAgent and isActiveStaus", isActiveStaus);
-      if (isActiveStaus == true) {
         let assignAgentQuery = `INSERT INTO InteractionMapping (InteractionId, AgentId, MappedBy, is_active) VALUES ?`;
-        let assignAgent = await db.excuteQuery(assignAgentQuery, [[[newId, LastAssistedAgent[0].AgentId, '-1', 1]]]);
+        let assignAgent = await db.excuteQuery(assignAgentQuery, [[[newId, LastAssistedAgent[0].LastAssistedAgent, '-1', 1]]]);
         console.log("LastAssistedAgent", assignAgent);
         if (assignAgent?.affectedRows > 0) {
           let openAssignChat = await updateInteraction(newId, sid, 'LastAssistedAgent', custid)
@@ -121,9 +119,6 @@ async function assignToLastAssistedAgent(sid, newId, agid, custid) {
           return true; // Return true if insertion is successful
 
         }
-      } else {
-        return { message: "Insertion into InteractionMapping failed" };
-      }
     } else if (RoutingRules?.length > 0 && RoutingRules[0]?.broadcast == '1') {
       console.log("broadcast");
       let result = await BroadCast(sid, agid, newId);
@@ -337,7 +332,7 @@ async function ManagemissedChat(sid, newId, agid, custid, RoutingRules) {
                 ? async () => await AssignAdmin(newId, sid, agid, custid)
                 : async () => await AssignAdmin(newId, sid, agid, custid);
 
-        // Get created_at timestamp from checkAssignInteraction
+         // Get created_at timestamp from checkAssignInteraction
         let createdAt = new Date(checkAssignInteraction[0]?.created_at);
         let currentTime = new Date();
 
@@ -452,7 +447,7 @@ async function AssignMissedToContactOwner(sid, newId, agid, custid) {
     let RoutingRulesQuery = `SELECT * FROM routingrules WHERE SP_ID = ?`;
     let RoutingRules = await db.excuteQuery(RoutingRulesQuery, [sid]);
     if (RoutingRules?.length > 0) {
-      if (contactOwnerUid != undefined && RoutingRules[0].contactowner == '1') {
+      if ((contactOwnerUid != undefined && RoutingRules[0].contactowner == '1') || RoutingRules[0].isMissChatAssigContactOwner == '1') {
         let updateInteractionMapQuery = `INSERT INTO InteractionMapping (InteractionId, AgentId, MappedBy, is_active) VALUES ?`;
         let values = [[newId, contactOwnerUid, '-1', 1]]; // 2nd agid is MappedBy values in teambox uid is used here also
         let updateInteractionMap = await db.excuteQuery(updateInteractionMapQuery, [values]);
