@@ -336,7 +336,7 @@ export class TemplateMessageComponent implements OnInit {
             Channel: new FormControl(null, [Validators.required]),
             Category: new FormControl(null, [Validators.required]),
             categoryChange: new FormControl(null, [Validators.required]),
-            Language: new FormControl('en', [Validators.required]),
+            Language: new FormControl('English', [Validators.required]),
             media_type: new FormControl(null),
             Header: new FormControl(null,this.noEmojiValidator),
             Links: new FormControl(null),
@@ -723,7 +723,7 @@ checkTemplateName(e:any){
                             $('#newTemplateMessagePreview').modal('hide');
                             this.getTemplatesData();
                             this.removeFormValues();
-                            this.showToaster('Template saved successfully','success')
+                            this.showToaster('Template saved successfully','success');
                         }
                         else{
                             this.showToaster('something went wrong','error')
@@ -744,6 +744,7 @@ checkTemplateName(e:any){
                             $('#newTemplateMessagePreview').modal('hide');
                             this.getTemplatesData();
                             this.removeFormValues();
+                            this.showToaster('Template saved successfully','success');
                         }
                         else{
                             this.showToaster('something went wrong','error')
@@ -1582,4 +1583,6 @@ return true
         this.buttonsArray[idx].webUrl += '/';
     }
   }
+
+
 }
