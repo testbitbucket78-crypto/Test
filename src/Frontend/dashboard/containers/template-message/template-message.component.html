@@ -453,7 +453,7 @@
                     <h6 class="pt-1 pb-2">Language <span class="text-danger font-weight-bold">*</span></h6>
                     <select class="sel input-form" formControlName="Language">
                         <option [disabled]="true" [selected]="true" [hidden]="true" [value]="null">Select language</option>
-                        <option *ngFor="let item of filterListLanguage" [value]="item.code">{{item?.label}}</option>     
+                        <option *ngFor="let item of filterListLanguage" [value]="item.label">{{item?.label}}</option>     
                     </select>
                 </div>
                 <div class="p-1 msg-head">
@@ -950,9 +950,9 @@
                 </div>
                 <div class="all-btn-popup" *ngIf="isAllButtonPopupVisible">
                     
-                    <div (click)="isAllButtonPopupVisible = false">
-                        <img src="../../../../assets/img/teambox/icon-close.svg">
-                        <div>All options</div>
+                    <div (click)="isAllButtonPopupVisible = false" class="d-flex">
+                        <div class="custom-control-label"><img src="../../../../assets/img/teambox/icon-close.svg"></div>
+                        <div class="all-option-head">All options</div>
                     </div>
                     <div class="all-btn-Name" *ngFor="let item of buttonsArray;let i =index" >
                         <img class="btn-preview-img" *ngIf="item.type =='Quick Reply'" src="../../../../assets/img/settings/reply-arrow.svg"> 
@@ -1044,9 +1044,9 @@
                         {{(i==2 && buttonsArray?.length>3) ? 'Show All Buttons' : item?.buttonText }}</button> </div>
                 </div>
                 <div class="all-btn-popup" *ngIf="isAllButtonPopupVisible">                    
-                    <div (click)="isAllButtonPopupVisible = false">
-                        <img src="../../../../assets/img/teambox/icon-close.svg">
-                        <div>All options</div>
+                    <div (click)="isAllButtonPopupVisible = false" class="d-flex">
+                        <div class="custom-control-label"><img src="../../../../assets/img/teambox/icon-close.svg"></div>
+                        <div class="all-option-head">All options</div>
                     </div>
                     <div class="all-btn-Name" *ngFor="let item of buttonsArray;let i =index" >
                         <img class="btn-preview-img" *ngIf="item.type =='Quick Reply' && !(i==2 && buttonsArray?.length>3)" src="../../../../assets/img/settings/reply-arrow.svg"> 
