@@ -1472,7 +1472,7 @@ stopPropagation(event: Event) {
 					  }
 				  }
 				  else {
-					var idx = this.assignedTagList.findIndex(item => item == this.addTagList[index]) 
+					var idx = this.assignedTagList.findIndex(item => item == this.addTagList[index]?.TagName) 
 					console.log(idx);
 					console.log(this.assignedTagList[idx]);
 					this.assignedTagList.splice(idx,1);
