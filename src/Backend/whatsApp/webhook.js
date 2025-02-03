@@ -146,6 +146,8 @@ async function extractDataFromMessage(body) {
     let ExternalMessageId = body.entry[0].id;
     let message_text = firstMessage.text ? firstMessage.text.body : "";  // extract the message text from the webhook payload
     let message_media = firstMessage.type;
+    let repliedMessage_id = 0;
+    let repliedMessageText = '';
 
     let Message_template_id = firstMessage.id;
     let Type = firstMessage.type
@@ -167,7 +169,18 @@ async function extractDataFromMessage(body) {
         let spid = await db.excuteQuery('select SP_ID from user where mobile_number =? limit 1', [display_phone_number])
         let campaignRepliedQuery = `UPDATE CampaignMessages set status=4,RepliedTime='${message_time}' where phone_number =${from} and (status = 3 OR status =2) and SP_ID = ${spid[0]?.SP_ID} AND messageTemptateId = '${firstMessage.context?.id}'` // will replace it withmessage id later
         console.log(campaignRepliedQuery)
-        let campaignReplied = await db.excuteQuery(campaignRepliedQuery, [])
+        let campaignReplied = await db.excuteQuery(campaignRepliedQuery, []);
+
+        let messageData = await db.excuteQuery('select Message_id,message_text from user where whatsAppMessageId =? limit 1', [firstMessage?.context?.id])
+        repliedMessage_id = messageData[0]?.Message_id;
+        repliedMessageText = messageData[0]?.message_text;
+        if (Type === 'image') {
+          repliedMessageText = 'Image';
+        } else if (Type === 'video') {
+          repliedMessageText = 'Video';
+        } else if (Type === 'document') {
+          repliedMessageText = 'Document';
+        }
         //console.log( spid, "campaignReplied*******", campaignReplied?.affectedRows)
       }
 
@@ -208,7 +221,7 @@ async function extractDataFromMessage(body) {
         message_text = message_text.replace(/\n/g, '<br>');
       }
       console.log("after text replacement", message_text)
-      var saveMessages = await saveIncommingMessages(from, firstMessage, phone_number_id, display_phone_number, phoneNo, message_text, message_media, Message_template_id, Quick_reply_id, Type, ExternalMessageId, contactName, extension, message_time, countryCode)
+      var saveMessages = await saveIncommingMessages(from, firstMessage, phone_number_id, display_phone_number, phoneNo, message_text, message_media, Message_template_id, Quick_reply_id, Type, ExternalMessageId, contactName, extension, message_time, countryCode,repliedMessage_id,repliedMessageText)
       var SavedMessageDetails = await getDetatilsOfSavedMessage(saveMessages, message_text, phone_number_id, contactName, from, display_phone_number)
     }else{
       logger.info(`Message Already Exist with this message id`)
@@ -310,7 +323,7 @@ const updateWhatsAppDetails = async (waba_id, phone_id, phoneNo) => {
 
 };
 
-async function saveIncommingMessages(from, firstMessage, phone_number_id, display_phone_number, phoneNo, message_text, message_media, Message_template_id, Quick_reply_id, Type, ExternalMessageId, contactName, extension, message_time, countryCode) {
+async function saveIncommingMessages(from, firstMessage, phone_number_id, display_phone_number, phoneNo, message_text, message_media, Message_template_id, Quick_reply_id, Type, ExternalMessageId, contactName, extension, message_time, countryCode,replyMessageId,replyMessageText) {
   console.log("sabewdfesk", Type, extension)
   logger.info(`saveIncommingMessages  ${phoneNo} ,${message_text}  ,${message_time}`)
   if (Type == "image") {
@@ -353,7 +366,7 @@ async function saveIncommingMessages(from, firstMessage, phone_number_id, displa
        let EcPhonewithoutcountryCode = countryCodeObj?.localNumber; 
        countryCode = countryCodeObj?.country + " +" + countryCodeObj?.countryCode;
 
-    var saveMessage = await db.excuteQuery(process.env.query, [phoneNo, 'IN', message_text, message_media, Message_template_id, Quick_reply_id, Type, ExternalMessageId, display_phone_number, contactName, media_type, 'NULL', 'WA API', message_time, countryCode, EcPhonewithoutcountryCode]);
+    var saveMessage = await db.excuteQuery(process.env.query, [phoneNo, 'IN', message_text, message_media, Message_template_id, Quick_reply_id, Type, ExternalMessageId, display_phone_number, contactName, media_type, 'NULL', 'WA API', message_time, countryCode, EcPhonewithoutcountryCode,repliedMessageId,repliedMessageText]);
 
     console.log("====SAVED MESSAGE====" + " replyValue length  " + JSON.stringify(saveMessage));
     logger.info(`====SAVED MESSAGE====   ${JSON.stringify(saveMessage)}`)

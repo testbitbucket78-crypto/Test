@@ -189,7 +189,7 @@ $('#atrributemodal').modal('show');
   insertAtCursor(selectedValue: any) {
     const spaceNode = document.createElement('span');
     spaceNode.innerHTML = '&nbsp;'; 
-    spaceNode.setAttribute('contenteditable', 'true');
+    spaceNode.setAttribute('contenteditable', 'false');
       this.lastCursorPosition?.insertNode(spaceNode);
       setTimeout(() => {
           const range = document.createRange();

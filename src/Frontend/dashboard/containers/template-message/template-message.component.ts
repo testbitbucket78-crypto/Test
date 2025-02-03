@@ -801,7 +801,7 @@ checkTemplateName(e:any){
         copyTemplateForm.Header = this.templatesMessageDataById.Header;
         copyTemplateForm.Links = this.templatesMessageDataById.Links;
         copyTemplateForm.BodyText = this.templatesMessageDataById.BodyText;
-        copyTemplateForm.FooterText = this.templatesMessageDataById.FooterText;
+        copyTemplateForm.FooterText = this.wrapWithEmTags(this.templatesMessageDataById.FooterText);
         copyTemplateForm.TemplateName = this.templatesMessageDataById.TemplateName +'_copy';
         copyTemplateForm.Channel = this.templatesMessageDataById.Channel;
         copyTemplateForm.Category = this.templatesMessageDataById.Category;
@@ -861,7 +861,7 @@ checkTemplateName(e:any){
         newTemplateForm.Links = this.newTemplateForm.controls.Links.value;
         newTemplateForm.Links = this.selectedPreview;
         newTemplateForm.BodyText = this.newTemplateForm.controls.BodyText.value;
-        newTemplateForm.FooterText = this.newTemplateForm.controls.FooterText.value;
+        newTemplateForm.FooterText = this.wrapWithEmTags(this.newTemplateForm.controls.FooterText.value);
         newTemplateForm.TemplateName = this.newTemplateForm.controls.TemplateName.value;
         newTemplateForm.Channel = this.newTemplateForm.controls.Channel.value;
         newTemplateForm.categoryChange = this.newTemplateForm.controls.categoryChange.value;
@@ -1141,7 +1141,7 @@ checkTemplateName(e:any){
 insertAtCursor(selectedValue: any) {
   const spaceNode = document.createElement('span');
   spaceNode.innerHTML = '&nbsp;'; 
-  spaceNode.setAttribute('contenteditable', 'true');
+  spaceNode.setAttribute('contenteditable', 'false');
     this.lastCursorPosition?.insertNode(spaceNode);
     setTimeout(() => {
         const range = document.createRange();
@@ -1383,13 +1383,13 @@ openButtonPopUp() {
     this.isPopupVisible = !this.isPopupVisible;
 
     // Close the popup if a click happens outside of it
-    if (this.isPopupVisible) {
-      this.renderer.listen('window', 'click', (event: Event) => {
-        if (!this.popupContainer?.nativeElement?.contains(event.target)) {
-          //this.isPopupVisible = false;
-        }
-      });
-    }
+    // if (this.isPopupVisible) {
+    //   this.renderer.listen('window', 'click', (event: Event) => {
+    //     if (!this.popupContainer?.nativeElement?.contains(event.target)) {
+    //       //this.isPopupVisible = false;
+    //     }
+    //   });
+    // }
   }
 
   isDisableButton(type:any){
@@ -1583,6 +1583,13 @@ return true
         this.buttonsArray[idx].webUrl += '/';
     }
   }
+
+  wrapWithEmTags(text:string) {
+    if (!/^<em>.*<\/em>$/.test(text)) {
+        return `<em>${text}</em>`;
+    }
+    return text;
+}
 
 
 }
