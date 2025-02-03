@@ -99,12 +99,12 @@ async function assignToLastAssistedAgent(sid, newId, agid, custid) {
 
     let LastAssistedAgent = await db.excuteQuery('select * from InteractionMapping where InteractionId =?  order by created_at desc limit 1', [newId]);
     console.log(RoutingRules[0]?.broadcast == '1', LastAssistedAgent.length, new Date(), RoutingRules[0]?.broadcast == 1);
-    let isActiveStaus = await isAgentActive(sid, LastAssistedAgent[0].LastAssistedAgent);
+    let isActiveStaus = await isAgentActive(sid, LastAssistedAgent[0]?.LastAssistedAgent);
     if (LastAssistedAgent.length > 0 && RoutingRules[0]?.assignagent == '1' && isActiveStaus == true) {
 
       console.log("if ----- LastAssistedAgent and isActiveStaus", isActiveStaus);
         let assignAgentQuery = `INSERT INTO InteractionMapping (InteractionId, AgentId, MappedBy, is_active) VALUES ?`;
-        let assignAgent = await db.excuteQuery(assignAgentQuery, [[[newId, LastAssistedAgent[0].LastAssistedAgent, '-1', 1]]]);
+        let assignAgent = await db.excuteQuery(assignAgentQuery, [[[newId, LastAssistedAgent[0]?.LastAssistedAgent, '-1', 1]]]);
         console.log("LastAssistedAgent", assignAgent);
         if (assignAgent?.affectedRows > 0) {
           let openAssignChat = await updateInteraction(newId, sid, 'LastAssistedAgent', custid)
