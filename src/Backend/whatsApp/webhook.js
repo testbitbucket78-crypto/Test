@@ -172,22 +172,26 @@ async function extractDataFromMessage(body) {
         console.log(campaignRepliedQuery)
         let campaignReplied = await db.excuteQuery(campaignRepliedQuery, []);
 
-        let messageData = await db.excuteQuery('select Message_id,message_text,Agent_id from Message where Message_template_id =? limit 1', [firstMessage?.context?.id]);
+        let messageData = await db.excuteQuery('select Message_id,message_text,Agent_id,button,media_type from Message where Message_template_id =? limit 1', [firstMessage?.context?.id]);
         if(messageData?.length > 0){
         repliedMessage_id = messageData[0]?.Message_id;
         repliedMessageText = messageData[0]?.message_text;
         let Agent_id = messageData[0]?.Agent_id;
+        let media_type = messageData[0]?.media_type;
+        let button = messageData[0]?.button;
         let agentName = await db.excuteQuery('select name from user where uid =? limit 1', [Agent_id]);
         if(agentName?.length > 0)
           repliedMessageTo = agentName[0]?.name;
-        if (Type === 'image') {
+        if (media_type?.includes('image') ) {
           repliedMessageText = 'Image';
-        } else if (Type === 'video') {
+        } else if (media_type?.includes('video')) {
           repliedMessageText = 'Video';
-        } else if (Type === 'document') {
+        } else if (media_type?.includes('document')) {
           repliedMessageText = 'Document';
-        } else if(Type === 'interactive')
-          repliedMessageText = 'Template';
+        }
+
+          if(button)
+            repliedMessageText = 'Template';
       }
         //console.log( spid, "campaignReplied*******", campaignReplied?.affectedRows)
       }
