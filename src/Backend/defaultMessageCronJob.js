@@ -66,7 +66,9 @@ async function NoCustomerReplyReminder() {
               } else {
                 message_text = extractedMessageCache.get(message.SP_ID);
               }
-             
+              if(message.value != null){
+                message_text = await removeTags.removeTagsFromMessages(message.value); // Clean up message
+               }
               //logger.info(`send no NoCustomerReplyReminder start  ${new Date()}   ,  ${message.SPID},  ${message.customer_phone_number}`)
               // Send the message via the selected channel
               let response = await messageThroughselectedchannel(
@@ -431,7 +433,7 @@ async function messageThroughselectedchannel(spid, from, type, text, media, phon
       if (clientReady.status) {
         logger.info(`WhatsApp Web send process start`, { spid, from, timestamp: new Date() });
         
-        let response ='' //await middleWare.postDataToAPI(spid, from, getMediaType, text, media);
+        let response = await middleWare.postDataToAPI(spid, from, getMediaType, text, media);
         logger.info(`WhatsApp Web send process end`, { spid, from, responseStatus: response?.status, timestamp: new Date() });
         
         return response;

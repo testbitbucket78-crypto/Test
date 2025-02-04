@@ -318,6 +318,7 @@ LEFT JOIN
     defaultmessages dm ON dm.SP_ID = M.SPID 
     AND dm.title = 'No Agent Reply' 
     AND dm.isDeleted != 1
+    AND dm.Is_disable = 1
 LEFT JOIN 
     WorkingTimeDetails whour ON whour.SP_ID = M.SPID 
     AND whour.isDeleted != 1

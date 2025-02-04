@@ -4,6 +4,7 @@ const axios = require('axios');
 const commonFun = require('./common/resuableFunctions')
 const token = 'EAAQTkLZBFFR8BOxmMdkw15j53ZCZBhwSL6FafG1PCR0pyp11EZCP5EO8o1HNderfZCzbZBZBNXiEFWgIrwslwoSXjQ6CfvIdTgEyOxCazf0lWTLBGJsOqXnQcURJxpnz3i7fsNbao0R8tc3NlfNXyN9RdDAm8s6CxUDSZCJW9I5kSmJun0Prq21QeOWqxoZAZC0ObXSOxM3pK0KfffXZC5S';
 const db = require("./dbhelper");
+const variables = require('./common/constant');
 
 function postDataToAPI(spid, phoneNo, type, text, link, interaction_id, msg_id, spNumber) {
 
@@ -208,6 +209,39 @@ async function getVerificationStatus(WABA_ID, spid){
         };
     }
 } 
+
+async function registerWebhook(WABA_ID, spid) {
+    try {
+        const getDetails = await getWAdetails(spid);
+        const token = getDetails?.[0]?.token;
+        
+        if (!token) {
+            console.log("Error fetching business verification status");
+            return { status: 400, message: "Token not found" };
+        }
+
+        const response = await axios.post(
+            `https://graph.facebook.com/v18.0/${WABA_ID}/subscribed_apps`, 
+            variables.webhookRegisterPayload,
+            {
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json'
+                }
+            }
+        );
+
+        return {
+            status: response?.status,
+            response: response.data,
+        };
+    } catch (err) {
+        return {
+            status: err?.response?.status || 500,
+            message: err?.response?.data?.error?.message || err?.message || 'An error occurred',
+        };
+    }
+}
 
 
 async function sendTextOnWhatsApp(messageTo, messageText) {
@@ -494,4 +528,4 @@ async function createWhatsAppPayload(type, to, templateName, languageCode, heade
 // const payload = createWhatsAppPayload('text', '918130818921', 'cip_attribute', 'en', headerVariables, bodyVariables, 'https://picsum.photos/id/1/200/300');
 // console.log(JSON.stringify(payload, null, 2));
 
-module.exports = { channelssetUp, postDataToAPI, sendDefultMsg, createWhatsAppPayload,getQualityRating,getVerificationStatus }
+module.exports = { channelssetUp, postDataToAPI, sendDefultMsg, createWhatsAppPayload,getQualityRating,getVerificationStatus, registerWebhook }

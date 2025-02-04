@@ -164,14 +164,15 @@ const getQualityRating = async (req, res) => {
         if (!check.length) {
             let result = await middleWare.getQualityRating(metaPhoneNumberID, spid);
             let result2 = await middleWare.getVerificationStatus(WABA_Id, spid);
-
+            let result3 = await middleWare.registerWebhook(WABA_Id, spid);
             const quality_rating = result?.response?.quality_rating;
             const phone_number_id = result?.response?.id;
             const messaging_limit_tier = commonFun.convertMessagingLimitTier(result?.response?.messaging_limit_tier);
             const fbVerification = result2?.response?.business_verification_status;
+            const isWebhookRegistered = result3?.response?.success ?? false;
 
             if (quality_rating && phone_number_id && messaging_limit_tier) {
-                result = await db.excuteQuery(val.insertHealthStatus, [phone_number_id, phoneNo, messaging_limit_tier, quality_rating, new Date(), fbVerification, spid]);
+                result = await db.excuteQuery(val.insertHealthStatus, [phone_number_id, phoneNo, messaging_limit_tier, quality_rating, new Date(), fbVerification, spid, isWebhookRegistered]);
             }
 
         }
@@ -645,7 +646,7 @@ async function insertInteractionAndRetrieveId(phoneNo, sid, channel) {
 const addWAAPIDetails = async (req, res) => {
     try {
         const spid = req.body.spid
-        const phoneNo = req.body?.phoneNo
+        let phoneNo = req.body?.phoneNo
         const code = req.body.Code;  // Get the authorization code from the query string
         const user_uid = req.body.user_uid
         const phoneNumber_id = req.body.phoneNumber_id
@@ -676,6 +677,15 @@ const addWAAPIDetails = async (req, res) => {
         // Store access_token for future API calls or redirect to your app
         if (response.data) {
             const isUpdated = await updateIfAlreadyExists(phoneNumber_id, waba_id);
+
+            let result = await middleWare.getQualityRating(phoneNumber_id, spid);
+            if (result && result.response && result.response.display_phone_number) {
+                const channelsMobileNumber = result.response.display_phone_number.replace(/\s+/g, '').replace('+', '');
+                let querry = `UPDATE user SET mobile_number = ? WHERE mobile_number = ? LIMIT 1`
+                await db.excuteQuery(querry, [channelsMobileNumber, phoneNo]);
+                phoneNo = channelsMobileNumber;
+            }
+            
             let myUTCString = new Date().toUTCString();
             const created_at = moment.utc(myUTCString).format('YYYY-MM-DD HH:mm:ss');
             let addToken = await db.excuteQuery('insert into WA_API_Details (token,spid,phoneNo,user_uid,phoneNumber_id,waba_id,created_at) VALUES(?,?,?,?,?,?,?)', [access_token, spid, phoneNo,user_uid,phoneNumber_id,waba_id, created_at])
