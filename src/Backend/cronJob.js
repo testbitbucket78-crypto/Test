@@ -9,6 +9,7 @@ const cors = require('cors')
 const moment = require('moment');
 app.use(bodyParser.json());
 app.use(cors());
+const port = 3008;
 app.use(bodyParser.urlencoded({ extended: true }));
 const middleWare = require('./middleWare')
 const batchSize = 10; // Number of users to send in each batch
@@ -88,21 +89,6 @@ async function fetchScheduledMessages() {
   }
 
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -968,20 +954,44 @@ function calculateInitialDelay() {
   return delay;
 }
 
+(async () => {
+
+  const { default: isPortReachable } = await import('is-port-reachable');
+  try {
+    const isPortAvailable = !(await isPortReachable(port));
+
+    if (!isPortAvailable) {
+      console.error(`Error: Port ${port} is already in use. Please choose a different port.`);
+      process.exit(1);
+    }
+
+    console.log(`Port ${port} is available. Starting the server...`);
+
+    // Initial startup
+    const initialDelay = calculateInitialDelay();
+
+    if (initialDelay > 0) {
+      console.log(`Waiting ${initialDelay / 1000} seconds to start the scheduler...`);
+      setTimeout(() => {
+        console.log('Starting the scheduler at:', new Date());
+        startScheduler();
+      }, initialDelay);
+    } else {
+      console.log('Starting the scheduler immediately at:', new Date());
+      startScheduler();
+    }
+
+    // Start the server only if the port is available
+    app.listen(port, () => {
+      console.log(`Campaign scheduler is listening on port ${port}`);
+    });
+
+  } catch (error) {
+    console.error("Error checking port availability:", error);
+  }
+})();
+
+
 // Initial startup
-const initialDelay = calculateInitialDelay();
 
-if (initialDelay > 0) {
-  console.log(`Waiting ${initialDelay / 1000} seconds to start the scheduler...`);
-  setTimeout(() => {
-    console.log('Starting the scheduler at:', new Date());
-    startScheduler();
-  }, initialDelay);
-} else {
-  console.log('Starting the scheduler immediately at:', new Date());
-  startScheduler();
-}
 
-app.listen(3008, () => {
-  console.log("Campaign scheduler  is listening on port 3008");
-});
