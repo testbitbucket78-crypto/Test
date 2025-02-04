@@ -148,6 +148,7 @@ async function extractDataFromMessage(body) {
     let message_media = firstMessage.type;
     let repliedMessage_id = 0;
     let repliedMessageText = '';
+    let repliedMessageTo = 'You';
 
     let Message_template_id = firstMessage.id;
     let Type = firstMessage.type
@@ -171,16 +172,23 @@ async function extractDataFromMessage(body) {
         console.log(campaignRepliedQuery)
         let campaignReplied = await db.excuteQuery(campaignRepliedQuery, []);
 
-        let messageData = await db.excuteQuery('select Message_id,message_text from user where whatsAppMessageId =? limit 1', [firstMessage?.context?.id])
+        let messageData = await db.excuteQuery('select Message_id,message_text,Agent_id from Message where Message_template_id =? limit 1', [firstMessage?.context?.id]);
+        if(messageData?.length > 0){
         repliedMessage_id = messageData[0]?.Message_id;
         repliedMessageText = messageData[0]?.message_text;
+        let Agent_id = messageData[0]?.Agent_id;
+        let agentName = await db.excuteQuery('select name from user where uid =? limit 1', [Agent_id]);
+        if(agentName?.length > 0)
+          repliedMessageTo = agentName[0]?.name;
         if (Type === 'image') {
           repliedMessageText = 'Image';
         } else if (Type === 'video') {
           repliedMessageText = 'Video';
         } else if (Type === 'document') {
           repliedMessageText = 'Document';
-        }
+        } else if(Type === 'interactive')
+          repliedMessageText = 'Template';
+      }
         //console.log( spid, "campaignReplied*******", campaignReplied?.affectedRows)
       }
 
@@ -221,7 +229,7 @@ async function extractDataFromMessage(body) {
         message_text = message_text.replace(/\n/g, '<br>');
       }
       console.log("after text replacement", message_text)
-      var saveMessages = await saveIncommingMessages(from, firstMessage, phone_number_id, display_phone_number, phoneNo, message_text, message_media, Message_template_id, Quick_reply_id, Type, ExternalMessageId, contactName, extension, message_time, countryCode,repliedMessage_id,repliedMessageText)
+      var saveMessages = await saveIncommingMessages(from, firstMessage, phone_number_id, display_phone_number, phoneNo, message_text, message_media, Message_template_id, Quick_reply_id, Type, ExternalMessageId, contactName, extension, message_time, countryCode,repliedMessageTo,repliedMessage_id,repliedMessageText)
       var SavedMessageDetails = await getDetatilsOfSavedMessage(saveMessages, message_text, phone_number_id, contactName, from, display_phone_number)
     }else{
       logger.info(`Message Already Exist with this message id`)
@@ -323,7 +331,7 @@ const updateWhatsAppDetails = async (waba_id, phone_id, phoneNo) => {
 
 };
 
-async function saveIncommingMessages(from, firstMessage, phone_number_id, display_phone_number, phoneNo, message_text, message_media, Message_template_id, Quick_reply_id, Type, ExternalMessageId, contactName, extension, message_time, countryCode,replyMessageId,replyMessageText) {
+async function saveIncommingMessages(from, firstMessage, phone_number_id, display_phone_number, phoneNo, message_text, message_media, Message_template_id, Quick_reply_id, Type, ExternalMessageId, contactName, extension, message_time, countryCode,repliedMessageTo,replyMessageId,replyMessageText) {
   console.log("sabewdfesk", Type, extension)
   logger.info(`saveIncommingMessages  ${phoneNo} ,${message_text}  ,${message_time}`)
   if (Type == "image") {
@@ -366,7 +374,7 @@ async function saveIncommingMessages(from, firstMessage, phone_number_id, displa
        let EcPhonewithoutcountryCode = countryCodeObj?.localNumber; 
        countryCode = countryCodeObj?.country + " +" + countryCodeObj?.countryCode;
 
-    var saveMessage = await db.excuteQuery(process.env.query, [phoneNo, 'IN', message_text, message_media, Message_template_id, Quick_reply_id, Type, ExternalMessageId, display_phone_number, contactName, media_type, 'NULL', 'WA API', message_time, countryCode, EcPhonewithoutcountryCode,replyMessageId,replyMessageText]);
+    var saveMessage = await db.excuteQuery(process.env.query, [phoneNo, 'IN', message_text, message_media, Message_template_id, Quick_reply_id, Type, ExternalMessageId, display_phone_number, contactName, media_type, 'NULL', 'WA API', message_time, countryCode, EcPhonewithoutcountryCode,repliedMessageTo,replyMessageText,replyMessageId]);
 
     console.log("====SAVED MESSAGE====" + " replyValue length  " + JSON.stringify(saveMessage));
     logger.info(`====SAVED MESSAGE====   ${JSON.stringify(saveMessage)}`)

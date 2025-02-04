@@ -271,7 +271,7 @@
 										<!-- <div  class="content" *ngIf="message?.repliedMessage"> -->
 											<div class="replied-msg" *ngIf="message?.repliedMessage" (click)="repliedMessage(message)">
 												<div>
-													<div class="replied-msg-from">{{message?.repliedMessageBy}}</div>
+													<div class="replied-msg-from">{{message?.repliedMessageTo}}</div>
 													<div class="d-flex">
 													<img src="/assets/img/teambox/document-icon.svg" class="mr-2" height="15px" width="15px" *ngIf="message?.repliedMessage == 'Document'">
 													<img src="/assets/img/teambox/video-icon.svg" class="mr-2" height="15px" width="15px"  *ngIf="message?.repliedMessage == 'Video'">
