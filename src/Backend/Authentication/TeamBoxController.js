@@ -961,7 +961,10 @@ const updateInteractionMapping = async (req, res) => {
         const is_active = 1;
         logger.debug('InteractionId:', InteractionId, 'AgentId:', AgentId, 'MappedBy:', MappedBy);
 
-        const values = [[is_active, InteractionId, AgentId, MappedBy, req.body?.lastAssistedAgent]];
+        const querryToGetPreviousAgent = "SELECT AgentId FROM InteractionMapping WHERE InteractionId = ? order by 1 desc";
+        const PreviousAgentId = (await db.excuteQuery(querryToGetPreviousAgent, [InteractionId]))[0]?.AgentId;
+
+        const values = [[is_active, InteractionId, AgentId, MappedBy, PreviousAgentId]];
         if (AgentId != -1) {
             const nameData = await db.excuteQuery(val.assignedNameQuery, [AgentId]);
             logger.debug('Name Data:', nameData);

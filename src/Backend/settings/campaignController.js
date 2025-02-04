@@ -1048,7 +1048,7 @@ const testCampaign = async (req, res) => {
             let bodyVar = await commonFun.getTemplateVariables(msgVar, body, phone_number?.SP_ID, customerID[0]?.customerId);
             let userChannel = channelForSendingMessage[phone_number?.Channel];
             
-          if (placeholders.length > 0) {
+          if (placeholders && placeholders.length > 0) {
                 const results = await removeTags.getDynamicURLToBESent(message_variables, phone_number?.SP_ID, customerID[0]?.customerId);
                 placeholders.forEach((placeholder, index) => {
                     const result = results[index];

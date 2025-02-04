@@ -76,7 +76,7 @@ const EmailConfigurations = {
     },
   };
 
- var emailForSendingOtp = "engagezilla786@gmail.com"
+ var emailForSendingOtp = "testing@engagezilla.com" // for Prod "superadmin@engagezilla.com"
 
 
 module.exports = {
