@@ -90,10 +90,10 @@ campaignTestData:any;
   }
 
   getUserList(){
-    this._settingsService.getUserListData(this.sp_Id)
+    this._settingsService.getUserList(this.sp_Id,1)
     .subscribe((result:any) =>{
       if(result){
-        this.userList =result?.userlist;    
+        this.userList =result?.getUser;    
       }
   
     })

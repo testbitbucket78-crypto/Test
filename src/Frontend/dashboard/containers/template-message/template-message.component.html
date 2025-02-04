@@ -652,10 +652,37 @@
                         <option value="Call to Action">Complete Flow</option>
                         <option value="Call to Action">Copy offer Code</option>
                     </select> -->
-                    <button (click)="openButtonPopUp()" class="add-btn">+ Add Buttons
+                    <button (click)="openButtonPopUp()" class="add-btn" data-bs-toggle="modal" data-bs-target="#rolesModals">+ Add Buttons
                         <img class="btn-preview-img" src="../../../../assets/img/drop-icon.png">
                     </button>
-                    <div class="btn-popup" *ngIf="isPopupVisible"  tabindex="-1" data-bs-backdrop="static" role="dialog">
+
+
+                    <!-- <div class="modal fade" tabindex="-1" id="rolesModals" data-bs-backdrop="static" role="dialog">
+                        <div class="modal-dialog" role="document">
+                            <div class="modal-content roles-modal p-2 pl-3">
+                                <div class="modal-body px-5 pt-0">
+                                    <div class="btn-popup" *ngIf="isPopupVisible"  >
+                                        <div class="btn-type-headings">Quick reply buttons</div>
+                                        <div class="btn-Name" (click)="addButtons('Quick Reply')" [class.disabled]="isDisableButton('Quick Reply')">
+                                            <img class="btn-preview-img" src="../../../../assets/img/settings/reply-arrow.svg"> Custom</div>
+                                            <hr>
+                                            <div class="btn-type-headings">Call to action buttons</div>
+                                        <div class="btn-Name" (click)="addButtons('Visit Website')" [class.disabled]="isDisableButton('Visit Website')">
+                                            <img class="btn-preview-img" src="../../../../assets/img/settings/open-in-new.svg"> URL<div class="font-small pl-4">2 buttons maximum</div></div>
+                                        <div class="btn-Name" (click)="addButtons('Call Phone')" [class.disabled]="isDisableButton('Call Phone')">
+                                            <img class="btn-preview-img" src="../../../../assets/img/settings/phone-call.svg"> Phone <div class="font-small pl-4">1 button maximum</div></div>
+                                        <div class="btn-Name" (click)="addButtons('Copy offer Code')" [class.disabled]="isDisableButton('Copy offer Code')">
+                                            <img class="btn-preview-img" src="../../../../assets/img/settings/copy.svg"> Coupon Code<div class="font-small pl-4">1 button maximum</div></div>
+                                        <div class="btn-Name" (click)="addButtons('Complete Flow')" [class.disabled]="isDisableButton('Complete Flow')">
+                                            <img class="btn-preview-img" src="../../../../assets/img/settings/form.svg">Flow<div class="font-small pl-4">1 button maximum</div></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div> -->
+
+                    <!-- <div class="modal fade" tabindex="-1" id="rolesModal" data-bs-backdrop="static" role="dialog"> -->
+                    <div class="btn-popup" *ngIf="isPopupVisible"  >
                         <div class="btn-type-headings">Quick reply buttons</div>
                         <div class="btn-Name" (click)="addButtons('Quick Reply')" [class.disabled]="isDisableButton('Quick Reply')">
                             <img class="btn-preview-img" src="../../../../assets/img/settings/reply-arrow.svg"> Custom</div>
@@ -670,6 +697,7 @@
                         <div class="btn-Name" (click)="addButtons('Complete Flow')" [class.disabled]="isDisableButton('Complete Flow')">
                             <img class="btn-preview-img" src="../../../../assets/img/settings/form.svg">Flow<div class="font-small pl-4">1 button maximum</div></div>
                     </div>
+                <!-- </div> -->
                 </div>
 
                  <!-- <div class="quick-reply-btns" *ngIf="newTemplateForm.get('buttonType')?.value === 'Quick Reply'">

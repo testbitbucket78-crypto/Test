@@ -1233,7 +1233,7 @@ async function saveIncommingMessages(message_direction, from, firstMessage, phon
   countryCode = countryCodeObj?.country + " +" + countryCodeObj?.countryCode;
 
   if ((message_text.length > 0 || message_media.length > 0) && Type != 'e2e_notification') {
-    let query = "CALL webhook_2(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)"
+    let query = "CALL webhook_2(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)"
     // console.log([phoneNo, message_direction, message_text, message_media, Message_template_id, Quick_reply_id, Type, ExternalMessageId, display_phone_number, contactName, media_type, ackStatus, 'WA Web', timestramp, countryCode])
     var saveMessage = await db.excuteQuery(query, [phoneNo, message_direction, message_text, message_media, Message_template_id, Quick_reply_id, Type, ExternalMessageId, display_phone_number, contactName, media_type, ackStatus, 'WA Web', timestramp, countryCode, EcPhonewithoutcountryCode]);
     notify.NotifyServer(display_phone_number, true);
