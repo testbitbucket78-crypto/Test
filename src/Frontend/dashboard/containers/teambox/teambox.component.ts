@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild, ElementRef, Renderer2, HostListener,TemplateRef  } from '@angular/core';
+import { Component, OnInit, ViewChild, ElementRef, Renderer2, HostListener,TemplateRef, ViewChildren, QueryList  } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 import { FormBuilder,FormGroup, FormControl, Validators, NgForm, ValidatorFn, AbstractControl } from '@angular/forms';
@@ -44,6 +44,7 @@ public  fieldsData: { [key: string]: string } = { text: 'name' };
 	@ViewChild('mention_integration') chatEditor!: RichTextEditorComponent; 
 	@ViewChild('chatSection') scrollContainer: ElementRef | any;
 	@ViewChild('messageadd') contactadd!: TemplateRef<any> ;
+	@ViewChildren('msg') messageElements!: QueryList<ElementRef>;
 
 	@ViewChild('variableValue', { static: false }) variableValueForm!: NgForm;
 
@@ -1867,7 +1868,7 @@ console.log(getMimeTypePrefix);
 		// 	}
 		// })
 
-		this.apiService.getAllMessageByInteractionId(item.InteractionId,'media',this.SPID,rangeStart,rangeEnd).subscribe((res2:any) =>{
+		 this.apiService.getAllMessageByInteractionId(item.InteractionId,'media',this.SPID,rangeStart,rangeEnd).subscribe((res2:any) =>{
 			let mediaList = res2.result;
 			let val = mediaList?mediaList:[];
 			if(isNewMessage){
@@ -4153,6 +4154,36 @@ updateValidation(controlName: any,isMandotry:any){
 	  else control.setErrors(null);
 	  control.markAsTouched(); 
 	}
+  }
+
+  async repliedMessage(message: any) {
+    const msgs =  this.selectedInteraction['allmessages'];
+	const repliedMessage = msgs.find((msg: any) => msg.Message_id == message?.repliedMessageId);
+	console.log(repliedMessage);
+	if(repliedMessage){
+		this.moveScrollToRepliedMessage(message);
+	}else{		
+		this.isLoadingOlderMessage = true;
+		this.messageRangeStart = this.messageRangeEnd;
+		this.messageRangeEnd = this.messageRangeEnd +100;
+		await this.getMessageData(this.selectedInteraction, false);
+		setTimeout(() => {
+		const last100msgs =  this.selectedInteraction['allmessages'];
+		const repliedMessages = last100msgs.find((msg: any) => msg.Message_id == message?.repliedMessageId);
+		if(repliedMessages){
+			this.moveScrollToRepliedMessage(message);
+		}	else{
+			this.showToaster('this message is either too old or Deleted','error');
+		}
+	},900);
+	}
+  }
+
+  moveScrollToRepliedMessage(message: any){
+	const messageElement = this.messageElements.find(el => el.nativeElement.id == message?.repliedMessageId);
+    if (messageElement) {
+      messageElement.nativeElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
   }
 
 }

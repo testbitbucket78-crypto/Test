@@ -252,7 +252,7 @@
 									<p>{{dateSince(messageGroup.date)}}</p><span>--</span>
 								</div>
 
-								<div *ngFor="let message of messageGroup.items; let i = index" id={{message.Message_id}}
+								<div *ngFor="let message of messageGroup.items; let i = index" id={{message.Message_id}} #msg
 									[ngClass]="message?.message_direction ? (message?.message_direction =='IN' ? 'message_box left' : 'message_box'):'message_box action_box'">
 									<div *ngIf="message?.message_direction" [ngClass]="{
 										'flex-start': message?.message_direction == 'IN',
@@ -267,11 +267,11 @@
 											<img *ngIf="message.message_direction !='IN' && message.assignAgent ==-1" class="hover-image" src="/assets/img/teambox/campaign-chat-stamp.svg" style="cursor:pointer;">
 										</div>
 								</div>
-									<div class="content" (mouseover)="markItRead()">
+									<div class="content" (mouseover)="markItRead()" >
 										<!-- <div  class="content" *ngIf="message?.repliedMessage"> -->
-											<div class="replied-msg" *ngIf="message?.repliedMessage">
+											<div class="replied-msg" *ngIf="message?.repliedMessage" (click)="repliedMessage(message)">
 												<div>
-													<div class="replied-msg-from">{{message?.repliedMessageBy}}</div>
+													<div class="replied-msg-from">{{message?.repliedMessageTo}}</div>
 													<div class="d-flex">
 													<img src="/assets/img/teambox/document-icon.svg" class="mr-2" height="15px" width="15px" *ngIf="message?.repliedMessage == 'Document'">
 													<img src="/assets/img/teambox/video-icon.svg" class="mr-2" height="15px" width="15px"  *ngIf="message?.repliedMessage == 'Video'">
