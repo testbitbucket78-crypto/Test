@@ -571,7 +571,9 @@ async function campaignAlerts(TemplateData, insertId, statusToUpdate) {
           fromChannel: emailSender,
         };
         try {
-          let emailSent = sendEmail(emailOptions);
+        if(body){
+            let emailSent = sendEmail(emailOptions);
+        }
           //console.log(`Email sent to ${user[i]?.email}:`, emailSent);
         } catch (error) {
           console.error(`Failed to send email to ${user[i]?.email}:`, error.message);

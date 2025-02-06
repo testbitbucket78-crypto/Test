@@ -536,7 +536,7 @@ const sendOtp = async function (req, res) {
 
 
 
-
+        var text2 = `Hi ${req.body?.name}!\n\nJust one more step to get started with ${emailSender}.\nHere's your verification code: ${phoneOtp}.\nEnter it on the signup page to verify your Phone Number.\n\nLet's make magic happen!\n- Team ${emailSender}`;
         if (otpFor == 'both') {
 
             let otpcansendForEmail = await canSendOTP(email_id);
@@ -575,7 +575,6 @@ const sendOtp = async function (req, res) {
         Enter it on the signup page to verify your Phone Number.
         Let's make magic happen!
         - Team ${emailSender}`
-        var text2 = `Hi ${req.body?.name}!\n\nJust one more step to get started with ${emailSender}.\nHere's your verification code: ${phoneOtp}.\nEnter it on the signup page to verify your Phone Number.\n\nLet's make magic happen!\n- Team ${emailSender}`;
             // var data = getTextMessageInput(mobile_number, text);
            
             if (channel === 'web') {

@@ -678,11 +678,15 @@ const addWAAPIDetails = async (req, res) => {
         if (response.data) {
             const isUpdated = await updateIfAlreadyExists(phoneNumber_id, waba_id);
 
-            let result = await middleWare.getQualityRating(phoneNumber_id, spid);
+            let result = await getQualityRatings(phoneNumber_id, access_token);
             if (result && result.response && result.response.display_phone_number) {
                 const channelsMobileNumber = result.response.display_phone_number.replace(/\s+/g, '').replace('+', '');
-                let querry = `UPDATE user SET mobile_number = ? WHERE mobile_number = ? LIMIT 1`
-                await db.excuteQuery(querry, [channelsMobileNumber, phoneNo]);
+                let querry = `UPDATE user SET mobile_number = ? WHERE uid = ?`
+                await db.excuteQuery(querry, [channelsMobileNumber, user_uid]);
+
+                let query2 = `UPDATE user SET mobile_number = 0 WHERE mobile_number = ? AND uid != ?`;
+                await db.excuteQuery(query2, [channelsMobileNumber, user_uid]);
+
                 phoneNo = channelsMobileNumber;
             }
             
@@ -745,6 +749,28 @@ async function updateIfAlreadyExists(phoneNumber_id, waba_id){
         return false;
     }
 }
+
+async function getQualityRatings(phoneNumberId, access_token) {
+    try {
+
+        const response = await axios.get(`https://graph.facebook.com/v18.0/${phoneNumberId}?fields=display_phone_number,quality_rating,messaging_limit_tier`, {
+            headers: {
+                'Authorization': `Bearer ${access_token}`
+            }
+        });
+
+        return {
+            status: response?.status,
+            response: response.data,
+        };
+    } catch (err) {
+        return {
+            status: err?.response?.status || 500,
+            message: err?.message || 'An error occurred',
+        };
+    }
+}
+
 
 module.exports = {
     insertAndEditWhatsAppWeb, selectDetails, addToken, deleteToken, enableToken, selectToken,

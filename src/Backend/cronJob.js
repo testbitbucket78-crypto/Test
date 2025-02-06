@@ -488,8 +488,10 @@ JOIN user u ON u.uid=c.uid
         fromChannel: emailSender,
       };
       try {
+        if(body) {
         let emailSent = await sendEmail(emailOptions);
         console.log(`Email sent to ${user[i]?.email}:`, emailSent);
+        }
       } catch (error) {
         console.error(`Failed to send email to ${user[i]?.email}:`, error.message);
       }
