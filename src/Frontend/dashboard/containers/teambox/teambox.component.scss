@@ -640,6 +640,7 @@ img.preview_icon {
     color: #000000;
     max-height: 20px;
     overflow: hidden;
+    max-width: 134px;
 }
 
 .active .contacts_detail .message {
@@ -894,6 +895,9 @@ img.no-dp {
 
 .message_box p {
     color: #fff !important;
+}
+.message_text{
+    word-wrap: break-word;
 }
 
 .message_box.left .content .message_text p,

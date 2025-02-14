@@ -92,6 +92,7 @@ export class TemplateMessageComponent implements OnInit {
         { value: 2, label: 'WA Web', checked: false },
     ];
     filterListLanguage = [
+        { label: 'English', code: 'en', checked: false },
         { label: 'Afrikaans', code: 'af', checked: false },
         { label: 'Albanian', code: 'sq', checked: false },
         { label: 'Arabic', code: 'ar', checked: false },
@@ -106,7 +107,6 @@ export class TemplateMessageComponent implements OnInit {
         { label: 'Czech', code: 'cs', checked: false },
         { label: 'Danish', code: 'da', checked: false },
         { label: 'Dutch', code: 'nl', checked: false },
-        { label: 'English', code: 'en', checked: false },
         { label: 'English (UK)', code: 'en_GB', checked: false },
         { label: 'English (US)', code: 'en_US', checked: false },
         { label: 'Estonian', code: 'et', checked: false },
@@ -707,6 +707,7 @@ checkTemplateName(e:any){
         if (this.newTemplateForm.valid) {
             const newTemplateFormData = this.createNewTemplateFormData();
             this.isLoading = true;
+            this.selectedPreview = this.selectedPreview ? this.selectedPreview : '';
             if ((this.templatesMessageDataById = null)) {
                 this.apiService
                     .saveNewTemplateData(newTemplateFormData, this.selectedPreview)
@@ -1039,8 +1040,12 @@ checkTemplateName(e:any){
                 else
                     this.newTemplateForm.get(prop)?.setValue(value);
             }
-            this.id = ID;
         }
+        this.id = 0;
+        this.newTemplateForm.get('Channel')?.setValue(null);
+        this.newTemplateForm.get('media_type')?.setValue(this.galleryMessageData?.media_type ? this.galleryMessageData?.media_type : 'none');
+        this.Category = this.galleryMessageData?.Category;
+        this.selectTab(0)
 
     }
 

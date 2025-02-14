@@ -217,6 +217,7 @@ getQualityRating() {
          this.mapHealthStatus(res?.response);
          this.addButtonDisabled = true;
         }
+        this.isLoading = false;
       }
       else {
         console.log("Error Code : " +res?.status);
@@ -245,7 +246,7 @@ mapHealthStatus(qualityStatus: any){
      }
      this.healthStatusData.push(healthStatus);
    });
-   this.isLoading = false;
+   //this.isLoading = false;
 }
 
 getaccountByID(data:any) {
