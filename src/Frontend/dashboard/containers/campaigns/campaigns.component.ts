@@ -3407,4 +3407,13 @@ console.log(this.allTemplatesMain);
 		const date = new Date(datetime);
 		return !isNaN(date.getTime());
 	}
+
+	extractslace(type:any,value:any){
+		console.log(value);
+		if(type =='start_date'){
+			return value.split(' / ')[0];
+		}else{
+			return value.split(' / ')[1] ? value.split(' / ')[1] : '';
+		}
+	  }
 }
