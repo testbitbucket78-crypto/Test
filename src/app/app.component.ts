@@ -25,11 +25,16 @@ export class AppComponent {
                     this.titleService.setTitle('EngageKart');
             });
             if(environment?.chhanel == 'web')
-                this.setFavicon()
+                this.setFavicon('assets/faviconweb.ico')
     }
 
-    setFavicon(): void {
+    // setFavicon(): void {
+    //     const favicon = this.renderer.selectRootElement('#app-favicon', true);
+    //     this.renderer.setAttribute(favicon, 'href', 'faviconweb.ico');
+    //   }
+
+      setFavicon(iconName: string): void {
         const favicon = this.renderer.selectRootElement('#app-favicon', true);
-        this.renderer.setAttribute(favicon, 'href', 'favicon1.ico');
+        this.renderer.setAttribute(favicon, 'href', `${iconName}?v=${new Date().getTime()}`);
       }
 }

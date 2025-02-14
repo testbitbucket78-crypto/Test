@@ -411,6 +411,15 @@ export class ContactFilterComponent implements OnInit {
 		}
 	  }
 
+	  extractslace(type:any,value:any){
+		console.log(value);
+		if(type =='start_date'){
+			return value.split(' / ')[0];
+		}else{
+			return value.split(' / ')[1];
+		}
+	  }
+
 	  selectFilterOperator(index:any,Operator:any){
 		this.ContactListNewFilters[index]['filterOperator'] = Operator
 	  }

@@ -349,7 +349,7 @@
                          
                         </div>
                       </div>
-                    <div *ngIf="selectedCategory == 1 && selectedTab == 1">
+                    <div *ngIf="selectedCategory == 1 && selectedTab == 1" class="language-scroll">
                       <div *ngFor="let Industry of filterListIndustry; let i = index" class="py-2 custom-control custom-checkbox user-dropdown">
                         <input type="checkbox" [(ngModel)]="Industry.checked" class="custom-control-input" value={{Industry.value}} (click)="updateFilter($event,Industry)"
                         id="Industry{{i}}">
@@ -404,7 +404,7 @@
     <div class="m-auto newTemplateMessageFirst modal-dialog" role="document">
         <div class="mt-0 modal-content welcomGreeting">
             <div class="d-flex justify-content-between pr-4 align-items-center modal-header">
-                <h5 *ngIf="!templatesMessageDataById && selectedTab==0" class="pl-4 modal-title">New Template Message</h5>
+                <h5 *ngIf="!templatesMessageDataById && selectedTab==0 && !galleryMessageData?.ID" class="pl-4 modal-title">New Template Message</h5>
                 <h5 *ngIf="templatesMessageDataById || galleryMessageData.ID" class="pl-4 modal-title">Edit Template Message</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" (click)="removeFormValues()">
                     <img src="../../../../assets/img/teambox/icon-close.svg">

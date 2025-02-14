@@ -10,6 +10,7 @@ const moment = require('moment');
 app.use(bodyParser.json());
 app.use(cors());
 const port = 3008;
+const host = 3008;
 app.use(bodyParser.urlencoded({ extended: true }));
 const middleWare = require('./middleWare')
 const batchSize = 10; // Number of users to send in each batch
@@ -22,6 +23,7 @@ const mapCountryCode = require('./Contact/utils.js');
 let metaPhoneNumberID = 211544555367892
 const { sendEmail }= require('./Services/EmailService');
 const { EmailTemplateProvider }= require('./common/template')
+
 // Function to check if the schedule_datetime is within 1-2 minutes from the current time
 function isWithinTimeWindow(scheduleDatetime) {
   const currentTime = moment();
@@ -35,7 +37,7 @@ async function fetchScheduledMessages() {
   try {
 
    // var messagesData = await db.excuteQuery(`select * from Campaign where (status=1 or status=2) and is_deleted != 1`, [])
-    var messagesData = await db.excuteQuery(`SELECT *, DATE_FORMAT(start_datetime, '%Y-%m-%d %H:%i:%s') AS formatted_date  FROM Campaign WHERE (status = 1 OR status = 2) AND is_deleted != 1`, [])
+    var messagesData = await db.excuteQuery(`SELECT *, DATE_FORMAT(start_datetime, '%Y-%m-%d %H:%i:%s') AS formatted_date  FROM Campaign WHERE (status = 1 OR status = 6) AND is_deleted != 1`, [])
     var remaingMessage = [];
     //console.log(messagesData)
     logger.info(`fetchScheduledMessages ${messagesData?.length}`)
@@ -538,8 +540,7 @@ JOIN user u ON u.uid=c.uid
 
 function sendBatchMessage(batch, sp_id, type, message_content, message_media, phone_number_id, channel_id,buttons) {
   for (var i = 0; i < batch.length; i++) {
-    let mobile_number = batch[i].mobile_number
-
+    let mobile_number = batch[i].mobile_number;
     setTimeout(() => {
       campaignAlertsThroughselectedchannel(sp_id, mobile_number, type, message_content, message_media, phone_number_id, channel_id,buttons)
     }, 10)
@@ -960,7 +961,7 @@ function calculateInitialDelay() {
 
   const { default: isPortReachable } = await import('is-port-reachable');
   try {
-    const isPortAvailable = !(await isPortReachable(port));
+    const isPortAvailable = !(await isPortReachable(port, { host }));
 
     if (!isPortAvailable) {
       console.error(`Error: Port ${port} is already in use. Please choose a different port.`);
@@ -969,8 +970,8 @@ function calculateInitialDelay() {
 
     console.log(`Port ${port} is available. Starting the server...`);
 
-    // Initial startup
-    const initialDelay = calculateInitialDelay();
+// Initial startup
+const initialDelay = calculateInitialDelay();
 
     if (initialDelay > 0) {
       console.log(`Waiting ${initialDelay / 1000} seconds to start the scheduler...`);

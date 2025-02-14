@@ -715,7 +715,7 @@ constructor(config: NgbModalConfig, private modalService: NgbModal,private datep
 				if(item.status==1){
 					item['status_label'] ='scheduled'
 				}else
-				if(item.status==2){
+				if(item.status==2 || item.status==6 ){
 					item['status_label'] ='running'
 				}else
 				if(item.status==3){
@@ -887,7 +887,7 @@ constructor(config: NgbModalConfig, private modalService: NgbModal,private datep
 				if(item?.status==1){
 					item['status_label'] ='scheduled'
 				}else
-				if(item?.status==2){
+				if(item?.status==2 || item?.status==6){
 					item['status_label'] ='running'
 				}else
 				if(item?.status==3){
@@ -1877,7 +1877,7 @@ formateDate(dateTime:string){
 			if(this.scheduled ==1){
 				BodyData['status']=1;
 			}else{
-				BodyData['status']=2;
+				BodyData['status']=6;
 			}
 			//this.getAllCampaigns()
 		}

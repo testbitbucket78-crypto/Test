@@ -314,6 +314,8 @@ LEFT JOIN (
         MAX(m.Message_id) AS LastMessageId
     FROM 
         Message m
+        WHERE 
+        m.type <> 'notes'
     GROUP BY 
         m.interaction_id
 ) AS last_message ON ic.InteractionId = last_message.interaction_id

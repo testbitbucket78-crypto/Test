@@ -1584,6 +1584,11 @@ input[type="radio"]:checked + label::before {
     background:none !important;
 }
 
+.language-scroll::-webkit-scrollbar{
+    display: block !important;
+    background:none !important;
+}
+
 .e-content::-webkit-scrollbar{
     display: block !important;
     background:none !important;

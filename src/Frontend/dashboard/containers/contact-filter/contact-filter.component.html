@@ -105,8 +105,8 @@
                                 </div>
 
                                 <div *ngIf="addedF?.filterType =='d_date'" class="formrow dateview">
-                                    <input type="date" class="form-control" name="start_date" value={{addedF.filterValue}}  (change)="selectFilterDates(i,$event)">
-                                    <input type="date" class="form-control" name="end_date" value={{addedF.filterValue}} (change)="selectFilterDates(i,$event)">
+                                    <input type="date" class="form-control" name="start_date" [value]="extractslace('start_date',addedF?.filterValue)"  (change)="selectFilterDates(i,$event)">
+                                    <input type="date" class="form-control" name="end_date" [value]="extractslace('end_date',addedF?.filterValue)" (change)="selectFilterDates(i,$event)">
                                 </div>
 
                                 <div *ngIf="addedF?.filterType =='time'" class="formrow dateview">
@@ -114,8 +114,8 @@
                                 </div>
 
                                 <div *ngIf="addedF?.filterType =='d_time'" class="formrow dateview">
-                                    <input type="time" class="form-control" name="start_date" value={{addedF.filterValue}}  (change)="selectFilterDates(i,$event)">
-                                    <input type="time" class="form-control" name="end_date" value={{addedF.filterValue}}  (change)="selectFilterDates(i,$event)">
+                                    <input type="time" class="form-control" name="start_date" [value]="extractslace('start_date',addedF?.filterValue)"  (change)="selectFilterDates(i,$event)">
+                                    <input type="time" class="form-control" name="end_date" [value]="extractslace('end_date',addedF?.filterValue)"  (change)="selectFilterDates(i,$event)">
                                 </div>
 
                                 <div *ngIf="addedF?.filterType =='datetime'" class="formrow dateview">
