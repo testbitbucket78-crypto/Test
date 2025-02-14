@@ -10,7 +10,7 @@ const moment = require('moment');
 app.use(bodyParser.json());
 app.use(cors());
 const port = 3008;
-const host = 3008;
+const host = 'localhost';
 app.use(bodyParser.urlencoded({ extended: true }));
 const middleWare = require('./middleWare')
 const batchSize = 10; // Number of users to send in each batch

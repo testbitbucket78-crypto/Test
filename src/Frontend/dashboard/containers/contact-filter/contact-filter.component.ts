@@ -416,7 +416,7 @@ export class ContactFilterComponent implements OnInit {
 		if(type =='start_date'){
 			return value.split(' / ')[0];
 		}else{
-			return value.split(' / ')[1];
+			return value.split(' / ')[1] ? value.split(' / ')[1] : '';
 		}
 	  }
 
