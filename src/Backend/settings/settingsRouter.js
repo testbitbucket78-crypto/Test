@@ -121,6 +121,7 @@ router.post('/enableStatus',authenticateToken,campaignController.enableStatusfie
 
 router.post('/addTemplate',authenticateToken,campaignController.addTemplate)  //  isTemplate  value 0 for quick response , 1 for template ,(2 for gallary and spid =0 )
 router.get('/getTemplate/:spid/:isTemplate',authenticateToken,campaignController.getTemplate)
+router.get('/getTemplateForGallery/:spid/:isTemplate/:channel',authenticateToken,campaignController.getTemplateForGallery)
 router.get('/getApprovedTemplate/:spid/:isTemplate',authenticateToken,campaignController.getApprovedTemplate)
 router.post('/deleteTemplates',authenticateToken,campaignController.deleteTemplates)
 router.post('/addGallery',authenticateToken,campaignController.addGallery)//unused

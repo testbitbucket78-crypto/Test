@@ -734,23 +734,27 @@ const insertMessage = async (req, res) => {
 
                     results = await removeTags.getDefaultAttribue(msgVar, SPID, customerId);
                     console.log("atribute result ", results)
-                    placeholders.forEach(placeholder => {
-                        const result = results.find(result => result.hasOwnProperty(placeholder));
-                        //  console.log(placeholder,"place foreach",results)
+                    placeholders.forEach((placeholder, index) => {
+                        const result = results[index];
                         const replacement = result && result[placeholder] !== undefined ? result[placeholder] : null;
-                        console.log(replacement, "replacement placeholder ", placeholder)
                         content = content.replace(`{{${placeholder}}}`, replacement);
-                    });
+                      });
                 } else {
 
                     results = await removeTags.getDefaultAttribueWithoutFallback(placeholders, SPID, customerId);
                 }
-
-                placeholders.forEach(placeholder => {
-                    const result = results.find(result => result.hasOwnProperty(placeholder));
+                
+                placeholders.forEach((placeholder, index) => {
+                    const result = results[index];
                     const replacement = result && result[placeholder] !== undefined ? result[placeholder] : null;
                     content = content.replace(`{{${placeholder}}}`, replacement);
-                });
+                  });
+
+                // placeholders.forEach(placeholder => {
+                //     const result = results.find(result => result.hasOwnProperty(placeholder));
+                //     const replacement = result && result[placeholder] !== undefined ? result[placeholder] : null;
+                //     content = content.replace(`{{${placeholder}}}`, replacement);
+                // });
             }
 
             let middlewareresult = "";
@@ -760,7 +764,7 @@ const insertMessage = async (req, res) => {
                         const mediaType = determineMediaType(media_type);
                         //get header and body variable 
                         let headerVar = await commonFun.getTemplateVariables(msgVar, header, SPID, customerId);
-                        let bodyVar = await commonFun.getTemplateVariables(msgVar, body, SPID, customerId);
+                        let bodyVar = await commonFun.getTemplateVariables(msgVar, message_text, SPID, customerId);
 
                         middlewareresult = await middleWare.createWhatsAppPayload(mediaType, req?.body?.messageTo, req?.body?.name, req?.body?.language, headerVar, bodyVar, message_media, SPID, req?.body?.buttons, DynamicURLToBESent);
                        // middlewareresult = await middleWare.channelssetUp(SPID, channel, mediaType, req.body.messageTo, content, message_media, interaction_id, msg_id.insertId, spNumber);
@@ -772,7 +776,7 @@ const insertMessage = async (req, res) => {
                             middlewareresult = await middleWare.channelssetUp(SPID, channel, 'text', req.body.messageTo, content, message_media, interaction_id, msg_id.insertId, spNumber);
                         }
                         // autoReplyPauseTime(SPID, interaction_id);
-                        messages[0]?.id
+                        //messages[0]?.id
                     }
                     if (middlewareresult?.status != 200) {
                         let NotSendedMessage = await db.excuteQuery('UPDATE Message set msg_status=9, whatsAppMessageId=? where Message_id=?', [middlewareresult?.msgId, msg_id.insertId]);

@@ -776,15 +776,18 @@ const addUser = async (req, res) => {
         registerPhone = req.body?.registerPhone
         var isNameExist = await db.excuteQuery('SELECT * FROM user WHERE LOWER(name)=? and isDeleted !=1 and SP_ID=?', [isExistName, SP_ID])
         var isPhoneExist = await db.excuteQuery('SELECT * FROM user WHERE registerPhone=? and isDeleted !=1 and SP_ID=?', [registerPhone, SP_ID])
+        var isChannelExist = await db.excuteQuery('SELECT * FROM user WHERE mobile_number=? and isDeleted !=1 and ParentId IS NULL', [registerPhone])
         var credentials = await db.excuteQuery(val.findEmail, [req.body.email_id])
 
-        if (credentials?.length > 0 || isNameExist?.length > 0 || isPhoneExist?.length > 0) {
-            //let msg = "This email ID is already used by another user, please use a unique email";
+        if (credentials?.length > 0 || isNameExist?.length > 0 || isPhoneExist?.length > 0 || isChannelExist) {
+             //let msg = "This email ID is already used by another user, please use a unique email";
             let msg = `User with this ${credentials?.length > 0 ? "Email" : ""}${
-                credentials?.length > 0 && (isNameExist?.length > 0 || isPhoneExist?.length > 0) ? ", " : ""
+                credentials?.length > 0 && (isNameExist?.length > 0 || isPhoneExist?.length > 0 || isChannelExist) ? ", " : ""
             }${isNameExist?.length > 0 ? `User Name` : ""}${
-                isNameExist?.length > 0 && isPhoneExist?.length > 0 ? ", " : ""
-            }${isPhoneExist?.length > 0 ? "Phone No." : ""} already exists. Please use a unique value.`;
+                isNameExist?.length > 0 && (isPhoneExist?.length > 0 || isChannelExist) ? ", " : ""
+            }${isPhoneExist?.length > 0 ? "Phone No." : ""}${
+                (credentials?.length > 0 || isNameExist?.length > 0 || isPhoneExist?.length > 0) && isChannelExist ? ", " : ""
+            }${isChannelExist ? "Channel Number" : ""} already exists. Please use a unique value.`; 
 
             // if (isNameExist?.length > 0 && isNameExist[0].name.toLowerCase() == isExistName) {
             //     msg = "User with this name already exist, please use a unique name";

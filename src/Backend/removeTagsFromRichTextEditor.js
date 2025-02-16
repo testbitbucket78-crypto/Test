@@ -360,6 +360,7 @@ function convertHTML(htmlString) {
 
   let result = htmlString.replace(/&nbsp;/g, ' ');
   result = result.replace('<p class=\"custom-class-attachmentType\"></p><p><br></p>','')
+  result = result.replace('<p class="temp-footer">','\n<p class="temp-footer">')
   result = result.replace('<p class=\"custom-class-attachmentType\"></p>','')
   // Replace <p> and <br> tags with newline characters
   result = result.replace(/<p>/, '');
