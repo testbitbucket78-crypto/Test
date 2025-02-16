@@ -1058,10 +1058,9 @@ showAddSmartRepliesModal() {
 		if(mediaContent && item.media_type!== 'text') {
 			htmlcontent += mediaContent
 		}
-	
-		htmlcontent +='<p>'+ item.BodyText+'</p>';
+		htmlcontent +='<br><p>'+ item.BodyText+'</p>';
 		if (item.FooterText) {
-			htmlcontent+='<p class="temp-footer">'+item.FooterText+'</p>';
+			htmlcontent+='<br><p class="temp-footer">'+item.FooterText+'</p>';
 		}
 		if(item.Links) this.messageMeidaFile = item.Links
 		this.chatEditor.value =htmlcontent;
@@ -1245,9 +1244,11 @@ showAddSmartRepliesModal() {
 		}
 		removeMediaTags(htmlContent: string): string {
 			let updatedHtml = htmlContent.replace(/<img[^>]*>[^<]*|<video[^>]*>[^<]*<\/video>/gi, '');
-			updatedHtml = updatedHtml.replace(/<[^\/>]+>\s*<\/[^>]+>/gi, '');
+			updatedHtml = updatedHtml.replace(/<([^\/>]+)>\s*<\/\1>/gi, match => {
+				return match.includes('<br>') ? match : ''; 
+			});
 			return updatedHtml;
-		  }
+		}
 		  removeClass(htmlContent: string): string {
 			const tempDiv = document.createElement('div');
 			tempDiv.innerHTML = htmlContent;
@@ -2016,6 +2017,10 @@ stopPropagation(event: Event) {
 			this.ShowChannelOption=false;
 			this.allTemplates = this.allTemplates.filter((item:any) => item.Channel == channel.label);
 			this.allTemplatesMain =JSON.parse(JSON.stringify(this.allTemplatesMain.filter((item:any) => item.Channel == channel.label)));
+		}
+		
+		checkList(){
+			return this.assignedAgentList.some(agent => agent.ActionID === 2);
 		}
 
   }

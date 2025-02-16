@@ -224,9 +224,10 @@
 						[height]="'200px'"
 						[maxLength]='1024'
 						[showCharCount]='true'
-						(change)="onContentChange()"
+						(valueChange)="onContentChange()"
 						placeholder="Enter"
 						[pasteCleanupSettings]="pasteCleanupSettings"
+						[saveInterval]="10"
 						>
 					  </ejs-richtexteditor>
 					</div>

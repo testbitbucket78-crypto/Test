@@ -474,6 +474,23 @@ async subscribeToNotifications() {
             $("#qrWhatsappModal").modal('hide');
             this.hideModal();
           }
+          if(msgjson.message == 'This number is already used as an SP number. Please use a different one.'){
+            this.channel_status = 0; 
+            this.saveWhatsappWebDetails(id);
+            this.showToaster('This number is already used as an SP number. Please use a different one.', 'error');
+            this.loadingQRCode = false;
+            $("#qrWhatsappModal").modal('hide');
+            this.hideModal();
+          }
+          if(msgjson.message == 'This Phone is already used in EngageKart !'){
+            this.channel_status = 0; 
+            this.saveWhatsappWebDetails(id);
+            this.showToaster('This number is already used as an SP number. Please use a different one.', 'error');
+            this.loadingQRCode = false;
+            $("#qrWhatsappModal").modal('hide');
+            this.hideModal();
+          }
+          
         }
       } catch (e) {
         console.log(e);

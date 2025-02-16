@@ -624,7 +624,7 @@
                 </div>
                 <div class="sel-type-text scrollBar-visible">
                     <ejs-richtexteditor formControlName="BodyText" id='defaultRTE' #chatEditor [toolbarSettings]='tools' [height]="'200px'"
-                    [maxLength]='1024' [showCharCount]='true' placeholder="Enter" (change)="onContentChange()" [pasteCleanupSettings]="pasteCleanupSettings">
+                    [maxLength]='1024' [showCharCount]='true' placeholder="Enter" (change)="onContentChange()" [pasteCleanupSettings]="pasteCleanupSettings"  [saveInterval]="10">
                    </ejs-richtexteditor>
                    <!-- (change)="onContentChange($event)" -->
                 </div>
@@ -652,7 +652,7 @@
                         <option value="Call to Action">Complete Flow</option>
                         <option value="Call to Action">Copy offer Code</option>
                     </select> -->
-                    <button (click)="openButtonPopUp()" class="add-btn" data-bs-toggle="modal" data-bs-target="#rolesModals">+ Add Buttons
+                    <button (click)="openButtonPopUp()" class="add-btn">+ Add Buttons
                         <img class="btn-preview-img" src="../../../../assets/img/drop-icon.png">
                     </button>
 

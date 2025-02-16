@@ -256,6 +256,7 @@ filterQuickRes(){
 
 
   saveTemplate(){
+    this.isLoading = true;
     let val = this.usertemplateForm.controls.Header.value;
     let temp = this.templates.filter(item => item?.Header == val)[0];
     if(temp && this.ID != temp?.ID)
@@ -265,6 +266,7 @@ filterQuickRes(){
     let userData=this.saveformmtemplate();
     this.apiService.addTemplate(userData).subscribe(response=>{
       if(response){
+        this.isLoading = false;
         this.Template();          
       $("#welcomGreeting").modal('hide');          
       $("#deleteModal").modal('hide');          
@@ -273,6 +275,7 @@ filterQuickRes(){
     });
   }else{
     this.usertemplateForm.markAllAsTouched();
+    this.isLoading = false;
   }
 }
   }
@@ -467,6 +470,7 @@ onContentChange() {
   const container = document.createElement('div');
   container.innerHTML = this.chatEditor?.value;
   const text = container.innerText;
+  this.onEditorChange(this.chatEditor?.value);
   const emojiRegex = /[\uD800-\uDBFF][\uDC00-\uDFFF]/g; 
   const characterCount = text?.replace(emojiRegex, '__').length || 0; 
   if (characterCount > 1024) {

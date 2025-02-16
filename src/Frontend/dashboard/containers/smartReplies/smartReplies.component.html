@@ -468,7 +468,7 @@
 								  <p class="label">Add Action</p>
 								  <p class="d-flex justify-content-around" *ngFor="let assignAction of assignActionList; let m = index"
 									(click)="toggleAssignOption(m)"
-									[ngClass]="{'fade-out': assignAction == 'Assign Conversation' && assignedAgentList.length > 0}">
+									[ngClass]="{'fade-out': assignAction == 'Assign Conversation' && assignedAgentList.length > 0 && checkList()}">
 									<span>{{assignAction}}</span><img class="pr-3 arrow-sign" src="../../../../assets/img/arrow-sign.svg" />
 								  </p>
 								  <div *ngIf="ShowAddAction" class="overlay" (click)="closeAddAction()"></div>

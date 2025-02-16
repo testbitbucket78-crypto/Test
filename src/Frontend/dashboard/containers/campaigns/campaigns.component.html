@@ -3,6 +3,7 @@
 		<sb-top-nav title="Campaigns"></sb-top-nav>
 	</ng-container>
 	<sb-loader [isLoading]="isLoading"></sb-loader>
+	<div *ngIf="ShowAssignOption" class="overlay" (click)="closeUtility()"></div>
 	<div class="campaigns_page">
 
 		<div class="toaster" (click)="hideToaster()">
