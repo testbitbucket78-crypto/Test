@@ -277,7 +277,7 @@
 													<img src="/assets/img/teambox/Template.svg" class="mr-2" height="15px" width="15px" *ngIf="message?.repliedMessage == 'Template'">
 													<img src="/assets/img/teambox/video-icon.svg" class="mr-2" height="15px" width="15px"  *ngIf="message?.repliedMessage == 'Video'">
 													<img src="/assets/img/teambox/photo-icon.svg" class="mr-2" height="15px" width="15px"  *ngIf="message?.repliedMessage == 'Image'">
-													<div [innerHTML]="message?.repliedMessage | sanitizeHtml"></div>
+													<div [innerHTML]="limitCharacters(message?.repliedMessage) | sanitizeHtml"></div>
 												</div>
 												</div>
 											</div>
