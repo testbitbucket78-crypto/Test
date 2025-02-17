@@ -2103,6 +2103,7 @@ closeUtility(){
 	this.Marketing=false;
 	this.Authentication=false;
 	this.vartip = false;
+	this.ShowAssignOption = false;
 }
 testinfo(){
 	this.campagininfo=!this.campagininfo;

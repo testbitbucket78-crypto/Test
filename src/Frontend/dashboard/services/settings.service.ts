@@ -499,6 +499,9 @@ const headers = new HttpHeaders({
   getTemplateData(spID:any,isTemplate:number): Observable<any> {
     return this.http.get<any>(`${this.API_URL}/getTemplate/${spID}/${isTemplate}`);
   }
+  getTemplateDataForGallery(spID:any,isTemplate:number, channel: any): Observable<any> {
+    return this.http.get<any>(`${this.API_URL}/getTemplateForGallery/${spID}/${isTemplate}/${channel}`);
+  }
 
   getApprovedTemplate(spid:any,isTemplate:number): Observable<any> {
     return this.http.get<any>(`${this.API_URL}/getApprovedTemplate/${spid}/${isTemplate}`);

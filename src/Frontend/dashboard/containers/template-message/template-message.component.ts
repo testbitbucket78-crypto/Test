@@ -630,7 +630,7 @@ export class TemplateMessageComponent implements OnInit {
             this.filteredTemplatesData = this.templatesData;
         });
 
-        this.apiService.getTemplateData(0, 2).subscribe(response => {
+        this.apiService.getTemplateDataForGallery(0, 2, this.channelDomain).subscribe(response => {
             this.galleryData = response.templates;
             this.filteredGalleryData = this.galleryData;
         });
@@ -1267,6 +1267,7 @@ onContentChange() {
     console.log(this.chatEditor?.value);
     const text = container.innerText;
     //this.processText(text);
+    this.onEditorChange(this.chatEditor?.value)
     const emojiRegex = /[\uD800-\uDBFF][\uDC00-\uDFFF]/g; 
     const characterCount = text?.replace(emojiRegex, '__').length || 0; 
     if (characterCount > 1024) {
