@@ -199,12 +199,30 @@ async function parseMessageForCSV(message_content, contact, messageVariable) {
 
   return {
     content,
-    extractedValues
+    extractedValues: replaceEmptyValuesInArray(extractedValues)
   };
 }
 
 
-
+function replaceEmptyValuesInArray(array) {
+  //This helper function will replace values of empty and null to "null"
+  return array.map((item) => {
+    if (Array.isArray(item)) {
+      return item.map((subItem) => {
+        return (subItem === undefined || subItem === null || subItem === '') ? "null" : subItem;
+      });
+    } else if (typeof item === 'object' && item !== null) {
+      const newItem = { ...item };
+      for (const key in newItem) {
+        if (newItem[key] === undefined || newItem[key] === null || newItem[key] === '') {
+          newItem[key] = "null";
+        }
+      }
+      return newItem;
+    }
+    return (item === undefined || item === null || item === '') ? "null" : item;
+  });
+}
 
 // Function to parse the message template and retrieve placeholders
 function parseMessageTemplate(template) {
