@@ -17,7 +17,7 @@ const logger = require('../common/logger.log');
 let fs = require('fs-extra');
 const path = require("path");
 const FormData = require('form-data');
-const { channelForSendingMessage } = require("../enum")
+const { channelForSendingMessage, channelsForTemplates } = require("../enum")
 const commonFun = require('../common/resuableFunctions.js')
 const addCampaignTimings = async (req, res) => {
     try {
@@ -831,7 +831,44 @@ const getTemplate = async (req, res) => {
                     packet.status = statusLookup[packet.TemplateName];
                 }
             }
-        });
+        })
+    }
+        //  console.log(templates)
+        res.status(200).send({
+            templates: templates,
+            status: 200
+        })
+    }
+    catch (err) {
+        console.log(err)
+        db.errlog(err);
+        res.send(err)
+    }
+}
+
+const getTemplateForGallery = async (req, res) => {
+    try {
+        let Channel = channelsForTemplates[req?.params?.channel];
+        let officialTemplates = await getOfficialTemplate(req.params.spid);
+        //console.log(officialTemplates)
+        let templates = await db.excuteQuery(val.selectTemplateForGallery, [req.params.spid, req.params.isTemplate, Channel]);
+        if ( officialTemplates != 'channel not found' ){
+        // Create a lookup object from newData
+        const statusLookup = officialTemplates.data.reduce((lookup, item) => {
+            lookup[item.name] = item.status;
+            return lookup;
+        }, {});
+
+        // Update status in rowDataPackets based on the lookup object
+        templates.forEach(packet => {
+            // console.log(packet.status  ,packet.TemplateName)
+            if (packet.status != 'draft') {
+                //     console.log("if")
+                if (statusLookup[packet.TemplateName]) {
+                    packet.status = statusLookup[packet.TemplateName];
+                }
+            }
+        })
     }
         //  console.log(templates)
         res.status(200).send({
@@ -1150,6 +1187,6 @@ module.exports = {
     addCampaignTimings, updateCampaignTimings, selectCampaignTimings, getUserList, addAndUpdateCampaign,
     selectCampaignAlerts, addCampaignTest, selectCampaignTest, addTag, gettags, deleteTag, addTemplate, getTemplate, deleteTemplates,
     testCampaign, addCustomField, editCustomField, getCustomField, deleteCustomField, getCustomFieldById, enableMandatoryfield,
-    enableStatusfield, getApprovedTemplate, addGallery, getGallery, isExistTemplate ,uploadMediaOnMeta,getFlows
+    enableStatusfield, getApprovedTemplate, addGallery, getGallery, isExistTemplate ,uploadMediaOnMeta,getFlows, getTemplateForGallery
 
 }

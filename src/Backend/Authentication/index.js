@@ -103,11 +103,11 @@ const isSpAlreadyExist = async function (req, res) {
                 status: 409
             });
         }
-        var loginQueryPhone = `SELECT * FROM user WHERE  registerPhone=? and isDeleted !=1 and IsActive !=2 and ParentId is null`
-        var credentialsOfPhone = await db.excuteQuery(loginQueryPhone, [req.body.mobile_number])
+        var loginQueryPhone = `SELECT * FROM user WHERE  (registerPhone = ? OR mobile_number = ?) and isDeleted !=1 and IsActive !=2 and ParentId is null`
+        var credentialsOfPhone = await db.excuteQuery(loginQueryPhone, [req.body.mobile_number, req.body.mobile_number]);
         if (credentialsOfPhone?.length > 0) {
             return res.status(409).send({
-                msg: 'User Already Exist with this Phone Number !',
+                msg: 'Phone number already exists as a Channel Number or User!',
                 status: 409
             });
         }

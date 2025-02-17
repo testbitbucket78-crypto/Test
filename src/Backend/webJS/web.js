@@ -267,7 +267,7 @@ function ClientInstance(spid, authStr, phoneNo) {
         console.log("loading_screen", percent, message)
       })
       let inc = 0;
-      client.on("qr", (qr) => {
+      client.on("qr", async (qr) => {
         try {
           // Generate and scan this code with your phone
           //clientSpidInprogress[[spid]] = client;
@@ -275,6 +275,11 @@ function ClientInstance(spid, authStr, phoneNo) {
           console.log("QR RECEIVED", qr);
           inc++;
           console.log("inc: " + inc);
+           var isChannelExist = await db.excuteQuery('SELECT * FROM user WHERE mobile_number=? and isDeleted !=1 and ParentId IS NULL and SP_ID != ?', [phoneNo, spid])
+           if(isChannelExist.length > 0){
+            notify.NotifyServer(phoneNo, false, 'This number is already used as an SP number. Please use a different one.')
+            resolve({ status: 400, value: 'QR cannot be generated because the same SP is already in use.' });
+           }
           if (qr.startsWith(undefined)) {
             undefinedCount = undefinedCount + 1;
           }
@@ -306,6 +311,13 @@ function ClientInstance(spid, authStr, phoneNo) {
           let isPhoneAlreadyUsed = await isPhoneAlreadyInUsed(client.info.wid.user, spid)
           if (!isPhoneAlreadyUsed) {
             let wrongNumber = await isWrongNumberScanned(spid, client.info.wid.user)
+
+            var isChannelExist = await db.excuteQuery('SELECT * FROM user WHERE mobile_number=? and isDeleted !=1 and ParentId IS NULL and SP_ID != ?', [client.info.wid.user, spid])
+            if(isChannelExist.length > 0){
+             notify.NotifyServer(client.info.wid.user, false, 'This number is already used as an SP number. Please use a different one.')
+             resolve({ status: 400, value: 'QR cannot be generated because the same SP is already in use.' });
+            }
+
             if (wrongNumber) {       //phoneNo != client.info.wid.user
               console.log("wrong Number Scanned")
               notify.NotifyServer(phoneNo, false, 'Wrong Number')
@@ -363,6 +375,8 @@ function ClientInstance(spid, authStr, phoneNo) {
         try {
           console.log("client message event -----------------------------------")
           const contact = await message.getContact();
+          if(!message.from.includes('@g.us')){
+          
           saveInMessages(message);
 
           // Check if the received message is a reply
@@ -385,6 +399,7 @@ function ClientInstance(spid, authStr, phoneNo) {
               console.log(repliedNumber, spid, "campaignReplied*******", campaignReplied?.affectedRows)
             }
           }
+        }
 
 
 
