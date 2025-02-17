@@ -172,16 +172,22 @@ async function extractDataFromMessage(body) {
         console.log(campaignRepliedQuery)
         let campaignReplied = await db.excuteQuery(campaignRepliedQuery, []);
 
-        let messageData = await db.excuteQuery('select Message_id,message_text,Agent_id,button,media_type from Message where Message_template_id =? limit 1', [firstMessage?.context?.id]);
+        let messageData = await db.excuteQuery('select Message_id,message_text,Agent_id,button,media_type,interaction_id,message_direction from Message where Message_template_id =? limit 1', [firstMessage?.context?.id]);
         if(messageData?.length > 0){
         repliedMessage_id = messageData[0]?.Message_id;
         repliedMessageText = messageData[0]?.message_text;
         let Agent_id = messageData[0]?.Agent_id;
+        let Interaction_id = messageData[0]?.interaction_id;
+        let message_direction = messageData[0]?.message_direction;
         let media_type = messageData[0]?.media_type;
         let button = messageData[0]?.button;
-        let agentName = await db.excuteQuery('select name from user where uid =? limit 1', [Agent_id]);
+        if(message_direction == 'IN'){
+        let agentName = await db.excuteQuery('SELECT e.name FROM Interaction i JOIN EndCustomer e ON i.customerId = e.customerId WHERE i.interactionId = ?;', [Interaction_id]);
         if(agentName?.length > 0)
           repliedMessageTo = agentName[0]?.name;
+      }else{
+        repliedMessageTo = 'You';
+      }
         if (media_type?.includes('image') ) {
           repliedMessageText = 'Image';
         } else if (media_type?.includes('video')) {
@@ -205,7 +211,9 @@ async function extractDataFromMessage(body) {
         message_text = firstMessage?.video?.caption;
       } else if (Type === 'document') {
         message_text = firstMessage?.document?.caption;
-        let filename = firstMessage.document.filename;
+        let filename = firstMessage?.document?.filename;
+        if(!message_text)
+          message_text = filename;
         extension = filename.substring(filename.lastIndexOf('.'));
       }
 
