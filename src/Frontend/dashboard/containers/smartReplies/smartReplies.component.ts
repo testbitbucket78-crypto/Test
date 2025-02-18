@@ -1592,7 +1592,11 @@ stopPropagation(event: Event) {
 			  }
 			},
 			(error: any) => {
-			  if (error.status === 500) {
+				this.isLoading = false;
+				this.modalService.dismissAll(smartreplysuccess);
+				if(error?.error?.msg == 'Image or Media is missing'){
+					this.modalService.open(smartreplyfailed);
+				} else if (error.status === 500) {
 				this.modalService.open(smartreplyfailed);
 			  } else {
 				this.showToaster("! Internal Server Error Please try after some time","error");
@@ -1603,6 +1607,17 @@ stopPropagation(event: Event) {
 		} else {
 		  this.showToaster("! Message cannot be empty","warn");
 		}
+	}
+	errorPopupClose(){
+		this.isLoading = false;
+		      this.isShowSmartReplies =  false;
+			   $("#smartrepliesModal").modal('hide');
+				this.location.replaceState(this.location.path());
+				this.modalService.dismissAll();
+				this.reloadCurrentRoute();
+				this.isEditAssigned = false;
+				this.removeModalBackdrop()
+				this.getReplies();
 	}
 	reloadCurrentRoute() {
 		this.router.navigateByUrl('/reload', { skipLocationChange: true }).then(() => {

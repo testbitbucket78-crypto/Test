@@ -237,6 +237,7 @@ filterQuickRes(){
 
 
   Template(){
+    debugger
     this.apiService.getTemplateData(this.spid,0).subscribe(response => {
       this.isLoading = false;
       this.templates=response?.templates;
@@ -266,7 +267,6 @@ filterQuickRes(){
     let userData=this.saveformmtemplate();
     this.apiService.addTemplate(userData).subscribe(response=>{
       if(response){
-        this.isLoading = false;
         this.Template();          
       $("#welcomGreeting").modal('hide');          
       $("#deleteModal").modal('hide');          
@@ -275,7 +275,6 @@ filterQuickRes(){
     });
   }else{
     this.usertemplateForm.markAllAsTouched();
-    this.isLoading = false;
   }
 }
   }
@@ -311,6 +310,7 @@ filterQuickRes(){
 
 
   gettemplateByID(data:any) {
+    debugger;
     this.repliestemplateData=data;
     const a= this.repliestemplateData.Links;
     this.messagemedia=a;
