@@ -35,6 +35,7 @@ let undefinedCount = 0;
 let updateUserQuery = `update user set mobile_number=? , isAutoScanOnce =? where SP_ID=? and ParentId is null and isDeleted !=1 and IsActive !=2`
 let notifyInteraction = `SELECT InteractionId FROM Interaction WHERE customerId IN (SELECT customerId FROM EndCustomer WHERE Phone_number = ? and SP_ID=? ) and is_deleted !=1   order by created_at desc`
 async function createClientInstance(spid, phoneNo) {
+  logger.info(`Creating client instance for spid: ${spid}, phoneNo: ${phoneNo}`);
   console.log(spid, phoneNo, new Date().toUTCString());
   console.log(clientPidMapping.hasOwnProperty(spid))
 
@@ -66,10 +67,12 @@ async function createClientInstance(spid, phoneNo) {
     try {
       // kill the cycle with pid and sign = 'SIGINT' 
       // process.kill(clientPidMapping[spid], 'SIGINT');
+      logger.info(`Process killed for spid: ${spid}, phoneNo: ${phoneNo}`);
       process.kill(clientPidMapping[spid])
       console.log("process killed", new Date().toUTCString())
       delete clientPidMapping[spid];
     } catch (err) {
+      logger.error(`Delete clientPidMapping issues in wrong scan for spid: ${spid}, phoneNo: ${phoneNo}`);
       console.log("Delete clientPidMapping issues in wrong scan", err)
     }
   }
@@ -79,6 +82,7 @@ async function createClientInstance(spid, phoneNo) {
   });
 
   console.log("client created call after verify", new Date().toUTCString())
+  logger.info(`Client created call after verify for spid: ${spid}, phoneNo: ${phoneNo}`);
   return await ClientInstance(spid, authStr, phoneNo);
 }
 
@@ -88,6 +92,7 @@ process.on('uncaughtException', function (err) {
     console.log(err)
     logger.info(`uncaught exception was trying to close this web js *********`)
     let getAllclient = getAllWidData(clientSpidMapping)
+    logger.error(`Uncaught exception Data of getAllClient: ${getAllclient}`);
     if (err.message.includes('Puppeteer')) {
       console.log("Ignoring Puppeteer-related error");
       // Perform any necessary cleanup or handling specific to Puppeteer errors
@@ -97,6 +102,7 @@ process.on('uncaughtException', function (err) {
     }
     //Need spid in this process for delete client from mapping
   } catch (err) {
+    logger.error(`Uncaught exception for error: ${err}`);
     let getAllclient = getAllWidData(clientSpidMapping)
     console.log(err);
   }
@@ -113,7 +119,7 @@ const os = require('os');
 
 function killChromeProcesses(spid, callback) {
   const platform = os.platform(); // Detect the operating system
-
+  logger.info(`Killing Chrome processes for spid: ${spid}`);
   let command;
   //console.log("platform------",platform)
   if (platform === 'win32') {
@@ -160,6 +166,7 @@ async function isPhoneAlreadyInUsed(mobile_number, spid) {
     }
     return false;
   } catch (err) {
+    logger.error(`error in, phone is already in use for spid: ${spid}, mobile_number: ${mobile_number}, error: ${err}`);
     console.log("check existing phone error", err);
     return err;
   }
@@ -175,6 +182,7 @@ async function isWrongNumberScanned(spid, scannedPhone) {
     }
     return false;
   } catch (err) {
+    logger.error(`error in, phone is already in use for spid: ${spid}, scannedPhone: ${scannedPhone}, error: ${err}`);
     console.log("check existing phone error", err);
     return err;
   }
@@ -220,6 +228,7 @@ async function destroyWrongScan(spid) {
 
     }
   } catch (err) {
+    logger.error(`Destroying wrong scan for spid for spid: ${spid}, error: ${err}`);
     console.log("destroyWrongScan catch error", err);
     return err;
   }
@@ -251,7 +260,7 @@ function ClientInstance(spid, authStr, phoneNo) {
         }
       });
       console.log("client created", new Date().toUTCString());
-
+      logger.info(`Creating ClientInstance for spid: ${spid}, phoneNo: ${phoneNo}`);
       // Handle client creation errors
       client.on('error', (error) => {
         console.error('Client error:', error);
@@ -481,6 +490,7 @@ function ClientInstance(spid, authStr, phoneNo) {
                 //______________________________________//
                 let updateWebdetails = await db.excuteQuery('update WhatsAppWeb set channel_status=0 where connected_id =? and spid=?', [phoneNo, spid]);
               } catch (err) {
+                logger.error(`Error while Sending mail on disconnection for spid:: ${spid}, mobile_number: ${phoneNo}, error: ${err}`);
                 console.log("Delete clientPidMapping issues in disconnected", err)
               }
               console.log(`Removed ${spid} from clientSpidMapping.`);
@@ -961,7 +971,7 @@ async function saveInMessages(message) {
       message_text = message_text.replace(/\n/g, '<br>');
     }
     let message_direction = 'IN'
-    let from = (message.from).replace(/@c\.us$/, '')   //phoneNo
+    var from = (message.from).replace(/@c\.us$/, '')   //phoneNo
     let phone_number_id = message.id.id
     let display_phone_number = (message.to).replace(/@c\.us$/, '')
     let message_media = "text"           //Type
@@ -995,6 +1005,7 @@ async function saveInMessages(message) {
       var SavedMessageDetails = await getDetatilsOfSavedMessage(saveMessage, message_text, phone_number_id, contactName, from, display_phone_number)
     }
   } catch (err) {
+    logger.error(`Saving incoming message for from:: ${from}, error: ${err}`);
     console.log(err);
 
   }
@@ -1029,7 +1040,7 @@ async function savelostChats(message, spPhone, spid, currentIndex, lastIndex) {
       message_text = message_text.replace(/\n/g, '<br>');
     }
     let ackStatus = message.ack;
-    let from = (message.from).replace(/@c\.us$/, '')   //phoneNo
+    var from = (message.from).replace(/@c\.us$/, '')   //phoneNo
     let countryCodeObj;
     if (from) {
       countryCodeObj = mapCountryCode.mapCountryCode(from); //Country Code abstraction `countryCode` = '91', `country` = 'IN', `localNumber` = '8130818921'
@@ -1100,6 +1111,7 @@ async function savelostChats(message, spPhone, spid, currentIndex, lastIndex) {
       }
     }
   } catch (err) {
+    logger.error(`error in, savelostChats : ${from}, error: ${err}`);
     console.log(err);
 
   }
@@ -1202,6 +1214,7 @@ async function actionsOflatestLostMessage(message_text, phone_number_id, from, d
       }
     }
   } catch (err) {
+    logger.error(`error in, phone is already in use for spid: ${sid}, error: ${err}`);
     console.log("err actionsOflatestLostMessage", err)
   }
 }

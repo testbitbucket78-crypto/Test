@@ -74,6 +74,7 @@ app.post("/webhook", async (req, res) => {
     });
 
   } catch (err) {
+    logger.error(`err while /webhook is triggered error: ${err}`)
     db.errlog(err);
     console.log("errrrrrrrr", err)
     res.status(500).send({
@@ -111,7 +112,8 @@ const updateQuality = async (templateId, newQualityStatus) => {
     }
     return result;
   } catch (error) {
-    console.error('Error in updateQuality:', error);
+    logger.error(`err while /webhook is triggered templateId: ${templateId}, error: ${error}`)
+    console.error('Error while updateQuality triggered:', error);
   }
 };
 
@@ -323,7 +325,7 @@ async function isMessageExist(messageId) {
       return false;
     }
   } catch (err) {
-    logger.error(`isMessageExist err ${err}`)
+    logger.error(`error in isMessageExist messageId: ${messageId}, err ${err}`)
   }
 }
 
@@ -338,6 +340,7 @@ const updateWhatsAppDetails = async (waba_id, phone_id, phoneNo) => {
     const result = await db.excuteQuery(query, values);
     return result;
   } catch (err) {
+    logger.error(`err while updateWhatsAppDetails is triggered, waba_id ${waba_id}, phoneNo ${phoneNo}, error: ${err}`)
     console.log("wadetails update err", err)
   }
 
@@ -408,6 +411,7 @@ async function currentlyAssigned(interactionId) {
     let result = await db.excuteQuery(query, [interactionId]);
     return result.length > 0 ? result[0].uid : null;
   } catch (error) {
+    logger.error(`err while currentlyAssigned is triggered, interactionId ${interactionId}, error: ${error}`)
     console.error('Error executing query:', error);
     throw error;
   }
@@ -582,6 +586,7 @@ async function saveImageFromReceivedMessage(from, message, phone_number_id, disp
       //console.log("****image API****" + JSON.stringify(response))
     }
     catch (err) {
+      logger.error(`err while saveImageFromReceivedMessage is triggered, display_phone_number: ${display_phone_number}, error: ${err}`)
       console.log("______image api ERR_____" + err)
     }
 

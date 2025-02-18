@@ -293,6 +293,7 @@ async function mapPhoneNumberfomCSV(message) {
     //let content = await removeTags.removeTagsFromMessages(message.message_content);
     batchofScheduledCampaign(contacts, message.sp_id, type, message.message_content, message.message_media, message.phone_number_id, message.channel_id, message, 'csv',message.headerText,message.bodyText,message.templateId) //channelType[0].connected_id
   } catch (err) {
+    logger.error(`err while mapPhoneNumberfomCSV is triggered message.templateId ${message?.templateId}, error: ${err}`)
     console.log(err)
   }
 
@@ -454,6 +455,7 @@ function isWorkingTime(item) {
     return true;
   }
   catch (err) {
+    logger.error(`err in isWorkingTime error: ${err}`)
     console.log(err)
   }
 }
@@ -884,6 +886,7 @@ async function insertInteractionAndRetrieveId(phoneNo, sid, channel) {
 
     return InteractionId;
   } catch (error) {
+    logger.error(`err while creating insertInteractionAndRetrieveId for SPID: ${sid}, phoneNo: ${phoneNo} error: ${error}`)
     console.error('Error:', error);
     return error;
   }

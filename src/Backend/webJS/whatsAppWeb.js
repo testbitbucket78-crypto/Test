@@ -111,7 +111,7 @@ app.post('/craeteQRcode', async (req, res) => {
 
     } catch (err) {
         processSet.delete(spid);
-        logger.error(`err of create QR CODE ${err}`)
+        logger.error(`err while Creating QR CODE for SPID ${req?.body?.spid}, error: ${err}`)
          res.send({
             status: 500,
             err: err
@@ -217,6 +217,7 @@ app.post('/sendMessage', async (req, res) => {
         return res.send({ status: response.status , msgId : response.msgId })
 
     } catch (err) {
+        logger.error(`err while /sendMessage is triggered for SPID: ${req?.body?.spid}, error: ${err}`)
         console.log(err);
         return res.send({ status: 500 })
     }
@@ -336,7 +337,7 @@ app.post('/IsClientReady', async (req, res) => {
 
 
     } catch (err) {
-        logger.error(`IsClientReady error ${err}`)
+        logger.error(`IsClientReady error for SPID: ${req?.body?.spid}, error ${err}`)
         res.send({ status: 500, err: err })
     }
 })
@@ -348,6 +349,7 @@ app.get('/webjsStatus', (req, res) => {
       res.send({ status: 200, message: response })
 
     } catch (err) {
+        logger.error(`Error in webjsStatus: error: ${err}`)
         res.send({ status: 500, err: err })
     }
 })
@@ -389,6 +391,7 @@ app.listen(3009, () => {
         }
     }
     catch (err) {
+        logger.error(`error while deleting cached sessions. Please delete manually and restart the server: ${err}`)
         console.log(err);
         console.log("error while deleting cached sessions. Please delete manually from within " + dir + " and restart the server")
     }
