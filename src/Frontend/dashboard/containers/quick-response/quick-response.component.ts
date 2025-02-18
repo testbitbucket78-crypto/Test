@@ -237,7 +237,6 @@ filterQuickRes(){
 
 
   Template(){
-    debugger
     this.apiService.getTemplateData(this.spid,0).subscribe(response => {
       this.isLoading = false;
       this.templates=response?.templates;
@@ -310,7 +309,6 @@ filterQuickRes(){
 
 
   gettemplateByID(data:any) {
-    debugger;
     this.repliestemplateData=data;
     const a= this.repliestemplateData.Links;
     this.messagemedia=a;
