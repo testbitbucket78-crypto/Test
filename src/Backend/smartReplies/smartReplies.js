@@ -44,6 +44,7 @@ app.post('/addNewReply', async (req, res) => {
   try {
     const myStringArray = req.body.Keywords;
     let Channel = req.body?.Channel
+    let Deleted;
     const params = {
       strings: {
 
@@ -55,6 +56,22 @@ app.post('/addNewReply', async (req, res) => {
 
     //db.runQuery(req, res, val.addNewReply, [req.body.SP_ID, req.body.Title, req.body.Description, req.body.MatchingCriteria, params.strings.value, jsonData])
     var saveReply = await db.excuteQuery(val.addNewReply, [req.body.SP_ID, req.body.Title, req.body.Description, req.body.MatchingCriteria, params.strings.value, jsonData,Channel])
+    if(saveReply && saveReply.length > 0){
+      let getRecentAddedDataID = (await db.excuteQuery(val.getRecentInsertion, [req.body.SP_ID]))[0]?.ID; 
+      if(getRecentAddedDataID){
+        let getDataForID = await db.excuteQuery(val.sideNavKeywords, [getRecentAddedDataID]);
+              if(getDataForID && getDataForID.length){
+                  for (const element of getDataForID) {
+                      if (element.Media && !element.media_type) {
+                          Deleted = await db.excuteQuery(val.deleteSmartReply, [getRecentAddedDataID]);
+                          break;
+                      }
+                  }
+              }
+      }
+    }
+   
+   if(Deleted) throw new Error("Image or Media is missing");
    // console.log(saveReply)
     res.status(200).send({
       msg: "Smart Reply added",
@@ -64,7 +81,7 @@ app.post('/addNewReply', async (req, res) => {
     console.error(err);
     db.errlog(err);
     res.status(500).send({
-      msg: err,
+      msg: err?.message ?? err,
       status: 500
     });
   }

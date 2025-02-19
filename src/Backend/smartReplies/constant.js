@@ -44,6 +44,43 @@ t.Title,
 t.Description,
 t.MatchingCriteria`
 
+
+getRecentInsertion = `SELECT
+t.ID,
+t.Title,
+t.Description,
+t.CreatedDate,
+t.ModifiedDate,
+t.Channel,
+COUNT(DISTINCT s.Keyword) AS KeywordCount,
+t.MatchingCriteria,
+COALESCE(action_counts.ActionCount, 0) AS ActionCount
+FROM
+SmartReply t
+LEFT JOIN
+SmartReplyKeywords s ON s.SmartReplyID = t.ID
+LEFT JOIN
+(
+    SELECT 
+        SmartReplyID,
+        COUNT(ActionID) AS ActionCount
+    FROM 
+        SmartReplyAction
+    WHERE 
+        isDeleted != 1 
+    GROUP BY 
+        SmartReplyID
+) AS action_counts ON action_counts.SmartReplyID = t.ID
+WHERE
+t.isDeleted != 1
+AND s.isDeleted != 1
+AND t.SP_ID = ?
+GROUP BY
+t.ID,
+t.Title,
+t.Description,
+t.MatchingCriteria order by 1 desc limit 1`
+
 getsmartReplieswithSPID = `select *from 
 (select t.ID AS SRID,
  CONCAT("[",
@@ -172,5 +209,5 @@ module.exports = {
     host, user, password, database, selectAll, search, sideNavKeywords, getsmartReplieswithSPID,
     alluserofAOwner, addNewReply, deleteSmartReply, deletMessage, editMessage, editAction,
     removeKeyword, updateSmartReply,crachlogQuery,updateInteractionMapping ,getInteractionMapping ,selectTagQuery,
-    access_token,url,content_type
+    access_token,url,content_type, getRecentInsertion
 }

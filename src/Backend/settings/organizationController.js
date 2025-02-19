@@ -779,8 +779,8 @@ const addUser = async (req, res) => {
         var isChannelExist = await db.excuteQuery('SELECT * FROM user WHERE mobile_number=? and isDeleted !=1 and ParentId IS NULL', [registerPhone])
         var credentials = await db.excuteQuery(val.findEmail, [req.body.email_id])
 
-        if (credentials?.length > 0 || isNameExist?.length > 0 || isPhoneExist?.length > 0 || isChannelExist) {
-             //let msg = "This email ID is already used by another user, please use a unique email";
+        if (credentials?.length > 0 || isNameExist?.length > 0 || isPhoneExist?.length > 0 || isChannelExist?.length > 0) {
+            //let msg = "This email ID is already used by another user, please use a unique email";
             let msg = `User with this ${credentials?.length > 0 ? "Email" : ""}${
                 credentials?.length > 0 && (isNameExist?.length > 0 || isPhoneExist?.length > 0 || isChannelExist) ? ", " : ""
             }${isNameExist?.length > 0 ? `User Name` : ""}${
