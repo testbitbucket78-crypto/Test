@@ -201,7 +201,7 @@
                 <div class="gallery_section_item_header">
                     <label>{{gallerydata?.topic}}</label>
                 </div>
-                <p class="py-2 text-capitalize title">{{gallerydata?.TemplateName}}</p>
+                <p class="py-2 text-capitalize title ellipsis">{{gallerydata?.TemplateName}}</p>
              
                 <div class="campaigns_section_item_statics">
                     <div class="py-2"><p>{{gallerydata?.Language}}</p><p><span>Language</span></p></div>
@@ -269,7 +269,22 @@
             <!-- <div class="contact-us">
                 Contact Us
             </div> -->
+            <div *ngIf="galleryMessageData?.buttons && galleryMessageData?.buttons?.length >0" class="w-70">
+                <div *ngFor="let item of galleryMessageData?.buttons let i = index" >
+                    <div class="text-center" *ngIf="(item?.buttonText || item?.text) && i<3"><button class="template-btn" (click)="isAllButtonPopupVisible = !isAllButtonPopupVisible" [ngClass]="{'btn-radius': ((galleryMessageData?.buttons?.length-1)== i || (galleryMessageData?.buttons?.length >2 && i==2))}">
+                    <img class="btn-preview-img" *ngIf="item.type =='Quick Reply' && !(i==2 && galleryMessageData?.buttons?.length>3)" src="../../../../assets/img/settings/reply-arrow.svg"> 
+                    <img class="btn-preview-img" *ngIf="item.type =='Call Phone' && !(i==2 && galleryMessageData?.buttons?.length>3)" src="../../../../assets/img/settings/phone-call.svg"> 
+                    <img class="btn-preview-img" *ngIf="item.type =='Copy offer Code' && !(i==2 && galleryMessageData?.buttons?.length>3)" src="../../../../assets/img/settings/copy.svg"> 
+                    <img class="btn-preview-img" *ngIf="item.type =='Visit Website' && !(i==2 && galleryMessageData?.buttons?.length>3)" src="../../../../assets/img/settings/open-in-new.svg"> 
+                    <img class="btn-preview-img" *ngIf="item.type =='Complete Flow' && ! (i==2 && galleryMessageData?.buttons?.length>3)" src="../../../../assets/img/settings/form.svg"> 
+                    <img class="btn-preview-img" *ngIf="item.type == 'URL' && !(i == 2 && galleryMessageData?.buttons?.length > 3)" 
+                    src="../../../../assets/img/settings/open-in-new.svg"> 
+                    <img class="btn-preview-img" *ngIf="(i==2 && galleryMessageData?.buttons?.length>3)" src="../../../../assets/img/settings/options-lines.svg">  
+                    {{(i==2 && galleryMessageData?.buttons?.length>3) ? 'Show All Buttons' : (item?.buttonText || item?.text) }}</button> </div>
+                </div>
+            </div>
         </div>
+        
      </div>
     <div class="action_section">
         <button type="button" class="btn" (click)=" copyGalleryData()"><img src="../../../../assets/img/teambox/copy.svg"></button>

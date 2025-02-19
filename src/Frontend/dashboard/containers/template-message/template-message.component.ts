@@ -585,6 +585,14 @@ export class TemplateMessageComponent implements OnInit {
         this.showGalleryDetail = !this.showGalleryDetail;
         if(this.showGalleryDetail) {
             this.galleryMessageData = data;
+            if (this.galleryMessageData?.buttons && typeof this.galleryMessageData.buttons === 'string') {
+                const fixedJson = this.galleryMessageData?.buttons.replace(/'/g, '"'); 
+                try {
+                  this.galleryMessageData.buttons = JSON.parse(fixedJson);
+                } catch (error) {
+                  console.error("Invalid JSON format for buttons:", error);
+                }
+              }
             this.status= 'saved';
             this.BodyText = this.galleryMessageData.BodyText;
             this.selectedType = this.galleryMessageData.media_type;
@@ -1031,6 +1039,24 @@ checkTemplateName(e:any){
     // for gallery form
     patchGalleryFormValue() {
         const galleryData = this.galleryMessageData;
+        this.buttonsArray =[];
+        if (galleryData.buttons && galleryData.buttons.length > 0) {
+            let type: string = '', buttonText: string = '', webUrl: string = '', phoneNumber: string = '', code: string = '', flowId: string = '';
+            
+            galleryData.buttons.forEach((button: any, index:any) => {
+                buttonText = button?.buttonText;
+                type = button?.type;
+                code = button?.code;
+                phoneNumber = button?.phoneNumber;
+                if(button?.type == 'URL'){
+                    buttonText = button?.text;
+                    webUrl = button?.url;
+                    type = 'Visit Website';
+                }
+                this.addButtonsPatch(type || '', buttonText || '', webUrl || '', phoneNumber || '', code || '', flowId || '');
+            });
+        }
+        
         let ID = this.galleryMessageData.ID;
         for (let prop in galleryData) {
             let value = galleryData[prop as keyof typeof galleryData];
@@ -1595,6 +1621,52 @@ return true
         return `<em>${text}</em>`;
     }
     return text;
+}
+addButtonsPatch(type: string, buttonText: string , webUrl: string , phoneNumber: string, code: string , flowId: string) {
+    const button = this.createButtonPatch(type, buttonText, webUrl, phoneNumber, code, flowId);
+    if(this.buttonsArray.length>0){
+
+    if (type === 'Quick Reply') {
+        const firstNonQuickReplyIndex = this.buttonsArray.findIndex(item => item.type !== 'Quick Reply');
+
+        if (this.buttonsArray[0].type === 'Quick Reply') {
+            this.buttonsArray.splice(firstNonQuickReplyIndex, 0, button);
+//            this.buttonsArray.push(button);
+        } else {
+            this.buttonsArray.push(button);
+        }
+    } else {
+        const lastQuickReplyIndex = this.buttonsArray.reduce((lastIndex, item, index) =>
+            item.type === 'Quick Reply' ? index : lastIndex, -1);
+            const firstNonQuickReplyIndex = this.buttonsArray.findIndex(item => item.type !== 'Quick Reply');
+        if (this.buttonsArray[0].type != 'Quick Reply') {
+            this.buttonsArray.splice(firstNonQuickReplyIndex, 0, button);
+        } else {
+            this.buttonsArray.push(button);
+        }
+    }
+}else{
+    this.buttonsArray.push(button);
+}
+    this.isPopupVisible = false;
+}
+
+createButtonPatch(type: string, buttonText: string, webUrl: string, phoneNumber: string, code: string, flowId: string) {
+    switch (type) {
+        case 'Quick Reply':
+            return { type: type, buttonText: buttonText };
+        case 'Call Phone':
+            return { type: type, buttonText: buttonText, code: 'IN +91', phoneNumber: phoneNumber, displayPhoneNumber: '' };
+        case 'Copy offer Code':
+        case 'Copy Offer Code':
+            return { type: 'Copy offer Code', buttonText: buttonText, code: code };
+        case 'Complete Flow':
+            return { type: type, buttonText: buttonText, flowId: flowId };
+        case 'Visit Website':
+            return { type: type, buttonText: buttonText, webUrl: webUrl, webType: 'Static', webUrlSample: '' };
+        default:
+            return {};
+    }
 }
 
 
