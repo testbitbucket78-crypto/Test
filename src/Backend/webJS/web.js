@@ -159,6 +159,7 @@ function killChromeProcesses(spid, callback) {
 
 async function isPhoneAlreadyInUsed(mobile_number, spid) {
   try {
+    logger.info(`Checking isPhoneAlreadyInUsed for spid: ${spid}, and mobile_number: ${mobile_number}`);
     let isExist = await db.excuteQuery('select * from user where mobile_number=? and isAutoScanOnce =? and ParentId is null and  isDeleted !=1 and IsActive !=2', [mobile_number, 1]);
     //console.log("is Exist",isExist)
     if (isExist?.length > 0 && isExist[0].SP_ID != spid) {
@@ -174,6 +175,7 @@ async function isPhoneAlreadyInUsed(mobile_number, spid) {
 
 async function isWrongNumberScanned(spid, scannedPhone) {
   try {
+    logger.info(`isWrongNumberScanned for spid: ${spid}, and scannedPhone: ${scannedPhone}`);
     let isExist = await db.excuteQuery('select * from user where SP_ID=? and isAutoScanOnce =? and ParentId is null and isDeleted !=1 and IsActive !=2', [spid, 1]);
     //console.log("isWrongNumberScanned",isExist)
     if (isExist?.length > 0 && (isExist[0]?.mobile_number != scannedPhone)) {
@@ -189,7 +191,8 @@ async function isWrongNumberScanned(spid, scannedPhone) {
 }
 
 async function destroyWrongScan(spid) {
-  try {
+  try { 
+    logger.info(`distroying Wrong Scan for spid: ${spid}`);
     if (clientSpidMapping.hasOwnProperty(spid)) {
       delete clientSpidMapping[spid];
       try {
@@ -222,13 +225,14 @@ async function destroyWrongScan(spid) {
 
       } catch (err) {
         console.log("Delete clientPidMapping issues in wrong scan")
+        logger.error(`Delete clientPidMapping issues in wrong scan for spid : ${spid}, error: ${err}`);
       }
 
       console.log(`destroy wrong no. ${spid} from clientSpidMapping.`);
 
     }
   } catch (err) {
-    logger.error(`Destroying wrong scan for spid for spid: ${spid}, error: ${err}`);
+    logger.error(`Destroying wrong scan for spid: ${spid}, error: ${err}`);
     console.log("destroyWrongScan catch error", err);
     return err;
   }
@@ -263,12 +267,14 @@ function ClientInstance(spid, authStr, phoneNo) {
       logger.info(`Creating ClientInstance for spid: ${spid}, phoneNo: ${phoneNo}`);
       // Handle client creation errors
       client.on('error', (error) => {
+        logger.error(`error Creating Client for spid: ${spid}, error: ${error}`);
         console.error('Client error:', error);
         notify.NotifyServer(phoneNo, false, 'Client creation failed')
         reject({ status: 500, value: 'Client creation failed' });
       });
 
       client.on('auth_failure', () => {
+        logger.error(`error Client is auth_failure! for spid: ${spid}`);
         console.log('Client is auth_failure!');
       });
 
@@ -280,6 +286,7 @@ function ClientInstance(spid, authStr, phoneNo) {
         try {
           // Generate and scan this code with your phone
           //clientSpidInprogress[[spid]] = client;
+          logger.info(`Generate QR Code for SPID: ${spid}, and phoneNo: ${phoneNo}`);
           console.log("QR CODE top", new Date().toUTCString())
           console.log("QR RECEIVED", qr);
           inc++;
@@ -309,6 +316,7 @@ function ClientInstance(spid, authStr, phoneNo) {
           }
           resolve({ status: 200, value: qr });
         } catch (err) {
+          logger.error(`error while generating QR Code for spid: ${spid}, error: ${err}`);
           console.log("err QR ............");
           console.log(err)
         }
@@ -316,6 +324,7 @@ function ClientInstance(spid, authStr, phoneNo) {
       client.on('ready', async () => {
 
         try {
+          logger.info(`Client on Ready for SPID: ${spid}`);
           console.log("Above client ready", new Date().toUTCString())
           let isPhoneAlreadyUsed = await isPhoneAlreadyInUsed(client.info.wid.user, spid)
           if (!isPhoneAlreadyUsed) {
@@ -342,6 +351,7 @@ function ClientInstance(spid, authStr, phoneNo) {
               console.log(client.info.wid.user, 1, spid, 'updateScannedNumber', updateScannedNumber);
               let allChats = await client.getChats();
               let chat_activos = allChats.splice(0, 10);
+              logger.info(`Client is Ready and SaveLostChats will be triggered for SPID: ${spid}, and phoneNo: ${phoneNo}`);
               for (const chat of chat_activos) {
                 if (!chat.isGroup) {
                   let mensajes_verificar = await chat.fetchMessages({ limit: 30 });
@@ -375,6 +385,7 @@ function ClientInstance(spid, authStr, phoneNo) {
             return resolve({ status: 410, value: 'This Phone is already used in EngageKart !' });
           }
         } catch (readyerr) {
+          logger.error(`client ready err for SPID: ${spid}, error: ${readyerr}`);
           console.log("client ready err", readyerr)
         }
         // }
@@ -384,8 +395,9 @@ function ClientInstance(spid, authStr, phoneNo) {
         try {
           console.log("client message event -----------------------------------")
           const contact = await message.getContact();
+          logger.info(`New Message Incomming for SPID: ${spid}`);
           if(!message.from.includes('@g.us')){
-          
+           
           saveInMessages(message);
 
           // Check if the received message is a reply
@@ -413,11 +425,13 @@ function ClientInstance(spid, authStr, phoneNo) {
 
 
         } catch (messageerr) {
+          logger.error(`error Creating Client for spid: ${spid}, error: ${messageerr}`);
           console.log("client message err")
         }
       });
       client.on('authenticated', async (session) => {
         try {
+          logger.info(`client authenticated for spid: ${spid}`);
           console.log("client authenticated", new Date().toUTCString());
           clientSpidMapping[[spid]] = client;
 
@@ -425,6 +439,7 @@ function ClientInstance(spid, authStr, phoneNo) {
             clientPidMapping[[spid]] = client.pupBrowser.process().pid;
             console.log("clientPidMapping[spid]", clientPidMapping[spid]);
           } catch (err) {
+            logger.error(`Set clientPidMapping issues in Authentication for SPID: ${spid}, error: ${err}`);
             console.log("Set clientPidMapping issues in Authentication", err);
           }
 
@@ -441,12 +456,14 @@ function ClientInstance(spid, authStr, phoneNo) {
           }, 30 * 60 * 1000); // 30 minutes in milliseconds
 
         } catch (authenticatederr) {
+          logger.error(`error authenticated client for spid: ${spid}, error: ${authenticatederr}`);
           console.log(authenticatederr);
         }
       });
       client.on('disconnected', (reason) => {
         setTimeout(async () => {
           try {
+            logger.info(`channel initiated for disconnection for spid: ${spid}, and phone number: ${phoneNo}`);
             sendMailOnDisconnection(phoneNo, spid);
             console.log("disconnected", new Date().toUTCString());
 
@@ -499,6 +516,7 @@ function ClientInstance(spid, authStr, phoneNo) {
             notify.NotifyServer(phoneNo, false, 'Client is disconnected!')
 
           } catch (error) {
+            logger.error(`Error while Sending mail on disconnection for spid:: ${spid}, mobile_number: ${phoneNo}, error: ${error}`);
             console.log("disconnect error")
 
           }
@@ -581,6 +599,7 @@ WHERE customerId IN (SELECT customerId FROM EndCustomer WHERE Phone_number =? an
 
 
         } catch (message_ackErr) {
+          logger.error(`error message_ack for SPID: ${spid}, error: ${message_ackErr}`);
           console.log(message_ackErr)
         }
       });
@@ -669,6 +688,7 @@ Team ${emailSender}`
     }
 
   } catch (err) {
+    logger.error(`Error encountered while sending mail during the process for SPID: ${spid}, phoneNo: ${phoneNo}, error: ${err}`);
     console.error('Error encountered while sending mail during the process:', err);
   }
 }
@@ -770,6 +790,7 @@ async function saveSendedMessageStatus(messageStatus, timestamp, to, id) {
 
 async function sendMessages(spid, endCust, type, text, link, interaction_id, msg_id, spNumber) {
   try {
+    logger.info(`Sending Messages for spid: ${spid}, and spNumber: ${spNumber}`);
     let client = clientSpidMapping[[spid]];
     if (client) {
       let contactId = `${endCust}@c.us`
@@ -789,15 +810,18 @@ async function sendMessages(spid, endCust, type, text, link, interaction_id, msg
         }
 
       } catch (error) {
+        logger.error(`Error checking registration for SPID: ${spid}, spNumber: ${spNumber}, error: ${error}`);
         return { status: 401, msgId: 'Error checking registration' }
       }
 
     } else {
       console.log("else");
+      logger.error(`Error Channel is disconnected for SPID: ${spid}, spNumber: ${spNumber}`);
       return { status: 400, msgId: 'Channel is disconnected' }
     }
   } catch (err) {
     console.log(err);
+    logger.error(`Error Channel is disconnected for SPID: ${spid}, spNumber: ${spNumber}, error ${err}`);
     return { status: 500, msgId: 'Channel is disconnected' }
   }
 }
@@ -898,6 +922,7 @@ async function sendDifferentMessagesTypes(client, endCust, type, text, link, int
     }
   } catch (err) {
     console.log("++++++++++++++++++++++++++++++++++++++++++++")
+    logger.error(`Error sendDifferentMessagesTypes msg_id: ${msg_id}, spNumber: ${spNumber}, error: ${err}`);
     console.log(err)
     return { status: 500, msgId: "error on send message" }
   }
@@ -954,6 +979,7 @@ async function sendDifferentFunnelTypes(client, endCust, type, text, link) {
 
   } catch (err) {
     console.log("++++++++++++++++++++++++++++++++++++++++++++")
+    logger.error(`Error sendDifferentFunnelTypes for client: ${client}, error: ${err}`);
     console.log(err)
   }
 }
@@ -972,6 +998,7 @@ async function saveInMessages(message) {
     }
     let message_direction = 'IN'
     var from = (message.from).replace(/@c\.us$/, '')   //phoneNo
+    logger.info(`Saving Message Incomming spid: ${from}`);
     let phone_number_id = message.id.id
     let display_phone_number = (message.to).replace(/@c\.us$/, '')
     let message_media = "text"           //Type
@@ -1311,6 +1338,7 @@ async function saveImageFromReceivedMessage(from, message, phone_number_id, disp
       console.log("****image API****", awsDetails.value.Location)
     }
     catch (err) {
+      logger.error(`Error saveImageFromReceivedMessage for from: ${from}, phone_number_id: ${phone_number_id}, error: ${err}`);
       console.log("______image api ERR_____" + err)
     }
 
@@ -1331,6 +1359,7 @@ async function currentlyAssigned(interactionId) {
     let result = await db.excuteQuery(query, [interactionId]);
     return result.length > 0 ? result[0].uid : null;
   } catch (error) {
+    logger.error(`Error Channel is disconnected for interactionId: ${interactionId}, error: ${error}`);
     console.error('Error executing query:', error);
     throw error;
   }

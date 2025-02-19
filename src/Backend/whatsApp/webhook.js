@@ -50,6 +50,7 @@ app.post("/webhook", async (req, res) => {
 
   try {
     console.log("===========================##############==========================")
+    logger.info(`/webhook triggered and will be extracting Data From Message extractDataFromMessage()`);
     let body = req.body;
 
     // Check the Incoming webhook message    
@@ -331,6 +332,7 @@ async function isMessageExist(messageId) {
 
 const updateWhatsAppDetails = async (waba_id, phone_id, phoneNo) => {
   try {
+    logger.info(`updateWhatsAppDetails is triggered, for waba_id ${waba_id}, and phoneNo ${phoneNo}`);
     const query = `
     UPDATE WA_API_Details
     SET waba_id = ?,phoneNumber_id=? updated_at = NOW()
@@ -419,6 +421,7 @@ async function currentlyAssigned(interactionId) {
 
 async function getDetatilsOfSavedMessage(saveMessage, message_text, phone_number_id, contactName, from, display_phone_number) {
   if (saveMessage?.length > 0) {
+    logger.info(`getDetatilsOfSavedMessage is triggered, from: ${from}, and display_phone_number: ${display_phone_number} and phone_number_id ${phone_number_id}`);
     console.log(display_phone_number + " .." + message_text)
     const data = saveMessage;
     // Extracting the values
@@ -554,6 +557,7 @@ async function getDetatilsOfSavedMessage(saveMessage, message_text, phone_number
 
 async function saveImageFromReceivedMessage(from, message, phone_number_id, display_phone_number, extension, mime_type) {
   console.log("saveImageFromReceivedMessage")
+  logger.info(`saveImageFromReceivedMessage is triggered for SPID: ${from}, and display_phone_number: ${display_phone_number}`);
   //https://graph.facebook.com/{{Version}}/{{Media-ID}}?phone_number_id=<PHONE_NUMBER_ID>
   return new Promise((resolve, reject) => {
     try {
@@ -594,7 +598,6 @@ async function saveImageFromReceivedMessage(from, message, phone_number_id, disp
 }
 
 async function saveSendedMessageStatus(messageStatus, displayPhoneNumber, customerPhoneNumber, smsId, createdTime, failedMessageReason, failedMessageCode) {
-
   // let getMessageId = await db.excuteQuery(process.env.messageIdQuery, []);
   // console.log(getMessageId)
   // if (getMessageId.length > 0) {
