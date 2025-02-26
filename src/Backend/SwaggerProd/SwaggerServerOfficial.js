@@ -15,13 +15,9 @@ const swagger = swaggerJSDoc({
             description: 'API documentation for EngageKart project.',
         },
         servers: [
-          {
-            url: 'http://localhost:3004',
-            description: 'Development Server',
-        },
         {
-            url: 'https://settings.stacknize.com',
-            description: 'Staging Server',
+            url: 'https://settings.engagekart.com',
+            description: 'EngageKart Server',
         }
         ],
         components: {
