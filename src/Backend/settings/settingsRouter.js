@@ -212,7 +212,7 @@ router.post('/APIkeysState',authenticateToken,accountController.APIkeysState)
 router.post('/saveWebhookUrl',authenticateToken,accountController.saveWebhookUrl)
 
 
-router.post('/sendMessage' ,accountController.sendMessage)
+router.post('/sendMessage' ,dynamicRateLimiter,accountController.sendMessage)
 
 
 
