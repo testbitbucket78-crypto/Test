@@ -127,6 +127,9 @@ const swagger = swaggerJSDoc({
         `${basePath}/SwaggerDocs/SmartReplies/SmartReplies.js`, // Smart Replies
 
         `${basePath}/SwaggerDocs/Campaign/Campaign.js`, // Campaigns
+
+        `${basePath}/SwaggerDocs/SendAPI/SendAPIForOfficial.js`,  // whatsApp Official
+        //`${basePath}/SwaggerDocs/SendAPI/SendAPIForWeb.js`, // WhatsApp web
     ],
 });
 
