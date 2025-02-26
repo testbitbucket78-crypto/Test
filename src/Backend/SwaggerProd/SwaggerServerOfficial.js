@@ -3,6 +3,9 @@ const app = express();
 const swaggerUi = require("swagger-ui-express");
 const swaggerJSDoc = require('swagger-jsdoc');
 
+const isServer = true;
+const basePath = isServer ? '..' : 'src/Backend';
+
 const swagger = swaggerJSDoc({
     definition: {
         openapi: '3.0.0',
@@ -37,7 +40,7 @@ const swagger = swaggerJSDoc({
         ],
     },
     apis: [
-       'src/Backend/SwaggerDocProd/WA_Official.js'
+       `${basePath}/SwaggerDocProd/WA_Official.js`
     ],
 });
 
