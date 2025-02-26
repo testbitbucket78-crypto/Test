@@ -1,7 +1,7 @@
 const swaggerJSDoc = require('swagger-jsdoc');
 
 
-const isServer = false;
+const isServer = true;
 const basePath = isServer ? '..' : 'src/Backend';
 
 const swagger = swaggerJSDoc({
