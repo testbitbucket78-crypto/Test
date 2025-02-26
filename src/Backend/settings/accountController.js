@@ -14,7 +14,7 @@ const path = require('path');
 const axios = require('axios');
 const middleWare = require('../middleWare')
 const commonFun = require('../common/resuableFunctions');
-const { APIKeyManager, sendMessageBody }= require('./model/accountModel');
+const { APIKeyManager, sendMessageBody, spPhoneNumber, ApiResponse }= require('./model/accountModel');
 const { WebSocketManager } = require("../whatsApp/PushNotifications")
 const {mapCountryCode} = require('../Contact/utils')
 const variables = require('../common/constant')
@@ -513,7 +513,13 @@ const sendMessage = async (req, res) => {
     try {
         const randomdelay = Math.floor(Math.random() * (3000 - 500 + 1)) + 500;
         await wait(randomdelay)
-    const APIKeyManagerInstance = new APIKeyManager(req?.body);
+
+    const spPhoneNumberInstance = new spPhoneNumber(req?.body);
+    spPhoneNumberInstance.validate();
+
+    const spId = await spPhoneNumberInstance.getSPIDFromSPNumber(spPhoneNumberInstance.spNumber);
+
+    const APIKeyManagerInstance = new APIKeyManager({ spId });
     APIKeyManagerInstance.validate();
     const clientIp = req.headers['x-forwarded-for'] || req?.connection.remoteAddress;
     const ip = clientIp?.startsWith('::ffff:') ? clientIp?.substring(7) : clientIp;
@@ -560,7 +566,7 @@ const sendMessage = async (req, res) => {
     }
 
   const sendMessageInstance = new sendMessageBody(req?.body);
-
+  sendMessageInstance.SPID = APIKeyManagerInstance.spId;
   if(sendMessageInstance.isTemplate == true){
     const { BodyText, FooterText } = await sendMessageBody.getBodyText(sendMessageInstance.name);
     sendMessageInstance.message_text = BodyText + FooterText;
@@ -580,8 +586,14 @@ const sendMessage = async (req, res) => {
   sendMessageInstance.AgentId = AgentId;
         const apiUrl = `${variables.ENV_URL.auth}/newmessage`;
         const response = await axios.post(apiUrl, sendMessageInstance);
-        const responseData = response?.data; 
-        return res.status(200).json(responseData);
+        const responseData = response?.data;
+        if (responseData?.status >= 200 && responseData?.status < 300) {
+            const structuredResponse = new ApiResponse(responseData);
+            return res.status(200).json(structuredResponse);
+          } else {
+            return res.status(responseData?.status || 500).json(responseData);
+        }
+        
 
 }catch (err) {
     db.errlog(err);

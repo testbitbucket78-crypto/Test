@@ -816,7 +816,7 @@ async function sendMessages(spid, endCust, type, text, link, interaction_id, msg
 
     } else {
       console.log("else");
-      logger.error(`Error Channel is disconnected for SPID: ${spid}, spNumber: ${spNumber}`);
+      //logger.error(`Error Channel is disconnected for SPID: ${spid}, spNumber: ${spNumber}`);
       return { status: 400, msgId: 'Channel is disconnected' }
     }
   } catch (err) {
