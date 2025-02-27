@@ -519,7 +519,9 @@ const sendMessage = async (req, res) => {
 
     const spId = await spPhoneNumberInstance.getSPIDFromSPNumber(spPhoneNumberInstance.spNumber);
 
-    const APIKeyManagerInstance = new APIKeyManager({ spId });
+    //const APIKeyManagerInstance = new APIKeyManager({ spId });
+    const APIKeyManagerInstance = new APIKeyManager({ spId, ...req?.body});
+
     APIKeyManagerInstance.validate();
     const clientIp = req.headers['x-forwarded-for'] || req?.connection.remoteAddress;
     const ip = clientIp?.startsWith('::ffff:') ? clientIp?.substring(7) : clientIp;
