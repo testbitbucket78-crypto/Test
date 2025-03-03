@@ -570,8 +570,9 @@ const sendMessage = async (req, res) => {
   const sendMessageInstance = new sendMessageBody(req?.body);
   sendMessageInstance.SPID = APIKeyManagerInstance.spId;
   if(sendMessageInstance.isTemplate == true){
-    const { BodyText, FooterText } = await sendMessageBody.getBodyText(sendMessageInstance.name);
-    sendMessageInstance.message_text = BodyText + FooterText;
+    const { Header, BodyText, FooterText } = await sendMessageBody.getBodyText(sendMessageInstance.name);
+    sendMessageInstance.message_text = (Header ? Header + "\n" : "") + BodyText + FooterText;
+    sendMessageInstance.bodyText = BodyText;
   }
    
   const channelData = await db.excuteQuery(val.getChannel, [APIKeyManagerInstance.spId]);
