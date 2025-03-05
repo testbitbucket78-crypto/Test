@@ -146,10 +146,10 @@ const register = async function (req, res) {
     try {
 
 
-        var credentials = await db.excuteQuery(val.loginQuery, [req.body.email_id, registerPhone])
+        var credentials = await db.excuteQuery(val.loginQuery, [registerPhone])
         if (credentials.length > 0) {
             res.status(409).send({
-                msg: 'User Already Exist with this email or Phone Number !',
+                msg: 'Number is already in use! Please use different number',
                 status: 409
             });
         }

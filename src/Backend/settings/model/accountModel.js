@@ -112,7 +112,7 @@ class sendMessageBody {
   }
 
   static async getBodyText(name) {
-  let BodyText = '', FooterText = '';
+  let BodyText = '', FooterText = '', Header = '';
     if (name) {
       try {
         const query = 'SELECT * FROM templateMessages WHERE TemplateName = ? AND isDeleted != 1';
@@ -121,6 +121,7 @@ class sendMessageBody {
         if (result && result.length > 0) {
           BodyText = result[0].BodyText; 
           FooterText = result[0].FooterText;
+          Header = result[0].Header;
         } else {
           throw new Error(`Template not found for Name: ${name}`);
         }
@@ -129,7 +130,7 @@ class sendMessageBody {
       }
     }
 
-    return { BodyText, FooterText };
+    return { Header, BodyText, FooterText };
   }
 }
 
