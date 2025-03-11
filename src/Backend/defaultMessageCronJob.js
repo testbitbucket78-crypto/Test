@@ -54,7 +54,7 @@ async function NoCustomerReplyReminder() {
             let latestOutMessageTime = latestMessageTime?.length >0 ? latestMessageTime[0]?.created_at : null;
            // console.log("*****",latestMessageTime,"NoCustomerReplyReminder",latestOutMessageTime , (latestOutMessageTime < message.latestMessageDate))
             logger.info(`isReplyPause NoCustomerReplyReminder , SPID, phone_number,${latestMessageTime[0]?.created_at},${message.latestMessageDate} ,${message.Is_disable != 0},${isReplyPause} , ${new Date()} , ${message.SPID} , ${message.customer_phone_number }`)
-            if (isReplyPause && latestOutMessageTime < message.latestMessageDate && message.Is_disable != 0) {
+            if (isReplyPause && latestOutMessageTime < message.latestMessageDate && message.Is_disable != 0 && message.settingUpdatedTime < message.created_at) {
               // Check if extractedMessageCache already has the result for this SP_ID
               if (!extractedMessageCache.has(message.SP_ID)) {
                // message_text = await getExtraxtedMessage(message.message_value, message.SP_ID, message.customerId);
@@ -121,7 +121,7 @@ async function NoCustomerReplyReminder() {
 
 async function NoCustomerReplyTimeout() {
   try {
-    let CustomerReplyTimeout = await db.excuteQuery(settingVal.systemMsgQuery, [lostMessageTimeGap]);
+    let CustomerReplyTimeout = await db.excuteQuery(settingVal.systemMsgQuery);
    
     logger.info(`NoCustomerReplyTimeout, ${CustomerReplyTimeout?.length}, ${new Date()}`);
     
@@ -155,7 +155,7 @@ async function NoCustomerReplyTimeout() {
            
 
             // If isReplyPause is true and conditions are met, proceed
-            if (isReplyPause && msg.Is_disable != 0 && (!(msg.updated_at >= msg.updateTime) || msg.updated_at == null) && currentTime >= autoReplyVal) {
+            if (isReplyPause && msg.Is_disable != 0 && ((msg.updated_at >= msg.updateTime) || msg.updated_at == null) && currentTime >= autoReplyVal && msg.settingUpdatedTime < msg.updated_at) {
               // Check if extractedMessageCache already has the result for this SP_ID
               if (!extractedMessageCache.has(msg.SP_ID)) {
                 if (msg.value != null) {
@@ -287,7 +287,7 @@ async function NoAgentReplyTimeOut() {
             logger.info(`Checking conditions for isWorkingHour, isReplyPause ,SPID, phone_number, msg.updated_at , interaction updateTime ,autoReplyVal :${isWorkingHour} ${isReplyPause}, ${new Date()}, ${msg.SPID}, ${msg.customer_phone_number},${msg.updated_at}, ${msg.updateTime}, ${autoReplyVal}`)    
 
          // Check conditions to send a reply
-          if (isReplyPause && msg.Is_disable != 0 && (!(msg.updated_at >= msg.updateTime) || msg.updated_at == null) && currentTime >= autoReplyVal && msg.message_direction == 'IN') {
+          if (isReplyPause && msg.Is_disable != 0 && (!(msg.updated_at >= msg.updateTime) || msg.updated_at == null) && currentTime >= autoReplyVal && msg.message_direction == 'IN' && msg.settingUpdatedTime < msg.updated_at) {
             if (isWorkingHour === true) {
               logger.info(`Sending message for SPID: ${msg.SPID}`, { timestamp: new Date() });
               let response = await messageThroughselectedchannel(

@@ -78,7 +78,7 @@ m.interaction_id, m.SPID, m.Agent_id, MAX(m.Message_id) as MaxMessageId, Max(m.c
 ec.channel,
 ec.phone_number AS customer_phone_number,
 ec.defaultAction_PauseTime,
- dm.value, dm.message_type, dm.Is_disable, dm.link
+ dm.value, dm.message_type, dm.Is_disable, dm.link,dm.updated_at as settingUpdatedTime
 FROM
 Interaction ic
 JOIN (
@@ -149,7 +149,8 @@ SUBSTRING_INDEX(GROUP_CONCAT(distinct imp.AgentId ORDER BY imp.created_at desc),
 defAc.isAutoReply,defAc.isAutoReplyDisable,defAc.pauseAutoReplyTime,
 dm.*,
 latestmsg.*,
-max(latestmsg.updated_at) as nonSystemUpdatedMsgTime
+max(latestmsg.updated_at) as nonSystemUpdatedMsgTime,
+dm.updated_at as settingUpdatedTime
 FROM
 Interaction ic
 JOIN EndCustomer ec ON ic.customerId = ec.customerId
@@ -297,6 +298,7 @@ SELECT
     dm.value,
     dm.message_type,
     dm.Is_disable,
+    dm.updated_at as settingUpdatedTime,
     dm.link,
     ec.channel,
     ec.Phone_number AS customer_phone_number,
