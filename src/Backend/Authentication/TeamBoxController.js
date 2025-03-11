@@ -776,7 +776,6 @@ const insertMessage = async (req, res) => {
                             middlewareresult = await middleWare.channelssetUp(SPID, channel, 'text', req.body.messageTo, content, message_media, interaction_id, msg_id.insertId, spNumber);
                         }
                         // autoReplyPauseTime(SPID, interaction_id);
-                        //messages[0]?.id
                     }
                     if (middlewareresult?.status != 200) {
                         let NotSendedMessage = await db.excuteQuery('UPDATE Message set msg_status=9, whatsAppMessageId=? where Message_id=?', [middlewareresult?.msgId, msg_id.insertId]);

@@ -157,6 +157,7 @@ async function extractDataFromMessage(body) {
     let Type = firstMessage.type
     // Variable to hold the filename
     let extension;
+    message_text = message_text ? message_text : '';
 
     var d = new Date(firstMessage.timestamp * 1000).toUTCString();
 
@@ -199,7 +200,7 @@ async function extractDataFromMessage(body) {
           repliedMessageText = 'Document';
         }
 
-          if(button)
+        if(button && button?.length > 0)
             repliedMessageText = 'Template';
       }
         //console.log( spid, "campaignReplied*******", campaignReplied?.affectedRows)

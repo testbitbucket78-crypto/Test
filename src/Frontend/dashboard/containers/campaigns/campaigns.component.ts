@@ -3140,7 +3140,9 @@ console.log(this.allTemplatesMain);
 		};
 		console.log(list);
 		this.segmentsContactList =[];
+		this.isLoading = true;
 		this.apiService.processQuery(bodyData).subscribe((result:any) =>{
+			this.isLoading = false;
 			if(result){
 				let contactList = result?.uniqueResults;
 				contactList.forEach((item:any)=>{

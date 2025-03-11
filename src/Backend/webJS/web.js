@@ -1058,6 +1058,7 @@ ec.customerId;`
 
 async function savelostChats(message, spPhone, spid, currentIndex, lastIndex) {
   try {
+      if(!message.from.includes('@g.us')){
     let message_text = message.body   //firstMessage
 
     if (message_text) {
@@ -1136,6 +1137,7 @@ async function savelostChats(message, spPhone, spid, currentIndex, lastIndex) {
           var SavedMessageDetails = await actionsOflatestLostMessage(message_text, phone_number_id, from, display_phone_number, saveMessage)
         }
       }
+    }
     }
   } catch (err) {
     logger.error(`error in, savelostChats : ${from}, error: ${err}`);

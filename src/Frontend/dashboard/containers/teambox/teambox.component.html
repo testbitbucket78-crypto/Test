@@ -533,7 +533,14 @@ popupWidth='250px' popupHeight='200px'>
 					</div>
 
 				</div>
-
+				<div *ngIf="!selectedInteraction?.Name" class="col-md-12 mt-3">
+					<div class="conversation_blank">
+							<img src="/assets/img/teambox/new-con@2x.png">
+							<p>Initiate Conversation</p>
+							<!-- <span>Let’s start a conversation through a message</span> -->
+							<span>No messages to show</span>
+						</div>
+				</div>
 			</div>
 
 			<div  class=" col-sm-3 team pl-2" style="background: #fbf9fe;">

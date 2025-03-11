@@ -630,7 +630,11 @@ export class ContactFilterComponent implements OnInit {
 				console.log(nextDate);
 				let update = this.datePipe.transform(nextDate, 'yyyy-MM-dd');
 				filterOper = '> "' + filter.filterValue.toString() + '" AND EC.' + filter.filterPrefix + ' < "' +update?.toString() + '"';				
-			}else{				
+			} else if(filter?.filterType =="d_time"){
+				let valueArray = filter.filterValue.split(' / ')
+				filterOper = "Between '"+valueArray[0]+"' AND '"+valueArray[1]+"'" ;
+			}
+			else{				
             	filterOper = "Between '"+valueArray[0]+"' AND '"+valueArray[1]+"'" ;
 			}
           }
