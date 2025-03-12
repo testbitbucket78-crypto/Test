@@ -1481,6 +1481,16 @@ createButton(type: string) {
     return null; // Return no error for validator
   }
 
+  sanitizeInput(event: string, item: any): void {
+    const emojiRegex = /[\p{Emoji}\u200D\uFE0F]/gu; // Regex for emojis
+    if (event) {
+      const sanitizedValue = event.replace(emojiRegex, '');
+      if (sanitizedValue !== event) {
+        item = sanitizedValue; // Directly update the object
+      }
+    }
+  }
+
 
   validateItems():boolean {
     let validationErrors = ''; 
