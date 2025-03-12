@@ -21,6 +21,9 @@
  *               headerText:
  *                 type: string
  *                 example: ""
+ *               bodyText:
+ *                 type: string
+ *                 example: ""
  *               message_text:
  *                 type: string
  *                 example: "<p>Text Here: {{Name}}</p>"
@@ -52,18 +55,31 @@
  *               isTemplate:
  *                 type: boolean
  *                 example: false
+ *               templateDetails:
+ *                 type: object
+ *                 properties:
+ *                   name:
+ *                     type: string
+ *                     example: ""
  *               language:
  *                 type: string
  *                 example: ""
- *               media_type:
- *                 type: string
- *                 example: ""
- *               message_media:
- *                 type: string
- *                 example: "text"
- *               name:
- *                 type: string
- *                 example: ""
+ *               hasMedia:
+ *                 type: boolean
+ *                 example: false
+ *                 description: "Indicates whether media is attached to the message."
+ *               mediaDetails:
+ *                 type: object
+ *                 properties:
+ *                   media_type:
+ *                     type: string
+ *                     example: "image/jpeg or video/mp4 etc."
+ *                     description: Required if message_media is not "text"
+ *                   message_media:
+ *                     type: string
+ *                     example: "https://example.com/image.jpg or https://example.com/video.mp4"
+ *                     description: URL of the media file
+ *                 description: Included only if message_media is not "text"
  *               apiKey:
  *                 type: string
  *                 example: "key-e8dihe8e3u-1735230342734"

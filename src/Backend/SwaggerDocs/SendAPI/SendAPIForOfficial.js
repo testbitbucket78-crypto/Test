@@ -21,6 +21,9 @@
  *               headerText:
  *                 type: string
  *                 example: ""
+ *               bodyText:
+ *                 type: string
+ *                 example: ""
  *               message_text:
  *                 type: string
  *                 example: "<p>Your Text Here {{Name}}:</p>"
