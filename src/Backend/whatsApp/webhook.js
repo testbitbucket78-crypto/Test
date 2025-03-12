@@ -391,7 +391,9 @@ async function saveIncommingMessages(from, firstMessage, phone_number_id, displa
     }
        let EcPhonewithoutcountryCode = countryCodeObj?.localNumber; 
        countryCode = countryCodeObj?.country + " +" + countryCodeObj?.countryCode;
-
+    if(message_media =='unsupported' || message_media == 'contact' || message_media == 'location'){
+      message_text = 'Message Type not supported';
+    }
     var saveMessage = await db.excuteQuery(process.env.query, [phoneNo, 'IN', message_text, message_media, Message_template_id, Quick_reply_id, Type, ExternalMessageId, display_phone_number, contactName, media_type, 'NULL', 'WA API', message_time, countryCode, EcPhonewithoutcountryCode,repliedMessageTo,replyMessageText,replyMessageId]);
 
     console.log("====SAVED MESSAGE====" + " replyValue length  " + JSON.stringify(saveMessage));

@@ -106,8 +106,8 @@ export class ContactFilterComponent implements OnInit {
 			option:[
 				{label:'Is empty',checked:false,type:'none'},
 				{label:'Is not empty',checked:false,type:'none'},
-			{label:'Is equal to',checked:false,type:'select_opt',options:['Paid','Un-Paid','New Customer']},
-			{label:'Is not equal to',checked:false,type:'select_opt',options:['Paid','Un-Paid','New Customer']},
+			{label:'Is equal to',checked:false,type:'multi_select_opt',options:['Paid','Un-Paid','New Customer']},
+			{label:'Is not equal to',checked:false,type:'multi_select_opt',options:['Paid','Un-Paid','New Customer']},
 			]},
 			
 			{value:'OptInStatus',label:'Message Opt-in',checked:false,addeFilter:[],
@@ -273,8 +273,8 @@ export class ContactFilterComponent implements OnInit {
 					options =[
 						{label:'Is empty',checked:false,type:'none'},
 						{label:'Is not empty',checked:false,type:'none'},
-						{label:'Is equal to',checked:false,type:'select_opt',options:selectOptions},
-						{label:'Is not equal to',checked:false,type:'select_opt',options:selectOptions}
+						{label:'Is equal to',checked:false,type:'multi_select_opt',options:selectOptions},
+						{label:'Is not equal to',checked:false,type:'multi_select_opt',options:selectOptions}
 					];
 					break;
 				}				
@@ -554,8 +554,12 @@ export class ContactFilterComponent implements OnInit {
 				console.log(nextDate);
 				let update = this.datePipe.transform(nextDate, 'yyyy-MM-dd');
 				filterOper = '>= "' + filter.filterValue.toString() + '" AND EC.' + filter.filterPrefix + ' < "' +update?.toString() + '"';				
+			}
+			else if(filter?.filterType =="multi_select_opt"){
+				filterOper = "LIKE '%"+filter.filterValue+"%'";
 			}else
-            	filterOper = '= "'+filter.filterValue + '"';
+			filterOper = '= "'+filter.filterValue + '"';
+
           }
           if(filter.filterBy=="Is not equal to"){
 			if(filter.filterType =="date"){

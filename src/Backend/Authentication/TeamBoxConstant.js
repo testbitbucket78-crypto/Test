@@ -782,7 +782,10 @@ getmessageBymsgId =`
         Message.system_message_type_id,
         Message.mediaSize,
         Message.assignAgent,
-        Message.button,
+        Message.button,        
+        Message.repliedMessageTo,
+        Message.repliedMessage,
+        Message.repliedMessageId,
         Author.name AS AgentName,
         DelAuthor.name AS DeletedBy
     FROM 
