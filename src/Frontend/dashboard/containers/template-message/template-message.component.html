@@ -526,22 +526,7 @@
                     <button type="button" class="previous-btn" type="button" data-bs-toggle="modal" data-bs-target="#newTemplateMessageFirst">
                         <img src="../../../../assets/img/profile/previous.svg" />
                     </button>
-                    <!-- <div class="d-flex justify-content-between align-items-center sel-type-btns">
-
-                        <input type="radio" id="sel-text" name="sel-type" (change)="showMessageType('text')" 
-                           [checked]="templatesMessageData.media_type=='text' || galleryMessageData.media_type=='text'">
-                        <label [ngClass]="{'radio-label': selectedType === 'text'}" class="m-0" for="sel-text">Text</label>
-                        <input type="radio" id="sel-image" name="sel-type" (change)="showMessageType('image')"
-                        [checked]="templatesMessageData.media_type=='image' || galleryMessageData.media_type=='image'">
-                        <label [ngClass]="{'radio-label': selectedType === 'image'}"  class="m-0" for="sel-image">Image</label>
-                        <input type="radio" id="sel-video" name="sel-type" (change)="showMessageType('video')"
-                        [checked]="templatesMessageData.media_type=='video' || galleryMessageData.media_type=='video'">
-                        <label [ngClass]="{'radio-label': selectedType === 'video'}"  class="m-0" for="sel-video">Video</label>
-                        <input type="radio" id="sel-document" name="sel-type"(change)="showMessageType('document')"
-                        [checked]="templatesMessageData.media_type=='document' || galleryMessageData.media_type=='document'">
-                        <label [ngClass]="{'radio-label': selectedType === 'document'}" class="m-0" for="sel-document">Document</label>
                     
-                    </div> -->
                     <div>
                         <select [(ngModel)]="selectedType" [ngModelOptions]="{standalone: true}"  class="sel input-form" (change)="showMessageType()">
                             <option value="">None</option>
@@ -659,45 +644,12 @@
                     <h6>Buttons<span>(Optional)</span></h6>
                     <span class="pb-1">Add buttons to let customers respond to your message or take action. You can add up to total of 10 buttons. If you add more than 3 buttons, they will appear in a list.</span>
                     <br />
-                    <!-- <select class="mt-1 input-form" formControlName="buttonType">
-                        <option  [disabled]="true" [selected]="true" [hidden]="true" ()>Select a button type</option>
-                        <option value="Quick Reply">Quick Reply</option>
-                        <option value="Call to Action">Visit Website</option>
-                        <option value="Call to Action">Call Phone</option>
-                        <option value="Call to Action">Complete Flow</option>
-                        <option value="Call to Action">Copy offer Code</option>
-                    </select> -->
-                    <button (click)="openButtonPopUp()" class="add-btn">+ Add Buttons
+                    
+                    <button (click)="openButtonPopUp($event)" class="add-btn">+ Add Buttons
                         <img class="btn-preview-img" src="../../../../assets/img/drop-icon.png">
                     </button>
-
-
-                    <!-- <div class="modal fade" tabindex="-1" id="rolesModals" data-bs-backdrop="static" role="dialog">
-                        <div class="modal-dialog" role="document">
-                            <div class="modal-content roles-modal p-2 pl-3">
-                                <div class="modal-body px-5 pt-0">
-                                    <div class="btn-popup" *ngIf="isPopupVisible"  >
-                                        <div class="btn-type-headings">Quick reply buttons</div>
-                                        <div class="btn-Name" (click)="addButtons('Quick Reply')" [class.disabled]="isDisableButton('Quick Reply')">
-                                            <img class="btn-preview-img" src="../../../../assets/img/settings/reply-arrow.svg"> Custom</div>
-                                            <hr>
-                                            <div class="btn-type-headings">Call to action buttons</div>
-                                        <div class="btn-Name" (click)="addButtons('Visit Website')" [class.disabled]="isDisableButton('Visit Website')">
-                                            <img class="btn-preview-img" src="../../../../assets/img/settings/open-in-new.svg"> URL<div class="font-small pl-4">2 buttons maximum</div></div>
-                                        <div class="btn-Name" (click)="addButtons('Call Phone')" [class.disabled]="isDisableButton('Call Phone')">
-                                            <img class="btn-preview-img" src="../../../../assets/img/settings/phone-call.svg"> Phone <div class="font-small pl-4">1 button maximum</div></div>
-                                        <div class="btn-Name" (click)="addButtons('Copy offer Code')" [class.disabled]="isDisableButton('Copy offer Code')">
-                                            <img class="btn-preview-img" src="../../../../assets/img/settings/copy.svg"> Coupon Code<div class="font-small pl-4">1 button maximum</div></div>
-                                        <div class="btn-Name" (click)="addButtons('Complete Flow')" [class.disabled]="isDisableButton('Complete Flow')">
-                                            <img class="btn-preview-img" src="../../../../assets/img/settings/form.svg">Flow<div class="font-small pl-4">1 button maximum</div></div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div> -->
-
                     <!-- <div class="modal fade" tabindex="-1" id="rolesModal" data-bs-backdrop="static" role="dialog"> -->
-                    <div class="btn-popup" *ngIf="isPopupVisible"  >
+                    <div class="btn-popup" *ngIf="isPopupVisible"  #btnPopupContainer>
                         <div class="btn-type-headings">Quick reply buttons</div>
                         <div class="btn-Name" (click)="addButtons('Quick Reply')" [class.disabled]="isDisableButton('Quick Reply')">
                             <img class="btn-preview-img" src="../../../../assets/img/settings/reply-arrow.svg"> Custom</div>
@@ -715,39 +667,7 @@
                 <!-- </div> -->
                 </div>
 
-                 <!-- <div class="quick-reply-btns" *ngIf="newTemplateForm.get('buttonType')?.value === 'Quick Reply'">
-                   <span>You can add upto 3 quick replies buttons</span>
-                  <div *ngFor="let quickReply of quickReplyButtons;let idx=index">
-                    <div class="d-flex justify-content-between align-items-center msg-head">
-                        <h6>Quick Reply {{ idx + 1 }}</h6><div><span class="characters-count">{{ getCharacterCount(idx) }}</span><span>/25 Characters</span></div>
-                    </div>
-                    <div class="flex-column sel-type-link">
-                        <input type="text" id="quickreply" maxlength="25" [formControlName]="'quickreply' + (idx + 1)" placeholder="Enter" (input)="updateCharacterCount($event, idx)">
-                    </div>
-                    <div class="d-flex justify-content-between incoming-card">
-                        <div>
-                            <a class="add-btn" (click)="addQuickReplyButtons()" *ngIf="idx == quickReplyButtons?.length -1">+ Add</a>
-                        </div>
-                        <a class="remove-btn" (click)="removeQuickReplyButtons(idx)" *ngIf="quickReplyButtons?.length>1">- Remove</a>
-                    </div>
-                   </div> 
-                </div> -->
-
                 <div class="call-to-action-btns" >     
-                    <!-- <div *ngFor="let quickReply of quickReplyButtons;let idx=index">
-                        <div class="d-flex justify-content-between align-items-center msg-head">
-                            <h6>Quick Reply {{ idx + 1 }}</h6><div><span class="characters-count">{{ getCharacterCount(idx) }}</span><span>/25 Characters</span></div>
-                        </div>
-                        <div class="flex-column sel-type-link">
-                            <input type="text" id="quickreply" maxlength="25" [formControlName]="'quickreply' + (idx + 1)" placeholder="Enter" (input)="updateCharacterCount($event, idx)">
-                        </div>
-                        <div class="d-flex justify-content-between incoming-card">
-                            <div>
-                                <a class="add-btn" (click)="addQuickReplyButtons()" *ngIf="idx == quickReplyButtons?.length -1">+ Add</a>
-                            </div>
-                            <a class="remove-btn" (click)="removeQuickReplyButtons(idx)" *ngIf="quickReplyButtons?.length>1">- Remove</a>
-                        </div>
-                       </div> -->
                        <div *ngIf="hasQuickReplyButtons" class="group-border quick-reply-group">
                         <div class="container-call-to-btns" *ngFor="let item of buttonsArray;let idx = index">
                         <div class="d-flex btn-container" *ngIf="item.type =='Quick Reply'">
@@ -763,7 +683,7 @@
                                 </div>
                                 <div class="flex-column sel-type-link">
                                     <!-- (input)="updateCharacterCount($event, idx)" -->
-                                    <input type="text" id="quickreply" [(ngModel)]="item.buttonText" [ngModelOptions]="{standalone: true}" maxlength="25" placeholder="e.g. Yes">
+                                    <input type="text" id="quickreply" [(ngModel)]="item.buttonText" [ngModelOptions]="{standalone: true}" maxlength="25" placeholder="e.g. Yes" (ngModelChange)="sanitizeInput($event,item.buttonText)">
                                 </div>
                             </div>
                         </div>
@@ -775,21 +695,7 @@
                        </div>
                        <div *ngIf="hasNonQuickReplyButtons" class="group-border non-quick-reply-group">
                 <div class="container-call-to-btns" *ngFor="let item of buttonsArray;let idx = index">
-                    <!-- <div class="d-flex btn-container" *ngIf="item.type =='Quick Reply'">
-                        <div class="msg-head btn-type-head">
-                            <h6>Button Type</h6>
-                            <div class="btn-type-heading">Quick Reply</div>
-                        </div>
-                        <div class="flex-grow-1 ml-2 pb-2">
-                            <div class="d-flex justify-content-between align-items-center msg-head">
-                                <h6>Button Text</h6>
-                                <div><span class="characters-count">{{item?.buttonText?.length}}</span><span>/25 Characters</span></div>
-                            </div>
-                            <div class="flex-column sel-type-link">
-                                <input type="text" id="quickreply" [(ngModel)]="item.buttonText" [ngModelOptions]="{standalone: true}" maxlength="25" placeholder="e.g. Yes">
-                            </div>
-                        </div>
-                    </div> -->
+                    
                     <div class="btn-container" *ngIf="item.type =='Copy offer Code'">
                         <div class="d-flex ">
                         <div class="msg-head btn-type-head">
@@ -817,7 +723,7 @@
                                 </div>
                                 <div class="flex-column sel-type-link">
                                     <!-- (input)="updateCharacterCount($event, idx)" -->
-                                    <input type="text" id="quickreply" maxlength="15" placeholder="e.g. Get50Off" [(ngModel)]="item.code" [ngModelOptions]="{standalone: true}" >
+                                    <input type="text" id="quickreply" maxlength="15" placeholder="e.g. Get50Off" [(ngModel)]="item.code" [ngModelOptions]="{standalone: true}" (ngModelChange)="sanitizeInput($event,item.code)" >
                                 </div>
                             </div>
                         </div>
@@ -835,7 +741,7 @@
                             </div>
                             <div class="flex-column sel-type-link">
                                 <!-- (input)="updateCharacterCount($event, idx)" -->
-                                <input type="text" id="quickreply" maxlength="25" placeholder="e.g. Sign up" [(ngModel)]="item.buttonText" [ngModelOptions]="{standalone: true}" >
+                                <input type="text" id="quickreply" maxlength="25" placeholder="e.g. Sign up" [(ngModel)]="item.buttonText" [ngModelOptions]="{standalone: true}" (ngModelChange)="sanitizeInput($event,item.buttonText)">
                             </div>
                         </div>
                     </div>
@@ -870,7 +776,7 @@
                                     </div>
                                 </div>
                                 <div class="sel-type-link">
-                                    <input type="text" [(ngModel)]="item.buttonText" [ngModelOptions]="{standalone: true}" maxlength="25" placeholder="e.g. Call us">
+                                    <input type="text" [(ngModel)]="item.buttonText" [ngModelOptions]="{standalone: true}" maxlength="25" placeholder="e.g. Call us" (ngModelChange)="sanitizeInput($event,item.buttonText)">
                                 </div>
                             </div>
                         </div>
@@ -890,8 +796,8 @@
                                     </div>
                                 </div>
                                 <div class="sel-type-link">
-                                    <input type="text" [(ngModel)]="item.phoneNumber" [ngModelOptions]="{standalone: true}" maxlength="20" placeholder="e.g. 9876543210"  placeholder="Enter" >
-                                    <input type="text" [(ngModel)]="item.displayPhoneNumber" [ngModelOptions]="{standalone: true}" maxlength="20" placeholder="e.g. 9876543210" style="display: none">
+                                    <input type="text" [(ngModel)]="item.phoneNumber" [ngModelOptions]="{standalone: true}" maxlength="20" (ngModelChange)="sanitizeInput($event,item.phoneNumber)" placeholder="e.g. 9876543210"  placeholder="Enter" >
+                                    <input type="text" [(ngModel)]="item.displayPhoneNumber" [ngModelOptions]="{standalone: true}" maxlength="20" placeholder="e.g. 9876543210" (ngModelChange)="sanitizeInput($event,item.displayPhoneNumber)" style="display: none">
                                 </div>
                             </div>
                         </div>
@@ -910,7 +816,7 @@
                                 </div>
                                 <div class="sel-type-link">
                                     <input type="text"  maxlength="25" placeholder="e.g. Visit website"
-                                    [(ngModel)]="item.buttonText" [ngModelOptions]="{standalone: true}" >
+                                    [(ngModel)]="item.buttonText" [ngModelOptions]="{standalone: true}" (ngModelChange)="sanitizeInput($event,item.buttonText)">
                                 </div>
                             </div>
                         </div>
@@ -929,7 +835,7 @@
                                     </div>
                                 </div>
                                 <div class="sel-type-link">
-                                    <input type="text" placeholder="e.g. https://www.example.com" (blur)="ensureTrailingSlash(idx)"  maxlength="2000" [(ngModel)]="item.webUrl" [ngModelOptions]="{standalone: true}">
+                                    <input type="text" placeholder="e.g. https://www.example.com" (blur)="ensureTrailingSlash(idx)"  maxlength="2000" [(ngModel)]="item.webUrl" [ngModelOptions]="{standalone: true}" (ngModelChange)="sanitizeInput($event,item.webUrl)">
                                 </div>
                             </div>
                         </div>

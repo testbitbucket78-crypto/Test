@@ -1420,7 +1420,7 @@ It is determined by a combination of user feedback signals like blocks, reports 
 											</p>
 										</div>
 									</div>
-									<div *ngIf="addedF?.filterType =='select_opt'" class="formrow">
+									<div *ngIf="addedF?.filterType =='select_opt' || addedF?.filterType =='multi_select_opt'" class="formrow">
 										<p (click)="toggleFilterTagOption()"  class="form-control select_box btn">
 											{{addedF?.filterValue}}
 										</p>

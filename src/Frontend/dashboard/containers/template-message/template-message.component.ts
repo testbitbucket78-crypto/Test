@@ -1,4 +1,4 @@
-import { Component, ElementRef, OnInit, Renderer2, ViewChild } from '@angular/core';
+import { Component, ElementRef, HostListener, OnInit, Renderer2, ViewChild } from '@angular/core';
 import { AbstractControl, FormControl, FormGroup, ValidationErrors, Validators } from '@angular/forms';
 import { newTemplateFormData, quickReplyButtons, templateMessageData,} from 'Frontend/dashboard/models/settings.model';
 import { SettingsService } from 'Frontend/dashboard/services/settings.service';
@@ -212,6 +212,9 @@ export class TemplateMessageComponent implements OnInit {
       'YE +967', 'YT +262', 'ZA +27', 'ZM +260', 'ZW +263'
     ];
     @ViewChild('chatEditor') chatEditor?: RichTextEditorComponent | any;
+
+
+  @ViewChild('btnPopupContainer') btnPopupContainer!: ElementRef;
     lastCursorPosition: Range | null = null;
 
     public tools: object = {
@@ -1019,11 +1022,12 @@ checkTemplateName(e:any){
             let value = data[prop as keyof typeof data];
             if (this.newTemplateForm.get(prop)){
                 console.log(prop)
-                if(prop == 'categoryChange'){
-
-                    console.log('1')
+                if(prop == 'FooterText'){
+                    let val = value.replace('<em>','').replace('</em>','');
+                    this.newTemplateForm.get(prop)?.setValue(val);
+                }else{
+                this.newTemplateForm.get(prop)?.setValue(value);
                 }
-             this.newTemplateForm.get(prop)?.setValue(value);
             }
             this.id = ID;
         }
@@ -1069,7 +1073,7 @@ checkTemplateName(e:any){
         }
         this.id = 0;
         this.newTemplateForm.get('Channel')?.setValue(null);
-        this.newTemplateForm.get('media_type')?.setValue(this.galleryMessageData?.media_type ? this.galleryMessageData?.media_type : 'none');
+        this.newTemplateForm.get('media_type')?.setValue(this.galleryMessageData?.media_type ? this.galleryMessageData?.media_type : 'text');
         this.Category = this.galleryMessageData?.Category;
         this.selectTab(0)
 
@@ -1411,18 +1415,18 @@ createButton(type: string) {
             return {};
     }
 }
-openButtonPopUp() {
-    this.isPopupVisible = !this.isPopupVisible;
+// openButtonPopUp() {
+//     this.isPopupVisible = !this.isPopupVisible;
 
-    // Close the popup if a click happens outside of it
-    // if (this.isPopupVisible) {
-    //   this.renderer.listen('window', 'click', (event: Event) => {
-    //     if (!this.popupContainer?.nativeElement?.contains(event.target)) {
-    //       //this.isPopupVisible = false;
-    //     }
-    //   });
-    // }
-  }
+//     // Close the popup if a click happens outside of it
+//     // if (this.isPopupVisible) {
+//     //   this.renderer.listen('window', 'click', (event: Event) => {
+//     //     if (!this.popupContainer?.nativeElement?.contains(event.target)) {
+//     //       //this.isPopupVisible = false;
+//     //     }
+//     //   });
+//     // }
+//   }
 
   isDisableButton(type:any){
     let isFlow = this.buttonsArray.filter((item:any)=>item?.type == 'Complete Flow')?.length > 0;
@@ -1477,6 +1481,16 @@ openButtonPopUp() {
     return null; // Return no error for validator
   }
 
+  sanitizeInput(event: string, item: any): void {
+    const emojiRegex = /[\p{Emoji}\u200D\uFE0F]/gu; // Regex for emojis
+    if (event) {
+      const sanitizedValue = event.replace(emojiRegex, '');
+      if (sanitizedValue !== event) {
+        item = sanitizedValue; // Directly update the object
+      }
+    }
+  }
+
 
   validateItems():boolean {
     let validationErrors = ''; 
@@ -1528,7 +1542,8 @@ return true
   }
 
   addNewTemplate(){
-    this.buttonsArray =[];
+    this.buttonsArray =[];    
+    this.newTemplateForm.get('Language')?.setValue('English');
   }
   CheckVariable(){
     let varValue = this.allVariablesValueList.filter((item:any)=> item.val == '');
@@ -1668,6 +1683,23 @@ createButtonPatch(type: string, buttonText: string, webUrl: string, phoneNumber:
             return {};
     }
 }
+
+openButtonPopUp(event: Event) {
+    event.stopPropagation(); // Prevents event bubbling
+    this.isPopupVisible = !this.isPopupVisible;
+  }
+
+  // Close when clicking outside
+  @HostListener('document:click', ['$event'])
+  closeAddButtonsOnOutsideClick(event: Event) {
+    if (
+      this.isPopupVisible && 
+      this.btnPopupContainer && 
+      !this.btnPopupContainer.nativeElement.contains(event.target)
+    ) {
+      this.isPopupVisible = false;
+    }
+  }
 
 
 }

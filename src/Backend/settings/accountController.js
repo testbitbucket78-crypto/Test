@@ -5,9 +5,9 @@ const val = require('./constant');
 const bodyParser = require('body-parser');
 const awsHelper = require('../awsHelper')
 const cors = require('cors')
+app.use(cors());
 const moment = require('moment');
 app.use(bodyParser.json());
-app.use(cors());
 app.use(bodyParser.urlencoded({ extended: true }));
 const fs = require('fs');
 const path = require('path');

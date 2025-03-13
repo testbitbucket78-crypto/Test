@@ -352,7 +352,7 @@ async function batchofScheduledCampaign(users, sp_id, type, message_content, mes
   for (let i = 0; i < users.length; i += batchSize) {
     const batch = users.slice(i, i + batchSize);  
     await sendScheduledCampaign(batch, sp_id, type, message_content, message_media, phone_number_id, channel_id, message, list,header,body,templateId);
-    const randomdelay = Math.floor(Math.random() * (12000 - 8000 + 1)) + 8000;
+    const randomdelay = Math.floor(Math.random() * (7000 - 5000 + 1)) + 5000;
     await wait(randomdelay)
   }
   setTimeout(() => {
@@ -418,7 +418,7 @@ async function sendScheduledCampaign(batch, sp_id, type, message_content, messag
     //   //console.log("response",response)     
     // }, 10)
     response = await messageThroughselectedchannel(sp_id, Phone_number, type, textMessage, message_media, phone_number_id, channel_id, message.Id, message, message_text,headerVar,bodyVar,templateId,message.buttons,DynamicURLToBESent);
-    const randomdelay = Math.floor(Math.random() * (2000 - 1000 + 1)) + 1000;
+    const randomdelay = Math.floor(Math.random() * (9000 - 7000 + 1)) + 7000;
     await wait(randomdelay)
   }
 }
