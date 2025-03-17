@@ -374,7 +374,43 @@ async function batchofScheduledCampaign(users, sp_id, type, message_content, mes
 //     campaignCompletedAlert(message)
 //   }, 10000)
 // }
+function replaceTemplateVariables(messageText, messageVariables) {
+  let updatedText = messageText;
 
+  if (typeof messageVariables === "string") {
+    messageVariables = JSON.parse(messageVariables);
+  }
+
+  console.log(messageVariables);
+
+  // Step 1: Use placeholders to prevent overwritten replacements
+  const placeholderMap = {};
+  const tempPlaceholders = {};
+
+  messageVariables.forEach((variable, index) => {
+    let label = variable.label;
+    let value = variable.value;
+
+    // Generate unique placeholder
+    let placeholder = `__TEMP_${index}__`;
+    placeholderMap[placeholder] = value;
+    tempPlaceholders[label] = placeholder;
+  });
+
+  // Step 2: Replace original variables with temporary placeholders
+  Object.keys(tempPlaceholders).forEach((key) => {
+    let regex = new RegExp(key, "g");
+    updatedText = updatedText.replace(regex, tempPlaceholders[key]);
+  });
+
+  // Step 3: Replace temporary placeholders with actual values
+  Object.keys(placeholderMap).forEach((placeholder) => {
+    let regex = new RegExp(placeholder, "g");
+    updatedText = updatedText.replace(regex, placeholderMap[placeholder]);
+  });
+
+  return updatedText;
+}
 
 
 async function campaignCompletedAlert(message) {
@@ -388,6 +424,7 @@ async function campaignCompletedAlert(message) {
 
 async function sendScheduledCampaign(batch, sp_id, type, message_content, message_media, phone_number_id, channel_id, message, list,header,body,templateId) {
   console.log("sendScheduledCampaign", "channel_id", sp_id, type, message_media, phone_number_id, channel_id)
+  body = replaceTemplateVariables(body, message.message_variables);
   for (var i = 0; i < batch.length; i++) {
     let message_text =  '<p><strong>'+header+'</strong></p><br>' + message_content
     let Phone_number = batch[i].Phone_number

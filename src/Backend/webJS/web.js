@@ -34,7 +34,20 @@ let isQRstack;
 let undefinedCount = 0;
 let updateUserQuery = `update user set mobile_number=? , isAutoScanOnce =? where SP_ID=? and ParentId is null and isDeleted !=1 and IsActive !=2`
 let notifyInteraction = `SELECT InteractionId FROM Interaction WHERE customerId IN (SELECT customerId FROM EndCustomer WHERE Phone_number = ? and SP_ID=? ) and is_deleted !=1   order by created_at desc`
+let isSessionAlreadyExistMap = {};
 async function createClientInstance(spid, phoneNo) {
+  const sessionId = spid;
+  const baseDir = path.resolve(__dirname, "../../../webJS/.wwebjs_auth");
+  const sessionPath = path.join(baseDir, `session-${sessionId}`);
+  
+  isSessionAlreadyExistMap[spid] = fs.existsSync(sessionPath);
+
+  if (isSessionAlreadyExistMap[spid]) {
+    console.log(`Session session-${sessionId} already exists.`);
+  } else {
+    console.log(`Session not already made for session-${sessionId}.`);
+  }
+
   logger.info(`Creating client instance for spid: ${spid}, phoneNo: ${phoneNo}`);
   console.log(spid, phoneNo, new Date().toUTCString());
   console.log(clientPidMapping.hasOwnProperty(spid))
@@ -364,7 +377,11 @@ function ClientInstance(spid, authStr, phoneNo) {
                   for (let currentIndex = 0; currentIndex <= lastIndex; currentIndex++) {
                     let n_chat_mensaje = mensajes_verificar[currentIndex];
 
-                    let getmessages = savelostChats(n_chat_mensaje, phoneNo, spid, currentIndex, lastIndex);
+                    if (isSessionAlreadyExistMap[spid]) {
+                      console.log(`isSessionAlreadyExist-${isSessionAlreadyExistMap[spid]}.`);
+                      let getmessages = savelostChats(n_chat_mensaje, phoneNo, spid, currentIndex, lastIndex);
+                    }
+                  // let getmessages = savelostChats(n_chat_mensaje, phoneNo, spid, currentIndex, lastIndex);
 
                   }
 
@@ -373,7 +390,6 @@ function ClientInstance(spid, authStr, phoneNo) {
                   // apply rauting rules and sreply 
                 }
               }
-
               console.log("resolve client ready", new Date().toUTCString())
               return resolve({ status: 201, value: 'Client is ready!' });
             }
