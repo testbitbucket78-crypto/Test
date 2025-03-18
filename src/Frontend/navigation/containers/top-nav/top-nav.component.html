@@ -16,6 +16,9 @@
         <div *ngIf="unreadCount > 0" class="notify-count">{{unreadCount}}</div>
       </div>
         <img  routerLink="/teambox" title="Teambox" src="../../../../assets/img/top-nav/chat-icon.svg">
+
+          <img  routerLink="/tools" title="Tools" src="../../../../assets/img/tools.svg">
+
         <div>
         <img *ngIf="profilePicture" class="profilepic" src="{{profilePicture}}?{{randomNumber}}" title="Profile" (click)="toggleShowProfile()"/>
         <!-- <div *ngIf="!profilePicture" class="pick">

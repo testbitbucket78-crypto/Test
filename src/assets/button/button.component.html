@@ -1,0 +1,9 @@
+<button class="button" 
+        [class.active]="isActive" 
+        [class.primary]="type === 'primary'" 
+        [class.secondary]="type === 'secondary'"
+        [ngStyle]="{ 'width': customWidth }"
+        [disabled]="disabled"
+        (click)="handleClick()">
+    {{ label }}
+</button>

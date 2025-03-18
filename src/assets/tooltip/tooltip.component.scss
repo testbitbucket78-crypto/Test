@@ -1,0 +1,38 @@
+.position-relative {
+    position: relative;
+}
+
+.showInfoFallback1 {
+    position: absolute;
+    top: 25px; 
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: #fff;
+    border: 1px solid #ccc;
+    padding: 10px;
+    box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.2);
+    z-index: 100;
+    width: 250px;
+    font-size: 12px;
+    border-radius: 30px;
+}
+#radio-close-btn {
+    width: 36px;
+    height: 36px;
+    position: absolute;
+    top: 4%;
+    right: 6%;
+    background: #ffffff;
+    border-radius: 15px;
+    opacity: 1;
+    border: 1px solid #ebebeb;
+    font-family: 'Manrope';
+    font-size: 13px;
+}
+#p-body {
+	font-size: 12px;
+    font-weight: 500;
+    margin-top: 10%;
+    color: #7a86a1;
+    padding: 10%;
+}

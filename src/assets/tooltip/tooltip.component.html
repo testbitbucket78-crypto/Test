@@ -1,0 +1,11 @@
+<div class="position-relative">
+    <img 
+        src="../../../../assets/img/info-icon.png" 
+        (click)="toggleTooltip()" 
+        style="width: 15px; height: 15px; margin-left: 5px; cursor: pointer;">
+
+    <div *ngIf="isVisible" class="showInfoFallback1">
+        <p id="p-body">{{ tooltipText }}</p>
+        <button id="radio-close-btn" (click)="closeTooltip()">X</button>
+    </div>
+</div>
