@@ -96,7 +96,6 @@ export class ToolsChatWidgetComponent implements OnInit {
         this.isTooltipVisible = visible;
     }
     handleHtmlReceived(html: string) {
-        debugger;
         this.codeToDisplay = html;
     }
     copyCode() {

@@ -21,7 +21,6 @@ export class WidgetComponent implements OnInit {
     ngOnInit(): void {
         this.popup = document.getElementById('popup-component');
         this.icon = document.getElementById('whatsapp-logo');
-        debugger;
         if (this.icon && this.popup) {
             this.icon.addEventListener('click', () => {
                 this.popup.style.display = this.popup?.style.display === 'flex' ? 'none' : 'flex';
@@ -61,7 +60,6 @@ export class WidgetComponent implements OnInit {
             }
             let script = `<script async type="text/javascript">document.addEventListener("DOMContentLoaded", function () {let popup = document.getElementById("popup-component");let icon = document.getElementById("whatsapp-logo");if (icon && popup) { icon.addEventListener("click", () => {popup.style.display = popup.style.display === "flex" ? "none" : "flex";});}});</script>`;
             let htmlContent = component.outerHTML + script;
-debugger
             let codeToDisplay = '<!DOCTYPE html><html><body>' + htmlContent + '</body></html>';
             if (changes['generatedHTML']) this.sendHtmlToParent.emit(codeToDisplay);
         }
