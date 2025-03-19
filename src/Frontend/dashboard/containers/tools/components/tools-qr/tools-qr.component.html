@@ -1,13 +1,13 @@
 <div class="custom-box-style p-3 w-100 rounded">
     <div>
-        <h2>Link</h2>
+        <h2>QR Code</h2>
         <p class="w-50">
             WhatsApp QR Code tool generates special QR code which automatically redirects customers
             to WhatsApp chat with your pre- defined message already filled.
         </p>
     </div>
     <div class="rounded border w-50 p-3">
-        <h4>Generate Link</h4>
+        <h4>Generate QR</h4>
         <form [formGroup]="qrToolForm">
             <div class="w-100">
                 <p class="mb-1">Channel</p>
@@ -45,7 +45,7 @@
             </div>
             <sb-button
                 [disabled]="!qrToolForm.get('channel')?.value"
-                [label]="'Generate Link'"
+                [label]="'Generate QR Code'"
                 [type]="'primary'"
                 [isActive]="true"
                 [customWidth]="'100%'"
