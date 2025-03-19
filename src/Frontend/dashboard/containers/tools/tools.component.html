@@ -1,0 +1,19 @@
+<sb-layout-dashboard>
+    <sb-top-nav title="Tools"></sb-top-nav>
+    <div class="px-3">
+        <div class="tabs mt-3 px-5">
+            <sb-button
+                *ngFor="let tab of tabs"
+                [label]="tab.label"
+                [isActive]="activeTab === tab.id"
+                (click)="setActiveTab(tab.id)"
+            >
+            </sb-button>
+        </div>
+        <div class="tab-content mt-3 px-5">
+            <sb-tools-link *ngIf="activeTab === 'link'"></sb-tools-link>
+            <sb-tools-qr *ngIf="activeTab === 'qr'"></sb-tools-qr>
+            <sb-tools-chat-widget *ngIf="activeTab === 'chat'"></sb-tools-chat-widget>
+        </div>
+    </div>
+</sb-layout-dashboard>

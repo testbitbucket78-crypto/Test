@@ -131,6 +131,19 @@ const routes: Routes = [
         component: dashboardContainers.TeamboxComponent,
     },
     {
+        path: 'tools',
+        data: {
+            title: 'Tools',
+            breadcrumbs: [
+                {
+                    text: 'Tools',
+                    active: true,
+                },
+            ],
+        } as SBRouteData,
+        component: dashboardContainers.ToolsComponent,
+    },
+    {
         path: 'teambox/:isNewMessage',
         data: {
             title: 'Teambox',

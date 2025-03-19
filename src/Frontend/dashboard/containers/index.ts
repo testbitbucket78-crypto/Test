@@ -34,8 +34,17 @@ import { CustomFieldsComponent } from './custom-fields/custom-fields.component';
 import { TemplateSettingsComponent } from './template-settings/template-settings.component';
 import { TemplateMessageComponent } from './template-message/template-message.component';
 import { QuickResponseComponent } from './quick-response/quick-response.component';
+import { ToolsComponent } from './tools/tools.component';
 
-export const containers = [DashboardComponent, ContactsComponent, TeamboxComponent, FlowBuilderComponent, SmartRepliesComponent, ImportComponent, CampaignsComponent,FunnelComponent, ReportsComponent,ConversationalReportsComponent, CampaignReportsComponent, AutomationReportsComponent, SettingComponent,AcoountSettingsComponent,NotificationsComponent,SupportComponent,UserguideComponent,MyprofileComponent,ManageplanComponent,WalletusageComponent,BillinghistoryComponent,OrganisationalSettingsComponent,WorkingHoursComponent,RolesSettingsComponent,DefaultMessageSettingsComponent,GeneralSettingsComponent,ManageStorageComponent,RoutingRulesComponent,TeamSettingsComponent,UserSettingsComponent,CampaignSettingsComponent,ContactSettingsComponent,CustomFieldsComponent,TemplateSettingsComponent,TemplateMessageComponent,QuickResponseComponent];
+import { ToolsLinkComponent } from './tools/components/tools-link/tools-link.component';
+import { ToolsQRComponent } from './tools/components/tools-qr/tools-qr.component';
+import { ToolsChatWidgetComponent } from './tools/components/tools-chat-widget/tools-chat-widget.component';
+import { ButtonComponent } from '../../../assets/button/button.component'
+import { DropdownComponent } from 'assets/dropdown/dropdown.component';
+import { TooltipComponent } from 'assets/tooltip/tooltip.component';
+import { WidgetComponent } from './tools/components/tools-widget/tools-widget.component';
+
+export const containers = [DashboardComponent, ContactsComponent, TeamboxComponent, FlowBuilderComponent, SmartRepliesComponent, ImportComponent, CampaignsComponent,FunnelComponent, ReportsComponent,ConversationalReportsComponent, CampaignReportsComponent, AutomationReportsComponent, SettingComponent,AcoountSettingsComponent,NotificationsComponent,SupportComponent,UserguideComponent,MyprofileComponent,ManageplanComponent,WalletusageComponent,BillinghistoryComponent,OrganisationalSettingsComponent,WorkingHoursComponent,RolesSettingsComponent,DefaultMessageSettingsComponent,GeneralSettingsComponent,ManageStorageComponent,RoutingRulesComponent,TeamSettingsComponent,UserSettingsComponent,CampaignSettingsComponent,ContactSettingsComponent,CustomFieldsComponent,TemplateSettingsComponent,TemplateMessageComponent,QuickResponseComponent,ToolsComponent,ToolsLinkComponent,ToolsQRComponent,ToolsChatWidgetComponent,ButtonComponent,DropdownComponent,TooltipComponent,WidgetComponent];
 
 export * from './dashboard/dashboard.component';
 export * from './contacts/contacts.component';
@@ -72,3 +81,11 @@ export * from './custom-fields/custom-fields.component';
 export * from './template-settings/template-settings.component';
 export * from './template-message/template-message.component';
 export * from './quick-response/quick-response.component';
+export * from './tools/tools.component';
+export * from './tools/components/tools-link/tools-link.component';
+export * from './tools/components/tools-qr/tools-qr.component';
+export * from './tools/components/tools-chat-widget/tools-chat-widget.component';
+export * from '../../../assets/button/button.component';
+export * from 'assets/dropdown/dropdown.component';
+export * from 'assets/tooltip/tooltip.component';
+export * from './tools/components/tools-widget/tools-widget.component';

@@ -427,3 +427,7 @@
 .multiselect-item-checkbox input[type=checkbox]:checked+div:after{
   transform: rotate(-45deg) scale(0.8) !important;
 }
+
+.outline-none {
+  outline: none !important;
+}

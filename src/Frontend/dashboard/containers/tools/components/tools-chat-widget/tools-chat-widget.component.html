@@ -1,0 +1,168 @@
+<div class="rounded custom-box-style p-3 w-100">
+    <div>
+        <h2>Chat Widget</h2>
+        <p class="w-50">
+            The WhatsApp Chat Widget lets you embed a chat button on your website, enabling visitors
+            to start a WhatsApp conversation instantly.
+        </p>
+    </div>
+    <div class="w-50">
+        <h5 class="mb-3">Appearance</h5>
+        <form [formGroup]="widgetToolForm">
+            <div class="mb-2">
+                <h6 class="mb-1">Position</h6>
+                <div class="d-flex">
+                    <div class="d-flex align-items-center">
+                        <input
+                            type="radio"
+                            id="leftPos"
+                            class="mr-2 cursor-pointer"
+                            formControlName="position"
+                            value="left"
+                        />
+                        <label for="leftPos" class="mb-0 mr-4">Left</label>
+                        <input
+                            type="radio"
+                            id="rightPos"
+                            class="mr-2 cursor-pointer"
+                            formControlName="position"
+                            value="right"
+                        />
+                        <label for="rightPos" class="mb-0">Right</label>
+                    </div>
+                </div>
+            </div>
+            <div class="mb-2">
+                <div class="mb-2">
+                    <h6 class="mb-1">Top / Bottom Offset</h6>
+                    <input
+                        type="range"
+                        formControlName="topBottomOffset"
+                        step="1"
+                        min="0"
+                        max="50"
+                        class="w-100"
+                    />
+                </div>
+                <div>
+                    <h6 class="mb-1">Left / Right Offset</h6>
+                    <input
+                        type="range"
+                        formControlName="leftRightOffset"
+                        step="1"
+                        min="0"
+                        max="50"
+                        class="w-100"
+                    />
+                </div>
+            </div>
+            <div class="w-100">
+                <p class="mb-3 fw-700">WhatsApp Configuration</p>
+                <div class="mb-1">
+                    <p class="mb-1">Channel</p>
+                    <sb-dropdown
+                        [channelOption]="channelOption"
+                        [channelSelected]="channelSelected"
+                        [channelPhoneNumber]="channelPhoneNumber"
+                        [ShowAssignOption]="ShowAssignOption"
+                        [customWidth]="'100%'"
+                        (selectionChange)="updateDropdown($event)"
+                    >
+                    </sb-dropdown>
+                </div>
+
+                <div class="d-flex align-items-center">
+                    <p class="mb-1">Custom Message</p>
+                    <div class="mb-1 ml-1">
+                        <sb-tooltip
+                            [tooltipText]="
+                                'This is a pre filled message when customer is redirected to WhatsApp'
+                            "
+                            [isVisible]="isTooltipVisible"
+                            (visibilityChange)="handleTooltipChange($event)"
+                        >
+                        </sb-tooltip>
+                    </div>
+                </div>
+                <input
+                    id="custom-message-field"
+                    class="p-1 common-input w-100 mb-4"
+                    type="text"
+                    placeholder="Hi, How can I assist you?"
+                    formControlName="customMessage"
+                />
+            </div>
+            <div>
+                <h5 class="mb-1">Widget Settings</h5>
+                <div class="mb-3">
+                    <h6 class="mb-1">Widget Title</h6>
+                    <div class="border d-flex align-items-center p-1 rounded">
+                        <input
+                            class="common-input w-100 border-0 outline-none"
+                            type="text"
+                            placeholder="Hey there chat with us"
+                            maxlength="40"
+                            formControlName="widgetTitle"
+                            (input)="updateCharacterCount('widgetTitle', 40)"
+                        />
+                        <small
+                            >{{ remainingCharacters.widgetTitle }}&nbsp;<span
+                                >characters</span
+                            ></small
+                        >
+                    </div>
+                </div>
+                <div class="mb-3">
+                    <h6 class="mb-1">Start Button Text</h6>
+                    <div class="border d-flex align-items-center p-1 rounded">
+                        <input
+                            class="common-input w-100 border-0 outline-none"
+                            type="text"
+                            placeholder="Start Chat"
+                            maxlength="20"
+                            formControlName="startButtonText"
+                            (input)="updateCharacterCount('startButtonText', 20)"
+                        />
+                        <small
+                            >{{ remainingCharacters.startButtonText }}&nbsp;<span
+                                >characters</span
+                            ></small
+                        >
+                    </div>
+                </div>
+                <sb-button
+                    [disabled]="!widgetToolForm.get('channel')?.value"
+                    [label]="'Generate Code'"
+                    [type]="'primary'"
+                    [customWidth]="'100%'"
+                    [isActive]="true"
+                    (onClick)="generateCode()"
+                >
+                </sb-button>
+                <div *ngIf="generatedHTML">
+                    <textarea class="my-4 w-100" style="resize: none; height: 200px" readonly>
+                        {{codeToDisplay}}
+                    </textarea>
+                    <sb-button
+                        [label]="'Copy'"
+                        [type]="'primary'"
+                        [customWidth]="'100%'"
+                        [isActive]="true"
+                        (onClick)="copyCode()"
+                    >
+                    </sb-button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+<sb-tools-widget
+    [popupX]="widgetToolForm.get('leftRightOffset')?.value"
+    [popupY]="widgetToolForm.get('topBottomOffset')?.value"
+    [title]="widgetToolForm.get('widgetTitle')?.value"
+    [buttonText]="widgetToolForm.get('startButtonText')?.value"
+    [position]="widgetToolForm.get('position')?.value"
+    [generatedLink]="generatedLink"
+    [generatedHTML]="generatedHTML"
+    (sendHtmlToParent)="handleHtmlReceived($event)"
+></sb-tools-widget>

@@ -1,0 +1,26 @@
+.button {
+    color: #7A86A1;
+    font-size: 15px;
+    padding: 8px 20px;
+    text-decoration: none;
+    margin-right: 12px;
+    cursor: pointer;
+    border: none;
+    background: transparent;
+    border-radius: 19px;
+}
+
+.button.active {
+    color: #FFFFFF !important;
+    background: #6149CD;
+}
+
+.button.secondary {
+    background: #6C757D;
+    color: #FFFFFF;
+}
+.button:disabled {
+    opacity: 0.5;
+    background: grey;
+    cursor: not-allowed;
+}

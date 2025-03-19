@@ -1,0 +1,74 @@
+<div class="custom-box-style p-3 w-100 rounded">
+    <div>
+        <h2>Link</h2>
+        <p class="w-50">
+            WhatsApp Link tool generates special links which automatically redirects customers to
+            WhatsApp chat with your pre-defined message already filled.
+        </p>
+    </div>
+    <div class="rounded border w-50 p-3">
+        <h4>Generate Link</h4>
+        <form [formGroup]="linkToolForm">
+            <div class="w-100">
+                <p class="mb-1">Channel</p>
+                <sb-dropdown
+                    [channelOption]="channelOption"
+                    [channelSelected]="channelSelected"
+                    [channelPhoneNumber]="channelPhoneNumber"
+                    [ShowAssignOption]="ShowAssignOption"
+                    [customWidth]="'100%'"
+                    (selectionChange)="updateDropdown($event)"
+                >
+                </sb-dropdown>
+            </div>
+            <div class="mt-3">
+                <div class="d-flex align-items-center">
+                    <p class="mb-1">Custom Message</p>
+                    <div class="mb-1 ml-1">
+                        <sb-tooltip
+                            [tooltipText]="
+                                'This is a pre filled message when customer is redirected to WhatsApp'
+                            "
+                            [isVisible]="isTooltipVisible"
+                            (visibilityChange)="handleTooltipChange($event)"
+                        >
+                        </sb-tooltip>
+                    </div>
+                </div>
+                <input
+                    id="custom-message-field"
+                    class="p-1 common-input w-100 mb-4"
+                    type="text"
+                    placeholder="Hi, How can I assist you?"
+                    formControlName="customMessage"
+                />
+            </div>
+            <sb-button
+                [disabled]="!linkToolForm.get('channel')?.value"
+                [label]="'Generate Link'"
+                [type]="'primary'"
+                [isActive]="true"
+                [customWidth]="'100%'"
+                (onClick)="generateLink()"
+            >
+            </sb-button>
+        </form>
+        <div *ngIf="generatedLink" class="d-flex align-items-center mt-4">
+            <input
+                id="generated-link"
+                class="p-1 common-input flex-grow-1 mr-2"
+                type="text"
+                [value]="generatedLink"
+                readonly
+            />
+            <sb-button
+                [label]="'Copy'"
+                [type]="'primary'"
+                [customWidth]="'100%'"
+                [isActive]="true"
+                (onClick)="copyToClipboard()"
+            >
+            </sb-button>
+        </div>
+    </div>
+</div>
