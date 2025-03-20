@@ -37,7 +37,7 @@ let notifyInteraction = `SELECT InteractionId FROM Interaction WHERE customerId 
 let isSessionAlreadyExistMap = {};
 async function createClientInstance(spid, phoneNo) {
   const sessionId = spid;
-  const baseDir = path.resolve(__dirname, "../../../webJS/.wwebjs_auth");
+  const baseDir = path.resolve(__dirname, ".wwebjs_auth");
   const sessionPath = path.join(baseDir, `session-${sessionId}`);
   
   isSessionAlreadyExistMap[spid] = fs.existsSync(sessionPath);
