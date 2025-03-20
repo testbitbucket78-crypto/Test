@@ -33,6 +33,8 @@ export class AppComponent {
     //     this.renderer.setAttribute(favicon, 'href', 'faviconweb.ico');
     //   }
 
+
+    
       setFavicon(iconName: string): void {
         const favicon = this.renderer.selectRootElement('#app-favicon', true);
         this.renderer.setAttribute(favicon, 'href', `${iconName}?v=${new Date().getTime()}`);
