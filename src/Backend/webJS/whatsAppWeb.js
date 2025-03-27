@@ -1,5 +1,7 @@
 const express = require('express')
 const web = require('./web')
+const Whapi = require("./whapi");
+
 // const path = require('path');
 //const InMessage = require('../IncommingMessages')
 var app = express();
@@ -13,6 +15,9 @@ const path = require('path');
 const { exec } = require('child_process');
 const logger = require('../common/logger.log');
 var processSet = new Set();
+const variables = require('../common/constant')
+
+
 // const { MessageMedia, Location, Contact } = require('whatsapp-web.js');
 /**
  * @swagger
@@ -96,7 +101,14 @@ app.post('/craeteQRcode', async (req, res) => {
         if(!isProcessing){
             return res.status(409).json({ value: 'Please wait for 60 seconds as the previous request is closing down' });
           }
-        let response = await web.createClientInstance(spid, phoneNo);
+        //const provider = ProviderFactory.getProvider();
+        let response
+        if(variables.provider == "whapi" || variables.SPID == spid){
+        response = await Whapi.createClientInstance(spid, phoneNo);
+       await Whapi.handleWhatsAppReady(spid, phoneNo, response.token);
+        }else{
+        response = await web.createClientInstance(spid, phoneNo);
+        }
         if(response?.status != 200){
             processSet.delete(spid);
             console.log(`Deleted spid: ${spid}, current processSet:`, processSet);
@@ -105,7 +117,7 @@ app.post('/craeteQRcode', async (req, res) => {
       
         logger.info(`response of create QR CODE  ${JSON.stringify(response.status)}`)
         res.send({
-            status: response.status,
+            status: 200,
             QRcode: response.value
         })
 
@@ -212,7 +224,13 @@ app.post('/sendMessage', async (req, res) => {
         interaction_id = req.body?.interaction_id,
         msg_id = req.body?.msg_id
         spNumber = req.body?.spNumber
-        let response = await web.sendMessages(spid, phoneNo, type, text, link, interaction_id, msg_id, spNumber);
+        let response
+        if(variables.provider == "whapi" || variables.SPID == spid){
+            response = await Whapi.sendMessageViaWhapi(spid, phoneNo, type, text, link, interaction_id, msg_id, spNumber);
+        }else{
+            response = await web.sendMessages(spid, phoneNo, type, text, link, interaction_id, msg_id, spNumber);
+        }
+        
         logger.info(`Response of webjs sendMessage API ${response,spid, phoneNo, type, text, link}`)
         return res.send({ status: response.status , msgId : response.msgId })
 
@@ -231,8 +249,12 @@ app.post('/sendFunnelMessage', async (req, res) => {
         link = req.body.link
         text = req.body.text
         phoneNo = req.body.phoneNo
-
-        let response = await web.sendFunnel(spid, phoneNo, type, text, link);
+        let response;
+        if(variables.provider == "whapi" || variables.SPID == spid){
+            response = await Whapi.sendFunnel(spid, phoneNo, type, text, link);
+        }else{
+            response = await web.sendFunnel(spid, phoneNo, type, text, link);
+        }
         console.log(response)
         return res.send({ status: response })
 
@@ -322,8 +344,12 @@ app.post('/sendFunnelMessage', async (req, res) => {
 app.post('/IsClientReady', async (req, res) => {
     try {
         spid = req.body.spid
-      
-        let result = await web.isActiveSpidClient(spid);
+        let result
+        if(variables.provider == "whapi" || variables.SPID == spid){
+           result = await Whapi.isActiveSpidClient(spid);
+        }else{
+           result = await web.isActiveSpidClient(spid);
+        }
         logger.info(`IsClientReady ready api result  ${result.isActiveSpidClient}`)
         if(result.WAweb[0]?.channel_id == 'WA API'){
             return res.send({ status: 200, message: "Client is ready !" ,result: result.WAweb})
@@ -344,8 +370,14 @@ app.post('/IsClientReady', async (req, res) => {
 
 app.get('/webjsStatus', (req, res) => {
     try {
-
-      let response = web.whatsappWebStatus();
+    let response
+      if(variables.provider == "whapi"){
+        response = Whapi.whatsappWebStatus();
+      }
+      else{
+        response = web.whatsappWebStatus();
+      }
+      
       res.send({ status: 200, message: response })
 
     } catch (err) {
