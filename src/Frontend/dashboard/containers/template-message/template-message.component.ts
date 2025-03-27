@@ -1074,6 +1074,7 @@ checkTemplateName(e:any){
         this.id = 0;
         this.newTemplateForm.get('Channel')?.setValue(null);
         this.newTemplateForm.get('media_type')?.setValue(this.galleryMessageData?.media_type ? this.galleryMessageData?.media_type : 'text');
+        this.selectedType = this.galleryMessageData?.media_type ? this.galleryMessageData?.media_type : 'text';
         this.Category = this.galleryMessageData?.Category;
         this.selectTab(0)
 
@@ -1481,12 +1482,12 @@ createButton(type: string) {
     return null; // Return no error for validator
   }
 
-  sanitizeInput(event: string, item: any): void {
+  sanitizeInput(event: string,idx:any, col: any): void {
     const emojiRegex = /[\p{Emoji}\u200D\uFE0F]/gu; // Regex for emojis
     if (event) {
       const sanitizedValue = event.replace(emojiRegex, '');
       if (sanitizedValue !== event) {
-        item = sanitizedValue; // Directly update the object
+        this.buttonsArray[idx][col] = sanitizedValue; // Directly update the object
       }
     }
   }

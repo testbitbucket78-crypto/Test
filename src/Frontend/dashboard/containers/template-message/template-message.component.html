@@ -683,7 +683,7 @@
                                 </div>
                                 <div class="flex-column sel-type-link">
                                     <!-- (input)="updateCharacterCount($event, idx)" -->
-                                    <input type="text" id="quickreply" [(ngModel)]="item.buttonText" [ngModelOptions]="{standalone: true}" maxlength="25" placeholder="e.g. Yes" (ngModelChange)="sanitizeInput($event,item.buttonText)">
+                                    <input type="text" id="quickreply" [(ngModel)]="item.buttonText" [ngModelOptions]="{standalone: true}" maxlength="25" placeholder="e.g. Yes" (ngModelChange)="sanitizeInput($event,idx,'buttonText')">
                                 </div>
                             </div>
                         </div>
@@ -723,7 +723,7 @@
                                 </div>
                                 <div class="flex-column sel-type-link">
                                     <!-- (input)="updateCharacterCount($event, idx)" -->
-                                    <input type="text" id="quickreply" maxlength="15" placeholder="e.g. Get50Off" [(ngModel)]="item.code" [ngModelOptions]="{standalone: true}" (ngModelChange)="sanitizeInput($event,item.code)" >
+                                    <input type="text" id="quickreply" maxlength="15" placeholder="e.g. Get50Off" [(ngModel)]="item.code" [ngModelOptions]="{standalone: true}" (ngModelChange)="sanitizeInput($event,idx,'code')" >
                                 </div>
                             </div>
                         </div>
@@ -741,7 +741,7 @@
                             </div>
                             <div class="flex-column sel-type-link">
                                 <!-- (input)="updateCharacterCount($event, idx)" -->
-                                <input type="text" id="quickreply" maxlength="25" placeholder="e.g. Sign up" [(ngModel)]="item.buttonText" [ngModelOptions]="{standalone: true}" (ngModelChange)="sanitizeInput($event,item.buttonText)">
+                                <input type="text" id="quickreply" maxlength="25" placeholder="e.g. Sign up" [(ngModel)]="item.buttonText" [ngModelOptions]="{standalone: true}" (ngModelChange)="sanitizeInput($event,idx,'buttonText')">
                             </div>
                         </div>
                     </div>
@@ -776,7 +776,7 @@
                                     </div>
                                 </div>
                                 <div class="sel-type-link">
-                                    <input type="text" [(ngModel)]="item.buttonText" [ngModelOptions]="{standalone: true}" maxlength="25" placeholder="e.g. Call us" (ngModelChange)="sanitizeInput($event,item.buttonText)">
+                                    <input type="text" [(ngModel)]="item.buttonText" [ngModelOptions]="{standalone: true}" maxlength="25" placeholder="e.g. Call us" (ngModelChange)="sanitizeInput($event,idx,'buttonText')">
                                 </div>
                             </div>
                         </div>
@@ -796,8 +796,8 @@
                                     </div>
                                 </div>
                                 <div class="sel-type-link">
-                                    <input type="text" [(ngModel)]="item.phoneNumber" [ngModelOptions]="{standalone: true}" maxlength="20" (ngModelChange)="sanitizeInput($event,item.phoneNumber)" placeholder="e.g. 9876543210"  placeholder="Enter" >
-                                    <input type="text" [(ngModel)]="item.displayPhoneNumber" [ngModelOptions]="{standalone: true}" maxlength="20" placeholder="e.g. 9876543210" (ngModelChange)="sanitizeInput($event,item.displayPhoneNumber)" style="display: none">
+                                    <input type="text" [(ngModel)]="item.phoneNumber" [ngModelOptions]="{standalone: true}" maxlength="20" (ngModelChange)="sanitizeInput($event,idx,'phoneNumber')" placeholder="e.g. 9876543210"  placeholder="Enter" >
+                                    <input type="text" [(ngModel)]="item.displayPhoneNumber" [ngModelOptions]="{standalone: true}" maxlength="20" placeholder="e.g. 9876543210" (ngModelChange)="sanitizeInput($event,idx,'displayPhoneNumber')" style="display: none">
                                 </div>
                             </div>
                         </div>
@@ -816,7 +816,7 @@
                                 </div>
                                 <div class="sel-type-link">
                                     <input type="text"  maxlength="25" placeholder="e.g. Visit website"
-                                    [(ngModel)]="item.buttonText" [ngModelOptions]="{standalone: true}" (ngModelChange)="sanitizeInput($event,item.buttonText)">
+                                    [(ngModel)]="item.buttonText" [ngModelOptions]="{standalone: true}" (ngModelChange)="sanitizeInput($event,idx,'buttonText')">
                                 </div>
                             </div>
                         </div>
@@ -835,7 +835,7 @@
                                     </div>
                                 </div>
                                 <div class="sel-type-link">
-                                    <input type="text" placeholder="e.g. https://www.example.com" (blur)="ensureTrailingSlash(idx)"  maxlength="2000" [(ngModel)]="item.webUrl" [ngModelOptions]="{standalone: true}" (ngModelChange)="sanitizeInput($event,item.webUrl)">
+                                    <input type="text" placeholder="e.g. https://www.example.com" (blur)="ensureTrailingSlash(idx)"  maxlength="2000" [(ngModel)]="item.webUrl" [ngModelOptions]="{standalone: true}" (ngModelChange)="sanitizeInput($event,idx,'webUrl')">
                                 </div>
                             </div>
                         </div>

@@ -263,8 +263,8 @@ export class ContactFilterComponent implements OnInit {
 					options =[
 						{label:'Is empty',checked:false,type:'none'},
 						{label:'Is not empty',checked:false,type:'none'},
-						{label:'Is equal to',checked:false,type:'select_opt',options:selectOptions},
-						{label:'Is not equal to',checked:false,type:'select_opt',options:selectOptions}
+						{label:'Is equal to',checked:false,type:'multi_select_opt',options:selectOptions},
+						{label:'Is not equal to',checked:false,type:'multi_select_opt',options:selectOptions}
 					];
 					break;
 				}
@@ -407,7 +407,12 @@ export class ContactFilterComponent implements OnInit {
 		if(event.target.name =='start_date'){
 			this.ContactListNewFilters[index]['filterValue'] =event.target.value
 		}else{
-			this.ContactListNewFilters[index]['filterValue'] =this.ContactListNewFilters[index]['filterValue']+' / '+event.target.value
+			let val = this.ContactListNewFilters[index]['filterValue'].split(' / ');
+			if(val[1]){
+				this.ContactListNewFilters[index]['filterValue'] = val[0] + ' / '+event.target.value;
+			}else{
+			this.ContactListNewFilters[index]['filterValue'] =this.ContactListNewFilters[index]['filterValue']+' / '+event.target.value;
+			}
 		}
 	  }
 
@@ -532,6 +537,10 @@ export class ContactFilterComponent implements OnInit {
           if(colName =='Phone_number'){
             colName = "REGEXP_REPLACE(Phone_number, '[^0-9]', '')"
           }
+
+		  if(colName =='Tag'){
+			colName = "ECTM.TagName";
+		  }
   
           contactFilter += idx == 0 ?' and ((' :  filters.items[0]['filterOperator'] == '' ? ' and ('  : filters.items[0]['filterOperator'] + ' (';
           filters.items.map((filter:any,index:any)=>{
@@ -574,6 +583,9 @@ export class ContactFilterComponent implements OnInit {
 			// 	filterOper = '< "' + filter.filterValue + '" AND EC.' + filter.filterPrefix + ' >= "' +update + '"';				
 			//else
             	filterOper = '!= "'+filter.filterValue + '"';
+				if(filter?.filterType =="multi_select_opt"){
+					filterOper = "Not LIKE '%"+filter.filterValue+"%'";
+				}
           }
   
           if(filter.filterBy=="Contains"){
