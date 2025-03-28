@@ -220,7 +220,7 @@ async function extractDataFromMessage(body) {
           repliedMessageText = 'Document';
         }
 
-        if(button && button?.length > 0)
+        if(button && button?.length > 2)
             repliedMessageText = 'Template';
       }
         //console.log( spid, "campaignReplied*******", campaignReplied?.affectedRows)

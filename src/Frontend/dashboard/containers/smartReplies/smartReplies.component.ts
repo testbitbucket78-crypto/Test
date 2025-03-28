@@ -1058,9 +1058,9 @@ showAddSmartRepliesModal() {
 		if(mediaContent && item.media_type!== 'text') {
 			htmlcontent += mediaContent
 		}
-		htmlcontent +='<br><p>'+ item.BodyText+'</p>';
+		htmlcontent +='<p>'+ item.BodyText+'</p>';
 		if (item.FooterText) {
-			htmlcontent+='<br><p class="temp-footer">'+item.FooterText+'</p>';
+			htmlcontent+='<p class="temp-footer">'+item.FooterText+'</p>';
 		}
 		if(item.Links) this.messageMeidaFile = item.Links
 		this.chatEditor.value =htmlcontent;
@@ -1201,6 +1201,7 @@ showAddSmartRepliesModal() {
         if(this.chatEditor.value){
 			value = this.removeMediaTags(this.chatEditor.value);
 			value = this.removeClass(value);
+			value =  value == '<p><br></p>' ? '': value;
 			if(this.messageMeidaFile) mediaType = this.getMediaType(this.messageMeidaFile);
 		}
 
@@ -1943,11 +1944,12 @@ stopPropagation(event: Event) {
 		this.keywords = this.repliesData.Keyword
 		this.model = this.repliesData.MatchingCriteria
 		this.selectedcriteria = this.repliesData.MatchingCriteria
-
+let sortedData = this.data.sort((a:any, b:any) => a.Keyword.localeCompare(b.Keyword));
+console.log(sortedData)
 		for (let i=0;i<this.repliesData.ActionList.length;i++) {
 			let ActionId:number = 0
-			let Value = this.data[i].Value
-			let uuid = this.data[i].uuid
+			let Value = sortedData[i].Value
+			let uuid = sortedData[i].uuid
 			if(this.repliesData.ActionList[i].Name == ''){
 				ActionId = 0
 			}
@@ -1956,23 +1958,23 @@ stopPropagation(event: Event) {
 			}
 			if (this.repliesData.ActionList[i].Name == 'Add Contact Tag') {
 				ActionId = 1
-				Value = JSON.parse(this.data[i].Value)
+				Value = JSON.parse(sortedData[i].Value)
 			}
 			this.assignedAgentList.push(
 				{	ActionID: ActionId,
-					Message: this.data[i].Message,
+					Message: sortedData[i].Message,
 					Value: Value,
 					ValueUuid: uuid,
-					Media: this.data[i].Media,
+					Media: sortedData[i].Media,
 					MessageVariables: this.allVariables,
-					media_type: this.data[i].media_type,					
-					isTemplate:this.data[i]?.isTemplate,
-					headerText: this.data[i]?.headerText,
-					bodyText: this.data[i]?.bodyText,
-					name: this.data[i]?.templateName,
-					language: this.data[i]?.templatelanguage,
-					buttons: this.data[i]?.buttons? JSON.parse(this.data[i]?.buttons) : this.data[i]?.templateButton,
-					buttonsVariable: this.data[i]?.buttonsVariable
+					media_type: sortedData[i].media_type,					
+					isTemplate:sortedData[i]?.isTemplate,
+					headerText: sortedData[i]?.headerText,
+					bodyText: sortedData[i]?.bodyText,
+					name: sortedData[i]?.templateName,
+					language: sortedData[i]?.templatelanguage,
+					buttons: sortedData[i]?.buttons? JSON.parse(sortedData[i]?.buttons) : sortedData[i]?.templateButton,
+					buttonsVariable: sortedData[i]?.buttonsVariable
 				});
 		}
 		console.log(this.assignedAgentList,'MESSAGE DATA')

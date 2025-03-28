@@ -4,7 +4,7 @@ import * as pdfFonts from 'pdfmake/build/vfs_fonts';
 import { TDocumentDefinitions } from 'pdfmake/interfaces';
 import { ProfileService } from 'Frontend/dashboard/services/profile.service';
 
-(pdfMake as any).vfs = pdfFonts.pdfMake.vfs;
+//(pdfMake as any).vfs = pdfFonts.pdfMake.vfs;
 
 @Component({
     selector: 'sb-billinghistory',
