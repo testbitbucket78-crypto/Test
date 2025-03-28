@@ -172,9 +172,9 @@ const getQualityRating = async (req, res) => {
             const messaging_limit_tier = commonFun.convertMessagingLimitTier(result?.response?.messaging_limit_tier);
             const fbVerification = result2?.response?.business_verification_status;
             const isWebhookRegistered = result3?.response?.success ?? false;
-
+            const isWhatsAppRegistered = result4?.response?.success ?? false;
             if (quality_rating && phone_number_id && messaging_limit_tier) {
-                result = await db.excuteQuery(val.insertHealthStatus, [phone_number_id, phoneNo, messaging_limit_tier, quality_rating, new Date(), fbVerification, spid, isWebhookRegistered]);
+                result = await db.excuteQuery(val.insertHealthStatus, [phone_number_id, phoneNo, messaging_limit_tier, quality_rating, new Date(), fbVerification, spid, isWebhookRegistered, isWhatsAppRegistered]);
             }
 
         }

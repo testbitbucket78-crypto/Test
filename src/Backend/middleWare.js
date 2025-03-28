@@ -248,6 +248,40 @@ async function registerWebhook(WABA_ID, spid) {
     }
 }
 
+async function registerWhatsApp(metaPhoneNumberID, spid) {
+    try {
+
+        const getDetails = await getWAdetails(spid);
+        const token =  getDetails?.[0]?.token;
+        
+        if (!token) {
+            console.log("Error fetching business verification status");
+            return { status: 400, message: "Token not found" };
+        }
+
+        const response = await axios.post(
+            `https://graph.facebook.com/v18.0/${metaPhoneNumberID}/register`, 
+            variables.registerWhatsAppPayload,
+            {
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json'
+                }
+            }
+        );
+
+        return {
+            status: response?.status,
+            response: response.data,
+        };
+    } catch (err) {
+        return {
+            status: err?.response?.status || 500,
+            message: err?.response?.data?.error?.message || err?.message || 'An error occurred',
+        };
+    }
+}
+
 
 async function sendTextOnWhatsApp(messageTo, messageText) {
     try {
@@ -533,4 +567,4 @@ async function createWhatsAppPayload(type, to, templateName, languageCode, heade
 // const payload = createWhatsAppPayload('text', '918130818921', 'cip_attribute', 'en', headerVariables, bodyVariables, 'https://picsum.photos/id/1/200/300');
 // console.log(JSON.stringify(payload, null, 2));
 
-module.exports = { channelssetUp, postDataToAPI, sendDefultMsg, createWhatsAppPayload,getQualityRating,getVerificationStatus, registerWebhook }
+module.exports = { channelssetUp, postDataToAPI, sendDefultMsg, createWhatsAppPayload,getQualityRating,getVerificationStatus, registerWebhook, registerWhatsApp }
