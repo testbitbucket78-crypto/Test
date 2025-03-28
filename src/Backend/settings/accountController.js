@@ -162,10 +162,11 @@ const getQualityRating = async (req, res) => {
             var currentDate = new Date().toISOString().split('T')[0];
         }
         if (!check.length) {
+            let result4 = await middleWare.registerWhatsApp(metaPhoneNumberID, spid);
             let result = await middleWare.getQualityRating(metaPhoneNumberID, spid);
             let result2 = await middleWare.getVerificationStatus(WABA_Id, spid);
             let result3 = await middleWare.registerWebhook(WABA_Id, spid);
-            let result4 = await middleWare.registerWhatsApp(metaPhoneNumberID, spid);
+            //let result4 = await middleWare.registerWhatsApp(metaPhoneNumberID, spid);
             const quality_rating = result?.response?.quality_rating;
             const phone_number_id = result?.response?.id;
             const messaging_limit_tier = commonFun.convertMessagingLimitTier(result?.response?.messaging_limit_tier);

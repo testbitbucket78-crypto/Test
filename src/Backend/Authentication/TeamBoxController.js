@@ -780,9 +780,12 @@ const insertMessage = async (req, res) => {
                     if (middlewareresult?.status != 200) {
                         let NotSendedMessage = await db.excuteQuery('UPDATE Message set msg_status=9, whatsAppMessageId=? where Message_id=?', [middlewareresult?.msgId, msg_id.insertId]);
                     };
-                    if (middlewareresult?.status == 200) {
+                    if (middlewareresult?.status == 200 && middlewareresult?.message) {
+                        const messageId = middlewareresult?.message?.messages?.length > 0
+                        ? middlewareresult?.message?.messages[0]?.id
+                        : null;
                         let UpdatePauseTime = await getDefaultActionTimeandUpdatePauseTime(SPID, customerId)
-                        let NotSendedMessage = await db.excuteQuery('UPDATE Message set Message_template_id=?,whatsAppMessageId=? where Message_id=?', [middlewareresult?.message?.messages[0]?.id, middlewareresult?.msgId, msg_id.insertId]);
+                        let NotSendedMessage = await db.excuteQuery('UPDATE Message set Message_template_id=?,whatsAppMessageId=? where Message_id=?', [messageId, middlewareresult?.msgId, msg_id.insertId]);
                     }
 
                     //  logger.debug('Middleware Result:', middlewareresult);
