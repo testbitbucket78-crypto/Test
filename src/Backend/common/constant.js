@@ -11,5 +11,22 @@ const variables = {
         messaging_product: 'whatsapp',
         pin: '123456',
     },
+    webhookPayload : {
+        webhooks: [
+            {
+                events: [
+                    { type: "users", method: "post" },
+                    { type: "channel", method: "post" }
+                ],
+                mode: "body",
+                url: ""
+            }
+        ],
+        callback_persist: true
+    },
+    provider: "webJS", // webJS or whapi
+    SPID : "861",
 };
+
+
 module.exports = variables;

@@ -20,6 +20,10 @@ const logger = require('../common/logger.log');
 let notifyInteraction = `SELECT InteractionId FROM Interaction WHERE customerId IN (SELECT customerId FROM EndCustomer WHERE Phone_number = ? and SP_ID=?  ) and is_deleted !=1   order by created_at desc`
 let metaPhoneNumberID = 211544555367892 //todo need to make it dynamic 
 
+//new imports 
+const { WhapiIncomingMessage } = require('../webJS/model/whapiModel');
+const WhapiProvider = require("../webJS/whapi.js");
+
 app.listen(process.env.PORT, () => {
   console.log('Server is running on port ' + process.env.PORT);
 });
@@ -66,9 +70,25 @@ app.post("/webhook", async (req, res) => {
     }
 
     // info on WhatsApp text message payload: https://developers.facebook.com/docs/whatsapp/cloud-api/webhooks/payload-examples#text-messages
-
-    let extractedMessage = await extractDataFromMessage(body)
-
+    
+    const incommingMessage = new WhapiIncomingMessage(body);
+    if(incommingMessage?.channel_id){
+      if(incommingMessage?.statuses.length > 0){
+         let messageAck = WhapiProvider.messageAck(incommingMessage.statuses);
+      }
+      if(incommingMessage?.messages.length > 0){
+         let message = WhapiProvider.Message(incommingMessage);
+      }
+      if(incommingMessage.isUserDisconnected()){
+        let userDisconnected = WhapiProvider.handleDisconnection(incommingMessage?.channel_id);
+      }
+      if(incommingMessage.isAuthenticationEvent()){
+        let authEvent = WhapiProvider.handleAuthentication(incommingMessage?.channel_id);
+      }
+    }
+    else {
+      let extractedMessage = await extractDataFromMessage(body)
+    }
     res.status(200).send({
       msg: "extractedMessage",
       status: 200
