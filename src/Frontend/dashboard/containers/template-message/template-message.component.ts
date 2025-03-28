@@ -1236,6 +1236,7 @@ triggerRichTextEditorChange() {
 
     previewTemplate() {
         this.allVariablesValueList =[];
+        console.log(this.newTemplateForm.controls.BodyText.value);
         if(this.validateItems()){
         let isVariableValue:string = this.newTemplateForm.controls.Header.value + this.newTemplateForm.controls.BodyText.value ;
 
@@ -1532,6 +1533,11 @@ createButton(type: string) {
       } else {
         buttonTextSet.add(item.buttonText);
       }
+      //if()
+      if(this.newTemplateForm.controls.BodyText.value.includes('<br>') && this.channelDomain == 'api'){
+        validationErrors = validationErrors + '<br>'+ `Body should not have empty lines.`;
+      }
+
     });
 if (validationErrors){
     this.showToaster(validationErrors,'error');

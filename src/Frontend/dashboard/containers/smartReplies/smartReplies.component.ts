@@ -1058,9 +1058,9 @@ showAddSmartRepliesModal() {
 		if(mediaContent && item.media_type!== 'text') {
 			htmlcontent += mediaContent
 		}
-		htmlcontent +='<br><p>'+ item.BodyText+'</p>';
+		htmlcontent +='<p>'+ item.BodyText+'</p>';
 		if (item.FooterText) {
-			htmlcontent+='<br><p class="temp-footer">'+item.FooterText+'</p>';
+			htmlcontent+='<p class="temp-footer">'+item.FooterText+'</p>';
 		}
 		if(item.Links) this.messageMeidaFile = item.Links
 		this.chatEditor.value =htmlcontent;
@@ -1201,6 +1201,7 @@ showAddSmartRepliesModal() {
         if(this.chatEditor.value){
 			value = this.removeMediaTags(this.chatEditor.value);
 			value = this.removeClass(value);
+			value =  value == '<p><br></p>' ? '': value;
 			if(this.messageMeidaFile) mediaType = this.getMediaType(this.messageMeidaFile);
 		}
 
