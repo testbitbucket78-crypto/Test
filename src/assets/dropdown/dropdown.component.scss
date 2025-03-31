@@ -80,14 +80,15 @@ img.icon{
 .left-content {
     display: flex;
     align-items: center;
-    gap: 5px; /* Adds spacing between icon and text */
+    gap: 5px;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
+    color: #495057;
 }
 
 .dropdown-arrow {
-    width: 12px; /* Adjust size of arrow */
-    margin-left: auto; /* Pushes arrow to the right */
+    width: 12px;
+    margin-left: auto; 
     cursor: pointer;
 }

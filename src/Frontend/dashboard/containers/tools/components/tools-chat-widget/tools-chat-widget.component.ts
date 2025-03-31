@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { SettingsService } from 'Frontend/dashboard/services/settings.service';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
-
+import { ToastService } from 'assets/toast/toast.service';
 @Component({
     selector: 'sb-tools-chat-widget',
     templateUrl: './tools-chat-widget.component.html',
@@ -23,7 +23,7 @@ export class ToolsChatWidgetComponent implements OnInit {
     };
     widgetToolForm!: FormGroup;
 
-    constructor(private _settingsService: SettingsService) {}
+    constructor(private _settingsService: SettingsService, private _toastService: ToastService) {}
     ngOnInit() {
         this.getWhatsAppDetails();
         this.initForm();
@@ -34,8 +34,8 @@ export class ToolsChatWidgetComponent implements OnInit {
             phoneNumber: new FormControl(''),
             customMessage: new FormControl('', Validators.required),
             position: new FormControl('right'),
-            topBottomOffset: new FormControl(0),
-            leftRightOffset: new FormControl(0),
+            topBottomOffset: new FormControl(2),
+            leftRightOffset: new FormControl(2),
             widgetTitle: new FormControl('Hey there, chat with us', [
                 Validators.required,
                 Validators.maxLength(40),
@@ -85,6 +85,7 @@ export class ToolsChatWidgetComponent implements OnInit {
             );
             this.generatedHTML = true;
             this.generatedLink = `https://wa.me/${phoneNumber}?text=${customMessage}`;
+            this._toastService.success('Code generated successfully!');
         }
     }
 

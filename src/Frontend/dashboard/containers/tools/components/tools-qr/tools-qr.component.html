@@ -44,7 +44,7 @@
                 />
             </div>
             <sb-button
-                [disabled]="!qrToolForm.get('channel')?.value"
+                [disabled]="!(qrToolForm.get('channel')?.value  && qrToolForm.get('customMessage')?.value)"
                 [label]="'Generate QR Code'"
                 [type]="'primary'"
                 [isActive]="true"
@@ -58,15 +58,14 @@
         </div>
         <div *ngIf="generatedLink">
             <sb-button
-            [disabled]="!qrToolForm.get('channel')?.value"
+            [disabled]="!(qrToolForm.get('channel')?.value  && qrToolForm.get('customMessage')?.value)"
             [label]="'Download QR Code'"
             [type]="'primary'"
             [isActive]="true"
             [customWidth]="'100%'"
             (onClick)="downloadQRCode()"
-        >
-        </sb-button>
+            >
+            </sb-button>
         </div>
-        
     </div>
 </div>

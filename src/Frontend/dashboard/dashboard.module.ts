@@ -16,6 +16,7 @@ import { ImageCropperModule } from 'ngx-image-cropper';
 import { DragDropModule } from '@angular/cdk/drag-drop';
 import { QRCodeModule } from 'angularx-qrcode';
 import { ReadMoreComponent } from 'Frontend/utility/containers/read-more/read-more.component';
+import { ToastComponent } from 'assets/toast/toast.component';
 
 
 
@@ -80,12 +81,14 @@ import { FilterMediaPipe } from './pipe/filter-media.pipe';
             LoaderComponent,
             LinkifyPipe,
             ParseJsonPipe,
-            FilterMediaPipe
+            FilterMediaPipe,
+            ToastComponent
         ],
     exports: [...dashboardContainers.containers,
               ...dashboardComponents.components,
                  DashboardComponent,
                  LoaderComponent,
+                 ToastComponent
             ],
 })
 export class DashboardModule { }

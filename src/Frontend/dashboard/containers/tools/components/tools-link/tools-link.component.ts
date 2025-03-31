@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { NgbModalConfig, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { SettingsService } from 'Frontend/dashboard/services/settings.service';
-
+import { ToastService } from 'assets/toast/toast.service';
 @Component({
     selector: 'sb-tools-link ',
     templateUrl: './tools-link.component.html',
@@ -18,7 +18,7 @@ export class ToolsLinkComponent implements OnInit {
     isTooltipVisible: boolean = false;
     generatedLink: string | null = null;
 
-    constructor(private _settingsService: SettingsService) {}
+    constructor(private _settingsService: SettingsService, private _toastService: ToastService) {}
     ngOnInit() {
         this.getWhatsAppDetails();
         this.initForm();
@@ -68,10 +68,12 @@ export class ToolsLinkComponent implements OnInit {
           const customMessage = encodeURIComponent(this.linkToolForm.get('customMessage')?.value || '');
           
           this.generatedLink = `https://wa.me/${phoneNumber}?text=${customMessage}`;
+          this._toastService.success('Link generated successfully!');
       }
     }
     copyToClipboard() {
       if (this.generatedLink) {
+        this._toastService.success('Copied!');
           navigator.clipboard.writeText(this.generatedLink).then(() => {
           });
       }
