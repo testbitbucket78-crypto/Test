@@ -18,6 +18,7 @@ import * as authGuards from './guards';
 
 /* Services */
 import * as authServices from './services';
+import { CreatePasswordComponent } from './containers/create-password/create-password.component';
 
 
 @NgModule({
@@ -31,7 +32,7 @@ import * as authServices from './services';
         DashboardModule,
     ],
     providers: [...authServices.services, ...authGuards.guards],
-    declarations: [...authContainers.containers, ...authComponents.components],
+    declarations: [...authContainers.containers, ...authComponents.components, CreatePasswordComponent],
     exports: [...authContainers.containers, ...authComponents.components],
 })
 export class AuthModule {}

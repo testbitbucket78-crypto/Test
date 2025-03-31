@@ -3872,6 +3872,10 @@ sendMessage(isTemplate:boolean=false,templateTxt:string=''){
 	}
 	
 	checkPermission(){
+		if(((JSON.parse(sessionStorage.getItem('loginDetails')!)).IsActive == 4 || (JSON.parse(sessionStorage.getItem('loginDetails')!)).currentStatus == 4 )){
+			this.showToaster('Attention! Your account has been PAUSED. Please contact your solution provider.','error');
+			return
+		}
 		console.log(this.selectedInteraction) ;	
 		if(this.showChatNotes=='text' && this.selectedInteraction.channel!='WA API'){
 			this.checkAuthentication()

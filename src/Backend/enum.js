@@ -25,4 +25,12 @@ const channelsForTemplates = {
     web: "WA Web",
 }
 
-module.exports = { MessagingLimitTiers, MessagingName, channelName, channelForSendingMessage, channelsForTemplates }
+const userStatus = {
+Active : 1,
+Paused : 4 ,
+Invited: 3,
+Disabled : 2,
+Deleted : 5
+}
+
+module.exports = { MessagingLimitTiers, MessagingName, channelName, channelForSendingMessage, channelsForTemplates,userStatus }
