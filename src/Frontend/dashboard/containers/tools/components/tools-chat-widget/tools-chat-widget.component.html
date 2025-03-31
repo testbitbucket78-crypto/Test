@@ -131,7 +131,10 @@
                     </div>
                 </div>
                 <sb-button
-                    [disabled]="!widgetToolForm.get('channel')?.value"
+                    [disabled]="!(widgetToolForm.get('channel')?.value &&
+                    widgetToolForm.get('customMessage')?.value &&
+                    widgetToolForm.get('widgetTitle')?.value && 
+                    widgetToolForm.get('startButtonText')?.value)"
                     [label]="'Generate Code'"
                     [type]="'primary'"
                     [customWidth]="'100%'"

@@ -44,7 +44,7 @@
                 />
             </div>
             <sb-button
-                [disabled]="!linkToolForm.get('channel')?.value"
+                [disabled]="!(linkToolForm.get('channel')?.value && linkToolForm.get('customMessage')?.value)"
                 [label]="'Generate Link'"
                 [type]="'primary'"
                 [isActive]="true"

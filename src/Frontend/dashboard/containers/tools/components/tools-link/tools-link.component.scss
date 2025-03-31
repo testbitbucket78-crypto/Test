@@ -8,12 +8,16 @@
         font-size: 13px;
     }
 
-    // &:focus {
-    //     border: 1px solid black;
-    //     box-shadow: 1px 1px 10px rgba(0, 0, 255, 0.712);
-    // }
 }
 .custom-box-style{
     box-shadow: 2px 13px 54px rgba(105, 95, 151, 0.0784313725);
     border-radius: 30px;
+    h4, h2 {
+        font-family: 'Manrope';
+
+    }
+    p {
+        font-family: 'Manrope';
+        font-size: 13px;
+    }
 }
