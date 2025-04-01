@@ -102,6 +102,7 @@ export class ToolsChatWidgetComponent implements OnInit {
     copyCode() {
         if (this.codeToDisplay) {
             navigator.clipboard.writeText(this.codeToDisplay).then(() => {});
+            this._toastService.success('Code Copied Successfully!');
         }
     }
 }

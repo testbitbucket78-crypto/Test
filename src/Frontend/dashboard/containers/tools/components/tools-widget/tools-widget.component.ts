@@ -58,10 +58,28 @@ export class WidgetComponent implements OnInit {
             if (changes['popupY']) {
                 component.style.bottom = `${this.popupY}%`;
             }
-            let script = `<script async type="text/javascript">document.addEventListener("DOMContentLoaded", function () {let popup = document.getElementById("popup-component");let icon = document.getElementById("whatsapp-logo");if (icon && popup) { icon.addEventListener("click", () => {popup.style.display = popup.style.display === "flex" ? "none" : "flex";});}});</script>`;
-            let htmlContent = component.outerHTML + script;
-            let codeToDisplay = '<!DOCTYPE html><html><body>' + htmlContent + '</body></html>';
-            if (changes['generatedHTML']) this.sendHtmlToParent.emit(codeToDisplay);
+            let script = `
+            <script async type="text/javascript">
+              document.addEventListener("DOMContentLoaded", function () {
+                let popup = document.getElementById("popup-component");
+                let icon = document.getElementById("whatsapp-logo");
+          
+                if (popup) {
+                  popup.style.display = "none"; // Ensure popup is hidden by default
+                }
+          
+                if (icon && popup) {
+                  icon.addEventListener("click", () => {
+                    popup.style.display = popup.style.display === "flex" ? "none" : "flex";
+                  });
+                }
+              });
+            </script>
+          `;
+          
+          let htmlContent = component.outerHTML + script;
+          let codeToDisplay = '<!DOCTYPE html><html><body>' + htmlContent + '</body></html>';
+          if (changes['generatedHTML']) this.sendHtmlToParent.emit(codeToDisplay);
         }
     }
 }
