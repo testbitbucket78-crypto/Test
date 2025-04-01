@@ -13,10 +13,10 @@ import { ToastService, ToastConfig } from './toast.service';
     .toast {
       position: fixed;
       right: 20px;
-      top: 20px;
+      top: 50px;
       z-index: 999999;
-      padding: 12px 24px;
-      border-radius: 8px;
+      padding: 10px 24px;
+      border-radius: 50px;
       box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
       min-width: 200px;
       text-align: center;
