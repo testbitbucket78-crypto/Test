@@ -384,12 +384,19 @@ getPhoneNumberValidation(){
         }
         }
 
-    getFirstName(name:any){
-        const nameParts = name?.split(' ');
+
+    getFirstName(name: any): string {
+        if (!name || typeof name !== 'string') {
+            return ''; // Return empty string if name is null, undefined, or not a string
+        }
+    
+        const nameParts = name.trim().split(/\s+/); // Trim & split by spaces (handles multiple spaces)
         const firstName = nameParts[0] || '';
         const lastName = nameParts[1] || '';
-        let firstLetterFirstName = firstName.charAt(0) || '';
-        let firstLetterLastName = lastName.charAt(0) || '';
+    
+        const firstLetterFirstName = firstName.charAt(0) || '';
+        const firstLetterLastName = lastName.charAt(0)|| '';
+    
         return firstLetterFirstName + firstLetterLastName;
     }
 

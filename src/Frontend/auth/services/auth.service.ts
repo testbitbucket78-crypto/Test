@@ -4,6 +4,7 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { Auth, authRegister, authForgotPassword ,authSendOtp,authVerifyOtp} from '../models';
 import { environment } from 'environments/environment.prod';
 const API_URL = environment.baseUrl;
+const AdminbaseUrl = environment.AdminbaseUrl;
 
 @Injectable()
 export class AuthService {
@@ -43,6 +44,12 @@ export class AuthService {
     }
     logout(): void {
         sessionStorage.clear();
+    }
+
+    createpassword(data:any, uid: any){
+        const params = new HttpParams().set('uid', uid)
+        return this.http.post(AdminbaseUrl+'/createPassword/:uid', data, { params: params })
+
     }
    
 }

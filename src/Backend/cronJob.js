@@ -21,8 +21,9 @@ const logger = require('./common/logger.log');
 const commonFun = require('./common/resuableFunctions')
 const mapCountryCode = require('./Contact/utils.js');
 let metaPhoneNumberID = 211544555367892
-const { sendEmail }= require('./Services/EmailService');
-const { EmailTemplateProvider }= require('./common/template')
+const { sendEmail } = require('./Services/EmailService');
+const { EmailTemplateProvider } = require('./common/template')
+const { userStatus } = require('./enum.js')
 
 // Function to check if the schedule_datetime is within 1-2 minutes from the current time
 function isWithinTimeWindow(scheduleDatetime) {
@@ -35,9 +36,9 @@ function isWithinTimeWindow(scheduleDatetime) {
 
 async function fetchScheduledMessages() {
   try {
-
-   // var messagesData = await db.excuteQuery(`select * from Campaign where (status=1 or status=2) and is_deleted != 1`, [])
-    var messagesData = await db.excuteQuery(`SELECT *, DATE_FORMAT(start_datetime, '%Y-%m-%d %H:%i:%s') AS formatted_date  FROM Campaign WHERE (status = 1 OR status = 6) AND is_deleted != 1`, [])
+    // var messagesData = await db.excuteQuery(`select * from Campaign where (status=1 or status=2) and is_deleted != 1`, [])
+    // var messagesData = await db.excuteQuery(`SELECT *, DATE_FORMAT(start_datetime, '%Y-%m-%d %H:%i:%s') AS formatted_date,u.IsActive,u.currentStatus  FROM Campaign u  LEFT JOIN user u ON u.SP_ID = c.spid  WHERE (status = 1 OR status = 6) AND is_deleted != 1`, [])
+    var messagesData = await db.excuteQuery(`SELECT c.*, DATE_FORMAT(c.start_datetime, '%Y-%m-%d %H:%i:%s') AS formatted_date, u.IsActive, u.currentStatus FROM Campaign c LEFT JOIN user u ON u.SP_ID = c.sp_id AND (u.ParentId Is Null) WHERE c.status IN (1, 6) AND c.is_deleted != 1`, [])
     var remaingMessage = [];
     //console.log(messagesData)
     logger.info(`fetchScheduledMessages ${messagesData?.length}`)
@@ -60,7 +61,7 @@ async function fetchScheduledMessages() {
 
         if (stDateTime <= currentDateTime) {
           console.log(" isWorkingTime messagesData loop",)
-          const phoneNumber = message.segments_contacts.length > 0 ? mapPhoneNumberfomList(message) : mapPhoneNumberfomCSV(message);
+            const phoneNumber = message.segments_contacts.length > 0 ? mapPhoneNumberfomList(message) : mapPhoneNumberfomCSV(message);
 
         }
       } else {
@@ -166,9 +167,9 @@ async function parseMessageForCSV(message_content, contact, messageVariable) {
 
   let content = '';
   if(message_content?.length >0){
-     content = await removeTags.removeTagsFromMessages(message_content);
+    content = await removeTags.removeTagsFromMessages(message_content);
   }
- 
+
   let message_variables = messageVariable && messageVariable.length > 0 ? JSON.parse(messageVariable) : undefined;
   const extractedValues = [];
   if (message_variables) {
@@ -177,14 +178,14 @@ async function parseMessageForCSV(message_content, contact, messageVariable) {
       let value = variable.value.trim();
       let regex = new RegExp(label);
 
-      content = content.replace(regex, (match) => {  
-        logger.info(`before if var ${value} ,${contact.hasOwnProperty(value)} ,${JSON.stringify(contact)}`) 
+      content = content.replace(regex, (match) => {
+        logger.info(`before if var ${value} ,${contact.hasOwnProperty(value)} ,${JSON.stringify(contact)}`)
         if (contact.hasOwnProperty(value)) {
-          logger.info(`if var ${value} ,${contact.hasOwnProperty(value)}`) 
+          logger.info(`if var ${value} ,${contact.hasOwnProperty(value)}`)
           extractedValues.push(contact[value]);
           return contact[value];
         } else {
-          logger.info(`else var ${value} ,${contact.hasOwnProperty(value)}`) 
+          logger.info(`else var ${value} ,${contact.hasOwnProperty(value)}`)
           extractedValues.push('');
           return value;
         }
@@ -342,15 +343,15 @@ async function getCampTime(spid) {
 
 function wait(delay) {
   return new Promise(resolve => {
-     setTimeout(() => {
-                  resolve("done");
+    setTimeout(() => {
+      resolve("done");
     }, delay);
   });
 }
 
 async function batchofScheduledCampaign(users, sp_id, type, message_content, message_media, phone_number_id, channel_id, message, list,header,body,templateId) {
   for (let i = 0; i < users.length; i += batchSize) {
-    const batch = users.slice(i, i + batchSize);  
+    const batch = users.slice(i, i + batchSize);
     await sendScheduledCampaign(batch, sp_id, type, message_content, message_media, phone_number_id, channel_id, message, list,header,body,templateId);
     const randomdelay = Math.floor(Math.random() * (7000 - 5000 + 1)) + 5000;
     await wait(randomdelay)
@@ -533,10 +534,10 @@ JOIN user u ON u.uid=c.uid
      WHERE SP_ID = ? AND ParentId IS NULL`
     let user = await db.excuteQuery(alertUser, [message.sp_id]);
         const spData = await  db.excuteQuery(querry, [message.sp_id]);
-        let spNumber
+    let spNumber
         if(spData.length > 0) {
-            spNumber = spData[0].mobile_number
-        }
+      spNumber = spData[0].mobile_number
+    }
     for (let i = 0; i < user.length; i++) {
       let { subject, body, emailSender } = await EmailTemplateProvider(message, updatedStatus, user[i]?.Channel, user[i].name, spNumber);
 
@@ -548,15 +549,15 @@ JOIN user u ON u.uid=c.uid
       };
       try {
         if(body) {
-        let emailSent = await sendEmail(emailOptions);
-        console.log(`Email sent to ${user[i]?.email}:`, emailSent);
+          let emailSent = await sendEmail(emailOptions);
+          console.log(`Email sent to ${user[i]?.email}:`, emailSent);
         }
       } catch (error) {
         console.error(`Failed to send email to ${user[i]?.email}:`, error.message);
       }
     }
-    
-    
+
+
     var type = 'image';
     if (message.message_media == null || message.message_media == "") {
       type = 'text';
@@ -728,16 +729,23 @@ async function isContactBlocked(phone, spid) {
 async function messageThroughselectedchannel(spid, from, type, text, media, phone_number_id, channelType, campaignId, message, message_content,headerVar,bodyVar,templateId,buttons,DynamicURLToBESent) {
   //console.log("messageThroughselectedchannel", spid, from, type, channelType,web.isActiveSpidClient(spid))
   try {
-     let button = typeof buttons === 'string' ? JSON.parse(buttons) : buttons;
+    let button = typeof buttons === 'string' ? JSON.parse(buttons) : buttons;
     let isBlockedContact = await isContactBlocked(from, spid)
 
     let getMediaType = determineMediaType(type);
     if (getMediaType === 'unknown' && media) getMediaType = determineMediaFromLink(media);
     if (channelType == 'WhatsApp Official' || channelType == 1 || channelType == 'WA API') {
+      if (message.IsActive ==  userStatus.Paused || message.currentStatus == userStatus.Paused) {
+        console.log("message.IsActive", message.IsActive, message.currentStatus)
+        let saveSendedMessage = await saveMessage(from, spid, '', message_content, media, type, type, 'Attention! Your account has been PAUSED. Please contact your solution provider', 9, buttons);
+        let saveInCampaignMessage = await sendMessages(from, text, campaignId, message, 403, text, '', 'WA API', '', 'This contact is blocked')
+        return
+      }
+
       if (!isBlockedContact) {
         let template = await db.excuteQuery('select * from templateMessages where ID=? and spid=?',[templateId,spid])
         let response = await middleWare.createWhatsAppPayload(getMediaType, from, template[0]?.TemplateName, template[0]?.Language, headerVar, bodyVar, media, spid, button, DynamicURLToBESent);
-       // await middleWare.sendDefultMsg(media, text, getMediaType, metaPhoneNumberID, from, spid);
+        // await middleWare.sendDefultMsg(media, text, getMediaType, metaPhoneNumberID, from, spid);
         console.log("Official response", JSON.stringify(response?.status));
 
         if (response?.status == 200) {
@@ -989,7 +997,7 @@ async function autoResolveExpireInteraction() {
 
 // });
 
-// Function to start the scheduler
+// Function to start the scheduler 
 function startScheduler() {
   cron.schedule('*/5 * * * *', async () => {
     console.log('Running scheduled task at:', new Date());
@@ -1028,8 +1036,8 @@ function calculateInitialDelay() {
 
     console.log(`Port ${port} is available. Starting the server...`);
 
-// Initial startup
-const initialDelay = calculateInitialDelay();
+    // Initial startup
+    const initialDelay = calculateInitialDelay();
 
     if (initialDelay > 0) {
       console.log(`Waiting ${initialDelay / 1000} seconds to start the scheduler...`);

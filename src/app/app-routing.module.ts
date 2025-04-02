@@ -373,6 +373,14 @@ const routes: Routes = [
             title: 'CIP - Verification',
         } as SBRouteData,
     },
+    {
+        path: 'Create-password',
+        canActivate: [],
+        component: authContainers.CreatePasswordComponent,
+        data: {
+            title: 'CIP - Create-password',
+        } as SBRouteData,
+    },
 ];
 
 @NgModule({

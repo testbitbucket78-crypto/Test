@@ -206,13 +206,14 @@
             </div>
         </div>
     </div>
-    <div class="sideBar-footer">
-        <button type="button" class="account-white-btn" (click)="showSideBar = false" data-bs-toggle="modal" data-bs-target="#userModal">
+
+    <div class="sideBar-footer" >
+        <button type="button" class="account-white-btn" (click)="showSideBar = false" data-bs-toggle="modal" data-bs-target="#userModal" [disabled]="userData?.ParentId == null && userData?.uid == login_uid">
             <img class="p-0" src="../../../../assets/img/edit.png"></button>
-        <button type="button" class="account-white-btn ml-2" (click)="showSideBar = false" data-bs-toggle="modal" data-bs-target="#deleteModal">
+        <button type="button" class="account-white-btn ml-2" (click)="showSideBar = false" data-bs-toggle="modal" data-bs-target="#deleteModal" [disabled]="userData?.ParentId == null && userData?.uid == login_uid">
             <img class="p-0" src="../../../../assets/img/delete.png">
         </button>
-        <button class="disable-btn ml-2 " [disabled]="userData?.IsActive == 3">
+        <button class="disable-btn ml-2 " [disabled]="userData?.IsActive == 3 || userData?.ParentId == null && userData?.uid == login_uid">
             <div class="active-toggle">
                 <span>Disable</span>
                 <div class="px-2 switch-toggle">

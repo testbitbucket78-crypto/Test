@@ -115,7 +115,14 @@ export class LoginComponent implements OnInit {
                     if (errorDiv) {
                         errorDiv.innerHTML = errorMessage;
                     }
-                } else if (error?.status === 502) {
+                } if (error?.status === 402) {
+                    const errorMessage = 'Attention! Your account has been DISABLED. Please contact your solution provider';
+                    const errorDiv = document.getElementById('error-message');
+                    if (errorDiv) {
+                        errorDiv.innerHTML = errorMessage;
+                    }
+                }                
+                else if (error?.status === 502) {
                     const errorMessage = '! Invalid Response.';
                     const errorDiv = document.getElementById('error-message');
                     if (errorDiv) {
