@@ -43,7 +43,7 @@ const login = async (req, res) => {
         const password = req.body.password;
         const Channel = req.body.Channel;
         // Retrieve all user records with the matching email ID
-        const credentials = await db.excuteQuery('SELECT * FROM user WHERE email_id = ? AND isDeleted != 1 and Channel=?', [emailId,Channel]);
+        const credentials = await db.excuteQuery('SELECT * FROM user WHERE email_id = ? AND isDeleted != 1 and Channel=? AND IsActive != 2', [emailId,Channel]);
 
         if (credentials.length === 0) {
             return res.status(401).send({
@@ -51,7 +51,7 @@ const login = async (req, res) => {
                 status: 401
             });
         }
-        if (credentials != undefined && credentials.length != 0 && credentials[0].IsActive == userStatus.Disabled || credentials[0].currentStatus == userStatus.Disabled) {
+        if (credentials != undefined && credentials.length != 0 && credentials[0].isDisable != 0) {
             return res.status(402).send({
                 msg: 'Attention! Your account has been DISABLED. Please contact your solution provider',
                 status: 402

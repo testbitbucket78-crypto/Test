@@ -170,14 +170,14 @@ async function sendSmartReply(message_text, phone_number_id, contactName, from, 
 
 async function isPaused(sid) {
   try {
-      let { IsActive, currentStatus } = (
+      let { isPaused } = (
           await db.excuteQuery(
-              `SELECT currentStatus, IsActive FROM cip_preprod.user WHERE SP_ID = ? AND ParentId IS NULL;`,
+              `SELECT isPaused FROM cip_preprod.user WHERE SP_ID = ? AND ParentId IS NULL;`,
               [sid]
           )
       )[0];
 
-      if (IsActive ==  userStatus.Paused || currentStatus == userStatus.Paused) {
+      if (isPaused != 0) {
           return true;
       }
       return false;
