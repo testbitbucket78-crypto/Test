@@ -821,17 +821,24 @@ const getTemplate = async (req, res) => {
             lookup[item.name] = item.status;
             return lookup;
         }, {});
-
+        let updateQuery = 'UPDATE templateMessages SET status = CASE';
+        const updateValues = [];
         // Update status in rowDataPackets based on the lookup object
         templates.forEach(packet => {
             // console.log(packet.status  ,packet.TemplateName)
             if (packet.status != 'draft') {
                 //     console.log("if")
                 if (statusLookup[packet.TemplateName]) {
+                    updateQuery += ` WHEN ID = ? THEN ?`;
+                    updateValues.push(packet.ID, statusLookup[packet.TemplateName]);
                     packet.status = statusLookup[packet.TemplateName];
                 }
             }
-        })
+        });
+        updateQuery += ' ELSE status END';
+        console.log(updateQuery, updateValues)
+        await db.excuteQuery(updateQuery, updateValues);
+
     }
         //  console.log(templates)
         res.status(200).send({
