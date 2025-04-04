@@ -763,6 +763,11 @@ async function messageThroughselectedchannel(spid, from, type, text, media, phon
         let saveInCampaignMessage = await sendMessages(from, text, campaignId, message, 403, text, '', 'WA API', '', 'This contact is blocked')
       }
     } if (channelType == 'WhatsApp Web' || channelType == 2 || channelType == 'WA Web') {
+      if (message.isPaused != 0) {
+        let saveSendedMessage = await saveMessage(from, spid, '', message_content, media, type, type, 'Attention! Your account has been PAUSED. Please contact your solution provider', 9, buttons);
+        let saveInCampaignMessage = await sendMessages(from, text, campaignId, message, 403, text, '', 'WA Web', '', 'This contact is blocked')
+        return
+      }
       if (!isBlockedContact) {
         logger.info(`Not BlockedContact ${from} ,${spid} ${new Date()}`);
         let clientReady = await isClientActive(spid);
