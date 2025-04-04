@@ -1,8 +1,12 @@
 <sb-layout-dashboard>
 	<sb-top-nav title="Smart Replies"></sb-top-nav>
-	<sb-loader [isLoading]="isLoading" ></sb-loader>
+		<sb-loader [isLoading]="isLoading" ></sb-loader>
 	<div [ngStyle]="isShowSmartReplies ? {'position': 'fixed'} : {}" class="row r1">
-
+		<div class="toaster" (click)="hideToaster()">
+			<p *ngIf="errorMessage" class="error">{{errorMessage}}</p>
+			<p *ngIf="successMessage" class="success">{{successMessage}}</p>
+			<p *ngIf="warnMessage" class="warn">{{warnMessage}}</p>
+		  </div>
 
 		<div class="d-flex justify-content-between pt-3 pb-4 content-header">
 			<div class="input-group gf">
