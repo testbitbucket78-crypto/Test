@@ -105,7 +105,7 @@ app.post('/craeteQRcode', async (req, res) => {
         let response
         if(variables.provider == "whapi" || variables.SPID == spid){
         response = await Whapi.createClientInstance(spid, phoneNo);
-       await Whapi.handleWhatsAppReady(spid, phoneNo, response.token);
+       await Whapi.handleWhatsAppReady(spid, phoneNo, response.token); //todo need to check
         }else{
         response = await web.createClientInstance(spid, phoneNo);
         }
@@ -116,7 +116,10 @@ app.post('/craeteQRcode', async (req, res) => {
      
       
         logger.info(`response of create QR CODE  ${JSON.stringify(response.status)}`)
-        res.send({
+        if(response.status == 409 && response.message == "Channel already authenticated"){
+            return res.send({ status: 409, value: 'Channel already authenticated' })
+        }
+        res. send({
             status: 200,
             QRcode: response.value
         })

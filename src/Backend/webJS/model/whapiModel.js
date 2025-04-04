@@ -90,7 +90,7 @@ class CreateChannelResponse {
             const result = await db.excuteQuery(query, [channelId]);
 
             if (result.length > 0) {
-                return new CreateChannelResponse(result[0]);
+                return new CreateChannelResponse(result[0], result[0]?.spid, result[0]?.phone_no);
             } else {
                 console.log('No channel found for ID:', channelId);
                 return null;
@@ -154,6 +154,7 @@ class Message {
         this.text = data?.text || {};
         this.from = data?.from;
         this.from_name = data?.from_name;
+        this.image = data?.image || null;
     }
 }
 

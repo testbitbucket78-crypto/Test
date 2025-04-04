@@ -74,10 +74,10 @@ app.post("/webhook", async (req, res) => {
     const incommingMessage = new WhapiIncomingMessage(body);
     if(incommingMessage?.channel_id){
       if(incommingMessage?.statuses.length > 0){
-         let messageAck = WhapiProvider.messageAck(incommingMessage.statuses);
+         let messageAck = WhapiProvider.messageAck(incommingMessage);
       }
       if(incommingMessage?.messages.length > 0){
-         let message = WhapiProvider.Message(incommingMessage);
+         let message = WhapiProvider.Message(incommingMessage, incommingmsg);
       }
       if(incommingMessage.isUserDisconnected()){
         let userDisconnected = WhapiProvider.handleDisconnection(incommingMessage?.channel_id);

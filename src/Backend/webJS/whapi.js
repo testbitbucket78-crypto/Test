@@ -14,7 +14,7 @@ app.use(bodyParser.urlencoded({ limit: "5mb", extended: true }));
 const Routing = require('../RoutingRules')
 const db = require('../dbhelper')
 const awsHelper = require('../awsHelper');
-const incommingmsg = require('../IncommingMessages')
+let incommingmsg = require('../IncommingMessages')
 const notify = require('../whatsApp/PushNotifications')
 const mapCountryCode = require('../Contact/utils.js');
 const logger = require('../common/logger.log');
@@ -45,8 +45,9 @@ async function createClientInstance(spid, phoneNo) {
         let channel;
         //Instead of making client Instance We are making channel here
         let checkIfChannelExist = await CreateChannelResponse.getBySpid(spid);
+        channel = checkIfChannelExist;
         if (!checkIfChannelExist) {
-            channel = checkIfChannelExist;
+            
 
             const projectId = await whapiService.getProjectId();
             let channelReqPayload = new CreateChannelRequest({
@@ -80,6 +81,10 @@ async function createClientInstance(spid, phoneNo) {
       if (err.response?.data?.error?.code === 409 && err.response?.data?.error?.message === "channel already authenticated") {
         try {
           await CreateChannelResponse.setChannelAlreadyAuthenticated(spid);
+          return {
+            status: 409,
+            message: "Channel already authenticated",
+          }
         } catch (dbError) {
             console.error('Error updating database:', dbError.message);
         }
@@ -247,8 +252,9 @@ async function destroyWrongScan(spid) {
  * Saves an incoming message.
  * @param {WhapiIncomingMessage} message - The message object from the model.
  */
-async function Message(message){
+async function Message(message, incommingMessageDependency){
     try {
+        incommingmsg = incommingMessageDependency;
         console.log("WHAPI event here -----------------------------------")
         if(!message.messages[0]?.chat_id?.includes('@g.us')){ 
          
@@ -264,8 +270,8 @@ async function Message(message){
           if (repliedMessage && repliedMessage.fromMe) {
             // Notify about the reply
             const repliedNumber = (message.from).replace(/@c\.us$/, "");
-            let d = new Date(message.timestamp * 1000).toUTCString();
-
+            let d = new Date(message?.messages[0]?.timestamp * 1000).toUTCString();
+            
             const message_time = moment.utc(d).format('YYYY-MM-DD HH:mm:ss');
             console.log(repliedMessage?._data?.id?.id, "reply ___________________", message.body)
             let campaignRepliedQuery = `UPDATE CampaignMessages set status=4 ,RepliedTime ='${message_time}' where phone_number =${repliedNumber} and (status = 3 OR status =2) and SP_ID = ${spid} AND messageTemptateId = '${repliedMessage?._data?.id?.id}'`
@@ -289,16 +295,19 @@ async function Message(message){
  * @param {WhapiIncomingMessage} statuses
  */
 async function messageAck(statuses) {
-    for (const status of statuses) {
+  let r1 = await CreateChannelResponse.getByChannelId(statuses.channel_id);
+  let spid = r1?.spid;
+    for (const status of statuses.statuses) {
         let phoneNumber = status.recipient_id.replace(/@s\.whatsapp\.net$/, "");
         let ack = status.code;
         let messageId = status.id;
-
+        
         try {
             let d = new Date(status.timestamp * 1000).toUTCString();
             const message_time = moment.utc(d).format('YYYY-MM-DD HH:mm:ss');
 
-            if (ack == '1') {
+            // Map status codes to appropriate states
+            if (status.status === 'sent') {
                 logger.info(`Sent message ${d}, ${message_time}`);
                 await db.excuteQuery('UPDATE CampaignMessages SET status=1, SentTime=? WHERE phone_number=? AND messageTemptateId=?', [message_time, phoneNumber, messageId]);
                 await db.excuteQuery('UPDATE Message SET created_at=? WHERE Message_template_id=?', [message_time, messageId]);
@@ -316,7 +325,7 @@ async function messageAck(statuses) {
                 logger.info(`Send ============== ${sended?.affectedRows}`);
                 notify.NotifyServer(phoneNumber, false, ack1InId[0]?.InteractionId, 'Out', 1, 0, messageId);
 
-            } else if (ack == '2') {
+            } else if (status.status === 'delivered') {
                 const LastModifiedDate = moment.utc(new Date().toUTCString()).format('YYYY-MM-DD HH:mm:ss');
                 logger.info(`Delivered message ${d}, ${message_time}, ${LastModifiedDate}`);
 
@@ -335,7 +344,7 @@ async function messageAck(statuses) {
                 let ack2InId = await db.excuteQuery(notifyInteraction, [phoneNumber, spid]);
                 notify.NotifyServer(phoneNumber, false, ack2InId[0]?.InteractionId, 'Out', 2, 0, messageId);
 
-            } else if (ack == '3') {
+            } else if (status.status === 'read') {
                 const LastModifiedDate = moment.utc(new Date().toUTCString()).format('YYYY-MM-DD HH:mm:ss');
                 logger.info(`Read message ${d}, ${message_time}, ${LastModifiedDate}`);
 
@@ -864,7 +873,7 @@ async function saveInMessages(message) {
         let Type = msg?.type;
         let contactName = msg?.from_name;
         let Message_template_id = msg?.id;
-  
+        console.log(r1,display_phone_number, from, message_text, Type, contactName, Message_template_id);
         // Format message text (bold, italic, strikethrough, and new lines)
         if (message_text) {
           message_text = message_text
@@ -881,12 +890,12 @@ async function saveInMessages(message) {
         let countryCode = countryCodeObj ? `${countryCodeObj.country} +${countryCodeObj.countryCode}` : '';
   
         let message_media = "text";
-        if (message?.hasMedia) {
-          const media = await message.downloadMedia();
-          message_media = media.data;
+        if (Type === 'image' || Type === 'video' || Type === 'audio' || Type === 'document') {
+          const media = msg?.image?.link
+          message_media = media
         }
   
-        let message_time = moment.utc(new Date(message.timestamp * 1000)).format('YYYY-MM-DD HH:mm:ss');
+        let message_time = moment.utc(new Date(msg.timestamp * 1000)).format('YYYY-MM-DD HH:mm:ss');
   
         let saveMessage = await saveIncommingMessages(
           message_direction, from, message_text, phone_number_id, 
@@ -1101,56 +1110,38 @@ async function actionsOflatestLostMessage(message_text, phone_number_id, from, d
   }
 }
 
-async function saveIncommingMessages(message_direction, from, firstMessage, phone_number_id, display_phone_number, phoneNo, message_text, message_media, Message_template_id, Quick_reply_id, Type, ExternalMessageId, contactName, ackStatus, timestramp, countryCode) {
+async function saveIncommingMessages(message_direction, from, firstMessage, phone_number_id, display_phone_number, phoneNo, message_text='', message_media, Message_template_id, Quick_reply_id, Type, ExternalMessageId, contactName, ackStatus, timestramp, countryCode) {
   // console.log("saveIncommingMessages")
 
-  if (Type == "image") {
-    console.log("lets check the image");
-
-    var imageurl = await saveImageFromReceivedMessage(from, message_media, phone_number_id, display_phone_number, Type);
-
-    message_media = imageurl.value;
-    // console.log(message_media)
-    // message_text = " "
-    var media_type = 'image/jpg'
+  if (Type == 'image') {
+      console.log('lets check the image');
+      message_media = message_media;
+      var media_type = 'image/jpg';
   }
-  if (Type == "video") {
-    console.log("lets check the video");
-
-    var imageurl = await saveImageFromReceivedMessage(from, message_media, phone_number_id, display_phone_number, Type);
-
-    message_media = imageurl.value;
-    //  console.log(message_media)
-    //message_text = " "
-    var media_type = 'video/mp4'
+  if (Type == 'video') {
+      console.log('lets check the video');
+      message_media = message_media;
+      var media_type = 'video/mp4';
   }
-  if (Type == "document") {
-    console.log("lets check the document");
-
-    var imageurl = await saveImageFromReceivedMessage(from, message_media, phone_number_id, display_phone_number, Type);
-
-    message_media = imageurl.value;
-    //  console.log(message_media)
-    // message_text = " "
-    var media_type = 'application/pdf'
+  if (Type == 'document') {
+      console.log('lets check the document');
+      message_media = message_media;
+      var media_type = 'application/pdf';
   }
 
   let countryCodeObj;
   if (phoneNo) {
-    countryCodeObj = mapCountryCode.mapCountryCode(phoneNo);
+      countryCodeObj = mapCountryCode.mapCountryCode(phoneNo);
   }
   let EcPhonewithoutcountryCode = countryCodeObj?.localNumber;
-  countryCode = countryCodeObj?.country + " +" + countryCodeObj?.countryCode;
+  countryCode = countryCodeObj?.country + ' +' + countryCodeObj?.countryCode;
 
   if ((message_text.length > 0 || message_media.length > 0) && Type != 'e2e_notification') {
     let query = "CALL webhook_2(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)"
-    // console.log([phoneNo, message_direction, message_text, message_media, Message_template_id, Quick_reply_id, Type, ExternalMessageId, display_phone_number, contactName, media_type, ackStatus, 'WA Web', timestramp, countryCode])
     var saveMessage = await db.excuteQuery(query, [phoneNo, message_direction, message_text, message_media, Message_template_id, Quick_reply_id, Type, ExternalMessageId, display_phone_number, contactName, media_type, ackStatus, 'WA Web', timestramp, countryCode, EcPhonewithoutcountryCode,'','',0]);
     notify.NotifyServer(display_phone_number, true);
-    //console.log("====SAVED MESSAGE====" + " replyValue length  " + JSON.stringify(saveMessage), "****", phoneNo, phone_number_id);
-
-
   }
+
   return saveMessage;
 }
 
