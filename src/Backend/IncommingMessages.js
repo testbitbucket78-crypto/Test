@@ -172,7 +172,7 @@ async function isPaused(sid) {
   try {
       let { isPaused } = (
           await db.excuteQuery(
-              `SELECT isPaused FROM cip_preprod.user WHERE SP_ID = ? AND ParentId IS NULL;`,
+              `SELECT isPaused FROM user WHERE SP_ID = ? AND ParentId IS NULL;`,
               [sid]
           )
       )[0];
@@ -961,17 +961,20 @@ async function SreplyThroughselectedchannel(spid, from, type, text, media, phone
   headerVar,
   bodyVar,buttons,DynamicURLToBESent) {
     let buttonsArray = typeof buttons === 'string' ? JSON.parse(buttons) : buttons;
+  
+
+    if(await isPaused(spid)){
+      let messageValu = [[spid, 'text', "", interactionId, agentId, 'Out', testMessage, (media ? media : 'text'), media_type, '', "", time, time, "", -2, 9,buttons]]
+      let saveMessage = await db.excuteQuery(insertMessageQuery, [messageValu]);
+      return
+    }
   if (channelType == 'WhatsApp Official' || channelType == 1 || channelType == 'WA API') {
     let response = false;
     let myUTCString = new Date().toUTCString();
     const time = moment.utc(myUTCString).format('YYYY-MM-DD HH:mm:ss');
     let sReply = '';
 
-    if(await isPaused(spid)){
-      let messageValu = [[spid, 'text', "", interactionId, agentId, 'Out', testMessage, (media ? media : 'text'), media_type, sReply.message.messages[0].id, "", time, time, "", -2, 9,buttons]]
-      let saveMessage = await db.excuteQuery(insertMessageQuery, [messageValu]);
-      return
-    }
+ 
 
     if(isTemplate == 'true'){
        sReply = await middleWare.createWhatsAppPayload(type, from, templateName, laungage, headerVar, bodyVar, media, spid, buttonsArray, DynamicURLToBESent);
