@@ -3872,7 +3872,7 @@ sendMessage(isTemplate:boolean=false,templateTxt:string=''){
 	}
 	
 	checkPermission(){
-		if(((JSON.parse(sessionStorage.getItem('loginDetails')!)).IsActive == 4 || (JSON.parse(sessionStorage.getItem('loginDetails')!)).currentStatus == 4 )){
+		if(((JSON.parse(sessionStorage.getItem('loginDetails')!)).isPaused != 0 )){
 			this.showToaster('Attention! Your account has been PAUSED. Please contact your solution provider.','error');
 			return
 		}
