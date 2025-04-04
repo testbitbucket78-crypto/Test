@@ -8,6 +8,7 @@ import { FacebookService } from 'Frontend/dashboard/services/facebook-embedded.s
 import { environment } from 'environments/environment';
 import { Clipboard } from '@angular/cdk/clipboard';
 import { json } from 'stream/consumers';
+import { ToastService } from 'assets/toast/toast.service';
 
 declare var $:any;
 declare var FB: any; 
@@ -101,7 +102,8 @@ ipRegexTs = /^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]
     public facebookService:FacebookService,
     public settingsService:SettingsService,
     private renderer: Renderer2,
-    private websocketService: WebsocketService,private changeDetector: ChangeDetectorRef) {}
+    private websocketService: WebsocketService,private changeDetector: ChangeDetectorRef, 
+    private _toastService : ToastService) {}
 
   private socket$: WebSocketSubject<any> = new WebSocketSubject('wss://notify.engagekart.com');
 
@@ -360,6 +362,15 @@ openDiv() {
       this.apiService.craeteQRcode(data).subscribe(
 
         (response) => {
+          debugger;
+          if(response.status === 409 && response.value == "Channel already authenticated") {
+            this.channel_status = 1; 
+            this.hideModal();
+            this._toastService.success('Channel already authenticated');
+            setTimeout(()=> {
+              this.saveWhatsappWebDetails(id);
+            },2000); 
+          }
           if (response.status === 200) {
             this.qrcode = response.QRcode;
             if(this.qrcode) {
