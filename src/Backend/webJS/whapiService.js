@@ -148,7 +148,7 @@ class whapiService {
     //     }
     // }
     static async getLoginQRCode(token) {
-        const MAX_RETRIES = 5;
+        const MAX_RETRIES = 3;
         const BACKOFF_MS = 3000;
         const LOGIN_URL = "https://gate.whapi.cloud/users/login/rowdata?wakeup=true";
     
@@ -284,7 +284,26 @@ class whapiService {
             return false;
         }
     }
+    static async getChatMessagesByChatId(token, chatId, count = 30, offset = 0) {
+        try {
+            const response = await axios.get(`https://gate.whapi.cloud/messages/list/${chatId}`, {
+                params: {
+                    count,
+                    offset
+                    // You can also include time_from, time_to, from_me, normal_types etc. if needed
+                },
+                headers: {
+                    accept: 'application/json',
+                    authorization: `Bearer ${token}`
+                }
+            });
     
+            return response.data;
+        } catch (error) {
+            console.error("Error fetching chat messages:", error.response?.data || error.message);
+            return false;
+        }
+    }
     
 }
 

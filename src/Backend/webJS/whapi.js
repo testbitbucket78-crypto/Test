@@ -42,7 +42,7 @@ const { CreateChannelRequest,
 
 async function createClientInstance(spid, phoneNo) {
     try {
-        let channel;
+        var channel;
         //Instead of making client Instance We are making channel here
         let checkIfChannelExist = await CreateChannelResponse.getBySpid(spid);
         channel = checkIfChannelExist;
@@ -84,6 +84,7 @@ async function createClientInstance(spid, phoneNo) {
           return {
             status: 409,
             message: "Channel already authenticated",
+            token: channel.token,
           }
         } catch (dbError) {
             console.error('Error updating database:', dbError.message);
@@ -515,29 +516,33 @@ async function handleWhatsAppReady(spid, phoneNo, token) {
           return;
       }
 
-      for (const chat of chat_activos.chats) {
+      const recentChats = chat_activos.chats.slice(0, 30);
+      for (const chat of recentChats) {
         if (chat.type !== 'group') {
             let chatId = chat?.last_message?.chat_id || chat?.id;
+            if(chatId == 'stories') continue;
             console.log(`Processing chat ID: ${chatId}`);
     
-            let message = chat?.last_message;
-    
-            if (!message) {
-                console.log(`Fetching messages for chat ID: ${chatId}`);
-                let chatDetails = await whapiService.getChat(token, chatId);
-                message = chatDetails?.messages?.[0] || null;
-            }
-    
-            // Skip stories
-            if (message?.chat_id === 'stories') continue;
-    
-            if (!message) {
+            let chatMessages = await whapiService.getChatMessagesByChatId(token, chatId);
+   
+            if (!chatMessages?.messages || chatMessages.messages.length === 0) {
                 console.log(`No messages found for chat ID: ${chatId}`);
                 continue;
             }
+            const messages = chatMessages.messages;
+            for (let i = messages.length - 1; i >= 0; i--) {
+                const message = messages[i];
+                
+                // Skip stories
+                if (message?.chat_id === 'stories') continue;
+                
+                if (!message) {
+                    console.log(`Invalid message at index ${i}`);
+                    continue;
+                }
     
-            console.log("Saving message:", message);
-            await savelostChats(message, phoneNo, spid, 0, 0); 
+                await savelostChats(message, phoneNo, spid, i, messages.length - 1);
+            }
         }
     }
 
@@ -1367,7 +1372,7 @@ async function getDetatilsOfSavedMessage(saveMessage, message_text, phone_number
 async function sendMessageViaWhapi(spid, phoneNo, type, message_body, media, interaction_id, msg_id, spNumber) {
     try {
         let r1 = await CreateChannelResponse.getBySpid(spid);
-        r1.token = "I3yX5PYIVRJsLsdMlojaN4VxufeGJb5N"
+        //r1.token = "I3yX5PYIVRJsLsdMlojaN4VxufeGJb5N"
         if (!r1 || !r1.token) {
             throw new Error("Invalid SPID or token not found.");
         }
