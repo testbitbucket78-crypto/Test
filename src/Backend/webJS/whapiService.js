@@ -121,30 +121,70 @@ class whapiService {
         }
     }
 
-    static async getLoginQRCode(token) {
-        try {
-            token = "I3yX5PYIVRJsLsdMlojaN4VxufeGJb5N";
-            const response = await axios.get("https://gate.whapi.cloud/users/login/rowdata?wakeup=true", {
-                headers: {
-                    "accept": "application/json",
-                    "authorization": `Bearer ${token}`,
-                    "content-type": "application/json"
-                },
-            });
+    // static async getLoginQRCode(token) {
+    //     try {
+    //         token = "I3yX5PYIVRJsLsdMlojaN4VxufeGJb5N";
+    //         const response = await axios.get("https://gate.whapi.cloud/users/login/rowdata?wakeup=true", {
+    //             headers: {
+    //                 "accept": "application/json",
+    //                 "authorization": `Bearer ${token}`,
+    //                 "content-type": "application/json"
+    //             },
+    //         });
     
-            if (response.data.status === 'OK') {
-                return {
-                    value: response?.data?.rowdata,
-                    rowdata: response?.data?.rowdata,
-                    expire: response?.data?.expire,
-                    channelToken: token,
-                };
-            } else {
-                throw new Error('Failed to retrieve QR code');
+    //         if (response.data.status === 'OK') {
+    //             return {
+    //                 value: response?.data?.rowdata,
+    //                 rowdata: response?.data?.rowdata,
+    //                 expire: response?.data?.expire,
+    //                 channelToken: token,
+    //             };
+    //         } else {
+    //             throw new Error('Failed to retrieve QR code');
+    //         }
+    //     } catch (error) {
+    //         console.error('Error fetching QR code:', error.message);
+    //         throw error;
+    //     }
+    // }
+    static async getLoginQRCode(token) {
+        const MAX_RETRIES = 3;
+        const BACKOFF_MS = 3000;
+        const LOGIN_URL = "https://gate.whapi.cloud/users/login/rowdata?wakeup=true";
+    
+        const delay = (ms) => new Promise(resolve => setTimeout(resolve, ms));
+    
+        for (let attempt = 1; attempt <= MAX_RETRIES; attempt++) {
+            try {
+                const response = await axios.get(LOGIN_URL, {
+                    headers: {
+                        accept: "application/json",
+                        authorization: `Bearer ${token}`,
+                        "content-type": "application/json",
+                    },
+                });
+    
+                if (response.data?.status === 'OK') {
+                    return {
+                        value: response.data.rowdata,
+                        rowdata: response.data.rowdata,
+                        expire: response.data.expire,
+                        channelToken: token,
+                    };
+                }
+    
+                throw new Error(`Unexpected status: ${response.data?.status || 'unknown'}`);
+            } catch (error) {
+                console.error(`Attempt ${attempt} failed: ${error.message}`);
+    
+                if (attempt === MAX_RETRIES) {
+                    console.error('All retry attempts exhausted. Aborting.');
+                    throw error;
+                }
+    
+                console.log(`Retrying in ${BACKOFF_MS / 1000} seconds...`);
+                await delay(BACKOFF_MS);
             }
-        } catch (error) {
-            console.error('Error fetching QR code:', error.message);
-            throw error;
         }
     }
 
@@ -244,7 +284,26 @@ class whapiService {
             return false;
         }
     }
+    static async getChatMessagesByChatId(token, chatId, count = 30, offset = 0) {
+        try {
+            const response = await axios.get(`https://gate.whapi.cloud/messages/list/${chatId}`, {
+                params: {
+                    count,
+                    offset
+                    // You can also include time_from, time_to, from_me, normal_types etc. if needed
+                },
+                headers: {
+                    accept: 'application/json',
+                    authorization: `Bearer ${token}`
+                }
+            });
     
+            return response.data;
+        } catch (error) {
+            console.error("Error fetching chat messages:", error.response?.data || error.message);
+            return false;
+        }
+    }
     
 }
 
