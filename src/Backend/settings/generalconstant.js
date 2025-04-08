@@ -267,7 +267,8 @@ WITH RecentInteractions AS (
 LatestMessageDirection AS (
     SELECT 
         interaction_id, 
-        message_direction 
+        message_direction,
+        created_at
     FROM 
         Message 
     WHERE 
@@ -275,9 +276,8 @@ LatestMessageDirection AS (
         AND is_deleted != 1
     ORDER BY 
         created_at DESC 
-
 )
-SELECT 
+	SELECT 
     M.interaction_id,
     (SELECT imp.AgentId FROM InteractionMapping imp WHERE imp.InteractionId = I.InteractionId ORDER BY imp.created_at DESC LIMIT 1) AS AgentId,
     whour.start_time,
@@ -287,6 +287,7 @@ SELECT
     MAX(M.updated_at) AS nonSystemUpdatedMsgTime,
     M.SPID,
     LMD.message_direction,
+    LMD.created_at AS MsgUpdate_at,
     M.Agent_id,
     MAX(M.Message_id) AS MaxMessageId,
     MAX(ms.created_at) AS updated_at,
