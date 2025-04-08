@@ -300,6 +300,11 @@ export class SmartRepliesComponent implements OnInit,OnDestroy {
 // add smart replies //
 
 showAddSmartRepliesModal() {
+	console.log("((JSON.parse(sessionStorage.getItem('loginDetails')!)).isPaused != 0)",)
+	if(((JSON.parse(sessionStorage.getItem('loginDetails')!)).isPaused != 0)){
+		this.showToaster('Attention! Your account has been PAUSED. Please contact your solution provider.','error');
+		return
+	}
 	$("#smartrepliesModal").modal('show');
 	// $('body').addClass('modal-add-smart-reply-open');
 	$('body').removeClass('modal-smart-reply-open');
