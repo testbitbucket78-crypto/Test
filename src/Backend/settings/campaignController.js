@@ -1169,9 +1169,20 @@ const getFlows = async (req,res) =>{
                 "Content-Type": "application/json",
             }
         });
-
+        let Flows = await db.excuteQuery(val.getflows, [req.params.spid]);
+            console.log(Flows,'Flows')
          // Filter the flows locally to return only those with status 'PUBLISHED'
-         const publishedFlows = response.data.data.filter(flow => flow.status === 'PUBLISHED');
+        // const publishedFlows = response.data.data.filter(flow => flow.status === 'PUBLISHED');
+         const publishedFlows = response.data.data;
+         const existingFlowIds = new Set(Flows.map(row => row.flowid));
+
+        const newData = publishedFlows.filter(item => !existingFlowIds.has(item?.id));
+        console.log(newData,'newData')
+        if (newData.length >0) {     
+        const insertValues = newData.map(item => [req.params.spid,item.id, item.name,item.status, 0]); 
+        const query = `INSERT INTO Flows (spid, flowid, flowname,status, responses) VALUES ?`;
+        await db.excuteQuery(query, [insertValues]);
+        }
         res.send({
             status: 200,
             flows: publishedFlows
@@ -1190,10 +1201,44 @@ const getFlows = async (req,res) =>{
     }
 }
 
+const getFlowDetail = async (req, res) => {
+    try {
+        let FlowDetail = await db.excuteQuery(val.getflowDetail, [req.params.spid, req.params.flowId]);        
+         res.send({
+            status: 200,
+            flows: FlowDetail
+        })
+    } catch (err) {
+         res.send({
+            status: 500,
+            err: err.message
+        })
+    }
+}
+
+const saveFlowMapping = async (req, res) => {
+    try {
+            let flowId = req.body?.flowId;
+            let spid = req.body.spid;
+            let ColumnMapping = req.body.ColumnMapping;
+       
+            let save = await db.excuteQuery(val.saveflowMapping, [ColumnMapping,spid,flowId]);
+
+            res.send({
+                status: 200,
+                flows: save
+            })
+    } catch (err) {
+        console.log(err)
+        db.errlog(err);
+        res.send(err)
+    }
+}
+
 module.exports = {
     addCampaignTimings, updateCampaignTimings, selectCampaignTimings, getUserList, addAndUpdateCampaign,
     selectCampaignAlerts, addCampaignTest, selectCampaignTest, addTag, gettags, deleteTag, addTemplate, getTemplate, deleteTemplates,
     testCampaign, addCustomField, editCustomField, getCustomField, deleteCustomField, getCustomFieldById, enableMandatoryfield,
-    enableStatusfield, getApprovedTemplate, addGallery, getGallery, isExistTemplate ,uploadMediaOnMeta,getFlows, getTemplateForGallery
+    enableStatusfield, getApprovedTemplate, addGallery, getGallery, isExistTemplate ,uploadMediaOnMeta,getFlows, getTemplateForGallery,getFlowDetail,saveFlowMapping
 
 }

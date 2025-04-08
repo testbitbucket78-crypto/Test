@@ -222,9 +222,21 @@ async function extractDataFromMessage(body) {
 
         if(button && button?.length > 2)
             repliedMessageText = 'Template';
+
+        if (Type == 'interactive') {
+          if(firstMessage?.interactive && firstMessage?.interactive?.type == 'flow_reply'){
+            repliedMessageText = 'Form sent';
+            let flow_reply = firstMessage?.interactive?.flow_reply;
+            const query = `INSERT INTO FlowsData (spid, flowid,flowToken, flowresponse) VALUES ?`;
+            await db.excuteQuery(query, [spid,flow_reply?.flow_id,flow_reply?.flow_token,flow_reply?.flow_data]);
+            const flowquery = `UPDATE Flows SET responses = responses + 1 WHERE flowid = ?`;
+            await db.excuteQuery(flowquery, [flow_reply?.flow_id]);
+          }
       }
         //console.log( spid, "campaignReplied*******", campaignReplied?.affectedRows)
       }
+
+    
 
       // Conditional check to determine the filename based on type
       if (Type === 'image') {
@@ -335,7 +347,7 @@ async function extractDataFromMessage(body) {
   }
 
 }
-
+}
 
 async function isMessageExist(messageId) {
   try {
@@ -650,7 +662,7 @@ WHERE customerId IN (SELECT customerId FROM EndCustomer WHERE Phone_number = ? a
 
     let ack1InId = await db.excuteQuery(notifyInteraction, [customerPhoneNumber, spid])
     //notify.NotifyServer(displayPhoneNumber, true)
-    notify.NotifyServer(displayPhoneNumber, false, ack1InId[0]?.InteractionId, 'Out', 1, 0)
+    notify.NotifyServer(displayPhoneNumber, false, ack1InId[0]?.InteractionId, 'Out', 1, 0,smsId)
 
   } else if (messageStatus == 'delivered') {
     let campaignDeliveredQuery = 'UPDATE CampaignMessages set status=2 , DeliveredTime=? where phone_number =? and status = 1  and messageTemptateId =?'
@@ -665,7 +677,7 @@ WHERE customerId IN (SELECT customerId FROM EndCustomer WHERE Phone_number = ? a
     //  console.log("deliver", deded?.affectedRows)
     //notify.NotifyServer(displayPhoneNumber, true)
     let ack2InId = await db.excuteQuery(notifyInteraction, [customerPhoneNumber, spid])
-    notify.NotifyServer(displayPhoneNumber, false, ack2InId[0]?.InteractionId, 'Out', 2, 0)
+    notify.NotifyServer(displayPhoneNumber, false, ack2InId[0]?.InteractionId, 'Out', 2, 0,smsId)
 
   } else if (messageStatus == 'read') {
     //  console.log("read")
@@ -681,7 +693,7 @@ WHERE customerId IN (SELECT customerId FROM EndCustomer WHERE Phone_number =? an
     //   console.log("read", resd?.affectedRows)
     // notify.NotifyServer(displayPhoneNumber, true)
     let ack3InId = await db.excuteQuery(notifyInteraction, [customerPhoneNumber, spid])
-    notify.NotifyServer(displayPhoneNumber, false, ack3InId[0]?.InteractionId, 'Out', 3, 0)
+    notify.NotifyServer(displayPhoneNumber, false, ack3InId[0]?.InteractionId, 'Out', 3, 0,smsId)
   } else if (messageStatus == 'failed') {
     let campaignReadQuery = 'UPDATE CampaignMessages set status=0,FailureReason=?,FailureCode=? where phone_number =?  and messageTemptateId =?';
     let campaignRead = await db.excuteQuery(campaignReadQuery, [failedMessageReason, failedMessageCode, customerPhoneNumber, smsId])
@@ -691,6 +703,6 @@ WHERE customerId IN (SELECT customerId FROM EndCustomer WHERE Phone_number =? an
     //   console.log("read", resd?.affectedRows)
     // notify.NotifyServer(displayPhoneNumber, true)
     let ack3InId = await db.excuteQuery(notifyInteraction, [customerPhoneNumber, spid])
-    notify.NotifyServer(displayPhoneNumber, false, ack3InId[0]?.InteractionId, 'Out', 9, 0)
+    notify.NotifyServer(displayPhoneNumber, false, ack3InId[0]?.InteractionId, 'Out', 9, 0,smsId)
   }
 }

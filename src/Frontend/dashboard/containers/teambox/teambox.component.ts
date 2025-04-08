@@ -1383,7 +1383,7 @@ console.log(getMimeTypePrefix);
 		  };	
 	}
 			
-	ngOnInit() {
+	async ngOnInit() {
 		this.isLoading = true;
 		switch(this.loginAs) {
 			case 1:
@@ -1404,10 +1404,10 @@ console.log(getMimeTypePrefix);
 		this.routerGuard()
 		this.getCustomFieldsData();
 		//this.getAgents()
-		this.getUserList()
+		 this.getUserList()
 		this.getInteractionsOnScroll()
 		this.getContactOnScroll()
-		this.getCustomers()
+		//this.getCustomers()
 		this.getquickReply()
 		// this.getTemplates()
 		this.subscribeToNotifications();
@@ -1623,8 +1623,10 @@ console.log(getMimeTypePrefix);
 	getCustomers(isAddContacts:boolean = false){
 		let rangeStart =this.contactCurrentPage;
     	let rangeEnd =this.contactCurrentPage + this.contactPageSize;
+		this.isLoading = rangeStart == 0 ? true : false;
 		this.apiService.getCustomers(this.SPID,rangeStart,rangeEnd).subscribe((data:any) =>{
 			this.isLoadingOnScroll = false;
+			this.isLoading = false;
 			this.isContactCompleted = data?.isCompleted ? data?.isCompleted : false;
 			if(isAddContacts){
 				this.contactList.push(...data?.results);
@@ -2465,7 +2467,7 @@ updateCustomer(){
 				this.showToaster('Contact information updated...','success');
 				//this.getAllInteraction(false);
 				this.updateContactData();
-				this.getCustomers();				
+				//this.getCustomers();				
 				this.getMessageData(this.selectedInteraction,true)
 				this.filterChannel='';
 			}
@@ -3191,7 +3193,7 @@ this.apiService.createInteraction(bodyData).subscribe(async( data:any) =>{
 	}
 	// this.isNewInteraction=true;
 	//this.getInteractionsFromStart();
-	this.getCustomers();
+	//this.getCustomers();
 	this.filterChannel='';
 	//item['messageList'] = [...val, ...item['messageList']];
 	//item['allmessages'] = [...val1, ...item['allmessages']];
@@ -3279,6 +3281,7 @@ getInteraction(InteractionId:any){
 }
 
 openaddMessage(messageadd: any) {
+	this.getCustomers()
 	if(this.modalReference){
 	this.modalReference.close();
 	}
@@ -3719,13 +3722,12 @@ sendMessage(isTemplate:boolean=false,templateTxt:string=''){
 			this.showFullMessage = !this.showFullMessage;
 		}
 
-		getUserList() {
+		 getUserList() {
 		let spid = Number(this.SPID)
-			this.settingService.getUserList(spid,1)
-			.subscribe(result =>{
+			 this.settingService.getUserList(spid,1).subscribe(async (result) =>{
 			  if(result){
 				this.userList =result?.getUser;
-				this.getAllInteraction()
+				 this.getAllInteraction()
 				for (const user of this.userList) {
 					if(this.AgentId == user.uid) {
 						this.loginAs = user.RoleName;

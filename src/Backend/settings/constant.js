@@ -456,6 +456,12 @@ var getAgentId = `select * from user where SP_ID = ? and ParentId is null`
 var getChannel = `SELECT channel_id, connected_id FROM WhatsAppWeb WHERE spid = ?`
 var getRateLimit = `select count(*) AS Count from Message WHERE (created_at >= NOW() - INTERVAL 1 MINUTE) and message_direction = 'Out' and SPID =?`
 
+// ------------------------- WhatsApp Flow ----------------------------------//
+var getflowDetail = `select * from FlowsData where spid = ? and flowid = ?`
+var getflows = `select * from Flows where spid = ? `
+var saveflowMapping = `update Flows SET col_Mapping =? where spid = ? and flowid = ?`
+
+
 module.exports = {
     host, user, password, database, insertCompanyDetails, insertlocalDetails, insertBillingDetails, selectCompanyDetails, selectlocalDetails, selectBillingDetails,
     updateCompanyDetails, updatelocalDetails, updateBillingDetails, insertWork, selectWork, deleteWork, insertHoliday, selectHoliday, removeHoliday, updateWork, getSubRight, getRights,
@@ -471,5 +477,5 @@ module.exports = {
     Whatsappdetails,addTokenQuery,updateTokenQuery,deleteTokenQuery,selectTokenQuery,isEnableQuery,baseURL,accessToken,deleteIPQuery,insertIPAddress,updateNotification,
     getColCount,addcolumn,getcolumn,deletecolumn,getcolumnid,enableMandatory,enablestatus,editfield ,selectApprovedTemplate ,addGallery ,getGallery,selectUserByIdQuery,
     content_type,access_token,url,selectActiveQuery,getAllUserQuery,checkDeletedColumn,getCustomColumnById,permanentDeleteColumn,selectHealthStatus,insertHealthStatus, insertUserAPIKeys, updateUserAPIKeysAndTokenName
-    ,getUserAPIKeys, updateAPIkeysState, updateWebhookUrl, getAgentId, getChannel, getRateLimit, getCampaignId, updateUserAPIKeysAndKeyGenerate, selectTemplateForGallery
+    ,getUserAPIKeys, updateAPIkeysState, updateWebhookUrl, getAgentId, getChannel, getRateLimit, getCampaignId, updateUserAPIKeysAndKeyGenerate, selectTemplateForGallery,getflowDetail,getflows,saveflowMapping
 }

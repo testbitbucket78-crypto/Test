@@ -230,6 +230,19 @@ export const routes: Routes = [
             ],
         } as SBRouteData,
         component: dashboardContainers.NotificationsComponent,
+    },
+    {
+        path: 'flow',
+        data: {
+            title: 'Whatsapp Flows',
+            breadcrumbs: [
+                {
+                    text: 'flow',
+                    active: true,
+                },
+            ],
+        } as SBRouteData,
+        component: dashboardContainers.WhatsAppFlowsComponent,
     }
 ];
 
