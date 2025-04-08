@@ -5,6 +5,7 @@ import { AuthService } from './../../services';
 import { Router } from '@angular/router';
 import { ActivatedRoute } from '@angular/router';
 import { environment } from 'environments/environment';
+import { ToastService } from 'assets/toast/toast.service';
 
 @Component({
   selector: 'sb-reset-password',
@@ -25,7 +26,7 @@ export class ResetPasswordComponent implements OnInit {
   title = 'formValidation';
   submitted = false;
   public channelDomain:string = environment?.chhanel;
-  constructor(private formBuilder: FormBuilder, private router: Router, private apiService: AuthService, private active: ActivatedRoute) {
+  constructor(private formBuilder: FormBuilder, private router: Router, private apiService: AuthService, private active: ActivatedRoute, private _ToastService: ToastService) {
 
     this.resetpassword = this.formBuilder.group({
       // id: sessionStorage.getItem('uid'),
@@ -78,22 +79,26 @@ export class ResetPasswordComponent implements OnInit {
     return null;
   }
 
+ onSubmit() {
+        var SP_ID = sessionStorage.getItem('SP_ID');
 
+        this.apiService.resetPassword(this.resetpassword.value, this.uid).subscribe({
+            next: (data: any) => {
+                console.log(data);
 
-  onSubmit() {
-
-    var SP_ID = sessionStorage.getItem('SP_ID')
-
-    this.apiService.resetPassword(this.resetpassword.value,this.uid).subscribe(data => {
-      console.log(data)
-
-      this.router.navigate(['login'])
-
-    })
-
-
-
-  }
+                if (data?.status === 200) {
+                    this._ToastService.success(data.msg || 'Password changed successfully');
+                    this.router.navigate(['login']);
+                } else {
+                    this._ToastService.error(data.msg || 'Something went wrong');
+                }
+            },
+            error: err => {
+                console.error(err);
+                this._ToastService.error(err?.error?.msg || 'Server error occurred');
+            },
+        });
+    }
 
   viewpass() {
     this.visible = !this.visible;

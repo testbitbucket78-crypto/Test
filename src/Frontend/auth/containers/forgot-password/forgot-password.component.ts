@@ -4,6 +4,7 @@ import { AuthService } from './../../services';
 import { Router } from '@angular/router';
 import { Validators } from '@angular/forms';
 import { environment } from 'environments/environment';
+import { ToastService } from 'assets/toast/toast.service';
 declare var $:any;
 
 @Component({
@@ -22,7 +23,7 @@ export class ForgotPasswordComponent implements OnInit {
     submittedValue:any;
     isLoading!:boolean;    
     public channelDomain:string = environment?.chhanel;
-    constructor(private apiService :AuthService ,private router: Router,  private formBuilder: FormBuilder) { }
+    constructor(private apiService :AuthService ,private router: Router,  private formBuilder: FormBuilder, private _ToastService: ToastService) { }
     ngOnInit() {
       
      }
@@ -40,6 +41,7 @@ export class ForgotPasswordComponent implements OnInit {
             this.apiService.forgotpassword(this.submittedValue).subscribe(
                 (result) => {
                     this.isLoading = false;
+                    this._ToastService.success('Email Sent Successfully');
                     this.openModal();
                 if (result.status === 200) {
             
@@ -49,6 +51,7 @@ export class ForgotPasswordComponent implements OnInit {
             },
                 (error) => {
                     this.isLoading = false;
+                    this._ToastService.error('Something went wrong while sending email');
                     if (error.status === 400) {
                         const errorMessage = "! Email Not Found";
                         const errorDiv = document.getElementById("error-message");
