@@ -54,7 +54,7 @@ async function NoCustomerReplyReminder() {
             let latestOutMessageTime = latestMessageTime?.length >0 ? latestMessageTime[0]?.created_at : null;
            // console.log("*****",latestMessageTime,"NoCustomerReplyReminder",latestOutMessageTime , (latestOutMessageTime < message.latestMessageDate))
             logger.info(`isReplyPause NoCustomerReplyReminder , SPID, phone_number,${latestMessageTime[0]?.created_at},${message.latestMessageDate} ,${message.Is_disable != 0},${isReplyPause} , ${new Date()} , ${message.SPID} , ${message.customer_phone_number }`)
-            if (isReplyPause && latestOutMessageTime < message.latestMessageDate && message.Is_disable != 0 && message.settingUpdatedTime < message.created_at) {
+            if (isReplyPause && latestOutMessageTime < message.latestMessageDate && message.Is_disable != 0 && message.settingUpdatedTime < message.latestMessageDate) {
               // Check if extractedMessageCache already has the result for this SP_ID
               if (!extractedMessageCache.has(message.SP_ID)) {
                // message_text = await getExtraxtedMessage(message.message_value, message.SP_ID, message.customerId);
