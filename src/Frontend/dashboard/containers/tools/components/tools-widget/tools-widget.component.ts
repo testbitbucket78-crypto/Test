@@ -16,7 +16,7 @@ export class WidgetComponent implements OnInit {
     @Output() sendHtmlToParent = new EventEmitter<string>();
     popup: any;
     icon: any;
-
+    whatsappLink: string | null = null;
 
     ngOnInit(): void {
         this.popup = document.getElementById('popup-component');
@@ -27,10 +27,16 @@ export class WidgetComponent implements OnInit {
             });
         }
     }
+    onAnchorClick(event: Event):void {
+      if(!this.whatsappLink){
+        event.preventDefault();
+      }
+    }
     ngOnChanges(changes: SimpleChanges): void {
         let startButton = document.getElementById('start-chat-button');
         if (startButton && changes['generatedLink']) {
-            startButton.setAttribute('href', this.generatedLink);
+            this.whatsappLink = this.generatedLink;
+           // startButton.setAttribute('href', this.generatedLink);
         }
 
         let component = document.getElementById('whatsapp-popup-component');
@@ -79,7 +85,7 @@ export class WidgetComponent implements OnInit {
           
           let htmlContent = component.outerHTML + script;
           let codeToDisplay = '<!DOCTYPE html><html><body>' + htmlContent + '</body></html>';
-          if (changes['generatedHTML']) this.sendHtmlToParent.emit(codeToDisplay);
+          this.sendHtmlToParent.emit(codeToDisplay);
         }
     }
 }
