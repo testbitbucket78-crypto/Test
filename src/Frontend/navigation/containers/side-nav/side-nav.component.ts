@@ -28,6 +28,7 @@ export class SideNavComponent implements OnInit {
         {id:8,name:'teambox'},
         {id:26,name:'SmartReplies'},
         {id:20,name:'camp'},
+        {id:1,name:'flow'},
         {id:22,name:'Funnel'},
         {id:24,name:'FlowBuilder'},
         {id:1,name:'rep'},

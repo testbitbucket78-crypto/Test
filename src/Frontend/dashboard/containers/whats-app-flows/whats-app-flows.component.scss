@@ -1,0 +1,248 @@
+.container-empty-state {
+    font-family: 'Manrope';
+}
+
+.container-empty-state {
+    height: 45vh;
+}
+
+.body-empty-state img {
+    width: 123px;
+    height: 109px;
+}
+
+.body-empty-state h5 {
+    font-weight: 700;
+}
+
+.body-empty-state p{
+    color: #7A86A1;
+}
+
+// ::-webkit-scrollbar {
+//     display: none;
+// }
+.contact-header{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 2% 5% 3% 5%;
+}
+
+.blocked{
+    color: white !important;
+    background: #f23b3b !important;
+}
+
+.ag-theme-alpine {
+    // height: 740px;
+    border-radius: 30px;
+    opacity: 1;
+    font-family: "Manrope";
+    font-style: normal;
+    font-size: 14px;
+    color: #6149CD;
+    left: 1px;
+    margin: 2% 5% 0% 5%;
+    
+}
+
+.btn-9 {
+    cursor: pointer;
+    width: 122px;
+    color: #7A86A1;
+    background-color: #ffffff;
+    border: 1px solid #EBEBEB;
+    border-radius: 17px;
+    font-family: "Manrope";
+    font-size: 14px;
+    height: 34px;
+    outline: none;
+}
+
+.flow-btn{
+    border: 2px solid grey;
+    border-radius: 20px;
+    min-width: 110px;
+    margin: 0px 5px;
+    background: white;
+}
+
+.flow-header{
+    display: flex;
+    justify-content: space-between;
+    padding: 15px 25px;
+    margin: 2% 5% 0% 5%;
+}
+
+.gf img {
+    position: absolute;
+    margin: 11px 0px 0px 12px!important;
+    width: 15px;
+    height: 15px;
+}
+
+.gf {
+    width: 322px;
+
+}
+.btn-footer{
+    border-top: 2px solid #e5e0e0;
+    position: fixed;
+    bottom: 0;
+    background: #fbf9fe;
+    width: 400px;
+}
+
+
+.table tr {
+    display: table;
+    width: 95%;
+    margin: 10px auto;
+    background: #FBFAFF;
+    padding: 10px 0;
+    color: #000000;
+    font-size: 15px;
+    border-radius: 20px;
+    font-family: 'Manrope';
+    border: none;
+}
+.table tr:hover{
+    display: table;
+    width: 95%;
+    margin: 10px auto;
+    background: #FBFAFF;
+    padding: 10px 0;
+    color: #000000;
+    font-size: 15px;
+    border-radius: 20px;
+    font-family: 'Manrope';
+    box-shadow: 0px 0px 14px #695F972E;
+border: none;
+opacity: 1;
+}
+.table td {
+    padding: 0.75rem;
+    vertical-align: top;
+    border-top: 1px solid #dee2e6;
+    border: none;
+    width: 140px;
+    
+}
+.table th{
+    padding: 0.75rem;
+    vertical-align: top;
+    border-top: 1px solid #dee2e6;
+    border: none;
+    width: 50px;
+}
+.table thead{
+    display: table;
+    width: 95%;
+    background: transparent;
+    padding: 10px 3px 0px 0px;
+    color: #6149CD;
+    font-size: 14px;
+    margin: 0px 18px;
+    font-family: 'Manrope';
+}
+.table thead .table-box{
+    color: #6149CD;
+    background: transparent;
+    margin: 0px 23px;
+}
+.table thead .table-box:hover{
+    box-shadow: none;
+}
+.table tr td img{
+    margin: -4px 0px 0px 10px;
+}
+.pagination {
+    display: flex;
+    padding-left: 0;
+    list-style: none;
+    border-radius: 0.25rem;
+    float: right;
+}
+.page-link {
+    position: relative;
+    display: block;
+    padding: 0.5rem 0.75rem;
+    margin-left: -1px;
+    line-height: 1.25;
+    color: #000000;
+    background-color: #fff;
+    border: none;
+}
+.page-link:hover {
+    position: relative;
+    display: block;
+    padding: 0.5rem 0.75rem;
+    margin-left: -1px;
+    line-height: 1.25;
+    color: #6149CD;
+    background-color: #fff;
+    border: none;
+}
+
+
+.grid-pagination {
+    padding: 0% 6% 0% 6%;
+    p {
+        color: #7a86a1;
+    }
+
+    select {
+        cursor: pointer;
+        border: none;
+        outline: none;
+        color: #7a86a1;
+    }
+
+    .page-next-back {
+        .pagination-btn {
+            border: none;
+            outline: none;
+            cursor: pointer;
+            background: #ffffff;
+            width: 36px;
+            height: 36px;
+            border-radius: 15px;
+            opacity: 1;
+        }
+
+        .button-box-shadow {
+            box-shadow: 1px 8px 29px #695f972e;
+        }
+
+        .page-No-selected {
+            color: blue;
+            font-weight: bold;
+        }
+
+        .pages-gap-2 {
+            gap: 10px;
+        }
+
+        .page-No-unselected {
+            color: gray;
+        }
+    }
+}
+
+.search-container{
+    border-radius: 16px;
+}
+
+.D2-whatsApp{
+	border-radius: 20px;
+    border: 2px solid grey;
+    height: 35px;
+    background: white;
+	font-size: 12px;
+	padding: 0 15px;
+}
+
+.select-flow{
+    border: 2px solid grey;
+}

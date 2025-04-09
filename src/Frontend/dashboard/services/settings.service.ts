@@ -10,6 +10,7 @@ import { DatePipe } from '@angular/common';
 
 export class SettingsService {
   API_URL:string='https://settings.stacknize.com';
+  //API_URL:string='http://localhost:3004';
   token = 'cXlkZE04VzM3MTVaSkNwWlhINVlDNEY3eEJGV1V0S21FMGROaTJFWg==';
   subprivilages!:any;
   dateFormat:any;
@@ -332,6 +333,14 @@ const headers = new HttpHeaders({
   
   getFlowData(spId: number): Observable<any> {
     return this.http.get<any>(`${this.API_URL}/getFlows/${spId}`);
+  }
+  
+  getFlowDetail(spId: number,flowId:number): Observable<any> {
+    return this.http.get<any>(`${this.API_URL}/getFlowDetail/${spId}/${flowId}`);
+  }
+  
+  saveFlowMapping(data: any): Observable<any> {
+    return this.http.post<any>(`${this.API_URL}/saveFlowMapping`,data);
   }
 
   saveCompanyDetail(companyData:companyDetail): Observable<any> {

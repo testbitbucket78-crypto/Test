@@ -1,0 +1,90 @@
+<!-- <div class="toaster" (click)="hideToaster()">
+	<p *ngIf="errorMessage" class="error">{{errorMessage}}</p>
+	<p *ngIf="successMessage" class="success">{{successMessage}}</p>
+	<p *ngIf="warnMessage" class="warn">{{warnMessage}}</p>
+  </div> -->
+
+<sb-layout-dashboard>
+
+		<sb-top-nav title="Whatsapp Flows"></sb-top-nav>
+        <div *ngIf="!isShowDetails">
+	<div class="flow-header">
+		<div class="d-flex">
+            <div class="border d-flex flex-row-reverse align-items-center px-3 h-100 search-container">
+                <input class="form-control border-0" type="search" placeholder="Search" name="Search"
+                    (input)="onFilterTextBoxChange()" id="Search-Ag" style="outline: none !important; box-shadow: none !important;"
+                    (focus)="onFocus()" (blur)="onBlur()" />
+                <img src="assets/img/search.png" style="height: 15px; width: 15px;">
+            </div>
+        </div>
+		<div class="d-flex">
+            <div class="mx-2">
+                <select class="input-form select-flow" id="select" (change)="onFilterChange()">
+                    <option value="">Select</option>
+                    <option value="Published">Published</option>
+                    <option value="Draft">Draft</option>
+                    <option value="Deprecated">Deprecated</option>
+                    <option value="Blocked">Blocked</option>
+                    <option value="Throttled">Throttled</option>
+                </select>
+            </div>
+            <div class="D-whatsApp mx-2">
+                <button class="D2-whatsApp" (click)="toggleAssignOption()" >
+                    <span>
+                        <img class="icon" src="/assets/img/teambox/whatsapp-icon-l.svg" />
+                        {{channelSelected}} ({{channelPhoneNumber}})
+                        <img src="../../../../assets/img/arrow-down.svg"/>
+                    </span>
+                </button>
+                <div *ngIf="ShowAssignOption" class="popup-dialog AssignOption p-15">
+                    <p *ngFor="let channel of channelOption" class="d-flex align-items-center px-2 py-1" 
+                    (click)="updateDropdown(channel.connected_id)">
+                    <img class="icon" src="/assets/img/teambox/whatsapp-icon-l.svg" />
+                        <span class="text-capitalize initials">{{channel.label}} ({{channel.connected_id}})</span>
+                    </p>
+                </div>
+            </div>				
+				<button class="flow-btn" id="add-contact"  ><span><img src="../../../../assets/img/teambox/add.svg" /></span>Create Flow</button>			
+		</div>
+	</div>
+
+    <div class="p-3">
+        <ag-grid-angular style="height: calc(64vh - 50px);" class="ag-theme-alpine" [rowData]="flowList" [columnDefs]="columnDefs" [animateRows]="true"
+                         [gridOptions]="gridOptions" suppressResize=true [suppressRowClickSelection]="true"
+                         (gridReady)="onGridReady($event)" [paginationPageSize]="paginationPageSize">
+        </ag-grid-angular>
+        <div class="grid-pagination d-flex justify-content-between align-items-center">
+            <div class="d-flex align-items-center">
+                <p class="p-0 m-0">Showing:</p>
+                <select class="mx-3" [(ngModel)]="paginationPageSize" (change)="setPaging()">
+                    <option value="10">10</option>
+                    <option value="15">15</option>
+                    <option value="20">20</option>
+                    <option value="25">25</option>
+                    <option value="30">30</option>
+                    <option value="45">35</option>
+                    <option value="40">40</option>
+                    <option value="45">45</option>
+                    <option value="50">50</option>
+                </select>
+            </div>
+            <div class="d-flex page-next-back mt-2">
+                <button class="pagination-btn left">
+                    <img class="next-img" src="assets/img/profile/previous.svg" (click)="onBtPrevious()">
+                </button>
+                <div class="mx-2 d-flex align-items-center pages-gap-2">
+                    <div *ngFor="let item of paging" [ngClass]="item == currPage ? 'page-No-selected':'page-No-unselected'"
+                         (click)="gotoPage(item)">{{item}}</div>
+                </div>
+                <button class="pagination-btn right button-box-shadow">
+                    <img class="next-img" src="assets/img/profile/next.svg" (click)="onBtNext()">
+                </button>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+    <sb-whatsapp-flow-detail *ngIf="isShowDetails" [flowId]="flowId" [flowName]="flowName" (closeFlowDetail)="isShowDetails = false"></sb-whatsapp-flow-detail>
+	
+</sb-layout-dashboard>

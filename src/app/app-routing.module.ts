@@ -209,6 +209,19 @@ const routes: Routes = [
         component: dashboardContainers.SmartRepliesComponent,
     },
     {
+        path: 'flow',
+        data: {
+            title: 'Whatsapp Flow',
+            breadcrumbs: [
+                {
+                    text: 'Whatsapp Flow',
+                    active: true,
+                },
+            ],
+        } as SBRouteData,
+        component: dashboardContainers.WhatsAppFlowsComponent,
+    },
+    {
         path: 'flowBuilder',
         data: {
             title: 'Flow builder',

@@ -538,7 +538,7 @@ export class ContactFilterComponent implements OnInit {
             colName = "REGEXP_REPLACE(Phone_number, '[^0-9]', '')"
           }
 
-		  if(colName =='Tag'){
+		  if(colName =='Tag' || colName =='tag'){
 			colName = "ECTM.TagName";
 		  }
   

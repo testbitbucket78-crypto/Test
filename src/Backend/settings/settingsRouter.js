@@ -127,7 +127,13 @@ router.post('/deleteTemplates',authenticateToken,campaignController.deleteTempla
 router.post('/addGallery',authenticateToken,campaignController.addGallery)//unused
 router.get('/getGallery/:spid/:isTemplate',authenticateToken,campaignController.getGallery)  // pass spid=0,isTemplate=2
 router.get('/exitTemplate/:spid/:isTemplate/:name',authenticateToken,campaignController.isExistTemplate);  // istemplate=1
-router.get('/getFlows/:spid',authenticateToken,campaignController.getFlows)
+
+// -------------- WhatsApp Flows Start -------------------//
+router.get('/getFlows/:spid',authenticateToken,campaignController.getFlows);
+router.get('/getFlowDetail/:spid/:flowId',authenticateToken,campaignController.getFlowDetail);
+router.post('/saveFlowMapping',authenticateToken,campaignController.saveFlowMapping)  
+
+// -------------- WhatsApp Flows End -------------------//
 
 //------------------UPLOAD  MEDIA ON METS IMPLEMENTATIONS------------------------//
 const multer = require('multer');
