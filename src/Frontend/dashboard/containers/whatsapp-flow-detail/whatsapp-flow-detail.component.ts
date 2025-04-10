@@ -35,24 +35,7 @@ export class WhatsappFlowDetailComponent {
                 cellStyle: { background: '#FBFAFF', opacity: 0.86 },
                 sortable: true,
             },
-            {
-                field: 'status',
-                headerName: 'Status',
-                width:150,
-                suppressSizeToFit: false,
-                resizable: true,
-                sortable: true,
-                cellStyle: { background: '#FBFAFF', opacity: 0.86 },
-            },
-            {
-                field: 'response',
-                headerName: 'Responses',
-                width:130,
-                suppressSizeToFit: false,
-                resizable: true,
-                sortable: true,
-                cellStyle: { background: '#FBFAFF', opacity: 0.86 },
-            }
+           
         ];
         public gridapi!: GridApi;
         paginationPageSize: string = '10';
@@ -98,7 +81,6 @@ export class WhatsappFlowDetailComponent {
     ngOnInit(): void {
       this.getAttributeList();
       this.getFlowDetail();
-      this.extractUniqueKeys(this.data);
       //this.setEverything();
     }
   
@@ -192,6 +174,14 @@ getFlowDetail() {
   this.settingsService.getFlowDetail(55,this.flowId).subscribe((response: any) => {
       if (response) {
           this.flowList =  response?.flows;
+          let responseData:any = [];
+          this.flowList.forEach((item:any)=>{
+            let data = JSON.parse(JSON.parse(item.flowresponse));
+            console.log(data, '----data----');
+            responseData.push(data);
+          });
+          console.log(responseData, '----responseData----');
+          this.extractUniqueKeys(responseData);
           this.getGridPageSize();
       }
   });
@@ -226,6 +216,7 @@ onSelectMapping(){
 
 SaveEditColumn(){
 this.initColumnMapping = this.ColumnMapping;
+this.saveFlowMapping();
 }
 
 extractUniqueKeys(arr: any[]){
@@ -279,6 +270,7 @@ createMapping(){
               // }
               this.columnDefs.push(columnDesc);
             })
+            console.log(this.columnDefs, '----columnDefs----');
           }  
             setTimeout(()=>{
               if (this.gridOptions?.api) {

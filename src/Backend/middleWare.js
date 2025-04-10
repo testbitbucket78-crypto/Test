@@ -516,6 +516,12 @@ async function createWhatsAppPayload(type, to, templateName, languageCode, heade
                 };
             }
             if (btn.type === 'Complete Flow') {
+                console.log("btn", btn);
+                console.log("btn.flow_id", btn.flow_id);
+                let flowToken = {                    
+                    custom_info:btn.flowId
+                }
+                console.log("payload-------3   -------------", flowToken);
                 return {
                     type: "button",
                     sub_type: "flow",
@@ -524,7 +530,7 @@ async function createWhatsAppPayload(type, to, templateName, languageCode, heade
                         {
                             type: "action",
                             action: {
-                                flow_token: WAdetails[0].phoneNumber_id 
+                                flow_token: JSON.stringify(flowToken)
                             }
                         }
                     ]
@@ -537,8 +543,10 @@ async function createWhatsAppPayload(type, to, templateName, languageCode, heade
                 payload.template.components = [];
             }
             payload.template.components = [...payload.template.components, ...buttonComponents];
+            
         }
     }
+console.log("payload", payload.template.components);
 
     const response = await axios({
         method: "POST",
@@ -560,6 +568,19 @@ async function createWhatsAppPayload(type, to, templateName, languageCode, heade
     };
 }
 }
+
+function simpleEncrypt(number, key = 12345) {
+    const numStr = String(number);
+    const masked = Array.from(numStr).map((digit) => {
+      return String(parseInt(digit) ^ (key % 10));
+    }).join('');
+    console.log(numStr,'numStr');
+    console.log(masked,'masked');
+    const obfuscated = Array.from(masked).map(char => {
+      return String(char.charCodeAt(0) + 10); // shift char codes
+    }).join('-'); // simple delimiter
+    return obfuscated;
+  }
 
 // const headerVariables = ['Header Text']; // Variables for header in 'text' type
 // const bodyVariables = ['Body Text 1', 'Body Text 2'];
