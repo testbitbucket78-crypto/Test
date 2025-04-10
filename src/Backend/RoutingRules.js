@@ -99,12 +99,12 @@ async function assignToLastAssistedAgent(sid, newId, agid, custid) {
 
     let LastAssistedAgent = await db.excuteQuery('select * from InteractionMapping where InteractionId =?  order by created_at desc limit 1', [newId]);
     console.log(RoutingRules[0]?.broadcast == '1', LastAssistedAgent.length, new Date(), RoutingRules[0]?.broadcast == 1);
-    let isActiveStaus = await isAgentActive(sid, LastAssistedAgent[0]?.LastAssistedAgent);
+    let isActiveStaus = await isAgentActive(sid, LastAssistedAgent[0]?.lastAssistedAgent);
     if (LastAssistedAgent.length > 0 && RoutingRules[0]?.assignagent == '1' && isActiveStaus == true) {
 
       console.log("if ----- LastAssistedAgent and isActiveStaus", isActiveStaus);
         let assignAgentQuery = `INSERT INTO InteractionMapping (InteractionId, AgentId, MappedBy, is_active) VALUES ?`;
-        let assignAgent = await db.excuteQuery(assignAgentQuery, [[[newId, LastAssistedAgent[0]?.LastAssistedAgent, '-1', 1]]]);
+        let assignAgent = await db.excuteQuery(assignAgentQuery, [[[newId, LastAssistedAgent[0]?.lastAssistedAgent, '-1', 1]]]);
         console.log("LastAssistedAgent", assignAgent);
         if (assignAgent?.affectedRows > 0) {
           let openAssignChat = await updateInteraction(newId, sid, 'LastAssistedAgent', custid)
@@ -192,7 +192,7 @@ async function BroadCast(sid, agid, newId) {
 
 async function isAgentActive(sid, uid) {
   try {
-    let activeAgentQuery = "select *from user where IsActive=1 and SP_ID=? and uid = ? and isDeleted !=1 ";
+    let activeAgentQuery = "select * from user where IsActive=1 and SP_ID=? and uid = ? and isDeleted !=1 ";
     let activeAgent = await db.excuteQuery(activeAgentQuery, [sid, uid]);
     if (activeAgent?.length) {
       return true;
@@ -378,7 +378,7 @@ async function AssignAdmin(newId, sid, agid, custid) {
     let selectAdminUid = `SELECT * FROM routingrules WHERE SP_ID=?`;
     let selectAdmin = await db.excuteQuery(selectAdminUid, [sid]);
     let admin = selectAdmin[0]?.adminUid;
-    if (selectAdmin?.length == 0) {
+    if (selectAdmin[0]?.isadmin == 1) {
       let defaultAdminQuery = `SELECT * FROM defaultActions WHERE spid=? AND (isDeleted is null or isDeleted = 0)`;
       let defaultAdmin = await db.excuteQuery(defaultAdminQuery, [sid]);
       admin = defaultAdmin[0]?.defaultAdminUid;

@@ -299,6 +299,8 @@ const forgotPassword = async (req, res) => {
             const senderConfig = EmailConfigurations[emailSender];
             // Encrypt
             var cipherdata = CryptoJS.AES.encrypt(JSON.stringify(uid), 'secretkey123').toString();
+            // Save encrypted token against the user
+            await db.excuteQuery('UPDATE user SET token_to_use = ? WHERE email_id = ?', [cipherdata, email_id]);
             const referer = req.get('Referer')
             let ResetPageURL = referer+`#/reset-password?uid=${cipherdata}`;
             
@@ -347,12 +349,26 @@ const forgotPassword = async (req, res) => {
 }
 
 //resetPssword api
-const resetPassword = function (req, res) {
+const resetPassword = async function (req, res) {
 
     try {
         console.log("resetPassword")
         console.log(req.query.uid)
         var updateduid = req.query.uid;
+        const checkToken = await db.excuteQuery('select * from user where token_to_use = ?', [
+            updateduid,
+        ]);
+        if (checkToken && checkToken.length > 0) {
+            await db.excuteQuery('update user set token_to_use = "" where token_to_use = ?', [
+                updateduid,
+            ]);
+        } else {
+            return res.status(403).send({
+                msg: 'This reset link has already been used or is expired',
+                status: 403,
+            });
+        }
+
         if (req.query.uid.includes(' ')) {
             var url = req.query.uid.split(' ');
             updateduid = '';

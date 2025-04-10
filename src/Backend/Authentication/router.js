@@ -30,7 +30,7 @@ router.post('/login',indexController.login);
 router.post('/forgotPassword',indexController.forgotPassword);
 router.post('/sendOtp',indexController.sendOtp)
 router.post('/verifyOtp',indexController.verifyOtp)
-router.post('/resetPassword/:uid',authenticateToken,indexController.resetPassword)
+router.post('/resetPassword/:uid',indexController.resetPassword)
 
 //________sign up end_______________//
 router.post('/allAgents',authenticateToken,userController.getAllAgents)
