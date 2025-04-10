@@ -80,10 +80,10 @@ app.post("/webhook", async (req, res) => {
          let message = WhapiProvider.Message(incommingMessage, incommingmsg);
       }
       if(incommingMessage.isUserDisconnected()){
-        let userDisconnected = WhapiProvider.handleDisconnection(incommingMessage?.channel_id);
+        let userDisconnected = await WhapiProvider.handleDisconnection(incommingMessage?.channel_id);
       }
       if(incommingMessage.isAuthenticationEvent()){
-        let authEvent = WhapiProvider.handleAuthentication(incommingMessage?.channel_id);
+        let authEvent = await WhapiProvider.handleAuthentication(incommingMessage?.channel_id);
       }
     }
     else {
@@ -236,7 +236,7 @@ async function extractDataFromMessage(body) {
             await db.excuteQuery(flowquery, [flow_token]);
           }
       }
-        //console.log( spid, "campaignReplied*******", campaignReplied?.affectedRows)
+         //console.log( spid, "campaignReplied*******", campaignReplied?.affectedRows)
       }
 
     

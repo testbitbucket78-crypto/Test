@@ -304,6 +304,38 @@ class whapiService {
             return false;
         }
     }
+
+    static async getQRScannedPhoneNo(channelId) {
+        try {
+            const response = await axios.get(`https://manager.whapi.cloud/channels/${channelId}`, {
+                headers: {
+                    accept: 'application/json',
+                    authorization: `Bearer ${authToken}` 
+                }
+            });
+    
+            return response.data;
+        } catch (error) {
+            console.error("Error fetching scanned phone number:", error.response?.data || error.message);
+            return false;
+        }
+    }
+    static async deleteChannelById(channelId) {
+        try {
+            const response = await axios.delete(`https://manager.whapi.cloud/channels/${channelId}`, {
+                headers: {
+                    accept: 'application/json',
+                    authorization: `Bearer ${authToken}`
+                }
+            });
+    
+            console.log(`Channel ${channelId} deleted successfully.`);
+            return true;
+        } catch (error) {
+            console.error(`Failed to delete channel ${channelId}:`, error.response?.data || error.message);
+            return false;
+        }
+    }
     
 }
 

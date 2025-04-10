@@ -105,7 +105,7 @@ app.post('/craeteQRcode', async (req, res) => {
         let response
         if(variables.provider == "whapi" || variables.SPID == spid){
         response = await Whapi.createClientInstance(spid, phoneNo);
-       await Whapi.handleWhatsAppReady(spid, phoneNo, response.token); //todo need to check
+        Whapi.handleWhatsAppReady(spid, phoneNo, response.channelToken); //todo need to check
         }else{
         response = await web.createClientInstance(spid, phoneNo);
         }
