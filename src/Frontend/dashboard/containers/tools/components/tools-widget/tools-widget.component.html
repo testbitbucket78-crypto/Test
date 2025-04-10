@@ -18,7 +18,7 @@
             <h5>{{ title }}</h5>
         </div>
         <div style="width: 100%; text-align: center">
-            <a id="start-chat-button" target="_blank" 
+            <a id="start-chat-button" target="_blank" [attr.href]="whatsappLink" (click)="onAnchorClick($event)"
                 style="
                     margin-bottom: 8px;
                     height: 40px;
@@ -44,7 +44,7 @@
     <div id="whatsapp-logo" style="display: flex; align-items: center; margin-top: 10px">
         <span>
             <svg
-                style="height: 40px; width: 40px"
+                style="height: 40px; width: 40px;cursor: pointer"
                 xmlns="http://www.w3.org/2000/svg"
                 width="31"
                 height="31"

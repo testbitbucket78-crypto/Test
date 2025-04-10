@@ -1,10 +1,10 @@
 <div class="custom-dropdown">
     <button class="custom-dropdown-btn" (click)="toggleAssignOption()" [ngStyle]="{ 'width': customWidth }">
-        <span class="left-content">
+        <b class="left-content">
             <!-- <img class="icon" src="/assets/img/teambox/whatsapp-icon-l.svg" /> -->
             {{channelSelected}} {{ channelPhoneNumber ? '(' + channelPhoneNumber + ')' : '' }}
             <img class="dropdown-arrow" src="../../../../assets/img/arrow-down.svg"/>
-        </span>
+        </b>
     </button>
     <div *ngIf="ShowAssignOption" class="custom-dropdown-menu p-15" [ngStyle]="{ 'width': customWidth }">
         <p *ngFor="let channel of channelOption" class="dropdown-item d-flex align-items-center px-2 py-1" 
