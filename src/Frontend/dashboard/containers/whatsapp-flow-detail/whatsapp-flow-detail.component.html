@@ -6,12 +6,12 @@
 
 	<div class="flow-header">
 		<div class="d-flex">
-			<div class="mx-2" (click)="closeFlowDetailComponent()" > <img src="../../../../assets/img/left-arrow.svg" width="18px" height="18px">  </div>
+			<div class="mx-2 hand-icon" (click)="closeFlowDetailComponent()" > <img src="../../../../assets/img/left-arrow.svg" width="18px" height="18px">  </div>
 			<div class="header-name">{{flowName}}</div>			
 		</div>
 		
 		<div class="d-flex">
-			
+			<div class="mx-2 hand-icon" (click)="getFlowDetail()" > <img src="../../../../assets/img/retry.svg" width="22px" height="22px">  </div>			
 				<button class="flow-btn" data-bs-toggle="modal" data-bs-target="#mapColumnsModal"  > <img src="../../../../assets/img/export.svg">Map Column</button>
 				<button class="flow-btn" id="import-btn" data-bs-toggle="modal" data-bs-target="#editColumnsModal" ><img
 						src="../../../../assets/img/import.svg">Edit Column</button>
@@ -23,7 +23,7 @@
     <div class="p-3">
 		<ag-grid-angular class="ag-theme-alpine"
 						 style="height: 60vh;"
-						 [rowData]="rowData"
+						 [rowData]="flowList"
 						 [columnDefs]="columnDefs"
 						 [animateRows]="true"
 						 [gridOptions]="gridOptions"
@@ -89,12 +89,12 @@
 							<input type="checkbox" [(ngModel)]="item.isInputSelected" (change)="onSelectEditing(idx)" class="form-check-input mr-2" id="exampleCheck1">
 						</diV>
 						<div class="billing-form-row d-flex flex-column  ">
-							<input type="text" class="input-form" type="text" [(ngModel)]="item.displayName" [disabled]="fieldData?.isInputSelected == false"
+							<input type="text" class="input-form" type="text" [(ngModel)]="item.displayName" [disabled]="item?.isInputSelected == false"
 								 placeholder="Select start time">
 						</div>
 					</div>
 						<div class="billing-form-row d-flex flex-column pl-3 ">
-							<select class="input-form select-flow" [(ngModel)]="item.type"  [disabled]="fieldData?.isInputSelected == false"
+							<select class="input-form select-flow" [(ngModel)]="item.type"  [disabled]="item?.isInputSelected == false"
 								placeholder="Select end time" >
 								<option value="">Select data type</option>
 								<option *ngFor="let type of types" [value]="type" >{{type}}</option>
@@ -137,13 +137,13 @@
 								<select class="input-form select-flow" [(ngModel)]="item.attributeMapped" (change)="onSelectMapping()"
 									placeholder="Select end time">
 									<option value="">Select an attribute to map</option>
-									<option *ngFor="let att of attributesList" [value]="att.ActuallName" [disabled]="fieldData?.isSelected == true" >{{att?.displayName}}</option>
+									<option *ngFor="let att of attributesList" [value]="att.ActuallName" [disabled]="att?.isSelected == true" >{{att?.displayName}}</option>
 								</select>
 							</div>
 							<div>
 								<div class="col-auto d-flex align-items-center active-toggle ml-2">
-									<label for="toggle-switch{{ith}}" class="m-0 switch">
-										<input type="checkbox" class="form-check-input" id="toggle-switch{{ith}}"
+									<label for="toggle-switch{{idx}}" class="m-0 switch">
+										<input type="checkbox" class="form-check-input" id="toggle-switch{{idx}}"
 											[(ngModel)]="item.isOverride">
 										<span  class="slider">
 										</span>

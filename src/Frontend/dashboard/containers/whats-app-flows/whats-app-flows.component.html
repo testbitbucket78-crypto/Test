@@ -19,7 +19,7 @@
         </div>
 		<div class="d-flex">
             <div class="mx-2">
-                <select class="input-form select-flow" id="select" (change)="onFilterChange()">
+                <select class="input-form select-flow" id="select" (change)="onFilterChange($event)">
                     <option value="">Select</option>
                     <option value="Published">Published</option>
                     <option value="Draft">Draft</option>
@@ -29,7 +29,7 @@
                 </select>
             </div>
             <div class="D-whatsApp mx-2">
-                <button class="D2-whatsApp" (click)="toggleAssignOption()" >
+                <button class="D2-whatsApp" >
                     <span>
                         <img class="icon" src="/assets/img/teambox/whatsapp-icon-l.svg" />
                         {{channelSelected}} ({{channelPhoneNumber}})

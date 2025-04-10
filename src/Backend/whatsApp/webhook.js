@@ -224,13 +224,16 @@ async function extractDataFromMessage(body) {
             repliedMessageText = 'Template';
 
         if (Type == 'interactive') {
-          if(firstMessage?.interactive && firstMessage?.interactive?.type == 'flow_reply'){
-            repliedMessageText = 'Form sent';
-            let flow_reply = firstMessage?.interactive?.flow_reply;
-            const query = `INSERT INTO FlowsData (spid, flowid,flowToken, flowresponse) VALUES ?`;
-            await db.excuteQuery(query, [spid,flow_reply?.flow_id,flow_reply?.flow_token,flow_reply?.flow_data]);
+          if(firstMessage?.interactive && firstMessage?.interactive?.type == 'nfm_reply'){
+            message_text = 'Form sent';
+            let flow_reply_Json = JSON.stringify(firstMessage?.interactive?.nfm_reply?.response_json);
+            let flow_reply = JSON.parse(firstMessage?.interactive?.nfm_reply?.response_json);
+            let flow_token = flow_reply?.flow_token?.custom_info;
+            console.log("flow_token", flow_token)
+            const query = `INSERT INTO FlowsData (spid, flowid,flowresponse) VALUES ?`;
+            await db.excuteQuery(query, [spid,flow_token,flow_reply_Json]);
             const flowquery = `UPDATE Flows SET responses = responses + 1 WHERE flowid = ?`;
-            await db.excuteQuery(flowquery, [flow_reply?.flow_id]);
+            await db.excuteQuery(flowquery, [flow_token]);
           }
       }
         //console.log( spid, "campaignReplied*******", campaignReplied?.affectedRows)
@@ -348,6 +351,7 @@ async function extractDataFromMessage(body) {
 
 }
 }
+
 
 async function isMessageExist(messageId) {
   try {
