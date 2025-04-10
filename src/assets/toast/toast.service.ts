@@ -15,20 +15,21 @@ export interface ToastConfig {
 export class ToastService {
   private toastSubject = new BehaviorSubject<ToastConfig | null>(null);
   toast$ = this.toastSubject.asObservable();
+  defaultTimeOut = 10000;
 
   show(config: ToastConfig) {
     this.toastSubject.next(config);
   }
 
-  success(message: string, duration: number = 5000) {
+  success(message: string, duration: number = this.defaultTimeOut) {
     this.show({ message, type: 'success', duration });
   }
 
-  error(message: string, duration: number = 5000) {
+  error(message: string, duration: number = this.defaultTimeOut) {
     this.show({ message, type: 'error', duration });
   }
 
-  warning(message: string, duration: number = 5000) {
+  warning(message: string, duration: number = this.defaultTimeOut) {
     this.show({ message, type: 'warning', duration });
   }
 

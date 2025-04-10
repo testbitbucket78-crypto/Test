@@ -48,7 +48,6 @@ async function createClientInstance(spid, phoneNo) {
         channel = checkIfChannelExist;
         if (!checkIfChannelExist) {
             
-
             const projectId = await whapiService.getProjectId();
             let channelReqPayload = new CreateChannelRequest({
                 name: `SPID-${spid}`,

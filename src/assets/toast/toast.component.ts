@@ -18,7 +18,8 @@ import { ToastService, ToastConfig } from './toast.service';
       padding: 10px 24px;
       border-radius: 50px;
       box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-      min-width: 200px;
+      max-width: 500px !important;
+      width: max-content;
       text-align: center;
     }
     .toast p {
