@@ -15,7 +15,7 @@ export interface ToastConfig {
 export class ToastService {
   private toastSubject = new BehaviorSubject<ToastConfig | null>(null);
   toast$ = this.toastSubject.asObservable();
-  defaultTimeOut = 10000;
+  defaultTimeOut = 3000;
 
   show(config: ToastConfig) {
     this.toastSubject.next(config);
