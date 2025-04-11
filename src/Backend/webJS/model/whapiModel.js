@@ -79,6 +79,19 @@ class CreateChannelResponse {
         }
     }
 
+    async deleteFromDatabase() {
+        try {
+            const query = 'DELETE FROM whapi_channels WHERE id = ?';
+            const result = await db.excuteQuery(query, [this.id]);
+    
+            console.log(`Channel with id ${this.id} deleted successfully.`, result);
+            return true;
+        } catch (error) {
+            console.error(`Error deleting channel with id ${this.id}:`, error.message);
+            return false;
+        }
+    }
+
     /**
      * Fetches a channel by ID from the database.
      * @param {string} channelId
@@ -172,6 +185,7 @@ class Status {
         this.status = data?.status || '';
         this.recipient_id = data?.recipient_id || '';
         this.timestamp = data?.timestamp || 0;
+        this.text = data?.text || '';
     }
 }
 class User {
@@ -200,7 +214,7 @@ class WhapiIncomingMessage {
     }
 
     isUserDisconnected() {
-        return this.event?.event === 'delete' && this.user?.id;
+        return this.health?.status?.code == 1 && this.health?.status?.text === 'INIT';
     }
     isAuthenticationEvent() {
         return this.event?.event === 'post' && this.health?.status?.text === 'AUTH';

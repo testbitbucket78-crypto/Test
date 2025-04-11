@@ -83,7 +83,7 @@ async function createClientInstance(spid, phoneNo) {
           return {
             status: 409,
             message: "Channel already authenticated",
-            token: channel.token,
+            channelToken: channel.token,
           }
         } catch (dbError) {
             console.error('Error updating database:', dbError.message);
@@ -379,45 +379,45 @@ const handleDisconnection = async (channel_id) => {
         logger.info(`Channel initiated for disconnection for spid: ${spid}, and phone number: ${phoneNo}`);
         sendMailOnDisconnection(phoneNo, spid);
         console.log("Disconnected", new Date().toUTCString());
-
-        if (clientSpidMapping.hasOwnProperty(spid)) {
-            try {
-                delete clientSpidMapping[spid];
+        await db.excuteQuery('UPDATE WhatsAppWeb SET channel_status = 0 WHERE connected_id = ? AND spid = ?', [phoneNo, spid]);
+        // if (clientSpidMapping.hasOwnProperty(spid)) {
+        //     try {
+        //         delete clientSpidMapping[spid];
                 
-                let myUTCString = new Date().toUTCString();
-                const updated_at = moment.utc(myUTCString).format('YYYY-MM-DD HH:mm:ss');
-                await db.excuteQuery('UPDATE WhatsAppWeb SET updated_at = ? WHERE connected_id = ? AND spid = ? AND is_deleted != 1', [updated_at, phoneNo, spid]);
+        //         let myUTCString = new Date().toUTCString();
+        //         const updated_at = moment.utc(myUTCString).format('YYYY-MM-DD HH:mm:ss');
+        //         await db.excuteQuery('UPDATE WhatsAppWeb SET updated_at = ? WHERE connected_id = ? AND spid = ? AND is_deleted != 1', [updated_at, phoneNo, spid]);
                 
-                console.log("Kill[spid]", clientPidMapping[spid]);
-                process.kill(clientPidMapping[spid]);
-                delete clientPidMapping[spid];
+        //         console.log("Kill[spid]", clientPidMapping[spid]);
+        //         process.kill(clientPidMapping[spid]);
+        //         delete clientPidMapping[spid];
                 
-                let dir = path.join(__dirname, '.wwebjs_auth');
-                let sessionDir = path.join(dir, `session-${spid}`);
+        //         let dir = path.join(__dirname, '.wwebjs_auth');
+        //         let sessionDir = path.join(dir, `session-${spid}`);
 
-                if (fs.existsSync(sessionDir)) {
-                    console.log(`Disconnected - Deleting directory: ${sessionDir}`);
-                    killChromeProcesses(spid, () => {
-                        setTimeout(() => {
-                            try {
-                                fs.rmdirSync(sessionDir, { recursive: true });
-                                console.log(`Successfully deleted directory on disconnection: ${sessionDir}`);
-                            } catch (err) {
-                                console.error(`Error deleting directory on disconnection ${sessionDir}:`, err);
-                            }
-                        }, 2000);
-                    });
-                } else {
-                    console.log(`Disconnected - Directory not found: ${sessionDir}`);
-                }
+        //         if (fs.existsSync(sessionDir)) {
+        //             console.log(`Disconnected - Deleting directory: ${sessionDir}`);
+        //             killChromeProcesses(spid, () => {
+        //                 setTimeout(() => {
+        //                     try {
+        //                         fs.rmdirSync(sessionDir, { recursive: true });
+        //                         console.log(`Successfully deleted directory on disconnection: ${sessionDir}`);
+        //                     } catch (err) {
+        //                         console.error(`Error deleting directory on disconnection ${sessionDir}:`, err);
+        //                     }
+        //                 }, 2000);
+        //             });
+        //         } else {
+        //             console.log(`Disconnected - Directory not found: ${sessionDir}`);
+        //         }
 
-                await db.excuteQuery('UPDATE WhatsAppWeb SET channel_status = 0 WHERE connected_id = ? AND spid = ?', [phoneNo, spid]);
-            } catch (err) {
-                logger.error(`Error while handling disconnection for spid: ${spid}, mobile_number: ${phoneNo}, error: ${err}`);
-                console.log("Error deleting clientPidMapping in disconnected", err);
-            }
-            console.log(`Removed ${spid} from clientSpidMapping.`);
-        }
+        //         await db.excuteQuery('UPDATE WhatsAppWeb SET channel_status = 0 WHERE connected_id = ? AND spid = ?', [phoneNo, spid]);
+        //     } catch (err) {
+        //         logger.error(`Error while handling disconnection for spid: ${spid}, mobile_number: ${phoneNo}, error: ${err}`);
+        //         console.log("Error deleting clientPidMapping in disconnected", err);
+        //     }
+        //     console.log(`Removed ${spid} from clientSpidMapping.`);
+        // }
         notify.NotifyServer(phoneNo, false, 'Client is disconnected!');
     } catch (error) {
         logger.error(`Error while handling disconnection for spid: ${spid}, mobile_number: ${phoneNo}, error: ${error}`);
@@ -427,8 +427,6 @@ const handleDisconnection = async (channel_id) => {
 
 const handleAuthentication = async (channel_id) => {
     try {
-        console.log(`Handling authentication for channel_id: ${channel_id}`);
-
         // Fetch details using channel_id
         let channelData = await CreateChannelResponse.getByChannelId(channel_id);
 
@@ -442,36 +440,41 @@ const handleAuthentication = async (channel_id) => {
 
         console.log(`Authenticated spid: ${spid}, phoneNo: ${phoneNo}`);
 
-        // Store client mapping
-        clientSpidMapping[spid] = client;
-        console.log(`Updated clientSpidMapping for spid: ${spid}`);
-
-        // Store process ID if available
-        try {
-            clientPidMapping[spid] = client.pupBrowser.process().pid;
-            console.log(`Updated clientPidMapping for spid: ${spid}`);
-        } catch (err) {
-            console.error(`Failed to set clientPidMapping for spid: ${spid}, error: ${err}`);
+        let Data = await whapiService.getQRScannedPhoneNo(channel_id);
+        let channel = new CreateChannelResponse(Data, spid, phoneNo);
+        if(await checkifSPAlreadyExist(channel.phone, channel.spid)){
+          notify.NotifyServer(channel.phone, false, 'This number is already used as an SP number. Please use a different one.');
+          whapiService.deleteChannelById(channel.id);
+          channel.deleteFromDatabase();
+          return;
         }
-
-        // Notify the server about authentication
+        await channel.saveToDatabase();
+        updateConnectedChannelNo(channel.phone, channel.spid);
+        await CreateChannelResponse.setChannelAlreadyAuthenticated(spid);
         notify.NotifyServer(phoneNo, false, 'Client Authenticated');
-
-        // Set an interval to keep the session active by clicking on #pane-side
-        setInterval(async () => {
-            try {
-                await client.pupPage.click("#pane-side");
-                console.log(`Clicked #pane-side at ${new Date().toUTCString()}`);
-            } catch (intervalError) {
-                console.error(`Error clicking #pane-side:`, intervalError);
-            }
-        }, 30 * 60 * 1000); // 30 minutes interval
 
     } catch (error) {
         console.error(`Error handling authentication for channel_id: ${channel_id}`, error);
     }
 };
 
+async function updateConnectedChannelNo(phoneNo, spid){
+  await db.excuteQuery('UPDATE WhatsAppWeb SET connected_id = ? WHERE spid = ?', [phoneNo, spid]);
+  await db.excuteQuery('UPDATE user SET mobile_number = ? WHERE spid = ?', [phoneNo, spid]);
+}
+async function checkifSPAlreadyExist(phoneNo, spid) {
+  try {
+      const isChannelExist = await db.excuteQuery(
+          'SELECT * FROM user WHERE mobile_number = ? AND isDeleted != 1 AND ParentId IS NULL AND SP_ID != ?',
+          [phoneNo, spid]
+      );
+
+      return isChannelExist.length > 0;
+  } catch (error) {
+      console.error('Error in checkifSPAlreadyExist:', error);
+      return false;
+  }
+}
 async function handleWhatsAppReady(spid, phoneNo, token) {
   try {
       let sessionData = await whapiService.getSessionStatus(token);
