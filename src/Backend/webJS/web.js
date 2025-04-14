@@ -1533,7 +1533,51 @@ async function getDetatilsOfSavedMessage(saveMessage, message_text, phone_number
     }
   }
 }
+async function autoReconnectSessions() {
+  // const baseDir = "/Users/ayush/Desktop/backend/.wwebjs_auth"
+   const baseDir = path.resolve(__dirname, ".wwebjs_auth");
+  if (!fs.existsSync(baseDir)) {
+     console.log("No sessions to reconnect.");
+    return;
+  }
+
+  const sessions = fs.readdirSync(baseDir)
+    .filter(name => name.startsWith("session-"))
+    .map(name => name.replace("session-", ""));
+
+  if (sessions.length === 0) {
+     console.log("No saved sessions found.");
+    return;
+  }
+
+  for (const spid of sessions) {
+    try {
+      const result = await db.excuteQuery(
+         'SELECT mobile_number FROM user WHERE SP_ID = ? AND isDeleted != 1 AND ParentId IS NULL',
+        [spid]
+      );
+
+      if (!result || result.length === 0) {
+        console.log(`No matching user found in DB for SP_ID: ${spid}`);
+        continue;
+      }
+
+      const phoneNo = result[0].mobile_number;
+
+      if (!phoneNo) {
+        console.log(`Phone number missing for SP_ID: ${spid}`);
+        continue;
+      }
+      let response = await createClientInstance(spid, phoneNo);
+      if (response.value === 'Client is ready!') {    
+         await db.excuteQuery('update WhatsAppWeb set channel_status = 1 where spid = ?', [spid]);
+      }
+    } catch (err) {
+      console.log(`Failed to reconnect session ${spid}:`, err);
+    }
+  }
+}
 
 
 
-module.exports = { createClientInstance, sendMessages, isActiveSpidClient, sendFunnel, whatsappWebStatus }
+module.exports = { createClientInstance, sendMessages, isActiveSpidClient, sendFunnel, whatsappWebStatus, autoReconnectSessions }
