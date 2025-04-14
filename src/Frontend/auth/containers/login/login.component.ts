@@ -109,13 +109,14 @@ export class LoginComponent implements OnInit {
 
             error => {
                 this.isLoading = false;
+                error = error?.error
                 if (error?.status === 401) {
                     const errorMessage = '! Incorrect Email or Password.';
                     const errorDiv = document.getElementById('error-message');
                     if (errorDiv) {
                         errorDiv.innerHTML = errorMessage;
                     }
-                } if (error?.status === 402) {
+                } else if (error?.status === 402) {
                     const errorMessage = 'Attention! Your account has been DISABLED. Please contact your solution provider';
                     const errorDiv = document.getElementById('error-message');
                     if (errorDiv) {

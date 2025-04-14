@@ -738,7 +738,7 @@ checkTemplateName(e:any){
                             this.showToaster('Template saved successfully','success');
                         }
                         else{
-                            this.showToaster('something went wrong','error')
+                            this.showToaster('Attention! Template submission not approved by Meta. Please follow template creation guidelines. Refer to the link given on the template creation page.','error')
                         }
                     });
             } else {
@@ -759,7 +759,7 @@ checkTemplateName(e:any){
                             this.showToaster('Template saved successfully','success');
                         }
                         else{
-                            this.showToaster('something went wrong','error')
+                            this.showToaster('Attention! Template submission not approved by Meta. Please follow template creation guidelines. Refer to the link given on the template creation page.','error')
                         }
                     });
             }
@@ -1483,21 +1483,29 @@ createButton(type: string) {
     return null; // Return no error for validator
   }
 
-  sanitizeInput(event: string,idx:any, col: any): void {
+  sanitizeInput(event: string, idx:any, col: any): void {
     const emojiRegex = /[\p{Emoji}\u200D\uFE0F]/gu; // Regex for emojis
     if (event) {
       const sanitizedValue = event.replace(emojiRegex, '');
       if (sanitizedValue !== event) {
-        this.buttonsArray[idx][col] = sanitizedValue; // Directly update the object
+        event = sanitizedValue;
+        this.showToaster('Emoji not allowed', 'error');
+        setTimeout(() => {
+            this.buttonsArray[idx][col] = sanitizedValue;
+          });
       }
     }
   }
-
+  
+  countTagOccurrence = (str: string, tag: string) => str.split(tag).length - 1;
 
   validateItems():boolean {
     let validationErrors = ''; 
     const buttonTextSet = new Set<string>();
     const urlPattern = /^(https?:\/\/).*\.[a-z]{2,}$/i;
+    if(this.countTagOccurrence(this.newTemplateForm.controls.BodyText.value, "<br>") > 1 && this.channelDomain == 'api'){
+        validationErrors += "Body should not have empty lines.";
+    }
     this.buttonsArray.forEach((item, index) => {
       if (!item.buttonText) {
         validationErrors = validationErrors + '<br>'+ `Button ${index + 1}: 'buttonText' is required.`;
@@ -1534,9 +1542,9 @@ createButton(type: string) {
         buttonTextSet.add(item.buttonText);
       }
       //if()
-      if(this.newTemplateForm.controls.BodyText.value.includes('<br>') && this.channelDomain == 'api'){
-        validationErrors = validationErrors + '<br>'+ `Body should not have empty lines.`;
-      }
+    //   if(this.newTemplateForm.controls.BodyText.value.includes('<br>') && this.channelDomain == 'api'){
+    //     validationErrors = validationErrors + '<br>'+ `Body should not have empty lines.`;
+    //   }
 
     });
 if (validationErrors){
