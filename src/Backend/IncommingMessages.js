@@ -842,6 +842,9 @@ async function isHolidays(spid) {
 
 function isWorkingTime(data, currentTime) {
   //console.log(data)
+  if(data.length == 0){
+    return true;
+  }
   const currentDay = new Date().toLocaleDateString('en-US', { weekday: 'long' });
   const currentTimeStr = currentTime.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
   let datetime = new Date().toLocaleString(undefined, { timeZone: 'Asia/Kolkata' });

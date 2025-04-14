@@ -1335,9 +1335,9 @@ showAddSmartRepliesModal() {
 			  }
 		}
 
-		  if (element) {
+		  if (element || mediaName) {
 			// element.focus();
-			let currentValue = element.innerHTML ?? '<br>';
+			let currentValue = element?.innerHTML ?? '<br>';
 			if(mediaName) this.chatEditor.value = mediaName + currentValue;
 			else this.chatEditor.value = currentValue;
 			console.log(element);

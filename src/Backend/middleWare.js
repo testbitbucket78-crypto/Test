@@ -516,8 +516,6 @@ async function createWhatsAppPayload(type, to, templateName, languageCode, heade
                 };
             }
             if (btn.type === 'Complete Flow') {
-                console.log("btn", btn);
-                console.log("btn.flow_id", btn.flow_id);
                 let flowToken = {                    
                     custom_info:btn.flowId
                 }
