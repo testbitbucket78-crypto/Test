@@ -464,16 +464,16 @@ async function updateConnectedChannelNo(phoneNo, spid){
 }
 async function checkifSPAlreadyExist(phoneNo, spid) {
   try {
-      const isChannelExist = await db.excuteQuery(
-          'SELECT * FROM user WHERE mobile_number = ? AND isDeleted != 1 AND ParentId IS NULL AND SP_ID != ?',
-          [phoneNo, spid]
-      );
-
-      return isChannelExist.length > 0;
+    let isExist = await db.excuteQuery('select * from user where mobile_number=? and ParentId is null and  isDeleted !=1 and IsActive !=2', [phoneNo, 1]);
+    if (isExist?.length > 0 && isExist[0].SP_ID != spid) {
+      return true;
+    }
+    return false;
   } catch (error) {
       console.error('Error in checkifSPAlreadyExist:', error);
       return false;
   }
+  
 }
 async function handleWhatsAppReady(spid, phoneNo, token) {
   try {
@@ -872,7 +872,7 @@ async function saveInMessages(message) {
       let message_direction = 'IN';
       let phone_number_id = ''; // Not found in the incoming message
       let r1 = await CreateChannelResponse.getByChannelId(message.channel_id);
-      let display_phone_number = r1?.phoneNo;
+      let display_phone_number = r1?.phone;
       
       for (const msg of message.messages || []) {
         let from = msg?.from;

@@ -236,6 +236,7 @@ async function extractDataFromMessage(body) {
             await db.excuteQuery(flowquery, [flow_token]);
           }
       }
+    }
          //console.log( spid, "campaignReplied*******", campaignReplied?.affectedRows)
       }
 
@@ -350,7 +351,7 @@ async function extractDataFromMessage(body) {
   }
 
 }
-}
+
 
 
 async function isMessageExist(messageId) {
