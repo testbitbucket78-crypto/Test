@@ -424,6 +424,7 @@ app.listen(3009, () => {
                 }
             });
         }
+         web.autoReconnectSessions();
     }
     catch (err) {
         logger.error(`error while deleting cached sessions. Please delete manually and restart the server: ${err}`)
