@@ -113,7 +113,7 @@ ipRegexTs = /^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]
     this.spid = Number(sessionStorage.getItem('SP_ID'));
     this.phoneNumber = (JSON.parse(sessionStorage.getItem('loginDetails')!))?.mobile_number;
     this.email = (JSON.parse(sessionStorage.getItem('loginDetails')!))?.email_id;
-    this.SPPhonenumber = (JSON.parse(sessionStorage.getItem('SPPhonenumber')!));
+    this.SPPhonenumber = sessionStorage.getItem('SPPhonenumber') ? (JSON.parse(sessionStorage.getItem('SPPhonenumber')!)) :null;
     this.getwhatsapp();
     this.subscribeToNotifications();
     this.loadFacebookSDK();
@@ -278,6 +278,25 @@ setChannelId(id: string) {
   this.channel_id = id;
 }
 
+getUserAndWhatsappDetails(id: number) {
+  if(id==0){
+    this.getUserById(id);
+  }
+}
+
+getUserById(id:number) {
+  this.apiService.userById(this.spid,this.uid).subscribe(result => {
+      if (result) {
+        console.log(result);
+        let userData = result?.getUser[0];
+        console.log(userData);
+        this.SPPhonenumber = userData?.mobile_number;
+        console.log(this.SPPhonenumber);
+        this.saveWhatsappWebDetails(id)
+      }
+  });
+}
+
 saveWhatsappWebDetails(id:number) { 
   this.whatAppDetails.id = id;
   this.whatAppDetails.spid = this.spid;
@@ -388,7 +407,7 @@ openDiv() {
             this.showToaster('! User is already authenticated', 'success');   
             this.hideModal();
             setTimeout(()=> {
-              this.saveWhatsappWebDetails(id);
+              this.getUserAndWhatsappDetails(id);
             },2000); 
           }
           this.getwhatsapp();
@@ -402,14 +421,14 @@ openDiv() {
           if(error.status === 400) {
             this.showToaster('Bad Request!', 'error');
             this.channel_status = 0;
-            this.saveWhatsappWebDetails(id);
+           // this.saveWhatsappWebDetails(id);
           }
           if (error) {
             this.showToaster('Something Went Wrong!', 'error');
             this.loadingQRCode = false;
             $("#qrWhatsappModal").modal('hide');
             this.channel_status = 0;
-            this.saveWhatsappWebDetails(id);
+           // this.saveWhatsappWebDetails(id);
           }
           this.getwhatsapp();
         }
@@ -445,7 +464,7 @@ openDiv() {
 async subscribeToNotifications() {
   let notificationIdentifier = {
     "UniqueSPPhonenumber": (JSON.parse(sessionStorage.getItem('loginDetails')!))?.mobile_number,
-    "spPhoneNumber": JSON.parse(sessionStorage.getItem('SPPhonenumber')!)
+    "spPhoneNumber": sessionStorage.getItem('SPPhonenumber') ? JSON.parse(sessionStorage.getItem('SPPhonenumber')!): null
   };
   this.websocketService.connect(notificationIdentifier);
   this.websocketService.getMessage()?.subscribe(message => {
@@ -465,21 +484,21 @@ async subscribeToNotifications() {
           if (msgjson.message == 'Client is ready!') {
             this.channel_status = 1; 
             this.showToaster('Your Device Linked Successfully !', 'success');
-            this.saveWhatsappWebDetails(id);
+            this.getUserAndWhatsappDetails(id);
             $("#qrWhatsappModal").modal('hide');
             this.hideModal();
           }
          
           if(msgjson.message == 'Wrong Number'){
             this.channel_status = 0; 
-            this.saveWhatsappWebDetails(id);
+            //this.saveWhatsappWebDetails(id);
             this.showToaster('Wrong Number, Please use logged in number!', 'error');
             this.hideModal();
           }
 
           if (msgjson.message == 'QR generation timed out. Plese re-open account settings and generate QR code') {           
             this.channel_status = 0; 
-            this.saveWhatsappWebDetails(id);
+           // this.saveWhatsappWebDetails(id);
             this.showToaster('QR generation timed out. Plese re-open account settings and generate QR code', 'error');
             this.loadingQRCode = false;
             $("#qrWhatsappModal").modal('hide');
@@ -487,7 +506,7 @@ async subscribeToNotifications() {
           }
           if(msgjson.message == 'This number is already used as an SP number. Please use a different one.'){
             this.channel_status = 0; 
-            this.saveWhatsappWebDetails(id);
+            //this.saveWhatsappWebDetails(id);
             this.showToaster('This number is already used as an SP number. Please use a different one.', 'error');
             this.loadingQRCode = false;
             $("#qrWhatsappModal").modal('hide');
@@ -495,7 +514,7 @@ async subscribeToNotifications() {
           }
           if(msgjson.message == 'This Phone is already used in EngageKart !'){
             this.channel_status = 0; 
-            this.saveWhatsappWebDetails(id);
+            //this.saveWhatsappWebDetails(id);
             this.showToaster('This number is already used as an SP number. Please use a different one.', 'error');
             this.loadingQRCode = false;
             $("#qrWhatsappModal").modal('hide');
@@ -513,7 +532,7 @@ async subscribeToNotifications() {
  close(){
   let notificationIdentifier = {
     "UniqueSPPhonenumber": (JSON.parse(sessionStorage.getItem('loginDetails')!))?.mobile_number,
-    "spPhoneNumber": JSON.parse(sessionStorage.getItem('SPPhonenumber')!),
+    "spPhoneNumber": sessionStorage.getItem('SPPhonenumber') ? JSON.parse(sessionStorage.getItem('SPPhonenumber')!) :null,
     "isClose":true
   };
   this.websocketService.connect(notificationIdentifier);

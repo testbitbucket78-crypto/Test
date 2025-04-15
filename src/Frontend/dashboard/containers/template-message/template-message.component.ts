@@ -813,7 +813,7 @@ checkTemplateName(e:any){
         copyTemplateForm.Header = this.templatesMessageDataById.Header;
         copyTemplateForm.Links = this.templatesMessageDataById.Links;
         copyTemplateForm.BodyText = this.templatesMessageDataById.BodyText;
-        copyTemplateForm.FooterText = this.wrapWithEmTags(this.templatesMessageDataById.FooterText);
+        copyTemplateForm.FooterText = this.templatesMessageDataById.FooterText ? this.wrapWithEmTags(this.templatesMessageDataById.FooterText) :'';
         copyTemplateForm.TemplateName = this.templatesMessageDataById.TemplateName +'_copy';
         copyTemplateForm.Channel = this.templatesMessageDataById.Channel;
         copyTemplateForm.Category = this.templatesMessageDataById.Category;
@@ -873,7 +873,7 @@ checkTemplateName(e:any){
         newTemplateForm.Links = this.newTemplateForm.controls.Links.value;
         newTemplateForm.Links = this.selectedPreview;
         newTemplateForm.BodyText = this.newTemplateForm.controls.BodyText.value;
-        newTemplateForm.FooterText = this.wrapWithEmTags(this.newTemplateForm.controls.FooterText.value);
+        newTemplateForm.FooterText = this.newTemplateForm.controls.FooterText.value ? this.wrapWithEmTags(this.newTemplateForm.controls.FooterText.value):'';
         newTemplateForm.TemplateName = this.newTemplateForm.controls.TemplateName.value;
         newTemplateForm.Channel = this.newTemplateForm.controls.Channel.value;
         newTemplateForm.categoryChange = this.newTemplateForm.controls.categoryChange.value;

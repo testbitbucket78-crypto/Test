@@ -427,7 +427,8 @@ async function sendScheduledCampaign(batch, sp_id, type, message_content, messag
   console.log("sendScheduledCampaign", "channel_id", sp_id, type, message_media, phone_number_id, channel_id)
   body = replaceTemplateVariables(body, message.message_variables);
   for (var i = 0; i < batch.length; i++) {
-    let message_text =  '<p><strong>'+header+'</strong></p><br>' + message_content
+    let headers = header ?  '<p><strong>'+header+'</strong></p><br>' : '';
+    let message_text =  headers + message_content
     let Phone_number = batch[i].Phone_number
     //Attributes for contact_list
     let textMessage = await parseMessage(message_text, batch[i].customerId, batch[i].SP_ID, message.message_variables)

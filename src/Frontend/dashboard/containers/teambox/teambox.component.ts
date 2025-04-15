@@ -699,7 +699,7 @@ public  fieldsData: { [key: string]: string } = { text: 'name' };
 			htmlcontent += mediaName
 		}
 	
-		htmlcontent +='<p>'+ item?.BodyText+'</p>';
+		htmlcontent += item?.BodyText;
 		if (item?.FooterText) {
 			htmlcontent+='<p class="temp-footer">'+item?.FooterText+'</p>';
 		}
