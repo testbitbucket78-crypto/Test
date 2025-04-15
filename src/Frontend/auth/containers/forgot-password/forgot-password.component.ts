@@ -41,7 +41,7 @@ export class ForgotPasswordComponent implements OnInit {
             this.apiService.forgotpassword(this.submittedValue).subscribe(
                 (result) => {
                     this.isLoading = false;
-                    this._ToastService.success('Email Sent Successfully');
+                   // this._ToastService.success('Email Sent Successfully');
                     this.openModal();
                 if (result.status === 200) {
             
