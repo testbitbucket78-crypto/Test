@@ -105,7 +105,7 @@
 			<h3 class="reply-action-btn" (click)="editSmartReply(3)"><img id="Edit-icon" src="assets/img/Edit-icon.png">Reply
 				Actions</h3>
 			<div *ngFor="let item of repliesData?.ActionList">
-				<div class="box4" *ngIf="item.Message">
+				<div class="box4" *ngIf="item.Message || item.Media">
 					<h3>Message</h3>
 					<div class="box4-Media">
 					<img *ngIf="isImage(item.Media)" [src]="item.Media" alt="Media" />

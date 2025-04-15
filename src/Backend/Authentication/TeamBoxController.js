@@ -56,6 +56,10 @@ const getAllCustomer = async (req, res) => {
         let contacts = await db.excuteQuery(val.selectAllQuery, [req.params.spID, req.params.spID, req.params.spID, req.params.spID, req.params.spID, RangeStart, RangeEnd]);
         // logger.info('Query executed for getAllCustomer', { spID: req.params.spID, RangeStart, RangeEnd, contacts });
         let isCompleted = false;
+        // let contacts =[];     
+        //    console.log( 'explainRows12')
+        // const [explainRows] = await connection.excuteQuery(val.selectAllQuery, [req.params.spID, req.params.spID, req.params.spID, req.params.spID, req.params.spID, RangeStart, RangeEnd]);
+        // console.log(explainRows, 'explainRows')
         if (contacts?.length === 0 || contacts?.length < RangeEnd) {
             isCompleted = true;
         }
@@ -764,7 +768,8 @@ const insertMessage = async (req, res) => {
                         const mediaType = determineMediaType(media_type);
                         //get header and body variable 
                         let headerVar = await commonFun.getTemplateVariables(msgVar, header, SPID, customerId);
-                        let bodyVar = await commonFun.getTemplateVariables(msgVar, message_text, SPID, customerId);
+                        let updateBody = replaceTemplateVariables(body, msgVar);
+                        let bodyVar = await commonFun.getTemplateVariables(msgVar, updateBody, SPID, customerId);
 
                         middlewareresult = await middleWare.createWhatsAppPayload(mediaType, req?.body?.messageTo, req?.body?.name, req?.body?.language, headerVar, bodyVar, message_media, SPID, req?.body?.buttons, DynamicURLToBESent);
                        // middlewareresult = await middleWare.channelssetUp(SPID, channel, mediaType, req.body.messageTo, content, message_media, interaction_id, msg_id.insertId, spNumber);
@@ -813,6 +818,44 @@ const insertMessage = async (req, res) => {
         res.send({ status: 500, error: err });
     }
 };
+
+function replaceTemplateVariables(messageText, messageVariables) {
+    let updatedText = messageText;
+  
+    if (typeof messageVariables === "string") {
+      messageVariables = JSON.parse(messageVariables);
+    }
+  
+    console.log(messageVariables);
+  
+    // Step 1: Use placeholders to prevent overwritten replacements
+    const placeholderMap = {};
+    const tempPlaceholders = {};
+  
+    messageVariables.forEach((variable, index) => {
+      let label = variable.label;
+      let value = variable.value.includes('{{') ? variable.value : variable.label;
+  
+      // Generate unique placeholder
+      let placeholder = `__TEMP_${index}__`;
+      placeholderMap[placeholder] = value;
+      tempPlaceholders[label] = placeholder;
+    });
+  
+    // Step 2: Replace original variables with temporary placeholders
+    Object.keys(tempPlaceholders).forEach((key)=> {
+      let regex = new RegExp(key, "g");
+      updatedText = updatedText.replace(regex, tempPlaceholders[key]);
+    });
+  
+    // Step 3: Replace temporary placeholders with actual values
+    Object.keys(placeholderMap).forEach((placeholder) => {
+      let regex = new RegExp(placeholder, "g");
+      updatedText = updatedText.replace(regex, placeholderMap[placeholder]);
+    });
+  
+    return updatedText;
+  }
 
 
 async function getDefaultActionTimeandUpdatePauseTime(spid, customerId) {

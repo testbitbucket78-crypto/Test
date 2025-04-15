@@ -1196,11 +1196,7 @@ formateDate(dateTime:string){
           if(colName =='Phone_number'){
             colName = "REGEXP_REPLACE(Phone_number, '[^0-9]', '')"
           }
-		  
-		  if(colName =='Tag'){
-			colName = "ECTM.TagName";
-		  }
-  
+		    
           contactFilter += idx == 0 ?' and ((' :  filters.items[0]['filterOperator'] == '' ? ' and ('  : filters.items[0]['filterOperator'] + ' (';
           filters.items.map((filter:any,index:any)=>{
   
@@ -1329,6 +1325,9 @@ formateDate(dateTime:string){
           }
 		  if(filter?.filterPrefixType =="Date"){
 			filterOper = this.applyDateCondition(filter);
+		  }
+		  if(filters?.filterPrefix =='Tag' || filters?.filterPrefix =='tag'){
+			colName = "ECTM.TagName";
 		  }
           
           contactFilter += ' '+QueryOperator +' '+colName+' '+filterOper
