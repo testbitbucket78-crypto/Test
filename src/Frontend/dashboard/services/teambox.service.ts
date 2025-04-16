@@ -8,7 +8,7 @@ const API_URL = environment.baseUrl;
 @Injectable()
 export class TeamboxService {
   //Setting_API_URL:string='https://settings.stacknize.com';
-  Setting_API_URL:string='http://localhost:3004';
+  Setting_API_URL:string='https://settings.stacknize.com';
   constructor(private http: HttpClient) { }
 
   public uploadfile(FileData:any, spid:any,name:any) {

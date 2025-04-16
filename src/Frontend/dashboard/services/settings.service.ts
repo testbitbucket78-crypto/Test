@@ -9,8 +9,8 @@ import { DatePipe } from '@angular/common';
 })
 
 export class SettingsService {
-  //API_URL:string='https://settings.stacknize.com';
-  API_URL:string='http://localhost:3004';
+  API_URL:string='https://settings.stacknize.com';
+  //API_URL:string='http://localhost:3004';
   token = 'cXlkZE04VzM3MTVaSkNwWlhINVlDNEY3eEJGV1V0S21FMGROaTJFWg==';
   subprivilages!:any;
   dateFormat:any;
