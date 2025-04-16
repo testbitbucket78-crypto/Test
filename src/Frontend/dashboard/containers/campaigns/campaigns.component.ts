@@ -1821,7 +1821,7 @@ formateDate(dateTime:string){
 	}
 	constructMessageContent(BodyText: string): string {
 	
-		let content ='<p>'+ BodyText+'</p>';
+		let content =BodyText;
 		if (this.selectedTemplate?.FooterText && this.selectedTemplate?.FooterText.trim() !== '') {
 		  content += '<p class="temp-footer">'+this.selectedTemplate?.FooterText+'</p>';
 		}

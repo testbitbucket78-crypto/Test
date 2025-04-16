@@ -1063,7 +1063,7 @@ showAddSmartRepliesModal() {
 		if(mediaContent && item.media_type!== 'text') {
 			htmlcontent += mediaContent
 		}
-		htmlcontent +='<p>'+ item.BodyText+'</p>';
+		htmlcontent +=item.BodyText;
 		if (item.FooterText) {
 			htmlcontent+='<p class="temp-footer">'+item.FooterText+'</p>';
 		}
