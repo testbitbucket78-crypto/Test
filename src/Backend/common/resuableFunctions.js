@@ -461,4 +461,58 @@ function replaceEmptyValuesInArray(array) {
   });
 }
 
-module.exports = { isStatusEmpty,getCodeByLabel, getDefaultAttribue, isHolidays, isWorkingTime, resetContactFields, determineMediaFromLink, notifiactionsToBeSent, currentlyAssigned, updateHealthStatus, convertMessagingLimitTier, updateCurrentLimit, getTemplateVariables, isInvalidParam }
+
+
+async function isPaused(sid) {
+  try {
+      let { isPaused } = (
+          await db.excuteQuery(
+              `SELECT isPaused FROM user WHERE SP_ID = ? AND ParentId IS NULL;`,
+              [sid]
+          )
+      )[0];
+
+      if (isPaused != 0) {
+          return true;
+      }
+      return false;
+  } catch (err) {
+    return false;
+  } 
+}
+
+async function isDisable(sid) {
+  try {
+      let { isDisable } = (
+          await db.excuteQuery(
+              `SELECT isDisable FROM user WHERE SP_ID = ? AND ParentId IS NULL;`,
+              [sid]
+          )
+      )[0];
+      if (isDisable != 0) {
+          return true;
+      }
+      return false;
+  } catch (err) {
+    return false;
+  }
+}
+
+async function isDeleted(sid) {
+  try {
+      let { isDeleted } = (
+          await db.excuteQuery(
+              `SELECT isDeleted FROM user WHERE SP_ID = ? AND ParentId IS NULL;`,
+              [sid]
+          )
+      )[0];
+      if (isDeleted != 0) {
+          return true;
+      }
+      return false;
+  } catch (err) {
+    return false;
+  }
+}
+
+module.exports = { isPaused,isDisable,isDeleted,isStatusEmpty,getCodeByLabel, getDefaultAttribue, isHolidays, isWorkingTime, resetContactFields, determineMediaFromLink, notifiactionsToBeSent, currentlyAssigned, updateHealthStatus, convertMessagingLimitTier, updateCurrentLimit, getTemplateVariables, isInvalidParam }

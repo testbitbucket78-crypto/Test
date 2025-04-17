@@ -168,23 +168,7 @@ async function sendSmartReply(message_text, phone_number_id, contactName, from, 
   // }
 }
 
-async function isPaused(sid) {
-  try {
-      let { isPaused } = (
-          await db.excuteQuery(
-              `SELECT isPaused FROM user WHERE SP_ID = ? AND ParentId IS NULL;`,
-              [sid]
-          )
-      )[0];
 
-      if (isPaused != 0) {
-          return true;
-      }
-      return false;
-  } catch (err) {
-    return false;
-  }
-}
 
 
 async function matchSmartReplies(message_text, sid, channelType) {
@@ -966,7 +950,7 @@ async function SreplyThroughselectedchannel(spid, from, type, text, media, phone
     let buttonsArray = typeof buttons === 'string' ? JSON.parse(buttons) : buttons;
   
 
-    if(await isPaused(spid)){
+    if(await commonFun.isPaused(spid) || await commonFun.isDisable(spid) || await commonFun.isDeleted(spid)){
       let messageValu = [[spid, 'text', "", interactionId, agentId, 'Out', testMessage, (media ? media : 'text'), media_type, '', "", time, time, "", -2, 9,buttons]]
       let saveMessage = await db.excuteQuery(insertMessageQuery, [messageValu]);
       return
