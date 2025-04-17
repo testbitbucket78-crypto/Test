@@ -38,7 +38,7 @@ async function fetchScheduledMessages() {
   try {
     // var messagesData = await db.excuteQuery(`select * from Campaign where (status=1 or status=2) and is_deleted != 1`, [])
     // var messagesData = await db.excuteQuery(`SELECT *, DATE_FORMAT(start_datetime, '%Y-%m-%d %H:%i:%s') AS formatted_date,u.IsActive,u.currentStatus  FROM Campaign u  LEFT JOIN user u ON u.SP_ID = c.spid  WHERE (status = 1 OR status = 6) AND is_deleted != 1`, [])
-    var messagesData = await db.excuteQuery(`SELECT c.*, DATE_FORMAT(c.start_datetime, '%Y-%m-%d %H:%i:%s') AS formatted_date, u.isPaused FROM Campaign c LEFT JOIN user u ON u.SP_ID = c.sp_id AND (u.ParentId Is Null) WHERE c.status IN (1, 6) AND c.is_deleted != 1`, [])
+    var messagesData = await db.excuteQuery(`SELECT c.*, DATE_FORMAT(c.start_datetime, '%Y-%m-%d %H:%i:%s') AS formatted_date, u.isPaused,u.isDisable.u.isDeleted FROM Campaign c LEFT JOIN user u ON u.SP_ID = c.sp_id AND (u.ParentId Is Null) WHERE c.status IN (1, 6) AND c.is_deleted != 1`, [])
     var remaingMessage = [];
     //console.log(messagesData)
     logger.info(`fetchScheduledMessages ${messagesData?.length}`)
@@ -735,9 +735,10 @@ async function messageThroughselectedchannel(spid, from, type, text, media, phon
     let getMediaType = determineMediaType(type);
     if (getMediaType === 'unknown' && media) getMediaType = determineMediaFromLink(media);
     if (channelType == 'WhatsApp Official' || channelType == 1 || channelType == 'WA API') {
-      if (message.isPaused != 0) {
-        let saveSendedMessage = await saveMessage(from, spid, '', message_content, media, type, type, 'Attention! Your account has been PAUSED. Please contact your solution provider', 9, buttons);
-        let saveInCampaignMessage = await sendMessages(from, text, campaignId, message, 403, text, '', 'WA API', '', 'This contact is blocked')
+      if (message.isPaused != 0 || message.isDisable != 0 || message.isDeleted != 0) {
+        var errorMessaage = message.isDeleted != 0 ? 'Attention! Your account has been DELETED. Please contact your solution provider': message.isDisable != 0 ? 'Attention! Your account has been DISABLED. Please contact your solution provider' : 'Attention! Your account has been PAUSED. Please contact your solution provider'
+        let saveSendedMessage = await saveMessage(from, spid, '', message_content, media, type, type, errorMessaage, 9, buttons);
+        let saveInCampaignMessage = await sendMessages(from, text, campaignId, message, 403, text, '', 'WA API', '', errorMessaage)
         return
       }
 
@@ -763,9 +764,10 @@ async function messageThroughselectedchannel(spid, from, type, text, media, phon
         let saveInCampaignMessage = await sendMessages(from, text, campaignId, message, 403, text, '', 'WA API', '', 'This contact is blocked')
       }
     } if (channelType == 'WhatsApp Web' || channelType == 2 || channelType == 'WA Web') {
-      if (message.isPaused != 0) {
-        let saveSendedMessage = await saveMessage(from, spid, '', message_content, media, type, type, 'Attention! Your account has been PAUSED. Please contact your solution provider', 9, buttons);
-        let saveInCampaignMessage = await sendMessages(from, text, campaignId, message, 403, text, '', 'WA Web', '', 'This contact is blocked')
+      if (message.isPaused != 0 || message.isDisable != 0 || message.isDeleted != 0) {
+        var errorMessaage = message.isDeleted != 0 ? 'Attention! Your account has been DELETED. Please contact your solution provider': message.isDisable != 0 ? 'Attention! Your account has been DISABLED. Please contact your solution provider' : 'Attention! Your account has been PAUSED. Please contact your solution provider'
+        let saveSendedMessage = await saveMessage(from, spid, '', message_content, media, type, type, errorMessaage, 9, buttons);
+        let saveInCampaignMessage = await sendMessages(from, text, campaignId, message, 403, text, '', 'WA Web', '', errorMessaage)
         return
       }
       if (!isBlockedContact) {

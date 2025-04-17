@@ -145,6 +145,7 @@ public  fieldsData: { [key: string]: string } = { text: 'name' };
 	uid = (JSON.parse(sessionStorage.getItem('loginDetails')!)).uid
 	AgentId = (JSON.parse(sessionStorage.getItem('loginDetails')!)).uid
 	AgentName = (JSON.parse(sessionStorage.getItem('loginDetails')!)).name
+	isPaused =(JSON.parse(sessionStorage.getItem('loginDetails')!)).isPaused != 0 ? true : false
 	loginAs:any;
 	spNumber = (JSON.parse(sessionStorage.getItem('loginDetails')!)).mobile_number
 	messageTimeLimit=10;
@@ -3872,7 +3873,7 @@ sendMessage(isTemplate:boolean=false,templateTxt:string=''){
 	}
 	
 	checkPermission(){
-		if(((JSON.parse(sessionStorage.getItem('loginDetails')!)).isPaused != 0 )){
+		if(((JSON.parse(sessionStorage.getItem('loginDetails')!)).isPaused != 0)){
 			this.showToaster('Attention! Your account has been PAUSED. Please contact your solution provider.','error');
 			return
 		}

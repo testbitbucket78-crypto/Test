@@ -76,7 +76,7 @@ const login = async (req, res) => {
             });
         }
 
-        const token = jwt.sign({ email_id: user.email_id }, SECRET_KEY, { expiresIn: '24h' });
+        const token = jwt.sign({ id: credentials[0].uid,email_id: user.email_id }, SECRET_KEY, { expiresIn: '24h' });
         const utcTimestamp = moment.utc(new Date()).format('YYYY-MM-DD HH:mm:ss');
 
         await db.excuteQuery('UPDATE user SET LastLogIn = ?, LoginIP = ?, IsActive = 1 WHERE email_id = ?', [utcTimestamp, ip, emailId]);

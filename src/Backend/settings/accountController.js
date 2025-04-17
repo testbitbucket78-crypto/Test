@@ -337,6 +337,8 @@ const editToken = async (req, res) => {
     }
 }
 
+
+
 const deleteToken = async (req, res) => {
     try {
         let myUTCString = new Date().toUTCString();
@@ -541,6 +543,16 @@ const sendMessage = async (req, res) => {
         if(result?.apiKey != APIKeyManagerInstance?.apiKey){
             throw new Error(`API Key is not authorized.`);
         }
+        if(await commonFun.isDisable(spId)){
+            throw new Error(`Attention! Your account has been DISABLED. Please contact your solution provider.`);
+        }
+        if(await commonFun.isPaused(spId)){
+            throw new Error(`Attention! Your account has been PAUSED. Please contact your solution provider.`);
+        }
+        if(await commonFun.isDeleted(spId)){
+            throw new Error(`Attention! Your account has been DELETED. Please contact your solution provider.`);
+        }
+
         if(APIKeyManagerInstance.spId){
             try {
                 const apiUrl = `${variables.ENV_URL.waweb}/IsClientReady`;
