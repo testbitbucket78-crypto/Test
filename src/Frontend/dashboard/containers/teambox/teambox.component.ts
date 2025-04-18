@@ -701,7 +701,7 @@ public  fieldsData: { [key: string]: string } = { text: 'name' };
 		}
 	
 		htmlcontent += item?.BodyText;
-		if (item?.FooterText) {
+		if (item?.FooterText && item?.FooterText!== '') {
 			htmlcontent+='<p class="temp-footer">'+item?.FooterText+'</p>';
 		}
 		//this.chatEditor.value =htmlcontent
