@@ -281,6 +281,8 @@ setChannelId(id: string) {
 getUserAndWhatsappDetails(id: number) {
   if(id==0){
     this.getUserById(id);
+  }else{
+    this.saveWhatsappWebDetails(id);
   }
 }
 
