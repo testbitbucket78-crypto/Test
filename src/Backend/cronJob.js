@@ -38,7 +38,7 @@ async function fetchScheduledMessages() {
   try {
     // var messagesData = await db.excuteQuery(`select * from Campaign where (status=1 or status=2) and is_deleted != 1`, [])
     // var messagesData = await db.excuteQuery(`SELECT *, DATE_FORMAT(start_datetime, '%Y-%m-%d %H:%i:%s') AS formatted_date,u.IsActive,u.currentStatus  FROM Campaign u  LEFT JOIN user u ON u.SP_ID = c.spid  WHERE (status = 1 OR status = 6) AND is_deleted != 1`, [])
-    var messagesData = await db.excuteQuery(`SELECT c.*, DATE_FORMAT(c.start_datetime, '%Y-%m-%d %H:%i:%s') AS formatted_date, u.isPaused,u.isDisable.u.isDeleted FROM Campaign c LEFT JOIN user u ON u.SP_ID = c.sp_id AND (u.ParentId Is Null) WHERE c.status IN (1, 6) AND c.is_deleted != 1`, [])
+    var messagesData = await db.excuteQuery(`SELECT c.*, DATE_FORMAT(c.start_datetime, '%Y-%m-%d %H:%i:%s') AS formatted_date, u.isPaused, u.isDisable, u.isDeleted FROM Campaign c LEFT JOIN user u ON u.SP_ID = c.sp_id AND (u.ParentId Is Null) WHERE c.status IN (1, 6) AND c.is_deleted != 1`, [])
     var remaingMessage = [];
     //console.log(messagesData)
     logger.info(`fetchScheduledMessages ${messagesData?.length}`)
@@ -376,41 +376,42 @@ async function batchofScheduledCampaign(users, sp_id, type, message_content, mes
 //   }, 10000)
 // }
 function replaceTemplateVariables(messageText, messageVariables) {
-  let updatedText = messageText;
-
   if (typeof messageVariables === "string") {
     messageVariables = JSON.parse(messageVariables);
   }
 
-  console.log(messageVariables);
-
-  // Step 1: Use placeholders to prevent overwritten replacements
   const placeholderMap = {};
   const tempPlaceholders = {};
 
   messageVariables.forEach((variable, index) => {
-    let label = variable.label;
-    let value = variable.value;
+    const label = variable.label;
+    const value = variable.value;
 
-    // Generate unique placeholder
-    let placeholder = `__TEMP_${index}__`;
-    placeholderMap[placeholder] = value;
-    tempPlaceholders[label] = placeholder;
+    // Only replace if both label and value are in {{...}} format
+    if (/^\{\{.+\}\}$/.test(label) && /^\{\{.+\}\}$/.test(value)) {
+      const placeholder = `__TEMP_${index}__`;
+      placeholderMap[placeholder] = value;
+      tempPlaceholders[label] = placeholder;
+    }
   });
 
-  // Step 2: Replace original variables with temporary placeholders
+  let updatedText = messageText;
+
   Object.keys(tempPlaceholders).forEach((key) => {
-    let regex = new RegExp(key, "g");
+    const regex = new RegExp(escapeRegExp(key), "g");
     updatedText = updatedText.replace(regex, tempPlaceholders[key]);
   });
 
-  // Step 3: Replace temporary placeholders with actual values
   Object.keys(placeholderMap).forEach((placeholder) => {
-    let regex = new RegExp(placeholder, "g");
+    const regex = new RegExp(placeholder, "g");
     updatedText = updatedText.replace(regex, placeholderMap[placeholder]);
   });
 
   return updatedText;
+}
+
+function escapeRegExp(string) {
+  return string.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 }
 
 
