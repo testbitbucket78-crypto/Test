@@ -302,10 +302,17 @@ h4 {
     // -webkit-appearance: none;
 }
 
-.input-area .text-box:focus,
-button:focus,
-input:focus {
-    outline: solid 0px #000;
+// .input-area .text-box:focus,
+// button:focus,
+// input:focus {
+//     outline: solid 0px #000;
+// }
+.message-buttons button:focus{
+    border: 2px solid #6149cd !important;
+}
+
+.assign-buttons button:focus{
+    border: 2px solid #6149cd !important;
 }
 
 .input-area button {

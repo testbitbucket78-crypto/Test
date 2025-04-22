@@ -1299,8 +1299,9 @@ showAddSmartRepliesModal() {
 
 	/* edit message and assinged conversation */ 
 	toggleEditable(index: number) {
-		this.isEditable[index] = !this.isEditable[index];
-		this.editableMessageIndex = this.isEditable[index] ? index : null;
+		//this.isEditable[index] = !this.isEditable[index];
+		//this.editableMessageIndex = this.isEditable[index] ? index : null;
+		this.editableMessageIndex = index ;
 		if(this.assignedAgentList[index]?.ValueUuid){
 			this.ShowAssignOption = true;
 			this.isEditAssigned =true;
