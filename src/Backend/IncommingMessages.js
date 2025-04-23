@@ -270,6 +270,36 @@ async function getSmartReplies(message_text, phone_number_id, contactname, from,
   }
 }
 
+function extractPlainValues(message_variable) {
+  let data = [];
+
+  // Convert string to JSON if necessary
+  if (typeof message_variable === 'string') {
+    try {
+      data = JSON.parse(message_variable);
+    } catch (error) {
+      console.error('Invalid JSON string:', error.message);
+      return [];
+    }
+  } else if (Array.isArray(message_variable)) {
+    data = message_variable;
+  } else {
+    console.error('Input must be a string or an array');
+    return [];
+  }
+
+  // Filter out values that are NOT wrapped in {{ }}
+  const plainValues = [];
+
+  for (const item of data) {
+    if (item?.value && !/^\{\{.*\}\}$/.test(item.value)) {
+      plainValues.push(item.value);
+    }
+  }
+
+  return plainValues;
+}
+
 async function iterateSmartReplies(replymessage, phone_number_id, from, sid, custid, agid, newId, channelType, display_phone_number) {
   try {
     var messageToSend = [];
@@ -288,7 +318,6 @@ async function iterateSmartReplies(replymessage, phone_number_id, from, sid, cus
       var header = message?.headerText
       var body = message?.bodyText
       var buttons = message?.buttons
- 
       //get header and body variable 
       let headerVar = await commonFun.getTemplateVariables(msgVar, header, sid, custid);
       let bodyVar = await commonFun.getTemplateVariables(msgVar, body, sid, custid);
@@ -343,6 +372,9 @@ async function iterateSmartReplies(replymessage, phone_number_id, from, sid, cus
       var delay = 3000;
       if (type == 'video') {
         delay = 7000
+      }
+      if(message?.isTemplate == 'true'){
+        bodyVar = extractPlainValues(msgVar);
       }
 
       var relyMsg = {
