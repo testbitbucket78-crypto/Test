@@ -1301,6 +1301,7 @@ showAddSmartRepliesModal() {
 	toggleEditable(index: number) {
 		//this.isEditable[index] = !this.isEditable[index];
 		//this.editableMessageIndex = this.isEditable[index] ? index : null;
+		this.messageMeidaFile='';
 		this.editableMessageIndex = index ;
 		if(this.assignedAgentList[index]?.ValueUuid){
 			this.ShowAssignOption = true;
