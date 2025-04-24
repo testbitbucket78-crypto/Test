@@ -426,7 +426,9 @@ async function campaignCompletedAlert(message) {
 
 async function sendScheduledCampaign(batch, sp_id, type, message_content, message_media, phone_number_id, channel_id, message, list,header,body,templateId) {
   console.log("sendScheduledCampaign", "channel_id", sp_id, type, message_media, phone_number_id, channel_id)
+  if(message.message_variables !='' && message.message_variables != null){
   body = replaceTemplateVariables(body, message.message_variables);
+  }
   for (var i = 0; i < batch.length; i++) {
     let headers = header ?  '<p><strong>'+header+'</strong></p><br>' : '';
     let message_text =  headers + message_content
