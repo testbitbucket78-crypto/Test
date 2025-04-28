@@ -45,5 +45,5 @@ app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swagger));
 
 
 app.listen(3012, function () {
-  console.log("Server is running on port 3014");
+  console.log("Server is running on port 3012");
 });
