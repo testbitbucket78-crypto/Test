@@ -336,6 +336,28 @@ class whapiService {
             return false;
         }
     }
+
+    static async interactiveButtons(payload, token) {
+        try {
+            const response = await axios.post(
+                'https://gate.whapi.cloud/messages/interactive',
+                payload,
+                {
+                    headers: {
+                        accept: 'application/json',
+                        authorization: `Bearer ${token}`,
+                        'content-type': 'application/json'
+                    }
+                }
+            );
+
+            console.log(`Message sent successfully to`, response.data);
+            return response.data;
+        } catch (error) {
+            console.error(`Failed to delete channel ${channelId}:`, error.response?.data || error.message);
+            return false;
+        }
+    }
     
 }
 

@@ -37,7 +37,8 @@ const { CreateChannelRequest,
         extendChannelValidity, 
         WhapiIncomingMessage,
         WhapiMessageRequest,
-        WhapiMessageResponse
+        WhapiMessageResponse,
+        WhapiInteractiveButtons
       } = require('../webJS/model/whapiModel');
 
 async function createClientInstance(spid, phoneNo) {
@@ -1400,6 +1401,29 @@ async function sendMessageViaWhapi(spid, phoneNo, type, message_body, media, int
         throw error.message;
     }
 }
+
+async function sendTemplateViaWhapi(spid, to, headerText, bodyText, interactiveButtons){
+  let r1 = await CreateChannelResponse.getBySpid(spid);
+
+  if (!r1 || !r1.token) {
+      throw new Error("Invalid SPID or token not found.");
+  }
+
+  
+  const template = new WhapiInteractiveButtons(to, interactiveButtons);
+  const payload = template.buildPayload();
+  let response = await whapiService.interactiveButtons(payload, r1.token);
+  if(response){
+    return {
+      status : 200
+    }
+  }else{
+    return {
+      status : 400
+    }
+  }
+}
+
 function removePlusFromPhoneNumber(phoneNumber) {
     if (typeof phoneNumber !== "string") {
         return phoneNumber;
@@ -1423,4 +1447,4 @@ function getWhapiEndpoint(type) {
 }
 
 
-module.exports = { createClientInstance, isActiveSpidClient, sendFunnel, whatsappWebStatus,sendMessageViaWhapi, Message, messageAck, handleDisconnection, handleAuthentication, handleWhatsAppReady }
+module.exports = { createClientInstance, isActiveSpidClient, sendFunnel, whatsappWebStatus,sendMessageViaWhapi, Message, messageAck, handleDisconnection, handleAuthentication, handleWhatsAppReady, sendTemplateViaWhapi }

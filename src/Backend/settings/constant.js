@@ -409,7 +409,7 @@ let getCustomColumnById = `SELECT * FROM SPIDCustomContactFields WHERE id=? AND 
 
 //________________________________________TEMPLATE SETTINGS__________________________//
 
-var addTemplates = `INSERT INTO templateMessages (TemplateName,Channel,Category,Language,media_type,Header,BodyText,Links,FooterText,template_json,status,spid,created_By,created_at,isTemplate,industry,category_id,templateID,buttons,categoryChange,quality) VALUES ?`
+var addTemplates = `INSERT INTO templateMessages (TemplateName,Channel,Category,Language,media_type,Header,BodyText,Links,FooterText,template_json,status,spid,created_By,created_at,isTemplate,industry,category_id,templateID,buttons,categoryChange,quality,interactive_buttons) VALUES ?`
 var selectTemplate = `SELECT * FROM templateMessages WHERE spid=? and isDeleted !=1 and isTemplate=?`
 var selectTemplateForGallery = `SELECT * FROM templateMessages WHERE spid=? and isDeleted !=1 and isTemplate=? and Channel=?`
 
