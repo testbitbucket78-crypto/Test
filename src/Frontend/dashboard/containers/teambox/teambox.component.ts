@@ -456,7 +456,6 @@ public  fieldsData: { [key: string]: string } = { text: 'name' };
 		this.quickreplysearch='';
 		this.variableValueForm.reset();
 		this.variableValues=[];
-		this.getCustomers()
 		this.newContact.reset();
 		// this.getTemplates();
 		this.mediaType = ''
@@ -3282,6 +3281,7 @@ getInteraction(InteractionId:any){
 }
 
 openaddMessage(messageadd: any) {
+	this.contactCurrentPage = 0;
 	this.getCustomers()
 	if(this.modalReference){
 	this.modalReference.close();

@@ -255,6 +255,36 @@ async function destroyWrongScan(spid) {
 function ClientInstance(spid, authStr, phoneNo) {
   return new Promise(async (resolve, reject) => {
     try {
+      if(clientSpidMapping.hasOwnProperty(spid)){
+        delete clientSpidMapping[spid];
+        process.kill(clientPidMapping[spid]);
+        delete clientPidMapping[spid];
+
+        // delete session of the spid 
+
+        let dir = path.join(__dirname, '.wwebjs_auth');
+        let sessionDir = path.join(dir, `session-${spid}`);
+
+        if (fs.existsSync(sessionDir)) {
+          console.log(`disconnected  Deleting directory: ${sessionDir}`);
+
+          // First, attempt to kill related processes (e.g., Chrome) that may be locking files
+          killChromeProcesses(spid, () => {
+            setTimeout(() => {
+              try {
+                // Use fs-extra's removeSync for better handling of recursive deletes
+                fs.rmdirSync(sessionDir, { recursive: true });
+                console.log(`Successfully deleted directory on disconnected: ${sessionDir}`);
+              } catch (err) {
+                console.error(`Error deleting directory on disconnected ${sessionDir}:`, err);
+              }
+            }, 2000); // Adjust the delay as necessary
+          });
+
+        } else {
+          console.log(`disconnected Directory not found: ${sessionDir}`);
+        }
+      }
       const client = new Client({
         puppeteer: {
           headless: true,
