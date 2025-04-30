@@ -424,14 +424,15 @@ app.listen(3009, () => {
                 }
             });
         }
-         web.autoReconnectSessions();
+      //   web.autoReconnectSessions();
     }
     catch (err) {
         logger.error(`error while deleting cached sessions. Please delete manually and restart the server: ${err}`)
         console.log(err);
         console.log("error while deleting cached sessions. Please delete manually from within " + dir + " and restart the server")
+        return;
     }
-
+     // web.autoReconnectSessions(); 
 })
 
 //server.timeOut = 180000; // 3 minute 3*60*1000 min*sec*millisec

@@ -91,6 +91,12 @@ export class CreatePasswordComponent {
       return
     }
 
+    if (this.createpassword.invalid) {
+      this.createpassword.markAllAsTouched(); // highlights errors on the UI
+      // this.showToaster('error', 'Please fill in all required fields');
+      return;
+    }
+
     this.apiService.createpassword(this.createpassword.value,this.uid).subscribe((data:any) => {
 
       if (data.status == 200) { 

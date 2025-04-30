@@ -693,7 +693,7 @@ public  fieldsData: { [key: string]: string } = { text: 'name' };
 		
 		let htmlcontent = '';
 		if (item?.Header && item?.media_type == 'text') {
-			htmlcontent += '<p><strong>'+item?.Header+'</strong></p><br>';
+			htmlcontent += '<p><strong>'+item?.Header+'</strong></p>';
 		}
 
 		if(mediaContent && item?.media_type!== 'text') {
