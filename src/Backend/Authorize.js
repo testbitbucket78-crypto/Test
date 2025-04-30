@@ -14,22 +14,23 @@ const token = async (req, resp, next) => {
         }
         
         const decoded = Jwt.verify(token, SECRET_KEY);
-        const users = await db.excuteQuery(
-            'SELECT isDeleted,isDisable,isPaused,isTokenExpire FROM user WHERE uid = ?', 
-            [decoded.id]
-          );
-          if (users?.length > 0) {
-              const user = users[0];
-              if (user.isDeleted == 1) {
-                  return resp.status(401).send({ status: 401, message: "User is Deleted" });
-              } else if (user.isDisable != 0) {
-                  return resp.status(401).send({ status: 401, message: "User is Disabled" });
-                }else if(user.isPaused != 0 && user.isTokenExpire == 1){
-                   
-                    return resp.status(401).send({ status: 401, message: "User is Paused" });
-                }
-              
-          }
+        if(decoded?.id){
+            const users = await db.excuteQuery(
+                'SELECT isDeleted,isDisable,isPaused,isTokenExpire FROM user WHERE uid = ?', 
+                [decoded.id]
+              );
+              if (users && users?.length > 0) {
+                  const user = users[0];
+                  if (user?.isDeleted == 1) {
+                      return resp.status(401).send({ status: 401, message: "User is Deleted" });
+                  } else if (user?.isDisable != 0) {
+                      return resp.status(401).send({ status: 401, message: "User is Disabled" });
+                    }else if(user?.isPaused != 0 && user?.isTokenExpire == 1)
+                        return resp.status(401).send({ status: 401, message: "User is Paused" });
+                  
+              }
+        }
+
 
         Jwt.verify(token, SECRET_KEY, async (err, user) => {
             if (err) {
