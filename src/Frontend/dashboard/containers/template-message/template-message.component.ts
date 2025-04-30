@@ -457,7 +457,6 @@ export class TemplateMessageComponent implements OnInit {
 
 
     updateCharacterCount(event: Event, idx: number) {
-        debugger;
         const inputElement = event.target as HTMLInputElement;
         let value = inputElement.value;
         const validPattern = /{{[^{}]*}}/g;
