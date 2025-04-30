@@ -1473,7 +1473,9 @@ createButton(type: string) {
   }
 
   noEmojiValidator(control: AbstractControl): ValidationErrors | null {
-    const emojiRegex = /[\p{Emoji}\u200D\uFE0F]/gu; // Regex for emojis
+    //const emojiRegex = /[\p{Emoji}\u200D\uFE0F]/gu; // Regex for emojis
+    // New Regex Category for the emoji that ejs-richtexteditor give us
+    const emojiRegex = /([\u231A-\u231B]|\u23E9-\u23F3|\u23F8-\u23FA|[\u24C2\u25AA-\u25FE]|\u2600-\u27BF|[\uD83C-\uDBFF][\uDC00-\uDFFF])/g;
     if (control.value) {
       const sanitizedValue = control.value.replace(emojiRegex, '');
       if (sanitizedValue !== control.value) {
@@ -1484,7 +1486,8 @@ createButton(type: string) {
   }
 
   sanitizeInput(event: string, idx:any, col: any): void {
-    const emojiRegex = /[\p{Emoji}\u200D\uFE0F]/gu; // Regex for emojis
+   // const emojiRegex = /[\p{Emoji}\u200D\uFE0F]/gu; // Regex for emojis
+   const emojiRegex = /([\u231A-\u231B]|\u23E9-\u23F3|\u23F8-\u23FA|[\u24C2\u25AA-\u25FE]|\u2600-\u27BF|[\uD83C-\uDBFF][\uDC00-\uDFFF])/g;
     if (event) {
       const sanitizedValue = event.replace(emojiRegex, '');
       if (sanitizedValue !== event) {
