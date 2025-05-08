@@ -399,8 +399,9 @@ app.listen(3009, () => {
     const processName = 'chrome';
     
     // Command to kill all processes with the given name
+    
     const killCommand = `killall ${processName}`;
-    web.sendMail();
+    
     exec(killCommand, (error, stdout, stderr) => {
         if (error) {
             console.error(`Error killing processes: ${error.message}`);
@@ -430,7 +431,9 @@ app.listen(3009, () => {
                 }
             });
         }
+        web.sendMail();
       //   web.autoReconnectSessions();
+      
     }
     catch (err) {
         logger.error(`error while deleting cached sessions. Please delete manually and restart the server: ${err}`)

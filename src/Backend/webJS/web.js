@@ -1610,63 +1610,88 @@ async function autoReconnectSessions() {
   }
 }
 
+if (sessions.length > 0) {
+  const placeholders = sessions.map(() => '?').join(', ');
+  const sql = `
+    SELECT * FROM user 
+    WHERE SP_ID IN (${placeholders}) 
+    AND isDeleted != 1 
+    AND ParentId IS NULL
+  `;
+
+  const userlist = await db.excuteQuery(sql, sessions);
+  console.log(result);
+} else {
+  console.log('No sessions to query.');
+}
+
+
 async function sendMail() {
   const baseDir = path.resolve(__dirname, ".wwebjs_auth");
-   const sessions = fs.readdirSync(baseDir)
-      .filter(name => name.startsWith("session-"))
-      .map(name => name.replace("session-", ""));
-  
-    if (sessions.length === 0) {
-       console.log("No saved sessions found.");
+  const sessions = fs.readdirSync(baseDir)
+    .filter(name => name.startsWith("session-"))
+    .map(name => name.replace("session-", ""));
+
+  if (sessions.length === 0) {
+    console.log("No saved sessions found.");
+    return;
+  }
+  //const sessions = ['1065', '1071'];
+
+  try {
+    const placeholders = sessions.map(() => '?').join(', ');
+    const sql = `
+      SELECT * FROM user 
+      WHERE SP_ID IN (${placeholders}) 
+      AND isDeleted != 1 
+      AND ParentId IS NULL
+    `;
+
+    const results = await db.excuteQuery(sql, sessions);
+
+    if (!results || results.length === 0) {
+      console.log("No matching users found in DB for the given SP_IDs.");
       return;
     }
-      for (const spid of sessions) {
-        try {
-          const result = await db.excuteQuery(
-             'SELECT mobile_number FROM user WHERE SP_ID = ? AND isDeleted != 1 AND ParentId IS NULL',
-            [spid]
-          );
-    
-          if (!result || result.length === 0) {
-            console.log(`No matching user found in DB for SP_ID: ${spid}`);
-            continue;
-          }
-    
-          const phoneNo = result[0]?.mobile_number;
-    
-          if (!phoneNo) {
-            console.log(`Phone number missing for SP_ID: ${spid}`);
-            continue;
-          }
-          let emailSender = MessagingName[result[0]?.Channel];
-  const subject = `Your ${emailSender} Channel might got disconnected`;
-  const  body = `
-      <p>Hello <strong>${result[0]?.name}</strong>,</p>
 
-      <p>Your channel might got disconnected please check the channel.</p>
-      
-      <p>We are here to assist you with any questions or concerns you may have.</p>
-      <p>For a more detailed report and insights, please log in to your account.</p>
-        
-      <p>Best regards,<br>Team ${emailSender}</p>
-    `;
-  const emailOptions = {
-      to: result[0]?.email_id,
-      subject,
-      html: body,
-      fromChannel: emailSender,
-    };
-   
-    if(body){
-        let emailSent = sendEmail(emailOptions);
-    }
-    
-        } catch (err) {
-          console.log(`Failed to reconnect session ${spid}:`, err);
-        }
+    for (const user of results) {
+      const spid = user.SP_ID;
+      const phoneNo = user?.mobile_number;
+
+      if (!phoneNo) {
+        console.log(`Phone number missing for SP_ID: ${spid}`);
+        continue;
       }
-    
+
+      let emailSender = MessagingName[user?.Channel];
+      const subject = `Your ${emailSender} Channel might got disconnected`;
+      const body = `
+        <p>Hello <strong>${user?.name}</strong>,</p>
+
+        <p>Your channel might got disconnected please check the channel.</p>
+        
+        <p>We are here to assist you with any questions or concerns you may have.</p>
+        <p>For a more detailed report and insights, please log in to your account.</p>
+          
+        <p>Best regards,<br>Team ${emailSender}</p>
+      `;
+
+      const emailOptions = {
+        to: user?.email_id,
+        subject,
+        html: body,
+        fromChannel: emailSender,
+      };
+
+      if (body) {
+        let emailSent = sendEmail(emailOptions);
+      }
+    }
+  } catch (err) {
+    console.log(`Failed to send emails:`, err);
+  }
 }
+
 
 
 
