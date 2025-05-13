@@ -14,7 +14,7 @@ const path = require('path');
 const axios = require('axios');
 const middleWare = require('../middleWare')
 const commonFun = require('../common/resuableFunctions');
-const { APIKeyManager, sendMessageBody, spPhoneNumber, ApiResponse }= require('./model/accountModel');
+const { APIKeyManager, sendMessageBody, spPhoneNumber, ApiResponse, Webhooks }= require('./model/accountModel');
 const { WebSocketManager } = require("../whatsApp/PushNotifications")
 const {mapCountryCode} = require('../Contact/utils')
 const variables = require('../common/constant')
@@ -182,7 +182,7 @@ const getQualityRating = async (req, res) => {
             result = await middleWare.getQualityRating(metaPhoneNumberID,spid);
             result2 = await middleWare.getVerificationStatus(WABA_Id, spid);
 
-            const quality_rating = result?.response.quality_rating;
+            const quality_rating = result?.response?.quality_rating;
             const phone_number_id = result?.response?.id;
             const messaging_limit_tier = commonFun.convertMessagingLimitTier(result?.response?.messaging_limit_tier);
             const fbVerification = result2?.response?.business_verification_status;
@@ -275,7 +275,49 @@ const saveWebhookUrl = async (req, res) => {
         res.send(err)
     }
 }
+const saveOrUpdateWebhook = async (req, res) => {
+    try {
+      const webhook = new Webhooks(req.body); 
+      let webhookDetails = await webhook.getWebhookDetails();
+      const urlExists = webhookDetails.some(w => w.url === webhook.url && w.id !== webhook.id);
+      
+      if (urlExists) {
+        throw new Error("URL Already Exists. Please use a different one.");
+      }
 
+      await webhook.saveOrUpdateToDatabase();
+      res.status(200).json({ message: 'Webhook saved successfully' });
+    } catch (err) {
+      console.log(err);
+      res.status(500).json({ 
+        error: 'Something went wrong',
+        msg: err?.message ?  err?.message : ''
+    });
+    }
+  };
+
+  const getWebhooks = async (req, res) => {
+    try {
+      const webhook = new Webhooks(req.params);
+      let res1 = await webhook.getWebhookDetails();
+      res.status(200).json(res1);
+    } catch (err) {
+      console.log(err);
+      res.status(500).json({ error: 'Something went wrong' });
+    }
+  };
+  
+  const deleteWebhook = async (req, res) => {
+    try {
+      const webhook = new Webhooks(req.params); 
+      let res1 = await webhook.deleteWebhook();
+      res.status(200).json(res1);
+    } catch (err) {
+      console.log(err);
+      res.status(500).json({ error: 'Something went wrong' });
+    }
+  };
+  
 
 
 const addToken = async (req, res) => {
@@ -504,6 +546,62 @@ const testWebhook = async (req, res) => {
         });
     }
 };
+
+const testWebhooks = async (req, res) => {
+    try {
+        const webhook = new Webhooks(req.body);
+        if (webhook) {
+            if (webhook.url) {
+                        try {
+                          const response = await axios.post(webhook.url, 'Webhook Connected', {
+                            headers: {
+                              'Content-Type': 'application/json',
+                            },
+                          });
+                          resDiscription = response?.data;
+                        } catch (err) {
+                          throw new Error('Error while trying to ping webhook ! Please check the url again')
+                        }
+            } else {
+                throw new Error("Webhook URL is missing.");
+            }
+        } else {
+            throw new Error("No URL Found");
+        }
+        res.status(200).send({
+            msg: "Webhook tested successfully!",
+            status: 200,
+            Discription: resDiscription
+        });
+    } catch (err) {
+        console.error(err);
+        db.errlog(err);
+
+        res.status(500).send({
+            msg: err?.message ? err?.message : "Internal server error! Please try after some time",
+            status: 500,
+            error: err.message,
+        });
+    }
+};
+
+const deleteAPIToken = async (req, res) => {
+    try {
+        let instanceOfkey = new APIKeyManager(req.body)
+        let result = await db.excuteQuery(val.deleteAPIKey, [instanceOfkey.spId]);
+        res.status(200).send(result);
+    } catch (err) {
+        console.error(err);
+        db.errlog(err);
+
+        res.status(500).send({ 
+            msg: err?.message ? err?.message : "Internal server error! Please try after some time",
+            status: 500,
+            error: err.message,
+        });
+    }
+};
+
 
 function wait(delay) {
     return new Promise(resolve => {
@@ -803,5 +901,5 @@ async function getQualityRatings(phoneNumberId, access_token) {
 
 module.exports = {
     insertAndEditWhatsAppWeb, selectDetails, addToken, deleteToken, enableToken, selectToken,
-    createInstance, getQRcode, generateQRcode, editToken, testWebhook,getQualityRating, addWAAPIDetails, addGetAPIKey, APIkeysState, saveWebhookUrl, sendMessage
+    createInstance, getQRcode, generateQRcode, editToken, testWebhook,getQualityRating, addWAAPIDetails, addGetAPIKey, APIkeysState, saveWebhookUrl, sendMessage, saveOrUpdateWebhook, getWebhooks, deleteWebhook, testWebhooks, deleteAPIToken
 }

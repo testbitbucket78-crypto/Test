@@ -216,6 +216,9 @@ router.get('/getQualityRating/:phoneNo/:phone_number_id/:WABA_ID/:spid',authenti
 router.post('/addGetAPIKeys',authenticateToken,accountController.addGetAPIKey)
 router.post('/APIkeysState',authenticateToken,accountController.APIkeysState)
 router.post('/saveWebhookUrl',authenticateToken,accountController.saveWebhookUrl)
+router.post('/Webhooks',authenticateToken,accountController.saveOrUpdateWebhook)
+router.get('/getWebhooks/:spid',authenticateToken,accountController.getWebhooks)
+router.get('/deleteWebhook/:id',authenticateToken,accountController.deleteWebhook)
 
 
 router.post('/sendMessage' ,dynamicRateLimiter,accountController.sendMessage)
@@ -224,13 +227,15 @@ router.post('/sendMessage' ,dynamicRateLimiter,accountController.sendMessage)
 
 router.post('/addToken',authenticateToken,accountController.addToken)//unused
 router.post('/editToken',authenticateToken,accountController.editToken)//unused
-router.get('/deleteToken/:id',authenticateToken,accountController.deleteToken)//unused
+//router.get('/deleteToken/:id',authenticateToken,accountController.deleteToken)//unused
 router.post('/isEnableToken',authenticateToken,accountController.enableToken)//unused
 router.get('/selectToken/:spid',authenticateToken,accountController.selectToken)//unused
 router.get('/createInstanceID',authenticateToken,accountController.createInstance)//unused
 router.post('/qrCodeData',authenticateToken,accountController.getQRcode)//unused
 router.post('/generateQRcode',authenticateToken,accountController.generateQRcode)//unused
 router.post('/testwebhook',authenticateToken,accountController.testWebhook)
+router.post('/testwebhooks',authenticateToken,accountController.testWebhooks)
+router.post('/deleteToken',authenticateToken,accountController.deleteAPIToken)
 
 //__________________________General Settings____________________________//
 
