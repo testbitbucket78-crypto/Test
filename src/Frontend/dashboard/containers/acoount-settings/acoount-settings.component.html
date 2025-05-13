@@ -388,6 +388,9 @@
                     <button class="account-white-btn mx-1" (click)="editToken()">
                         <img class="p-0" src="../../../../assets/img/edit.png">
                     </button>
+                    <button class="account-white-btn mx-1" (click)="deleteToken()">
+                        <img class="p-0" src="/assets/img/teambox/delete.svg">
+                    </button>
                     <!-- <button class="account-white-btn mx-1" data-bs-toggle="modal" data-bs-target="#deleteModal">
                         <img class="p-0" src="../../../../assets/img/delete.png">
                     </button> -->
@@ -424,11 +427,94 @@
 
 
     <div class="setting-card api-card" *ngIf="selectedTab==3 ">
-        <div class="account-card-header">
+
+        <div class="account-card-header d-flex align-items-center justify-content-between">
             <h4>Webhook</h4>
+            <button class="border-0 outline-0 bg-transparent" style="color:#6149CD;" (click)="openModal();resetWebhookForm()">+ Add Webhook</button>
+        </div>
+        <div *ngIf="!webhookDetails.length" class="save-empty-card">
+            <div>
+                <img class="p-0" src="../../../../assets/img/settings/image.png">
+                <br>
+                <span class="text-bold">Add New Webhook</span>
+            </div>
         </div>
         <div>
-            <div class="connection-card tokens-card">
+            <div *ngFor="let item of webhookDetails; let i = index">
+                <div class="py-2 my-2 px-4" style="background :#FFF4F2; border-radius: 30px;">
+            
+                    <div class="d-flex align-items-center justify-content-between mb-2">
+                        <div>
+            
+                            <h4 class="mb-0">{{item.name}}</h4>
+                            <p class="mb-0"><b>{{item.url}}</b></p>
+                            <small style="font-size: 12px;" class="text-muted">
+                                <span>
+                                    Created At: {{settingsService?.getDateTimeFormate(item.createdAt)}}
+                                </span>
+                                <span>&nbsp;|&nbsp;</span>
+                                <span>
+                                    Modified At: {{settingsService?.getDateTimeFormate(item.updatedAt)}}
+                                </span>
+                            </small>
+                        </div>
+                        <div class="d-flex">
+                            <!-- Export  Edit  Delete-->
+                            <button class="account-white-btn mr-2" (click)="exportLogs(item)"><img src="../../../../assets/img/export.svg"/></button> 
+                            <button class="account-white-btn mr-2" (click)="editWebhook(item)"><img src="/assets/img/teambox/Edit.svg"/></button>
+                            <button class="account-white-btn" (click)="deleteWebhook(item.id)"><img src="assets/img/delete.png"/></button>
+                        </div>
+                    </div>
+            
+                    <div class="row no-gutters align-items-center justify-content-between">
+                        <div class="col-3 d-flex flex-column justify-content-start">
+                            <p (click)="toggleEventDropdown(i)" style="color: #6149CD; cursor: pointer;" class="mb-0"><b>Events Subscribed ({{item.eventType.length}})</b> <img src="../../../../assets/img/arrow-down.svg"/></p>
+                            <!-- <p *ngFor="let event_type of item.eventType" class="d-flex flex-column">
+                                <span>{{event_type}}</span>
+                            </p> -->
+                            <sb-dropdown 
+                             style="height: 0"
+                             [isOpen]="eventSubscribedDropdownMap[i]"
+                             [type]="'secondary'"
+                             [channelOption]="item.eventType"
+                             [customWidth]="'100px'">
+                           </sb-dropdown>
+                        </div>
+                        <div class="col-3 d-flex align-items-center justify-content-center">
+                            <sb-dropdown style="width: 110%" [channelOption]="channelOption" [channelSelected]="item.channel"
+                                [ShowAssignOption]="ShowAssignOption"
+                                [customWidth]="'110%'">
+                            </sb-dropdown>
+                        </div>
+                        <div class="col-3 d-flex align-items-center justify-content-end">
+                            <!-- <button class="account-btn" (click)="testWebhooks(item)">
+                                Test
+                            </button> -->
+                            <button class="account-btn custom-padding" (click)="testWebhooks(item)" [disabled]="loadingIds.has(item.id)">
+                                Test
+                              </button>
+                            <button class="disable-btn ml-2 ">
+                                <div class="active-toggle">
+                                    <span>Enable</span>
+                                    <div class="px-2 switch-toggle">
+                                        <label class="m-0 switch">
+                                            <input type="checkbox" class="m-0 form-control-checkbox"
+                                                data-bs-toggle="modal"
+                                                data-bs-target="#disableModal" 
+                                                (input)="onToggleWebhook(item)" 
+                                                [checked]="item.isEnabled"/>
+                                            <span class="slider"></span>
+                                        </label>
+                                    </div>
+                                </div>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+            <!-- <div class="connection-card tokens-card">
             <div class="account-card-header">
                 <div class="w-70">
                     <input type="text" class="token-input-form" [(ngModel)]="webSocketUrl" (change)="isSaveEnabled = true" placeholder="Enter Webhook url">
@@ -441,10 +527,133 @@
             <div class="account-card-header">
                 <p class="api-time m-0">{{settingsService?.getDateTimeFormate(apiKeyData?.updatedAt)}}</p>
             </div>
+            </div> -->
+        </div>
+    </div>
+
+    <div class="modal fade" id="webhookModal" tabindex="-1" aria-labelledby="webhookModalLabel" aria-hidden="true" data-bs-backdrop="static" data-bs-keyboard="false">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <form [formGroup]="webhookForm" class="p-4">
+                    <div class="modal-header p-0">
+                        <h5 class="modal-title mb-0" id="webhookModalLabel">Add Webhook</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="X" (click)="resetWebhookForm()">X</button>
+                    </div>
+    
+                    <div class="modal-body p-0">
+                        <div>
+                            <label for="name" class="form-label">Webhook Name <span class="text-danger">*</span></label>
+                            <input type="text" id="name" class="form-control p-1 common-input w-100 mb-2" 
+                                placeholder="Give any name to your webhook in 20 characters"
+                                formControlName="name" maxlength="20"/>
+                        </div>
+    
+                        <div>
+                            <label for="url" class="form-label">Webhook URL <span class="text-danger">*</span></label>
+                            <input type="text" id="url" class="form-control p-1 common-input w-100 mb-2"
+                                placeholder="Give the webhook request URL"
+                                formControlName="url" />
+                        </div>
+    
+                        <div>
+                            <label for="secret" class="form-label">Secret</label>
+                            <input type="text" id="secret" class="form-control p-1 common-input w-100 mb-2"
+                                placeholder="Enter the Secret"
+                                formControlName="secret" />
+                        </div>
+    
+                        <div>
+                            <label for="channel" class="form-label">Channel <span class="text-danger mb-2">*</span></label>
+                            <sb-dropdown [channelOption]="channelOption" [channelSelected]="channelSelectedWebhook"
+                                [channelPhoneNumber]="channelPhoneNumberWebhook" [ShowAssignOption]="ShowAssignOption"
+                                [customWidth]="'100%'" (selectionChange)="updateDropdown($event)">
+                            </sb-dropdown>
+                        </div>
+    
+                        <!-- <div class="mb-3">
+                      <label for="eventType" class="form-label">Event Type <span class="text-danger">*</span></label>
+                      <select class="form-select" id="eventType" formControlName="eventType">
+                        <option value="" disabled>Select Event Type</option>
+                        <option *ngFor="let type of eventTypes" [value]="type">{{ type }}</option>
+                      </select>
+                    </div> -->
+    
+                        <div class="mb-3 mt-1 position-relative">
+                            <label class="form-label">Webhook Event Types <span class="text-danger">*</span></label>
+                            <div (click)="eventTypeDropdown = !eventTypeDropdown" style="border-radius: 10px;" class="border d-flex align-items-center justify-content-between w-100 px-3 py-2">
+                                <small style="font-size: 12px;">
+                                    Select Events
+                                </small>
+                                <img src="../../../../assets/img/arrow-down.svg" style="width: 13px; height: 13px;" />
+                            </div>
+                            <div *ngIf="eventTypeDropdown" class="border p-2 bg-white position-absolute left-0 w-100"
+                                style="z-index: 999;top: 100%; max-height: 150px; overflow-y: auto;">
+                                <div class="p-1 mb-2" *ngFor="let group of eventGroups">
+                                    <!-- Group Master Checkbox -->
+                                    <div class="form-check fw-bold">
+                                        <input class="form-check-input" type="checkbox" [checked]="isGroupSelected(group)"
+                                            (change)="toggleGroupSelection(group, $event)">
+                                        <label class="form-check-label">{{ group.label }}</label>
+                                    </div>
+    
+                                    <!-- Sub Event Checkboxes -->
+                                    <div class="px-3" *ngFor="let event of group.events">
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="checkbox" [value]="event.value"
+                                                [checked]="isEventSelected(event.value)"
+                                                (change)="toggleEventSelection(event.value, $event)">
+                                            <label class="form-check-label">{{ event.label }}</label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+    
+                    </div>
+    
+                    <div class="modal-footer border-top-0">
+                        <sb-button [label]="'Save'" [type]="'primary'" [isActive]="true" [disabled]="webhookForm.invalid"
+                            (click)="submitForm()">
+                        </sb-button>
+                    </div>
+                </form>
             </div>
         </div>
     </div>
 
+    <div class="modal fade" id="export-logs" tabindex="-1" aria-labelledby="exportLogsModal" aria-hidden="true" data-bs-backdrop="static" data-bs-keyboard="false">
+        <div class="modal-dialog">
+            <div class="modal-content p-4">
+                <div class="modal-header p-0">
+                    <h5 class="modal-title mb-0" id="webhookModalLabel">Export Logs</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="X">X</button>
+                </div>
+
+                <form [formGroup]="exportLogsForm">
+                    <div>
+                      <label for="fromDate" class="form-label">From Date <span class="text-danger">*</span></label>
+                      <input type="date" id="fromDate" class="form-control p-1 common-input w-100 mb-2" formControlName="fromDate" />
+                    </div>
+          
+                    <div>
+                      <label for="toDate" class="form-label">To Date <span class="text-danger">*</span></label>
+                      <input type="date" id="toDate" class="form-control p-1 common-input w-100 mb-2" formControlName="toDate" />
+                    </div>
+
+                    <div class="modal-footer border-top-0">
+                        <sb-button [label]="'Cancel'" [type]="'primary'"
+                          data-bs-dismiss="modal"
+                          (click)="null">
+                        </sb-button>
+
+                        <sb-button [label]="'Save'" [type]="'primary'" [isActive]="true"
+                            (click)="null">
+                        </sb-button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
 
     <div class="modal fade" tabindex="-1" id="createTokenModal" role="dialog">
         <div class="modal-dialog create-token-modal" role="document">

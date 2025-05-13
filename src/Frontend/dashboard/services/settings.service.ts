@@ -547,7 +547,21 @@ const headers = new HttpHeaders({
   testWebhook(tagData:any): Observable<any> {
     return this.http.post<any>(`${this.API_URL}/testwebhook`,tagData);
   } 
-
+  testWebhooks(data:any): Observable<any> {
+    return this.http.post<any>(`${this.API_URL}/testWebhooks`,data);
+  }
+  deleteToken(data:any): Observable<any> {
+    return this.http.post<any>(`${this.API_URL}/deleteToken`,data);
+  }
+  Webhooks(Data:any): Observable<any> {
+    return this.http.post<any>(`${this.API_URL}/Webhooks`,Data);
+  }
+  getWebhooks(spid:any): Observable<any> {
+    return this.http.get<any>(`${this.API_URL}/getWebhooks/${spid}`);
+  }
+  deleteWebhook(id:any): Observable<any> {
+    return this.http.get<any>(`${this.API_URL}/deleteWebhook/${id}`);
+  }
   saveWebhook(tagData:any): Observable<any> {
     return this.http.post<any>(`${this.API_URL}/saveWebhookUrl`,tagData);
   } 

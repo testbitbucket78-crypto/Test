@@ -759,3 +759,43 @@ input[type="radio"]:checked + label::before {
 .min-button-width{
   min-width: 178px !important;
 }
+
+.common-input {
+  font-size: 16px;
+  outline: none;
+  border-radius: 10px;
+  border: 1px solid #0000001d;
+  
+  &::placeholder {
+      font-size: 13px;
+  }
+}
+
+.disable-btn{
+  background: #FFFFFF 0% 0% no-repeat padding-box;
+  box-shadow: 1px 8px 29px #695F9724;
+  border: 1px solid #E9E9EA;
+  border-radius: 19px;
+  padding: 7px 10px;
+}
+
+.disable-btn label{
+  margin: 0px;
+}
+
+.disable-btn span{
+  font-weight: 600;
+  font-family: 'Manrope';
+}
+
+.active-toggle {
+  border-radius: 19px;
+  width: 100%;
+  display: flex;
+}
+.custom-padding{
+  padding: 7px 14px !important;
+}  
+.border-top-0{
+  border-top: 0;
+}
