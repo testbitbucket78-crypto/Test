@@ -33,4 +33,19 @@ Disabled : 2,
 Deleted : 5
 }
 
-module.exports = { MessagingLimitTiers, MessagingName, channelName, channelForSendingMessage, channelsForTemplates,userStatus }
+const  WebhookEventType = {
+    ContactCreated : 'contact.created',
+    ContactUpdated : 'contact.updated',
+    ContactDeleted : 'contact.deleted',
+    ContactBulkUpdate : 'Contact.bulkUpdate',
+    MessageReceived : 'message.received',
+    MessageStatus : 'message.status',
+    MessageFlowReceived : 'message.flow.received',
+    ConversationCreated : 'conversation.created',
+    ConversationOpen : 'conversation.open',
+    ConversationResolved : 'conversation.resolved',
+    ConversationAssigned : 'conversation.assigned',
+    TemplateStatus : 'template.status',
+  }
+
+module.exports = { MessagingLimitTiers, MessagingName, channelName, channelForSendingMessage, channelsForTemplates,userStatus, WebhookEventType }
