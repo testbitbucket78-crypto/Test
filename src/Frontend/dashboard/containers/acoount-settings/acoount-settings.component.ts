@@ -729,7 +729,6 @@ getApiKeyData(isSave:boolean,isRegenrate:boolean=false){
     data['ip'] = arrIp;
   }
   this.apiService.getApiKeyData(data).subscribe((response) => {
-    debugger;
     console.log(response + JSON.stringify(this.accoountsetting));
     if(response){
       if(isSave){
@@ -845,7 +844,6 @@ openModal() {
 }
 
 submitForm(){
-  debugger;
   if (this.webhookForm.valid) {
     const formData = this.webhookForm.value;
     const payload: WebhookPayload = {
@@ -859,7 +857,6 @@ submitForm(){
     };
     this.apiService.Webhooks(payload).subscribe({
       next: (response) => {
-        debugger;
         this._toastService.success(response.message);
         this.loadWebhooks();
         $('#webhookModal').modal('hide');
@@ -878,9 +875,7 @@ toggleEventDropdown(index: number): void {
   this.eventSubscribedDropdownMap[index] = !this.eventSubscribedDropdownMap[index];
 }
 loadWebhooks() {
-  debugger;
   this.apiService.getWebhooks(this.spid).subscribe((response: WebhookPayload) => {
-    debugger;
     if(response){
       this.webhookDetails = response;
       this.changeDetector.detectChanges();
@@ -943,7 +938,6 @@ isEventSelected(value: WebhookEventType): boolean {
 }
 
 toggleEventSelection(value: WebhookEventType, event: Event) {
-  debugger;
   const checked = (event.target as HTMLInputElement).checked;
   const selected = this.webhookForm.get('eventType')?.value || [];
 
@@ -960,7 +954,6 @@ isGroupSelected(group: WebhookEventGroup): boolean {
 }
 
 toggleGroupSelection(group: WebhookEventGroup, event: Event) {
-  debugger;
   const checked = (event.target as HTMLInputElement).checked;
   const selected = this.webhookForm.get('eventType')?.value || [];
 
@@ -976,9 +969,7 @@ toggleGroupSelection(group: WebhookEventGroup, event: Event) {
 }
 
 deleteWebhook(id : number){
-  debugger;
   this.apiService.deleteWebhook(id).subscribe((response) => {
-    debugger;
     if(response){
       this.loadWebhooks();
     } else {
@@ -1008,13 +999,11 @@ resetWebhookForm(){
 }
 
 deleteToken(){
-  debugger
   let payload = {
     spId: this.spid
   }
   this.apiService.deleteToken(payload).subscribe({
     next: (response) => {
-      debugger;
       if (response) {
         this.resetAPIKeyData();
         this._toastService.success("Token Deleted successfully!");
@@ -1084,7 +1073,6 @@ exportLogsAndMail(){
   };
   this.apiService.exportLogs(payload).subscribe((response) => {
     if(response){
-      debugger;
       this._toastService.success(response?.message)
       $("#export-logs").modal('hide');
     } else{
