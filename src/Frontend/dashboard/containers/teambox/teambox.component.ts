@@ -163,6 +163,7 @@ public  fieldsData: { [key: string]: string } = { text: 'name' };
 	AutoReplyOption=false;
 	ShowConversationStatusOption=false;
 	ShowAssignOption=false;
+	isDisableSendButton=false;
 	selectedInteraction:any = [];
 	selectedNote:any=[];
 	contactList:any = [];
@@ -3436,6 +3437,8 @@ getUIDsFromNames(Names: any): number[] {
     return uids;
 }
 sendMessage(isTemplate:boolean=false,templateTxt:string=''){
+	this.isDisableSendButton = true;
+	console.log('is sendMessage')
 	var tempDivElement = document.createElement("div");   
 
 	let value =isTemplate ?templateTxt :(this.chatEditor.value || "");
@@ -3444,6 +3447,7 @@ sendMessage(isTemplate:boolean=false,templateTxt:string=''){
 //	if(!isTemplate){
 	if (value == null || val.trim()=='') {
 		this.showToaster('! Please enter a message before sending.','error');
+		this.isDisableSendButton = false;
 		return;
 	}
   // }
@@ -3517,9 +3521,10 @@ sendMessage(isTemplate:boolean=false,templateTxt:string=''){
 		};
 		if(this.newMessage.value.Message_id == ''){
 		this.settingService.clientAuthenticated(input).subscribe(response => {
-
+			console.log('is clientAuthenticated')
 			if (response.status === 404 && this.showChatNotes != 'notes' && this.selectedInteraction?.channel!='WA API') {
-				this.showToaster('The Channel of this conversation is currently disconnected. Please Reconnect this channel from Account Settings to use it.','error')
+				this.showToaster('The Channel of this conversation is currently disconnected. Please Reconnect this channel from Account Settings to use it.','error');
+				this.isDisableSendButton = false;
 				return;
 			}
 			//(response.status === 200 && response.message === 'Client is ready !' ) || this.showChatNotes == 'notes'
@@ -3580,6 +3585,7 @@ sendMessage(isTemplate:boolean=false,templateTxt:string=''){
 								
 								}
 								this.chatEditor.value ='';
+								this.isDisableSendButton = false;
 								this.messageMeidaFile='';
 								this.mediaType='';
 								this.SIPthreasholdMessages=this.SIPthreasholdMessages-1;
@@ -3595,7 +3601,7 @@ sendMessage(isTemplate:boolean=false,templateTxt:string=''){
 								this.selectedNote.message_text= bodyData.message_text
 							}
 							
-				
+							//this.isDisableSendButton = false;
 							this.newMessage.reset({
 								Message_id: ''
 							});
@@ -3617,7 +3623,8 @@ sendMessage(isTemplate:boolean=false,templateTxt:string=''){
 				this.newMessage.reset({
 					Message_id: ''
 				});
-				this.chatEditor.value ='';					
+				this.chatEditor.value ='';	
+				this.isDisableSendButton = false;				
 				// this.getMessageData(this.selectedInteraction,true)
 				this.getNoteData(this.selectedInteraction);
 				this.selectedNote =[];

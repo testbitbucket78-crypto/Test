@@ -724,7 +724,7 @@ const sendMessage = async (req, res) => {
   sendMessageInstance.SPID = APIKeyManagerInstance.spId;
   if(sendMessageInstance.isTemplate == true){
     const { Header, BodyText, FooterText } = await sendMessageBody.getBodyText(sendMessageInstance.name);
-    sendMessageInstance.message_text = (Header ? Header + "\n" : "") + BodyText + FooterText;
+    sendMessageInstance.message_text = (Header ? Header + "\n" : "") + BodyText +'<p class="temp-footer">'+FooterText+'</p>';
     sendMessageInstance.bodyText = BodyText;
   }
    
