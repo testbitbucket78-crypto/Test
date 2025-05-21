@@ -37,7 +37,7 @@ const  WebhookEventType = {
     ContactCreated : 'contact.created',
     ContactUpdated : 'contact.updated',
     ContactDeleted : 'contact.deleted',
-    ContactBulkUpdate : 'Contact.bulkUpdate',
+    ContactBulkUpdate : 'contact.bulkupdate',
     MessageReceived : 'message.received',
     MessageStatus : 'message.status',
     MessageFlowReceived : 'message.flow.received',
