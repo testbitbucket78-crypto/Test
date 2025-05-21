@@ -556,6 +556,9 @@ const headers = new HttpHeaders({
   Webhooks(Data:any): Observable<any> {
     return this.http.post<any>(`${this.API_URL}/Webhooks`,Data);
   }
+  exportLogs(Data:any): Observable<any> {
+    return this.http.post<any>(`${this.API_URL}/exportLogs`,Data);
+  }
   getWebhooks(spid:any): Observable<any> {
     return this.http.get<any>(`${this.API_URL}/getWebhooks/${spid}`);
   }

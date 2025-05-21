@@ -460,8 +460,8 @@
                         </div>
                         <div class="d-flex">
                             <!-- Export  Edit  Delete-->
-                            <button class="account-white-btn mr-2" (click)="exportLogs(item)"><img src="../../../../assets/img/export.svg"/></button> 
-                            <button class="account-white-btn mr-2" (click)="editWebhook(item)"><img src="/assets/img/teambox/Edit.svg"/></button>
+                            <button class="account-white-btn mr-3" (click)="exportLogs(item)"><img src="../../../../assets/img/export.svg"/></button> 
+                            <button class="account-white-btn mr-3" (click)="editWebhook(item)"><img src="/assets/img/teambox/Edit.svg"/></button>
                             <button class="account-white-btn" (click)="deleteWebhook(item.id)"><img src="assets/img/delete.png"/></button>
                         </div>
                     </div>
@@ -646,8 +646,9 @@
                           (click)="null">
                         </sb-button>
 
-                        <sb-button [label]="'Save'" [type]="'primary'" [isActive]="true"
-                            (click)="null">
+                        <sb-button [label]="'Confirm and Export'" [type]="'primary'" [isActive]="true"
+                            [disabled]="exportLogsForm.invalid || exportLogsForm.errors?.invalidDateRange"
+                            (click)="exportLogsAndMail()">
                         </sb-button>
                     </div>
                 </form>

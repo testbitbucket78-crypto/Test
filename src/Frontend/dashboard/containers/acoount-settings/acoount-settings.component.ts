@@ -9,8 +9,8 @@ import { environment } from 'environments/environment';
 import { Clipboard } from '@angular/cdk/clipboard';
 import { json } from 'stream/consumers';
 import { ToastService } from 'assets/toast/toast.service';
-import { FormControl, FormGroup, Validators } from '@angular/forms';
-import { WebhookEventGroup, WebhookPayload, WebhookEventType } from 'Frontend/dashboard/models/webhookEvent.model';
+import { FormControl, FormGroup, Validators,ValidatorFn, AbstractControl, ValidationErrors, } from '@angular/forms';
+import { WebhookEventGroup, WebhookPayload, WebhookEventType, ExportLogsPayload } from 'Frontend/dashboard/models/webhookEvent.model';
 
 declare var $:any;
 declare var FB: any; 
@@ -171,11 +171,24 @@ ipRegexTs = /^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]
   }
 
   initExportLogsForm(){
-    this.webhookForm = new FormGroup({
+    this.exportLogsForm = new FormGroup({
       fromDate: new FormControl('', Validators.required),
       toDate: new FormControl('', Validators.required),
-    });
+    }, { validators: this.dateRangeValidator });
   }
+
+  dateRangeValidator: ValidatorFn = (control: AbstractControl): ValidationErrors | null => {
+    const group = control as FormGroup;
+    const from = new Date(group.get('fromDate')?.value);
+    const to = new Date(group.get('toDate')?.value);
+  
+    if (from && to && from > to) {
+      this._toastService.error('From date should be less than To date');
+      return { invalidDateRange: true };
+    }
+  
+    return null;
+  };
 
   showToaster(message:any,type:any){
 		if(type=='success'){
@@ -836,9 +849,9 @@ submitForm(){
   if (this.webhookForm.valid) {
     const formData = this.webhookForm.value;
     const payload: WebhookPayload = {
-      name: formData.name,
-      url: formData.url,
-      secret: formData.secret,
+      name: this.settingsService.trimText(formData.name),
+      url: this.settingsService.trimText(formData.url),
+      secret: this.settingsService.trimText(formData.secret),
       channel: formData.channel,
       eventType: formData.eventType,
       spid : this.spid,
@@ -897,6 +910,7 @@ eventGroups: WebhookEventGroup[] = [
       { label: 'contact.created', value: WebhookEventType.ContactCreated },
       { label: 'contact.updated', value: WebhookEventType.ContactUpdated },
       { label: 'contact.deleted', value: WebhookEventType.ContactDeleted },
+      { label: 'Contact.bulkUpdate', value: WebhookEventType.ContactBulkUpdate},
     ]
   },
   {
@@ -925,7 +939,7 @@ eventGroups: WebhookEventGroup[] = [
 ];
 
 isEventSelected(value: WebhookEventType): boolean {
-  return this.webhookForm.get('eventType')?.value.includes(value);
+  return this.webhookForm.get('eventType')?.value?.includes(value);
 }
 
 toggleEventSelection(value: WebhookEventType, event: Event) {
@@ -1057,6 +1071,26 @@ let currentToggle = webhookData.isEnabled ? "Webhook is Enabled" : "Webhook is D
 }
 exportLogs(webhookData: WebhookPayload){
   $("#export-logs").modal('show');
+}
+
+exportLogsAndMail(){
+  const formData = this.exportLogsForm.value;
+  const payload: ExportLogsPayload = {
+    spid: this.spid,
+    fromDate: formData.toDate,
+    toDate: formData.toDate,
+    email: this.email,
+    channel: this.channelDomain
+  };
+  this.apiService.exportLogs(payload).subscribe((response) => {
+    if(response){
+      debugger;
+      this._toastService.success(response?.message)
+      $("#export-logs").modal('hide');
+    } else{
+      this._toastService.error("Something went wrong!")
+    }
+  });
 }
 
 }

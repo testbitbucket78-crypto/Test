@@ -10,6 +10,7 @@ export interface WebhookEventGroup {
     ContactCreated = 'contact.created',
     ContactUpdated = 'contact.updated',
     ContactDeleted = 'contact.deleted',
+    ContactBulkUpdate = 'Contact.bulkUpdate',
     MessageReceived = 'message.received',
     MessageStatus = 'message.status',
     MessageFlowReceived = 'message.flow.received',
@@ -31,4 +32,12 @@ export interface WebhookEventGroup {
     isEnabled?: boolean;
     createdAt?: string;
     updatedAt?: string;
+  }
+
+  export interface ExportLogsPayload {
+    spid: string | number; 
+    channel: string;
+    fromDate: string; 
+    toDate: string;
+    email: string;
   }
