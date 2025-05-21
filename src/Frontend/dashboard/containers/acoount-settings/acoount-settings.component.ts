@@ -905,7 +905,7 @@ eventGroups: WebhookEventGroup[] = [
       { label: 'contact.created', value: WebhookEventType.ContactCreated },
       { label: 'contact.updated', value: WebhookEventType.ContactUpdated },
       { label: 'contact.deleted', value: WebhookEventType.ContactDeleted },
-      { label: 'Contact.bulkUpdate', value: WebhookEventType.ContactBulkUpdate},
+      { label: 'contact.bulkupdate', value: WebhookEventType.ContactBulkUpdate},
     ]
   },
   {
