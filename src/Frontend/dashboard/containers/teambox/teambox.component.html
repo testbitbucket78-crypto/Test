@@ -518,8 +518,8 @@ popupWidth='250px' popupHeight='200px'>
 					   </div>
 					</div>
 					<div class="d-align-center ml-2"> 
-					<button *ngIf="showChatNotes=='text'" class="submit_btn btn-press">
-						<img src="/assets/img/teambox/icon-send.svg" (click)="sendMessage()">
+					<button *ngIf="showChatNotes=='text'" [disabled]="isDisableSendButton" class="submit_btn btn-press" (click)="sendMessage()">
+						<img src="/assets/img/teambox/icon-send.svg" >
 					</button>
 					<button *ngIf="showChatNotes== 'notes'" class="save_notes_btn btn-press" (click)="sendMessage()">Save</button>
 				</div>
