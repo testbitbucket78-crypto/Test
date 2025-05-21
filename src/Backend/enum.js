@@ -48,4 +48,11 @@ const  WebhookEventType = {
     TemplateStatus : 'template.status',
   }
 
-module.exports = { MessagingLimitTiers, MessagingName, channelName, channelForSendingMessage, channelsForTemplates,userStatus, WebhookEventType }
+  const ConversationStatusMap = {
+    Open: 'conversation.open',
+    Resolved: 'conversation.resolved',
+    Assigned: 'conversation.assigned',
+    Created: 'conversation.created'
+  };
+
+module.exports = { MessagingLimitTiers, MessagingName, channelName, channelForSendingMessage, channelsForTemplates,userStatus, WebhookEventType, ConversationStatusMap }

@@ -219,7 +219,7 @@ router.post('/saveWebhookUrl',authenticateToken,accountController.saveWebhookUrl
 router.post('/Webhooks',authenticateToken,accountController.saveOrUpdateWebhook)
 router.get('/getWebhooks/:spid',authenticateToken,accountController.getWebhooks)
 router.get('/deleteWebhook/:id',authenticateToken,accountController.deleteWebhook)
-
+router.post('/exportLogs',authenticateToken,accountController.exportLogs)
 
 router.post('/sendMessage' ,dynamicRateLimiter,accountController.sendMessage)
 

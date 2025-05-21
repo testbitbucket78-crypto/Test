@@ -18,6 +18,11 @@ const { APIKeyManager, sendMessageBody, spPhoneNumber, ApiResponse, Webhooks }= 
 const { WebSocketManager } = require("../whatsApp/PushNotifications")
 const {mapCountryCode} = require('../Contact/utils')
 const variables = require('../common/constant')
+const { exportLog } = require('../Services/ServiceModel');
+const { makeXLSXFileOfData } = require('../Contact/utils');
+const { sendEmail }= require('../Services/EmailService');
+const { MessagingName }= require('../enum');
+
 const insertAndEditWhatsAppWeb = async (req, res) => {
     try {
         // Extracting request body parameters
@@ -318,6 +323,42 @@ const saveOrUpdateWebhook = async (req, res) => {
     }
   };
   
+
+  const exportLogs = async (req, res) => {
+    try {
+        const exportLogsInstance = new exportLog(req.body);
+        let logsData = await exportLogsInstance.getLogs();
+        const XLSXFile = makeXLSXFileOfData(
+            logsData,
+            exportLogsInstance.spid,
+            exportLogsInstance.fromDate,
+            exportLogsInstance.toDate
+          );
+           const EmailChannel = MessagingName[exportLogsInstance.channel];
+          await sendEmail({
+            to: exportLogsInstance.email,
+            subject: `Exported Webhook Logs`,
+            html: `
+              <p>Dear User,</p>
+              <p>Attached is the exported webhook logs data between <b>${exportLogsInstance.fromDate}</b> and <b>${exportLogsInstance.toDate}</b>.</p>
+              <p>Regards,<br>${EmailChannel}</p>
+            `,
+            fromChannel: EmailChannel,
+            attachments: [
+              {
+                filename: `webhook-logs-${exportLogsInstance.spid}.xlsx`,
+                content: XLSXFile,
+                contentType: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+              },
+            ],
+          });
+      
+          return res.status(200).json({ success: true, message: 'Email sent successfully' });
+      } catch (err) {
+        console.log(err);
+        res.status(500).json({ error: 'Something went wrong' });
+      }
+  }
 
 
 const addToken = async (req, res) => {
@@ -901,5 +942,5 @@ async function getQualityRatings(phoneNumberId, access_token) {
 
 module.exports = {
     insertAndEditWhatsAppWeb, selectDetails, addToken, deleteToken, enableToken, selectToken,
-    createInstance, getQRcode, generateQRcode, editToken, testWebhook,getQualityRating, addWAAPIDetails, addGetAPIKey, APIkeysState, saveWebhookUrl, sendMessage, saveOrUpdateWebhook, getWebhooks, deleteWebhook, testWebhooks, deleteAPIToken
+    createInstance, getQRcode, generateQRcode, editToken, testWebhook,getQualityRating, addWAAPIDetails, addGetAPIKey, APIkeysState, saveWebhookUrl, sendMessage, saveOrUpdateWebhook, getWebhooks, deleteWebhook, testWebhooks, deleteAPIToken, exportLogs
 }
