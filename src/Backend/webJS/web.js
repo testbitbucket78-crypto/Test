@@ -1628,20 +1628,20 @@ async function autoReconnectSessions() {
   }
 }
 
-if (sessions.length > 0) {
-  const placeholders = sessions.map(() => '?').join(', ');
-  const sql = `
-    SELECT * FROM user 
-    WHERE SP_ID IN (${placeholders}) 
-    AND isDeleted != 1 
-    AND ParentId IS NULL
-  `;
+// if (sessions.length > 0) {
+//   const placeholders = sessions.map(() => '?').join(', ');
+//   const sql = `
+//     SELECT * FROM user 
+//     WHERE SP_ID IN (${placeholders}) 
+//     AND isDeleted != 1 
+//     AND ParentId IS NULL
+//   `;
 
-  const userlist = await db.excuteQuery(sql, sessions);
-  console.log(result);
-} else {
-  console.log('No sessions to query.');
-}
+//   const userlist = await db.excuteQuery(sql, sessions);
+//   console.log(result);
+// } else {
+//   console.log('No sessions to query.');
+// }
 
 
 async function sendMail() {
