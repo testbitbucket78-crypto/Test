@@ -11,16 +11,31 @@ class ContactsAdded {
     }
   }
 
+  // class contactBulkUpdate { // todo deprecated
+  //   constructor(payload, keys, action) {
+  //       this.eventType = WebhookEventType.ContactCreated;
+  //       this.Action = action;
+  //       this.data = {};
+    
+  //       keys.forEach((key) => {
+  //         this.data[key] = payload[key];
+  //       });
+  //     }
+  // }
   class contactBulkUpdate {
     constructor(payload, keys, action) {
-        this.eventType = WebhookEventType.ContactCreated;
-        this.Action = action;
-        this.data = {};
-    
-        keys.forEach((key) => {
-          this.data[key] = payload[key];
+      this.eventType = WebhookEventType.ContactBulkUpdate;
+      this.Action = action || 'Bulk Upload';
+      this.data = [];
+  
+      payload.data.forEach((row) => {
+        const rowObj = {};
+        keys.forEach((key, index) => {
+          rowObj[key] = row[index];
         });
-      }
+        this.data.push(rowObj);
+      });
+    }
   }
 
   class deleteContactsModel {

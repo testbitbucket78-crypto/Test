@@ -26,7 +26,7 @@ const variables = {
     },
     provider: "webJS", // webJS or whapi
     SPID : "847",
-    webhookSPIDs : ['847',]
+    webhookSPIDs : ['847','91']
 };
 
 

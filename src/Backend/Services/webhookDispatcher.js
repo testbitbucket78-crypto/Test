@@ -1,15 +1,15 @@
-const { WebhookLog, logData } = require('../Services/ServiceModel') //  todo need to make a model if needed.
+const { WebhookLog, logData } = require('./ServiceModel')
 const { Webhooks } = require('../settings/model/accountModel');
 var axios = require('axios');
 
-async function webhookService(spid, eventType, payload) {
+async function dispatchWebhookEvent(spid, eventType, payload) {
     try{
         const webhook = new Webhooks({spid}); 
         let webhookDetails = await webhook.getWebhookDetails();
         webhookDetails.forEach(details => {
             if (details?.isEnabled){
             details?.eventType.forEach(async(e) => {
-                if(e == eventType){ 
+             if(e == eventType){ 
 
                     const logDataInstance = new logData({
                         spid,
@@ -49,5 +49,5 @@ async function webhookService(spid, eventType, payload) {
    
 }
 
-module.exports = { webhookService }
+module.exports = { dispatchWebhookEvent };
   

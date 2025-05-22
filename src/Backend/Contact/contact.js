@@ -768,7 +768,7 @@ async function addOnlynewContact(CSVdata, identifier, SP_ID) {
       `;
         const updateValues = set.map((field) => field.displayName).concat([identifierValue, SP_ID]);
         if(variables.webhookSPIDs.includes(String(SP_ID))) {
-          await ContactBulkUpdate(SP_ID, updateQuery, updateValues);
+          await ContactBulkUpdate(CSVdata?.length, SP_ID, updateQuery, updateValues);
         }
         result = await db.excuteQuery(updateQuery, updateValues);
       }
@@ -778,7 +778,7 @@ async function addOnlynewContact(CSVdata, identifier, SP_ID) {
         //  console.log(values, fieldNames);
         // Ensure db.executeQuery returns a promise
         if(variables.webhookSPIDs.includes(String(SP_ID))) {
-          await ContactBulkUpdate(SP_ID, query, values);
+          await ContactBulkUpdate(CSVdata?.length, SP_ID, query, values);
         } 
         result = await db.excuteQuery(query, [values,  identifierValue, SP_ID]);
         

@@ -2,7 +2,7 @@ const db = require('../dbhelper');
 const { ContactsAdded, contactBulkUpdate, deleteContactsModel, MessageReceivedModel, MessageStatusModel,
     conversationStatusModel, conversationAssignedModel, templateStatusModel, conversationCreatedModel
       }= require('./commonModel');
-const {webhookService}  = require('../Services/webhookService');
+const { dispatchWebhookEvent }  = require('../Services/webhookDispatcher');
 const { WebhookEventType } = require('../enum')
 
 // todo 1 made for the insert only ( Deprecated extractKeysFromQuery )
@@ -48,7 +48,7 @@ const payloadFromKeysAndValues = (keys, values) => {
     // });
   
     const webhookPayload = new ContactsAdded(payload, keys);
-    await webhookService(spid, webhookPayload.eventType , webhookPayload)
+    await dispatchWebhookEvent(spid, webhookPayload.eventType , webhookPayload)
     try {
       let result = await db.excuteQuery(querry, values);
       return result;
@@ -67,7 +67,7 @@ const payloadFromKeysAndValues = (keys, values) => {
     const WebhookPayload = new ContactsAdded(payload, keys);
 
     WebhookPayload.eventType = WebhookEventType.ContactUpdated;
-    await webhookService(spid, WebhookPayload.eventType, WebhookPayload);
+    await dispatchWebhookEvent(spid, WebhookPayload.eventType, WebhookPayload);
     try {
       let result = await db.excuteQuery(querry, values);
       return result;
@@ -79,27 +79,57 @@ const payloadFromKeysAndValues = (keys, values) => {
       }
   }
 
-  async function ContactBulkUpdate (spid, querry, values) {
-    const keys = extractKeysFromQuery(querry);
-    const payload = payloadFromKeysAndValues(keys, values)
+  // async function ContactBulkUpdate (length, spid, querry, values) { // todo deprecate this function
+  //   const keys = extractKeysFromQuery(querry);
+  //   const payload = payloadFromKeysAndValues(keys, values)
   
-    const WebhookPayload = new contactBulkUpdate(payload, keys);
-    await webhookService(spid, WebhookPayload.eventType, WebhookPayload);
-    try {
-      let result = await db.excuteQuery(query, values);
-      return result;
+  //   const WebhookPayload = new contactBulkUpdate(payload, keys);
+  //   await dispatchWebhookEvent(spid, WebhookPayload.eventType, WebhookPayload);
+  //   try {
+  //     let result = await db.excuteQuery(querry, values);
+  //     return result;
 
-      } catch (error) {
-        return {
-          success: false,
-          error: error.message,
-        };
+  //     } catch (error) {
+  //       return {
+  //         success: false,
+  //         error: error.message,
+  //       };
+  //     }
+  // }
+  let collectedWebhookRows = [];
+  let collectedWebhookKeys = null;
+
+  async function ContactBulkUpdate(length, spid, query, values) {
+    const keys = extractKeysFromQuery(query);
+    if (!collectedWebhookKeys) {
+      collectedWebhookKeys = keys;
+    }
+  
+    collectedWebhookRows.push(values);
+  
+    try {
+      const result = await db.excuteQuery(query, values);
+  
+      if (collectedWebhookRows.length === length) {
+        const payload = { data: collectedWebhookRows };
+        const WebhookPayload = new contactBulkUpdate(payload, collectedWebhookKeys, 'Bulk Upload');
+        await dispatchWebhookEvent(spid, WebhookPayload.eventType, WebhookPayload);
+        collectedWebhookRows = []; // Clear the collected rows after sending the webhook
+        collectedWebhookKeys = null; // Clear the keys after sending the webhook
       }
+  
+      return result;
+    } catch (error) {
+      return {
+        success: false,
+        error: error.message,
+      };
+    }
   }
 
   async function deleteContacts (data) {
     let WebhookPayload = new deleteContactsModel(data);
-    await webhookService(WebhookPayload.SP_ID, WebhookPayload.eventType, WebhookPayload);
+    await dispatchWebhookEvent(WebhookPayload.SP_ID, WebhookPayload.eventType, WebhookPayload);
     
   }
 
@@ -148,38 +178,38 @@ const payloadFromKeysAndValues = (keys, values) => {
       retryCount
     );
   
-    await webhookService(spid, payload.eventType, payload);
+    await dispatchWebhookEvent(spid, payload.eventType, payload);
   }
 
 
   async function messageStatus(message, ack, spid) {
     const payload = new MessageStatusModel(message, ack, spid);
-    await webhookService(spid, payload.eventType, payload);
+    await dispatchWebhookEvent(spid, payload.eventType, payload);
   }
 
   async function conversationStatus(spid, interaction_status, InteractionId) {
     const payload = new conversationStatusModel(spid, interaction_status, InteractionId);
-    await webhookService(spid, payload.eventType, payload);
+    await dispatchWebhookEvent(spid, payload.eventType, payload);
   }
 
   async function conversationAssigned(body) {
     const payload = new conversationAssignedModel(body);
-    await webhookService(payload.SP_ID, payload.eventType, payload);
+    await dispatchWebhookEvent(payload.SP_ID, payload.eventType, payload);
   }
 
   async function templateStatus(event, spid) {
     const payload = new templateStatusModel(event, spid);
-    await webhookService(payload.SP_ID, payload.eventType, payload);
+    await dispatchWebhookEvent(payload.SP_ID, payload.eventType, payload);
   }
 
   async function conversationCreated(spid, customerId) {
     const payload = new conversationCreatedModel(spid, customerId);
-    await webhookService(payload.SP_ID, payload.eventType, payload);
+    await dispatchWebhookEvent(payload.SP_ID, payload.eventType, payload);
   }
 
   async function flowReceieved(spid, payload) {
      //const webhookPayload = new flowRecievedModel(payload);
-    //await webhookService(spid, webhookPayload.eventType, webhookPayload);
+    //await dispatchWebhookEvent(spid, webhookPayload.eventType, webhookPayload);
   }
 
   module.exports = {addContact, updateContacts, ContactBulkUpdate, deleteContacts, messageRecieved, messageStatus, conversationStatus, conversationAssigned, templateStatus, conversationCreated }
