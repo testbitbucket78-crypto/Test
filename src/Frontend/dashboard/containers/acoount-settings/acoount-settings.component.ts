@@ -383,7 +383,6 @@ openDiv() {
       this.apiService.craeteQRcode(data).subscribe(
 
         (response) => {
-          debugger;
           if(response.status === 409 && response.value == "Channel already authenticated") {
             this.channel_status = 1; 
             this.hideModal();

@@ -120,6 +120,7 @@ FROM CombinedResults cr
 JOIN DistinctPhoneNumbers dpn ON cr.Phone_number = dpn.Phone_number AND cr.priority = dpn.min_priority
 ORDER BY cr.priority, cr.customerId
 LIMIT ?, ?`;
+var getCustomerquery= `select * from EndCustomer where SP_ID=? and isDeleted !=1 and IsTemporary !=1 order by customerId desc Limit ?, ?`;
 var interactionsquery = "SELECT * FROM Interaction WHERE SP_ID=?  and is_deleted !=1"
 var contactsInteraction = `SELECT e.*, i.*
 FROM EndCustomer e
@@ -811,6 +812,7 @@ module.exports = {
     createInteractionQuery, updateInteractionQuery, getAllInteraction, selectInteractionByIdQuery,
     getAllMessagesByInteractionId, insertMessageQuery,
     updateInteractionMapping, getInteractionMapping,
+    getCustomerquery,
     savedMessagesQuery, getquickReplyQuery, getTemplatesQuery,
     addNotification, assignedNameQuery, interactions, contactsInteraction, interactionsquery, getallMessagesWithScripts, getMediaMessage,getmessageBymsgId,
     searchWithAllData ,interactionDataById,defaultQuery,updateContactDefaultQuery,updateTempInteractionQuery

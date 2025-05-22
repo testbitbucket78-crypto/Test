@@ -81,7 +81,7 @@ class whapiService {
 
     static async setupWebhook(token) {
         try {
-            token = "I3yX5PYIVRJsLsdMlojaN4VxufeGJb5N" //todo need to check why only I am able to test for this id
+
             const response = await fetch("https://gate.whapi.cloud/settings", {
                 method: "PATCH",
                 headers: {
@@ -93,8 +93,12 @@ class whapiService {
                     webhooks: [
                         {
                             events: [
-                                { type: "users", method: "post" },
-                                { type: "channel", method: "post" }
+                                { type: "messages", method: "post" },
+                                { type: "statuses", method: "post" },
+                                { type: "chats", method: "post" },
+                                { type: "contacts", method: "post" },
+                                { type: "channel", method: "post" },
+                                { type: "labels", method: "post" }
                             ],
                             mode: "body",
                             url: "https://call.stacknize.com/webhook" // static webhook that should be registered.

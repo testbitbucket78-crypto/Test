@@ -389,15 +389,19 @@ app.get('/webjsStatus', (req, res) => {
     }
 })
 
+
+
+
 app.listen(3009, () => {
     console.log("Server is Running on Port : : 3009");
     // Replace 'chrome' with the actual process name if needed
     logger.info('port 3003 restarted ');
     const processName = 'chrome';
-
+    
     // Command to kill all processes with the given name
+    
     const killCommand = `killall ${processName}`;
-
+    
     exec(killCommand, (error, stdout, stderr) => {
         if (error) {
             console.error(`Error killing processes: ${error.message}`);
@@ -417,21 +421,27 @@ app.listen(3009, () => {
     try {
         if (fs.existsSync(dir)) {
             console.log("dir found");
-            fs.readdirSync(dir).forEach(f => {
+            fs.readdirSync(dir).forEach((f,idx) => {
                 if (f.indexOf("session-") > -1 && fs.existsSync(path.join(dir, f, "Default/Service Worker"))) {
                     console.log("Deleting : " + path.join(dir, f, "Default/Service Worker"));
                     fs.rmdirSync(path.join(dir, f, "Default/Service Worker"), { recursive: true });
                 }
+                if(idx == fs.readdirSync(dir).length - 1){
+                    web.autoReconnectSessions();
+                }
             });
         }
-         web.autoReconnectSessions();
+        web.sendMail();
+      //   web.autoReconnectSessions();
+      
     }
     catch (err) {
         logger.error(`error while deleting cached sessions. Please delete manually and restart the server: ${err}`)
         console.log(err);
         console.log("error while deleting cached sessions. Please delete manually from within " + dir + " and restart the server")
+        return;
     }
-
+     // web.autoReconnectSessions(); 
 })
 
 //server.timeOut = 180000; // 3 minute 3*60*1000 min*sec*millisec

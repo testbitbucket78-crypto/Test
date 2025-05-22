@@ -27,6 +27,8 @@ const fs = require('fs')
 const path = require("path");
 const { EmailConfigurations } =  require('../Authentication/constant');
 const { MessagingName, channelName }= require('../enum');
+
+const { sendEmail } = require('../Services/EmailService');
 let clientSpidMapping = {};
 let clientPidMapping = {};
 let clientSpidInprogress = {};
@@ -255,6 +257,36 @@ async function destroyWrongScan(spid) {
 function ClientInstance(spid, authStr, phoneNo) {
   return new Promise(async (resolve, reject) => {
     try {
+      if(clientSpidMapping.hasOwnProperty(spid)){
+        delete clientSpidMapping[spid];
+        process.kill(clientPidMapping[spid]);
+        delete clientPidMapping[spid];
+
+        // delete session of the spid 
+
+        let dir = path.join(__dirname, '.wwebjs_auth');
+        let sessionDir = path.join(dir, `session-${spid}`);
+
+        if (fs.existsSync(sessionDir)) {
+          console.log(`disconnected  Deleting directory: ${sessionDir}`);
+
+          // First, attempt to kill related processes (e.g., Chrome) that may be locking files
+          killChromeProcesses(spid, () => {
+            setTimeout(() => {
+              try {
+                // Use fs-extra's removeSync for better handling of recursive deletes
+                fs.rmdirSync(sessionDir, { recursive: true });
+                console.log(`Successfully deleted directory on disconnected: ${sessionDir}`);
+              } catch (err) {
+                console.error(`Error deleting directory on disconnected ${sessionDir}:`, err);
+              }
+            }, 2000); // Adjust the delay as necessary
+          });
+
+        } else {
+          console.log(`disconnected Directory not found: ${sessionDir}`);
+        }
+      }
       const client = new Client({
         puppeteer: {
           headless: true,
@@ -1578,6 +1610,89 @@ async function autoReconnectSessions() {
   }
 }
 
+if (sessions.length > 0) {
+  const placeholders = sessions.map(() => '?').join(', ');
+  const sql = `
+    SELECT * FROM user 
+    WHERE SP_ID IN (${placeholders}) 
+    AND isDeleted != 1 
+    AND ParentId IS NULL
+  `;
+
+  const userlist = await db.excuteQuery(sql, sessions);
+  console.log(result);
+} else {
+  console.log('No sessions to query.');
+}
 
 
-module.exports = { createClientInstance, sendMessages, isActiveSpidClient, sendFunnel, whatsappWebStatus, autoReconnectSessions }
+async function sendMail() {
+  const baseDir = path.resolve(__dirname, ".wwebjs_auth");
+  const sessions = fs.readdirSync(baseDir)
+    .filter(name => name.startsWith("session-"))
+    .map(name => name.replace("session-", ""));
+
+  if (sessions.length === 0) {
+    console.log("No saved sessions found.");
+    return;
+  }
+  //const sessions = ['1065', '1071'];
+
+  try {
+    const placeholders = sessions.map(() => '?').join(', ');
+    const sql = `
+      SELECT * FROM user 
+      WHERE SP_ID IN (${placeholders}) 
+      AND isDeleted != 1 
+      AND ParentId IS NULL
+    `;
+
+    const results = await db.excuteQuery(sql, sessions);
+
+    if (!results || results.length === 0) {
+      console.log("No matching users found in DB for the given SP_IDs.");
+      return;
+    }
+
+    for (const user of results) {
+      const spid = user.SP_ID;
+      const phoneNo = user?.mobile_number;
+
+      if (!phoneNo) {
+        console.log(`Phone number missing for SP_ID: ${spid}`);
+        continue;
+      }
+
+      let emailSender = MessagingName[user?.Channel];
+      const subject = `Your ${emailSender} Channel might got disconnected`;
+      const body = `
+        <p>Hello <strong>${user?.name}</strong>,</p>
+
+        <p>Your channel might got disconnected please check the channel.</p>
+        
+        <p>We are here to assist you with any questions or concerns you may have.</p>
+        <p>For a more detailed report and insights, please log in to your account.</p>
+          
+        <p>Best regards,<br>Team ${emailSender}</p>
+      `;
+
+      const emailOptions = {
+        to: user?.email_id,
+        subject,
+        html: body,
+        fromChannel: emailSender,
+      };
+
+      if (body) {
+        let emailSent = sendEmail(emailOptions);
+      }
+    }
+  } catch (err) {
+    console.log(`Failed to send emails:`, err);
+  }
+}
+
+
+
+
+module.exports = { createClientInstance, sendMessages, isActiveSpidClient, sendFunnel, whatsappWebStatus, autoReconnectSessions,sendMail }

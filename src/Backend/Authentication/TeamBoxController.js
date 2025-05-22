@@ -53,7 +53,8 @@ const getAllCustomer = async (req, res) => {
         let RangeEnd = parseInt(req.params.RangeEnd - req.params.RangeStart);
         //  logger.info('RangeStart and RangeEnd calculated', { RangeStart, RangeEnd });
 
-        let contacts = await db.excuteQuery(val.selectAllQuery, [req.params.spID, req.params.spID, req.params.spID, req.params.spID, req.params.spID, RangeStart, RangeEnd]);
+        //let contacts = await db.excuteQuery(val.selectAllQuery, [req.params.spID, req.params.spID, req.params.spID, req.params.spID, req.params.spID, RangeStart, RangeEnd]);
+        let contacts = await db.excuteQuery(val.getCustomerquery, [req.params.spID, RangeStart, RangeEnd]);
         // logger.info('Query executed for getAllCustomer', { spID: req.params.spID, RangeStart, RangeEnd, contacts });
         let isCompleted = false;
         // let contacts =[];     
@@ -770,11 +771,19 @@ const insertMessage = async (req, res) => {
                     else if (req?.body?.isTemplate == true && channel == 'WA API') {
                         const mediaType = determineMediaType(media_type);
                         //get header and body variable 
+                        console.log('line 770');
                         let headerVar = await commonFun.getTemplateVariables(msgVar, header, SPID, customerId);
-                        let updateBody = replaceTemplateVariables(body, msgVar);
+                        console.log(body, msgVar);
+                        let updateBody = body;
+                        if(msgVar !='' && msgVar != null){
+                            console.log('line 775');
+                            updateBody = replaceTemplateVariables(body, msgVar);
+                        }
                         let bodyVar = await commonFun.getTemplateVariables(msgVar, updateBody, SPID, customerId);
-
+                        console.log('line 774');
+                        console.log(mediaType, req?.body?.messageTo, req?.body?.name, req?.body?.language, headerVar, bodyVar, message_media, SPID, req?.body?.buttons, DynamicURLToBESent);
                         middlewareresult = await middleWare.createWhatsAppPayload(mediaType, req?.body?.messageTo, req?.body?.name, req?.body?.language, headerVar, bodyVar, message_media, SPID, req?.body?.buttons, DynamicURLToBESent);
+                        console.log('line 776');
                        // middlewareresult = await middleWare.channelssetUp(SPID, channel, mediaType, req.body.messageTo, content, message_media, interaction_id, msg_id.insertId, spNumber);
                     } else {
                         if (req.body.message_media != 'text') {
