@@ -968,8 +968,15 @@ toggleGroupSelection(group: WebhookEventGroup, event: Event) {
   }
 }
 
-deleteWebhook(id : number){
-  this.apiService.deleteWebhook(id).subscribe((response) => {
+
+openDeletePopup(id: number) {
+  this.webhookIdSelected = id;
+  $("#deleteModal").modal('show');
+}
+
+deleteWebhook(){
+  this.apiService.deleteWebhook(this.webhookIdSelected).subscribe((response) => {
+    $("#deleteModal").modal('hide');
     if(response){
       this.loadWebhooks();
     } else {
