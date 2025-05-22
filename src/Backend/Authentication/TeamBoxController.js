@@ -53,7 +53,8 @@ const getAllCustomer = async (req, res) => {
         let RangeEnd = parseInt(req.params.RangeEnd - req.params.RangeStart);
         //  logger.info('RangeStart and RangeEnd calculated', { RangeStart, RangeEnd });
 
-        let contacts = await db.excuteQuery(val.selectAllQuery, [req.params.spID, req.params.spID, req.params.spID, req.params.spID, req.params.spID, RangeStart, RangeEnd]);
+        //let contacts = await db.excuteQuery(val.selectAllQuery, [req.params.spID, req.params.spID, req.params.spID, req.params.spID, req.params.spID, RangeStart, RangeEnd]);
+        let contacts = await db.excuteQuery(val.getCustomerquery, [req.params.spID, RangeStart, RangeEnd]);
         // logger.info('Query executed for getAllCustomer', { spID: req.params.spID, RangeStart, RangeEnd, contacts });
         let isCompleted = false;
         // let contacts =[];     

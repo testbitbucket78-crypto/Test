@@ -876,6 +876,9 @@ async function saveInMessages(message) {
       
       for (const msg of message.messages || []) {
         let from = msg?.from;
+        if(display_phone_number == msg?.from){
+          return
+        }
         let message_text = msg?.text?.body;
         let Type = msg?.type;
         let contactName = msg?.from_name;
