@@ -163,7 +163,96 @@ class Contact {
 }
 
 // Middleware function to process the response
+class Webhooks{
+  constructor(args){
+    this.id = args?.id;
+    this.name = args?.name;
+    this.url = args?.url;
+    this.secret = args?.secret;
+    this.channel = args?.channel;
+    this.eventType = typeof args?.eventType === 'string' ? args.eventType : JSON.stringify(args?.eventType || []);
+    this.spid = args?.spid;
+    this.isEnabled =  args?.isEnabled || false;
+    this.createdAt = args?.createdAt ? new Date(args?.createdAt) : new Date();
+    this.updatedAt = new Date();
+  }
 
+  async saveOrUpdateToDatabase() {
+    try {
+      const query = `
+        INSERT INTO Webhooks (id, name, url, secret, channel, event_type, spid, is_enabled, created_at, updated_at)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+        ON DUPLICATE KEY UPDATE
+          name = VALUES(name),
+          url = VALUES(url),
+          secret = VALUES(secret),
+          channel = VALUES(channel),
+          event_type = VALUES(event_type),
+          spid = VALUES(spid),
+          is_enabled = VALUES(is_enabled),
+          updated_at = CURRENT_TIMESTAMP;
+      `;
+
+      const values = [
+        this.id || null,
+        this.name,
+        this.url,
+        this.secret,
+        this.channel,
+        this.eventType,
+        this.spid,
+        this.isEnabled,
+      ];
+
+      const result = await db.excuteQuery(query, values);
+      console.log('Webhook saved or updated successfully:', result);
+      return true;
+    } catch (error) {
+      console.error('Error saving or updating webhook:', error.message);
+      return false;
+    }
+  }
+
+  async getWebhookDetails() {
+    try {
+      const query = `SELECT * FROM Webhooks WHERE spid = ?`;
+      const values = [this.spid];
+      const result = await db.excuteQuery(query, values);
+      const webhooks = result.map(row => ({
+        id: row.id,
+        name: row.name,
+        url: row.url,
+        secret: row.secret,
+        channel: row.channel,
+        eventType: row.event_type ? JSON.parse(row.event_type) : [],
+        spid: row.spid,
+        isEnabled: !!row.is_enabled,
+        createdAt: row.created_at,
+        updatedAt: row.updated_at
+      }));
+  
+      return webhooks;
+
+    } catch (error) {
+      console.error('Error fetching webhook details:', error.message);
+      return [];
+    }
+  }
+  async deleteWebhook() {
+    try {
+      const query = `
+        DELETE FROM Webhooks WHERE id = ?;
+      `;
+  
+      let res = await db.excuteQuery(query, [this.id]);
+      console.log(`Webhook with id ${this.id} deleted successfully.`);
+      return res;
+    } catch (error) {
+      console.error('Error deleting webhook:', error);
+      throw error;
+    }
+  }
+}
 
   
-  module.exports = {APIKeyManager, sendMessageBody, spPhoneNumber, ApiResponse};
+  module.exports = {APIKeyManager, sendMessageBody, spPhoneNumber, ApiResponse, Webhooks};

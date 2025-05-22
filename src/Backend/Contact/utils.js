@@ -474,5 +474,34 @@ try {
 }
 }
 
+const XLSX = require('xlsx');
 
-module.exports = {formatterDate, formatterTime, mapCountryCode, formatterDateTime,getCountryDetails, formatDateTimeAccToTimeZone};
+const makeXLSXFileOfData = (data, spid, fromDate, toDate) => {
+  const sheetData = [];
+
+  const title = `Exported Webhook Logs Data - SPID: ${spid}, Date Range: ${fromDate} to ${toDate}`;
+  sheetData.push([title]);
+  sheetData.push([]);
+  sheetData.push(['Webhook Log ID', 'Event', 'Timestamp', 'Status', 'Payload']);
+
+  data.forEach(log => {
+    sheetData.push([
+      log.webhookLogId,
+      log.event,
+      log.timestamp,
+      log.status,
+      log.payload
+    ]);
+  });
+
+  const worksheet = XLSX.utils.aoa_to_sheet(sheetData);
+  const workbook = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(workbook, worksheet, 'Webhook Logs');
+
+  const buffer = XLSX.write(workbook, { type: 'buffer', bookType: 'xlsx' });
+
+  return buffer;
+};
+
+
+module.exports = {formatterDate, formatterTime, mapCountryCode, formatterDateTime,getCountryDetails, formatDateTimeAccToTimeZone, makeXLSXFileOfData};

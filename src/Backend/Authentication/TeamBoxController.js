@@ -13,6 +13,8 @@ const removeTags = require('../removeTagsFromRichTextEditor')
 const logger = require('../common/logger.log');
 const commonFun = require('../common/resuableFunctions.js')
 app.use(bodyParser.json());
+const { conversationStatus, conversationAssigned, conversationCreated } = require('../common/webhookEvents.js');
+const { ConversationStatusMap } = require('../enum');
 
 app.use(bodyParser.urlencoded({ extended: true }));
 
@@ -149,6 +151,7 @@ const insertCustomers = async (req, res) => {
                 let insertedCon = await db.excuteQuery(insertQuery, [values]);
                 customerId = insertedCon?.insertId;
                 interactionId = await db.excuteQuery('select * from Interaction where customerId=? and is_deleted !=1 and SP_ID=? order by created_at desc', [customerId, SP_ID]);
+                conversationCreated(SP_ID, customerId);
                 res.status(200).send({
                     msg: 'Contact added successfully.',
                     status: 200,
@@ -325,8 +328,10 @@ const updateInteraction = async (req, res) => {
 
             await db.excuteQuery(actionQuery, [req.body.InteractionId, req.body?.action, req.body?.action_at, req.body?.action_by, utcTimestamp, req.body?.SP_ID, 'text']);
             updateQuery = "UPDATE Interaction SET interaction_status ='" + req.body.Status + "' ,updated_at ='" + utcTimestamp + "' WHERE InteractionId =" + req.body.InteractionId;
+            conversationStatus(req.body?.SP_ID, req.body.Status == "Open" ? ConversationStatusMap.Open : ConversationStatusMap.Resolved, req.body.InteractionId);
             if (req.body.Status == 'Open') {
                 let ResolveOpenChat = await db.excuteQuery('UPDATE Interaction SET interaction_status =? WHERE InteractionId !=? and customerId=?', ['Resolved', req.body.InteractionId, req.body?.customerId]);
+                // conversationStatus(req.body?.SP_ID, ConversationStatusMap.Resolved, req.body.InteractionId);
                 logger.info(`ResolveOpenChat if previous is open already ${req.body?.customerId}`)
             }
         }
@@ -1024,12 +1029,12 @@ const updateInteractionMapping = async (req, res) => {
         const MappedBy = req.body.MappedBy;
         const is_active = 1;
         logger.debug('InteractionId:', InteractionId, 'AgentId:', AgentId, 'MappedBy:', MappedBy);
-
+        conversationAssigned(req.body );
         const querryToGetPreviousAgent = "SELECT * FROM InteractionMapping WHERE InteractionId = ? order by 1 desc limit 1";
         const PreviousAgent = await db.excuteQuery(querryToGetPreviousAgent, [InteractionId]);
         let PreviousAgentId;
         if(PreviousAgent.length > 0) {
-            PreviousAgentId = PreviousAgent[0]?.AgentId;
+             PreviousAgentId = PreviousAgent[0]?.AgentId;
         }
         const values = [[is_active, InteractionId, AgentId, MappedBy, PreviousAgentId]];
         if (AgentId != -1) {
