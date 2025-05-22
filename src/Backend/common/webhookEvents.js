@@ -1,7 +1,7 @@
 const db = require('../dbhelper');
 const { ContactsAdded, contactBulkUpdate, deleteContactsModel, MessageReceivedModel, MessageStatusModel,
     conversationStatusModel, conversationAssignedModel, templateStatusModel, conversationCreatedModel
-      }= require('./model');
+      }= require('./commonModel');
 const {webhookService}  = require('../Services/webhookService');
 const { WebhookEventType } = require('../enum')
 
