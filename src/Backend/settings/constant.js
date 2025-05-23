@@ -451,6 +451,7 @@ var updateUserAPIKeysAndTokenName = `UPDATE UserAPIKeys SET tokenName = ?, ips =
 var updateUserAPIKeysAndKeyGenerate = `UPDATE UserAPIKeys SET api_key = ?, ips = ?, updated_at = CURRENT_TIMESTAMP WHERE spid = ?`
 var getUserAPIKeys = `select * from UserAPIKeys where spid = ?`
 var updateAPIkeysState = `UPDATE UserAPIKeys SET is_enabled = ?, updated_at = CURRENT_TIMESTAMP WHERE spid = ?`
+const deleteAPIKey = `DELETE FROM UserAPIKeys WHERE spid = ?`;
 var updateWebhookUrl = `UPDATE UserAPIKeys  SET webhook_url = ?, updated_at = CURRENT_TIMESTAMP WHERE spid = ?`
 var getAgentId = `select * from user where SP_ID = ? and ParentId is null`
 var getChannel = `SELECT channel_id, connected_id FROM WhatsAppWeb WHERE spid = ?`
@@ -477,5 +478,5 @@ module.exports = {
     Whatsappdetails,addTokenQuery,updateTokenQuery,deleteTokenQuery,selectTokenQuery,isEnableQuery,baseURL,accessToken,deleteIPQuery,insertIPAddress,updateNotification,
     getColCount,addcolumn,getcolumn,deletecolumn,getcolumnid,enableMandatory,enablestatus,editfield ,selectApprovedTemplate ,addGallery ,getGallery,selectUserByIdQuery,
     content_type,access_token,url,selectActiveQuery,getAllUserQuery,checkDeletedColumn,getCustomColumnById,permanentDeleteColumn,selectHealthStatus,insertHealthStatus, insertUserAPIKeys, updateUserAPIKeysAndTokenName
-    ,getUserAPIKeys, updateAPIkeysState, updateWebhookUrl, getAgentId, getChannel, getRateLimit, getCampaignId, updateUserAPIKeysAndKeyGenerate, selectTemplateForGallery,getflowDetail,getflows,saveflowMapping
+    ,getUserAPIKeys, updateAPIkeysState, updateWebhookUrl, getAgentId, getChannel, getRateLimit, getCampaignId, updateUserAPIKeysAndKeyGenerate, selectTemplateForGallery,getflowDetail,getflows,saveflowMapping, deleteAPIKey
 }
