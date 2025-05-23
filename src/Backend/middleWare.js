@@ -77,6 +77,11 @@ async function channelssetUp(spid, channelType, mediaType, messageTo, message_bo
     }
 }
 
+async function sendingTemplate(spid, to, header, body, interactiveButtons){
+    messages = await Whapi.sendTemplateViaWhapi(spid, to, header, body, interactiveButtons)
+    return messages;
+}
+
 async function sendMessagesThroughWhatsAppOfficial(phoneNumber, mediaType, message_body, media) {
     try {
 
@@ -586,4 +591,4 @@ function simpleEncrypt(number, key = 12345) {
 // const payload = createWhatsAppPayload('text', '918130818921', 'cip_attribute', 'en', headerVariables, bodyVariables, 'https://picsum.photos/id/1/200/300');
 // console.log(JSON.stringify(payload, null, 2));
 
-module.exports = { channelssetUp, postDataToAPI, sendDefultMsg, createWhatsAppPayload,getQualityRating,getVerificationStatus, registerWebhook, registerWhatsApp }
+module.exports = { channelssetUp, postDataToAPI, sendDefultMsg, createWhatsAppPayload,getQualityRating,getVerificationStatus, registerWebhook, registerWhatsApp, sendingTemplate }

@@ -770,7 +770,10 @@ const insertMessage = async (req, res) => {
             let middlewareresult = "";
             if (Type != 'notes') {
                 if (channelType[0].isBlocked != 1) {
-                    if (req?.body?.isTemplate == true && channel == 'WA API') {
+                    if(req?.body?.isTemplate == true && req.body?.interactiveButtonsPayload){
+                        middlewareresult = await middleWare.sendingTemplate(SPID, req.body.messageTo, header, content, req.body?.interactiveButtonsPayload);
+                    }
+                    else if (req?.body?.isTemplate == true && channel == 'WA API') {
                         const mediaType = determineMediaType(media_type);
                         //get header and body variable 
                         console.log('line 770');
