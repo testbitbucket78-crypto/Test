@@ -120,6 +120,9 @@
                                 <span *ngIf="templatesMessageData?.BodyText" [innerHTML]="templatesMessageData?.BodyText | sanitizeHtml"></span><br /><br />
                                 <span class="temp-footer"  *ngIf="templatesMessageData?.FooterText" [innerHTML]="templatesMessageData?.FooterText | sanitizeHtml"></span><br />
                             </div>
+
+                            <interactive-button *ngIf="templatesMessageData.interactive_buttons" [interactiveButtons]="templatesMessageData.interactive_buttons"></interactive-button>
+
                             <div *ngIf="templatesMessageData?.buttons && templatesMessageData?.buttons?.length >0" class="w-70">
                                 <div *ngFor="let item of templatesMessageData?.buttons let i = index" >
                                 <div  class="text-center" *ngIf="item?.buttonText && i<3"><button class="template-btn" (click)="isAllButtonPopupVisible = !isAllButtonPopupVisible" [ngClass]="{'btn-radius': ((templatesMessageData?.buttons?.length-1)== i || (templatesMessageData?.buttons?.length >2 && i==2))}">
@@ -648,6 +651,7 @@
                     <button (click)="openButtonPopUp($event)" class="add-btn">+ Add Buttons
                         <img class="btn-preview-img" src="../../../../assets/img/drop-icon.png">
                     </button>
+
                     <!-- <div class="modal fade" tabindex="-1" id="rolesModal" data-bs-backdrop="static" role="dialog"> -->
                     <div class="btn-popup" *ngIf="isPopupVisible"  #btnPopupContainer>
                         <div class="btn-type-headings">Quick reply buttons</div>
@@ -863,7 +867,113 @@
             </div>
                 </div>
             
-            </div>      
+            </div>  
+            
+            <div *ngIf="channel=='whapi'" class="d-flex pt-3 pb-2 flex-column add-buttons">
+                <div class="px-4 pt-1 msg-head">
+                    <h6>Buttons<span>(Optional)</span></h6>
+                    <span class="pb-1">Add buttons to let customers respond to your message or take action. You can add up to total of 10 buttons. If you add more than 3 buttons, they will appear in a list.</span>
+                    <br />
+                    <div class="position-relative">
+                        <sb-button (click)="interactiveButtonspopup = !interactiveButtonspopup" [type]="'secondary'" [label]="'Add Button'"
+                            [leftIcon]="'+'" [rightIcon]="'<img src=\'../../../../assets/img/drop-icon.png\'/>'">
+                        </sb-button>
+                    
+                    
+                    
+                    
+                        <div *ngIf="interactiveButtonspopup" class="bg-white rounded p-2 position-absolute"
+                            style="width: max-content; box-shadow: 0px 4px 8px #00000033; z-index: 9999;">
+                            <div *ngFor="let item of interactiveButtons; let last = last">
+                                <h6 class="mb-1">
+                                    {{ item.title }}
+                                </h6>
+                                <button [disabled]="isButtonDisabled(d.id)"
+                                    (click)="onInteractiveButtonClick(d); interactiveButtonspopup = false" id="{{ d.id }}"
+                                    *ngFor="let d of item.details"
+                                    class="d-flex align-items-center mb-2 w-100 border-0 outline-none bg-white">
+                                    <img style="width: 16px; height: 16px;" src={{d.icon_path}} alt={{d.id}}>
+                                    <div class="pl-2">
+                                        <p class="mb-0 text-left">{{d.name}}</p>
+                                        <small class="text-muted">{{d.maximum_buttons}} button maximum</small>
+                                    </div>
+                                </button>
+                                <div *ngIf="!last" style="height: 2px;" class="bg-dark mb-2"></div>
+                            </div>
+                        </div>
+                    
+                    
+                    
+                    </div>
+                    
+                    
+                    <div *ngIf="renderedButtons.length > 0" style="border: 3px solid black; border-radius: 15px;">
+                        <form *ngFor="let btn of renderedButtons; let i = index; trackBy: trackByFn" class="m-2">
+                    
+                            <div class="p-2 mt-2" style="border: 3px solid #00000033; border-radius: 15px;">
+                                <div class="row">
+                                    <div class="d-flex flex-column col-4">
+                                        <small class="mb-1"><b>Button Type</b></small>
+                                        <h6 class="p-2 mb-1 border rounded-pill">{{btn.name}}</h6>
+                                    </div>
+                                    <div class="d-flex flex-column col-8">
+                                        <div class="d-flex justify-content-between align-items-center">
+                                            <small class="mb-1"><b>Button Text</b></small>
+                                            <p class="mb-1"><b>0</b> / <span class="text-muted">{{btn.children.button_text_length}} characters</span></p>
+                                        </div>
+                                        <input type="text" [(ngModel)]="btn.children.button_text" (change)="a($event)" [name]="'buttonText-' + i" [id]="'buttonText-' + i" class="h-100 rounded-pill p-2 border" [placeholder]="btn.children.button_text_placeholder" />
+                                    </div>
+                    
+                                    <div *ngIf="btn.children.extra_field" class="col-12 mt-2">
+                                        <div *ngFor="let field of btn.children.extra_field; let index = index;" class="row">
+                                            <div *ngIf="field.id.startsWith('row')" class="d-flex flex-column col-4">
+                                                <!-- For List Message -->
+                                                <p class="mb-1" *ngIf="field.id.startsWith('row')"><b>Row</b></p>
+                                                <h6 *ngIf="field.id.startsWith('row')" class="p-2 mb-1 border rounded-pill">Row {{index + 1}}</h6>
+                                            </div>
+                                            <div *ngIf="(field.type_title && field.type)" class="d-flex flex-column col-4">
+                                                <!-- For URL Type -->
+                                                <p class="mb-1" *ngIf="field.type_title"><b>{{field.type_title}}</b></p>
+                                                <h6 *ngIf="field.type" class="mb-1 p-2 border rounded-pill">{{field.type}}</h6>
+                                            </div>
+                                            <div *ngIf="field.dropdown_field == true" class="d-flex flex-column col-4">
+                                                <!-- For Phone Type -->
+                                                <p class="mb-1" *ngIf="field.dropdown_title"><b>{{field.dropdown_title}}</b></p>
+                                                <select id="countryCodePicker" [(ngModel)]="field.selected_country_code" class="p-2 border rounded-pill" [(ngModel)]="field.default_value">
+                                                    <option *ngFor="let option of field.country_code_list" [value]="option">
+                                                      {{ option }}
+                                                    </option>
+                                                </select>
+                                            </div>
+                                            <div class="d-flex flex-column" [ngClass]="!((field.type_title && field.type) || (field.dropdown_title) || (field.id.startsWith('row'))) ? 'col-12' : 'col-8'">
+                                                <div class="d-flex justify-content-between align-items-center">
+                                                    <p class="mb-1"><b>{{field.name}}</b></p>
+                                                    <p class="mb-1"><b>0</b> / <span class="text-muted">{{field.character_length}} characters</span></p>
+                                                </div>
+                                                <input type="text" [(ngModel)]="field.extra_field_text" name="extraField-{{i}}" [id]="'extraField-' + i" class="h-100 rounded-pill p-2 border" [placeholder]="field.placeholder"
+                                                    [attr.maxlength]="field.character_length" />
+                                            </div>
+                                        </div>
+                                    </div>
+                    
+                                </div>
+                            </div>
+                    
+                    
+                            <div class="w-100 text-right">
+                                <small *ngIf="btn.maximum_buttons > 1" (click)="addButton(btn.id)" type="button"
+                                    class="text-center mx-2 mb-0 text-primary" aria-label="Close">+
+                                    Add</small>
+                                <!-- Remove Button -->
+                                <small (click)="removeButton(btn.id)" type="button" class="text-center mb-0 text-danger" aria-label="Close">-
+                                    Remove</small>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            
+
         </div>
         <div class="col-5 justify-content-center preview-part">
        

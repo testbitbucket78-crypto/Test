@@ -284,6 +284,7 @@ public  fieldsData: { [key: string]: string } = { text: 'name' };
 	templateName: string = '';
 	templatelanguage: string = '';
     templateButton: any[] = [];
+	interactiveButtonsPayload: any;
 	public insertImageSettings: object = {
 		width: '50px',
 		height: '50px'
@@ -716,6 +717,7 @@ public  fieldsData: { [key: string]: string } = { text: 'name' };
 		this.messageMeidaFile = item?.Links;
 		this.templateButton = item?.buttons
 		this.addingStylingToMedia(item);
+		this.interactiveButtonsPayload = item?.interactive_buttons;
 		console.log(htmlcontent);
 		this.sendMessage(true,htmlcontent);
 	}
@@ -3513,7 +3515,8 @@ sendMessage(isTemplate:boolean=false,templateTxt:string=''){
 			name: this.templateName,
 			language: this.templatelanguage,
 			buttons: this.templateButton,
-			buttonsVariable: JSON.stringify(this.buttonsVariable)
+			buttonsVariable: JSON.stringify(this.buttonsVariable),
+			interactiveButtonsPayload: this.interactiveButtonsPayload
 		}
 		console.log(bodyData,'Bodydata')
 		let input = {

@@ -1,9 +1,24 @@
-<button class="button" 
-        [class.active]="isActive" 
-        [class.primary]="type === 'primary'" 
-        [class.secondary]="type === 'secondary'"
-        [ngStyle]="{ 'width': customWidth }"
-        [disabled]="disabled"
-        (click)="handleClick()">
-    {{ label }}
+<button
+  class="button d-flex align-items-center justify-content-between text-center"
+  [class.active]="isActive"
+  [ngClass]="type"
+  [ngStyle]="{ width: customWidth }"
+  [disabled]="disabled"
+  (click)="handleClick()"
+>
+  <ng-container *ngIf="leftIcon">
+    <span *ngIf="!isLeftIconHtml" class="w-100 text-nowrap pr-2">
+      {{ leftIcon }}
+    </span>
+    <span *ngIf="isLeftIconHtml" class="w-100 text-nowrap pr-2" [innerHTML]="safeLeftIcon"></span>
+  </ng-container>
+
+  <span class="w-100 text-nowrap">{{ label }}</span>
+
+  <ng-container *ngIf="rightIcon">
+    <span *ngIf="!isRightIconHtml" class="w-100 text-nowrap pl-2">
+      {{ rightIcon }}
+    </span>
+    <span *ngIf="isRightIconHtml" class="w-100 text-nowrap pl-2" [innerHTML]="safeRightIcon"></span>
+  </ng-container>
 </button>

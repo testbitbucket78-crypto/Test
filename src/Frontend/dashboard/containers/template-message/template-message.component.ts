@@ -9,6 +9,7 @@ import { RichTextEditorComponent, HtmlEditorService } from '@syncfusion/ej2-angu
 import { faSmileWink } from '@fortawesome/free-solid-svg-icons';
 import { PhoneValidationService } from 'Frontend/dashboard/services/phone-validation.service';
 import { environment } from 'environments/environment';
+import { InteractiveButtonPayload, InteractiveMessagePayload } from 'Frontend/dashboard/models/interactiveButtons.model';
 
 declare var $: any;
 @Component({
@@ -240,6 +241,7 @@ export class TemplateMessageComponent implements OnInit {
     };
     newTemplateForm!: FormGroup;
     buttonsArray:any[] =[];
+    channel='whapi'; // todo make it dynamic
     isPopupVisible:boolean = false;
     isAllButtonPopupVisible:boolean = false;
     channelQualityTooltip:boolean = false;
@@ -250,7 +252,9 @@ export class TemplateMessageComponent implements OnInit {
     constructor(public apiService: SettingsService,
         private renderer: Renderer2,
         private phoneValidationService: PhoneValidationService,
-        public settingsService: SettingsService, private _teamboxService: TeamboxService) {}
+        public settingsService: SettingsService, private _teamboxService: TeamboxService) {
+            this.countryCodeList = this.apiService.countryCodes;
+        }
 
     errorMessage = '';
     successMessage = '';
@@ -884,6 +888,7 @@ checkTemplateName(e:any){
         newTemplateForm.template_id = 0;
         newTemplateForm.isCopied = 0;
         newTemplateForm.template_json = [];
+        newTemplateForm.interactiveButtonsPayload= JSON.stringify(this.interactiveButtonsPayload);
         if(this.newTemplateForm.controls.Channel.value == 'WA API') {
             let buttons:any[] =[];
             let headerAtt = this.getVariables(this.newTemplateForm.controls.Header.value, "{{", "}}", true);
@@ -1235,6 +1240,7 @@ triggerRichTextEditorChange() {
     
 
     previewTemplate() {
+        this.interactiveButtonsPayload = this.generateInteractivePayload('');
         this.allVariablesValueList =[];
         console.log(this.newTemplateForm.controls.BodyText.value);
         if(this.validateItems()){
@@ -1706,7 +1712,10 @@ openButtonPopUp(event: Event) {
     event.stopPropagation(); // Prevents event bubbling
     this.isPopupVisible = !this.isPopupVisible;
   }
-
+  openButtonPopUpWeb(event: Event){
+    event.stopPropagation();
+    this.isPopupVisible = !this.isPopupVisible;
+  }
   // Close when clicking outside
   @HostListener('document:click', ['$event'])
   closeAddButtonsOnOutsideClick(event: Event) {
@@ -1719,5 +1728,334 @@ openButtonPopUp(event: Event) {
     }
   }
 
+
+    selectedButtons: string[] = [];
+    renderedButtons: any[] = [];
+    countryCodeList: any = [];
+    interactiveButtonspopup!: boolean ;
+    interactiveButtonsPayload: any ;
+      interactiveButtons: any[] = [
+          {
+            title: "",
+            details: [
+              {
+                  id: "quick_reply",
+                  name: "Quick Reply",
+                  icon_path: "../../../../assets/img/settings/reply-arrow.svg",
+                  maximum_buttons: 3,
+                  enabledButton: [],
+                  children: {
+                      button_text: '',
+                      button_text_length: 25,
+                      button_text_placeholder: "e.g. placeholder",
+                  }
+              },  
+              {
+                  id: "list_messages",
+                  name: "List Messages",
+                  icon_path: "../../../../assets/img/drop-icon.png",
+                  maximum_buttons: 10,
+                  enabledButton: [],
+                  children: {
+                      button_text: '',
+                      button_text_length: 25,
+                      button_text_placeholder: "e.g. placeholder",
+                      extra_field: [
+                          {
+                              id: "row",
+                              name: "Row",
+                              extra_field_text: '',
+                              character_length: 25,
+                              placeholder: "e.g. Red"
+                          }
+                      ]
+                  }
+              }
+            ],
+          },
+          {
+            title: "Call to actions buttons",
+            details: [
+              {
+                  id: "url",
+                  name: "URL",
+                  icon_path: "../../../../assets/img/settings/open-in-new.svg",
+                  maximum_buttons: 1,
+                  enabledButton: ["phone"],
+                  children: {
+                      button_text: '',
+                      button_text_length: 25,
+                      button_text_placeholder: "e.g. placeholder",
+                      extra_field: [
+                          {
+                              id: "hyperlink",
+                              name: "Website URL",
+                              character_length: 2000,
+                              extra_field_text: '',
+                              placeholder: "e.g. https://www.example.com",
+                              type: "static",
+                              type_title: "URL type",
+                          }
+                      ]
+                  }
+              },
+              {
+                  id: "phone",
+                  name: "Phone",
+                  icon_path: "../../../../assets/img/settings/phone-call.svg",
+                  maximum_buttons: 1,
+                  enabledButton: ["url"],
+                  children: {
+                      button_text: '',
+                      button_text_length: 25,
+                      button_text_placeholder: "e.g. placeholder",
+                      extra_field: [
+                          {
+                              id: "phone_number",
+                              name: "Phone Number",
+                              character_length: 20,
+                              extra_field_text: '',
+                              placeholder: "e.g. 8627019494",
+                              default_value: "IN +91",
+                              selected_country_code: '',
+                              dropdown_field: true,
+                              dropdown_title: "Country",
+                              country_code_list: this.countryCodes,
+                          }
+                      ]
+                  }
+              },
+              {
+                  id: "copy_button",
+                  name: "Copy Button",
+                  icon_path: "../../../../assets/img/settings/copy.svg",
+                  maximum_buttons: 1,
+                  enabledButton: [],
+                  children: {
+                      button_text: '',
+                      button_text_length: 25,
+                      button_text_placeholder: "e.g. placeholder",
+                      extra_field: [
+                          {
+                              id: "offer_code",
+                              name: "Sample offer code",
+                              character_length: 15,
+                              extra_field_text: '',
+                              placeholder: "e.g. Get50Off",
+                          }
+                      ]
+                  }
+              }
+           ],
+          },
+      ];
+
+      a(event: Event){
+      }
+
+      trackByFn(index: number, item: any) {
+        return item.id || index; // Use an ID if available, otherwise index
+      }
+
+  onInteractiveButtonClick(button: any) {
+      const isPhoneOrUrl = button.id === 'phone' || button.id === 'url';
+      const hasPhone = this.selectedButtons.includes('phone');
+      const hasUrl = this.selectedButtons.includes('url');
+      const hasOther = this.selectedButtons.some(id => id !== 'phone' && id !== 'url');
+
+      // Block duplicates
+      if (this.selectedButtons.includes(button.id)) {
+          return;
+      }
+
+      // Allow phone + url combination only
+      if (isPhoneOrUrl) {
+          if ((button.id === 'phone' && hasUrl) || (button.id === 'url' && hasPhone)) {
+              this.selectedButtons.push(button.id);
+              this.renderUIForButton(button);
+              return;
+          }
+
+          if (!hasPhone && !hasUrl && !hasOther) {
+              this.selectedButtons.push(button.id);
+              this.renderUIForButton(button);
+              return;
+          }
+      }
+
+      // For non-phone/url, allow only if no button is selected yet
+      if (!isPhoneOrUrl && this.selectedButtons.length === 0) {
+          this.selectedButtons.push(button.id);
+          this.renderUIForButton(button);
+      }
+  }
+    
+
+  isButtonDisabled(buttonId: string): boolean {
+      if (this.selectedButtons.includes(buttonId)) return true;
+
+      const isPhoneOrUrl = buttonId === 'phone' || buttonId === 'url';
+      const hasPhone = this.selectedButtons.includes('phone');
+      const hasUrl = this.selectedButtons.includes('url');
+      const hasOther = this.selectedButtons.some(id => id !== 'phone' && id !== 'url');
+
+      if (hasOther) {
+          // No other buttons allowed with anything else
+          return true;
+      }
+
+      if (hasPhone) {
+          return buttonId !== 'url';
+      }
+
+      if (hasUrl) {
+          return buttonId !== 'phone';
+      }
+
+      return false;
+  }
+
+  renderUIForButton(button: any): void {
+      const currentCount = this.renderedButtons.filter(rb => rb.id === button.id).length;
+
+      if (currentCount < button.maximum_buttons) {
+          this.renderedButtons.push(button);
+      }
+  }
+
+
+  canAddMoreButtons(buttonId: string, max: number): boolean {
+      const count = this.renderedButtons.filter(b => b.id === buttonId).length;
+      return count < max;
+  }
+
+  removeButton(id: string) {
+      if (id === 'list_messages') {
+          const listMessageButton = this.renderedButtons.find(btn => btn.id === 'list_messages');
+          if (listMessageButton?.children?.extra_field) {
+            const rowFields = listMessageButton.children.extra_field.filter((field: any) => field.id.startsWith('row'));
+        
+            if (rowFields.length > 0) {
+              // Remove last row
+              const lastRowIndex = listMessageButton.children.extra_field.lastIndexOf(rowFields[rowFields.length - 1]);
+              if (lastRowIndex == 0){
+                  this.renderedButtons.splice(lastRowIndex, 1);
+                  this.selectedButtons.splice(lastRowIndex, 1);
+              } else {
+                listMessageButton.children.extra_field.splice(lastRowIndex, 1);
+              }
+      
+            }
+          }
+          return;
+      }
+
+      const index = this.renderedButtons.findIndex(btn => btn.id === id);
+      if (index !== -1) {
+          this.renderedButtons.splice(index, 1);
+      }
+
+      // Remove from selectedButtons only if no more UIs of the same ID exist
+      if (!this.renderedButtons.some(btn => btn.id === id)) {
+          const selectedIndex = this.selectedButtons.indexOf(id);
+          if (selectedIndex !== -1) {
+              this.selectedButtons.splice(selectedIndex, 1);
+          }
+      }
+  }
+
+    addButton(id: string): void {
+        const isSelected = this.selectedButtons.includes(id);
+        if (!isSelected) return;
+      
+        const buttonSchema = this.findButtonSchemaById(id);
+        if (!buttonSchema) return;
+      
+        if (id === 'list_messages') {
+            const rowField = buttonSchema.children?.extra_field?.find((field: any) => field.id === 'row');
+            if (!rowField) return;
+            const deepClonedrowField = JSON.parse(JSON.stringify(rowField));
+            deepClonedrowField.extra_field_text = '';
+            this.renderedButtons[0].children.extra_field.push(deepClonedrowField);
+            return;
+          }
+          
+          const deepClonedSchema = JSON.parse(JSON.stringify(buttonSchema));
+          deepClonedSchema.children.button_text = '';
+        this.renderedButtons.push(deepClonedSchema);
+      }
+
+   findButtonSchemaById(id: string): any | undefined {
+      for (const section of this.interactiveButtons) {
+        const found = section.details.find((btn: any) => btn.id === id);
+        if (found) return found;
+      }
+      return undefined;
+    }
+
+    generateInteractivePayload(to: string): InteractiveMessagePayload {
+        const buttons: InteractiveButtonPayload[] = [];
+      
+        this.renderedButtons.forEach(group => {
+            // Ignore if no text entered
+            if (group.children.button_text.trim()) {
+              const button: InteractiveButtonPayload = {
+                type: this.getButtonType(group.id),
+                title: group.children.button_text,
+                id: group.id
+              };
+      
+              // Add extra fields if required based on type
+              if (group.id === 'url') {
+                const extra = group.children.extra_field?.find((e:any) => e.id === 'hyperlink');
+                if (extra && extra.extra_field_text) {
+                  button.url = extra.extra_field_text;
+                }
+              }
+      
+              if (group.id === 'phone') {
+                const extra = group.children.extra_field?.find((e: any) => e.id === 'phone_number');
+                if (extra && extra.extra_field_text) {
+                  button.phone_number = extra.extra_field_text;
+                }
+              }
+      
+              if (group.id === 'copy_button') {
+                const extra = group.children.extra_field?.find((e: any) => e.id === 'offer_code');
+                if (extra && extra.extra_field_text) {
+                  button.copy_code = extra.extra_field_text;
+                }
+              }
+      
+              buttons.push(button);
+            }
+
+        });
+      
+        const payload: InteractiveMessagePayload = {
+          to,
+          action: {
+            buttons
+          }
+        };
+      
+        return payload;
+      }
+      getButtonType(id: string): string {
+        switch (id) {
+          case 'quick_reply':
+            return 'quick_reply';
+          case 'url':
+            return 'url';
+          case 'phone':
+            return 'call';
+          case 'copy_button':
+            return 'copy';
+          case 'list_messages':
+          return 'list';
+          default:
+            return 'reply';
+        }
+      }
 
 }
