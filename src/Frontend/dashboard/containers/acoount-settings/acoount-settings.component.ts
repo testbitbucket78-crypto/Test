@@ -9,6 +9,8 @@ import { environment } from 'environments/environment';
 import { Clipboard } from '@angular/cdk/clipboard';
 import { json } from 'stream/consumers';
 import { ToastService } from 'assets/toast/toast.service';
+import { FormControl, FormGroup, Validators,ValidatorFn, AbstractControl, ValidationErrors, } from '@angular/forms';
+import { WebhookEventGroup, WebhookPayload, WebhookEventType, ExportLogsPayload } from 'Frontend/dashboard/models/webhookEvent.model';
 
 declare var $:any;
 declare var FB: any; 
@@ -75,7 +77,7 @@ export class AcoountSettingsComponent implements OnInit {
   addButtonDisabled: boolean = false;
   conversationType!:string;
   phoneType!:string;
-
+  channelOption: any = [];
   loadingQRCode: boolean = false;
 
   connection:number[] =[1,3,2,4];
@@ -109,8 +111,11 @@ ipRegexTs = /^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]
 
 
   ngOnInit(): void {
+    this.initWebhookForm();
+    this.initExportLogsForm();
     this.isLoading = true;
     this.spid = Number(sessionStorage.getItem('SP_ID'));
+    this.loadWebhooks();
     this.phoneNumber = (JSON.parse(sessionStorage.getItem('loginDetails')!))?.mobile_number;
     this.email = (JSON.parse(sessionStorage.getItem('loginDetails')!))?.email_id;
     this.SPPhonenumber = sessionStorage.getItem('SPPhonenumber') ? (JSON.parse(sessionStorage.getItem('SPPhonenumber')!)) :null;
@@ -153,6 +158,37 @@ ipRegexTs = /^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]
 
     this.renderer.listen('window', 'message', this.sessionInfoListener);
   }
+  webhookForm!: FormGroup;
+  exportLogsForm!: FormGroup;
+  initWebhookForm() {
+    this.webhookForm = new FormGroup({
+      name: new FormControl('', [Validators.required]),
+      url: new FormControl('', Validators.required),
+      secret: new FormControl(''),
+      channel: new FormControl('', Validators.required),
+      eventType: new FormControl('', Validators.required),
+    });
+  }
+
+  initExportLogsForm(){
+    this.exportLogsForm = new FormGroup({
+      fromDate: new FormControl('', Validators.required),
+      toDate: new FormControl('', Validators.required),
+    }, { validators: this.dateRangeValidator });
+  }
+
+  dateRangeValidator: ValidatorFn = (control: AbstractControl): ValidationErrors | null => {
+    const group = control as FormGroup;
+    const from = new Date(group.get('fromDate')?.value);
+    const to = new Date(group.get('toDate')?.value);
+  
+    if (from && to && from > to) {
+      this._toastService.error('From date should be less than To date');
+      return { invalidDateRange: true };
+    }
+  
+    return null;
+  };
 
   showToaster(message:any,type:any){
 		if(type=='success'){
@@ -185,6 +221,22 @@ ipRegexTs = /^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]
   // getwhatsappwebdetails
 getwhatsapp() { 
   this.apiService.getWhatsAppDetails(this.spid).subscribe(response => {
+    if (response) {
+      if (response && response?.whatsAppDetails) {
+          this.channelOption = response?.whatsAppDetails.map((item: any) => ({
+              value: item?.id,
+              label: item?.channel_id,
+              connected_id: item?.connected_id,
+              channel_status: item?.channel_status,
+          })
+        );
+        if(this.channelOption.length){
+          this.channelSelected = this.channelOption[0]?.label; 
+          this.channelPhoneNumber = this.channelOption[0]?.connected_id;
+        }
+      }
+  }
+
     this.isLoading = false
     this.whatsAppDetails=response?.whatsAppDetails;
     this.numberCount = response?.channelCounts[0]?.count_of_channel_id;
@@ -775,5 +827,265 @@ trackByIndex(index: number): number {
   return index;
 }
 
+channelSelected: string = 'Select Channel';
+channelPhoneNumber: string = '';
+channelSelectedWebhook: string = 'Select Channel';
+channelPhoneNumberWebhook: string = '';
+ShowAssignOption: boolean = false;
+eventType = ['Created', 'Updated', 'Deleted'];
+webhookDetails: any = [];
+eventTypeDropdown!: boolean;
+eventSubscribedDropdownMap: { [index: number]: boolean } = {};
+webhookIdSelected: number | undefined;
+loadingIds: Set<number> = new Set();
+
+openModal() {
+    $('#webhookModal').modal('show');   
+}
+
+submitForm(){
+  if (this.webhookForm.valid) {
+    const formData = this.webhookForm.value;
+    const payload: WebhookPayload = {
+      name: this.settingsService.trimText(formData.name),
+      url: this.settingsService.trimText(formData.url),
+      secret: this.settingsService.trimText(formData.secret),
+      channel: formData.channel,
+      eventType: formData.eventType,
+      spid : this.spid,
+      id : this.webhookIdSelected
+    };
+    this.apiService.Webhooks(payload).subscribe({
+      next: (response) => {
+        this._toastService.success(response.message);
+        this.loadWebhooks();
+        $('#webhookModal').modal('hide');
+        this.resetWebhookForm();
+      },
+      error: (err) => {
+        const errorMsg = err?.error?.msg || "Something went wrong!";
+        this._toastService.error(errorMsg);
+      }
+    });
+  }
+}
+
+
+toggleEventDropdown(index: number): void {
+  this.eventSubscribedDropdownMap[index] = !this.eventSubscribedDropdownMap[index];
+}
+loadWebhooks() {
+  this.apiService.getWebhooks(this.spid).subscribe((response: WebhookPayload) => {
+    if(response){
+      this.webhookDetails = response;
+      this.changeDetector.detectChanges();
+    } else {
+      this._toastService.error("No webhook Data Found!")
+    }
+  });
+}
+
+updateDropdown(id: string) {
+  const selectedChannel = this.channelOption.find(
+      (channel: any) => channel.connected_id === id
+  );
+  if (selectedChannel) {
+      this.channelSelectedWebhook= selectedChannel.label;
+      this.channelPhoneNumberWebhook = selectedChannel.connected_id;
+      let saveData = `${selectedChannel.label} (${selectedChannel.connected_id})`
+      this.webhookForm.controls['channel'].setValue(saveData);
+  }
+  this.ShowAssignOption = false;
+}
+
+eventGroups: WebhookEventGroup[] = [
+  {
+    label: 'Contact',
+    events: [
+      { label: 'contact.created', value: WebhookEventType.ContactCreated },
+      { label: 'contact.updated', value: WebhookEventType.ContactUpdated },
+      { label: 'contact.deleted', value: WebhookEventType.ContactDeleted },
+      { label: 'contact.bulkupdate', value: WebhookEventType.ContactBulkUpdate},
+    ]
+  },
+  {
+    label: 'Message',
+    events: [
+      { label: 'message.received', value: WebhookEventType.MessageReceived },
+      { label: 'message.status', value: WebhookEventType.MessageStatus },
+      { label: 'message.flow.received', value: WebhookEventType.MessageFlowReceived },
+    ]
+  },
+  {
+    label: 'Conversation',
+    events: [
+      { label: 'conversation.created', value: WebhookEventType.ConversationCreated },
+      { label: 'conversation.open', value: WebhookEventType.ConversationOpen },
+      { label: 'conversation.resolved', value: WebhookEventType.ConversationResolved },
+      { label: 'conversation.assigned', value: WebhookEventType.ConversationAssigned },
+    ]
+  },
+  {
+    label: 'Template',
+    events: [
+      { label: 'template.status', value: WebhookEventType.TemplateStatus }
+    ]
+  }
+];
+
+isEventSelected(value: WebhookEventType): boolean {
+  return this.webhookForm.get('eventType')?.value?.includes(value);
+}
+
+toggleEventSelection(value: WebhookEventType, event: Event) {
+  const checked = (event.target as HTMLInputElement).checked;
+  const selected = this.webhookForm.get('eventType')?.value || [];
+
+  if (checked && !selected.includes(value)) {
+    this.webhookForm.get('eventType')?.setValue([...selected, value]);
+  } else if (!checked) {
+    this.webhookForm.get('eventType')?.setValue(selected.filter((v: any) => v !== value));
+  }
+}
+
+isGroupSelected(group: WebhookEventGroup): boolean {
+  const selected = this.webhookForm.get('eventType')?.value || [];
+  return group.events.every(e => selected.includes(e.value));
+}
+
+toggleGroupSelection(group: WebhookEventGroup, event: Event) {
+  const checked = (event.target as HTMLInputElement).checked;
+  const selected = this.webhookForm.get('eventType')?.value || [];
+
+  if (checked) {
+    const added = group.events
+      .map(e => e.value)
+      .filter(val => !selected.includes(val));
+    this.webhookForm.get('eventType')?.setValue([...selected, ...added]);
+  } else {
+    const filtered = selected.filter((val : any) => !group.events.map(e => e.value).includes(val));
+    this.webhookForm.get('eventType')?.setValue(filtered);
+  }
+}
+
+
+openDeletePopup(id: number) {
+  this.webhookIdSelected = id;
+  $("#deleteModal").modal('show');
+}
+
+deleteWebhook(){
+  this.apiService.deleteWebhook(this.webhookIdSelected).subscribe((response) => {
+    $("#deleteModal").modal('hide');
+    if(response){
+      this.loadWebhooks();
+    } else {
+      this._toastService.error("No webhook Data Found!")
+    }
+  });
+}
+
+
+editWebhook(webhookData: WebhookPayload){
+  this.webhookIdSelected = webhookData.id;
+
+   this.webhookForm.patchValue({
+    name: webhookData.name || '',
+    url: webhookData.url || '',
+    secret: webhookData.secret || '',
+    channel: webhookData.channel || '',
+    eventType: webhookData.eventType || []
+  });
+   this.openModal();
+}
+
+resetWebhookForm(){
+  this.webhookIdSelected = undefined;
+  this.webhookForm.reset();
+  this.channelSelected = 'Select Channel';
+}
+
+deleteToken(){
+  let payload = {
+    spId: this.spid
+  }
+  this.apiService.deleteToken(payload).subscribe({
+    next: (response) => {
+      if (response) {
+        this.resetAPIKeyData();
+        this._toastService.success("Token Deleted successfully!");
+      } else {
+        this._toastService.error(response?.msg || 'Unknown error occurred.');
+      }
+    },
+    error: (err) => {
+      this._toastService.error(err?.error?.error);
+    },
+  });
+  
+}
+resetAPIKeyData(){
+    this.isEdit = false;
+    this.apiKeyData = '';
+    this.isEnabled = false;
+    this.apiName = '';
+    this.webSocketUrl = '';
+    this.ipAddress = this.apiKeyData?.ips ? JSON.parse( JSON.stringify(this.apiKeyData?.ips)) : [''];
+
+}
+
+
+testWebhooks(webhookData: WebhookPayload) {
+  if(webhookData.id) this.loadingIds.add(webhookData.id);
+  this.apiService.testWebhooks(webhookData).subscribe({
+    next: (response) => {
+      if(webhookData.id) this.loadingIds.delete(webhookData.id);
+      if (response) {
+        this._toastService.success("Webhook request is successfully sent!");
+      } else {
+        this._toastService.error(response?.msg || 'Unknown error occurred.');
+      }
+    },
+    error: (err) => {
+      if(webhookData.id) this.loadingIds.delete(webhookData.id);
+      this._toastService.error(err?.error?.error);
+    },
+  });
+}
+
+onToggleWebhook(webhookData: WebhookPayload){
+webhookData.isEnabled = !webhookData.isEnabled
+let currentToggle = webhookData.isEnabled ? "Webhook is Enabled" : "Webhook is Disabled";
+  this.apiService.Webhooks(webhookData).subscribe((response) => {
+    if(response){
+      this._toastService.success(currentToggle);
+      this.loadWebhooks()
+    } else{
+      this._toastService.error("Something went wrong!")
+    }
+});
+}
+exportLogs(webhookData: WebhookPayload){
+  $("#export-logs").modal('show');
+}
+
+exportLogsAndMail(){
+  const formData = this.exportLogsForm.value;
+  const payload: ExportLogsPayload = {
+    spid: this.spid,
+    fromDate: formData.toDate,
+    toDate: formData.toDate,
+    email: this.email,
+    channel: this.channelDomain
+  };
+  this.apiService.exportLogs(payload).subscribe((response) => {
+    if(response){
+      this._toastService.success(response?.message)
+      $("#export-logs").modal('hide');
+    } else{
+      this._toastService.error("Something went wrong!")
+    }
+  });
+}
 
 }
