@@ -230,38 +230,165 @@ const payloadFromKeysAndValues = (keys, values) => {
   //       };
   //     }
   // }
-  let collectedWebhookRows = [];
-  let collectedWebhookKeys = null;
 
+  // let collectedWebhookRows = [];// todo deprecated
+  // let collectedWebhookKeys = null;
+
+  // async function ContactBulkUpdate(length, spid, query, values, user) {
+  //   const keys = extractKeysFromQuery(query);
+  //   if (!collectedWebhookKeys) {
+  //     collectedWebhookKeys = keys;
+  //   }
+  
+  //   collectedWebhookRows.push(values);
+  
+  //   try {
+  //     const result = await db.excuteQuery(query, values);
+  
+  //     if (collectedWebhookRows.length === length) {
+  //       const payload = { data: collectedWebhookRows };
+  //       const WebhookPayload = new contactBulkUpdate(payload, collectedWebhookKeys, 'Bulk Upload');
+  //       WebhookPayload.contact_updater = user;
+
+  //       await dispatchWebhookEvent(spid, WebhookPayload.eventType, WebhookPayload);
+  //       collectedWebhookRows = []; // Clear the collected rows after sending the webhook
+  //       collectedWebhookKeys = null; // Clear the keys after sending the webhook
+  //     }
+  
+  //     return result;
+  //   } catch (error) {
+  //     return {
+  //       success: false,
+  //       error: error.message,
+  //     };
+  //   }
+  // }
+
+const BATCH_SIZE = 200;
+let collectedWebhookRows = [];
+let collectedWebhookKeys = null;
   async function ContactBulkUpdate(length, spid, query, values, user) {
-    const keys = extractKeysFromQuery(query);
-    if (!collectedWebhookKeys) {
-      collectedWebhookKeys = keys;
-    }
+  const keys = extractKeysFromQuery(query);
+
+  if (!collectedWebhookKeys) {
+    collectedWebhookKeys = keys;
+  }
   
-    collectedWebhookRows.push(values);
+  collectedWebhookRows.push(values);
+
+  try {
+    const result = await db.excuteQuery(query, values);
   
-    try {
-      const result = await db.excuteQuery(query, values);
-  
-      if (collectedWebhookRows.length === length) {
-        const payload = { data: collectedWebhookRows };
+    if (collectedWebhookRows.length === length) {
+      for (let i = 0; i < collectedWebhookRows.length; i += BATCH_SIZE) {
+        const batch = collectedWebhookRows.slice(i, i + BATCH_SIZE);
+        const payload = { data: batch };
         const WebhookPayload = new contactBulkUpdate(payload, collectedWebhookKeys, 'Bulk Upload');
         WebhookPayload.contact_updater = user;
 
         await dispatchWebhookEvent(spid, WebhookPayload.eventType, WebhookPayload);
-        collectedWebhookRows = []; // Clear the collected rows after sending the webhook
-        collectedWebhookKeys = null; // Clear the keys after sending the webhook
+
+        // Optional: random delay like your SMS campaign example
+        const delay = Math.floor(Math.random() * (7000 - 5000 + 1)) + 5000;
+        await new Promise((resolve) => setTimeout(resolve, delay));
       }
-  
-      return result;
-    } catch (error) {
-      return {
-        success: false,
-        error: error.message,
-      };
+
+      // Clear everything after all batches are sent
+      collectedWebhookRows = [];
+      collectedWebhookKeys = null;
     }
+
+    return result;
+  } catch (error) {
+    return {
+      success: false,
+      error: error.message,
+    };
   }
+}
+
+ // ----------- It is Queuing technique works correct for bulk update currently using diff way for now-------------
+// const BATCH_SIZE = 5;
+// let webhookQueue = [];
+// let webhookKeys = null;
+// let webhookMeta = {
+//   totalExpected: 0,
+//   processedCount: 0,
+//   spid: null,
+//   user: null,
+//   isDispatching: false
+// };
+
+// async function flushWebhookQueue(forceFlush = false) {
+//   // While full batches are available, send them
+//   while (webhookQueue.length >= BATCH_SIZE) {
+//     const batch = webhookQueue.splice(0, BATCH_SIZE);
+//     const payload = { data: batch };
+//     const webhookPayload = new contactBulkUpdate(payload, webhookKeys, 'Bulk Upload');
+//     webhookPayload.contact_updater = webhookMeta.user;
+
+//     await dispatchWebhookEvent(webhookMeta.spid, webhookPayload.eventType, webhookPayload);
+//   }
+
+//   // If this is the final flush and there are leftover rows
+//   if (forceFlush && webhookQueue.length > 0) {
+//     const payload = { data: webhookQueue };
+//     const webhookPayload = new contactBulkUpdate(payload, webhookKeys, 'Bulk Upload');
+//     webhookPayload.contact_updater = webhookMeta.user;
+
+//     await dispatchWebhookEvent(webhookMeta.spid, webhookPayload.eventType, webhookPayload);
+//     webhookQueue = [];
+//   }
+
+//   // Reset when done
+//   if (forceFlush) {
+//     webhookKeys = null;
+//     webhookMeta = {
+//       totalExpected: 0,
+//       processedCount: 0,
+//       spid: null,
+//       user: null,
+//       isDispatching: false
+//     };
+//   }
+// }
+
+// async function ContactBulkUpdate(length, spid, query, values, user) {
+//   const keys = extractKeysFromQuery(query);
+
+//   // Initialize state on first call
+//   if (webhookMeta.processedCount === 0) {
+//     webhookKeys = keys;
+//     webhookMeta.totalExpected = length;
+//     webhookMeta.spid = spid;
+//     webhookMeta.user = user;
+//   }
+
+//   webhookQueue.push(values);
+//   webhookMeta.processedCount++;
+
+//   try {
+//     const result = await db.excuteQuery(query, values);
+
+//     // Send batch if threshold met
+//     if (webhookQueue.length >= BATCH_SIZE) {
+//       await flushWebhookQueue(false);
+//     }
+
+//     // If this is the final call, flush remaining
+//     if (webhookMeta.processedCount === webhookMeta.totalExpected) {
+//       await flushWebhookQueue(true);
+//     }
+
+//     return result;
+//   } catch (error) {
+//     return {
+//       success: false,
+//       error: error.message,
+//     };
+//   }
+// }
+  
 
   async function deleteContacts (data) {
     let WebhookPayload = new deleteContactsModel(data);
