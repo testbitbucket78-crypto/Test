@@ -52,7 +52,7 @@ class ContactsAdded {
 class deleteContactsModel {
   constructor(payload) {
     this.eventType = WebhookEventType.ContactDeleted;
-    this.SP_ID = payload.SP_ID;
+    //this.SP_ID = payload.SP_ID;
     this.delete_initiator = 'System';
 
     const ids = Array.isArray(payload.customerId)
@@ -144,7 +144,7 @@ class deleteContactsModel {
       retryCount                // 0
     ) {
       this.eventType = WebhookEventType.MessageReceived;
-      this.SP_ID = spid;
+      //this.SP_ID = spid;
       this.channel_number = display_phone_number;
       this.sender = {
         phoneNo,
@@ -180,7 +180,7 @@ class deleteContactsModel {
       //this.statusCode = parseInt(ack); // 1 = sent, 2 = delivered, 3 = read
       this.status = messageAckStatus[ack]; // 1 = sent, 2 = delivered, 3 = read
       this.messageId = message?._data?.id?.id || null;
-      this.spid = spid;
+      //this.spid = spid;
   
       const rawTimestamp = new Date(message.timestamp * 1000).toUTCString();
       this.message_time = moment.utc(rawTimestamp).format('YYYY-MM-DD HH:mm:ss');
@@ -193,7 +193,7 @@ class deleteContactsModel {
   class conversationStatusModel {
     constructor(spid, conversationStatus , InteractionId) {
         this.channel_number = null; // todo 1
-        this.SP_ID = spid;
+        //this.SP_ID = spid;
         this.eventType = WebhookEventType.ConversationStatusUpdate;
         this.status = conversationStatus; // 'Open', 'Resolved', 'Assigned', 'Created'
         this.customer_number = null; // todo 1
@@ -215,7 +215,7 @@ class deleteContactsModel {
       //this.InteractionId = args.InteractionId || null;
       //this.lastAssistedAgent = args.lastAssistedAgent || null;
       //this.MappedBy = args.MappedBy || null;
-      this.SP_ID = args.SP_ID || '';
+      //this.SP_ID = args.SP_ID || '';
     }
   }
 
@@ -223,7 +223,7 @@ class deleteContactsModel {
     constructor(event, spid){
         this.channel_number = null; // todo 1
         this.eventType = WebhookEventType.TemplateStatus;
-        this.SP_ID = spid || '';
+        //this.SP_ID = spid || '';
         this.templateId = event?.message_template_id || null;
         this.status = event?.event || null;
     }
@@ -233,9 +233,9 @@ class deleteContactsModel {
     constructor(spid, customerId, source, assignment){
         this.channel_number = null; // todo 1
         this.eventType = WebhookEventType.ConversationCreated;
-        this.SP_ID = spid || null;
+        //this.SP_ID = spid || null;
         this.source =  source || 'system' ;  //user name>/system/incoming
-       // this.action = "Conversation Created";
+        // this.action = "Conversation Created";
         this.assignment = assignment || "System";  //user name>/bot/unassigned
         this.customerId = customerId || null;
     }

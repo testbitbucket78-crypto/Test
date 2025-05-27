@@ -266,7 +266,7 @@ const payloadFromKeysAndValues = (keys, values) => {
   async function deleteContacts (data) {
     let WebhookPayload = new deleteContactsModel(data);
     WebhookPayload.delete_initiator = await getUserNameById(data?.userId); 
-    await dispatchWebhookEvent(WebhookPayload.SP_ID, WebhookPayload.eventType, WebhookPayload);
+    await dispatchWebhookEvent(data?.SP_ID, WebhookPayload.eventType, WebhookPayload);
     
   }
   
@@ -388,13 +388,13 @@ const payloadFromKeysAndValues = (keys, values) => {
   async function templateStatus(event, spid) {
     const payload = new templateStatusModel(event, spid);
     payload.channel_number = await getChannelNumberBySpId(spid);
-    await dispatchWebhookEvent(payload.SP_ID, payload.eventType, payload);
+    await dispatchWebhookEvent(spid, payload.eventType, payload);
   }
 
   async function conversationCreated(spid, customerId, displayPhoneNumber) {
     const payload = new conversationCreatedModel(spid, customerId, '', displayPhoneNumber);
     payload.channel_number = await getChannelNumberBySpId(spid);
-    await dispatchWebhookEvent(payload.SP_ID, payload.eventType, payload);
+    await dispatchWebhookEvent(spid, payload.eventType, payload);
   }
 
   async function flowReceieved(spid, payload) {
