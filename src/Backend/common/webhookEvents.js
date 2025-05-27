@@ -264,7 +264,7 @@ const payloadFromKeysAndValues = (keys, values) => {
   //   }
   // }
 
-const BATCH_SIZE = 3;
+const BATCH_SIZE = 200;
 let collectedWebhookRows = [];
 let collectedWebhookKeys = null;
   async function ContactBulkUpdate(length, spid, query, values, user) {
