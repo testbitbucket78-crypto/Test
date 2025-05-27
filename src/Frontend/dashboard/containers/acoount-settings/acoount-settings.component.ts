@@ -920,9 +920,13 @@ eventGroups: WebhookEventGroup[] = [
     label: 'Conversation',
     events: [
       { label: 'conversation.created', value: WebhookEventType.ConversationCreated },
-      { label: 'conversation.open', value: WebhookEventType.ConversationOpen },
-      { label: 'conversation.resolved', value: WebhookEventType.ConversationResolved },
-      { label: 'conversation.assigned', value: WebhookEventType.ConversationAssigned },
+      // { label: 'conversation.open', value: WebhookEventType.ConversationOpen },
+      // { label: 'conversation.resolved', value: WebhookEventType.ConversationResolved },
+      { label: 'conversation.status.update', value: WebhookEventType.ConversationStatusUpdate },
+      
+     // { label: 'conversation.assigned', value: WebhookEventType.ConversationAssigned },
+      { label: 'conversation.assignment.update', value: WebhookEventType.ConversationAssigned },
+
     ]
   },
   {
