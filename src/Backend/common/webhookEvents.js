@@ -264,7 +264,7 @@ const payloadFromKeysAndValues = (keys, values) => {
   //   }
   // }
 
-const BATCH_SIZE = 200;
+const BATCH_SIZE = 3;
 let collectedWebhookRows = [];
 let collectedWebhookKeys = null;
   async function ContactBulkUpdate(length, spid, query, values, user) {
@@ -288,9 +288,7 @@ let collectedWebhookKeys = null;
 
         await dispatchWebhookEvent(spid, WebhookPayload.eventType, WebhookPayload);
 
-        // Optional: random delay like your SMS campaign example
-        const delay = Math.floor(Math.random() * (7000 - 5000 + 1)) + 5000;
-        await new Promise((resolve) => setTimeout(resolve, delay));
+        await new Promise((resolve) => setTimeout(resolve, 1000));
       }
 
       // Clear everything after all batches are sent
