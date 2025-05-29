@@ -54,5 +54,17 @@ const  WebhookEventType = {
     Assigned: 'conversation.assigned',
     Created: 'conversation.created'
   };
+  
+    const messageAckStatus = {
+    1: 'SENT',
+    2: 'DELIVERED',
+    3: 'READ',
+    4: 'FAILED',
+    5: 'REJECTED',
+    6: 'EXPIRED',
+    7: 'QUEUED',
+    8: 'SENDING'
+  };
 
-module.exports = { MessagingLimitTiers, MessagingName, channelName, channelForSendingMessage, channelsForTemplates,userStatus, WebhookEventType, ConversationStatusMap }
+
+module.exports = { MessagingLimitTiers, MessagingName, channelName, channelForSendingMessage, channelsForTemplates,userStatus, WebhookEventType, ConversationStatusMap, messageAckStatus }

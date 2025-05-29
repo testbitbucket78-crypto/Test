@@ -221,18 +221,29 @@ class WhapiIncomingMessage {
     }
 }
 
+// class WhapiMessageRequest { // deprecated
+//     constructor({
+//         to,
+//         body,
+//         media = undefined,
+//     }) {
+//         this.to = to;
+//         this.body = body;
+//         if(media )this.media = media;
+//     }
+// }
 class WhapiMessageRequest {
-    constructor({
-        to,
-        body,
-        media = undefined,
-    }) {
-        this.to = to;
-        this.body = body;
-        if(media )this.media = media;
-    }
-}
+  constructor({ to, body, media = undefined }) {
+    this.to = to;
 
+    if (media) {
+      this.media = media;
+      this.caption = body; 
+    } else {
+      this.body = body;
+    }
+  }
+}
 class WhapiMessageResponse {
     constructor(success, status, msgId = null, message = null, error = null) {
         this.success = success;

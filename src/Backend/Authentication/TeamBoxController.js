@@ -769,7 +769,7 @@ const insertMessage = async (req, res) => {
 
             let middlewareresult = "";
             if (Type != 'notes') {
-                if (channelType[0].isBlocked != 1) {
+                if (channelType[0]?.isBlocked != 1) {
                     if(req?.body?.isTemplate == true && req.body?.interactiveButtonsPayload){
                         middlewareresult = await middleWare.sendingTemplate(SPID, req.body.messageTo, header, content, req.body?.interactiveButtonsPayload);
                     }

@@ -298,6 +298,7 @@ async function Message(message, incommingMessageDependency){
 async function messageAck(statuses) {
   let r1 = await CreateChannelResponse.getByChannelId(statuses.channel_id);
   let spid = r1?.spid;
+  let spsPhoneNo = r1?.phone;
     for (const status of statuses.statuses) {
         let phoneNumber = status.recipient_id.replace(/@s\.whatsapp\.net$/, "");
         let ack = status.code;
@@ -324,7 +325,7 @@ async function messageAck(statuses) {
                     ) AND is_deleted !=1  AND (msg_status IS NULL);`, [phoneNumber, spid]);
 
                 logger.info(`Send ============== ${sended?.affectedRows}`);
-                notify.NotifyServer(phoneNumber, false, ack1InId[0]?.InteractionId, 'Out', 1, 0, messageId);
+                notify.NotifyServer(spsPhoneNo, false, ack1InId[0]?.InteractionId, 'Out', 1, 0, messageId);
 
             } else if (status.status === 'delivered') {
                 const LastModifiedDate = moment.utc(new Date().toUTCString()).format('YYYY-MM-DD HH:mm:ss');
@@ -343,7 +344,7 @@ async function messageAck(statuses) {
 
                 logger.info(`Deliver ============== ${deded?.affectedRows}`);
                 let ack2InId = await db.excuteQuery(notifyInteraction, [phoneNumber, spid]);
-                notify.NotifyServer(phoneNumber, false, ack2InId[0]?.InteractionId, 'Out', 2, 0, messageId);
+                notify.NotifyServer(spsPhoneNo, false, ack2InId[0]?.InteractionId, 'Out', 2, 0, messageId);
 
             } else if (status.status === 'read') {
                 const LastModifiedDate = moment.utc(new Date().toUTCString()).format('YYYY-MM-DD HH:mm:ss');
@@ -362,7 +363,7 @@ async function messageAck(statuses) {
 
                 logger.info(`Read ============== ${resd?.affectedRows}`);
                 let ack3InId = await db.excuteQuery(notifyInteraction, [phoneNumber, spid]);
-                notify.NotifyServer(phoneNumber, false, ack3InId[0]?.InteractionId, 'Out', 3, 0, messageId);
+                notify.NotifyServer(spsPhoneNo, false, ack3InId[0]?.InteractionId, 'Out', 3, 0, messageId);
             }
         } catch (error) {
             logger.error(`Error processing message_ack for SPID: ${spid}, error: ${error}`);
@@ -902,7 +903,13 @@ async function saveInMessages(message) {
   
         let message_media = "text";
         if (Type === 'image' || Type === 'video' || Type === 'audio' || Type === 'document') {
-          const media = msg?.image?.link
+          let media
+          if( msg?.image?.preview){
+            media = await uploadBase64ToAws(msg?.image?.preview, r1?.spid, r1?.phone, Type);
+          } else{
+              media = msg?.image?.link
+          }
+          message_text = msg?.image?.caption || message_text;
           message_media = media
         }
   
@@ -923,6 +930,41 @@ async function saveInMessages(message) {
       console.error("Error saving messages:", error);
     }
   }
+
+async function uploadBase64ToAws(base64, spid, phoneNumberId, type) {
+  try {
+    const base64Data = base64.split(',')[1];
+    const buffer = Buffer.from(base64Data, 'base64');
+
+    let key = '';
+    let contentType = '';
+    let awsDetails;
+
+    if (type === 'image') {
+      key = `${spid}/teambox/${phoneNumberId}/whatsAppWeb.jpeg`;
+      awsDetails = await awsHelper.uploadStreamToAws(key, base64Data); 
+    } else if (type === 'video') {
+      key = `${spid}/teambox/${phoneNumberId}/whatsAppWeb.mp4`;
+      contentType = 'video/mp4';
+      awsDetails = await awsHelper.uploadVideoToAws(key, buffer, contentType);
+    } else if (type === 'document') {
+      key = `${spid}/teambox/${phoneNumberId}/whatsAppWeb.pdf`;
+      contentType = 'application/pdf';
+      awsDetails = await awsHelper.uploadVideoToAws(key, buffer, contentType);
+    } else if (type === 'audio') {
+      key = `${spid}/teambox/${phoneNumberId}/whatsAppWeb.mp3`;
+      contentType = 'audio/mpeg';
+      awsDetails = await awsHelper.uploadVideoToAws(key, buffer, contentType);
+    } else {
+      throw new Error(`Unsupported media type: ${type}`);
+    }
+
+    return awsDetails?.value?.Location;
+  } catch (error) {
+    console.error(`Error in uploadBase64ToAws: ${error.message}`);
+    throw error;
+  }
+}
 
 let messageQuery = `SELECT 
 ec.customerId,
@@ -1445,6 +1487,7 @@ function getWhapiEndpoint(type) {
         case 'text': return `${baseURL}/text`;
         case 'image': return `${baseURL}/image`;
         case 'video': return `${baseURL}/video`;
+        case 'document': return `${baseURL}/document`;
         default: throw new Error('Invalid message type');
     }
 }
