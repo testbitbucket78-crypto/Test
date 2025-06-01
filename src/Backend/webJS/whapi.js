@@ -375,7 +375,7 @@ async function messageAck(statuses) {
 const handleDisconnection = async (channel_id) => {
     try {
         let r1 = await CreateChannelResponse.getByChannelId(channel_id);
-        const phoneNo = r1?.phoneNo;
+        const phoneNo = r1?.phone;
         const spid = r1?.spid;
 
         logger.info(`Channel initiated for disconnection for spid: ${spid}, and phone number: ${phoneNo}`);
@@ -453,7 +453,7 @@ const handleAuthentication = async (channel_id) => {
         await channel.saveToDatabase();
         updateConnectedChannelNo(channel.phone, channel.spid);
         await CreateChannelResponse.setChannelAlreadyAuthenticated(spid);
-        notify.NotifyServer(phoneNo, false, 'Client Authenticated');
+        notify.NotifyServer(channel.phone, false, 'Client is ready!');
 
     } catch (error) {
         console.error(`Error handling authentication for channel_id: ${channel_id}`, error);
@@ -463,6 +463,7 @@ const handleAuthentication = async (channel_id) => {
 async function updateConnectedChannelNo(phoneNo, spid){
   await db.excuteQuery('UPDATE WhatsAppWeb SET connected_id = ? WHERE spid = ?', [phoneNo, spid]);
   await db.excuteQuery('UPDATE user SET mobile_number = ? WHERE spid = ?', [phoneNo, spid]);
+  await db.excuteQuery('UPDATE whapi_channels SET phone = ? WHERE  spid = ?', [phoneNo, spid]);
 }
 async function checkifSPAlreadyExist(phoneNo, spid) {
   try {
@@ -634,12 +635,21 @@ async function isActiveSpidClient(spid) {
   if (spid) {
     console.log("if client ready")
     let WAwebdetails = await db.excuteQuery('select channel_id,connected_id,channel_status from  WhatsAppWeb where spid=? and is_deleted !=1', [spid]);
-    return { "isActiveSpidClient": true, "WAweb": WAwebdetails };
-  } else {
-    let disconnectWAweb = await db.excuteQuery('update WhatsAppWeb set channel_status=0 where spid=? and channel_id =? ', [spid, 'WA Web']);
-    let WAwebdetails = await db.excuteQuery('select channel_id,connected_id,channel_status from  WhatsAppWeb where spid=? and is_deleted !=1', [spid]);
-    return { "isActiveSpidClient": false, "WAweb": WAwebdetails };
-  }
+    if (WAwebdetails.length > 0) {
+      if(WAwebdetails[0].channel_status == 0){
+        return { "isActiveSpidClient": false, "WAweb": WAwebdetails };
+      }
+      else{
+        return { "isActiveSpidClient": true, "WAweb": WAwebdetails };
+      }
+    }
+    
+  } 
+  //else {
+  //   let disconnectWAweb = await db.excuteQuery('update WhatsAppWeb set channel_status=0 where spid=? and channel_id =? ', [spid, 'WA Web']);
+  //   let WAwebdetails = await db.excuteQuery('select channel_id,connected_id,channel_status from  WhatsAppWeb where spid=? and is_deleted !=1', [spid]);
+  //   return { "isActiveSpidClient": false, "WAweb": WAwebdetails };
+  // }
 }
 
 

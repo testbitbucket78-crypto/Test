@@ -234,7 +234,7 @@ class WhapiIncomingMessage {
 // }
 class WhapiMessageRequest {
   constructor({ to, body, media = undefined }) {
-    this.to = to;
+    this.to = String(to);
 
     if (media) {
       this.media = media;
