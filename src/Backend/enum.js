@@ -63,7 +63,7 @@ const  WebhookEventType = {
     Created: 'conversation.created'
   };
   
-    messageAckStatus = {
+    const messageAckStatus = {
     1: 'SENT',
     2: 'DELIVERED',
     3: 'READ',

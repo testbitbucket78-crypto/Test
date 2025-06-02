@@ -24,7 +24,7 @@ let metaPhoneNumberID = 211544555367892
 const { sendEmail } = require('./Services/EmailService');
 const { EmailTemplateProvider } = require('./common/template')
 const { userStatus } = require('./enum.js')
-
+const variable = require('./common/constant')
 // Function to check if the schedule_datetime is within 1-2 minutes from the current time
 function isWithinTimeWindow(scheduleDatetime) {
   const currentTime = moment();
@@ -778,7 +778,7 @@ async function messageThroughselectedchannel(spid, from, type, text, media, phon
         logger.info(`Not BlockedContact ${from} ,${spid} ${new Date()}`);
         let clientReady = await isClientActive(spid);
         //console.log("clientReady",clientReady)
-        if (clientReady?.status) {
+        if (clientReady?.status || variable.SPID == spid || variable.provider == 'whapi') {
           let saveSendedMessage = await saveMessage(from, spid, '', message_content, media, type, type, 'WA Web', "Web campaign message", 1,buttons)
           let response = await middleWare.postDataToAPI(spid, from, getMediaType, text, media, '', saveSendedMessage);
           console.log(spid, " web response", JSON.stringify(response?.status), response.msgId);
