@@ -151,7 +151,7 @@ const insertCustomers = async (req, res) => {
                 let insertedCon = await db.excuteQuery(insertQuery, [values]);
                 customerId = insertedCon?.insertId;
                 interactionId = await db.excuteQuery('select * from Interaction where customerId=? and is_deleted !=1 and SP_ID=? order by created_at desc', [customerId, SP_ID]);
-                conversationCreated(SP_ID, customerId);
+                conversationCreated(SP_ID, customerId, displayPhoneNumber, req?.body?.userId);
                 res.status(200).send({
                     msg: 'Contact added successfully.',
                     status: 200,
