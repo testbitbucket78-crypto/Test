@@ -173,7 +173,7 @@ class deleteContactsModel {
     }
   }
   class MessageStatusModel {
-    constructor(message, ack, spid) {
+    constructor(message, ack, spid) { // todo 
       this.eventType = WebhookEventType.MessageStatus;
       this.customer_number = message.to.replace(/@c\.us$/, "");
       this.channel_number = message?.from.replace(/@c\.us$/, "");

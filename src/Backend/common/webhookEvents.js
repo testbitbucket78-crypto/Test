@@ -228,7 +228,7 @@ let collectedWebhookKeys = null;
   }
 }
 
- // ----------- It is Queuing technique works correct for bulk update currently using diff way for now-------------
+ // ----------- todo It is Queuing technique works correct for bulk update currently using diff way for now-------------
 // const BATCH_SIZE = 5;
 // let webhookQueue = [];
 // let webhookKeys = null;
