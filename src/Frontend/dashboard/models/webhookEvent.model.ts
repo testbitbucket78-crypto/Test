@@ -15,9 +15,12 @@ export interface WebhookEventGroup {
     MessageStatus = 'message.status',
     MessageFlowReceived = 'message.flow.received',
     ConversationCreated = 'conversation.created',
-    ConversationOpen = 'conversation.open',
-    ConversationResolved = 'conversation.resolved',
-    ConversationAssigned = 'conversation.assigned',
+    // ConversationOpen = 'conversation.open',
+    // ConversationResolved = 'conversation.resolved',
+    ConversationStatusUpdate = 'conversation.status.update',
+    //ConversationAssigned = 'conversation.assigned',
+    ConversationAssigned = 'conversation.assignment.update',
+
     TemplateStatus = 'template.status'
   }
 
