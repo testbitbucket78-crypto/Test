@@ -5,32 +5,10 @@ const { ContactsAdded, contactBulkUpdate, deleteContactsModel, MessageReceivedMo
 const { dispatchWebhookEvent }  = require('../Services/webhookDispatcher');
 const { WebhookEventType } = require('../enum');
 const { webhookPayload } = require('./constant');
+const logger = require('./logger.log');
 
-// todo 1 made for the insert only ( Deprecated extractKeysFromQuery )
-// const extractKeysFromQuery = (query) => {
-//     const match = query.match(/\(([^)]+)\)/);
-//     if (!match) return [];
-//     return match[1].split(',').map(k => k.trim());
-// };
 
-// todo 2 made made for insert and update querry (deprecated 2)
-// const extractKeysFromQuery = (query) => {
-//     if (query.trim().toUpperCase().startsWith('INSERT')) {
-//       // Extract keys from INSERT INTO (...) VALUES (...)
-//       const match = query.match(/\(([^)]+)\)/);
-//       if (!match) return [];
-//       return match[1].split(',').map(k => k.trim());
-//     } else if (query.trim().toUpperCase().startsWith('UPDATE')) {
-//       // Extract keys from UPDATE ... SET key1 =?, key2 =?, ...
-//       const setPart = query.split('SET')[1]?.split('WHERE')[0];
-//       if (!setPart) return [];
-//       return setPart
-//         .split(',')
-//         .map(pair => pair.split('=')[0].trim())
-//         .filter(key => key.length);
-//     }
-//     return [];
-//   };
+
   // todo made it to ingnore keys heaving static value 
 // const extractKeysFromQuery = (query) => {
 //   const trimmedQuery = query.trim().toUpperCase();
@@ -69,7 +47,6 @@ async function getUserNameById(userId) {
       return 'Unknown User'; 
     }
   } catch (error) {
-    console.error('Error fetching user name:', error.message);
     return 'Unknown User'; 
   }
 }
@@ -90,7 +67,7 @@ async function getCustomerNumberByInteractionId(interactionId) {
       return null;
     }
   } catch (error) {
-    console.error('Error fetching customer number:', error.message);
+    logger.error(`Error fetching customer number:: ${error}`)
     return null;
   }
 }
@@ -113,7 +90,7 @@ async function getChannelNumberBySpId(spId) {
       return null;
     }
   } catch (error) {
-    console.error('Error fetching mobile numbers:', error.message);
+    logger.error(`Error fetching mobile numbers:: ${error}`)
     return [];
   }
 }
@@ -170,11 +147,7 @@ const payloadFromKeysAndValues = (keys, values) => {
   async function addContact (spid , querry, values){
     const keys = extractKeysFromQuery(querry);
     const payload = payloadFromKeysAndValues(keys, values)
-    // const payload = {};
-    // keys.forEach((key, index) => {
-    //   payload[key] = values[index];
-    // });
-    
+
     var webhookPayload = new ContactsAdded(payload, keys);
     webhookPayload.contact_creator = await getUserNameById(webhookPayload?.data?.uid); 
 
@@ -213,56 +186,6 @@ const payloadFromKeysAndValues = (keys, values) => {
       }
   }
 
-  // async function ContactBulkUpdate (length, spid, querry, values) { // todo deprecate this function
-  //   const keys = extractKeysFromQuery(querry);
-  //   const payload = payloadFromKeysAndValues(keys, values)
-  
-  //   const WebhookPayload = new contactBulkUpdate(payload, keys);
-  //   await dispatchWebhookEvent(spid, WebhookPayload.eventType, WebhookPayload);
-  //   try {
-  //     let result = await db.excuteQuery(querry, values);
-  //     return result;
-
-  //     } catch (error) {
-  //       return {
-  //         success: false,
-  //         error: error.message,
-  //       };
-  //     }
-  // }
-
-  // let collectedWebhookRows = [];// todo deprecated
-  // let collectedWebhookKeys = null;
-
-  // async function ContactBulkUpdate(length, spid, query, values, user) {
-  //   const keys = extractKeysFromQuery(query);
-  //   if (!collectedWebhookKeys) {
-  //     collectedWebhookKeys = keys;
-  //   }
-  
-  //   collectedWebhookRows.push(values);
-  
-  //   try {
-  //     const result = await db.excuteQuery(query, values);
-  
-  //     if (collectedWebhookRows.length === length) {
-  //       const payload = { data: collectedWebhookRows };
-  //       const WebhookPayload = new contactBulkUpdate(payload, collectedWebhookKeys, 'Bulk Upload');
-  //       WebhookPayload.contact_updater = user;
-
-  //       await dispatchWebhookEvent(spid, WebhookPayload.eventType, WebhookPayload);
-  //       collectedWebhookRows = []; // Clear the collected rows after sending the webhook
-  //       collectedWebhookKeys = null; // Clear the keys after sending the webhook
-  //     }
-  
-  //     return result;
-  //   } catch (error) {
-  //     return {
-  //       success: false,
-  //       error: error.message,
-  //     };
-  //   }
-  // }
 
 const BATCH_SIZE = 200;
 let collectedWebhookRows = [];
