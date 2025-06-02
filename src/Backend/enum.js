@@ -42,15 +42,23 @@ const  WebhookEventType = {
     MessageStatus : 'message.status',
     MessageFlowReceived : 'message.flow.received',
     ConversationCreated : 'conversation.created',
-    ConversationOpen : 'conversation.open',
-    ConversationResolved : 'conversation.resolved',
-    ConversationAssigned : 'conversation.assigned',
+    // ConversationOpen : 'conversation.open',
+    // ConversationResolved : 'conversation.resolved',
+    ConversationStatusUpdate : 'conversation.status.update',
+    //ConversationAssigned : 'conversation.assigned',
+    ConversationAssigned : 'conversation.assignment.update',
     TemplateStatus : 'template.status',
   }
 
+//   const ConversationStatusMap = { // todo deprecated
+//     Open: 'conversation.open',
+//     Resolved: 'conversation.resolved',
+//     Assigned: 'conversation.assigned',
+//     Created: 'conversation.created'
+//   };
   const ConversationStatusMap = {
-    Open: 'conversation.open',
-    Resolved: 'conversation.resolved',
+    Open: 'Open',
+    Resolved: 'Resolved',
     Assigned: 'conversation.assigned',
     Created: 'conversation.created'
   };

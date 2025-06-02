@@ -573,7 +573,7 @@ app.post('/importContact', authenticateToken, async (req, res) => {
     if (purpose === 'Add new contact only') {
       try {
 
-        let addNewUserOnly = await addOnlynewContact(CSVdata, identifier, SP_ID)
+        let addNewUserOnly = await addOnlynewContact(CSVdata, identifier, SP_ID, user)
 
         sendMailAfterImport(emailId, user, addNewUserOnly?.count,Channel)
         res.status(200).send({
@@ -733,7 +733,7 @@ async function findTagId(TagNames, spid) {
 }
 
 
-async function addOnlynewContact(CSVdata, identifier, SP_ID) {
+async function addOnlynewContact(CSVdata, identifier, SP_ID, user) {
   try {
     let result;
     let count = 0;
@@ -768,7 +768,7 @@ async function addOnlynewContact(CSVdata, identifier, SP_ID) {
       `;
         const updateValues = set.map((field) => field.displayName).concat([identifierValue, SP_ID]);
         if(variables.webhookSPIDs.includes(String(SP_ID))) {
-          await ContactBulkUpdate(CSVdata?.length, SP_ID, updateQuery, updateValues);
+          await ContactBulkUpdate(CSVdata?.length, SP_ID, updateQuery, updateValues, user);
         }
         result = await db.excuteQuery(updateQuery, updateValues);
       }
@@ -778,7 +778,7 @@ async function addOnlynewContact(CSVdata, identifier, SP_ID) {
         //  console.log(values, fieldNames);
         // Ensure db.executeQuery returns a promise
         if(variables.webhookSPIDs.includes(String(SP_ID))) {
-          await ContactBulkUpdate(CSVdata?.length, SP_ID, query, values);
+          await ContactBulkUpdate(CSVdata?.length, SP_ID, query, values, user);
         } 
         result = await db.excuteQuery(query, [values,  identifierValue, SP_ID]);
         

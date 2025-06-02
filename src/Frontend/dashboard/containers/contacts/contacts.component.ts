@@ -582,6 +582,8 @@ onChangePage(pageOfItems: any) {
       var data = {
 
         customerId: deleteList,
+        customerNumber: this.checkedConatct.map(x => x.displayPhoneNumber),
+        userId : this.userid,
         SP_ID: sessionStorage.getItem('SP_ID')
       }
       
