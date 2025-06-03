@@ -1,45 +1,115 @@
 const { WebhookEventType, messageAckStatus } = require('../enum') //ConversationStatusMap
 const moment = require('moment');
-class ContactsAdded {
-    constructor(payload, keys) {
-      this.eventType = WebhookEventType.ContactCreated;
-      this.contact_creator = 'System'; // default to 'System' if not provided
-      this.contact_id =  null; // default to null if not provided
-      this.data = {};
+// class ContactsAdded { // todo deprecated
+//     constructor(payload, keys) {
+//       this.eventType = WebhookEventType.ContactCreated;
+//       this.contact_creator = 'System'; // default to 'System' if not provided
+//       this.contact_id =  null; // default to null if not provided
+//       this.data = {};
   
-      keys.forEach((key) => {
-        this.data[key] = payload[key];
-      });
-    }
-  }
+//       keys.forEach((key) => {
+//         this.data[key] = payload[key];
+//       });
+//     }
+//   }
 
-  // class contactBulkUpdate { // todo deprecated
+  class ContactsAdded {
+  constructor(payload, keys) {
+    this.event_type = WebhookEventType.ContactCreated;
+    this.contact_creator = 'System';
+    this.contact_id = null;
+    this.data = {};
+
+    keys.forEach((key) => {
+       if (key === 'SP_ID') return;
+      switch (key) {
+        case 'displayPhoneNumber':
+          this.data.customer_number = payload[key];
+          break;
+        case 'Name':
+          this.data.customer_name = payload[key];
+          break;
+        case 'emailId':
+          this.data.email_id = payload[key];
+          break;
+        case 'ContactOwner':
+          this.data.contact_owner = payload[key];
+          break;
+        case 'tag':
+          this.data.tags = payload[key];
+          break;
+        case 'OptInStatus':
+          this.data.optin_status = payload[key];
+          break;
+        default:
+          this.data[key] = payload[key];
+      }
+    });
+
+    this.data.block = false;
+  }
+}
+
+  // }
+  // class contactBulkUpdate { todo deprecated
   //   constructor(payload, keys, action) {
-  //       this.eventType = WebhookEventType.ContactCreated;
-  //       this.Action = action;
-  //       this.data = {};
-    
-  //       keys.forEach((key) => {
-  //         this.data[key] = payload[key];
+  //     this.eventType = WebhookEventType.ContactBulkUpdate;
+  //     this.Action = action || 'Bulk Upload';
+  //     this.contact_updater = 'System'; // default to 'System' if not provided
+  //     this.data = [];
+  
+  //     payload.data.forEach((row) => {
+  //       const rowObj = {};
+  //       keys.forEach((key, index) => {
+          
+  //         rowObj[key] = row[index];
   //       });
-  //     }
+  //       this.data.push(rowObj);
+  //     });
+  //   }
   // }
   class contactBulkUpdate {
-    constructor(payload, keys, action) {
-      this.eventType = WebhookEventType.ContactBulkUpdate;
-      this.Action = action || 'Bulk Upload';
-      this.contact_updater = 'System'; // default to 'System' if not provided
-      this.data = [];
-  
-      payload.data.forEach((row) => {
-        const rowObj = {};
-        keys.forEach((key, index) => {
-          rowObj[key] = row[index];
-        });
-        this.data.push(rowObj);
+  constructor(payload, keys, action) {
+    this.eventType = WebhookEventType.ContactBulkUpdate;
+    this.Action = action || 'Bulk Upload';
+    this.contact_updater = 'System'; // default to 'System' if not provided
+    this.data = [];
+
+    payload.data.forEach((row) => {
+      const rowObj = {};
+
+      keys.forEach((key, index) => {
+        if (key === 'SP_ID') return;
+
+        switch (key) {
+          case 'displayPhoneNumber':
+            rowObj.customer_number = row[index];
+            break;
+          case 'Name':
+            rowObj.customer_name = row[index];
+            break;
+          case 'emailId':
+            rowObj.email_id = row[index];
+            break;
+          case 'ContactOwner':
+            rowObj.contact_owner = row[index];
+            break;
+          case 'tag':
+            rowObj.tags = row[index];
+            break;
+          case 'OptInStatus':
+            rowObj.optin_status = row[index];
+            break;
+          default:
+            rowObj[key] = row[index];
+        }
       });
-    }
+
+      rowObj.block = false;
+      this.data.push(rowObj);
+    });
   }
+}
 
   // class deleteContactsModel { // todo deprecated
   //   constructor(payload) {

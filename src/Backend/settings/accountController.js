@@ -289,6 +289,7 @@ const saveOrUpdateWebhook = async (req, res) => {
       if (urlExists) {
         throw new Error("URL Already Exists. Please use a different one.");
       }
+      await testWebhookUrl(webhook.url);
 
       await webhook.saveOrUpdateToDatabase();
       res.status(200).json({ message: 'Webhook saved successfully' });
@@ -301,6 +302,33 @@ const saveOrUpdateWebhook = async (req, res) => {
     }
   };
 
+const testWebhookUrl = async (url) => {
+  if (!url) {
+    throw new Error("Webhook URL is missing.");
+  }
+  if (!isValidUrl(url)) {
+      throw new Error("Invalid webhook URL format.");
+    }
+  try {
+    const response = await axios.post(url, 'Checking the Connection before saving', {
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      timeout: 5000,
+    });
+    return response?.data;
+  } catch (err) {
+    throw new Error('Error while trying to ping webhook! Please check the URL again.');
+  }
+};
+const isValidUrl = (url) => {
+  try {
+    new URL(url); // will throw if invalid
+    return true;
+  } catch (e) {
+    return false;
+  }
+};
   const getWebhooks = async (req, res) => {
     try {
       const webhook = new Webhooks(req.params);
