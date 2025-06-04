@@ -1174,7 +1174,7 @@ const getFlows = async (req,res) =>{
         });
         let Flows = await db.excuteQuery(val.getflows, [req.params.spid]);
             console.log(Flows,'Flows')
-         // Filter the flows locally to return only those with status 'PUBLISHED'
+        // Filter the flows locally to return only those with status 'PUBLISHED'
         // const publishedFlows = response.data.data.filter(flow => flow.status === 'PUBLISHED');
          const publishedFlows = response.data.data;
          const existingFlowIds = new Set(Flows.map(row => row.flowid));
@@ -1185,10 +1185,12 @@ const getFlows = async (req,res) =>{
         const insertValues = newData.map(item => [req.params.spid,item.id, item.name,item.status, 0]); 
         const query = `INSERT INTO Flows (spid, flowid, flowname,status, responses) VALUES ?`;
         await db.excuteQuery(query, [insertValues]);
-        }
+
+    }
+    let FlowsData = await db.excuteQuery(val.getflows, [req.params.spid]);
         res.send({
             status: 200,
-            flows: publishedFlows
+            flows: FlowsData
         })
     }else{
         res.send({
@@ -1222,15 +1224,43 @@ const getFlowDetail = async (req, res) => {
 const saveFlowMapping = async (req, res) => {
     try {
             let flowId = req.body?.flowId;
-            let spid = req.body.spid;
-            let ColumnMapping = req.body.ColumnMapping;
+            let spid = req.body.spId;
+            let ColumnMapping = req.body.mapping;
        
-            let save = await db.excuteQuery(val.saveflowMapping, [ColumnMapping,spid,flowId]);
+            let save = await db.excuteQuery(val.saveflowMapping, [JSON.stringify(ColumnMapping),spid,flowId]);
+            if(req.body.isUpdateValues){
+                 updatePreviousValue(req); 
+            }
 
             res.send({
                 status: 200,
                 flows: save
             })
+    } catch (err) {
+        console.log(err)
+        db.errlog(err);
+        res.send(err)
+    }
+}
+
+async function updatePreviousValue(req){
+    try {
+        let FlowDetail = await db.excuteQuery(val.getflowDetail, [req.body.spId, req.body?.flowId]);
+        FlowDetail.forEach((record) => {
+           let mapping =  req.body.mapping;
+           let flowresponse= JSON.parse(JSON.parse(record?.flowresponse));
+              mapping.forEach((map) => {
+                  let value= flowresponse[map?.ActuallName];
+                  if(map.attributeMapped != "" && map?.isOverride && value){
+                    let updateQuery = `UPDATE EndCustomer SET ${map.attributeMapped}=? WHERE SP_ID=? AND customerId=?`;
+                    db.excuteQuery(updateQuery, [value, req.body.spId, record.customerId]);
+                } else if(map.attributeMapped != "" && !map?.isOverride && value){
+                    let updateQuery = `UPDATE EndCustomer SET ${map.attributeMapped} =? WHERE SP_ID =? AND customerId =? AND (${map.attributeMapped} IS NULL OR ${map.attributeMapped} = '')`;
+                    db.excuteQuery(updateQuery, [value, req.body.spId, record.customerId]);
+                }
+              })
+
+        });
     } catch (err) {
         console.log(err)
         db.errlog(err);

@@ -22,7 +22,7 @@ export class WhatsAppFlowsComponent implements OnInit {
         cellRenderer: this.actionsCellRenderer.bind(this),
     },
           {
-              field: 'name',
+              field: 'flowname',
               headerName: 'Flow Name',
               width:430,
               suppressSizeToFit: false,
@@ -31,7 +31,7 @@ export class WhatsAppFlowsComponent implements OnInit {
               cellStyle: { background: '#FBFAFF', opacity: 0.86 },
           },
           {
-              field: 'id',
+              field: 'flowid',
               headerName: 'Flow Id',
               width:230,
               suppressSizeToFit: false,
@@ -71,6 +71,7 @@ export class WhatsAppFlowsComponent implements OnInit {
     isShowDetails:boolean = false;
     flowId:number = 0;
     flowName:string = '';
+    mapping: any = {};
     channelSelected: string = '';
     channelPhoneNumber: string = '';
     channelOption:any;
@@ -92,8 +93,9 @@ export class WhatsAppFlowsComponent implements OnInit {
   rowClicked = (event: any) => {
 
 this.isShowDetails = true;
-    this.flowId = event.data?.id;
-    this.flowName = event.data?.name;
+    this.flowId = event.data?.flowid;
+    this.flowName = event.data?.flowname;
+    this.mapping = JSON.parse(event.data?.col_Mapping || '{}');
 };    
 
 gridOptions:any = {
@@ -182,7 +184,7 @@ gotoPage(page: any) {
 }
 
 getFlowList() {
-  this.settingsService.getFlowData(55).subscribe((response: any) => {
+  this.settingsService.getFlowData(this.spId).subscribe((response: any) => {
       if (response) {
           console.log(response);
           this.initflowList =  response?.flows;
@@ -225,9 +227,9 @@ getWhatsAppDetails() {
 
   onFilterChange(event: any) {
     const selectedValue = event.target.value;
-    if(selectedValue != 'all') {
+    if(selectedValue != 'All') {
     this.flowList = this.initflowList.filter((item: any) => {
-      return item.status === selectedValue;
+      return item.status == selectedValue;
     });
   }else{
     this.flowList = this.initflowList;
