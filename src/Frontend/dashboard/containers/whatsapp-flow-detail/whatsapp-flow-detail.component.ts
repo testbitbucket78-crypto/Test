@@ -4,6 +4,7 @@ import { ColDef, GridApi, GridReadyEvent } from 'ag-grid-community';
 import { TeamboxService } from 'Frontend/dashboard/services/teambox.service';
 import { SettingsService } from 'Frontend/dashboard/services/settings.service';
 import { map } from 'rxjs/operators';
+import { environment } from 'environments/environment';
 declare var $: any;
 
 @Component({
@@ -17,17 +18,10 @@ export class WhatsappFlowDetailComponent {
   @Input() flowName: string ='';
   @Input() ColumnMapping:any =[];
   @Output() closeFlowDetail = new EventEmitter<string>();
+     public channelDomain:string = environment?.chhanel;
 
     columnDefs: ColDef[] | any = [
-            // {
-            //     field: 'name',
-            //     headerName: 'Flow Name',
-            //     width:200,
-            //     suppressSizeToFit: false,
-            //     resizable: true,
-            //     sortable: true,
-            //     cellStyle: { background: '#FBFAFF', opacity: 0.86 },
-            // },
+            
             {
                 field: 'flowId',
                 headerName: 'Flow Id',
@@ -80,7 +74,8 @@ export class WhatsappFlowDetailComponent {
       warningMessage='';
 
     constructor( public GridService: GridService, private _teamboxService: TeamboxService,public settingsService: SettingsService){
-      this.spId = Number(sessionStorage.getItem('SP_ID'));  
+      //this.spId = Number(sessionStorage.getItem('SP_ID'));  
+      this.spId = 55;
     }
   
     ngOnInit(): void {
@@ -208,15 +203,6 @@ getRefresh(){
         sortable: true,
         cellStyle: { background: '#FBFAFF', opacity: 0.86 },
     },
-    // {
-    //     field: 'flowId',
-    //     headerName: 'Flow Id',
-    //     width:160,
-    //     suppressSizeToFit: false,
-    //     resizable: true,
-    //     cellStyle: { background: '#FBFAFF', opacity: 0.86 },
-    //     sortable: true,
-    // },   
 ];
 }
 
@@ -333,6 +319,51 @@ closeModal(){
     if(this.ColumnMapping[idx]?.isInputSelected)
     this.ColumnMapping[idx].displayName = this.ColumnMapping[idx]?.ActuallName;
     this.ColumnMapping[idx].type = '';
+  }
+
+  
+  exportFlowData() {
+    let fields:any[] =[];
+    this.columnDefs.forEach((item:any)=>{
+      
+      fields.push(item?.field)
+    })
+
+    const fieldToHeaderMap:any = {};
+      this.columnDefs.forEach((item:any) => {
+        fieldToHeaderMap[item?.field] = item?.headerName;
+    });
+console.log(fieldToHeaderMap, '----fieldToHeaderMap----');
+    const exportContact = this.flowList.map((obj:any) => {
+      const newObj:any = {};
+      fields.forEach((field:any) => {
+        try {
+          const headerName = fieldToHeaderMap[field];
+          if (obj.hasOwnProperty(field) && headerName) {
+            if(field =="displayPhoneNumber"){
+              newObj[headerName] = obj['Phone_number'] ?? '';
+            }else{              
+                newObj[headerName] = obj[field] ?? '';
+            }
+          }
+        } catch (error) {
+          console.error(`Error processing field: ${field}`, error);
+        }
+      });
+      return newObj;
+    });
+
+    var exContact = {
+      data: exportContact,
+      loginData: (JSON.parse(sessionStorage.loginDetails)).email_id,
+      Name: (JSON.parse(sessionStorage.loginDetails)).name,
+      Channel: this.channelDomain,
+      spId: this.spId,
+    }
+    this.settingsService.exportFlowData(exContact).subscribe(response => {
+
+  
+    });
   }
 
   
