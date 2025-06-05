@@ -1,8 +1,8 @@
-<!-- <div class="toaster" (click)="hideToaster()">
+<div class="toaster" (click)="hideToaster()">
 	<p *ngIf="errorMessage" class="error">{{errorMessage}}</p>
 	<p *ngIf="successMessage" class="success">{{successMessage}}</p>
 	<p *ngIf="warnMessage" class="warn">{{warnMessage}}</p>
-  </div> -->
+  </div>
 
 	<div class="flow-header">
 		<div class="d-flex">
@@ -11,16 +11,16 @@
 		</div>
 		
 		<div class="d-flex">
-			<div class="mx-2 hand-icon" (click)="getFlowDetail()" > <img src="../../../../assets/img/retry.svg" width="22px" height="22px">  </div>			
+			<div class="mx-2 hand-icon" (click)="getRefresh()" > <img src="../../../../assets/img/retry.svg" width="22px" height="22px">  </div>			
 				<button class="flow-btn" data-bs-toggle="modal" data-bs-target="#mapColumnsModal"  > <img src="../../../../assets/img/export.svg">Map Column</button>
 				<button class="flow-btn" id="import-btn" data-bs-toggle="modal" data-bs-target="#editColumnsModal" ><img
 						src="../../../../assets/img/import.svg">Edit Column</button>
-				<button class="flow-btn" id="add-contact"  > <img src="../../../../assets/img/export.svg">Export</button>
+				<button class="flow-btn" id="add-contact"  (click)="exportFlowData()"> <img src="../../../../assets/img/export.svg">Export</button>
 		</div>
 	</div>
     <!-- (selectionChanged)="onSelectionChanged($event)"
     (filterChanged)="onFilterChanged()" -->
-    <div class="p-3">
+    <div class="p-3" *ngIf="isflowDetailLoading">
 		<ag-grid-angular class="ag-theme-alpine"
 						 style="height: 60vh;"
 						 [rowData]="flowList"
@@ -68,7 +68,7 @@
 
 
 
-	<div class="modal fade Edit-modal" tabindex="-1" data-bs-backdrop="static" id="editColumnsModal" role="dialog">
+	<div class="modal fade Edit-modal" tabindex="-1" data-bs-backdrop="static" id="editColumnsModal" #editColumnsModal role="dialog">
 		<div class="modal-dialog" role="document">
 			<div class="modal-content working-hour-modal ">
 				<div class="modal-header sticky-header">
@@ -111,7 +111,7 @@
 		</div>
 	</div>
 
-	<div class="modal fade flow-modal " tabindex="-1" data-bs-backdrop="static" id="mapColumnsModal" role="dialog">
+	<div class="modal fade flow-modal " tabindex="-1" data-bs-backdrop="static" id="mapColumnsModal" #mapColumnsModal role="dialog">
 		<div class="modal-dialog" role="document">
 			<div class="modal-content ">
 				<div class="modal-header sticky-header">
@@ -155,7 +155,7 @@
 					</div>
 
 					<div class="mt-2">
-						<input type="checkbox" class="form-check-input mr-2" id="exampleCheck1">
+						<input type="checkbox" class="form-check-input mr-2" id="exampleCheck1" [(ngModel)]="isUpdateValuesFromEarlierFlowResponses">
 						Update values from earlier Flow responses also
 					</div>
 					<!-- </form> -->

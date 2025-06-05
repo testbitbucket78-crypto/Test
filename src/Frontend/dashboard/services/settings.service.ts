@@ -332,15 +332,20 @@ const headers = new HttpHeaders({
 }
   
   getFlowData(spId: number): Observable<any> {
-    return this.http.get<any>(`http://localhost:3004/getFlows/${spId}`);
+    return this.http.get<any>(`${this.API_URL}/getFlows/${spId}`);
   }
   
   getFlowDetail(spId: number,flowId:number): Observable<any> {
-    return this.http.get<any>(`http://localhost:3004/getFlowDetail/${spId}/${flowId}`);
+    return this.http.get<any>(`${this.API_URL}/getFlowDetail/${spId}/${flowId}`);
   }
   
   saveFlowMapping(data: any): Observable<any> {
-    return this.http.post<any>(`http://localhost:3004/saveFlowMapping`,data);
+    return this.http.post<any>(`${this.API_URL}/saveFlowMapping`,data);
+  }
+
+  
+  exportFlowData(data: any): Observable<any> {
+    return this.http.post<any>(`${this.API_URL}/exportFlowData`,data);
   }
 
   saveCompanyDetail(companyData:companyDetail): Observable<any> {
