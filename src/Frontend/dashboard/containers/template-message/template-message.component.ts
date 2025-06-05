@@ -828,6 +828,7 @@ checkTemplateName(e:any){
         copyTemplateForm.status = 'draft';
         copyTemplateForm.isCopied = 1;
         copyTemplateForm.template_id = this.templatesMessageDataById.template_id;
+        copyTemplateForm.interactiveButtonsPayload= typeof this.templatesMessageDataById?.interactive_buttons == 'string' ? this.templatesMessageDataById?.interactive_buttons : JSON.parse(this.templatesMessageDataById?.interactive_buttons);
       //  if(this.templatesMessageDataById.Category=='WA API') {
             copyTemplateForm.template_json = this.templatesMessageDataById?.template_json;
 

@@ -125,6 +125,7 @@
 							{{(i==2 && item?.buttons?.length>3) ? 'Show All Buttons' : it?.buttonText }}</button> </div>
 						</div>
 					</div>
+					 <interactive-button *ngIf="item?.interactive_buttons" [width]="'100%'" [interactiveButtons]="item?.interactive_buttons"></interactive-button>
 				</div>
 				<div *ngIf="item.Name =='Assign Conversation' && item.Name" class="sidebar-assign-conversation">
 					<p class="m-0 py-1 px-2" id="msgbox-head1">Action</p>
@@ -349,6 +350,7 @@
 												{{(i==2 && message?.buttons?.length>3) ? 'Show All Buttons' : item?.buttonText }}</button> </div>
 											</div>
 										</div>
+										<interactive-button *ngIf="message?.interactive_buttons" [width]="'100%'" [interactiveButtons]="message?.interactive_buttons"></interactive-button>
 										</div>
 					  
 										<div class="col-6 message-buttons">
@@ -686,6 +688,7 @@
 										{{(i==2 && template?.buttons?.length>3) ? 'Show All Buttons' : item?.buttonText }}</button> </div>
 									</div>
 								</div>
+								 <interactive-button *ngIf="template.interactive_buttons" [width]="'100%'" [interactiveButtons]="template.interactive_buttons"></interactive-button>
 								<!-- <div *ngIf="template.Channel === 'WhatsApp Official'" class="template_btn">
 								  <button type="button" class="btn">Button 1</button>
 								  <button type="button" class="btn">Button 2</button> 
@@ -763,6 +766,7 @@
 											{{(i==2 && selectedTemplate?.buttons?.length>3) ? 'Show All Buttons' : item?.buttonText }}</button> </div>
 										</div>
 									</div>
+									 <interactive-button *ngIf="selectedTemplate.interactive_buttons" [width]="'100%'" [interactiveButtons]="selectedTemplate.interactive_buttons"></interactive-button>
 									  <!-- <div *ngIf="selectedTemplate.Channel === 'WA API'" class="px-2 template_btn">
 										<button type="button" class="btn">Button 1</button>
 										<button type="button" class="btn">Button 2</button>
@@ -1079,6 +1083,7 @@
 										{{(i==2 && selectedTemplate?.buttons?.length>3) ? 'Show All Buttons' : item?.buttonText }}</button> </div>
 									</div>
 								</div>
+								 <interactive-button *ngIf="selectedTemplate.interactive_buttons" [width]="'100%'" [interactiveButtons]="selectedTemplate.interactive_buttons"></interactive-button>
 							  </div>
 							  
 							  <!-- (click)="toggleshowAdvance()"   *ngIf="showAdvance" -->

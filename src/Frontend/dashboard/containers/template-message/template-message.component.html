@@ -1116,6 +1116,7 @@
                         <img class="btn-preview-img" *ngIf="(i==2 && buttonsArray?.length>3)" src="../../../../assets/img/settings/options-lines.svg"> 
                         {{(i==2 && buttonsArray?.length>3) ? 'Show All Buttons' : item?.buttonText }}</div>
                 </div>
+                <interactive-button *ngIf="interactiveButtonsPayload" [width]="'100%'" [interactiveButtons]="interactiveButtonsPayload"></interactive-button>
                 
                 <!-- <div *ngIf="newTemplateForm.controls.buttonType.value == 'Call to Action'" class="w-70">
                     <div class="text-center"><button class="template-btn">{{this.newTemplateForm?.controls?.buttonText?.value}}</button> </div>
