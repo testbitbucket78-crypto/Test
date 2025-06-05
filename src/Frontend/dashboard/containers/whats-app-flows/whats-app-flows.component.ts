@@ -78,8 +78,7 @@ export class WhatsAppFlowsComponent implements OnInit {
     ShowAssignOption:boolean = false;
    
   constructor( public GridService: GridService,public settingsService: SettingsService){
-    //this.spId = Number(sessionStorage.getItem('SP_ID'));
-    this.spId = 55; // For testing purposes, replace with actual SP_ID retrieval logic
+    this.spId = Number(sessionStorage.getItem('SP_ID'));
   }
 
   ngOnInit(): void {

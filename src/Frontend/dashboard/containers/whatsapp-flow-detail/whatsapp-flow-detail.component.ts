@@ -20,18 +20,16 @@ export class WhatsappFlowDetailComponent {
   @Output() closeFlowDetail = new EventEmitter<string>();
      public channelDomain:string = environment?.chhanel;
 
-    columnDefs: ColDef[] | any = [
-            
-            {
-                field: 'flowId',
-                headerName: 'Flow Id',
-                width:160,
-                suppressSizeToFit: false,
-                resizable: true,
-                cellStyle: { background: '#FBFAFF', opacity: 0.86 },
-                sortable: true,
-            },
-           
+    columnDefs: ColDef[] | any = [            
+      {
+        field: 'created_at',
+        headerName: 'Received At',
+        width:200,
+        suppressSizeToFit: false,
+        resizable: true,
+        sortable: true,
+        cellStyle: { background: '#FBFAFF', opacity: 0.86 },
+    },           
         ];
         public gridapi!: GridApi;
         paginationPageSize: string = '10';
@@ -74,8 +72,7 @@ export class WhatsappFlowDetailComponent {
       warningMessage='';
 
     constructor( public GridService: GridService, private _teamboxService: TeamboxService,public settingsService: SettingsService){
-      //this.spId = Number(sessionStorage.getItem('SP_ID'));  
-      this.spId = 55;
+      this.spId = Number(sessionStorage.getItem('SP_ID'));  
     }
   
     ngOnInit(): void {

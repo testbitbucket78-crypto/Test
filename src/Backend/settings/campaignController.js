@@ -1243,8 +1243,7 @@ const saveFlowMapping = async (req, res) => {
                 flows: save
             })
     } catch (err) {
-        console.log(err)
-        db.errlog(err);
+        console.log(err);
         res.send(err)
     }
 }
@@ -1268,7 +1267,6 @@ async function updatePreviousValue(req){
         });
     } catch (err) {
         console.log(err)
-        db.errlog(err);
         res.send(err)
     }
 }
@@ -1344,7 +1342,7 @@ const exportFlowData = async (req, res) => {
   
       return res.status(200).send({ msg: "Contacts exported sucessfully!" });
     } catch (err) {
-      db.errlog(err);
+        console.log(err)
       res.send(err);
     }  
   }
