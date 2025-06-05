@@ -15,7 +15,7 @@ const moment = require('moment');
 
   class ContactsAdded {
   constructor(payload, keys) {
-    this.event_type = WebhookEventType.ContactCreated;
+    this.eventType = WebhookEventType.ContactCreated;
     this.contact_creator = 'System';
     this.contact_id = null;
     this.data = {};

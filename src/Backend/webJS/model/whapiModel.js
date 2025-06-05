@@ -274,9 +274,10 @@ class WhapiMessageResponse {
     
 }
 class WhapiInteractiveButtons {
-    constructor(to, interactiveButtons) {
+    constructor(to, interactiveButtons, bodyText = '') {
       this.to = to;
       this.interactiveButtons = this.parseButtons(interactiveButtons);
+      this.bodyText = bodyText;
     }
   
     parseButtons(buttons) {
@@ -309,6 +310,9 @@ class WhapiInteractiveButtons {
       return {
         to: this.to,
         type: "button",
+        body: {
+          text: this.bodyText
+        },
         action: {
           buttons: this.interactiveButtons.map((btn, index) => {
             const button = {

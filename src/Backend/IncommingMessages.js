@@ -33,7 +33,7 @@ WHERE M.interaction_id = ?
   AND I.is_deleted != 1 order by M.updated_at desc limit 1`;
 
 checkResolve = `select * from Interaction where  InteractionId = ? and SP_ID=? and IsTemporary !=1 and is_deleted !=1 `
-var insertMessageQuery = "INSERT INTO Message (SPID,Type,ExternalMessageId, interaction_id, Agent_id, message_direction,message_text,message_media,media_type,Message_template_id,Quick_reply_id,created_at,updated_at,system_message_type_id,assignAgent,msg_status,button) VALUES ?";
+var insertMessageQuery = "INSERT INTO Message (SPID,Type,ExternalMessageId, interaction_id, Agent_id, message_direction,message_text,message_media,media_type,Message_template_id,Quick_reply_id,created_at,updated_at,system_message_type_id,assignAgent,msg_status,button,interactive_buttons) VALUES ?";
 
 async function sReplyActionOnlostMessage(message_text, sid, channelType, phone_number_id, from, custid, agid, newId, display_phone_number) {
   try {
@@ -323,6 +323,7 @@ async function iterateSmartReplies(replymessage, phone_number_id, from, sid, cus
       let bodyVar = await commonFun.getTemplateVariables(msgVar, body, sid, custid);
       let buttonsVariable;
       let buttonsVar = typeof message?.buttonsVariable === 'string' ? JSON.parse(message?.buttonsVariable) : message?.buttonsVariable;
+      let interactive_buttons = message?.interactive_buttons;
       if(!commonFun.isInvalidParam(buttonsVar) && buttonsVar.length > 0) {
         buttonsVariable = await removeTags.getDynamicURLToBESent(buttonsVar, sid, custid);
       }
@@ -396,7 +397,8 @@ async function iterateSmartReplies(replymessage, phone_number_id, from, sid, cus
         "headerVar": headerVar,
         "bodyVar": bodyVar,
         "buttons" : buttons,
-        "buttonsVariable" : buttonsVariable
+        "buttonsVariable" : buttonsVariable,
+        "interactive_buttons" : interactive_buttons
       };
       console.log(message.replyId, "replysms", relyMsg);
       messageToSend.push(relyMsg);
@@ -433,7 +435,8 @@ async function iterateSmartReplies(replymessage, phone_number_id, from, sid, cus
           message.headerVar,
           message.bodyVar,
           message.buttons,
-          message.buttonsVariable
+          message.buttonsVariable,
+          message.interactive_buttons
         );
         // console.log(type,"SreplyThroughselectedchannel response:", respose);
       }
@@ -972,16 +975,15 @@ async function messageThroughselectedchannel(spid, from, type, text, media, phon
     return false;
   }
 }
-
+const variable = require('./common/constant')
 async function SreplyThroughselectedchannel(spid, from, type, text, media, phone_number_id, channelType, agentId, interactionId, testMessage, media_type, display_phone_number,
   isTemplate,
   laungage,
   templateName,
   headerVar,
-  bodyVar,buttons,DynamicURLToBESent) {
+  bodyVar,buttons,DynamicURLToBESent,interactive_buttons) {
     let buttonsArray = typeof buttons === 'string' ? JSON.parse(buttons) : buttons;
-  
-
+    interactive_buttons = typeof interactive_buttons === 'string' ? interactive_buttons : JSON.stringify(interactive_buttons);
     if(await commonFun.isPaused(spid) || await commonFun.isDisable(spid) || await commonFun.isDeleted(spid)){
       let messageValu = [[spid, 'text', "", interactionId, agentId, 'Out', testMessage, (media ? media : 'text'), media_type, '', "", time, time, "", -2, 9,buttons]]
       let saveMessage = await db.excuteQuery(insertMessageQuery, [messageValu]);
@@ -1005,21 +1007,27 @@ async function SreplyThroughselectedchannel(spid, from, type, text, media, phone
     if (sReply?.status == 200) {
 
 
-      let messageValu = [[spid, 'text', "", interactionId, agentId, 'Out', testMessage, (media ? media : 'text'), media_type, sReply.message.messages[0].id, "", time, time, "", -2, 1,buttons]]
+      let messageValu = [[spid, 'text', "", interactionId, agentId, 'Out', testMessage, (media ? media : 'text'), media_type, sReply.message.messages[0].id, "", time, time, "", -2, 1,buttons,interactive_buttons]]
       let saveMessage = await db.excuteQuery(insertMessageQuery, [messageValu]);
       notify.NotifyServer(display_phone_number, false, interactionId, 0, 'Out', 'Smartreply')
       response = true;
     }
     // console.log("sreply", response)
     return response;
-  } if (channelType == 'WhatsApp Web' || channelType == 2 || channelType == 'WA Web') {
+  } if (channelType == 'WhatsApp Web' || channelType == 2 || channelType == 'WA Web'|| variable.SPID == spid || variable.provider == 'whapi') {
+       let result
+    if(isTemplate == 'true' && interactive_buttons){
+        result = await middleWare.sendingTemplate(spid, from, headerVar, text, interactive_buttons);
+      }
+      else{
+        result = await middleWare.postDataToAPI(spid, from, type, text, media)
+      }
 
-    let result = await middleWare.postDataToAPI(spid, from, type, text, media)
+
     if (result.status == 200) {
-
       let myUTCString = new Date().toUTCString();
       const time = moment.utc(myUTCString).format('YYYY-MM-DD HH:mm:ss');
-      let messageValu = [[spid, 'text', "", interactionId, agentId, 'Out', testMessage, (media ? media : 'text'), media_type, "", "", time, time, "", -2, 1,'']]
+      let messageValu = [[spid, 'text', "", interactionId, agentId, 'Out', testMessage, (media ? media : 'text'), media_type, "", "", time, time, "", -2, 1,'',interactive_buttons]]
       let saveMessage = await db.excuteQuery(insertMessageQuery, [messageValu]);
       notify.NotifyServer(display_phone_number, false, interactionId, 0, 'Out', 'Smartreply')
       return true;

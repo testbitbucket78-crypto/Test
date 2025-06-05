@@ -1465,7 +1465,7 @@ async function sendTemplateViaWhapi(spid, to, headerText, bodyText, interactiveB
   }
 
   
-  const template = new WhapiInteractiveButtons(to, interactiveButtons);
+  const template = new WhapiInteractiveButtons(to, interactiveButtons, bodyText);
   const payload = template.buildPayload();
   let response = await whapiService.interactiveButtons(payload, r1.token);
   if(response){
