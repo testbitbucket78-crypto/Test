@@ -1887,7 +1887,6 @@ stopPropagation(event: Event) {
 		this.showSideBar = !this.showSideBar
 	}
 	getRepliesByID(data:any) {
-		debugger;
 		this.isLoading = true;
 		this.apiService.sideNav(data.ID).subscribe((response => {
 			this.data = response;
