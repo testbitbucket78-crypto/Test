@@ -458,8 +458,8 @@ async function sendScheduledCampaign(batch, sp_id, type, message_content, messag
 
     // setTimeout(async () => {
     //   //console.log("response",response)     
-    // }, 10)
-    response = await messageThroughselectedchannel(sp_id, Phone_number, type, textMessage, message_media, phone_number_id, channel_id, message.Id, message, message_text,headerVar,bodyVar,templateId,message.buttons,DynamicURLToBESent);
+    // }, 10)    middlewareresult = await middleWare.sendingTemplate(spid, from, headerVar, testMessage, interactive_buttons);
+    response = await messageThroughselectedchannel(sp_id, Phone_number, type, textMessage, message_media, phone_number_id, channel_id, message.Id, message, message_text,headerVar,bodyVar,templateId,message.buttons,DynamicURLToBESent, message?.interactive_buttons);
     const randomdelay = Math.floor(Math.random() * (9000 - 7000 + 1)) + 7000;
     await wait(randomdelay)
   }
@@ -730,7 +730,7 @@ async function isContactBlocked(phone, spid) {
 
 //_________________________COMMON METHOD FOR SEND MESSAGE___________________________//
 
-async function messageThroughselectedchannel(spid, from, type, text, media, phone_number_id, channelType, campaignId, message, message_content,headerVar,bodyVar,templateId,buttons,DynamicURLToBESent) {
+async function messageThroughselectedchannel(spid, from, type, text, media, phone_number_id, channelType, campaignId, message, message_content,headerVar,bodyVar,templateId,buttons,DynamicURLToBESent,interactive_buttons) {
   //console.log("messageThroughselectedchannel", spid, from, type, channelType,web.isActiveSpidClient(spid))
   try {
     let button = typeof buttons === 'string' ? JSON.parse(buttons) : buttons;
@@ -754,7 +754,7 @@ async function messageThroughselectedchannel(spid, from, type, text, media, phon
 
         if (response?.status == 200) {
           //interaction_id,message_direction,message_text,message_media,Type,SPID,media_type,Agent_id,assignAgent,Message_template_id
-          let saveSendedMessage = await saveMessage(from, spid, response?.message?.messages[0]?.id, message_content, media, type, type, 'WA API', "Official campaign message", 1,buttons);
+          let saveSendedMessage = await saveMessage(from, spid, response?.message?.messages[0]?.id, message_content, media, type, type, 'WA API', "Official campaign message", 1,buttons,interactive_buttons);
           let saveInCampaignMessage = await sendMessages(from, text, campaignId, message, response.status, text, response.message?.messages[0]?.id, 'WA API', '', '')
         } else {
           console.log("else of OFFICIAL")
@@ -779,8 +779,14 @@ async function messageThroughselectedchannel(spid, from, type, text, media, phon
         let clientReady = await isClientActive(spid);
         //console.log("clientReady",clientReady)
         if (clientReady?.status || variable.SPID == spid || variable.provider == 'whapi') {
-          let saveSendedMessage = await saveMessage(from, spid, '', message_content, media, type, type, 'WA Web', "Web campaign message", 1,buttons)
-          let response = await middleWare.postDataToAPI(spid, from, getMediaType, text, media, '', saveSendedMessage);
+
+          let saveSendedMessage = await saveMessage(from, spid, '', message_content, media, type, type, 'WA Web', "Web campaign message", 1,buttons,interactive_buttons)
+          let response
+          if(interactive_buttons){
+             response = await middleWare.sendingTemplate(spid, from, headerVar, text, interactive_buttons);
+          }else{
+              response = await middleWare.postDataToAPI(spid, from, getMediaType, text, media, '', saveSendedMessage);
+          }
           console.log(spid, " web response", JSON.stringify(response?.status), response.msgId);
           if (response.status == 200) {
             let saveInCampaignMessage = await sendMessages(from, text, campaignId, message, response.status, text, response.msgId, 'WA Web', '', '');
@@ -881,13 +887,13 @@ function determineMediaType(mediaType) {
   }
 }
 
-async function saveMessage(PhoneNo, spid, msgTemplateId, text, media, type, mediaType, channel, fromWhere, msg_status,buttons) {
+async function saveMessage(PhoneNo, spid, msgTemplateId, text, media, type, mediaType, channel, fromWhere, msg_status,buttons,interactive_buttons) {
 
   let InteractionId = await insertInteractionAndRetrieveId(PhoneNo, spid, channel);
   console.log(PhoneNo, fromWhere, spid, "InteractionId InteractionId", InteractionId)
 
-  let msgQuery = `insert into Message (interaction_id,message_direction,message_text,message_media,Type,SPID,media_type,Agent_id,assignAgent,msg_status,Message_template_id,button) values ?`
-  let savedMessage = await db.excuteQuery(msgQuery, [[[InteractionId[0]?.InteractionId, 'Out', text, media, 'text', spid, mediaType, '', -1, msg_status, msgTemplateId,buttons]]]);
+  let msgQuery = `insert into Message (interaction_id,message_direction,message_text,message_media,Type,SPID,media_type,Agent_id,assignAgent,msg_status,Message_template_id,button,interactive_buttons) values ?`
+  let savedMessage = await db.excuteQuery(msgQuery, [[[InteractionId[0]?.InteractionId, 'Out', text, media, 'text', spid, mediaType, '', -1, msg_status, msgTemplateId,buttons,interactive_buttons]]]);
   logger.info(`saved message id  ,${savedMessage?.insertId}`)
   let insertedMsgId = savedMessage?.insertId
   return insertedMsgId;

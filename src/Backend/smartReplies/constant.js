@@ -146,7 +146,8 @@ m.media_type,
 m.Media,
 n.Name,
 JSON_UNQUOTE(m.buttons) as buttons,
-JSON_UNQUOTE(m.buttons) as buttonsVariable
+JSON_UNQUOTE(m.buttonsVariable) as buttonsVariable,
+JSON_UNQUOTE(m.interactive_buttons) as interactive_buttons
 from
 SmartReply t
 left join SmartReplyAction m ON m.SmartReplyID = t.ID
