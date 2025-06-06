@@ -254,7 +254,7 @@ var interactions = `WITH LatestInteraction AS (
 LatestInteractionMapping AS (
     SELECT 
         InteractionId,
-        MAX(created_at) AS LatestMappingInfo
+        created_at AS LatestMappingInfo
     FROM 
         InteractionMapping
     WHERE 
