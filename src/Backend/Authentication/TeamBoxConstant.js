@@ -254,11 +254,11 @@ var interactions = `WITH LatestInteraction AS (
 LatestInteractionMapping AS (
     SELECT 
         InteractionId,
-        MAX(created_at) AS LatestMappingInfo
+        created_at AS LatestMappingInfo
     FROM 
         InteractionMapping
-    GROUP BY 
-        InteractionId
+    WHERE 
+        is_active = 1
 ),
 TagSplit AS (
     SELECT 

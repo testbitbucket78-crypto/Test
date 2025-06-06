@@ -375,7 +375,7 @@ const getAllFilteredInteraction = async (req, res) => {
             if (filterBy === 'Open' || filterBy === 'Resolved') {
                 queryPath += " and ic.interaction_status='" + filterBy + "'";
             } else if (filterBy === 'Unassigned') {
-                queryPath += " and ic.InteractionId NOT IN (SELECT InteractionId FROM InteractionMapping where AgentId != -1) and ic.interaction_status='Open' ";
+                queryPath += " and ic.InteractionId NOT IN (SELECT InteractionId FROM InteractionMapping where AgentId != -1 and is_active=1) and ic.interaction_status='Open' ";
             } else if (filterBy === 'Mine') {
                 queryPath += " and ic.InteractionId  IN (SELECT InteractionId FROM InteractionMapping where AgentId=" + req.body.AgentId + " and is_active=1)";
             } else if (filterBy === 'Mentioned') {
@@ -770,7 +770,7 @@ const insertMessage = async (req, res) => {
             let middlewareresult = "";
             if (Type != 'notes') {
                 if (channelType[0]?.isBlocked != 1) {
-                    if(req?.body?.isTemplate == true && req.body?.interactiveButtonsPayload){
+                    if(req?.body?.isTemplate == true && req.body?.interactiveButtonsPayload  && channel != 'WA API'){
                         middlewareresult = await middleWare.sendingTemplate(SPID, req.body.messageTo, header, content, req.body?.interactiveButtonsPayload);
                     }
                     else if (req?.body?.isTemplate == true && channel == 'WA API') {

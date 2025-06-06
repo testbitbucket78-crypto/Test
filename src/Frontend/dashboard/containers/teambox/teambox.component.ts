@@ -671,13 +671,13 @@ public  fieldsData: { [key: string]: string } = { text: 'name' };
 		this.closeAllModal()
 		let mediaContent;
 		let mediaName;
-		const fileNameWithPrefix = item?.Links.substring(item.Links.lastIndexOf('/') + 1);
+		const fileNameWithPrefix = item?.Links?.substring(item?.Links?.lastIndexOf('/') + 1) ? item?.Links?.substring(item?.Links?.lastIndexOf('/') + 1) : '';
 		let originalName;
 		if (item.media_type === 'video') {
 			originalName = fileNameWithPrefix.substring(0, fileNameWithPrefix.lastIndexOf('-'));
 			originalName = originalName + fileNameWithPrefix.substring(fileNameWithPrefix.lastIndexOf('.'));
 		} else {
-			originalName = fileNameWithPrefix.substring(fileNameWithPrefix.indexOf('-') + 1);
+			originalName = fileNameWithPrefix?.substring(fileNameWithPrefix.indexOf('-') + 1);
 		}
 		if(item?.media_type === 'image') {
 		  mediaContent ='<p><img style="width:100%; height:100%" src="'+item?.Links+'"></p>';

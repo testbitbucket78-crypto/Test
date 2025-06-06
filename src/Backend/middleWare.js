@@ -493,7 +493,10 @@ async function createWhatsAppPayload(type, to, templateName, languageCode, heade
         }
     }
     if (button.length > 0) {
+        let dynamicUrlCount = 0;
+        let initDynamicCount = 0;
         let buttonComponents = button.map((btn,idx) => {
+            dynamicUrlCount = initDynamicCount;
             if (btn?.type === 'Copy offer Code') {
                 return {
                     type: "button",
@@ -507,7 +510,8 @@ async function createWhatsAppPayload(type, to, templateName, languageCode, heade
                     ]
                 };
             }
-            if (btn.webType === 'Dynamic' && DynamicURLToBESent[idx]) {
+            if (btn.webType === 'Dynamic' && DynamicURLToBESent[dynamicUrlCount]) {
+                initDynamicCount++;
                 return {
                     type: "button",
                     sub_type: "url",
@@ -515,7 +519,7 @@ async function createWhatsAppPayload(type, to, templateName, languageCode, heade
                     parameters: [
                         {
                             type: "text",
-                            text: DynamicURLToBESent[idx].trim()
+                            text: DynamicURLToBESent[dynamicUrlCount]?.trim()
                         }
                     ]
                 };

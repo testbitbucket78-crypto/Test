@@ -12,6 +12,8 @@
     "nodemailer": "^6.8.0",
     "node-schedule": "^2.1.1",
     "winston": "^3.13.1",
-    "winston-daily-rotate-file": "^5.0.0"
+    "xlsx": "^0.18.5",
+    "winston-daily-rotate-file": "^5.0.0",
+    "jsonwebtoken": "^8.5.1"
   }
 }
