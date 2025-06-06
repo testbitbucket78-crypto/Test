@@ -351,7 +351,7 @@
 											  </div>
 											</div>
 										  </div>
-
+					                     <interactive-button *ngIf="message?.interactive_buttons" [width]="'100%'" [interactiveButtons]="message?.interactive_buttons"></interactive-button>
 									</div>
 								</div>
 								<div *ngIf="message?.message_direction ==null || !message?.message_direction" class="flex-end action-tab">

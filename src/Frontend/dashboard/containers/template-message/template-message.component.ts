@@ -828,6 +828,7 @@ checkTemplateName(e:any){
         copyTemplateForm.status = 'draft';
         copyTemplateForm.isCopied = 1;
         copyTemplateForm.template_id = this.templatesMessageDataById.template_id;
+        copyTemplateForm.interactiveButtonsPayload= typeof this.templatesMessageDataById?.interactive_buttons == 'string' ? this.templatesMessageDataById?.interactive_buttons : JSON.parse(this.templatesMessageDataById?.interactive_buttons);
       //  if(this.templatesMessageDataById.Category=='WA API') {
             copyTemplateForm.template_json = this.templatesMessageDataById?.template_json;
 
@@ -1858,6 +1859,7 @@ openButtonPopUp(event: Event) {
       }
 
   onInteractiveButtonClick(button: any) {
+      button = JSON.parse(JSON.stringify(button));
       const isPhoneOrUrl = button.id === 'phone' || button.id === 'url';
       const hasPhone = this.selectedButtons.includes('phone');
       const hasUrl = this.selectedButtons.includes('url');
@@ -1929,40 +1931,21 @@ openButtonPopUp(event: Event) {
       return count < max;
   }
 
-  removeButton(id: string) {
-      if (id === 'list_messages') {
-          const listMessageButton = this.renderedButtons.find(btn => btn.id === 'list_messages');
-          if (listMessageButton?.children?.extra_field) {
-            const rowFields = listMessageButton.children.extra_field.filter((field: any) => field.id.startsWith('row'));
+    removeButton(id: string, index: number) {
+        if (id === 'list_messages') {
+            this.renderedButtons[0].children.extra_field.splice(index, 1);
+            if (this.renderedButtons[0].children.extra_field.length === 0)
+                this.renderedButtons = [];
+        } else
+            this.renderedButtons.splice(index, 1);
+
+        if (id === 'phone' || id === 'url')
+            return this.selectedButtons.splice(this.selectedButtons.indexOf(id), 1)
         
-            if (rowFields.length > 0) {
-              // Remove last row
-              const lastRowIndex = listMessageButton.children.extra_field.lastIndexOf(rowFields[rowFields.length - 1]);
-              if (lastRowIndex == 0){
-                  this.renderedButtons.splice(lastRowIndex, 1);
-                  this.selectedButtons.splice(lastRowIndex, 1);
-              } else {
-                listMessageButton.children.extra_field.splice(lastRowIndex, 1);
-              }
-      
-            }
-          }
-          return;
-      }
+        if (this.renderedButtons.length === 0)
+            this.selectedButtons.splice(this.selectedButtons.indexOf(id), 1);
 
-      const index = this.renderedButtons.findIndex(btn => btn.id === id);
-      if (index !== -1) {
-          this.renderedButtons.splice(index, 1);
-      }
-
-      // Remove from selectedButtons only if no more UIs of the same ID exist
-      if (!this.renderedButtons.some(btn => btn.id === id)) {
-          const selectedIndex = this.selectedButtons.indexOf(id);
-          if (selectedIndex !== -1) {
-              this.selectedButtons.splice(selectedIndex, 1);
-          }
-      }
-  }
+    }
 
     addButton(id: string): void {
         const isSelected = this.selectedButtons.includes(id);
@@ -1995,7 +1978,6 @@ openButtonPopUp(event: Event) {
 
     generateInteractivePayload(to: string): InteractiveMessagePayload {
         const buttons: InteractiveButtonPayload[] = [];
-      
         this.renderedButtons.forEach(group => {
             // Ignore if no text entered
             if (group.children.button_text.trim()) {
@@ -2057,5 +2039,46 @@ openButtonPopUp(event: Event) {
             return 'reply';
         }
       }
+      countMaximumBtn(id: string): number {
+        if(id == 'list_messages'){
+            const countBtn = this.renderedButtons[0].children.extra_field?.filter((item:any)=> item.id.startsWith('row'))?.length;
+            return countBtn;
+        }
+       const countBtn = this.renderedButtons.filter((item:any)=> item.id == id)?.length;
+       return countBtn;
+      }
 
+      getInputCharacterCount(event : Event, id: any, idx: number): number {
+        return 1;
+      }
+
+addRow(id: string): void {
+  const buttonIndex = this.renderedButtons.findIndex(b => b.id === id);
+  if (buttonIndex === -1) return;
+
+  const button = this.renderedButtons[buttonIndex];
+  const rowSchema = this.findButtonSchemaById(id)?.children?.extra_field?.find((field: any) => field.id === 'row');
+
+  if (!rowSchema) return;
+
+  const newRow = JSON.parse(JSON.stringify(rowSchema));
+  newRow.extra_field_text = '';
+  newRow.id = 'row' + (button.children.extra_field.length + 1); // Ensure unique ID
+  button.children.extra_field.push(newRow);
+}
+removeRow(id: string, rowIndex: number): void {
+  const buttonIndex = this.renderedButtons.findIndex(b => b.id === id);
+  if (buttonIndex === -1) return;
+
+  const button = this.renderedButtons[buttonIndex];
+
+  button.children.extra_field.splice(rowIndex, 1);
+
+  // If all rows are removed, you may want to clear out list_messages button entirely
+  if (button.children.extra_field.length === 0) {
+    this.renderedButtons.splice(buttonIndex, 1);
+    const selectedIndex = this.selectedButtons.indexOf(id);
+    if (selectedIndex !== -1) this.selectedButtons.splice(selectedIndex, 1);
+  }
+}
 }

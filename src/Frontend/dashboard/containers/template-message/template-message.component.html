@@ -907,7 +907,7 @@
                     </div>
                     
                     
-                    <div *ngIf="renderedButtons.length > 0" style="border: 3px solid black; border-radius: 15px;">
+                    <div *ngIf="renderedButtons.length > 0" class="mt-1" style="border: 3px solid black; border-radius: 15px;">
                         <form *ngFor="let btn of renderedButtons; let i = index; trackBy: trackByFn" class="m-2">
                     
                             <div class="p-2 mt-2" style="border: 3px solid #00000033; border-radius: 15px;">
@@ -919,9 +919,9 @@
                                     <div class="d-flex flex-column col-8">
                                         <div class="d-flex justify-content-between align-items-center">
                                             <small class="mb-1"><b>Button Text</b></small>
-                                            <p class="mb-1"><b>0</b> / <span class="text-muted">{{btn.children.button_text_length}} characters</span></p>
+                                            <p class="mb-1"><b>{{btn.children.button_text.length}}</b> / <span class="text-muted">{{btn.children.button_text_length}} characters</span></p>
                                         </div>
-                                        <input type="text" [(ngModel)]="btn.children.button_text" (change)="a($event)" [name]="'buttonText-' + i" [id]="'buttonText-' + i" class="h-100 rounded-pill p-2 border" [placeholder]="btn.children.button_text_placeholder" />
+                                        <input type="text" [(ngModel)]="btn.children.button_text" maxlength="{{btn.children.button_text_length}}" (change)="a($event)" (input)="getInputCharacterCount($event.data, 'buttonText-' + i, i)" [name]="'buttonText-' + i" [id]="'buttonText-' + i" class="h-100 rounded-pill p-2 border" [placeholder]="btn.children.button_text_placeholder" />
                                     </div>
                     
                                     <div *ngIf="btn.children.extra_field" class="col-12 mt-2">
@@ -948,10 +948,20 @@
                                             <div class="d-flex flex-column" [ngClass]="!((field.type_title && field.type) || (field.dropdown_title) || (field.id.startsWith('row'))) ? 'col-12' : 'col-8'">
                                                 <div class="d-flex justify-content-between align-items-center">
                                                     <p class="mb-1"><b>{{field.name}}</b></p>
-                                                    <p class="mb-1"><b>0</b> / <span class="text-muted">{{field.character_length}} characters</span></p>
+                                                    <p class="mb-1"><b>{{field.extra_field_text.length}}</b> / <span class="text-muted">{{field.character_length}} characters</span></p>
                                                 </div>
-                                                <input type="text" [(ngModel)]="field.extra_field_text" name="extraField-{{i}}" [id]="'extraField-' + i" class="h-100 rounded-pill p-2 border" [placeholder]="field.placeholder"
-                                                    [attr.maxlength]="field.character_length" />
+                                                <input type="text" [(ngModel)]="field.extra_field_text" name="extraField-{{i}}" [id]="'extraField-' + i" class="h-100 rounded-pill p-2 border" [placeholder]="field.placeholder" (change)="getInputCharacterCount($event.data, 'extraField-' + i, i)"
+                                                    maxlength="{{field.character_length}}" />
+                                            </div>
+                                            <div *ngIf="btn.id === 'list_messages'" class="w-100 text-right pr-2">
+                                                <!-- Add only for the last row -->
+                                                <small *ngIf="index === btn.children.extra_field.length - 1 && btn.maximum_buttons > 1 && countMaximumBtn(btn.id) < btn.maximum_buttons"
+                                                    (click)="addRow(btn.id)"
+                                                    class="text-center mx-2 mb-0 text-primary">+ Add</small>
+                                                
+                                                <!-- Remove visible for each row -->
+                                                <small (click)="removeRow(btn.id, index)"
+                                                    class="text-center mb-0 text-danger">- Remove</small>
                                             </div>
                                         </div>
                                     </div>
@@ -960,13 +970,13 @@
                             </div>
                     
                     
-                            <div class="w-100 text-right">
-                                <small *ngIf="btn.maximum_buttons > 1" (click)="addButton(btn.id)" type="button"
-                                    class="text-center mx-2 mb-0 text-primary" aria-label="Close">+
-                                    Add</small>
-                                <!-- Remove Button -->
-                                <small (click)="removeButton(btn.id)" type="button" class="text-center mb-0 text-danger" aria-label="Close">-
-                                    Remove</small>
+                            <div class="w-100 text-right" *ngIf="btn.id !== 'list_messages'">
+                            <small *ngIf="i === renderedButtons.length - 1 && btn.maximum_buttons > 1 && countMaximumBtn(btn.id) < btn.maximum_buttons"
+                                    (click)="addButton(btn.id)"
+                                    class="text-center mx-2 mb-0 text-primary">+ Add</small>
+
+                            <small (click)="removeButton(btn.id, i)"
+                                    class="text-center mb-0 text-danger">- Remove</small>
                             </div>
                         </form>
                     </div>
@@ -1116,6 +1126,7 @@
                         <img class="btn-preview-img" *ngIf="(i==2 && buttonsArray?.length>3)" src="../../../../assets/img/settings/options-lines.svg"> 
                         {{(i==2 && buttonsArray?.length>3) ? 'Show All Buttons' : item?.buttonText }}</div>
                 </div>
+                <interactive-button *ngIf="interactiveButtonsPayload" [width]="'100%'" [interactiveButtons]="interactiveButtonsPayload"></interactive-button>
                 
                 <!-- <div *ngIf="newTemplateForm.controls.buttonType.value == 'Call to Action'" class="w-70">
                     <div class="text-center"><button class="template-btn">{{this.newTemplateForm?.controls?.buttonText?.value}}</button> </div>
