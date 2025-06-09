@@ -869,13 +869,13 @@
             
             </div>  
             
-            <div *ngIf="channel=='whapi'" class="d-flex pt-3 pb-2 flex-column add-buttons">
+            <div *ngIf="channel=='whapi' && channelDomain != 'api'" class="d-flex pt-3 pb-2 flex-column add-buttons">
                 <div class="px-4 pt-1 msg-head">
                     <h6>Buttons<span>(Optional)</span></h6>
-                    <span class="pb-1">Add buttons to let customers respond to your message or take action. You can add up to total of 10 buttons. If you add more than 3 buttons, they will appear in a list.</span>
+                    <span class="pb-1">Add buttons to enable customer actions. Only one type of button is allowed, except for 'Call' and 'Link,' which may be used together or individually.</span>
                     <br />
                     <div class="position-relative">
-                        <sb-button (click)="interactiveButtonspopup = !interactiveButtonspopup" [type]="'secondary'" [label]="'Add Button'"
+                        <sb-button (click)="openinteractiveButtonPopUp($event)" [type]="'secondary'" [label]="'Add Button'"
                             [leftIcon]="'+'" [rightIcon]="'<img src=\'../../../../assets/img/drop-icon.png\'/>'">
                         </sb-button>
                     
@@ -883,7 +883,7 @@
                     
                     
                         <div *ngIf="interactiveButtonspopup" class="bg-white rounded p-2 position-absolute"
-                            style="width: max-content; box-shadow: 0px 4px 8px #00000033; z-index: 9999;">
+                            style="width: max-content; box-shadow: 0px 4px 8px #00000033; z-index: 9999; border-radius: 10px!important;">
                             <div *ngFor="let item of interactiveButtons; let last = last">
                                 <h6 class="mb-1">
                                     {{ item.title }}
@@ -907,10 +907,10 @@
                     </div>
                     
                     
-                    <div *ngIf="renderedButtons.length > 0" class="mt-1" style="border: 3px solid black; border-radius: 15px;">
+                    <div *ngIf="renderedButtons.length > 0" class="mt-2" style="border: 2px solid black; border-radius: 15px;">
                         <form *ngFor="let btn of renderedButtons; let i = index; trackBy: trackByFn" class="m-2">
                     
-                            <div class="p-2 mt-2" style="border: 3px solid #00000033; border-radius: 15px;">
+                            <div class="p-2 mt-2" style="border: 2px solid #00000033; border-radius: 15px;">
                                 <div class="row">
                                     <div class="d-flex flex-column col-4">
                                         <small class="mb-1"><b>Button Type</b></small>
@@ -921,25 +921,25 @@
                                             <small class="mb-1"><b>Button Text</b></small>
                                             <p class="mb-1"><b>{{btn.children.button_text.length}}</b> / <span class="text-muted">{{btn.children.button_text_length}} characters</span></p>
                                         </div>
-                                        <input type="text" [(ngModel)]="btn.children.button_text" maxlength="{{btn.children.button_text_length}}" (change)="a($event)" (input)="getInputCharacterCount($event.data, 'buttonText-' + i, i)" [name]="'buttonText-' + i" [id]="'buttonText-' + i" class="h-100 rounded-pill p-2 border" [placeholder]="btn.children.button_text_placeholder" />
+                                        <input type="text" [(ngModel)]="btn.children.button_text" maxlength="{{btn.children.button_text_length}}" (change)="a($event)" (input)="getInputCharacterCount($event.data, 'buttonText-' + i, i)" [name]="'buttonText-' + i" [id]="'buttonText-' + i" class="h-100 rounded-pill p-2 border small-input" [placeholder]="btn.children.button_text_placeholder" />
                                     </div>
                     
                                     <div *ngIf="btn.children.extra_field" class="col-12 mt-2">
-                                        <div *ngFor="let field of btn.children.extra_field; let index = index;" class="row">
+                                        <div *ngFor="let field of btn.children.extra_field; let index = index; trackBy: trackByRowId" class="row">
                                             <div *ngIf="field.id.startsWith('row')" class="d-flex flex-column col-4">
                                                 <!-- For List Message -->
-                                                <p class="mb-1" *ngIf="field.id.startsWith('row')"><b>Row</b></p>
+                                                <p style="font-weight: 800; font-size: 12px;" class="mb-1" *ngIf="field.id.startsWith('row')"><b>Row</b></p>
                                                 <h6 *ngIf="field.id.startsWith('row')" class="p-2 mb-1 border rounded-pill">Row {{index + 1}}</h6>
                                             </div>
                                             <div *ngIf="(field.type_title && field.type)" class="d-flex flex-column col-4">
                                                 <!-- For URL Type -->
-                                                <p class="mb-1" *ngIf="field.type_title"><b>{{field.type_title}}</b></p>
+                                                <p style="font-weight: 800; font-size: 12px;" class="mb-1" *ngIf="field.type_title"><b>{{field.type_title}}</b></p>
                                                 <h6 *ngIf="field.type" class="mb-1 p-2 border rounded-pill">{{field.type}}</h6>
                                             </div>
                                             <div *ngIf="field.dropdown_field == true" class="d-flex flex-column col-4">
                                                 <!-- For Phone Type -->
-                                                <p class="mb-1" *ngIf="field.dropdown_title"><b>{{field.dropdown_title}}</b></p>
-                                                <select id="countryCodePicker" [(ngModel)]="field.selected_country_code" class="p-2 border rounded-pill" [(ngModel)]="field.default_value">
+                                                <p style="font-weight: 800; font-size: 12px;" class="mb-1" *ngIf="field.dropdown_title"><b>{{field.dropdown_title}}</b></p>
+                                                <select id="countryCodePicker" [(ngModel)]="field.selected_country_code" class="p-2 border rounded-pill">
                                                     <option *ngFor="let option of field.country_code_list" [value]="option">
                                                       {{ option }}
                                                     </option>
@@ -947,10 +947,10 @@
                                             </div>
                                             <div class="d-flex flex-column" [ngClass]="!((field.type_title && field.type) || (field.dropdown_title) || (field.id.startsWith('row'))) ? 'col-12' : 'col-8'">
                                                 <div class="d-flex justify-content-between align-items-center">
-                                                    <p class="mb-1"><b>{{field.name}}</b></p>
-                                                    <p class="mb-1"><b>{{field.extra_field_text.length}}</b> / <span class="text-muted">{{field.character_length}} characters</span></p>
+                                                    <p style="font-weight: 800; font-size: 12px;" class="mb-1"><b>{{field.name}}</b></p>
+                                                    <p style="font-weight: 800; font-size: 12px;" class="mb-1"><b>{{field.extra_field_text.length}}</b> / <span class="text-muted">{{field.character_length}} characters</span></p>
                                                 </div>
-                                                <input type="text" [(ngModel)]="field.extra_field_text" name="extraField-{{i}}" [id]="'extraField-' + i" class="h-100 rounded-pill p-2 border" [placeholder]="field.placeholder" (change)="getInputCharacterCount($event.data, 'extraField-' + i, i)"
+                                                <input type="text" [(ngModel)]="field.extra_field_text" [name]="field.id" [id]="field.id" class="h-100 rounded-pill p-2 border small-input" [placeholder]="field.placeholder" (input)="getInputCharacterCount($event.data, 'extraField-' + i, i)"
                                                     maxlength="{{field.character_length}}" />
                                             </div>
                                             <div *ngIf="btn.id === 'list_messages'" class="w-100 text-right pr-2">
