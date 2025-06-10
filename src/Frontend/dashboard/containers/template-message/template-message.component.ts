@@ -1,4 +1,4 @@
-import { Component, ElementRef, HostListener, OnInit, Renderer2, ViewChild } from '@angular/core';
+import { Component, ElementRef, HostListener, OnInit, Renderer2, ViewChild, ChangeDetectorRef } from '@angular/core';
 import { AbstractControl, FormControl, FormGroup, ValidationErrors, Validators } from '@angular/forms';
 import { newTemplateFormData, quickReplyButtons, templateMessageData,} from 'Frontend/dashboard/models/settings.model';
 import { SettingsService } from 'Frontend/dashboard/services/settings.service';
@@ -252,7 +252,7 @@ export class TemplateMessageComponent implements OnInit {
     constructor(public apiService: SettingsService,
         private renderer: Renderer2,
         private phoneValidationService: PhoneValidationService,
-        public settingsService: SettingsService, private _teamboxService: TeamboxService) {
+        public settingsService: SettingsService, private _teamboxService: TeamboxService, public cdr : ChangeDetectorRef) {
             this.countryCodeList = this.apiService.countryCodes;
         }
 
@@ -1713,6 +1713,10 @@ openButtonPopUp(event: Event) {
     event.stopPropagation(); // Prevents event bubbling
     this.isPopupVisible = !this.isPopupVisible;
   }
+  openinteractiveButtonPopUp(event: Event) {
+     event.stopPropagation(); 
+     this.interactiveButtonspopup = !this.interactiveButtonspopup;
+  }
   openButtonPopUpWeb(event: Event){
     event.stopPropagation();
     this.isPopupVisible = !this.isPopupVisible;
@@ -1748,19 +1752,19 @@ openButtonPopUp(event: Event) {
                   children: {
                       button_text: '',
                       button_text_length: 25,
-                      button_text_placeholder: "e.g. placeholder",
+                      button_text_placeholder: "e.g. Yes",
                   }
               },  
               {
                   id: "list_messages",
                   name: "List Messages",
-                  icon_path: "../../../../assets/img/drop-icon.png",
+                  icon_path: "../../../../assets/img/options-lines.svg",
                   maximum_buttons: 10,
                   enabledButton: [],
                   children: {
                       button_text: '',
                       button_text_length: 25,
-                      button_text_placeholder: "e.g. placeholder",
+                      button_text_placeholder: "e.g. Yes",
                       extra_field: [
                           {
                               id: "row",
@@ -1786,7 +1790,7 @@ openButtonPopUp(event: Event) {
                   children: {
                       button_text: '',
                       button_text_length: 25,
-                      button_text_placeholder: "e.g. placeholder",
+                      button_text_placeholder: "e.g. Visit Website",
                       extra_field: [
                           {
                               id: "hyperlink",
@@ -1809,7 +1813,7 @@ openButtonPopUp(event: Event) {
                   children: {
                       button_text: '',
                       button_text_length: 25,
-                      button_text_placeholder: "e.g. placeholder",
+                      button_text_placeholder: "e.g. Call Us",
                       extra_field: [
                           {
                               id: "phone_number",
@@ -1818,7 +1822,7 @@ openButtonPopUp(event: Event) {
                               extra_field_text: '',
                               placeholder: "e.g. 8627019494",
                               default_value: "IN +91",
-                              selected_country_code: '',
+                              selected_country_code: "IN +91",
                               dropdown_field: true,
                               dropdown_title: "Country",
                               country_code_list: this.countryCodes,
@@ -1835,7 +1839,7 @@ openButtonPopUp(event: Event) {
                   children: {
                       button_text: '',
                       button_text_length: 25,
-                      button_text_placeholder: "e.g. placeholder",
+                      button_text_placeholder: "e.g. Copy Offer Code",
                       extra_field: [
                           {
                               id: "offer_code",
@@ -1856,6 +1860,9 @@ openButtonPopUp(event: Event) {
 
       trackByFn(index: number, item: any) {
         return item.id || index; // Use an ID if available, otherwise index
+      }
+      trackByRowId(index: number, item: any) {
+        return  item.id || index; // Use an ID if available, otherwise index
       }
 
   onInteractiveButtonClick(button: any) {
@@ -2062,9 +2069,12 @@ addRow(id: string): void {
   if (!rowSchema) return;
 
   const newRow = JSON.parse(JSON.stringify(rowSchema));
-  newRow.extra_field_text = '';
+   const colors = ['Red', 'Orange', 'Yellow', 'Green', 'Blue', 'White', 'Gray', 'Pink', 'Brown', 'Black'];
+   newRow.placeholder = colors[Math.floor(Math.random() * colors.length)];
+  //newRow.extra_field_text = '';
   newRow.id = 'row' + (button.children.extra_field.length + 1); // Ensure unique ID
   button.children.extra_field.push(newRow);
+  this.cdr.detectChanges(); // Ensure view updates immediately
 }
 removeRow(id: string, rowIndex: number): void {
   const buttonIndex = this.renderedButtons.findIndex(b => b.id === id);

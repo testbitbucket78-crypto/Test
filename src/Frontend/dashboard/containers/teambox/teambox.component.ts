@@ -675,7 +675,7 @@ public  fieldsData: { [key: string]: string } = { text: 'name' };
 		let originalName;
 		if (item.media_type === 'video') {
 			originalName = fileNameWithPrefix.substring(0, fileNameWithPrefix.lastIndexOf('-'));
-			originalName = originalName + fileNameWithPrefix.substring(fileNameWithPrefix.lastIndexOf('.'));
+			originalName = originalName + fileNameWithPrefix?.substring(fileNameWithPrefix?.lastIndexOf('.'));
 		} else {
 			originalName = fileNameWithPrefix?.substring(fileNameWithPrefix.indexOf('-') + 1);
 		}
