@@ -32,6 +32,7 @@ export class SideNavComponent implements OnInit {
         {id:22,name:'Funnel'},
         {id:24,name:'FlowBuilder'},
         {id:1,name:'rep'},
+
     ]
  
 
@@ -43,7 +44,7 @@ export class SideNavComponent implements OnInit {
         let data =item?.items;
         let tempArr =[];
         for(let i=0;i<data?.length;i++){
-            let idx = this.items.filter((it:any)=> it.name == data[i])[0].id;
+            let idx = this.items.filter((it:any)=> it.name == data[i])[0]?.id;
             console.log(idx);
             if(this.settingsService.checkRoleExist(idx.toString())){
                 console.log('remove',data[i]);                

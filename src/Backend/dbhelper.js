@@ -89,7 +89,7 @@ async function excuteQuery(query, param) {
             console.log("** if con" + "excuteQuery" + "**" + db.state)
            db.connect()
         }
-        //console.log("**" + "excuteQuery" + "**" + db.state)
+        console.log("**" + "excuteQuery" + "**" + query,param)
         return new Promise((resolve, reject) => {
             db.query(query, param, (err, results) => {
                 if (err) return reject(err);

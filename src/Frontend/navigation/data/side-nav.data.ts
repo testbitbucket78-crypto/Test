@@ -7,7 +7,7 @@ export const sideNavSections: SideNavSection[] = [
     },
 
     {
-        items: ['Contacts', 'teambox', 'SmartReplies', 'camp','flow', 'Funnel', 'FlowBuilder',  'rep'],
+        items: ['Contacts', 'teambox', 'SmartReplies', 'camp','flow', 'Funnel', 'FlowBuilder',  'rep','botBuilder'],
     },
 ];
 
@@ -46,6 +46,11 @@ export const sideNavItems: SideNavItems = {
         icon: 'assets/img/side-nav/campaign.svg',
         text: 'Whatsapp Flow',
         link: '/flow',
+    },
+    botBuilder: {
+        icon: 'assets/img/side-nav/campaign.svg',
+        text: 'Bot Builder',
+        link: '/bot-builder',
     },
 
     

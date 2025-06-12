@@ -1,0 +1,825 @@
+import { Component, ElementRef, HostListener, ViewChild } from '@angular/core';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { SettingsService } from 'Frontend/dashboard/services/settings.service';
+import moment from 'moment';
+declare var bootstrap: any;
+declare var $: any;
+import { ToolbarService, NodeSelection, LinkService, ImageService } from '@syncfusion/ej2-angular-richtexteditor';
+import { RichTextEditorComponent, HtmlEditorService, EmojiPickerService } from '@syncfusion/ej2-angular-richtexteditor';
+import { Router } from '@angular/router';
+import { PhoneValidationService } from 'Frontend/dashboard/services/phone-validation.service';
+
+@Component({
+  selector: 'sb-bot-builder',
+  templateUrl: './bot-builder.component.html',
+  styleUrls: ['./bot-builder.component.scss'],
+  providers: [ToolbarService, LinkService, ImageService, HtmlEditorService, EmojiPickerService],
+})
+export class BotBuilderComponent {
+  searchKey: any = ''
+
+  @ViewChild('chatEditor') chatEditor!: RichTextEditorComponent;
+  @ViewChild('editFlowModal') editFlowModal!: ElementRef;
+  @ViewChild('createFlowModal') createFlowModal!: ElementRef;
+  public tools: object = {
+    items: ['Bold', 'Italic', 'StrikeThrough', 'EmojiPicker',
+
+      // {
+      //   tooltipText: 'Attributes',
+      //   undo: true,
+      //   click: this.ToggleAttributesOption.bind(this),
+      //   template: '<button style="width:28px;height:28px;border-radius: 35%!important;border: 1px solid #e2e2e2!important;background:#fff;" class="e-tbar-btn e-btn" tabindex="-1" id="custom_tbar"  >'
+      //     + '<div class="e-tbar-btn-text"><img style="width:10px;" src="/assets/img/teambox/attributes.svg"></div></button>'
+      // },
+
+    ]
+  };
+  dragAreaClass: string = '';
+  public pasteCleanupSettings: object = {
+    prompt: false,
+    plainText: true,
+    keepFormat: false,
+  };
+  statusColors: any = {
+    Draft: '#FFD0D0',
+    approved: '#E2F4EC',
+    pending: '#EBEDF1',
+    rejected: '#E4DFF5',
+    Published: '#E2F4EC',
+  };
+  showCampaignDetails: boolean = false;
+  selectedCategory = 0;
+  selectedTab: number = 0;
+  filterTemplateCategory = ['Status'];
+  profilePicture: any = ''
+  userDetails: any
+    agentList: any = []
+  tagList: any = []
+  advanceActions = [
+
+    {
+      name: 'Assign to contact owner',
+      value: 'assign_owner'
+    },
+
+    {
+      name: 'Unassign conversation',
+      value: 'Unassign_conversation'
+    }, {
+      name: 'Assign to Agent',
+      value: 'assign_agent',
+      children: this.agentList
+    },
+    {
+      name: 'Mark Conversation Status',
+      value: 'Mark_Status', children: [{ name: 'Resolve', value: 'resolve' }, { name: 'Open', value: 'open' }]
+    },
+    {
+      name: 'Add Tag',
+      value: 'Add_Tag', children: this.tagList, multiSelect: true
+    },
+    {
+      name: 'Remove Tag',
+      value: 'Remove_Tag', children: this.tagList, multiSelect: true
+    },
+  ];
+
+
+
+
+
+  botsList = [
+    {
+      botId: 'BOT-001',
+      botName: 'Customer Support Bot',
+      status: 'Published',
+      createdOn: '2025-04-25T14:35:00Z',
+      created_By: 'John Doe',
+      invoked: 120,
+      completed: 85,
+      dropped: 35,
+      Channel: 'WA API',
+      advanceAction: {
+        selected: [
+          { name: 'Assign Agent', value: 'assign_agent' },
+          { name: 'Update Status', value: 'update_status' }
+        ]
+      }
+    },
+    {
+      botId: 'BOT-002',
+      botName: 'Feedback Collector',
+      status: 'Draft',
+      createdOn: '2025-04-20T09:00:00Z',
+      invoked: 50,
+      completed: 30,
+      dropped: 20,
+      created_By: 'John Doe',
+      Channel: 'WA API',
+      botChannel: 'WhatsApp',
+      botDescription: 'This is a test bot',
+      botTimeout: '12:30',
+      dropOfMessage: '<p>Hello</p>',
+      advanceAction: {
+        selected: [
+          { name: 'Assign Agent', value: 'assign_agent' },
+          { name: 'Update Status', value: 'update_status' }
+        ]
+      }
+    },
+    {
+      botId: 'BOT-003',
+      botName: 'Order Tracking Bot',
+      status: 'Deprecated',
+      createdOn: '2025-02-01T10:15:00Z',
+      created_By: 'John Doe',
+      invoked: 200,
+      completed: 150,
+      Channel: 'WA API',
+      dropped: 50
+    }, {
+      botId: 'BOT-004',
+      botName: 'Order Tracking Bot',
+      status: 'Deprecated',
+      created_By: 'John Doe',
+      createdOn: '2025-02-01T10:15:00Z',
+      invoked: 200,
+      completed: 150,
+      Channel: 'WA API',
+      dropped: 50
+    }, {
+      botId: 'BOT-005',
+      botName: 'Order Tracking Bot',
+      status: 'Deprecated',
+      created_By: 'John Doe',
+      createdOn: '2025-02-01T10:15:00Z',
+      invoked: 200,
+      completed: 150,
+      Channel: 'WA API',
+      dropped: 50
+    }, {
+      botId: 'BOT-006',
+      botName: 'Order Tracking Bot 06',
+      status: 'Deprecated',
+      created_By: 'John Doe',
+      createdOn: '2025-02-01T10:15:00Z',
+      invoked: 200,
+      completed: 150,
+      Channel: 'WA API',
+      dropped: 50
+    }
+  ];
+
+
+  filterListChannel = [
+    { value: 1, label: 'WA API', checked: false },
+    { value: 2, label: 'WA Web', checked: false },
+  ];
+
+  channelOption: any = [
+    { value: 1, label: 'WhatsApp Official', checked: false },
+    { value: 2, label: 'WhatsApp Web', checked: false }];
+  filterListStatus = [
+    { value: 0, label: 'Draft', checked: false },
+    { value: 1, label: 'Published', checked: false },
+    { value: 2, label: 'Deprecated', checked: false },
+
+  ];
+
+
+
+
+
+
+
+
+
+  modalInstance: any;
+  dateRangeForm: any = FormGroup;
+  botBuilderForm: any = FormGroup;
+  dateRangeModal: any;
+  showDatePickers = false;
+  dateError: string | null = null;
+  maxSelectableDate = ""
+  constructor(public settingsService: SettingsService, public apiService: SettingsService, private modalService: NgbModal, private fb: FormBuilder, private router: Router) {
+    this.profilePicture = JSON.parse(sessionStorage.getItem('loginDetails')!).profile_img;
+    this.userDetails = JSON.parse(sessionStorage.getItem('loginDetails')!);
+  }
+
+  ngOnInit() {
+
+    this.botBuilderForm = this.fb.group({
+      botName: [null, [Validators.required, Validators.maxLength(20)]],
+      botDescription: [null, [Validators.required, Validators.maxLength(80)]],
+      botChannel: [null, Validators.required],
+      botChannelId: [null, Validators.required],
+      botTimeout: [null, Validators.required],
+      dropOfMessage: [null],
+      advanceAction: [null] // Add this line
+
+    })
+
+
+
+    this.dateRangeForm = this.fb.group({
+      dateOption: ['7Days', Validators.required],
+      fromDate: [null],
+      toDate: [null]
+    });
+
+    this.getWhatsAppDetails()
+    this.getUserList()
+    this.getTaglist()
+  }
+
+  searchBotBuilder(event: any) {
+    if (event?.target?.value?.length > 2) {
+      this.searchKey = event.target.value
+    } else {
+      this.searchKey = '';
+    }
+    this.applyFilterOnBotBuilder()
+  }
+
+
+  onDateOptionChange(option: string) {
+    this.showDatePickers = option === 'custom';
+    if (option !== 'custom') {
+      this.dateRangeForm.patchValue({ fromDate: null, toDate: null });
+      this.dateError = null;
+    }
+  }
+
+  applyFilterOnBotBuilder() {
+
+  }
+
+  ngAfterViewInit() {
+
+  }
+
+
+  getInitial(name: string): string {
+    return name ? name.charAt(0).toUpperCase() : '';
+  }
+
+  // getLimitedMessageText(message: string) {
+  //   let maxLength = 30;
+  //   if (message) {
+  //     if (message.length <= maxLength) {
+  //       return message;
+  //     }
+  //     else {
+  //       return message.substring(0, maxLength) + '...';
+  //     }
+  //   }
+  // }
+
+  setSelectedCategory(index: number) {
+    this.selectedCategory = index;
+  }
+
+  
+  openModal(content: any) {
+    this.maxSelectableDate = moment().subtract(1, 'day').format('YYYY-MM-DD');
+    this.modalService.open(content, { centered: true, backdrop: 'static' });
+  }
+
+
+  lastCursorPosition: Range | null = null;
+  ToggleAttributesOption() {
+    // this.closeAllModal()
+    $("#showAttributes").modal('show');
+    const selection = window.getSelection();
+    this.lastCursorPosition = selection?.getRangeAt(0) || null;
+    document.getElementById('addsmartreplies')!.style.display = 'none';
+  }
+
+  ToggleAttachmentBox() {
+    // this.closeAllModal()
+    $("#attachmentbox").modal('show');
+    document.getElementById('addsmartreplies')!.style.display = 'none';
+    this.dragAreaClass = "dragarea";
+  }
+  clearFilters() {
+
+  }
+
+///
+  updateFilter(event: any, filter: any) {
+    if (event.target.checked) {
+      filter['checked'] = true;
+      let isChecked = filter.label
+    } else {
+      filter['checked'] = false;
+    }
+  }
+
+  botDetailsData: any = null
+  toggleTemplatesData(item: any) {
+    console.log(item)
+    if (item == null) {
+      this.showCampaignDetails = false
+      this.botDetailsData = null
+    }
+    else {
+      this.showCampaignDetails = true
+      this.botDetailsData = item
+
+
+
+
+      this.botBuilderForm.patchValue({
+        botName: item.botName,
+        botDescription: item.botDescription,
+        botChannel: item.Channel,
+        botTimeout: item.botTimeout,
+        dropOfMessage: item.dropOfMessage,
+        advanceAction: {
+          selected: item?.advanceAction?.selected
+        }
+      });
+
+      this.selectedAdvanceAction = null;
+    }
+
+  }
+
+  channelPhoneNumber: string = '';
+  channelSelected: string = '';
+  ShowAssignOption: any = false;
+  toggleAssignOption() {
+    this.ShowAssignOption = !this.ShowAssignOption
+  }
+
+  updateDropdown(id: string) {
+    const selectedChannel = this.channelOption.find((channel: any) => channel.connected_id === id);
+    if (selectedChannel) {
+      this.channelSelected = selectedChannel.label;
+    }
+    this.ShowAssignOption = false;
+  }
+
+  validateDate() {
+    const fromDate = moment(this.dateRangeForm.value.fromDate);
+    const toDate = moment(this.dateRangeForm.value.toDate);
+    const today = moment().startOf('day');
+    const threeMonthsAgo = moment().subtract(3, 'months').startOf('day');
+
+    if (fromDate.isAfter(toDate)) {
+      this.dateError = "From date cannot be greater than To date.";
+    } else if (fromDate.isSame(today, 'day') || toDate.isSame(today, 'day')) {
+      this.dateError = "Today's date is not allowed as From Date and today Date";;
+    } else if (toDate.isAfter(today)) {
+      this.dateError = "Future dates are not allowed.";
+    } else if (fromDate.isBefore(threeMonthsAgo)) {
+      this.dateError = "Only dates from the last 3 months are allowed.";
+    } else {
+      this.dateError = null;
+    }
+  }
+
+
+
+
+
+  dowloadTooltip!: boolean;
+  showDownloadBtn!: boolean;
+  downloadBtnLoad: any = false
+  confirmAndExport(modal: any) {
+    var downloadIcon = document.querySelector(".btn-circle-download");
+    if (downloadIcon) {
+      this.downloadBtnLoad = true;
+      downloadIcon.classList.add("load");
+    }
+    if (this.dateRangeForm.valid && !this.dateError) {
+      const selectedOption = this.dateRangeForm.value.dateOption;
+      let fromDate, toDate;
+
+    }
+  }
+
+
+  stopPropagation(event: Event) {
+    event.stopPropagation();
+  }
+
+  ShowChannelOption: any = false;
+  toggleChannelOption() {
+    this.ShowChannelOption = !this.ShowChannelOption;
+  }
+
+
+  selectChannel(channel: any) {
+    this.botBuilderForm.get('botChannel')?.setValue(`${channel.label} (${channel.connected_id})`);
+    this.botBuilderForm.get('botChannelId')?.setValue(channel.connected_id);
+    this.ShowChannelOption = false;
+  }
+
+  showAdvanceAction = false;
+  showSubmenuPanel = false;
+  submenuOptions: any[] = [];
+  submenuTitle = '';
+  searchText = '';
+  selectedAdvanceAction: any = null;
+  tempSelections: any = [];
+
+
+
+  toggleAdvanceAction() {
+    this.showAdvanceAction = !this.showAdvanceAction;
+    this.showSubmenuPanel = false;
+  }
+
+
+  /// should be reviewed latter
+  currentAdvanceAction: any = null;
+  selectedParentAction: any = null;
+  handleActionClick(action: any) {
+    this.selectedParentAction = action;
+
+    if (!action.children || action.children.length === 0) {
+      // No children – directly assign and close
+      this.botBuilderForm.patchValue({ advanceAction: action });
+      this.showAdvanceAction = false;
+      return;
+    }
+
+    // Has children – open submenu
+    this.submenuTitle = action.name;
+    this.submenuOptions = action.children || [];
+    this.showSubmenuPanel = true;
+
+    // Restore previous selection if any
+    const prev = this.botBuilderForm.value.advanceAction;
+    if (action.multiSelect) {
+      this.multiSelect = prev?.selectedChildren || [];
+    } else {
+      this.tempSelections = prev?.selectedChild || null;
+    }
+  }
+
+
+  filteredSubmenuOptions() {
+    console.log(this.submenuOptions)
+    return this.submenuOptions.filter(opt =>
+      opt.value.toLowerCase().includes(this.searchText.toLowerCase())
+    );
+  }
+
+  multiSelect: any = []
+
+  selectAdvanceAction(child: any) {
+    if (this.selectedParentAction?.multiSelect) {
+      const index = this.multiSelect.findIndex((c: any) => c.value === child.value);
+      if (index > -1) {
+        this.multiSelect.splice(index, 1); // Deselect
+      } else {
+        this.multiSelect.push(child); // Select
+      }
+    } else {
+      this.tempSelections = child; // single select fallback
+    }
+  }
+
+
+
+  isChildSelected(child: any): boolean {
+    if (this.selectedParentAction?.multiSelect) {
+      return this.multiSelect.some((c: any) => c.value === child.value);
+    }
+    return this.tempSelections?.value === child.value;
+  }
+
+
+  confirmSelection() {
+    if (this.selectedParentAction?.multiSelect) {
+      this.botBuilderForm.patchValue({
+        advanceAction: {
+          ...this.selectedParentAction,
+          selectedChildren: [...this.multiSelect]
+        }
+      });
+    } else {
+      this.botBuilderForm.patchValue({
+        advanceAction: {
+          ...this.selectedParentAction,
+          selectedChild: this.tempSelections
+        }
+      });
+    }
+
+    this.showAdvanceAction = false;
+    this.showSubmenuPanel = false;
+    this.searchText = '';
+  }
+
+
+  backToMainDropdown() {
+    this.showSubmenuPanel = false;
+    this.tempSelections = null;
+  }
+
+  getAdvanceActionDisplayValue(): string {
+    const action = this.botBuilderForm.value.advanceAction;
+    if (!action) return '';
+
+    if (action.multiSelect && action.selectedChildren?.length) {
+      const childNames = action.selectedChildren.map((c: any) => c.name).join(', ');
+      return `${action.name} (${childNames})`;
+    }
+
+    if (action.selectedChild) {
+      return `${action.name} (${action.selectedChild.name})`;
+    }
+
+    return action.name;
+  }
+
+
+
+
+
+
+
+
+  showAdvanceOption = false;
+
+  toggleAdvanceOption() {
+    this.showAdvanceOption = !this.showAdvanceOption;
+  }
+
+
+  showOptions = false;
+  contactOwner = '{{Contact Owner}}';
+  ownerName = 'Jane Cooper';
+
+  toggleOptions() {
+    this.showOptions = !this.showOptions;
+  }
+
+
+
+
+  menuOpen = false;
+  selectedAction: string | null = null;
+  submenus: { [key: string]: boolean } = { agent: false, team: false };
+
+  toggleMenu(event: Event) {
+    event.stopPropagation();
+    this.menuOpen = !this.menuOpen;
+  }
+
+  selectAction(action: string) {
+    this.selectedAction = action;
+    this.menuOpen = false;
+    // Optionally reset submenus:
+    this.submenus = { agent: false, team: false };
+  }
+
+  openSubmenu(menu: string) {
+    this.submenus[menu] = true;
+  }
+
+  closeSubmenu(menu: string) {
+    this.submenus[menu] = false;
+  }
+
+  @HostListener('document:click')
+  closeDropdown() {
+    this.menuOpen = false;
+    this.submenus = { agent: false, team: false };
+  }
+
+
+
+  successMessage: string = '';
+  errorMessage: string = '';
+  warningMessage: string = '';
+  showToaster(type: any, message: any) {
+    if (type == 'success') {
+      this.successMessage = message;
+    } else if (type == 'error') {
+      this.errorMessage = message;
+    } else {
+      this.warningMessage = message;
+    }
+    setTimeout(() => {
+      this.hideToaster()
+    }, 5000);
+
+  }
+  hideToaster() {
+    this.successMessage = '';
+    this.errorMessage = '';
+    this.warningMessage = '';
+  }
+
+
+
+
+  // API
+  getUserList() {
+    this.apiService.getUserList(this.userDetails.SP_ID).subscribe((res: any) => {
+      if (res.status == 200) {
+        this.agentList = res.getUser.filter((item: any) => item.RoleName === 'Agent').map((item: any) => ({
+          name: item.name,
+          value: item.email_id
+        }));
+        let index = this.advanceActions.findIndex((item: any) => item.value == 'assign_agent')
+        this.advanceActions[index].children = this.agentList
+      } else {
+        this.showToaster('error', res.message);
+      }
+    }, (error: any) => {
+      this.showToaster('error', error.error.message);
+    });
+  }
+
+  // get tag list
+  getTaglist() {
+    this.apiService.getTagData(this.userDetails.SP_ID).subscribe((res: any) => {
+      if (res.status == 200) {
+        this.tagList = res.taglist.map((item: any) => ({
+          name: item.TagName,
+          value: item.TagColour,
+          tag: true
+        }));
+        let index = this.advanceActions.findIndex((item: any) => item.value == 'Add_Tag')
+        let index2 = this.advanceActions.findIndex((item: any) => item.value == 'Remove_Tag')
+        this.advanceActions[index].children = this.tagList
+        this.advanceActions[index2].children = this.tagList
+      } else {
+        this.showToaster('error', res.message);
+      }
+    }, (error: any) => {
+      this.showToaster('error', error.error.message);
+    });
+  }
+
+
+  getWhatsAppDetails() {
+    console.log(this.userDetails)
+    this.apiService.getWhatsAppDetails(this.userDetails.SP_ID)
+      .subscribe((response: any) => {
+        if (response) {
+          if (response && response?.whatsAppDetails) {
+            this.channelOption = response?.whatsAppDetails.map((item: any) => ({
+              value: item?.id,
+              label: item?.channel_id,
+              connected_id: item?.connected_id,
+              channel_status: item?.channel_status
+            }));
+
+            if (this.channelOption.length == 1) {
+              this.channelSelected = this.channelOption[0].label;
+              this.channelPhoneNumber = this.channelOption[0].connected_id;
+
+            }
+
+          }
+        }
+      })
+  }
+
+
+
+  submitBotForm() {
+    
+    if (this.botBuilderForm.invalid) {
+      this.botBuilderForm.markAllAsTouched(); // show validation errors
+      return;
+    }
+    
+    
+    
+    if (this.botBuilderForm.valid) {
+      const formData = this.botBuilderForm.value;
+      console.log('Saving Bot Form Data:', formData);
+      var data: any = {
+        spid: this.userDetails.SP_ID,
+        name: formData.botName,
+        description: formData.botDescription,
+        channel_id: formData.botChannelId,
+        status: 'draft',
+        timeout_value: formData.botTimeout,
+        timeout_message: formData.dropOfMessage,
+        created_by: this.userDetails.uid,
+      }
+      this.settingsService.saveBotDetails(data).subscribe((response: any) => {
+        if (response.status === 200) {
+          this.botBuilderForm?.reset()
+          // this.showToaster('success', 'Bot created successfully');
+          // this.router.navigate(['/bot-Creation']);
+        } else {
+          this.showToaster('error', response.message);
+        }
+      })
+
+
+
+      // this.closeModalById('createFlowModal')
+      // this.router.navigate(['/bot-Creation']);
+      // You can now send formData to the backend or store it
+      // this.botService.saveBot(formData).subscribe(...);
+    } else {
+      console.warn('Form is invalid');
+      this.botBuilderForm.markAllAsTouched();
+    }
+  }
+
+
+  resetBotForm() {
+      this.botBuilderForm.reset();
+    this.botBuilderForm.removeControl('copyBotName');
+    this.showAdvanceAction = false;
+    this.showSubmenuPanel = false;
+    this.searchText = '';
+    this.selectedAdvanceAction = null;
+    this.selectedParentAction = null;
+    this.tempSelections = null;
+    this.multiSelect = [];
+    this.showAdvanceOption = false;      
+  }  
+
+
+
+  updateBotForm() {
+    if (this.botBuilderForm.valid) {
+      const formData = this.botBuilderForm.value;
+      console.log('Updated bot data:', formData);
+      this.closeModalById('editFlowModal')
+      this.router.navigate(['/bot-Creation']);
+
+      // Send to backend service
+      // this.botService.updateBot(formData).subscribe(
+      //   () => {
+      //     // Close modal and redirect or refresh
+      //   },
+      //   error => {
+      //     console.error('Update failed', error);
+      //   }
+      // );
+    }
+  }
+
+
+  closeModalById(modalId: string) {
+    const modalElement = document.getElementById(modalId);
+    if (modalElement) {
+      const modalInstance = bootstrap.Modal.getInstance(modalElement) || new bootstrap.Modal(modalElement);
+      modalInstance.hide();
+    }
+    this.resetBotForm()
+  }
+
+  copyBot() {
+
+    this.botBuilderForm.patchValue({
+      copyBotName: [null, [Validators.required, Validators.maxLength(20)]],
+    });
+  }
+
+
+  copyBotForm() {
+    if (this.botBuilderForm.valid) {
+      const formData = this.botBuilderForm.value;
+      console.log('Updated bot data:', formData);
+      this.closeModalById('copyBot')
+      this.router.navigate(['/bot-Creation']);
+
+      this.botBuilderForm.removeControl('copyBotName');
+
+
+      // Send to backend service
+      // this.botService.updateBot(formData).subscribe(
+      //   () => {
+      //     // Close modal and redirect or refresh
+      //   },
+      //   error => {
+      //     console.error('Update failed', error);
+      //   }
+      // );
+    }
+  }
+
+
+
+
+  confirmDelete() {
+    if (!this.botDetailsData.botId) return;
+
+    // Call your delete API here
+
+    this.botsList = this.botsList.filter(bot => bot.botId !== this.botDetailsData.botId);
+
+    console.log('Deleting bot:', this.botDetailsData);
+
+    // Optionally close modal
+    this.closeModalById('deleteBotModal')
+    this.showCampaignDetails = false;
+    // Reset selection
+    this.botDetailsData = null;
+  }
+}

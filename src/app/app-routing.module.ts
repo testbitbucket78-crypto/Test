@@ -222,6 +222,32 @@ const routes: Routes = [
         component: dashboardContainers.WhatsAppFlowsComponent,
     },
     {
+        path: 'bot-builder',
+        data: {
+            title: 'Bot Builder',
+            breadcrumbs: [
+                {
+                    text: 'Bot Builder',
+                    active: true,
+                },
+            ],
+        } as SBRouteData,
+        component: dashboardContainers.BotBuilderComponent,
+    },
+    {
+        path: 'bot-Creation',
+        data: {
+            title: 'Bot Creation',
+            breadcrumbs: [
+                {
+                    text: 'Bot Creation',
+                    active: true,
+                },
+            ],
+        } as SBRouteData,
+        component: dashboardContainers.CardCreationComponent,
+    },
+    {
         path: 'flowBuilder',
         data: {
             title: 'Flow builder',

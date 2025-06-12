@@ -92,3 +92,6 @@ export * from 'assets/tooltip/tooltip.component';
 export * from './tools/components/tools-widget/tools-widget.component';
 export * from './whats-app-flows/whats-app-flows.component';
 export * from 'assets/toast/toast.component';
+
+export * from './bot-builder/bot-builder.component';
+export * from './card-creation/card-creation.component';

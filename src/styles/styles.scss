@@ -23,10 +23,11 @@
 
 //Import Smartreply styles
 .modal-smart-reply-open {
-    @import "smartReply.scss";
-  }
-.modal-smart-reply-open{
-  overflow: auto!important;
+  @import "smartReply.scss";
+}
+
+.modal-smart-reply-open {
+  overflow: auto !important;
 }
 
 // Layout
@@ -68,53 +69,57 @@
 @import "node_modules/ngx-bootstrap/datepicker/bs-datepicker";
 
 
-.background-blur{
-	background: rgb(255 255 255 / 80%) !important;
+.background-blur {
+  background: rgb(255 255 255 / 80%) !important;
 }
 
-.contact-modal .modal-content{
+.contact-modal .modal-content {
   height: max-content;
   max-height: 90vh;
- }
- .updateCustomerCustom .modal-content{
+}
+
+.updateCustomerCustom .modal-content {
   height: max-content;
   max-height: 90vh;
 
- }
+}
 
- .contact-modal .contact-scroll{
+.contact-modal .contact-scroll {
   height: max-content;
   overflow-y: scroll;
   overflow-x: hidden;
- }
- 
-.e-mention-chip{
+}
+
+.e-mention-chip {
   background: #eee;
   border-radius: 2px;
   color: #2e2ef1;
 }
-.e-mention-chip a{
+
+.e-mention-chip a {
   color: #007bff !important;
 }
 
-.toaster{
+.toaster {
   z-index: 9999999 !important;
 }
+
 // for font size for all text in here to 12px;
- ejs-richtexteditor .e-rte-content .e-content {
-  font-size: 12px!important;
+ejs-richtexteditor .e-rte-content .e-content {
+  font-size: 12px !important;
 }
-.cursor-pointer{
+
+.cursor-pointer {
   cursor: pointer !important;
 }
 
 
-.temp-footer{
+.temp-footer {
   font-style: italic !important;
   font-size: 11px;
 }
 
-.temp-header{
+.temp-header {
   font-size: 12.5px;
 }
 
@@ -131,7 +136,7 @@
 }
 
 
-.copyright-text{
+.copyright-text {
   position: absolute;
   bottom: 60px;
   left: 30px;
@@ -143,9 +148,358 @@
 .box4 p {
   margin-bottom: 0px !important;
 }
+
 .box4 p p {
   margin-bottom: 0px !important;
 }
+
 .modal-smart-reply-open .box4 p {
   margin-bottom: 0px !important;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+.new_chat_content .drawflow .drawflow-node {
+  width: 280px;
+  padding: 0;
+  border: none !important;
+  background: rgb(255 255 255 / 80%) !important;
+  border-radius: 10px !important;
+  box-shadow: 10px 20px 35px rgba(0, 0, 0, 0.1);
+}
+
+
+.new_chat_content .drawflow_content_node {
+  padding: 15px;
+  padding-bottom: 23px;
+  height: auto;
+  /* <-- allow height to expand */
+  overflow: visible;
+
+}
+
+.new_chat_content .box_111 {
+  background: var(--blue);
+  color: rgb(5 4 4 / 80%) !important;
+  font-size: 18px;
+  font-family: "Segoe UI', sans-serif";
+  border-top-left-radius: 10px;
+  border-top-right-radius: 10px;
+  padding: 10px;
+  margin: 0 -15px;
+  margin-top: -15px;
+  margin-bottom: 15px;
+}
+
+
+.new_chat_content .drawflow .drawflow-node {
+  width: 280px;
+  padding: 0;
+  border: none !important;
+  background: rgb(255 255 255 / 80%) !important;
+  border-radius: 10px !important;
+  box-shadow: 10px 20px 35px rgba(0, 0, 0, 0.1);
+}
+
+
+.viewSection {
+  position: absolute;
+  left: 189px;
+  top: 8px;
+  background: var(--br);
+  width: 30px;
+  height: 30px;
+  box-shadow: 10px 20px 35px rgba(0, 0, 0, 0.1);
+  text-align: center;
+  border-top-left-radius: 5px;
+  border-bottom-left-radius: 5px;
+  line-height: 30px;
+}
+
+.viewSectioncopy {
+  position: absolute;
+  left: 215px;
+  top: 8px;
+  background: var(--br);
+  width: 30px;
+  height: 30px;
+  box-shadow: 10px 20px 35px rgba(0, 0, 0, 0.1);
+  text-align: center;
+  border-top-left-radius: 5px;
+  border-bottom-left-radius: 5px;
+  line-height: 30px;
+}
+
+
+
+
+
+
+
+.new_chat_content .drawflow .drawflow-node .outputs {
+
+  right: -4px;
+  position: absolute;
+  top: 0;
+  bottom: 0;
+
+}
+#node-1 .output.output_1 {
+    right: 12px;
+    top: 28px;
+}
+
+.temName{
+    /* padding-right: 30px; */
+    white-space: normal;
+    word-break: break-word;
+    max-width: 180px;
+    display: inline-block;
+    font-family: 'Manrope';
+    font-size: 15px;
+    font-weight: bold;
+        padding-left: 9px;
+
+}
+
+.new_chat_content .drawflow .drawflow-node .outputs .output,
+.new_chat_content .drawflow .drawflow-node .input {
+  width: 14px;
+  height: 14px;
+  border-color: #82de8d;
+  // margin-bottom: 32px;
+}
+
+
+
+
+/* Container for all outputs */
+// .new_chat_content .drawflow .drawflow-node .outputs {
+//   position: absolute;
+//   right: 10px;
+//   top: 0;
+//   bottom: 52px;
+//   pointer-events: none; /* Allows clicks to pass through empty areas */
+// }
+
+// /* output_1 positioned at top */
+// .new_chat_content .drawflow .drawflow-node .outputs .output_1 {
+//   width: 14px;
+//   height: 14px;
+//   border: 2px solid #82de8d;
+//   border-radius: 50%;
+//   background: white;
+//   position: relative;
+//   top: 17px !important;
+//   right: -5px;
+//   pointer-events: auto;
+//   z-index: 10;
+// }
+
+// /* Other outputs positioned at bottom */
+// .new_chat_content .drawflow .drawflow-node .outputs .output:not(.output_1) {
+//   width: 14px;
+//   height: 14px;
+//   border: 2px solid #82de8d;
+//   border-radius: 50%;
+//   background: white;
+//   position: relative;
+//   bottom: -127px;
+//   right: -5px;
+//   margin-bottom: 30px;
+//   pointer-events: auto;
+//   z-index: 10;
+// }
+
+/* Input connector style */
+.new_chat_content .drawflow .drawflow-node .input {
+  width: 13px;
+  height: 13px;
+  border: 2px solid #82de8d;
+  border-radius: 50%;
+  background: white;
+  position: relative;
+  left: -287px;
+  pointer-events: auto;
+  z-index: 10;
+}
+
+
+// .drawflow .drawflow-node .output{
+//   top:unset !important
+// }
+
+.new_chat_content .drawflow .drawflow-node .inputs {
+  position: absolute;
+  right: 0px;
+  top: 17px;
+  background: #72de87 !important;
+}
+
+
+
+.drawflow .drawflow-node .input {
+  background: #72de87 !important;
+}
+
+
+.textCont {
+  background: #f7f7f7;
+  border-radius: 19px;
+  padding: 14px;
+  word-wrap: break-word;
+  /* Ensures long words break to the next line */
+  overflow-wrap: break-word;
+  /* Modern equivalent for better support */
+  white-space: pre-wrap;
+  /* Keeps line breaks and wraps long lines */
+  height: auto;
+  /* Let the box grow with content */
+  max-width: 100%;
+  /* Prevents overflow horizontally */
+  display: block;
+  min-height: 115px;
+}
+
+.textQuestion {
+  background: #f7f7f7;
+  border-radius: 19px;
+  padding: 14px;
+  overflow-wrap: break-word;
+  white-space: pre-wrap;
+}
+
+.new_chat_content .drawflow-delete {
+  background: #e5020d;
+  font-size: 17px;
+  line-height: 19px;
+  width: 25px !important;
+  height: 25px !important;
+}
+
+.textContImage {
+  background: #f7f7f7;
+  height: 115px;
+  border-radius: 19px;
+  padding: 14px;
+  border: 1px dashed #ccc;
+  border-radius: 12px;
+  overflow: hidden;
+  background-color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+
+
+.new_chat_content .drawflow_content_node img.Preview {
+  margin-bottom: 15px;
+}
+
+.btn_theme3 {
+  background: #f1f1f1;
+  color: #000000 !important;
+  box-shadow: none !important;
+  border-color: #000000 !important;
+  border-radius: 9px;
+}
+
+
+
+
+
+
+/* Home icon styling */
+.home-node {
+  background: white;
+  border: 2px solid #6B46C1;
+  border-radius: 50%;
+  width: 80px;
+  height: 80px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  cursor: default;
+}
+
+.home-icon {
+  font-size: 32px;
+}
+
+.home-text {
+  font-size: 12px;
+  color: #6B46C1;
+  font-weight: bold;
+  margin-top: 4px;
+}
+
+/* Connection line styling */
+.drawflow .connection .main-path {
+  stroke: #6B46C1;
+  stroke-width: 2px;
+}
+
+.drawflow .connection .point {
+  stroke: #6B46C1;
+  stroke-width: 2px;
+  fill: white;
+}
+
+#node-1 .drawflow-delete {
+  display: none !important;
+}
+
+
+.drawflow-delete {
+  display: none !important;
+}
+
+.drawflow .drawflow-node .drawflow-delete {
+  display: block !important;  /* force it to be visible */
+  opacity: 1 !important;
+  pointer-events: auto;
+  visibility: visible;
+}
+
+#node-1 .drawflow_content_node {
+    padding: 0px !important;
+    padding-bottom: 0px !important;
+} 
+
+
+div#node-1 {
+    background: none !important;
+    width: 72px !important;
+    height: 74px !important;
+}
+
+.viewSectionDelete {
+    position: absolute;
+    left: 241px;
+    top: 8px;
+    background: var(--br);
+    width: 30px;
+    height: 30px;
+    box-shadow: 10px 20px 35px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    border-top-left-radius: 5px;
+    border-bottom-left-radius: 5px;
+    line-height: 30px;
 }

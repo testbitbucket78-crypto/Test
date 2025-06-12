@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="70" height="70" viewBox="0 0 70 70">
+  <defs>
+    <linearGradient id="linear-gradient" x1="0.5" x2="0.5" y2="1" gradientUnits="objectBoundingBox">
+      <stop offset="0" stop-color="#f9b035"/>
+      <stop offset="0.53" stop-color="#f98c4e"/>
+      <stop offset="1" stop-color="#f96767"/>
+    </linearGradient>
+    <filter id="Rectangle_154" x="0" y="0" width="70" height="70" filterUnits="userSpaceOnUse">
+      <feOffset dy="3" input="SourceAlpha"/>
+      <feGaussianBlur stdDeviation="3" result="blur"/>
+      <feFlood flood-opacity="0.161"/>
+      <feComposite operator="in" in2="blur"/>
+      <feComposite in="SourceGraphic"/>
+    </filter>
+  </defs>
+  <g id="home-f" transform="translate(-367.846 -314.846)">
+    <g transform="matrix(1, 0, 0, 1, 367.85, 314.85)" filter="url(#Rectangle_154)">
+      <rect id="Rectangle_154-2" data-name="Rectangle 154" width="52" height="52" rx="18" transform="translate(9 6)" fill="url(#linear-gradient)"/>
+    </g>
+    <g id="Home" transform="translate(393.51 337.019)">
+      <path id="Home-2" data-name="Home" d="M6.52,18.449v-3a1.394,1.394,0,0,1,1.4-1.389h2.825a1.4,1.4,0,0,1,.989.407,1.384,1.384,0,0,1,.41.982v3a1.192,1.192,0,0,0,.35.852,1.21,1.21,0,0,0,.856.354h1.927a3.4,3.4,0,0,0,2.4-.982,3.351,3.351,0,0,0,1-2.381V7.731a2.43,2.43,0,0,0-.88-1.869L11.236.664a3.044,3.044,0,0,0-3.88.07L.95,5.862A2.431,2.431,0,0,0,0,7.731v8.552a3.384,3.384,0,0,0,3.4,3.372H5.279a1.21,1.21,0,0,0,1.214-1.2Z" transform="translate(0 0)"/>
+    </g>
+  </g>
+</svg>
