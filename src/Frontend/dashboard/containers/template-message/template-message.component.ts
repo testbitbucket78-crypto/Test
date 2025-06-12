@@ -10,7 +10,7 @@ import { faSmileWink } from '@fortawesome/free-solid-svg-icons';
 import { PhoneValidationService } from 'Frontend/dashboard/services/phone-validation.service';
 import { environment } from 'environments/environment';
 import { InteractiveButtonPayload, InteractiveMessagePayload } from 'Frontend/dashboard/models/interactiveButtons.model';
-
+import { ToastService } from 'assets/toast/toast.service';
 declare var $: any;
 @Component({
     selector: 'sb-template-message',
@@ -252,7 +252,7 @@ export class TemplateMessageComponent implements OnInit {
     constructor(public apiService: SettingsService,
         private renderer: Renderer2,
         private phoneValidationService: PhoneValidationService,
-        public settingsService: SettingsService, private _teamboxService: TeamboxService, public cdr : ChangeDetectorRef) {
+        public settingsService: SettingsService, private _teamboxService: TeamboxService, public cdr : ChangeDetectorRef, public toast: ToastService) {
             this.countryCodeList = this.apiService.countryCodes;
         }
 
@@ -374,9 +374,13 @@ export class TemplateMessageComponent implements OnInit {
 
     showMessageType() {
         // this.selectedType = type;
+                debugger;
         this.newTemplateForm.get('Links')?.setValue(null);
         this.newTemplateForm.get('Header')?.setValue('');
         this.selectedPreview = '';
+       if (this.selectedType !== '' && this.selectedType !== 'text') {
+            this.toast.warning('Attention: Buttons are allowed only when the header type is "Text" or "None"');
+        }
     }
  
     applyGalleryFilter() {
@@ -1241,6 +1245,10 @@ triggerRichTextEditorChange() {
     
 
     previewTemplate() {
+        if(!this.validateRenderedButtons(this.renderedButtons)){
+           this.toast.error('Buttons text should not be empty');
+           return;
+        }
         this.interactiveButtonsPayload = this.generateInteractivePayload('');
         this.allVariablesValueList =[];
         console.log(this.newTemplateForm.controls.BodyText.value);
@@ -1982,11 +1990,58 @@ openButtonPopUp(event: Event) {
       }
       return undefined;
     }
+    validateRenderedButtons(renderedButtons: any[]):boolean {
+        let boolean =  true;
+        renderedButtons.forEach((detail: any) => {
+        // Skip buttons that are not selected
+        //if (!detail.enabledButton || detail.enabledButton.length === 0) return;
+
+        // 1. Check button text
+        if (!detail.children?.button_text || detail.children.button_text.trim() === '') {
+            boolean = false
+            return;
+        }
+
+        // 2. Check extra fields
+        if (Array.isArray(detail.children?.extra_field)) {
+            detail.children.extra_field.forEach((field: any) => {
+            if (!field.extra_field_text || field.extra_field_text.trim() === '') {
+                boolean = false
+                return
+            }
+
+            // For dropdowns
+            if (field.dropdown_field && (!field.selected_country_code || field.selected_country_code.trim() === '')) {
+            boolean = false
+            return
+            }
+            });
+        }
+
+        // 3. Special case for list_messages -> rows
+        if (detail.id === 'list_messages' && Array.isArray(detail.children?.extra_field)) {
+            detail.children.extra_field.forEach((row: any) => {
+            if (!row.extra_field_text || row.extra_field_text.trim() === '') {
+            boolean = false
+            return;
+            }
+            });
+        }
+        });
+       return boolean;
+}
 
     generateInteractivePayload(to: string): InteractiveMessagePayload {
+        let listPayload: any = null;
         const buttons: InteractiveButtonPayload[] = [];
+        
+
+
         this.renderedButtons.forEach(group => {
             // Ignore if no text entered
+                const buttonText = group.children.button_text?.trim();
+                if (!buttonText) return;
+
             if (group.children.button_text.trim()) {
               const button: InteractiveButtonPayload = {
                 type: this.getButtonType(group.id),
@@ -2015,6 +2070,23 @@ openButtonPopUp(event: Event) {
                   button.copy_code = extra.extra_field_text;
                 }
               }
+                  if (group.id === 'list_messages') {
+                    const rows = group.children.extra_field.map((item: any, index: number) => ({
+                        title: item.extra_field_text?.trim() || `Option ${index + 1}`,
+                        description: item.placeholder?.trim() || '',
+                        id: item.id?.trim() || `row${index + 1}`
+                    }));
+
+                    listPayload = {
+                        label: buttonText,
+                        sections: [
+                        {
+                            title: buttonText,
+                            rows
+                        }
+                        ]
+                    };
+                  }
       
               buttons.push(button);
             }
@@ -2027,7 +2099,14 @@ openButtonPopUp(event: Event) {
             buttons
           }
         };
-      
+
+        if (listPayload) {
+            payload.type = 'list';
+            payload.action.list = listPayload;
+        } else if (buttons.length) {
+            payload.action.buttons = buttons;
+        }
+
         return payload;
       }
       getButtonType(id: string): string {
