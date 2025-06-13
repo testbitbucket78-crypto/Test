@@ -6,6 +6,7 @@ export interface InteractiveMessagePayload {
   header?: any;
   body?: any;
   footer?: any;
+  type?: string; // Add this for 'list' type
   action: InteractiveAction;
 }
 

@@ -868,8 +868,8 @@
                 </div>
             
             </div>  
-            
-            <div *ngIf="channel=='whapi' && channelDomain != 'api'" class="d-flex pt-3 pb-2 flex-column add-buttons">
+
+            <div *ngIf="channel=='whapi' && channelDomain != 'api' && (selectedType == '' || selectedType == 'text')" class="d-flex pt-3 pb-2 flex-column add-buttons">
                 <div class="px-4 pt-1 msg-head">
                     <h6>Buttons<span>(Optional)</span></h6>
                     <span class="pb-1">Add buttons to enable customer actions. Only one type of button is allowed, except for 'Call' and 'Link,' which may be used together or individually.</span>
