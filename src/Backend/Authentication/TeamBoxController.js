@@ -690,6 +690,7 @@ const insertMessage = async (req, res) => {
             var header = req.body?.headerText
             var body = req.body?.bodyText
             let DynamicURLToBESent;
+            let Interactive_buttons = typeof req.body?.interactiveButtonsPayload == 'string' ? req.body?.interactiveButtonsPayload : JSON.stringify(req.body?.interactiveButtonsPayload);
             let buttonsVariable = typeof req.body?.buttonsVariable === 'string' ? JSON.parse(req.body?.buttonsVariable) : req.body?.buttonsVariable;
             if(!commonFun.isInvalidParam(req.body?.buttonsVariable) && buttonsVariable.length > 0) {
                DynamicURLToBESent = await removeTags.getDynamicURLToBESent(buttonsVariable, SPID, customerId);
@@ -702,7 +703,7 @@ const insertMessage = async (req, res) => {
             let buttons = JSON.stringify(req?.body?.buttons);
             const channel = channelType.length > 0 ? channelType[0].channel : spchannel[0]?.channel_id;
 
-            var values = [[SPID, Type, ExternalMessageId, interaction_id, Agent_id, message_direction, message_text, message_media, media_type, Message_template_id, Quick_reply_id, created_at, created_at, mediaSize, assignAgent, buttons]];
+            var values = [[SPID, Type, ExternalMessageId, interaction_id, Agent_id, message_direction, message_text, message_media, media_type, Message_template_id, Quick_reply_id, created_at, created_at, mediaSize, assignAgent, buttons, Interactive_buttons]];
             let msg_id = await db.excuteQuery(messageQuery, [values]);
             //  logger.debug('Message ID:', msg_id);
             let updateInteraction = await db.excuteQuery(val.updateTempInteractionQuery, [0, interaction_id])
