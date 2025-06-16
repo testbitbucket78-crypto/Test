@@ -761,7 +761,7 @@
                                     <!-- <input type="text" id="quickreply" maxlength="25" placeholder="Enter" [(ngModel)]="item.buttonText" [ngModelOptions]="{standalone: true}" > -->
                                     <select class="sel input-form" [(ngModel)]="item.flowId" [ngModelOptions]="{standalone: true}">
                                         <option value="" selected disabled>Select a WhatsApp flow</option>
-                                        <option *ngFor="let flow of templateFlows" [value]="flow?.id">{{flow?.name}}</option>
+                                        <option *ngFor="let flow of templateFlows" [value]="flow?.flowid">{{flow?.flowname}}</option>
                                     </select>
                                 </div>
                             </div>
