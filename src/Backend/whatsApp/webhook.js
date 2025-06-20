@@ -156,6 +156,7 @@ async function extractDataFromMessage(body) {
     let contact = changes.value.contacts && changes.value.contacts.length > 0 ? changes.value.contacts[0] : null;
 
     let contactName = contact.profile.name ? contact.profile.name : from;
+    let contactDetail;
 
 
     let phoneNo = contact.wa_id;
@@ -207,7 +208,8 @@ async function extractDataFromMessage(body) {
         let media_type = messageData[0]?.media_type;
         let button = messageData[0]?.button;
         if(message_direction == 'IN'){
-        let agentName = await db.excuteQuery('SELECT e.name FROM Interaction i JOIN EndCustomer e ON i.customerId = e.customerId WHERE i.interactionId = ?;', [Interaction_id]);
+        let agentName = await db.excuteQuery('SELECT e.name,i.customerId,e.Phone_number FROM Interaction i JOIN EndCustomer e ON i.customerId = e.customerId WHERE i.interactionId = ?;', [Interaction_id]);
+        contactDetail = agentName[0];
         if(agentName?.length > 0)
           repliedMessageTo = agentName[0]?.name;
       }else{
@@ -229,12 +231,14 @@ async function extractDataFromMessage(body) {
             message_text = 'Form sent';
             let flow_reply_Json = JSON.stringify(firstMessage?.interactive?.nfm_reply?.response_json);
             let flow_reply = JSON.parse(firstMessage?.interactive?.nfm_reply?.response_json);
-            let flow_token = flow_reply?.flow_token?.custom_info;
+            let flow_token = JSON.parse(flow_reply?.flow_token)?.custom_info;
             console.log("flow_token", flow_token)
-            const query = `INSERT INTO FlowsData (spid, flowid,flowresponse) VALUES ?`;
-            await db.excuteQuery(query, [spid,flow_token,flow_reply_Json]);
+            const query = `INSERT INTO FlowsData (spid, flowid,flowresponse,customerId,name,phoneNumber) VALUES ?`;
+            await db.excuteQuery(query, [SPID[0]?.SP_ID,flow_token,flow_reply_Json, contactDetail?.customerId, contactDetail?.name, contactDetail?.Phone_number]);
             const flowquery = `UPDATE Flows SET responses = responses + 1 WHERE flowid = ?`;
             await db.excuteQuery(flowquery, [flow_token]);
+            let body= { mapping: flow_reply?.mapping, spId: SPID[0]?.SP_ID, customerId: contactDetail?.customerId, flowresponse: flow_reply_Json }
+            updatePreviousValue(body);
           }
       }
     }
@@ -354,6 +358,26 @@ async function extractDataFromMessage(body) {
 
 }
 
+
+async function updatePreviousValue(body){
+    try {
+           let mapping =  body.mapping;
+           let flowresponse= JSON.parse(JSON.parse(body?.flowresponse));
+              mapping.forEach((map) => {
+                  let value= flowresponse[map?.ActuallName];
+                  if(map.attributeMapped != "" && map?.isOverride && value){
+                    let updateQuery = `UPDATE EndCustomer SET ${map.attributeMapped}=? WHERE SP_ID=? AND customerId=?`;
+                    db.excuteQuery(updateQuery, [value, body.spId, body.customerId]);
+                } else if(map.attributeMapped != "" && !map?.isOverride && value){
+                    let updateQuery = `UPDATE EndCustomer SET ${map.attributeMapped} =? WHERE SP_ID =? AND customerId =? AND (${map.attributeMapped} IS NULL OR ${map.attributeMapped} = '')`;
+                    db.excuteQuery(updateQuery, [value, body.spId, body.customerId]);
+                }
+        });
+    } catch (err) {
+        console.log(err)
+        res.send(err)
+    }
+}
 
 
 async function isMessageExist(messageId) {
