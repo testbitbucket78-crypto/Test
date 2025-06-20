@@ -20,7 +20,25 @@ export class WhatsappFlowDetailComponent {
   @Output() closeFlowDetail = new EventEmitter<string>();
      public channelDomain:string = environment?.chhanel;
 
-    columnDefs: ColDef[] | any = [            
+    columnDefs: ColDef[] | any = [ 
+      {
+        field: 'name',
+        headerName: 'Name',
+        width:200,
+        suppressSizeToFit: false,
+        resizable: true,
+        sortable: true,
+        cellStyle: { background: '#FBFAFF', opacity: 0.86 },
+    },       
+    {
+      field: 'phoneNumber',
+      headerName: 'Phone Number',
+      width:200,
+      suppressSizeToFit: false,
+      resizable: true,
+      sortable: true,
+      cellStyle: { background: '#FBFAFF', opacity: 0.86 },
+  },                  
       {
         field: 'created_at',
         headerName: 'Received At',
@@ -175,6 +193,9 @@ getFlowDetail() {
           flowData.forEach((item:any)=>{
             let data = JSON.parse(JSON.parse(item.flowresponse));
             console.log(data, '----data----');
+            data['created_at'] = item?.created_at;
+            data['phoneNumber'] = item?.phoneNumber;
+            data['name'] = item?.name;
             responseData.push(data);
           });
           this.flowList = responseData;
@@ -192,14 +213,32 @@ getRefresh(){
   this.ColumnMapping = this.initColumnMapping;
   this.columnDefs = [
     {
-        field: 'created_at',
-        headerName: 'Received At',
-        width:200,
-        suppressSizeToFit: false,
-        resizable: true,
-        sortable: true,
-        cellStyle: { background: '#FBFAFF', opacity: 0.86 },
-    },
+      field: 'name',
+      headerName: 'Name',
+      width:200,
+      suppressSizeToFit: false,
+      resizable: true,
+      sortable: true,
+      cellStyle: { background: '#FBFAFF', opacity: 0.86 },
+  },       
+  {
+    field: 'phoneNumber',
+    headerName: 'Phone Number',
+    width:200,
+    suppressSizeToFit: false,
+    resizable: true,
+    sortable: true,
+    cellStyle: { background: '#FBFAFF', opacity: 0.86 },
+},                  
+    {
+      field: 'created_at',
+      headerName: 'Received At',
+      width:200,
+      suppressSizeToFit: false,
+      resizable: true,
+      sortable: true,
+      cellStyle: { background: '#FBFAFF', opacity: 0.86 },
+  },       
 ];
 }
 
