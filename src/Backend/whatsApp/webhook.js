@@ -209,9 +209,10 @@ async function extractDataFromMessage(body) {
         let button = messageData[0]?.button;
         if(message_direction == 'IN'){
         let agentName = await db.excuteQuery('SELECT e.name,i.customerId,e.Phone_number FROM Interaction i JOIN EndCustomer e ON i.customerId = e.customerId WHERE i.interactionId = ?;', [Interaction_id]);
-        contactDetail = agentName[0];
-        if(agentName?.length > 0)
+        if(agentName?.length > 0){
+          contactDetail = agentName[0];
           repliedMessageTo = agentName[0]?.name;
+        }
       }else{
         repliedMessageTo = 'You';
       }
