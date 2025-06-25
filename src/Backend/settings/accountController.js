@@ -14,7 +14,9 @@ const path = require('path');
 const axios = require('axios');
 const middleWare = require('../middleWare')
 const commonFun = require('../common/resuableFunctions');
-const { APIKeyManager, sendMessageBody, spPhoneNumber, ApiResponse, Webhooks }= require('./model/accountModel');
+const { APIKeyManager, sendMessageBody, spPhoneNumber, ApiResponse, Webhooks, 
+    textMessageBody, mediaMessageBody, TemplateStatus, SessionStatus, 
+    TemplateAPI, TemplateWHAPI, TemplateWEB, Template, sendTemplateBody }= require('./model/accountModel');
 const { WebSocketManager } = require("../whatsApp/PushNotifications")
 const {mapCountryCode} = require('../Contact/utils')
 const variables = require('../common/constant')
@@ -217,13 +219,13 @@ const addGetAPIKey = async (req, res) => {
             let result = await SaveOrUpdate(APIKeyManagerInstance);
             let resResult = await GetAPIKeyData(APIKeyManagerInstance);
             if (resResult && resResult.length > 0) {
-                const response = APIKeyManagerInstance.mapResponse(resResult[0]);
+                const response = resResult.map((item) => APIKeyManagerInstance.mapResponse(item));
                 return res?.status(200).json(response);
             }
         } else {
             let result = await GetAPIKeyData(APIKeyManagerInstance);
             if (result && result.length > 0) {
-                const response = APIKeyManagerInstance.mapResponse(result[0]);
+                const response = result.map((item) => APIKeyManagerInstance.mapResponse(item));
                 return res?.status(200).json(response);
             }
         }
@@ -234,20 +236,21 @@ const addGetAPIKey = async (req, res) => {
 }
 async function SaveOrUpdate(APIKeyManagerInstance) {
     const keyGenerated = APIKeyManagerInstance.generateKey();
+    const api_token = APIKeyManagerInstance.generateKey2();
     let checkIfAlreadyExists = await GetAPIKeyData(APIKeyManagerInstance);
     let ips = APIKeyManagerInstance.ip;
     if (typeof ips !== 'string') {
         ips = JSON.stringify(ips);
     }
-    if (checkIfAlreadyExists && checkIfAlreadyExists.length > 0) {
+    if (!APIKeyManagerInstance.isNew) {
         if(APIKeyManagerInstance.isRegenerate){
-            await db.excuteQuery(val.updateUserAPIKeysAndKeyGenerate, [keyGenerated, ips, APIKeyManagerInstance.spId]);
+            await db.excuteQuery(val.updateUserAPIKeysAndKeyGenerate, [keyGenerated, ips, APIKeyManagerInstance.id]);
         } else{
-            await db.excuteQuery(val.updateUserAPIKeysAndTokenName, [APIKeyManagerInstance.tokenName ,ips, APIKeyManagerInstance.spId]);
+            await db.excuteQuery(val.updateUserAPIKeysAndTokenName, [APIKeyManagerInstance.tokenName ,ips, APIKeyManagerInstance.id]);
         }
         return { success: true, data: { spid: APIKeyManagerInstance.spId, ips } };
     } else {
-        await db.excuteQuery(val.insertUserAPIKeys, [APIKeyManagerInstance.spId, keyGenerated, ips, APIKeyManagerInstance.tokenName]);
+        let checking = await db.excuteQuery(val.insertUserAPIKeys, [APIKeyManagerInstance.spId, keyGenerated, ips, APIKeyManagerInstance.tokenName, api_token]);
         return { success: true, data: { spid: APIKeyManagerInstance.spId, ips } };
     }
 }
@@ -657,7 +660,7 @@ const testWebhooks = async (req, res) => {
 const deleteAPIToken = async (req, res) => {
     try {
         let instanceOfkey = new APIKeyManager(req.body)
-        let result = await db.excuteQuery(val.deleteAPIKey, [instanceOfkey.spId]);
+        let result = await db.excuteQuery(val.deleteAPIKey, [instanceOfkey.id]);
         res.status(200).send(result);
     } catch (err) {
         console.error(err);
@@ -788,6 +791,480 @@ const sendMessage = async (req, res) => {
     });
 }
 }
+
+const textMessage = async (req, res) => { 
+    try {
+    const spId = req.spid
+    const APIKeyManagerInstance = new APIKeyManager({ spId, ...req?.body});
+    //const APIKeyManagerInstance = new APIKeyManager({ spId });
+    // const APIKeyManagerInstance = new APIKeyManager({ spId, ...req?.body});
+
+    APIKeyManagerInstance.validate();
+    const clientIp = req.headers['x-forwarded-for'] || req?.connection.remoteAddress;
+    const ip = clientIp?.startsWith('::ffff:') ? clientIp?.substring(7) : clientIp;
+    
+    const Data = await db.excuteQuery(val.getUserAPIKeys, [APIKeyManagerInstance.spId]);
+    if (Data && Data.length > 0) {
+        const result = APIKeyManagerInstance.mapResponse(Data[0]);
+
+        if(APIKeyManagerInstance.spId){
+            try {
+                const apiUrl = `${variables.ENV_URL.waweb}/IsClientReady`;
+                const dataToSend = {
+                  spid: APIKeyManagerInstance.spId
+                };
+          
+                const response = await axios.post(apiUrl, dataToSend);
+                if(response?.data?.message != 'Client is ready !'){
+                    throw new Error(`Please go to settings and Scan the QR Code !`);
+                }
+              } catch (error) {
+                throw new Error(`Error While Authenticating client !`);
+              }
+        }
+    } else {
+         throw new Error("No data found for the given spId.");
+    }
+
+  const sendMessageInstance = new textMessageBody(req?.body);
+  sendMessageInstance.SPID = APIKeyManagerInstance.spId;
+  if(sendMessageInstance.isTemplate == true){
+    const { Header, BodyText, FooterText } = await textMessageBody.getBodyText(sendMessageInstance.name);
+    sendMessageInstance.message_text = (Header ? Header + "\n" : "") + BodyText +'<p class="temp-footer">'+FooterText+'</p>';
+    sendMessageInstance.bodyText = BodyText;
+  }
+   
+  const channelData = await db.excuteQuery(val.getChannel, [APIKeyManagerInstance.spId]);
+  let channel, AgentId;
+  if (channelData && channelData.length > 0) {
+      channel = channelData[0]?.channel_id;
+  }
+
+  let { InteractionId, custid } = await insertInteractionAndRetrieveId(sendMessageInstance.messageTo, sendMessageInstance.SPID, channel);
+  const AgentIdData = await db.excuteQuery(val.getAgentId, [APIKeyManagerInstance.spId]);
+  if(AgentIdData && AgentIdData.length > 0) AgentId = AgentIdData[0]?.uid;
+  sendMessageInstance.InteractionId = InteractionId;
+  sendMessageInstance.CustomerId = custid;
+  sendMessageInstance.AgentId = AgentId;
+        const apiUrl = `${variables.ENV_URL.auth}/newmessage`;
+        const response = await axios.post(apiUrl, sendMessageInstance);
+        const responseData = response?.data;
+        if (responseData?.status >= 200 && responseData?.status < 300) {
+            const structuredResponse = new ApiResponse(responseData);
+            return res.status(200).json(structuredResponse);
+          } else {
+            return res.status(responseData?.status || 500).json(responseData);
+        }
+        
+
+}catch (err) {
+    db.errlog(err);
+    res.status(403).send({
+        msg: "Sending Message failed.",
+        status: 403,
+        error: err?.message,
+    });
+}
+}
+const mediaMessage = async (req, res) => { 
+    try {
+    const spId = req.spid
+    const APIKeyManagerInstance = new APIKeyManager({ spId, ...req?.body});
+    //const APIKeyManagerInstance = new APIKeyManager({ spId });
+    // const APIKeyManagerInstance = new APIKeyManager({ spId, ...req?.body});
+
+    APIKeyManagerInstance.validate();
+    const clientIp = req.headers['x-forwarded-for'] || req?.connection.remoteAddress;
+    const ip = clientIp?.startsWith('::ffff:') ? clientIp?.substring(7) : clientIp;
+    
+    const Data = await db.excuteQuery(val.getUserAPIKeys, [APIKeyManagerInstance.spId]);
+    if (Data && Data.length > 0) {
+        const result = APIKeyManagerInstance.mapResponse(Data[0]);
+
+        if(APIKeyManagerInstance.spId){
+            try {
+                const apiUrl = `${variables.ENV_URL.waweb}/IsClientReady`;
+                const dataToSend = {
+                  spid: APIKeyManagerInstance.spId
+                };
+          
+                const response = await axios.post(apiUrl, dataToSend);
+                if(response?.data?.message != 'Client is ready !'){
+                    throw new Error(`Please go to settings and Scan the QR Code !`);
+                }
+              } catch (error) {
+                throw new Error(`Error While Authenticating client !`);
+              }
+        }
+    } else {
+         throw new Error("No data found for the given spId.");
+    }
+
+  const sendMessageInstance = new mediaMessageBody(req?.body);
+  sendMessageInstance.SPID = APIKeyManagerInstance.spId;
+  if(sendMessageInstance.isTemplate == true){
+    const { Header, BodyText, FooterText } = await mediaMessageBody.getBodyText(sendMessageInstance.name);
+    sendMessageInstance.message_text = (Header ? Header + "\n" : "") + BodyText +'<p class="temp-footer">'+FooterText+'</p>';
+    sendMessageInstance.bodyText = BodyText;
+  }
+   
+  const channelData = await db.excuteQuery(val.getChannel, [APIKeyManagerInstance.spId]);
+  let channel, AgentId;
+  if (channelData && channelData.length > 0) {
+      channel = channelData[0]?.channel_id;
+  }
+
+  let { InteractionId, custid } = await insertInteractionAndRetrieveId(sendMessageInstance.messageTo, sendMessageInstance.SPID, channel);
+  const AgentIdData = await db.excuteQuery(val.getAgentId, [APIKeyManagerInstance.spId]);
+  if(AgentIdData && AgentIdData.length > 0) AgentId = AgentIdData[0]?.uid;
+  sendMessageInstance.InteractionId = InteractionId;
+  sendMessageInstance.CustomerId = custid;
+  sendMessageInstance.AgentId = AgentId;
+  //sendMessageInstance.mediaType = true;
+        const apiUrl = `${variables.ENV_URL.auth}/newmessage`;
+        const response = await axios.post(apiUrl, sendMessageInstance);
+        const responseData = response?.data;
+        if (responseData?.status >= 200 && responseData?.status < 300) {
+            const structuredResponse = new ApiResponse(responseData);
+            return res.status(200).json(structuredResponse);
+          } else {
+            return res.status(responseData?.status || 500).json(responseData);
+        }
+        
+
+}catch (err) {
+    db.errlog(err);
+    res.status(403).send({
+        msg: "Sending Message failed.",
+        status: 403,
+        error: err?.message,
+    });
+}
+}
+const getTemplate = async (req, res) => { 
+    try {
+    const spId = req.spid
+    let getTemplatesQuery = `SELECT * FROM templateMessages WHERE spid=? and isDeleted !=1 and isTemplate=1`;
+    db.runQuery(req, res, getTemplatesQuery, [spId], (err, result) => {
+                if (err) {
+                    logger.error('Error in getTemplates:', err);
+                    res.status(500).send({ error: 'Database query error' });
+                } else {
+                    logger.info('getTemplates function completed successfully', result);
+                    res.send(result);
+                }
+    });
+    
+}catch (err) {
+    db.errlog(err);
+    res.status(403).send({
+        msg: "Get Template failed.",
+        status: 403,
+        error: err?.message,
+    });
+}
+}
+
+const getTemplateStatus = async (req, res) => {
+  try {
+    const spId = req.spid
+    const { templateName } = req.body;
+
+    const templateStatus = new TemplateStatus(spId, templateName);
+    const status = await templateStatus.getStatus();
+
+    res.status(200).send({ status });
+  } catch (err) {
+    const statusCode = err?.message === "Template not found" ? 404 : 400;
+    res.status(statusCode).send({ error: err?.message });
+  }
+};
+
+const getSessionStatus = async (req, res) => {
+  try {
+    const spId = req?.spid
+    const { customerId } = req.body;
+
+    const Session = new SessionStatus(spId, customerId);
+    const status = await Session.getSession();
+
+    res.status(200).send({ status });
+  } catch (err) {
+    const statusCode = err?.message === "Template not found" ? 404 : 400;
+    res.status(statusCode).send({ error: err?.message });
+  }
+};
+
+const getContacts = async (req, res) => {
+  try {
+    const spId = req.spid 
+    let querry = `SELECT 
+                EC.*,
+                IFNULL(GROUP_CONCAT(ECTM.TagName ORDER BY FIND_IN_SET(ECTM.ID, REPLACE(EC.tag, ' ', ''))), '') AS tag_names
+                FROM 
+                EndCustomer AS EC
+                LEFT JOIN 
+                EndCustomerTagMaster AS ECTM ON FIND_IN_SET(ECTM.ID, REPLACE(EC.tag, ' ', '')) AND (ECTM.isDeleted != 1)
+                WHERE 
+                EC.isDeleted != 1
+                AND EC.SP_ID = ?
+                AND EC.IsTemporary != 1
+                GROUP BY 
+                EC.customerId
+                order by updated_at desc`;
+
+    let contactList = await db.excuteQuery(querry, [spId]);
+    if(!contactList || contactList.length === 0) {
+      throw new Error("No contacts found !");
+    }
+    res.status(200).send({ contactList });
+
+  } catch (err) {
+    res.status(500).send({ error: "Error Occured while fetching the contacts" });
+  }
+};
+
+const deleteContacts = async (req, res) => {
+  try {
+    const spId = req.spid
+    const { customerId } = req.body;
+
+    const sendMessageInstance = {
+      customerId,
+      SP_ID: spId
+    };
+
+    const apiUrl = `${variables.ENV_URL.contacts}/deletContact`;
+    const response = await axios.post(apiUrl, sendMessageInstance);
+    const responseData = response?.data;
+    res.status(200).send({ status: 'success', data: responseData });
+  } catch (err) {
+    const statusCode = err?.message === "Template not found" ? 404 : 400;
+    res.status(statusCode).send({ error: err?.message });
+  }
+};
+
+const getUsers = async (req, res) => {
+  try {
+    const spId = req.spid
+    selectAllQuery = `SELECT   r.RoleName,  u.*
+                    FROM user u
+                    JOIN roles r ON u.UserType = r.roleID
+                    WHERE u.SP_ID =? AND u.isDeleted != 1` ;
+    
+    let getUser = await db.excuteQuery(val.selectAllQuery, [spId])               
+    res.status(200).send({ status: 'success', data: getUser });
+  } catch (err) {
+    res.status(500).send({ error: "Error while fetching Users List" });
+  }
+};
+
+const getCustomFields = async (req, res) => {
+  try {
+    const spId = req.spid 
+    const apiUrl = `${variables.ENV_URL.settings}/wrapperGetCustomField/${spId}`; 
+
+    const response = await axios.get(apiUrl);
+    const responseData = response?.data;
+
+    if (!responseData || responseData.status !== 200) {
+      return res.status(500).send({ error: 'Failed to fetch custom fields from wrapper API' });
+    }
+
+    res.status(200).send({
+      status: 'success',
+      data: responseData,
+    });
+  } catch (err) {
+    res.status(500).send({ error: "Error while fetching Custom Fields" });
+  }
+};
+
+const createContact = async (req, res) => {
+  try {
+    const spId = req.spid
+
+    const userPayload = req.body;
+
+    if (!userPayload || typeof userPayload !== 'object') {
+      return res.status(400).send({ error: "Invalid payload" });
+    }
+
+    // Convert payload into the required `req.body.result` structure
+    const result = [
+      { displayName: spId, ActuallName: "SP_ID" },
+      ...Object.entries(userPayload).map(([key, value]) => ({
+        displayName: value,
+        ActuallName: key
+      }))
+    ];
+
+    const apiUrl = `${variables.ENV_URL.contacts}/addCustomContact`;
+
+    const response = await axios.post(apiUrl, { result });
+    const responseData = response?.data;
+
+    if (!responseData || responseData.status !== 200) {
+      return res.status(500).send({ error: 'Failed to add contact to remote service' });
+    }
+
+    res.status(200).send({
+      status: 'success',
+      data: responseData,
+    });
+  } catch (err) {
+    res.status(500).send({
+      error: err?.message || "Internal server error"
+    });
+  }
+};
+
+const updateContact = async (req, res) => {
+  try {
+    const spId = req.spid
+    const customerId = req.query.customerId;
+
+    const userPayload = req.body;
+
+    if (!userPayload || typeof userPayload !== 'object') {
+      return res.status(400).send({ error: "Invalid payload" });
+    }
+
+    // Convert the payload into the required `req.body.result` structure
+    const result = [
+      { displayName: spId, ActuallName: "SP_ID" },
+      ...Object.entries(userPayload).map(([key, value]) => ({
+        displayName: value,
+        ActuallName: key
+      }))
+    ];
+
+    const apiUrl = `${variables.ENV_URL.contacts}/editCustomContact?SP_ID=${spId}&customerId=${customerId}`;
+
+    const response = await axios.post(apiUrl, { result });
+    const responseData = response?.data;
+
+    if (!responseData || responseData.status !== 200) {
+      return res.status(500).send({ error: 'Failed to edit contact on remote service' });
+    }
+
+    res.status(200).send({
+      status: 'success',
+      data: responseData,
+    });
+  } catch (err) {
+    res.status(500).send({
+      error: err?.message || "Internal server error"
+    });
+  }
+};
+
+const createTemplatesAPI = async (req, res) => {
+  try {
+    const spId = req.spid
+    const instanceAPI = new TemplateAPI(req.body);
+
+    const apiUrl = `${variables.ENV_URL.settings}/addTemplateWrapper`;
+    const response = await axios.post(apiUrl, instanceAPI);
+    const responseData = response?.data;
+
+    res.status(200).send({
+      status: 'success',
+      data: responseData,
+    });
+  } catch (err) {
+    console.error("Error:", err);
+    res.status(500).send({
+      error: err?.message || "Internal server error",
+    });
+  }
+};
+
+const createTemplatesWHAPI = async (req, res) => {
+  try {
+    const spId = req.spid
+    const instanceWHAPI = new TemplateWHAPI(req.body, spId);
+
+    const apiUrl = `${variables.ENV_URL.settings}/addTemplateWrapper`;
+    const response = await axios.post(apiUrl, instanceWHAPI);
+    const responseData = response?.data;
+    res.status(200).send({
+      status: 'success',
+      data: responseData,
+    });
+  } catch (err) {
+    res.status(500).send({
+      error: err?.message || "Internal server error"
+    });
+  }
+};
+
+const createTemplatesWEB = async (req, res) => {
+  try {
+    const spId = req.spid
+    const instanceWEB = new TemplateWEB(req.body, spId);
+
+    const apiUrl = `${variables.ENV_URL.settings}/addTemplateWrapper`;
+    const response = await axios.post(apiUrl, instanceWEB);
+    const responseData = response?.data;
+
+    res.status(200).send({
+      status: 'success',
+      data: responseData,
+    });
+  } catch (err) {
+    res.status(500).send({
+      error: err?.message || "Internal server error"
+    });
+  }
+};
+
+const sendTemplates = async (req, res) => {
+  try {
+    const spId = req.spid
+    const instanceWEB = new Template(req.body, spId);
+    const detailsInstance = await instanceWEB.getTemplateDetails();
+    const sendMessageInstance = new sendTemplateBody({
+            spId: instanceWEB.spid, 
+            PhoneNo: req.body.PhoneNo, 
+            messageTo:req.body.messageTo, 
+            templateDetails: detailsInstance
+        }); 
+
+  if(sendMessageInstance.isTemplate == true){
+    const { Header, BodyText, FooterText } = await sendMessageBody.getBodyText(sendMessageInstance.name);
+    sendMessageInstance.message_text = (Header ? Header + "\n" : "") + BodyText +'<p class="temp-footer">'+FooterText+'</p>';
+    sendMessageInstance.bodyText = BodyText;
+  }
+
+  const channelData = await db.excuteQuery(val.getChannel, [instanceWEB.spid]);
+  let channel, AgentId;
+  if (channelData && channelData.length > 0) {
+      channel = channelData[0]?.channel_id;
+  }
+
+  let { InteractionId, custid } = await insertInteractionAndRetrieveId(sendMessageInstance.messageTo, sendMessageInstance.SPID, channel);
+  const AgentIdData = await db.excuteQuery(val.getAgentId, [instanceWEB.spid]);
+  if(AgentIdData && AgentIdData.length > 0) AgentId = AgentIdData[0]?.uid;
+  sendMessageInstance.InteractionId = InteractionId;
+  sendMessageInstance.CustomerId = custid;
+  sendMessageInstance.AgentId = AgentId;
+        const apiUrl = `${variables.ENV_URL.auth}/newmessage`;
+        const response = await axios.post(apiUrl, sendMessageInstance);
+        const responseData = response?.data;
+        if (responseData?.status >= 200 && responseData?.status < 300) {
+            const structuredResponse = new ApiResponse(responseData);
+            return res.status(200).json(structuredResponse);
+          } else {
+            return res.status(responseData?.status || 500).json(responseData);
+        }
+  } catch (err) {
+    res.status(500).send({
+      error: err?.message || "Internal server error"
+    });
+  }
+};
+
 
 
 async function insertInteractionAndRetrieveId(phoneNo, sid, channel) {
@@ -970,5 +1447,6 @@ async function getQualityRatings(phoneNumberId, access_token) {
 
 module.exports = {
     insertAndEditWhatsAppWeb, selectDetails, addToken, deleteToken, enableToken, selectToken,
-    createInstance, getQRcode, generateQRcode, editToken, testWebhook,getQualityRating, addWAAPIDetails, addGetAPIKey, APIkeysState, saveWebhookUrl, sendMessage, saveOrUpdateWebhook, getWebhooks, deleteWebhook, testWebhooks, deleteAPIToken, exportLogs
+    createInstance, getQRcode, generateQRcode, editToken, testWebhook,getQualityRating, addWAAPIDetails, addGetAPIKey, APIkeysState, saveWebhookUrl, sendMessage, saveOrUpdateWebhook, getWebhooks, deleteWebhook, testWebhooks, deleteAPIToken, exportLogs, textMessage, mediaMessage, getTemplate, getTemplateStatus
+    , getSessionStatus, getContacts, deleteContacts, getUsers, getCustomFields, createContact, updateContact, createTemplatesAPI, createTemplatesWEB, createTemplatesWHAPI, sendTemplates
 }

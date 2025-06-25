@@ -225,7 +225,7 @@ app.post('/addCustomContact', async (req, res) => {
 
 
 
-app.post('/editCustomContact', authenticateToken, async (req, res) => {
+app.post('/editCustomContact', async (req, res) => {
   try {
     const id = req.query.customerId;
     const spid = req.query.SP_ID;
