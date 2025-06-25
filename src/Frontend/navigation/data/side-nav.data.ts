@@ -7,7 +7,7 @@ export const sideNavSections: SideNavSection[] = [
     },
 
     {
-        items: ['Contacts', 'teambox', 'SmartReplies', 'camp','flow', 'Funnel', 'FlowBuilder',  'rep','botBuilder'],
+        items: ['Contacts', 'teambox', 'SmartReplies', 'camp', 'flow', 'Funnel', 'BotBuilder', 'rep', 'bot-creation'],
     },
 ];
 
@@ -47,13 +47,13 @@ export const sideNavItems: SideNavItems = {
         text: 'Whatsapp Flow',
         link: '/flow',
     },
-    botBuilder: {
-        icon: 'assets/img/side-nav/campaign.svg',
+    BotBuilder: {
+        icon: 'assets/img/teambox/bot-sideBar.svg',
         text: 'Bot Builder',
         link: '/bot-builder',
     },
 
-    
+
     // Funnel: {
 
     //     icon: 'assets/img/side-nav/funnel.svg',
@@ -67,7 +67,7 @@ export const sideNavItems: SideNavItems = {
     //     link: '/flowBuilder',
     // },
 
- 
+
 
     // rep: {
     //     icon: 'assets/img/side-nav/repots.svg',

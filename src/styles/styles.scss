@@ -287,43 +287,6 @@ ejs-richtexteditor .e-rte-content .e-content {
 
 
 
-/* Container for all outputs */
-// .new_chat_content .drawflow .drawflow-node .outputs {
-//   position: absolute;
-//   right: 10px;
-//   top: 0;
-//   bottom: 52px;
-//   pointer-events: none; /* Allows clicks to pass through empty areas */
-// }
-
-// /* output_1 positioned at top */
-// .new_chat_content .drawflow .drawflow-node .outputs .output_1 {
-//   width: 14px;
-//   height: 14px;
-//   border: 2px solid #82de8d;
-//   border-radius: 50%;
-//   background: white;
-//   position: relative;
-//   top: 17px !important;
-//   right: -5px;
-//   pointer-events: auto;
-//   z-index: 10;
-// }
-
-// /* Other outputs positioned at bottom */
-// .new_chat_content .drawflow .drawflow-node .outputs .output:not(.output_1) {
-//   width: 14px;
-//   height: 14px;
-//   border: 2px solid #82de8d;
-//   border-radius: 50%;
-//   background: white;
-//   position: relative;
-//   bottom: -127px;
-//   right: -5px;
-//   margin-bottom: 30px;
-//   pointer-events: auto;
-//   z-index: 10;
-// }
 
 /* Input connector style */
 .new_chat_content .drawflow .drawflow-node .input {
@@ -467,9 +430,7 @@ ejs-richtexteditor .e-rte-content .e-content {
 }
 
 
-.drawflow-delete {
-  display: none !important;
-}
+
 
 .drawflow .drawflow-node .drawflow-delete {
   display: block !important;  /* force it to be visible */
@@ -502,4 +463,37 @@ div#node-1 {
     border-top-left-radius: 5px;
     border-bottom-left-radius: 5px;
     line-height: 30px;
+}
+
+
+
+
+/* Smaller modal width */
+.swal2-popup.small-swal {
+    width: 419px !important;
+    height: 351px;
+    padding: 20px;
+}
+
+/* Red delete button */
+.swal-btn-confirm {
+  background-color: #ef4444 !important; // Tailwind red-500
+  color: white !important;
+  border: none;
+  border-radius: 4px;
+  padding: 8px 16px;
+  font-weight: 600;
+  font-size: 14px;
+}
+
+/* White cancel button */
+.swal-btn-cancel {
+  background-color: white !important;
+  color: #111827 !important; // Tailwind gray-900
+  border: 1px solid #d1d5db;  // Tailwind gray-300
+  border-radius: 4px;
+  padding: 8px 16px;
+  font-weight: 600;
+  font-size: 14px;
+  margin-left: 8px;
 }

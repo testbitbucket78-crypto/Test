@@ -8,94 +8,105 @@
 	</div>
 	<sb-loader [isLoading]="isLoading"></sb-loader>
 	<div class="row team-box-page" id="team-box-page">
-	
+
 		<div class="d-flex justify-content-center w-100">
 
 			<div class="col-sm-3 team-box">
 
-	<!-- filter-popup -->
+				<!-- filter-popup -->
 				<div class="custom_row pt-3">
-					<input (focus)="focusInFunction()" (focusout)="focusOutFunction()" (keyup)="getSearchInteraction($event)"
-						[ngClass]="searchFocused ? 'search-box active' : 'search-box'" type="text" [placeholder]="searchFocused ? 'Search by Name or Phone No.' : 'Search'" 
-						aria-label="Search" aria-describedby="basic-addon2" />
+					<input (focus)="focusInFunction()" (focusout)="focusOutFunction()"
+						(keyup)="getSearchInteraction($event)"
+						[ngClass]="searchFocused ? 'search-box active' : 'search-box'" type="text"
+						[placeholder]="searchFocused ? 'Search by Name or Phone No.' : 'Search'" aria-label="Search"
+						aria-describedby="basic-addon2" />
 
 					<div *ngIf="!searchFocused" class="drop-down-btn" (click)="addfilters()">
 						<div class="toggle-box" (click)="toggleFilerOption()"><img
 								src="assets/img/teambox/filter-icon.svg"></div>
-								<div *ngIf="showfilter" id="pop-filter" class="popup-dialog" (click)="stopPropagation($event)">
-									<p class="label">Filter</p>
-		
-									<p [ngClass]="interactionFilterBy=='All' ? 'active' : ''"
-										(click)="filterInteraction('All')"><span>All Chats</span></p>
-									<p [ngClass]="interactionFilterBy=='Unassigned' ? 'active' : ''"
-										(click)="filterInteraction('Unassigned')"><span>Unassigned</span></p>
-									<p [ngClass]="interactionFilterBy=='Mine' ? 'active' : ''"
-										(click)="filterInteraction('Mine')"><span>My Open</span></p>
-									<!-- <p [ngClass]="interactionFilterBy=='Open' ? 'active' : ''"
+						<div *ngIf="showfilter" id="pop-filter" class="popup-dialog" (click)="stopPropagation($event)">
+							<p class="label">Filter</p>
+
+							<p [ngClass]="interactionFilterBy=='All' ? 'active' : ''"
+								(click)="filterInteraction('All')"><span>All Chats</span></p>
+							<p [ngClass]="interactionFilterBy=='Unassigned' ? 'active' : ''"
+								(click)="filterInteraction('Unassigned')"><span>Unassigned</span></p>
+							<p [ngClass]="interactionFilterBy=='Mine' ? 'active' : ''"
+								(click)="filterInteraction('Mine')"><span>My Open</span></p>
+							<!-- <p [ngClass]="interactionFilterBy=='Open' ? 'active' : ''"
 										(click)="filterInteraction('Open')"><span>My Open</span></p> -->
-									<p [ngClass]="interactionFilterBy=='Resolved' ? 'active' : ''"
-										(click)="filterInteraction('Resolved')"><span>Resolved</span></p>
-									<p [ngClass]="interactionFilterBy=='Mentioned' ? 'active' : ''"
-										(click)="filterInteraction('Mentioned')"><span>Mentioned</span></p>
-									<p [ngClass]="interactionFilterBy=='Pinned' ? 'active' : ''"
-										(click)="filterInteraction('Pinned')"><span>Pinned</span></p>
-								</div>
-								<div *ngIf="showfilter" class="overlay" (click)="closeFilterOptions()"></div>
+							<p [ngClass]="interactionFilterBy=='Resolved' ? 'active' : ''"
+								(click)="filterInteraction('Resolved')"><span>Resolved</span></p>
+							<p [ngClass]="interactionFilterBy=='Mentioned' ? 'active' : ''"
+								(click)="filterInteraction('Mentioned')"><span>Mentioned</span></p>
+							<p [ngClass]="interactionFilterBy=='Pinned' ? 'active' : ''"
+								(click)="filterInteraction('Pinned')"><span>Pinned</span></p>
+						</div>
+						<div *ngIf="showfilter" class="overlay" (click)="closeFilterOptions()"></div>
 
 					</div>
 					<button class="new-message-btn" (click)="openaddMessage(messageadd)"><img class="icon"
 							src="/assets/img/teambox/add.svg" /> {{ searchFocused ? '' : 'New Message' }}</button>
 				</div>
 				<div class="custom_row mt-3">
-					<p *ngIf="interactionList" class="conversaction_status">{{interactionFilterBy =='Mine' ? 'My Open' : interactionFilterBy}}<span
-							class="total_count red">{{unreadList}}</span></p>
+					<p *ngIf="interactionList" class="conversaction_status">{{interactionFilterBy =='Mine' ? 'My Open' :
+						interactionFilterBy}}<span class="total_count red">{{unreadList}}</span></p>
 				</div>
 				<div>
 					<div class="all_contacts">
 						<div *ngIf="interactionList.length === 0" class="not-found-message">
 							No Conversation here!
 						</div>
-						<div *ngFor="let item of interactionList; let i = index" id={{i}}
-							(click)="selectInteraction(i)"
+						<div *ngFor="let item of interactionList; let i = index" id={{i}} (click)="selectInteraction(i)"
 							[ngClass]="item.selected ? 'contacts_row active' : 'contacts_row'">
 							<div class="contacts_item">
 								<div class="contacts_list">
 									<div class="contacts_left">
-										<img *ngIf="item.PinnedInteractionID" (click)="updatePinnedStatus(item)" class="pin_icon"
-											src="/assets/img/teambox/pinned.svg" />
-										<img *ngIf="!item.PinnedInteractionID" (click)="updatePinnedStatus(item)" class="pin_icon"
-											src="/assets/img/teambox/pin.svg" />
+										<img *ngIf="item.PinnedInteractionID" (click)="updatePinnedStatus(item)"
+											class="pin_icon" src="/assets/img/teambox/pinned.svg" />
+										<img *ngIf="!item.PinnedInteractionID" (click)="updatePinnedStatus(item)"
+											class="pin_icon" src="/assets/img/teambox/pin.svg" />
 										<img *ngIf="item.avatar" class="profile_icon"
 											src="/assets/img/teambox/Richie_1.png" />
 										<!-- <img *ngIf="!item.avatar" class="profile_icon_no-dp"
 											src="/assets/img/teambox/no-dp.svg" /> -->
-											<div class="profile_icon_no-dp">{{settingService.getInitials(item.Name)}}</div>
+										<div class="profile_icon_no-dp">{{settingService.getInitials(item.Name)}}</div>
 										<div class="contacts_detail">
 											<p class="name">{{item.Name}}</p>
-											<div *ngIf="item.message_text && item?.message_media =='text'" class="message"
+											<div *ngIf="item.message_text && item?.message_media =='text'"
+												class="message"
 												[innerHTML]="limitCharacters(item.message_text) | sanitizeHtml">
 											</div>
-											<div  *ngIf="item?.message_media !='text'" class="message s">
-												<img src="/assets/img/teambox/document-icon.svg" class="mr-2" height="15px" width="15px" *ngIf="getMediaType(item.media_type) == 'Document'">
-												<img src="/assets/img/teambox/video-icon.svg" class="mr-2" height="15px" width="15px"  *ngIf="getMediaType(item.media_type) == 'Video'">
-												<img src="/assets/img/teambox/photo-icon.svg" class="mr-2" height="15px" width="15px"  *ngIf="getMediaType(item.media_type) == 'Image'">{{getMediaType(item.media_type)}}</div>
+											<div *ngIf="item?.message_media !='text'" class="message s">
+												<img src="/assets/img/teambox/document-icon.svg" class="mr-2"
+													height="15px" width="15px"
+													*ngIf="getMediaType(item.media_type) == 'Document'">
+												<img src="/assets/img/teambox/video-icon.svg" class="mr-2" height="15px"
+													width="15px" *ngIf="getMediaType(item.media_type) == 'Video'">
+												<img src="/assets/img/teambox/photo-icon.svg" class="mr-2" height="15px"
+													width="15px"
+													*ngIf="getMediaType(item.media_type) == 'Image'">{{getMediaType(item.media_type)}}
+											</div>
 										</div>
 									</div>
-									
+
 									<div class="contacts_right">
 										<div class="contacts_detail_timelog">
-											<p *ngIf="item.LastMessageDate" class="time">{{getTime(item?.LastMessageDate)}}</p>
+											<p *ngIf="item.LastMessageDate" class="time">
+												{{getTime(item?.LastMessageDate)}}</p>
 											<!-- <span *ngIf="item.UnreadCount > 0" class="total_count green" [style.display]="item.UnreadCount === 0 ? 'none' : 'block'">{{item.UnreadCount}}</span> -->
 											<!-- <img *ngIf="item.channel=='WhatsApp'" class="icon" src="/assets/img/teambox/whatsapp-icon-l.svg" /> -->
 											<div class="image-container">
-											<img class="contact-whatsapp"  src="/assets/img/teambox/whatsapp-icon-l.svg">
-											<div  class="icon" class="hover-text2">
-												{{item?.channel}} {{(item?.connected_id ?'(' + item?.connected_id + ')':'')}}
-											</div>
-											<!-- <div *ngIf="item.channel=='WA API'" class="icon" class="hover-text2">
+												<img class="contact-whatsapp"
+													src="/assets/img/teambox/whatsapp-icon-l.svg">
+												<div class="icon" class="hover-text2">
+													{{item?.channel}} {{(item?.connected_id ?'(' + item?.connected_id +
+													')':'')}}
+												</div>
+												<!-- <div *ngIf="item.channel=='WA API'" class="icon" class="hover-text2">
 												{{'WA API' + (item.connected_id ?'(' + item.connected_id + ')':'')}}
 											</div> -->
-										</div>
+											</div>
 										</div>
 									</div>
 
@@ -103,18 +114,19 @@
 
 								<div class="contacts_list mt-2" *ngIf="item?.interaction_status =='Open'">
 									<div class="contacts_left">
-										<p  class="assigned_to">Assigned To</p>
-										<div  class="assigned_to_btn">
+										<p class="assigned_to">Assigned To</p>
+										<div class="assigned_to_btn">
 											<div class="inner">
 												<img *ngIf="item?.assignTo?.avatar" class="thumbnail"
 													src="/assets/img/teambox/Richie_1.png" />
 												<img *ngIf="!item?.assignTo?.avatar" class="no-dp"
 													src="/assets/img/teambox/no-dp.svg" />
-													{{item?.assignAgent ? item.assignAgent : 'Unassigned'}}
+												{{item?.assignAgent ? item.assignAgent : 'Unassigned'}}
 											</div>
 										</div>
 									</div>
-									<span *ngIf="item.UnreadCount > 0" class="total_count green" [style.display]="item.UnreadCount === 0 ? 'none' : 'block'">{{item.UnreadCount}}</span>
+									<span *ngIf="item.UnreadCount > 0" class="total_count green"
+										[style.display]="item.UnreadCount === 0 ? 'none' : 'block'">{{item.UnreadCount}}</span>
 								</div>
 							</div>
 						</div>
@@ -133,7 +145,9 @@
 										class="icon" src="/assets/img/teambox/whatsapp-icon-l.svg" />{{selectedInteraction.channel}}{{selectedInteraction.connected_id ?'(' + selectedInteraction.connected_id + ')':''}}
 								</p> -->
 								<p class="user_from f-9"><img class="icon"
-										src="/assets/img/teambox/whatsapp-icon-l.svg" /> {{selectedInteraction.channel}} {{selectedInteraction.connected_id ?'(' + selectedInteraction.connected_id + ')':''}}</p>
+										src="/assets/img/teambox/whatsapp-icon-l.svg" /> {{selectedInteraction.channel}}
+									{{selectedInteraction.connected_id ?'(' + selectedInteraction.connected_id +
+									')':''}}</p>
 							</div>
 						</div>
 						<div class=" right_part">
@@ -145,15 +159,16 @@
 									*ngIf="selectedInteraction?.progressbar?.progressbarValue >= 0 || selectedInteraction.progressbar.progressbarValue <= 72"
 									style="margin:0 8px"
 									[ngClass]="selectedInteraction.interaction_status=='Resolved' ? 'drop-down-btn green-color' : selectedInteraction.interaction_status=='Open' ? 'drop-down-btn red-color':'drop-down-btn'"
-									(click)="toggleConversationStatusOption()" >
+									(click)="toggleConversationStatusOption()">
 									<img *ngIf="selectedInteraction.interaction_status=='Resolved'" class="icon"
 										src="/assets/img/teambox/checked_icon.png" />
-									{{selectedInteraction.interaction_status == 'empty'? 'Select': selectedInteraction.interaction_status}}
+									{{selectedInteraction.interaction_status == 'empty'? 'Select':
+									selectedInteraction.interaction_status}}
 								</button>
 
 								<button *ngIf="selectedInteraction?.progressbar?.progressbarValue >= 72"
 									style="margin:0 8px" class="drop-down-btn green-color"
-									(click)="toggleConversationStatusOption()"  >
+									(click)="toggleConversationStatusOption()">
 									<img class="icon" src="/assets/img/teambox/checked_icon.png" /> Resolved
 								</button>
 
@@ -164,11 +179,13 @@
 											[ngClass]="selectedInteraction.interaction_status=='Open' ? 'active red-color' : 'red-color'">Open</span>
 									</p> -->
 									<p [ngClass]="selectedInteraction.interaction_status=='Open' ? 'active red-color' : 'red-color'"
-										(click)="triggerUpdateConversationStatus('Open',openStatusAlertmMessage)" [class.disabled]="(settingsService.checkRoleExist('9'))"><span
+										(click)="triggerUpdateConversationStatus('Open',openStatusAlertmMessage)"
+										[class.disabled]="(settingsService.checkRoleExist('9'))"><span
 											[ngClass]="selectedInteraction.interaction_status=='Open' ? 'active red-color' : 'red-color'">Open</span>
 									</p>
 									<p [ngClass]="selectedInteraction.interaction_status=='Resolved' ? 'active green-color' : 'green-color'"
-										(click)="triggerUpdateConversationStatus('Resolved',openStatusAlertmMessage)" [class.disabled]="!(selectedInteraction.assignTo?.AgentId == this.uid && !settingsService.checkRoleExist('10')) && !((selectedInteraction.assignTo?.AgentId == -1 || !selectedInteraction.assignTo?.AgentId) && !settingsService.checkRoleExist('11')) && !((selectedInteraction.assignTo?.AgentId != -1 && selectedInteraction?.assignTo?.AgentId != this.uid) && !settingsService.checkRoleExist('12'))">
+										(click)="triggerUpdateConversationStatus('Resolved',openStatusAlertmMessage)"
+										[class.disabled]="!(selectedInteraction.assignTo?.AgentId == this.uid && !settingsService.checkRoleExist('10')) && !((selectedInteraction.assignTo?.AgentId == -1 || !selectedInteraction.assignTo?.AgentId) && !settingsService.checkRoleExist('11')) && !((selectedInteraction.assignTo?.AgentId != -1 && selectedInteraction?.assignTo?.AgentId != this.uid) && !settingsService.checkRoleExist('12'))">
 										<span
 											[ngClass]="selectedInteraction.interaction_status=='Resolved' ? 'active green-color' : 'green-color'">Resolved</span>
 									</p>
@@ -178,7 +195,7 @@
 
 
 							<div *ngIf="!searchChatFocused" class="drop-down-btn">
-								<button class="drop-down-btn" (click)="toggleAssignOption()" >
+								<button class="drop-down-btn" (click)="toggleAssignOption()">
 									<span *ngIf="selectedInteraction.assignTo">
 										<img *ngIf="selectedInteraction.assignTo.avatar" class="thumbnail"
 											src="/assets/img/teambox/Richie_1.png" />
@@ -194,39 +211,45 @@
 								</button>
 								<div *ngIf="ShowAssignOption" class="popup-dialog AssignOption">
 									<p class="label">Assign To</p>
-									<p class="d-flex align-items-center px-2 py-1" 
-										(click)="updateInteractionMapping(selectedInteraction.InteractionId,-1,TeamLeadId)" [class.disabled]="(settingsService.checkRoleExist('15'))">
+									<p class="d-flex align-items-center px-2 py-1"
+										(click)="updateInteractionMapping(selectedInteraction.InteractionId,-1,TeamLeadId)"
+										[class.disabled]="(settingsService.checkRoleExist('15'))">
 										<span class="text-capitalize initials"> U </span>
 										<span key={k}>
 											<!-- <img src="/assets/img/teambox/no-dp.svg" class="profile_icon_no-dp"> -->Unassigned</span>
 									</p>
-									<p class="d-flex align-items-center px-2 py-1" 
-										(click)="updateInteractionMapping(selectedInteraction.InteractionId,uid,TeamLeadId)" [class.disabled]="!((selectedInteraction.assignTo?.AgentId == -1 || !selectedInteraction.assignTo?.AgentId) && !settingsService.checkRoleExist('13')) && !(selectedInteraction.assignTo?.AgentId != -1 && !settingsService.checkRoleExist('16'))">
+									<p class="d-flex align-items-center px-2 py-1"
+										(click)="updateInteractionMapping(selectedInteraction.InteractionId,uid,TeamLeadId)"
+										[class.disabled]="!((selectedInteraction.assignTo?.AgentId == -1 || !selectedInteraction.assignTo?.AgentId) && !settingsService.checkRoleExist('13')) && !(selectedInteraction.assignTo?.AgentId != -1 && !settingsService.checkRoleExist('16'))">
 										<span class="text-capitalize initials"> M </span>
 										<span key={k}>
 											<!-- <img src="/assets/img/teambox/no-dp.svg" class="profile_icon_no-dp"> -->Myself</span>
 									</p>
 									<div class="agent-item">
-									<p class="d-flex align-items-center px-2 py-1">
-										<span class="text-capitalize initials"> A </span>
-										<span key={k}>
-											<!-- <img src="/assets/img/teambox/no-dp.svg" class="profile_icon_no-dp"> -->Other's</span>
-									</p>
-									<div class="popup-dialog AssignOption agent-list">
-										<div *ngFor="let user of assigineeList;let k = index">
-									<p class="d-flex align-items-center px-2 py-1" 
-										(click)="updateInteractionMapping(selectedInteraction.InteractionId,user.uid,TeamLeadId)" *ngIf="user.uid != uid" [class.disabled]="!((selectedInteraction.assignTo?.AgentId == -1 || !selectedInteraction.assignTo?.AgentId) && !settingsService.checkRoleExist('14')) && !(selectedInteraction.assignTo?.AgentId != -1 && !settingsService.checkRoleExist('16'))">
-										<span class="text-capitalize initials"> {{ user.nameInitials }} </span>
-										<span key={k}>
-											<!-- <img src="/assets/img/teambox/no-dp.svg" class="profile_icon_no-dp"> -->{{user?.name}} {{user?.UserType == 'Admin' ? '(Admin)' :''}}</span>
-									</p>
+										<p class="d-flex align-items-center px-2 py-1">
+											<span class="text-capitalize initials"> A </span>
+											<span key={k}>
+												<!-- <img src="/assets/img/teambox/no-dp.svg" class="profile_icon_no-dp"> -->Other's</span>
+										</p>
+										<div class="popup-dialog AssignOption agent-list">
+											<div *ngFor="let user of assigineeList;let k = index">
+												<p class="d-flex align-items-center px-2 py-1"
+													(click)="updateInteractionMapping(selectedInteraction.InteractionId,user.uid,TeamLeadId)"
+													*ngIf="user.uid != uid"
+													[class.disabled]="!((selectedInteraction.assignTo?.AgentId == -1 || !selectedInteraction.assignTo?.AgentId) && !settingsService.checkRoleExist('14')) && !(selectedInteraction.assignTo?.AgentId != -1 && !settingsService.checkRoleExist('16'))">
+													<span class="text-capitalize initials"> {{ user.nameInitials }}
+													</span>
+													<span key={k}>
+														<!-- <img src="/assets/img/teambox/no-dp.svg" class="profile_icon_no-dp"> -->{{user?.name}}
+														{{user?.UserType == 'Admin' ? '(Admin)' :''}}</span>
+												</p>
+											</div>
+										</div>
+									</div>
 								</div>
-								</div>
+
 							</div>
-								</div>
-							
-							</div>
-							<input (focus)="focusInChatFunction()" *ngIf="isRefresh" (focusout)="focusOutChatFunction()" 
+							<input (focus)="focusInChatFunction()" *ngIf="isRefresh" (focusout)="focusOutChatFunction()"
 								(keyup)="seacrhInChat($event)"
 								[ngClass]="searchChatFocused ? 'chat-search-box active' : 'chat-search-box'"
 								type="text" />
@@ -243,70 +266,106 @@
 							<span>No messages to show</span>
 						</div>
 						<div *ngIf="showChatNotes=='text' &&  selectedInteraction.messageList?.length>0"
-							class="conversation_list chat"  #chatSection id="chatSection">
-							<div class="older-message" (click)="getOlderMessages(selectedInteraction)" *ngIf="!(isMessageCompletedMedia && isMessageCompletedNotes && isMessageCompletedText)">Click here to get older messages</div>
-							<sb-loader [isLoading]="isLoadingOlderMessage" [message]="''" [loaderType]="'small'"></sb-loader>
+							class="conversation_list chat" #chatSection id="chatSection">
+							<div class="older-message" (click)="getOlderMessages(selectedInteraction)"
+								*ngIf="!(isMessageCompletedMedia && isMessageCompletedNotes && isMessageCompletedText)">
+								Click here to get older messages</div>
+							<sb-loader [isLoading]="isLoadingOlderMessage" [message]="''"
+								[loaderType]="'small'"></sb-loader>
 							<div *ngFor="let messageGroup of selectedInteraction?.messageList; let i = index" id={{i}}
 								class="conversation_list_inner_box">
 								<div class="date_seprator"><span>---</span>
 									<p>{{dateSince(messageGroup.date)}}</p><span>--</span>
 								</div>
 
-								<div *ngFor="let message of messageGroup.items; let i = index" id={{message.Message_id}} #msg
+								<div *ngFor="let message of messageGroup.items; let i = index" id={{message.Message_id}}
+									#msg
 									[ngClass]="message?.message_direction ? (message?.message_direction =='IN' ? 'message_box left' : 'message_box'):'message_box action_box'">
 									<div *ngIf="message?.message_direction" [ngClass]="{
 										'flex-start': message?.message_direction == 'IN',
 										'flex-end':  message?.message_direction != 'IN'
 									  }">
-									<label *ngIf="message.message_direction !='IN' && message.assignAgent !=-1 && message.assignAgent !=-2 && message.assignAgent !=-3">{{message.AgentName}}</label>
-									<div class="d-flex align-items-center justify-content-end">
-										<div class="image-wrapper">
-											<img *ngIf="message.message_direction !='IN' && message.assignAgent ==-2" class="hover-image" src="/assets/img/teambox/automotion-chat-stamp.svg" style="cursor:pointer;">
-											<img *ngIf="message.message_direction !='IN' && message.assignAgent ==-3" class="hover-image" src="/assets/img/teambox/api.svg" style="cursor:pointer; width: 24px; height: 24px">
-											<div class="hover-text" >{{message.assignAgent ==-2 ?'Automation': message.assignAgent ==-3 ? 'Send&nbsp;API': 'Campaign'}}</div>
-											<img *ngIf="message.message_direction !='IN' && message.assignAgent ==-1" class="hover-image" src="/assets/img/teambox/campaign-chat-stamp.svg" style="cursor:pointer;">
+										<label
+											*ngIf="message.message_direction !='IN' && message.assignAgent !=-1 && message.assignAgent !=-2 && message.assignAgent !=-3">{{message.AgentName}}</label>
+										<div class="d-flex align-items-center justify-content-end">
+											<div class="image-wrapper">
+												<img *ngIf="message.message_direction !='IN' && message.assignAgent ==-2"
+													class="hover-image"
+													src="/assets/img/teambox/automotion-chat-stamp.svg"
+													style="cursor:pointer;">
+												<img *ngIf="message.message_direction !='IN' && message.assignAgent ==-3"
+													class="hover-image" src="/assets/img/teambox/api.svg"
+													style="cursor:pointer; width: 24px; height: 24px">
+
+												<img *ngIf="message.message_direction !='IN' &&  message.assignAgent == -4"
+													class="hover-image" src="/assets/img/teambox/boticon.svg"
+													style="cursor:pointer; width: 24px; height: 24px">
+												<div class="hover-text">{{message.assignAgent ==-2 ?'Automation':
+													message.assignAgent ==-3 ? 'Send&nbsp;API': message.assignAgent ==
+													-4?'Bot':'Campaign'}}</div>
+
+
+												<img *ngIf="message.message_direction !='IN' && message.assignAgent ==-1"
+													class="hover-image"
+													src="/assets/img/teambox/campaign-chat-stamp.svg"
+													style="cursor:pointer;">
+												<img *ngIf="message.message_direction !='IN' && message.assignAgent ==-4"
+													class="hover-image" src="/assets/img/teambox/api.svg"
+													style="cursor:pointer; width: 24px; height: 24px">
+											</div>
 										</div>
-								</div>
-									<div class="content" (mouseover)="markItRead()" >
-										<!-- <div  class="content" *ngIf="message?.repliedMessage"> -->
-											<div class="replied-msg" *ngIf="message?.repliedMessage" (click)="repliedMessage(message)">
+										<div class="content" (mouseover)="markItRead()">
+											<!-- <div  class="content" *ngIf="message?.repliedMessage"> -->
+											<div class="replied-msg" *ngIf="message?.repliedMessage"
+												(click)="repliedMessage(message)">
 												<div>
 													<div class="replied-msg-from">{{message?.repliedMessageTo}}</div>
 													<div class="d-flex">
-													<img src="/assets/img/teambox/document-icon.svg" class="mr-2" height="15px" width="15px" *ngIf="message?.repliedMessage == 'Document'">
-													<img src="/assets/img/teambox/Template.svg" class="mr-2" height="15px" width="15px" *ngIf="message?.repliedMessage == 'Template'">
-													<img src="/assets/img/teambox/video-icon.svg" class="mr-2" height="15px" width="15px"  *ngIf="message?.repliedMessage == 'Video'">
-													<img src="/assets/img/teambox/photo-icon.svg" class="mr-2" height="15px" width="15px"  *ngIf="message?.repliedMessage == 'Image'">
-													<div [innerHTML]="limitCharacters(message?.repliedMessage) | sanitizeHtml"></div>
-												</div>
+														<img src="/assets/img/teambox/document-icon.svg" class="mr-2"
+															height="15px" width="15px"
+															*ngIf="message?.repliedMessage == 'Document'">
+														<img src="/assets/img/teambox/Template.svg" class="mr-2"
+															height="15px" width="15px"
+															*ngIf="message?.repliedMessage == 'Template'">
+														<img src="/assets/img/teambox/video-icon.svg" class="mr-2"
+															height="15px" width="15px"
+															*ngIf="message?.repliedMessage == 'Video'">
+														<img src="/assets/img/teambox/photo-icon.svg" class="mr-2"
+															height="15px" width="15px"
+															*ngIf="message?.repliedMessage == 'Image'">
+														<div
+															[innerHTML]="limitCharacters(message?.repliedMessage) | sanitizeHtml">
+														</div>
+													</div>
 												</div>
 											</div>
 											<!-- <div class="message_text" [innerHTML]="message?.message_text | sanitizeHtml"></div>
 											<span class="message_time" *ngIf="message.created_at">{{timeSince(message.created_at)}}</span> -->
-										<!-- </div> -->
-										<div *ngIf="message?.message_media" class="message_media">
-											<img class="preview_icon" *ngIf="message?.media_type == 'video/mp4'"
-												src="/assets/img/teambox/video_preview.png"
-												(click)="downloadFile(message.message_media)">
-											<img class="preview_icon" *ngIf="message.media_type == 'text/plain'"
-												src="/assets/img/teambox/doc_preview.png"
-												(click)="downloadFile(message.message_media)">
-											<img class="preview_icon" *ngIf="message.media_type == 'application/pdf'"
-												src="/assets/img/teambox/doc_preview.png"
-												(click)="downloadFile(message.message_media)">
+											<!-- </div> -->
+											<div *ngIf="message?.message_media" class="message_media">
+												<img class="preview_icon" *ngIf="message?.media_type == 'video/mp4'"
+													src="/assets/img/teambox/video_preview.png"
+													(click)="downloadFile(message.message_media)">
+												<img class="preview_icon" *ngIf="message.media_type == 'text/plain'"
+													src="/assets/img/teambox/doc_preview.png"
+													(click)="downloadFile(message.message_media)">
+												<img class="preview_icon"
+													*ngIf="message.media_type == 'application/pdf'"
+													src="/assets/img/teambox/doc_preview.png"
+													(click)="downloadFile(message.message_media)">
 
-											<img *ngIf="message.media_type == 'image/jpeg'"
-												src={{message.message_media}}>
-											<img *ngIf="message.media_type == 'image/jpg'"
-												src={{message.message_media}}>
-											<img *ngIf="message.media_type == 'image/png'"
-												src={{message.message_media}}>
-											<img *ngIf="message.media_type == 'image/webp'"
-												src={{message.message_media}}>
+												<img *ngIf="message.media_type == 'image/jpeg'"
+													src={{message.message_media}}>
+												<img *ngIf="message.media_type == 'image/jpg'"
+													src={{message.message_media}}>
+												<img *ngIf="message.media_type == 'image/png'"
+													src={{message.message_media}}>
+												<img *ngIf="message.media_type == 'image/webp'"
+													src={{message.message_media}}>
 
 
-										</div>
-										<!-- <div class="message_text">
+											</div>
+											<!-- <div class="message_text">
 											<ng-container *ngIf="isHttpOrHttps(message.message_text); else plainText">
 											  <a [href]="message.message_text" target="_blank" class="isLink">
 												{{ message.message_text }}
@@ -319,47 +378,69 @@
 												</div>
 											</ng-template>
 										  </div> -->
-										<div class="message_text" [innerHTML]="message?.message_text | sanitizeHtml">
-											<button *ngIf="!showFullMessage && message?.message_text?.length> maxLength" (click)="toggleShowFullMessage()">Read More</button>
-										</div>
-										<div [ngClass]="{'message_box_container':message?.media_type}">
-											<!-- <span *ngIf="message.media_type" class="message_size">{{message.mediaSize}} KB</span> -->
-										
-											<span class="message_time"
-												*ngIf="message.created_at">{{timeSince(message.created_at)}}
-												<div class="pl-2" *ngIf="message.Message_id !== undefined && message.msg_status !== undefined && message.message_direction === 'Out'">
-													<div [ngStyle]="{'background':message.msg_status === '1'? '#ffffff':'none'}" class="doubleee">
-													  <img [ngStyle]="{'height': message.msg_status === '1'? '6px':'auto'}" [src]="tickUpdate(message)" alt="">
-													</div>
-												  </div>											  
-											</span>
-										</div>
-										 <div *ngIf="message?.button | parseJson as buttons">
-											<div *ngIf="buttons?.length > 0" class="w-70 py-2">
-											  <div *ngFor="let item of buttons; let i = index">
-												<div class="text-center" *ngIf="item?.buttonText && i < 3">
-												  <button class="template-btn" [ngClass]="{'btn-radius': ((buttons.length - 1) === i || (buttons.length > 2 && i === 2))}">
-													<img class="btn-preview-img" *ngIf="item.type === 'Quick Reply' && !(i === 2 && buttons.length > 3)" src="../../../../assets/img/settings/reply-arrow.svg"> 
-													<img class="btn-preview-img" *ngIf="item.type === 'Call Phone' && !(i === 2 && buttons.length > 3)" src="../../../../assets/img/settings/phone-call.svg"> 
-													<img class="btn-preview-img" *ngIf="item.type === 'Copy offer Code' && !(i === 2 && buttons.length > 3)" src="../../../../assets/img/settings/copy.svg"> 
-													<img class="btn-preview-img" *ngIf="item.type === 'Visit Website' && !(i === 2 && buttons.length > 3)" src="../../../../assets/img/settings/open-in-new.svg"> 
-													<img class="btn-preview-img" *ngIf="item.type === 'Complete Flow' && !(i === 2 && buttons.length > 3)" src="../../../../assets/img/settings/form.svg"> 
-													<img class="btn-preview-img" *ngIf="(i === 2 && buttons.length > 3)" src="../../../../assets/img/settings/options-lines.svg">  
-													{{(i === 2 && buttons.length > 3) ? 'Show All Buttons' : item?.buttonText }}
-												  </button>
-												</div>
-											  </div>
+											<div class="message_text"
+												[innerHTML]="message?.message_text | sanitizeHtml">
+												<button
+													*ngIf="!showFullMessage && message?.message_text?.length> maxLength"
+													(click)="toggleShowFullMessage()">Read More</button>
 											</div>
-										  </div>
+											<div [ngClass]="{'message_box_container':message?.media_type}">
+												<!-- <span *ngIf="message.media_type" class="message_size">{{message.mediaSize}} KB</span> -->
 
+												<span class="message_time"
+													*ngIf="message.created_at">{{timeSince(message.created_at)}}
+													<div class="pl-2"
+														*ngIf="message.Message_id !== undefined && message.msg_status !== undefined && message.message_direction === 'Out'">
+														<div [ngStyle]="{'background':message.msg_status === '1'? '#ffffff':'none'}"
+															class="doubleee">
+															<img [ngStyle]="{'height': message.msg_status === '1'? '6px':'auto'}"
+																[src]="tickUpdate(message)" alt="">
+														</div>
+													</div>
+												</span>
+											</div>
+											<div *ngIf="message?.button | parseJson as buttons">
+												<div *ngIf="buttons?.length > 0" class="w-70 py-2">
+													<div *ngFor="let item of buttons; let i = index">
+														<div class="text-center" *ngIf="item?.buttonText && i < 3">
+															<button class="template-btn"
+																[ngClass]="{'btn-radius': ((buttons.length - 1) === i || (buttons.length > 2 && i === 2))}">
+																<img class="btn-preview-img"
+																	*ngIf="item.type === 'Quick Reply' && !(i === 2 && buttons.length > 3)"
+																	src="../../../../assets/img/settings/reply-arrow.svg">
+																<img class="btn-preview-img"
+																	*ngIf="item.type === 'Call Phone' && !(i === 2 && buttons.length > 3)"
+																	src="../../../../assets/img/settings/phone-call.svg">
+																<img class="btn-preview-img"
+																	*ngIf="item.type === 'Copy offer Code' && !(i === 2 && buttons.length > 3)"
+																	src="../../../../assets/img/settings/copy.svg">
+																<img class="btn-preview-img"
+																	*ngIf="item.type === 'Visit Website' && !(i === 2 && buttons.length > 3)"
+																	src="../../../../assets/img/settings/open-in-new.svg">
+																<img class="btn-preview-img"
+																	*ngIf="item.type === 'Complete Flow' && !(i === 2 && buttons.length > 3)"
+																	src="../../../../assets/img/settings/form.svg">
+																<img class="btn-preview-img"
+																	*ngIf="(i === 2 && buttons.length > 3)"
+																	src="../../../../assets/img/settings/options-lines.svg">
+																{{(i === 2 && buttons.length > 3) ? 'Show All Buttons' :
+																item?.buttonText }}
+															</button>
+														</div>
+													</div>
+												</div>
+											</div>
+
+										</div>
+									</div>
+									<div *ngIf="message?.message_direction ==null || !message?.message_direction"
+										class="flex-end action-tab">
+										<div class="action-heading">{{message?.action}}</div>
+										<div class="action-sub-heading">by {{message?.action_by}} at
+											{{timeSince(message.created_at)}}</div>
 									</div>
 								</div>
-								<div *ngIf="message?.message_direction ==null || !message?.message_direction" class="flex-end action-tab">
-									<div class="action-heading">{{message?.action}}</div>
-									<div class="action-sub-heading">by {{message?.action_by}} at {{timeSince(message.created_at)}}</div>
-								</div>
-								</div>	
-							</div>	
+							</div>
 						</div>
 
 						<div *ngIf="showChatNotes=='notes' &&  selectedInteraction.notesList.length <1"
@@ -377,19 +458,24 @@
 								<div class="date_seprator"><span>---</span>
 									<p>{{dateSince(notesGroup.date)}}</p><span>---</span>
 								</div>
-								<div class="conversation_list_inner_box" *ngFor="let note of notesGroup.items; let i = index"
-									id={{note.Message_id}}>
-									<div *ngIf="isAgmodalOpened" class="overlay" (click)="agmodalClose(selectedModalIndex);isAgmodalOpened = !isAgmodalOpened"></div>
+								<div class="conversation_list_inner_box"
+									*ngFor="let note of notesGroup.items; let i = index" id={{note.Message_id}}>
+									<div *ngIf="isAgmodalOpened" class="overlay"
+										(click)="agmodalClose(selectedModalIndex);isAgmodalOpened = !isAgmodalOpened">
+									</div>
 									<div *ngIf="note?.Message_id"
 										[ngClass]="note.message_direction =='IN' ? 'message_box left' : 'message_box'">
 										<label *ngIf="note.message_direction !='IN'">{{note.AgentName}}</label>
-										<div class="position-relative d-flex align-items-center justify-content-center flex-nowrap">
-											<div class="modal fade delete-note" tabindex="-1" id="agmodal_{{i}}"  data-bs-backdrop="dynamic" role="dialog">
+										<div
+											class="position-relative d-flex align-items-center justify-content-center flex-nowrap">
+											<div class="modal fade delete-note" tabindex="-1" id="agmodal_{{i}}"
+												data-bs-backdrop="dynamic" role="dialog">
 												<div class="modal-dialog" role="document">
 													<div class="modal-content">
 														<div class="modal-body">
 															<div class="popup-dialog NoteOption">
-																<p class="label" style="color: #6149cd!important;" (click)="hideNoteOption(i)">Options</p>
+																<p class="label" style="color: #6149cd!important;"
+																	(click)="hideNoteOption(i)">Options</p>
 																<p (click)="editNotes(i)">
 																	<span class="editnotes-btn">Edit</span>
 																</p>
@@ -401,11 +487,14 @@
 													</div>
 												</div>
 											</div>
-											<div *ngIf="selectedInteraction.assignTo && selectedInteraction.assignTo.AgentId ==AgentId">
-												<small (click)="toggleNoteOption(note,i); isAgmodalOpened = !isAgmodalOpened" class="ellipsis_button mb-0 p-1 cursor-pointer">···</small>
+											<div
+												*ngIf="selectedInteraction.assignTo && selectedInteraction.assignTo.AgentId ==AgentId">
+												<small
+													(click)="toggleNoteOption(note,i); isAgmodalOpened = !isAgmodalOpened"
+													class="ellipsis_button mb-0 p-1 cursor-pointer">···</small>
 											</div>
 
-											<div class="content"style="max-width: 450px;">
+											<div class="content" style="max-width: 450px;">
 												<div *ngIf="note.message_media" class="message_media">
 													<img class="preview_icon" *ngIf="note.media_type == 'video/mp4'"
 														src="/assets/img/teambox/video_preview.png"
@@ -443,11 +532,11 @@
 									</div> -->
 
 
-									<div *ngIf="!note?.Message_id"
-										class="content-box-edited">
+									<div *ngIf="!note?.Message_id" class="content-box-edited">
 										<div class="content_box_edited_inner">
 											<p>{{note?.action}}</p>
-											<span class="action-sub-heading" *ngIf="note?.action_at">at {{timeSince(note?.action_at)}}</span>
+											<span class="action-sub-heading" *ngIf="note?.action_at">at
+												{{timeSince(note?.action_at)}}</span>
 										</div>
 									</div>
 								</div>
@@ -457,7 +546,7 @@
 
 
 						<div class="conversation_inout_area" id="conversation_inout_area">
-					
+
 							<div class="tabs_link flex">
 								<button [ngClass]="showChatNotes=='text' ? 'flex tab_btn active ' : 'flex tab_btn'"
 									(click)="toggleChatNotes('text')">Chat <span
@@ -467,35 +556,42 @@
 									(click)="toggleChatNotes('notes')">Notes</button>
 							</div>
 							<div class="input-area" (click)="checkPermission()" *ngIf="isRefresh">
-								<ejs-richtexteditor id="mention_integration" [insertImageSettings]="insertImageSettings" #mention_integration (onChange)="onCreate()" [readonly]="(selectedInteraction?.assignTo?.AgentId != uid && showChatNotes=='text') || (this.showChatNotes=='notes' && this.selectedInteraction?.interaction_status != 'Open') || (this.showChatNotes=='text' && this.selectedInteraction.channel=='WA API' && this.selectedInteraction?.progressbar?.progressbarValue ==0) || isPaused"  [toolbarSettings]='tools' [height]='100'
-								  [placeholder]="(this.showChatNotes=='text' && this.selectedInteraction.channel=='WA API' && this.selectedInteraction?.progressbar?.progressbarValue ==0) ? 'Select Template':'Enter Message'" (actionBegin)="onActionBegin($event)" [pasteCleanupSettings]="pasteCleanupSettings">
+								<ejs-richtexteditor id="mention_integration" [insertImageSettings]="insertImageSettings"
+									#mention_integration (onChange)="onCreate()"
+									[readonly]="(selectedInteraction?.assignTo?.AgentId != uid && showChatNotes=='text') || (this.showChatNotes=='notes' && this.selectedInteraction?.interaction_status != 'Open') || (this.showChatNotes=='text' && this.selectedInteraction.channel=='WA API' && this.selectedInteraction?.progressbar?.progressbarValue ==0) || isPaused"
+									[toolbarSettings]='tools' [height]='100'
+									[placeholder]="(this.showChatNotes=='text' && this.selectedInteraction.channel=='WA API' && this.selectedInteraction?.progressbar?.progressbarValue ==0) ? 'Select Template':'Enter Message'"
+									(actionBegin)="onActionBegin($event)" [pasteCleanupSettings]="pasteCleanupSettings">
 								</ejs-richtexteditor>
 
-								<ejs-mention *ngIf="showChatNotes=='notes'" #mention [dataSource]='mentionAgentsList' target='#mention_integration_rte-edit-view' [fields]='fieldsData' [suggestionCount]="8" [showMentionChar]="false" [allowSpaces]="true"  
-popupWidth='250px' popupHeight='200px'>
-    <ng-template #itemTemplate let-data>
-        <table>
-            <tr>
-              <td>
-                <div id="mention-TemplateList"> 
-                  <!-- <img class="mentionEmpImage" src="./assets/rich-text-editor/images/.png" alt="employee" /> -->
-                  <span class="e-badge e-badge-success e-badge-overlap e-badge-dot e-badge-bottom "></span>
-                </div>
-                </td>
-                <td class="mentionNameList">
-                  <span class="person">{{ data.name }}</span>
-                  <span class="email"></span>
-                </td>
-              </tr>
-            </table>
-    </ng-template>
-    <ng-template #displayTemplate let-data>
-        <a>&#64;{{ data.name }}</a>
-    </ng-template>
-</ejs-mention>
-							  
+								<ejs-mention *ngIf="showChatNotes=='notes'" #mention [dataSource]='mentionAgentsList'
+									target='#mention_integration_rte-edit-view' [fields]='fieldsData'
+									[suggestionCount]="8" [showMentionChar]="false" [allowSpaces]="true"
+									popupWidth='250px' popupHeight='200px'>
+									<ng-template #itemTemplate let-data>
+										<table>
+											<tr>
+												<td>
+													<div id="mention-TemplateList">
+														<!-- <img class="mentionEmpImage" src="./assets/rich-text-editor/images/.png" alt="employee" /> -->
+														<span
+															class="e-badge e-badge-success e-badge-overlap e-badge-dot e-badge-bottom "></span>
+													</div>
+												</td>
+												<td class="mentionNameList">
+													<span class="person">{{ data.name }}</span>
+													<span class="email"></span>
+												</td>
+											</tr>
+										</table>
+									</ng-template>
+									<ng-template #displayTemplate let-data>
+										<a>&#64;{{ data.name }}</a>
+									</ng-template>
+								</ejs-mention>
 
-									<!-- <div *ngIf="false" class="popup-dialog mention" (click)="stopPropagation($event)">
+
+								<!-- <div *ngIf="false" class="popup-dialog mention" (click)="stopPropagation($event)">
 									<p class="label">@mention</p>
 								<p *ngFor="let user of agentsList;let k = index" (click)="InsertMentionOption(user)">
 								<span *ngIf="user.uid != uid" class="user-img">
@@ -504,66 +600,69 @@ popupWidth='250px' popupHeight='200px'>
 					</span>
 				</p>
 				</div> -->
-					<div *ngIf="showMention" class="popup-dialog mention" (click)="stopPropagation($event)">
-						<p class="label">@mention</p>
-						<p *ngFor="let user of agentsList;let k = index"
-							(click)="InsertMentionOption(user)">
-							<span *ngIf="user.uid != uid" class="user-img">
-								<div class="img">{{settingService.getInitials(user.name)}}</div>
-								{{user.name}} {{user?.UserType == 'Admin' ? '(Admin)' :''}}
-							</span>
-						</p>
-						<div class="p-4" *ngIf="shouldShowNoData">
-							<p>No Data Available.</p>
-					   </div>
-					</div>
-					<div class="d-align-center ml-2"> 
-					<button *ngIf="showChatNotes=='text'" class="submit_btn btn-press">
-						<img src="/assets/img/teambox/icon-send.svg" (click)="sendMessage()">
-					</button>
-					<button *ngIf="showChatNotes== 'notes'" class="save_notes_btn btn-press" (click)="sendMessage()">Save</button>
-				</div>
+								<div *ngIf="showMention" class="popup-dialog mention" (click)="stopPropagation($event)">
+									<p class="label">@mention</p>
+									<p *ngFor="let user of agentsList;let k = index"
+										(click)="InsertMentionOption(user)">
+										<span *ngIf="user.uid != uid" class="user-img">
+											<div class="img">{{settingService.getInitials(user.name)}}</div>
+											{{user.name}} {{user?.UserType == 'Admin' ? '(Admin)' :''}}
+										</span>
+									</p>
+									<div class="p-4" *ngIf="shouldShowNoData">
+										<p>No Data Available.</p>
+									</div>
+								</div>
+								<div class="d-align-center ml-2">
+									<button *ngIf="showChatNotes=='text'" class="submit_btn btn-press">
+										<img src="/assets/img/teambox/icon-send.svg" (click)="sendMessage()">
+									</button>
+									<button *ngIf="showChatNotes== 'notes'" class="save_notes_btn btn-press"
+										(click)="sendMessage()">Save</button>
+								</div>
 
-				</div>
-			<!-- </form> -->
-			</div> 
+							</div>
+							<!-- </form> -->
+						</div>
 
-						
+
 
 					</div>
 
 				</div>
 				<div *ngIf="!selectedInteraction?.Name" class="col-md-12 mt-3">
 					<div class="conversation_blank">
-							<img src="/assets/img/teambox/new-con@2x.png">
-							<p>Initiate Conversation</p>
-							<!-- <span>Let’s start a conversation through a message</span> -->
-							<span>No messages to show</span>
-						</div>
+						<img src="/assets/img/teambox/new-con@2x.png">
+						<p>Initiate Conversation</p>
+						<!-- <span>Let’s start a conversation through a message</span> -->
+						<span>No messages to show</span>
+					</div>
 				</div>
 			</div>
 
-			<div  class=" col-sm-3 team pl-2" style="background: #fbf9fe;">
+			<div class=" col-sm-3 team pl-2" style="background: #fbf9fe;">
 				<div class="mt-2 sideBar-btn d-flex justify-content-end">
 					<button type="button" class="btn5 btn-close" (click)="toggleProfileView()" *ngIf="showFullProfile">
 						<img src="assets/img/teambox/icon-close.svg">
 					</button>
-					<button type="button" class="btn5 btn-close" (click)="toggleAttachedMediaView()" *ngIf="selectedInteraction?.InteractionId && showAttachedMedia">
+					<button type="button" class="btn5 btn-close" (click)="toggleAttachedMediaView()"
+						*ngIf="selectedInteraction?.InteractionId && showAttachedMedia">
 						<img src="assets/img/teambox/icon-close.svg">
 					</button>
 				</div>
 				<div class="team-box right_box" *ngIf="selectedInteraction?.messageList">
 					<div class="sidenav">
-				
+
 						<div class="profile" *ngIf="selectedInteraction.InteractionId > 0 && !showAttachedMedia">
-						
+
 							<div class="custom_row">
 								<div class="col-md-4 flex">
 									<!-- <img *ngIf="selectedInteraction.avatar" class="big-thumbnail"
 										src="/assets/img/teambox/Richie_1.png" />
 									<img *ngIf="!selectedInteraction.avatar" class="big-thumbnail"
 										src="/assets/img/teambox/no-dp.svg" /> -->
-										<div class="big-thumbnail">{{settingService.getInitials(selectedInteraction.Name)}}</div>
+									<div class="big-thumbnail">{{settingService.getInitials(selectedInteraction.Name)}}
+									</div>
 									<span *ngIf="selectedInteraction.channel=='WhatsApp'"
 										class="big-thumbnail-sufix"><img
 											src="/assets/img/teambox/whatsapp-icon-l.svg"></span>
@@ -572,8 +671,12 @@ popupWidth='250px' popupHeight='200px'>
 								<div class="col-md-8 align-content-center customized">
 									<h1>{{selectedInteraction.Name}}</h1>
 									<p>Customer Id:<span>{{selectedInteraction.customerId}}</span></p>
-									<p>Created Date:<span>{{settingsService?.getDateTimeFormate(selectedInteraction.InCreatedDate)}}</span></p>
-									<p>Last Updated:<span>{{settingsService?.getDateTimeFormate(selectedInteraction.InUpdatedDate)}}</span></p>
+									<p>Created
+										Date:<span>{{settingsService?.getDateTimeFormate(selectedInteraction.InCreatedDate)}}</span>
+									</p>
+									<p>Last
+										Updated:<span>{{settingsService?.getDateTimeFormate(selectedInteraction.InUpdatedDate)}}</span>
+									</p>
 								</div>
 							</div>
 
@@ -581,18 +684,20 @@ popupWidth='250px' popupHeight='200px'>
 							<div class="custom_list mt-3">
 								<div class="w-100">
 									<label>Phone Number</label>
-									<p>{{selectedInteraction.countryCode}} {{selectedInteraction.displayPhoneNumber}}</p>
+									<p>{{selectedInteraction.countryCode}} {{selectedInteraction.displayPhoneNumber}}
+									</p>
 
 									<label>Email Id</label>
-									<p fxLayout="row" fxLayout.xs="column" fxLayoutAlign="start start" fxLayoutGap="10px" class="wrap-text">
-									  {{selectedInteraction.emailId}}
+									<p fxLayout="row" fxLayout.xs="column" fxLayoutAlign="start start"
+										fxLayoutGap="10px" class="wrap-text">
+										{{selectedInteraction.emailId}}
 									</p>
-								  
+
 									<label>Message Opt-in</label>
 									<p class="wrap-text">{{selectedInteraction.OptInStatus}}</p>
-								  </div>
-								  
-								<div class="w-100">									
+								</div>
+
+								<div class="w-100">
 									<label>Contact Owner</label>
 									<p>{{selectedInteraction.ContactOwner}}</p>
 								</div>
@@ -604,7 +709,8 @@ popupWidth='250px' popupHeight='200px'>
 
 							<div class="custom_row">
 								<div class="col-md-12">
-									<label *ngIf="!settingsService.checkRoleExist('18')" (click)="toggleTagsModal(updatedtags)"><img class="edit-icon"
+									<label *ngIf="!settingsService.checkRoleExist('18')"
+										(click)="toggleTagsModal(updatedtags)"><img class="edit-icon"
 											src="/assets/img/teambox/edit-icon.svg" />Tag</label>
 									<div class="tag_list">
 										<!-- <div
@@ -624,18 +730,18 @@ popupWidth='250px' popupHeight='200px'>
 									<div class="col-md-12">
 										<button class="pink-link-btn" (click)="toggleProfileView()"><img class="icon"
 												src="/assets/img/teambox/no-dp.svg" />
-												View Full Profile
+											View Full Profile
 										</button>
 										<button class="pink-link-btn mt-3" (click)="toggleAttachedMediaView()"><img
 												class="icon" src="/assets/img/teambox/docs-attachment.svg" />
-												Docs & Attachment
+											Docs & Attachment
 										</button>
 									</div>
 								</div>
 							</div>
 						</div>
 
-						<div *ngIf="showFullProfile" >
+						<div *ngIf="showFullProfile">
 
 							<div class="custom_row">
 								<div class="col-md-6">
@@ -643,16 +749,24 @@ popupWidth='250px' popupHeight='200px'>
 								</div>
 							</div>
 							<div class="custom_row" *ngFor="let it of filteredCustomFields">
-								<div class="col-md-12" >
+								<div class="col-md-12">
 									<label>{{it?.displayName}}</label>
 									<!-- <h6 class="mt-2" *ngIf="it?.type != 'Select'">{{items[it?.ActuallName]}}</h6>
 							<h6 class="mt-2" *ngIf="it?.type == 'Select'">{{getSplitItem(items[it?.ActuallName])}}</h6> -->
 									<div class="tag_list">
-										<div class="tag_item" *ngIf="it?.type != 'Select' && it?.type != 'Multi Select' && it?.type != 'Date' && it?.type != 'Time'">{{selectedInteraction[it?.ActuallName]}}</div>
-										<div class="tag_item" *ngIf="it?.type == 'Select'">{{getSplitItem(selectedInteraction[it?.ActuallName])}}</div>
-										<div class="tag_item" *ngIf="it?.type == 'Multi Select'">{{getSplitMultiSelect(selectedInteraction[it?.ActuallName])}}</div>
-										<div class="tag_item" *ngIf="it?.type == 'Date'">{{settingsService?.getDateTimeFormate(selectedInteraction[it?.ActuallName],true)}}</div>
-										<div class="tag_item"  *ngIf="it?.type == 'Time'">{{settingsService?.convertTimeFormat(selectedInteraction[it?.ActuallName])}}</div>
+										<div class="tag_item"
+											*ngIf="it?.type != 'Select' && it?.type != 'Multi Select' && it?.type != 'Date' && it?.type != 'Time'">
+											{{selectedInteraction[it?.ActuallName]}}</div>
+										<div class="tag_item" *ngIf="it?.type == 'Select'">
+											{{getSplitItem(selectedInteraction[it?.ActuallName])}}</div>
+										<div class="tag_item" *ngIf="it?.type == 'Multi Select'">
+											{{getSplitMultiSelect(selectedInteraction[it?.ActuallName])}}</div>
+										<div class="tag_item" *ngIf="it?.type == 'Date'">
+											{{settingsService?.getDateTimeFormate(selectedInteraction[it?.ActuallName],true)}}
+										</div>
+										<div class="tag_item" *ngIf="it?.type == 'Time'">
+											{{settingsService?.convertTimeFormat(selectedInteraction[it?.ActuallName])}}
+										</div>
 									</div>
 								</div>
 								<!-- <div class="parent-flex px-4 py-2 parent d-flex">
@@ -705,30 +819,36 @@ popupWidth='250px' popupHeight='200px'>
 							</div> -->
 						</div>
 
-					
 
-					<div *ngIf="showFullProfile" class="scrolll customFooter">
-						<div class="footerProfile">
-							<div class="horizental_line mt-4"></div>
-							<div class="custom_row edit-block-section">
-								<!-- <button class="small-gradient-btn"><img class="icon"
+
+						<div *ngIf="showFullProfile" class="scrolll customFooter">
+							<div class="footerProfile">
+								<div class="horizental_line mt-4"></div>
+								<div class="custom_row edit-block-section">
+									<!-- <button class="small-gradient-btn"><img class="icon"
 										src="/assets/img/teambox/icon-delete.svg"
 										(click)="triggerDeleteCustomer(openDeleteAlertmMessage)" /></button> -->
-								<button class="small-gradient-btn"  *ngIf="!settingsService.checkRoleExist('19')"><img class="icon" src="/assets/img/teambox/Edit.svg"
-										(click)="triggerEditCustomer(updatecustomer)" /></button>
+									<button class="small-gradient-btn"
+										*ngIf="!settingsService.checkRoleExist('19')"><img class="icon"
+											src="/assets/img/teambox/Edit.svg"
+											(click)="triggerEditCustomer(updatecustomer)" /></button>
 
 
-								<button *ngIf="selectedInteraction.isBlocked!=1 && !settingsService.checkRoleExist('19')" class="small-gradient-btn red-color"
-									(click)="triggerBlockCustomer('Block',openBlockAlertmMessage)">Block</button>
-								<button *ngIf="selectedInteraction.isBlocked==1  && !settingsService.checkRoleExist('19')" class="small-gradient-btn blocked-btn green-color"
-									(click)="triggerBlockCustomer('Unblocked',openBlockAlertmMessage)">Blocked</button>
+									<button
+										*ngIf="selectedInteraction.isBlocked!=1 && !settingsService.checkRoleExist('19')"
+										class="small-gradient-btn red-color"
+										(click)="triggerBlockCustomer('Block',openBlockAlertmMessage)">Block</button>
+									<button
+										*ngIf="selectedInteraction.isBlocked==1  && !settingsService.checkRoleExist('19')"
+										class="small-gradient-btn blocked-btn green-color"
+										(click)="triggerBlockCustomer('Unblocked',openBlockAlertmMessage)">Blocked</button>
 
 
-								<!-- <button class="small-gradient-btn"><img class="setting_icon"
+									<!-- <button class="small-gradient-btn"><img class="setting_icon"
 										src="/assets/img/campaign/setting-g.svg"></button> -->
 
-							</div>
-							<!-- <div class="custom_row">
+								</div>
+								<!-- <div class="custom_row">
 
 								<button class="small-gradient-btn info_button">
 									<span><img class="setting_icon px-2" src="../../../../assets/img/profile/Info.svg" />
@@ -737,19 +857,22 @@ popupWidth='250px' popupHeight='200px'>
 							</div> -->
 
 
+							</div>
 						</div>
-					</div>
-					<!-- <div *ngIf="selectedInteraction.InteractionId && showAttachedMedia" class="mt-3 sideBar-btn d-flex justify-content-end">
+						<!-- <div *ngIf="selectedInteraction.InteractionId && showAttachedMedia" class="mt-3 sideBar-btn d-flex justify-content-end">
 						<button type="button" class="btn5 btn-close" (click)="toggleAttachedMediaView()">
 							<img src="assets/img/teambox/icon-close.svg">
 						</button>
 					</div> -->
-				
-					<div class="profile pl-2 flex-row" *ngIf="selectedInteraction.InteractionId && showAttachedMedia">
-						
-						<div class="attached_media_list" *ngFor="let file of selectedInteraction.allmedia | filterMedia;let m = index">
-				
-							<p *ngIf="(file?.message_media != '0' && file?.message_media != 'text')" class="preview_media">				
+
+						<div class="profile pl-2 flex-row"
+							*ngIf="selectedInteraction.InteractionId && showAttachedMedia">
+
+							<div class="attached_media_list"
+								*ngFor="let file of selectedInteraction.allmedia | filterMedia;let m = index">
+
+								<p *ngIf="(file?.message_media != '0' && file?.message_media != 'text')"
+									class="preview_media">
 									<img class="preview_icon" *ngIf="file.media_type == 'video/mp4'"
 										src="/assets/img/teambox/video_preview.png"
 										(click)="downloadFile(file.message_media)">
@@ -759,7 +882,7 @@ popupWidth='250px' popupHeight='200px'>
 									<img class="preview_icon" *ngIf="file.media_type == 'application/pdf'"
 										src="/assets/img/teambox/doc_preview.png"
 										(click)="downloadFile(file.message_media)">
-	
+
 									<img *ngIf="file.media_type == 'image/jpeg'" src={{file.message_media}}
 										(click)="openaddMediaGallery(mediagallery,m)">
 									<img *ngIf="file.media_type == 'image/jpg'" src={{file.message_media}}
@@ -768,26 +891,29 @@ popupWidth='250px' popupHeight='200px'>
 										(click)="openaddMediaGallery(mediagallery,m)">
 									<img *ngIf="file.media_type == 'image/webp'" src={{file.message_media}}
 										(click)="openaddMediaGallery(mediagallery,m)">
-							</p>
-						</div>
-						<div class="text-center w-100 font-weight-bolder">
-							<p *ngIf="selectedInteraction.allmedia.length==0" >
-								No Documents Available!
-							</p>
+								</p>
+							</div>
+							<div class="text-center w-100 font-weight-bolder">
+								<p *ngIf="selectedInteraction.allmedia.length==0">
+									No Documents Available!
+								</p>
+							</div>
 						</div>
 					</div>
-				</div>
 					<div *ngIf="!showFullProfile && !showAttachedMedia" class="footer">
 
 						<div class="horizental_line mt-4">
 						</div>
 						<div class="custom_row edit-block-section">
-							<button class="small-gradient-btn" *ngIf="!settingsService.checkRoleExist('19')"><img class="icon" src="/assets/img/teambox/Edit.svg"
+							<button class="small-gradient-btn" *ngIf="!settingsService.checkRoleExist('19')"><img
+									class="icon" src="/assets/img/teambox/Edit.svg"
 									(click)="triggerEditCustomer(updatecustomer)" /></button>
 
-							<button *ngIf="selectedInteraction.isBlocked!=1 && !settingsService.checkRoleExist('19')" class="small-gradient-btn red-color"
+							<button *ngIf="selectedInteraction.isBlocked!=1 && !settingsService.checkRoleExist('19')"
+								class="small-gradient-btn red-color"
 								(click)="triggerBlockCustomer('Block',openBlockAlertmMessage)">Block</button>
-							<button *ngIf="selectedInteraction.isBlocked==1  && !settingsService.checkRoleExist('19')" class="small-gradient-btn blocked-btn"
+							<button *ngIf="selectedInteraction.isBlocked==1  && !settingsService.checkRoleExist('19')"
+								class="small-gradient-btn blocked-btn"
 								(click)="triggerBlockCustomer('Unblocked',openBlockAlertmMessage)">Blocked</button>
 						</div>
 
@@ -803,7 +929,8 @@ popupWidth='250px' popupHeight='200px'>
 						</div> -->
 						<div class="custom_row mt-1">
 							<div class="col-md-12" id="addteamboox">
-								<div *ngIf="AutoReplyOption" class="popup-dialog autoreply"  (click)="stopPropagation($event)">
+								<div *ngIf="AutoReplyOption" class="popup-dialog autoreply"
+									(click)="stopPropagation($event)">
 									<div *ngIf="selectedInteraction.PausedTimer">
 										<p *ngFor="let option of AutoReplyEnableOption;"
 											[ngClass]="selectedInteraction.AutoReplyStatus==option ? 'active' : ''"
@@ -819,10 +946,10 @@ popupWidth='250px' popupHeight='200px'>
 										</p>
 									</div>
 								</div>
-	
+
 							</div>
 						</div>
-						
+
 
 
 						<div class="custom_row edit-block-section mt-4">
@@ -833,7 +960,7 @@ popupWidth='250px' popupHeight='200px'>
 							</div>
 						</div>
 					</div>
-				
+
 				</div>
 
 			</div>
@@ -845,14 +972,16 @@ popupWidth='250px' popupHeight='200px'>
 		</div>
 
 
-		<div *ngIf="ShowConversationStatusOption" (click)="handleInnerClick($event)" class="overlay" (click)="closeConversationStatusOption()"></div>
+		<div *ngIf="ShowConversationStatusOption" (click)="handleInnerClick($event)" class="overlay"
+			(click)="closeConversationStatusOption()"></div>
 
 	</div>
 
 
 
 	<!-- attach file pop-up -->
-	<div *ngIf="messageMeidaFile==''" class="modal fade" tabindex="-1" id="attachfle" #attachfle data-bs-backdrop="static" role="dialog">
+	<div *ngIf="messageMeidaFile==''" class="modal fade" tabindex="-1" id="attachfle" #attachfle
+		data-bs-backdrop="static" role="dialog">
 		<div class="modal-dialog" role="document">
 			<div class="modal-content">
 				<div class="modal-body">
@@ -862,37 +991,39 @@ popupWidth='250px' popupHeight='200px'>
 								<h4 class="modal-title" id="modal-basic-title"></h4>
 							</div>
 							<div class="modal-header-right">
-								<p *ngIf="this.isAttachmentMedia==false" class="close-box" aria-label="Close" (click)="closeAllModal()"><img
-										src="assets/img/teambox/icon-close.svg">
+								<p *ngIf="this.isAttachmentMedia==false" class="close-box" aria-label="Close"
+									(click)="closeAllModal()"><img src="assets/img/teambox/icon-close.svg">
 								</p>
-								<p *ngIf="this.isAttachmentMedia==true" class="close-box" aria-label="Close" (click)="closeEditMedia()"><img
-									src="assets/img/teambox/icon-close.svg">
-							</p>
-							
+								<p *ngIf="this.isAttachmentMedia==true" class="close-box" aria-label="Close"
+									(click)="closeEditMedia()"><img src="assets/img/teambox/icon-close.svg">
+								</p>
+
 							</div>
 						</div>
 						<div class="modal-body attachmentboxbody">
 							<div class="header-line">
-							<h4>{{isAttachmentMedia==true?'Replace&nbsp;Media' : 'Attachfile'}}</h4>
-							<h4>Instructions</h4>
+								<h4>{{isAttachmentMedia==true?'Replace&nbsp;Media' : 'Attachfile'}}</h4>
+								<h4>Instructions</h4>
 							</div>
 							<div class="attachmentbox">
 								<div class="attachmentbox_left" ngClass="{{dragAreaClass}}">
 									<img class="icon" src="/assets/img/teambox/image-a@2x.png">
 									<p>Drag & Drop file</p>
 									<p><span>OR</span></p>
-									<sb-loader [isLoading]="isUploadingLoader" [loaderType]="'small'" [message]="''"></sb-loader>
+									<sb-loader [isLoading]="isUploadingLoader" [loaderType]="'small'"
+										[message]="''"></sb-loader>
 									<label class="custom-file-upload">
 										<input type="file" #file
 											accept="image/*, application/msword, application/pdf, video/*"
-											[multiple]="false" (change)="onFileChange($event)" (click)="$event.target.value=null" style="display:none" />
+											[multiple]="false" (change)="onFileChange($event)"
+											(click)="$event.target.value=null" style="display:none" />
 										<img class="icon" src="/assets/img/teambox/upload.png"> Browse files
 									</label>
 
 								</div>
 								<div class="attachmentbox_right">
 									<div>
-										
+
 										<p>Media file attachment must fulfill following requirements:<br>
 											1) Images should be JPEG or PNG with maximum size of 5 MB.<br>
 											2) Video should be MP4 with maximum size of 10 MB.<br>
@@ -906,10 +1037,10 @@ popupWidth='250px' popupHeight='200px'>
 			</div>
 
 
-		
+
+		</div>
 	</div>
-	</div>
-	
+
 	<div class="modal fade" tabindex="-1" id="sendfile" #sendfile data-bs-backdrop="static" role="dialog">
 		<div class="modal-dialog" role="document">
 			<div class="modal-content">
@@ -939,16 +1070,17 @@ popupWidth='250px' popupHeight='200px'>
 
 
 						<div class="input_group_btn" id="senddoc">
-							<button type="button" class="submit-btn" (click)="attachMedia(messageMeidaFile, mediaType)">Attach</button>
+							<button type="button" class="submit-btn"
+								(click)="attachMedia(messageMeidaFile, mediaType)">Attach</button>
 						</div>
-</div>
-</div>
-	</div>
+					</div>
+				</div>
+			</div>
 		</div>
-		
+
 
 	</div>
-	
+
 
 
 
@@ -970,19 +1102,21 @@ popupWidth='250px' popupHeight='200px'>
 							</div>
 						</div>
 						<div class="modal-body quickResponse">
-							<input class="search-box" type="search" placeholder="Search" [(ngModel)]="attributesearch" />
+							<input class="search-box" type="search" placeholder="Search"
+								[(ngModel)]="attributesearch" />
 							<div class="items_list">
-								<div *ngFor="let alist of attributesList  | searchfilter:attributesearch " class="attribute"
-									(click)="selectAttributes(alist)">
+								<div *ngFor="let alist of attributesList  | searchfilter:attributesearch "
+									class="attribute" (click)="selectAttributes(alist)">
 									<p class="label"><img src="assets/img/teambox/attribute.svg"> {{alist}}</p>
 								</div>
 							</div>
 
 							<div class="bottom_section">
-								<p class="text-box-readonly"><span><img class="setting_icon px-2" src="../../../../assets/img/profile/Info.svg">
-								</span>Add/edit new attributes from settings</p>
+								<p class="text-box-readonly"><span><img class="setting_icon px-2"
+											src="../../../../assets/img/profile/Info.svg">
+									</span>Add/edit new attributes from settings</p>
 							</div>
-							
+
 
 						</div>
 
@@ -997,112 +1131,202 @@ popupWidth='250px' popupHeight='200px'>
 		<div class="modal-dialog" role="document">
 			<div class="modal-content">
 				<div class="modal-body">
-					<div *ngIf="showInsertTemplate" class="custom_modal bg-pink sm" style="max-height: 100vh; overflow: unset;">
+					<div *ngIf="showInsertTemplate" class="custom_modal bg-pink sm"
+						style="max-height: 100vh; overflow: unset;">
 						<div class="modal-header">
 							<div class="modal-header-left">
 								<h4 class="modal-title" id="modal-basic-title">Insert Template</h4>
 							</div>
 							<div class="modal-header-right">
-								<p class="close-box" aria-label="Close" (click)="closeAllModal()"><img (click)="isAttachmentMedia = false;"
-										src="assets/img/teambox/icon-close.svg"></p>
+								<p class="close-box" aria-label="Close" (click)="closeAllModal()"><img
+										(click)="isAttachmentMedia = false;" src="assets/img/teambox/icon-close.svg">
+								</p>
 							</div>
 						</div>
 						<div class="modal-body quickResponse">
-							<input class="search-box" type="search" placeholder="Search" (input)="searchTemplate($event)" />
-						
+							<input class="search-box" type="search" placeholder="Search"
+								(input)="searchTemplate($event)" />
+
 							<div class="section_filter">
-							  <div class="custom-control custom-checkbox">
-								<input class="custom-control-input" [checked]="isFilterTemplate.Marketing" id="Marketing" type="checkbox" value="Marketing" (click)="filterTemplate($event)" />
-								<label class="custom-control-label" for="Marketing">Marketing</label>
-							</div>
-							<div class="custom-control custom-checkbox">
-							  <input class="custom-control-input" [checked]="isFilterTemplate.Utility" id="Utility" type="checkbox" value="Utility" (click)="filterTemplate($event)" />
-							  <label class="custom-control-label" for="Utility">Utility</label>
-							</div>
-							  <div class="custom-control custom-checkbox">
-								<input class="custom-control-input" [checked]="isFilterTemplate.Authentication" id="Authentication" type="checkbox" value="Authentication" (click)="filterTemplate($event)" />
-								<label class="custom-control-label" for="Authentication">Authentication</label>
-							</div>
+								<div class="custom-control custom-checkbox">
+									<input class="custom-control-input" [checked]="isFilterTemplate.Marketing"
+										id="Marketing" type="checkbox" value="Marketing"
+										(click)="filterTemplate($event)" />
+									<label class="custom-control-label" for="Marketing">Marketing</label>
+								</div>
+								<div class="custom-control custom-checkbox">
+									<input class="custom-control-input" [checked]="isFilterTemplate.Utility"
+										id="Utility" type="checkbox" value="Utility" (click)="filterTemplate($event)" />
+									<label class="custom-control-label" for="Utility">Utility</label>
+								</div>
+								<div class="custom-control custom-checkbox">
+									<input class="custom-control-input" [checked]="isFilterTemplate.Authentication"
+										id="Authentication" type="checkbox" value="Authentication"
+										(click)="filterTemplate($event)" />
+									<label class="custom-control-label" for="Authentication">Authentication</label>
+								</div>
 							</div>
 							<div class="template_list">
-							  <div class="mb-4 template_box" *ngFor="let template of allTemplates ;let i = index">
-								<div class="px-4 template_box_inner d-flex align-items-start w-100">
-								  <div class="d-flex align-items-center template_box_inner">
-								  <input type="radio" id="selectedTemplate{{i}}" name="selectedTemplate" [checked]="templateChecked" (click)="selectTemplate(template)">
-								  <label class="m-0" for="selectedTemplate{{i}}"></label>
-								  </div>
-							   <div class="template_head flex-column w-100">
-								<p class="m-0 template_name">{{template.TemplateName}}</p>
-								<p class="m-0"><span>{{settingsService?.getDateTimeFormate(template.created_at,true)}}</span></p>
-						
-								<div class="inner_box">
-								  <img *ngIf="template.media_type === 'image'" class="template_img" src="{{template.Links}}">
-								  <video *ngIf="template.media_type === 'video'" controls muted id="video-background" [src]="template.Links"></video>
-								  <div class="doc-preview"*ngIf="template.media_type === 'document'">
-									<a [href]="template.Links"><img src="../../../../assets/img/settings/doc.svg" /></a>
-									</div>
-									<!-- <embed *ngIf="template.media_type === 'document'" [src]="template.Links" type="application/pdf" width="100%" height="400px"> -->
-								  <div [ngClass]="{'templateText': template.media_type === 'text'}" class="template_text">
-									<p *ngIf="template.media_type ==='text' && template.Header" class="temp-header font-weight-bolder" [innerHTML]="template.Header | sanitizeHtml" class="m-0 font-weight-bold"></p>
-									<p [innerHTML]="template.BodyText| sanitizeHtml"></p>
-									<p *ngIf="template.FooterText" class="temp-footer" [innerHTML]="template.FooterText | sanitizeHtml"></p>
-								  </div>
-								  <div *ngIf="template?.buttons && template?.buttons?.length >0" class="w-70">
-									<div *ngFor="let item of template?.buttons let i = index" >
-									<div  class="text-center" *ngIf="item?.buttonText && i<3"><button class="template-btn"  [ngClass]="{'btn-radius': ((template?.buttons?.length-1)== i || (template?.buttons?.length >2 && i==2))}">
-										<img class="btn-preview-img" *ngIf="item.type =='Quick Reply' && !(i==2 && template?.buttons?.length>3)" src="../../../../assets/img/settings/reply-arrow.svg"> 
-                        				<img class="btn-preview-img" *ngIf="item.type =='Call Phone' && !(i==2 && template?.buttons?.length>3)" src="../../../../assets/img/settings/phone-call.svg"> 
-                        					<img class="btn-preview-img" *ngIf="item.type =='Copy offer Code' && !(i==2 && template?.buttons?.length>3)" src="../../../../assets/img/settings/copy.svg"> 
-                        				<img class="btn-preview-img" *ngIf="item.type =='Visit Website' && !(i==2 && template?.buttons?.length>3)" src="../../../../assets/img/settings/open-in-new.svg"> 
-                        				<img class="btn-preview-img" *ngIf="item.type =='Complete Flow' && ! (i==2 && template?.buttons?.length>3)" src="../../../../assets/img/settings/form.svg"> 
-                        				<img class="btn-preview-img" *ngIf="(i==2 && template?.buttons?.length>3)" src="../../../../assets/img/settings/options-lines.svg">  
-										{{(i==2 && template?.buttons?.length>3) ? 'Show All Buttons' : item?.buttonText }}</button> </div>
-									</div>
-								</div>
-								<!--  <div *ngIf="template.Channel === 'WhatsApp Official'" class="template_btn">
+								<div class="mb-4 template_box" *ngFor="let template of allTemplates ;let i = index">
+									<div class="px-4 template_box_inner d-flex align-items-start w-100">
+										<div class="d-flex align-items-center template_box_inner">
+											<input type="radio" id="selectedTemplate{{i}}" name="selectedTemplate"
+												[checked]="templateChecked" (click)="selectTemplate(template)">
+											<label class="m-0" for="selectedTemplate{{i}}"></label>
+										</div>
+										<div class="template_head flex-column w-100">
+											<p class="m-0 template_name">{{template.TemplateName}}</p>
+											<p class="m-0">
+												<span>{{settingsService?.getDateTimeFormate(template.created_at,true)}}</span>
+											</p>
+
+											<div class="inner_box">
+												<img *ngIf="template.media_type === 'image'" class="template_img"
+													src="{{template.Links}}">
+												<video *ngIf="template.media_type === 'video'" controls muted
+													id="video-background" [src]="template.Links"></video>
+												<div class="doc-preview" *ngIf="template.media_type === 'document'">
+													<a [href]="template.Links"><img
+															src="../../../../assets/img/settings/doc.svg" /></a>
+												</div>
+												<!-- <embed *ngIf="template.media_type === 'document'" [src]="template.Links" type="application/pdf" width="100%" height="400px"> -->
+												<div [ngClass]="{'templateText': template.media_type === 'text'}"
+													class="template_text">
+													<p *ngIf="template.media_type ==='text' && template.Header"
+														class="temp-header font-weight-bolder"
+														[innerHTML]="template.Header | sanitizeHtml"
+														class="m-0 font-weight-bold"></p>
+													<p [innerHTML]="template.BodyText| sanitizeHtml"></p>
+													<p *ngIf="template.FooterText" class="temp-footer"
+														[innerHTML]="template.FooterText | sanitizeHtml"></p>
+												</div>
+												<div *ngIf="template?.buttons && template?.buttons?.length >0"
+													class="w-70">
+													<div *ngFor="let item of template?.buttons let i = index">
+														<div class="text-center" *ngIf="item?.buttonText && i<3"><button
+																class="template-btn"
+																[ngClass]="{'btn-radius': ((template?.buttons?.length-1)== i || (template?.buttons?.length >2 && i==2))}">
+																<img class="btn-preview-img"
+																	*ngIf="item.type =='Quick Reply' && !(i==2 && template?.buttons?.length>3)"
+																	src="../../../../assets/img/settings/reply-arrow.svg">
+																<img class="btn-preview-img"
+																	*ngIf="item.type =='Call Phone' && !(i==2 && template?.buttons?.length>3)"
+																	src="../../../../assets/img/settings/phone-call.svg">
+																<img class="btn-preview-img"
+																	*ngIf="item.type =='Copy offer Code' && !(i==2 && template?.buttons?.length>3)"
+																	src="../../../../assets/img/settings/copy.svg">
+																<img class="btn-preview-img"
+																	*ngIf="item.type =='Visit Website' && !(i==2 && template?.buttons?.length>3)"
+																	src="../../../../assets/img/settings/open-in-new.svg">
+																<img class="btn-preview-img"
+																	*ngIf="item.type =='Complete Flow' && ! (i==2 && template?.buttons?.length>3)"
+																	src="../../../../assets/img/settings/form.svg">
+																<img class="btn-preview-img"
+																	*ngIf="(i==2 && template?.buttons?.length>3)"
+																	src="../../../../assets/img/settings/options-lines.svg">
+																{{(i==2 && template?.buttons?.length>3) ? 'Show All
+																Buttons' : item?.buttonText }}</button> </div>
+													</div>
+												</div>
+												<!--  <div *ngIf="template.Channel === 'WhatsApp Official'" class="template_btn">
 									<button type="button" class="btn">Button 1</button>
 									<button type="button" class="btn">Button 2</button> 
 									<button type="button" class="btn">Button 3</button>
 								</div> -->
+											</div>
+										</div>
+									</div>
+
+
 								</div>
-							    </div>
-								</div>
-							
-						
-							  </div>
-						
+
 							</div>
-						
-							
+
+
 							<div class="input_group_btn">
-							  <button type="button" class="submit-btn" (click)="showeditTemplate()">Next</button>
+								<button type="button" class="submit-btn" (click)="showeditTemplate()">Next</button>
 							</div>
-						
+
 							<div class="bottom_section">
-							  <p class="text-box-readonly"><span><img class="setting_icon px-2" src="../../../../assets/img/profile/Info.svg">
-							  </span>Add/edit Insert Template from settings</p>
+								<p class="text-box-readonly"><span><img class="setting_icon px-2"
+											src="../../../../assets/img/profile/Info.svg">
+									</span>Add/edit Insert Template from settings</p>
 							</div>
-						
-						  </div>
+
+						</div>
 					</div>
-     			 </div>
 				</div>
 			</div>
+		</div>
 	</div>
+
+	<div class="modal fade" tabindex="-1" id="insertBotmodal" #insertBotmodal data-bs-backdrop="static" role="dialog">
+		<div class="modal-dialog" role="document">
+			<div class="modal-content">
+				<div class="modal-body">
+					<div class="custom_modal bg-pink sm" style="max-height: 100vh; overflow: unset;">
+						<div class="modal-header">
+							<div class="modal-header-left">
+								<h4 class="modal-title" id="modal-basic-title">Insert Bot</h4>
+							</div>
+							<div class="modal-header-right">
+								<p class="close-box" aria-label="Close" (click)="closeAllModal()"><img
+										(click)="isAttachmentMedia = false;" src="assets/img/teambox/icon-close.svg">
+								</p>
+							</div>
+						</div>
+						<div class="modal-body quickResponse">
+							<input class="search-box" type="search" placeholder="Search"
+								(input)="searchBotBuilder($event)" />
+
+
+							<div class="bot_list">
+								<div class="mb-3 template_box" *ngFor="let bot of botsList; let i = index">
+									<div class="px-3 d-flex align-items-start w-100 template_box_inner ">
+										<div class="d-flex align-items-center template_box_inner">
+											<input type="radio" id="botRadio{{ i }}" name="selectedBot"
+												[checked]="selectedBotobj?.name === bot.name"
+												(change)="selectedbot(bot)" />
+
+											<label class="ms-2" for="botRadio{{ i }}"></label>
+										</div>
+										<div class="ms-3">
+											<p class="m-0 fw-bold">{{ bot.name }}</p>
+											<p class="m-0 text-muted">{{ bot.description?.substring(0, 20) || 'No
+												description' }}</p>
+										</div>
+									</div>
+								</div>
+							</div>
+
+							<div class="input_group_btn mt-3">
+								<button type="button" class="submit-btn" [disabled]="!selectedBotobj"
+									(click)="onDone()">Done</button>
+							</div>
+
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+
+
 
 	<div class="modal fade" tabindex="-1" id="editTemplate" #editTemplate data-bs-backdrop="static" role="dialog">
 		<div class="modal-dialog editTemplate" role="document">
 			<div class="modal-content">
 				<div class="modal-body">
-				<!-- <div class=""> -->
+					<!-- <div class=""> -->
 					<div class="modal-header">
 						<div class="modal-header-left">
 							<h4 class="modal-title" id="modal-basic-title">Insert Template</h4>
 						</div>
 						<div class="modal-header-right">
-							<p class="close-box" aria-label="Close" (click)="closeAllModal(); closeTemplatePopup();"><img
-								    (click)="isAttachmentMedia = false"
-									src="assets/img/teambox/icon-close.svg"></p>
+							<p class="close-box" aria-label="Close" (click)="closeAllModal(); closeTemplatePopup();">
+								<img (click)="isAttachmentMedia = false" src="assets/img/teambox/icon-close.svg">
+							</p>
 						</div>
 					</div>
 					<div class="modal-body" style="height: 500px;overflow: scroll;">
@@ -1114,53 +1338,75 @@ popupWidth='250px' popupHeight='200px'>
 									</label>
 
 									<div class="px-2 inner_box">
-										<img *ngIf="selectedTemplate.media_type === 'image'" class="template_img" src="{{selectedTemplate.Links}}">
-										<video *ngIf="selectedTemplate.media_type === 'video'" controls muted id="video-background" [src]="selectedTemplate.Links"></video>
-										<div class="doc-preview"*ngIf="selectedTemplate.media_type === 'document'">
-										  <a [href]="selectedTemplate.Links"><img src="../../../../assets/img/settings/doc.svg" /></a>
-										  </div>
-										  <p *ngIf="selectedTemplate.media_type !== 'text'" class="close-box edit_media" (click)="editMedia()">
+										<img *ngIf="selectedTemplate.media_type === 'image'" class="template_img"
+											src="{{selectedTemplate.Links}}">
+										<video *ngIf="selectedTemplate.media_type === 'video'" controls muted
+											id="video-background" [src]="selectedTemplate.Links"></video>
+										<div class="doc-preview" *ngIf="selectedTemplate.media_type === 'document'">
+											<a [href]="selectedTemplate.Links"><img
+													src="../../../../assets/img/settings/doc.svg" /></a>
+										</div>
+										<p *ngIf="selectedTemplate.media_type !== 'text'" class="close-box edit_media"
+											(click)="editMedia()">
 											<img src="/assets/img/campaign/edit.svg">
 										</p>
-										 <div [ngClass]="{'templateText': selectedTemplate.media_type === 'text'}" class="template_text">
-											<p *ngIf="selectedTemplate.media_type ==='text' && selectedTemplate.Header" class="temp-header font-weight-bolder" [innerHTML]="selectedTemplate.Header | sanitizeHtml" class="m-0 font-weight-bold"></p>
+										<div [ngClass]="{'templateText': selectedTemplate.media_type === 'text'}"
+											class="template_text">
+											<p *ngIf="selectedTemplate.media_type ==='text' && selectedTemplate.Header"
+												class="temp-header font-weight-bolder"
+												[innerHTML]="selectedTemplate.Header | sanitizeHtml"
+												class="m-0 font-weight-bold"></p>
 											<p [innerHTML]="selectedTemplate.BodyText | sanitizeHtml"></p>
-											<p *ngIf="selectedTemplate.FooterText" class="temp-footer" [innerHTML]="selectedTemplate.FooterText | sanitizeHtml"></p>
-										  </div>
-									<div *ngIf="selectedTemplate?.buttons && selectedTemplate?.buttons?.length >0" class="px-2 w-100">
-										<div *ngFor="let item of selectedTemplate?.buttons let i = index" >
-										<div  class="text-center" *ngIf="item?.buttonText && i<3"><button class="template-btn"  [ngClass]="{'btn-radius': ((selectedTemplate?.buttons?.length-1)== i || (selectedTemplate?.buttons?.length >2 && i==2))}">
-											<img class="btn-preview-img" *ngIf="item.type =='Quick Reply'" src="../../../../assets/img/settings/reply-arrow.svg"> 
-											<img class="btn-preview-img" *ngIf="item.type =='Call Phone'" src="../../../../assets/img/settings/phone-call.svg"> 
-											<img class="btn-preview-img" *ngIf="item.type =='Copy offer Code'" src="../../../../assets/img/settings/copy.svg"> 
-											<img class="btn-preview-img" *ngIf="item.type =='Visit Website'" src="../../../../assets/img/settings/open-in-new.svg"> 
-											<img class="btn-preview-img" *ngIf="item.type =='Complete Flow'" src="../../../../assets/img/settings/form.svg"> 
-											{{(i==2 && selectedTemplate?.buttons?.length>3) ? 'Show All Buttons' : item?.buttonText }}</button> </div>
+											<p *ngIf="selectedTemplate.FooterText" class="temp-footer"
+												[innerHTML]="selectedTemplate.FooterText | sanitizeHtml"></p>
+										</div>
+										<div *ngIf="selectedTemplate?.buttons && selectedTemplate?.buttons?.length >0"
+											class="px-2 w-100">
+											<div *ngFor="let item of selectedTemplate?.buttons let i = index">
+												<div class="text-center" *ngIf="item?.buttonText && i<3"><button
+														class="template-btn"
+														[ngClass]="{'btn-radius': ((selectedTemplate?.buttons?.length-1)== i || (selectedTemplate?.buttons?.length >2 && i==2))}">
+														<img class="btn-preview-img" *ngIf="item.type =='Quick Reply'"
+															src="../../../../assets/img/settings/reply-arrow.svg">
+														<img class="btn-preview-img" *ngIf="item.type =='Call Phone'"
+															src="../../../../assets/img/settings/phone-call.svg">
+														<img class="btn-preview-img"
+															*ngIf="item.type =='Copy offer Code'"
+															src="../../../../assets/img/settings/copy.svg">
+														<img class="btn-preview-img" *ngIf="item.type =='Visit Website'"
+															src="../../../../assets/img/settings/open-in-new.svg">
+														<img class="btn-preview-img" *ngIf="item.type =='Complete Flow'"
+															src="../../../../assets/img/settings/form.svg">
+														{{(i==2 && selectedTemplate?.buttons?.length>3) ? 'Show All
+														Buttons' : item?.buttonText }}</button> </div>
+											</div>
 										</div>
 									</div>
-								</div>
 								</div>
 
 							</div>
 
 							<div class="template_details_section_right">
-								<p class="mt-2 mb-0">Variable value<img class="px-2 icon sm" (click)="toggleInfoIcon()" src="/assets/img/campaign/Info.svg"></p>
+								<p class="mt-2 mb-0">Variable value<img class="px-2 icon sm" (click)="toggleInfoIcon()"
+										src="/assets/img/campaign/Info.svg"></p>
 
-									<span *ngIf="showInfoIcon" class="px-2 opt-In-Info">
-										<div class="opt-In-Info-div">
-											<button type="button" class="m-2 opt-In-Info-close" (click)="showInfoIcon=false">
-												<img src="../../../../assets/img/teambox/icon-close.svg">
-											</button>
-											<p id="p-body">You can input variable values or choose contact attributes (fields)
-												that will be used to send personalized messages to users, 
-												reflecting their specific contact details instead of generic values.
-										    </p>
-										</div>
-									</span>
+								<span *ngIf="showInfoIcon" class="px-2 opt-In-Info">
+									<div class="opt-In-Info-div">
+										<button type="button" class="m-2 opt-In-Info-close"
+											(click)="showInfoIcon=false">
+											<img src="../../../../assets/img/teambox/icon-close.svg">
+										</button>
+										<p id="p-body">You can input variable values or choose contact attributes
+											(fields)
+											that will be used to send personalized messages to users,
+											reflecting their specific contact details instead of generic values.
+										</p>
+									</div>
+								</span>
 
-							   <p class="h5" *ngIf="allVariablesList.length==0">
-								No variable available in this message
-							  </p>
+								<p class="h5" *ngIf="allVariablesList.length==0">
+									No variable available in this message
+								</p>
 
 								<!-- <div class="form_row">
 									<label>[[Name]]</label>
@@ -1168,64 +1414,74 @@ popupWidth='250px' popupHeight='200px'>
 										<p class="form-control">
 											<input type="text" class="form-control inner"
 												placeholder="Input value or add attribute"> -->
-											<!-- <span class="map_attribute" (click)="openMapOption('map_name')">Map</span> -->
-										<!-- </p> -->
-										<!-- <div *ngIf="MapOptionFor =='map_name'" class="popup-dialog">
+								<!-- <span class="map_attribute" (click)="openMapOption('map_name')">Map</span> -->
+								<!-- </p> -->
+								<!-- <div *ngIf="MapOptionFor =='map_name'" class="popup-dialog">
 							<p class="label">Map the column</p>
 							<p *ngFor="let map of mapNameOption ;let i = index" (click)="openMapOption('')"><span>{{map}}</span></p>
 						</div> -->
-									<!-- </div>
+								<!-- </div>
 								</div>
 								<div class="form_row">
 									<label>[[Product]]</label>
 									<p class="form-control">
 										<input type="text" class="form-control inner"
 											placeholder="Input value or add attribute"> -->
-										<!-- <span class="map_attribute_img" (click)="openVariableOption(variableoption)"><img src="/assets/img/campaign/attribute.svg"></span> -->
-									<!-- </p>
+								<!-- <span class="map_attribute_img" (click)="openVariableOption(variableoption)"><img src="/assets/img/campaign/attribute.svg"></span> -->
+								<!-- </p>
 								</div>
 								<div class="form_row">
 									<label>[[25%]]</label>
 									<p class="form-control">
 										<input type="text" class="form-control inner"
 											placeholder="Input value or add attribute"> -->
-										<!-- <span class="map_attribute_img" (click)="openVariableOption(variableoption)"><img src="/assets/img/campaign/attribute.svg"></span> -->
-									<!-- </p> -->
+								<!-- <span class="map_attribute_img" (click)="openVariableOption(variableoption)"><img src="/assets/img/campaign/attribute.svg"></span> -->
+								<!-- </p> -->
 								<!-- </div> -->
 								<form #variableValue="ngForm">
 									<div *ngFor="let item of allVariablesList; let ith = index" class="form_row">
-									  <label for="variableValue{{ith}}">{{item}}</label>
+										<label for="variableValue{{ith}}">{{item}}</label>
 										<div class="form-control-wrapper">
-									  <p class="form-control">
-										<input type="text" id="variableValue{{ith}}" name="variableValue{{ith}}" [(ngModel)]="variableValues[ith]" class="form-control inner"
-										(keyup)="UpdateVariable($event, ith)" placeholder="Input value or add attribute" [ngClass]="{'input-custom-color': isFallback[ith] == true}">
-										<span style="cursor: pointer;" (click)="openVariableOption(ith)" class="map_attribute_img"><img src="/assets/img/campaign/attribute.svg"></span>
-									  </p>
-											<div *ngIf="fallbackvalue[ith]" class="fallback-value">fallbackValue : {{fallbackvalue[ith]}}</div>
+											<p class="form-control">
+												<input type="text" id="variableValue{{ith}}" name="variableValue{{ith}}"
+													[(ngModel)]="variableValues[ith]" class="form-control inner"
+													(keyup)="UpdateVariable($event, ith)"
+													placeholder="Input value or add attribute"
+													[ngClass]="{'input-custom-color': isFallback[ith] == true}">
+												<span style="cursor: pointer;" (click)="openVariableOption(ith)"
+													class="map_attribute_img"><img
+														src="/assets/img/campaign/attribute.svg"></span>
+											</p>
+											<div *ngIf="fallbackvalue[ith]" class="fallback-value">fallbackValue :
+												{{fallbackvalue[ith]}}</div>
 										</div>
-									  
-								  <!-- <div *ngIf="MapOptionFor =='map_name'" class="popup-dialog">
+
+										<!-- <div *ngIf="MapOptionFor =='map_name'" class="popup-dialog">
 										  <p class="label">Map the column</p>
 										  <p *ngFor="let map of mapNameOption ;let i = index" (click)="openMapOption('')"><span>{{map}}</span></p>
 										</div> -->
 									</div>
-								  </form>
-                                    
+								</form>
+
 								<div *ngFor="let item of buttonsVariable; let ith = index" class="form_row">
 									<div>
 										<label style="font-weight: bold;">Dynamic URL</label>
 										<label>{{settingService.truncateLength(item?.label)}}</label>
 									</div>
-									
+
 									<div class="form-control-wrapper">
 										<p class="form-control">
-											<input type="text" [(ngModel)]="item.value" class="form-control inner" (keyup)="UpdateButtonsVariableState($event, ith)"
-											 placeholder="Input value or add attribute" [ngClass]="{'input-custom-color': item.isAttribute == true}">
-											 <span style="cursor: pointer;" (click)="openVariableOptionDynamicURL(ith)" class="map_attribute_img">
+											<input type="text" [(ngModel)]="item.value" class="form-control inner"
+												(keyup)="UpdateButtonsVariableState($event, ith)"
+												placeholder="Input value or add attribute"
+												[ngClass]="{'input-custom-color': item.isAttribute == true}">
+											<span style="cursor: pointer;" (click)="openVariableOptionDynamicURL(ith)"
+												class="map_attribute_img">
 												<img src="/assets/img/campaign/attribute.svg">
 											</span>
 										</p>
-										<div *ngIf="item?.Fallback" class="fallback-value">fallbackValue : {{item?.Fallback}}</div>
+										<div *ngIf="item?.Fallback" class="fallback-value">fallbackValue :
+											{{item?.Fallback}}</div>
 									</div>
 								</div>
 								<!-- <div *ngIf="selectedTemplate.Channel === 'WA API'" >
@@ -1241,7 +1497,7 @@ popupWidth='250px' popupHeight='200px'>
 							</div> -->
 							</div>
 						</div>
-					
+
 					</div>
 					<div class="modal-footer" style="border: none;">
 						<div class="input_group_btn justify-content-end mb-1">
@@ -1249,213 +1505,254 @@ popupWidth='250px' popupHeight='200px'>
 						</div>
 					</div>
 
+					<!-- </div> -->
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<div class="modal fade" tabindex="-1" id="showvariableoption" #showvariableoption data-bs-backdrop="static"
+		role="dialog">
+		<div class="modal-dialog showvariableoption" role="document">
+			<div class="modal-content" *ngIf="isShowAttributes">
+				<div class="modal-body showvariableoption">
+					<div class="modal-header">
+						<div class="modal-header-left">
+							<h4 class="modal-title" id="modal-basic-title">Attributes</h4>
+						</div>
+						<div class="modal-header-right">
+							<p class="close-box" aria-label="Close" (click)="closeVariableOption()"><img
+									src="assets/img/teambox/icon-close.svg"></p>
+						</div>
+					</div>
+
+
+					<div class="modal-body variableoption">
+						<div class="content">
+							<input class="search-box" type="search" placeholder="Search"
+								[(ngModel)]="attributesearch" />
+							<p *ngFor='let alist of attributesList | searchfilter:attributesearch  ;let i = index'
+								class="form-control" [ngClass]="{ 'selected': selectedAttribute == alist }"
+								(click)="addAttributeInVariables(alist)" style="cursor: pointer;">
+								{{alist}}
+							</p>
+
+						</div>
+						<div class="content_inner">
+							<p><span>Fallback</span><img class="px-2 fallback-tooltip"
+									src="../../../../assets/img/campaign/Info.svg" (click)="showToolTip($event)">
+							</p>
+
+							<div *ngIf="showInfo" class="showInfoFallback">
+								<p id="p-body">You can input a value as a fallback for the selected variable (attribute)
+									in the message. This fallback will be used whenever no data is available for the
+									selected variable in the contacts database.
+								</p>
+								<button id="radio-close-btn" (click)="showInfo=false">X</button>
+							</div>
+							<input style="cursor:text;" placeholder="Enter value" type="text" class="form-control"
+								[(ngModel)]="attribute">
+						</div>
+					</div>
+					<div class="modal-footer" style="border: none;">
+						<div class="input_group_btn">
+							<button type="button" class="cancel-btn" aria-label="Close"
+								(click)="closeVariableOption()">Cancel</button>
+							<button [ngClass]="{'disabledAttribute': !selectedAttribute}" type="button"
+								class="submit-btn" aria-label="Close" (click)="SaveVariableOption()"
+								[disabled]="!selectedAttribute">Done</button>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<div class="modal fade" tabindex="-1" id="editTemplateMedia" #editTemplateMedia data-bs-backdrop="static"
+		role="dialog">
+		<div class="modal-dialog editTemplateMedia" role="document">
+			<div class="modal-content editTemplateMedia">
+				<div class="modal-header">
+					<div class="modal-header-left">
+						<h4 class="modal-title" id="modal-basic-title">Replace Media</h4>
+					</div>
+					<div class="modal-header-right">
+						<p class="close-box" aria-label="Close" (click)="closeEditMedia()"><img
+								src="assets/img/teambox/icon-close.svg"></p>
+					</div>
+				</div>
+				<div class="modal-body">
+					<label class="container mb-2">
+						<input type="radio" name="media_source">
+						<span class="label">By Uploading file</span>
+						<span class="checkmark radio"></span>
+					</label>
+
+					<div class="important_contact">
+
+						<div class="important_contact_left dragAreaClass">
+
+							<img class="icon xl" src="assets/img/campaign/image-a@2x.png">
+							<p>Drag & Drop files</p>
+							<p><span>or</span></p>
+							<label class="custom-file-upload">
+								<input type="file" #file [multiple]="false" (change)="onFileChange($event)"
+									(click)="$event.target.value=null" style="display:none" />
+								<img class="icon" src="/assets/img/teambox/upload.png"> Browse files
+							</label>
+						</div>
+
+						<div class="important_contact_right mt-0">
+							<div class="info_box mt-0">
+								<p class="info"><img src="assets/img/campaign/info-icon.png">Instructions</p>
+								<p><span>Upload a CSV file with the contacts and details that you would like to import.
+										Ensure
+										the CSV file fulfils the Following requirements: Only CSV files are accepted for
+										import.
+										File size must be 10 MB The file must contain at least.. the CSV file fulfils
+										the
+										Following requirements: Only CSV files are accepted for import. File size must
+										be 10
+										MB</span></p>
+							</div>
+
+						</div>
+
+					</div>
+					<div class="important_contact_middle edit_template">
+
+						<div class="left_part">
+							<label class="container">
+								<input type="radio" name="media_source">
+								<span class="label">By URL</span>
+								<span class="checkmark radio"></span>
+							</label>
+							<div class="formrow">
+								<label for="name">URL</label>
+								<input class="form-control" maxlength="20" type="text"
+									placeholder="Enter title in max 20 character" name="Name" formControlName="Name"
+									id="name" />
+							</div>
+
+						</div>
+						<div class="right_part">
+							<label class="container">
+								<input type="radio" name="media_source">
+								<span class="label">Use custom media header</span>
+								<span class="checkmark radio"></span>
+							</label>
+							<div class="formrow ">
+								<label for="name">Input Value</label>
+								<p class="form-control">
+									<input type="text" id="attribute_input" class="form-control inner"
+										placeholder="Input value or add attribute">
+									<!-- <span class="map_attribute_img" (click)="openVariableOption(variableoption)"><img src="/assets/img/campaign/attribute.svg"></span> -->
+								</p>
+
+							</div>
+
+						</div>
+
+					</div>
+
+					<div class="input_group_btn mb-4">
+						<button type="button" class="cancel-btn" (click)="cancelEditTemplateMedia()">Cancel</button>
+						<button type="button" class="submit-btn" (click)="updateEditTemplateMedia()">Done</button>
+					</div>
+
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<div class="modal fade" tabindex="-1" id="templatePreview" #templatePreview data-bs-backdrop="static" role="dialog">
+		<div class="modal-dialog templatePreview" role="document">
+			<div class="modal-content">
+				<!-- <div *ngIf="TemplatePreview" class="custom_modal bg-pink lg"> -->
+				<div class="modal-header">
+					<div class="modal-header-left">
+						<h4 class="modal-title" id="modal-basic-title">Preview</h4>
+					</div>
+					<div class="modal-header-right">
+						<p class="close-box" aria-label="Close" (click)="closeAllModal(); closeTemplatePopup()"><img
+								(click)="isAttachmentMedia = false" src="assets/img/teambox/icon-close.svg"></p>
+					</div>
+				</div>
+				<div class="modal-body" style="height: 365px; overflow: scroll;">
+					<div class="template_preiview">
+
+						<div class="template_box">
+							<label class="py-2 container">
+								<p><b>{{selectedTemplate.TemplateName}}</b></p>
+
+							</label>
+
+							<div class="px-2 inner_box">
+								<img *ngIf="selectedTemplate.media_type === 'image'" class="template_img"
+									src="{{selectedTemplate.Links}}">
+								<video *ngIf="selectedTemplate.media_type === 'video'" controls muted
+									id="video-background" [src]="selectedTemplate.Links"></video>
+								<div class="doc-preview" *ngIf="selectedTemplate.media_type === 'document'">
+									<a [href]="selectedTemplate.Links"><img
+											src="../../../../assets/img/settings/doc.svg" /></a>
+								</div>
+								<!-- <p class="close-box edit_media" (click)="editMedia()">
+							<img src="/assets/img/campaign/edit.svg">
+						</p> -->
+								<div [ngClass]="{'templateText': selectedTemplate.media_type === 'text'}"
+									class="template_text">
+									<p *ngIf="selectedTemplate.media_type ==='text' && selectedTemplate.Header"
+										class="temp-header font-weight-bolder"
+										[innerHTML]="selectedTemplate.Header | sanitizeHtml"
+										class="m-0 font-weight-bold"></p>
+									<p [innerHTML]="selectedTemplate.BodyText | sanitizeHtml"></p>
+									<p *ngIf="selectedTemplate.FooterText" class="temp-footer"
+										[innerHTML]="selectedTemplate.FooterText | sanitizeHtml"></p>
+								</div>
+								<div *ngIf="selectedTemplate?.buttons && selectedTemplate?.buttons?.length >0 && selectedTemplate.Channel === 'WA API'"
+									class="w-100 px-2">
+									<div *ngFor="let item of selectedTemplate?.buttons let i = index">
+										<div class="text-center" *ngIf="item?.buttonText && i<3"><button
+												class="template-btn"
+												[ngClass]="{'btn-radius': ((selectedTemplate?.buttons?.length-1)== i || (selectedTemplate?.buttons?.length >2 && i==2))}">
+												<img class="btn-preview-img"
+													*ngIf="item.type =='Quick Reply' && !(i==2 && selectedTemplate?.buttons?.length>3)"
+													src="../../../../assets/img/settings/reply-arrow.svg">
+												<img class="btn-preview-img"
+													*ngIf="item.type =='Call Phone' && !(i==2 && selectedTemplate?.buttons?.length>3)"
+													src="../../../../assets/img/settings/phone-call.svg">
+												<img class="btn-preview-img"
+													*ngIf="item.type =='Copy offer Code' && !(i==2 && selectedTemplate?.buttons?.length>3)"
+													src="../../../../assets/img/settings/copy.svg">
+												<img class="btn-preview-img"
+													*ngIf="item.type =='Visit Website' && !(i==2 && selectedTemplate?.buttons?.length>3)"
+													src="../../../../assets/img/settings/open-in-new.svg">
+												<img class="btn-preview-img"
+													*ngIf="item.type =='Complete Flow' && ! (i==2 && selectedTemplate?.buttons?.length>3)"
+													src="../../../../assets/img/settings/form.svg">
+												<img class="btn-preview-img"
+													*ngIf="(i==2 && selectedTemplate?.buttons?.length>3)"
+													src="../../../../assets/img/settings/options-lines.svg">
+												{{(i==2 && selectedTemplate?.buttons?.length>3) ? 'Show All Buttons' :
+												item?.buttonText }}</button> </div>
+									</div>
+								</div>
+							</div>
+						</div>
+
+					</div>
+				</div>
+
+				<div class="modal-footer" style="border: none;">
+					<div class="input_group_btn justify-content-center mb-4" style="width: 100%;">
+						<button type="button" class="submit-btn"
+							(click)="insertTemplate(selectedTemplate)">Done</button>
+					</div>
+				</div>
 				<!-- </div> -->
 			</div>
 		</div>
 	</div>
-  </div>
-
-  <div class="modal fade" tabindex="-1" id="showvariableoption" #showvariableoption data-bs-backdrop="static" role="dialog">
-	<div class="modal-dialog showvariableoption" role="document">
-	<div class="modal-content" *ngIf="isShowAttributes">
-		<div class="modal-body showvariableoption">
-			<div class="modal-header">
-				<div class="modal-header-left">
-					<h4 class="modal-title" id="modal-basic-title">Attributes</h4>
-				</div>
-				<div class="modal-header-right">
-					<p  class="close-box" aria-label="Close" (click)="closeVariableOption()"><img src="assets/img/teambox/icon-close.svg"></p>
-				</div>
-			</div>
-	
-	
-				<div class="modal-body variableoption">
-						<div class="content">
-							<input class="search-box" type="search" placeholder="Search" [(ngModel)]="attributesearch" />
-							<p *ngFor='let alist of attributesList | searchfilter:attributesearch  ;let i = index' class="form-control" [ngClass]="{ 'selected': selectedAttribute == alist }" 
-							    (click)="addAttributeInVariables(alist)" style="cursor: pointer;">
-								{{alist}}
-							</p>
-						
-								</div>
-					<div class="content_inner">
-								<p><span>Fallback</span><img class="px-2 fallback-tooltip" src="../../../../assets/img/campaign/Info.svg" (click)="showToolTip($event)">
-								</p>
-								
-								<div *ngIf="showInfo" class="showInfoFallback">
-									<p id="p-body">You can input a value as a fallback for the selected variable (attribute) in the message. This fallback will be used whenever no data is available for the selected variable in the contacts database.
-									</p>
-									<button id="radio-close-btn" (click)="showInfo=false">X</button>
-								</div>
-								<input style="cursor:text;" placeholder="Enter value" type="text" class="form-control" [(ngModel)]="attribute">
-							</div>
-							</div>
-							<div class="modal-footer" style="border: none;">
-								<div class="input_group_btn">
-									<button type="button" class="cancel-btn" aria-label="Close" (click)="closeVariableOption()">Cancel</button>
-									<button [ngClass]="{'disabledAttribute': !selectedAttribute}"  type="button" class="submit-btn" aria-label="Close" (click)="SaveVariableOption()" [disabled]="!selectedAttribute">Done</button>
-								</div>
-							</div>
-						</div>
-			      </div>
-		      </div>
-          </div>
-
-  <div class="modal fade" tabindex="-1" id="editTemplateMedia" #editTemplateMedia data-bs-backdrop="static" role="dialog">
-	<div class="modal-dialog editTemplateMedia" role="document">
-		<div class="modal-content editTemplateMedia">
-			<div class="modal-header">
-				<div class="modal-header-left">
-					<h4 class="modal-title" id="modal-basic-title">Replace Media</h4>
-				</div>
-				<div class="modal-header-right">
-					<p class="close-box" aria-label="Close" (click)="closeEditMedia()"><img
-							src="assets/img/teambox/icon-close.svg"></p>
-				</div>
-					</div>
-			<div class="modal-body">
-				<label class="container mb-2">
-					<input type="radio" name="media_source">
-					<span class="label">By Uploading file</span>
-					<span class="checkmark radio"></span>
-				</label>
-		
-				<div class="important_contact">
-		
-					<div class="important_contact_left dragAreaClass">
-		
-						<img class="icon xl" src="assets/img/campaign/image-a@2x.png">
-						<p>Drag & Drop files</p>
-						<p><span>or</span></p>
-						<label class="custom-file-upload">
-							<input type="file" #file [multiple]="false" (change)="onFileChange($event)"
-							(click)="$event.target.value=null"
-								style="display:none" />
-							<img class="icon" src="/assets/img/teambox/upload.png"> Browse files
-						</label>
-					</div>
-		
-					<div class="important_contact_right mt-0">
-						<div class="info_box mt-0">
-							<p class="info"><img src="assets/img/campaign/info-icon.png">Instructions</p>
-							<p><span>Upload a CSV file with the contacts and details that you would like to import. Ensure
-									the CSV file fulfils the Following requirements: Only CSV files are accepted for import.
-									File size must be 10 MB The file must contain at least.. the CSV file fulfils the
-									Following requirements: Only CSV files are accepted for import. File size must be 10
-									MB</span></p>
-						</div>
-		
-					</div>
-		
-				</div>
-				<div class="important_contact_middle edit_template">
-		
-					<div class="left_part">
-						<label class="container">
-							<input type="radio" name="media_source">
-							<span class="label">By URL</span>
-							<span class="checkmark radio"></span>
-						</label>
-						<div class="formrow">
-							<label for="name">URL</label>
-							<input class="form-control" maxlength="20" type="text" placeholder="Enter title in max 20 character"
-								name="Name" formControlName="Name" id="name" />
-						</div>
-		
-					</div>
-					<div class="right_part">
-						<label class="container">
-							<input type="radio" name="media_source">
-							<span class="label">Use custom media header</span>
-							<span class="checkmark radio"></span>
-						</label>
-						<div class="formrow ">
-							<label for="name">Input Value</label>
-							<p class="form-control">
-								<input type="text" id="attribute_input" class="form-control inner" placeholder="Input value or add attribute">
-								<!-- <span class="map_attribute_img" (click)="openVariableOption(variableoption)"><img src="/assets/img/campaign/attribute.svg"></span> -->
-							</p>
-		
-						</div>
-		
-					</div>
-		
-				</div>
-		
-				<div class="input_group_btn mb-4">
-					<button type="button" class="cancel-btn" (click)="cancelEditTemplateMedia()">Cancel</button>
-					<button type="button" class="submit-btn" (click)="updateEditTemplateMedia()">Done</button>
-				</div>
-		
-			</div>
-	      </div>
-     	</div>
-	</div>
-
-<div class="modal fade" tabindex="-1" id="templatePreview" #templatePreview data-bs-backdrop="static" role="dialog">
-	<div class="modal-dialog templatePreview" role="document">
-		<div class="modal-content">
-	   <!-- <div *ngIf="TemplatePreview" class="custom_modal bg-pink lg"> -->
-		<div class="modal-header">
-			<div class="modal-header-left">
-				<h4 class="modal-title" id="modal-basic-title">Preview</h4>
-			</div>
-			<div class="modal-header-right">
-				<p class="close-box" aria-label="Close" (click)="closeAllModal(); closeTemplatePopup()"><img
-					(click)="isAttachmentMedia = false"
-						src="assets/img/teambox/icon-close.svg"></p>
-			</div>
-		</div>
-		<div class="modal-body" style="height: 365px; overflow: scroll;">
-			<div class="template_preiview">
-
-				<div class="template_box">
-					<label class="py-2 container">
-						<p><b>{{selectedTemplate.TemplateName}}</b></p>
-
-					</label>
-
-					<div class="px-2 inner_box">
-						<img *ngIf="selectedTemplate.media_type === 'image'" class="template_img" src="{{selectedTemplate.Links}}">
-						<video *ngIf="selectedTemplate.media_type === 'video'" controls muted id="video-background" [src]="selectedTemplate.Links"></video>
-						<div class="doc-preview"*ngIf="selectedTemplate.media_type === 'document'">
-						  <a [href]="selectedTemplate.Links"><img src="../../../../assets/img/settings/doc.svg" /></a>
-						  </div>
-						  <!-- <p class="close-box edit_media" (click)="editMedia()">
-							<img src="/assets/img/campaign/edit.svg">
-						</p> -->
-						 <div [ngClass]="{'templateText': selectedTemplate.media_type === 'text'}" class="template_text">
-							<p *ngIf="selectedTemplate.media_type ==='text' && selectedTemplate.Header" class="temp-header font-weight-bolder" [innerHTML]="selectedTemplate.Header | sanitizeHtml" class="m-0 font-weight-bold"></p>
-							<p [innerHTML]="selectedTemplate.BodyText | sanitizeHtml"></p>
-							<p *ngIf="selectedTemplate.FooterText" class="temp-footer" [innerHTML]="selectedTemplate.FooterText | sanitizeHtml"></p>
-						  </div>
-					<div *ngIf="selectedTemplate?.buttons && selectedTemplate?.buttons?.length >0 && selectedTemplate.Channel === 'WA API'" class="w-100 px-2">
-						<div *ngFor="let item of selectedTemplate?.buttons let i = index" >
-						<div  class="text-center" *ngIf="item?.buttonText && i<3"><button class="template-btn"  [ngClass]="{'btn-radius': ((selectedTemplate?.buttons?.length-1)== i || (selectedTemplate?.buttons?.length >2 && i==2))}">
-							<img class="btn-preview-img" *ngIf="item.type =='Quick Reply' && !(i==2 && selectedTemplate?.buttons?.length>3)" src="../../../../assets/img/settings/reply-arrow.svg"> 
-                        <img class="btn-preview-img" *ngIf="item.type =='Call Phone' && !(i==2 && selectedTemplate?.buttons?.length>3)" src="../../../../assets/img/settings/phone-call.svg"> 
-                        <img class="btn-preview-img" *ngIf="item.type =='Copy offer Code' && !(i==2 && selectedTemplate?.buttons?.length>3)" src="../../../../assets/img/settings/copy.svg"> 
-                        <img class="btn-preview-img" *ngIf="item.type =='Visit Website' && !(i==2 && selectedTemplate?.buttons?.length>3)" src="../../../../assets/img/settings/open-in-new.svg"> 
-                        <img class="btn-preview-img" *ngIf="item.type =='Complete Flow' && ! (i==2 && selectedTemplate?.buttons?.length>3)" src="../../../../assets/img/settings/form.svg"> 
-                        <img class="btn-preview-img" *ngIf="(i==2 && selectedTemplate?.buttons?.length>3)" src="../../../../assets/img/settings/options-lines.svg"> 
-							{{(i==2 && selectedTemplate?.buttons?.length>3) ? 'Show All Buttons' : item?.buttonText }}</button> </div>
-						</div>
-					</div>
-				</div>
-				</div>
-
-			</div>
-		</div>
-
-		<div class="modal-footer" style="border: none;">
-			<div class="input_group_btn justify-content-center mb-4" style="width: 100%;">
-			  <button type="button" class="submit-btn" (click)="insertTemplate(selectedTemplate)">Done</button>
-			</div>
-		  </div>
-	<!-- </div> -->
-	 </div>
-	</div>
-</div>
 
 	<!-- quick response popup -->
 	<div class="modal fade" tabindex="-1" id="quikpopup" #quikpopup data-bs-backdrop="static" role="dialog">
@@ -1474,21 +1771,25 @@ popupWidth='250px' popupHeight='200px'>
 						</div>
 						<div class="modal-body quickResponse">
 							<input class="search-box" type="text" placeholder="Search" aria-label="Search"
-								aria-describedby="basic-addon2"  [(ngModel)]="quickreplysearch" />
+								aria-describedby="basic-addon2" [(ngModel)]="quickreplysearch" />
 							<div class="items_list">
 
 								<div class="item" *ngFor="let Message of QuickReplyList | searchfilter:quickreplysearch"
 									(click)="selectQuickReplies(Message)">
-									<img style="height: 50%; width: 100%;" *ngIf="Message.media_type === 'image'" class="template_img" src="{{Message.Links}}">
-									<video style="height: 50%; width: 100%;"  *ngIf="Message.media_type === 'video'" controls muted id="video-background" [src]="Message.Links"></video>
-									<div class="doc-preview"*ngIf="Message.media_type === 'document'">
-									<a [href]="Message.Links"><img src="../../../../assets/img/settings/doc.svg" /></a>
+									<img style="height: 50%; width: 100%;" *ngIf="Message.media_type === 'image'"
+										class="template_img" src="{{Message.Links}}">
+									<video style="height: 50%; width: 100%;" *ngIf="Message.media_type === 'video'"
+										controls muted id="video-background" [src]="Message.Links"></video>
+									<div class="doc-preview" *ngIf="Message.media_type === 'document'">
+										<a [href]="Message.Links"><img
+												src="../../../../assets/img/settings/doc.svg" /></a>
 									</div>
 									<p [innerHTML]="Message.BodyText | sanitizeHtml"></p>
 								</div>
 							</div>
 							<div class="bottom_section">
-								<p class="text-box-readonly"><span><img class="setting_icon px-2" src="../../../../assets/img/profile/Info.svg"></span>
+								<p class="text-box-readonly"><span><img class="setting_icon px-2"
+											src="../../../../assets/img/profile/Info.svg"></span>
 									Add/edit Quick replies from settings</p>
 							</div>
 						</div>
@@ -1524,24 +1825,25 @@ popupWidth='250px' popupHeight='200px'>
 						[ngClass]="slideIndex==k ? 'mySlides active' : 'mySlides'">
 						<div *ngIf="(file?.message_media != '0' && file?.message_media != 'text')">
 
-						<img class="preview_icon" *ngIf="file.media_type == 'video/mp4'"
-							src="/assets/img/teambox/video_preview.png" (click)="downloadFile(file.message_media)">
-						<img class="preview_icon" *ngIf="file.media_type == 'text/plain'"
-							src="/assets/img/teambox/doc_preview.png" (click)="downloadFile(file.message_media)">
-						<img class="preview_icon" *ngIf="file.media_type == 'application/pdf'"
-							src="/assets/img/teambox/doc_preview.png" (click)="downloadFile(file.message_media)">
+							<img class="preview_icon" *ngIf="file.media_type == 'video/mp4'"
+								src="/assets/img/teambox/video_preview.png" (click)="downloadFile(file.message_media)">
+							<img class="preview_icon" *ngIf="file.media_type == 'text/plain'"
+								src="/assets/img/teambox/doc_preview.png" (click)="downloadFile(file.message_media)">
+							<img class="preview_icon" *ngIf="file.media_type == 'application/pdf'"
+								src="/assets/img/teambox/doc_preview.png" (click)="downloadFile(file.message_media)">
 
-						<img *ngIf="file.media_type == 'image/jpeg'" src={{file.message_media}}>
-						<img *ngIf="file.media_type == 'image/jpg'" src={{file.message_media}}>
-						<img *ngIf="file.media_type == 'image/png'" src={{file.message_media}}>
-						<img *ngIf="file.media_type == 'image/webp'" src={{file.message_media}}>
-					</div>
-					
+							<img *ngIf="file.media_type == 'image/jpeg'" src={{file.message_media}}>
+							<img *ngIf="file.media_type == 'image/jpg'" src={{file.message_media}}>
+							<img *ngIf="file.media_type == 'image/png'" src={{file.message_media}}>
+							<img *ngIf="file.media_type == 'image/webp'" src={{file.message_media}}>
+						</div>
+
 					</div>
 
 				</div>
 			</div>
-			<div class="attached_media_list_right" *ngIf="slideIndex<(selectedInteraction?.allmedia | filterMedia)?.length-1">
+			<div class="attached_media_list_right"
+				*ngIf="slideIndex<(selectedInteraction?.allmedia | filterMedia)?.length-1">
 				<img (click)="showNextSlides(slideIndex)" src="assets/img/teambox/next.svg">
 			</div>
 		</div>
@@ -1555,54 +1857,56 @@ popupWidth='250px' popupHeight='200px'>
 				<h4 class="modal-title" id="modal-basic-title">New Message</h4>
 			</div>
 			<div class="modal-header-right">
-				<button *ngIf="!settingsService.checkRoleExist('17')" type="button" class="custom-width-btn" (click)="openadd(contactadd)"><img class="icon"
-						src="../../../../assets/img/teambox/add-User.svg" /> Create Contacts</button>
+				<button *ngIf="!settingsService.checkRoleExist('17')" type="button" class="custom-width-btn"
+					(click)="openadd(contactadd)"><img class="icon" src="../../../../assets/img/teambox/add-User.svg" />
+					Create Contacts</button>
 				<p class="close-box" aria-label="Close" (click)="closeAllModal();changeRoutes()"><img
 						src="assets/img/teambox/icon-close.svg"></p>
 			</div>
 		</div>
-		
+
 		<div class="modal-body messageadd">
 			<input class="search-box" type="text" placeholder="Search by Name or phone number" aria-label="Search"
-				aria-describedby="basic-addon2" [(ngModel)]="header" (keyup)="searchContact($event.target.value)"/>
-		<div class="position-relative">
-			<div class="drop-down-btn" (click)="toggleContactOption()">
-				
-				<button *ngIf="selectedChannel == ''" class="drop-down-btn">
-					<img class="icon" src="/assets/img/teambox/whatsapp-icon-l.svg" /> Select Channels
-				</button>
-				
-				<button *ngIf="selectedChannel == 'WA API'" class="drop-down-btn">
-					<img class="icon" src="/assets/img/teambox/whatsapp-icon-l.svg" /> WA API
-				</button>
+				aria-describedby="basic-addon2" [(ngModel)]="header" (keyup)="searchContact($event.target.value)" />
+			<div class="position-relative">
+				<div class="drop-down-btn" (click)="toggleContactOption()">
 
-				<button *ngIf="selectedChannel == 'WA Web'" class="drop-down-btn">
-					<img class="icon" src="/assets/img/teambox/whatsapp-icon-l.svg" /> WA Web
-				</button>
-			</div>
-			<div *ngIf="ShowContactOption" class="popup-dialog ContactOption position-absolute">
-				<p *ngFor="let item of WhatsAppDetailList" (click)="filterContactByType(item)" >
-					<span>
-						<img class="icon" src="/assets/img/teambox/whatsapp-icon-l.svg" />
-						{{
-                            item?.channel_id === 'WhatsApp Official' ? 'WA API' : 
-                            item?.channel_id === 'WhatsApp Web' ? 'WA Web' : 
-                            item?.channel_id 
-                            }} ({{item?.connected_id}})
-					</span>
-				</p>
-				<!-- <p (click)="filterContactByType('WhatsApp Web')">
+					<button *ngIf="selectedChannel == ''" class="drop-down-btn">
+						<img class="icon" src="/assets/img/teambox/whatsapp-icon-l.svg" /> Select Channels
+					</button>
+
+					<button *ngIf="selectedChannel == 'WA API'" class="drop-down-btn">
+						<img class="icon" src="/assets/img/teambox/whatsapp-icon-l.svg" /> WA API
+					</button>
+
+					<button *ngIf="selectedChannel == 'WA Web'" class="drop-down-btn">
+						<img class="icon" src="/assets/img/teambox/whatsapp-icon-l.svg" /> WA Web
+					</button>
+				</div>
+				<div *ngIf="ShowContactOption" class="popup-dialog ContactOption position-absolute">
+					<p *ngFor="let item of WhatsAppDetailList" (click)="filterContactByType(item)">
+						<span>
+							<img class="icon" src="/assets/img/teambox/whatsapp-icon-l.svg" />
+							{{
+							item?.channel_id === 'WhatsApp Official' ? 'WA API' :
+							item?.channel_id === 'WhatsApp Web' ? 'WA Web' :
+							item?.channel_id
+							}} ({{item?.connected_id}})
+						</span>
+					</p>
+					<!-- <p (click)="filterContactByType('WhatsApp Web')">
 					<span>
 						<img class="icon" src="/assets/img/teambox/whatsapp-icon-l.svg" />
 						WhatsApp Web
 					</span>
 				</p> -->
+				</div>
 			</div>
-		</div>
 			<div class="contact_list">
-				<div *ngIf="(contactList | searchfilter:header)?.length === 0" class="noRecords d-flex justify-content-center align-items-center">
+				<div *ngIf="(contactList | searchfilter:header)?.length === 0"
+					class="noRecords d-flex justify-content-center align-items-center">
 					<span>No Records Found</span>
-				  </div>
+				</div>
 				<div class="contact_item" *ngFor="let item of contactList | searchfilter:header; let i = index"
 					(click)="createInteraction(item.customerId)">
 					<div class="contact_item_left">
@@ -1625,19 +1929,18 @@ popupWidth='250px' popupHeight='200px'>
 
 
 	<ng-template #contactadd let-c="close" let-d="dismiss" id="contactadd">
-	
+
 		<div class="modal-header">
 			<div class="modal-header-left">
 				<h4 class="modal-title" id="modal-basic-title">Add New Contact</h4>
 			</div>
 			<div class="modal-header-right">
-				<p  class="close-box" (click)="closeAllModal()"><img
-						src="assets/img/teambox/icon-close.svg"></p>
+				<p class="close-box" (click)="closeAllModal()"><img src="assets/img/teambox/icon-close.svg"></p>
 			</div>
 		</div>
 		<form [formGroup]="newContact" autocomplete="off" class="inner_form" (ngSubmit)="createCustomer()">
-		<div class="modal-body">
-			
+			<div class="modal-body">
+
 				<div class="row">
 					<img class="back-array-icon" (click)="openaddMessage(messageadd)"
 						src="../../../../assets/img/profile/previous1.svg">
@@ -1645,49 +1948,48 @@ popupWidth='250px' popupHeight='200px'>
 				<div class="row">
 					<label for="floatingInputGrid">Name<span class="text-danger">*</span></label>
 					<input class="form-control" type="text" placeholder="Enter Name" formControlName="Name" id="Name"
-					[ngClass]="{'is-invalid':newContact.get('Name')?.touched && newContact.get('Name')?.errors}">
+						[ngClass]="{'is-invalid':newContact.get('Name')?.touched && newContact.get('Name')?.errors}">
 				</div>
-				<div *ngIf="newContact.get('Name')?.touched && newContact.get('Name')?.dirty && newContact.controls.Name?.invalid" 
-				     class="invalid-feedback">
-						<div *ngIf="newContact.controls.Name?.hasError('required')"
-						class="text-danger">
+				<div *ngIf="newContact.get('Name')?.touched && newContact.get('Name')?.dirty && newContact.controls.Name?.invalid"
+					class="invalid-feedback">
+					<div *ngIf="newContact.controls.Name?.hasError('required')" class="text-danger">
 						! Name is required.
 					</div>
-					<div *ngIf="newContact.controls.Name?.hasError('maxlength')"
-						class="text-danger">
+					<div *ngIf="newContact.controls.Name?.hasError('maxlength')" class="text-danger">
 						! Maximum 50 characters are allowed.
 					</div>
-					<div *ngIf="newContact.controls.Name?.hasError('pattern')"
-					class="text-danger">
-					! Invalid Name. 
-				</div>
+					<div *ngIf="newContact.controls.Name?.hasError('pattern')" class="text-danger">
+						! Invalid Name.
+					</div>
 
 				</div>
 				<div class="phonefield row">
 					<label for="floatingSelectGrid">Phone Number<span class="text-danger">*</span></label>
-					<select class="country_code" formControlName="country_code" id="country_code" (change)="formatPhoneNumber(newContact)">
+					<select class="country_code" formControlName="country_code" id="country_code"
+						(change)="formatPhoneNumber(newContact)">
 						<option *ngFor="let country_code of countryCodes" [ngValue]="country_code">
 							{{ country_code }}
 						</option>
 					</select>
-					<input class="form-control" type="text" formControlName="Phone_number"
-					   id="Phone_number" style="display: none" />
-					<input class="form-control countryCode" type="text" placeholder="Enter Number" formControlName="displayPhoneNumber"
-					id="displayPhoneNumber" (change)="formatPhoneNumber(newContact)"
-					[ngClass]="{'is-invalid' :newContact.controls.displayPhoneNumber.touched && newContact.controls.displayPhoneNumber.errors }">
+					<input class="form-control" type="text" formControlName="Phone_number" id="Phone_number"
+						style="display: none" />
+					<input class="form-control countryCode" type="text" placeholder="Enter Number"
+						formControlName="displayPhoneNumber" id="displayPhoneNumber"
+						(change)="formatPhoneNumber(newContact)"
+						[ngClass]="{'is-invalid' :newContact.controls.displayPhoneNumber.touched && newContact.controls.displayPhoneNumber.errors }">
 				</div>
 				<!-- <div *ngIf="newContact.controls.displayPhoneNumber.touched && newContact.controls.displayPhoneNumber.invalid && 
 					newContact.controls.displayPhoneNumber.hasError('minlength') || newContact.controls.displayPhoneNumber.hasError('maxlength')"
 			     	class="text-danger">
 		         	! Phone number must consist of 6 to 15 digits.
 					</div> -->
-					<div *ngIf="newContact.controls.displayPhoneNumber.touched && newContact.controls.displayPhoneNumber.hasError('required')"
+				<div *ngIf="newContact.controls.displayPhoneNumber.touched && newContact.controls.displayPhoneNumber.hasError('required')"
 					class="text-danger">
 					! Phone Number is required.
 				</div>
 				<div *ngIf="newContact.controls.displayPhoneNumber.touched && newContact.get('displayPhoneNumber')?.hasError('invalidPhoneNumberLength')"
-					 class="text-danger">
-							! Invalid phone number length for the selected country.
+					class="text-danger">
+					! Invalid phone number length for the selected country.
 				</div>
 				<div class="row position-relative" style="flex-direction:column">
 					<label for="floatingSelectGrid" class="required">Channel<span class="text-danger">*</span></label>
@@ -1697,19 +1999,19 @@ popupWidth='250px' popupHeight='200px'>
 							{{selectedChannel == '' ? 'Select Channel' : selectedChannel}}
 						</button>
 					</div>
-					<div *ngIf="ShowChannelOption" class="popup-dialog ContactOption position-absolute">						
+					<div *ngIf="ShowChannelOption" class="popup-dialog ContactOption position-absolute">
 						<p *ngFor="let item of WhatsAppDetailList" (click)="selectChannelOption(item)">
 							<span>
 								<img class="icon" src="/assets/img/teambox/whatsapp-icon-l.svg" />
 								{{
-									item?.channel_id === 'WhatsApp Official' ? 'WA API' : 
-									item?.channel_id === 'WhatsApp Web' ? 'WA Web' : 
-									item?.channel_id 
-									}} ({{item?.connected_id}})
+								item?.channel_id === 'WhatsApp Official' ? 'WA API' :
+								item?.channel_id === 'WhatsApp Web' ? 'WA Web' :
+								item?.channel_id
+								}} ({{item?.connected_id}})
 							</span>
-						</p>						
+						</p>
 					</div>
-					
+
 				</div>
 				<!-- <div>
 					<div class="py-2 row-md" *ngFor="let item of filteredCustomFields">
@@ -1752,14 +2054,14 @@ popupWidth='250px' popupHeight='200px'>
 						<span>Contact has opted-in to receive communication from us</span>
 					</div>
 				</div>
-		</div>
-		<div class="modal-footer row popfooter start-convo">
-
-			<div class="inner_form text-right">
-				<button type="submit" class="submit-btn">Start Conversation</button>
 			</div>
-		</div>
-	 </form>
+			<div class="modal-footer row popfooter start-convo">
+
+				<div class="inner_form text-right">
+					<button type="submit" class="submit-btn">Start Conversation</button>
+				</div>
+			</div>
+		</form>
 	</ng-template>
 
 
@@ -1778,107 +2080,111 @@ popupWidth='250px' popupHeight='200px'>
 		<div class="modal-body  contact-modal-body" style="height: max-content; overflow: auto;">
 			<form [formGroup]="editContact" class="p-0 inner_form large editContact" (ngSubmit)="updateCustomer()">
 				<div class="contact-form-scroll px-3">
-				
-				<div style="flex-direction:column">
-					<label for="floatingInputGrid" class="required">Name<span class="text-danger">*</span></label>
-					<input class="form-control" (input)="hangeEditContactInuts($event)" type="text" formControlName="Name" 
-					[ngClass]="{'is-invalid':editContact.get('Name')?.touched && editContact.get('Name')?.errors}"
-					 placeholder="Enter Full Name">
-					
-					<div *ngIf="editContact.get('Name')?.invalid && (editContact.get('Name')?.touched || editContact.get('Name')?.dirty)" 
-					class="invalid-feedback">
-					   <div *ngIf="editContact.get('Name')?.hasError('required')"
-					   class="text-danger">
-					   ! Name is required.
-				   </div>
-				   <div *ngIf="editContact.get('Name')?.hasError('maxlength')"
-					   class="text-danger">
-					   ! Maximum 50 characters are allowed.
-				   </div>
-				   <div *ngIf="editContact.get('Name')?.hasError('pattern')"
-				   class="text-danger">
-				   ! Invalid Name. 
-			      </div>
-	
-			      </div>
-				</div>
-	
 
-				<div class="phoneFieldEdit" style="flex-direction:column">
-					<label for="floatingSelectGrid" class="required">Phone Number<span class="text-danger">*</span></label>
-					<select class="input-formm" name="country_code" (change)="hangeEditContactInuts($event);updatePhoneNumber()" formControlName="country_code">
-						<option *ngFor="let country_code of countryCodes" [ngValue]="country_code">
-							{{ country_code }}
-						</option>
-					</select>
-					<input class="form-control" type="text" formControlName="Phone_number" style="display: none" />
+					<div style="flex-direction:column">
+						<label for="floatingInputGrid" class="required">Name<span class="text-danger">*</span></label>
+						<input class="form-control" (input)="hangeEditContactInuts($event)" type="text"
+							formControlName="Name"
+							[ngClass]="{'is-invalid':editContact.get('Name')?.touched && editContact.get('Name')?.errors}"
+							placeholder="Enter Full Name">
 
-					<input class="phone-no form-control" type="text" formControlName="displayPhoneNumber" 
-						type="text" (input)="hangeEditContactInuts($event)" (change)="updatePhoneNumber()" placeholder="Enter Phone" 	
-					    [ngClass]="{'is-invalid' :editContact.controls.displayPhoneNumber.touched && editContact.controls.displayPhoneNumber.errors }"> 
-						
+						<div *ngIf="editContact.get('Name')?.invalid && (editContact.get('Name')?.touched || editContact.get('Name')?.dirty)"
+							class="invalid-feedback">
+							<div *ngIf="editContact.get('Name')?.hasError('required')" class="text-danger">
+								! Name is required.
+							</div>
+							<div *ngIf="editContact.get('Name')?.hasError('maxlength')" class="text-danger">
+								! Maximum 50 characters are allowed.
+							</div>
+							<div *ngIf="editContact.get('Name')?.hasError('pattern')" class="text-danger">
+								! Invalid Name.
+							</div>
+
+						</div>
+					</div>
+
+
+					<div class="phoneFieldEdit" style="flex-direction:column">
+						<label for="floatingSelectGrid" class="required">Phone Number<span
+								class="text-danger">*</span></label>
+						<select class="input-formm" name="country_code"
+							(change)="hangeEditContactInuts($event);updatePhoneNumber()" formControlName="country_code">
+							<option *ngFor="let country_code of countryCodes" [ngValue]="country_code">
+								{{ country_code }}
+							</option>
+						</select>
+						<input class="form-control" type="text" formControlName="Phone_number" style="display: none" />
+
+						<input class="phone-no form-control" type="text" formControlName="displayPhoneNumber"
+							type="text" (input)="hangeEditContactInuts($event)" (change)="updatePhoneNumber()"
+							placeholder="Enter Phone"
+							[ngClass]="{'is-invalid' :editContact.controls.displayPhoneNumber.touched && editContact.controls.displayPhoneNumber.errors }">
+
 						<!-- <div *ngIf="editContact.controls.displayPhoneNumber.touched && editContact.controls.displayPhoneNumber.invalid && 
 							editContact.controls.displayPhoneNumber.hasError('minlength') || editContact.controls.displayPhoneNumber.hasError('maxlength')"
 							class="text-danger">
 							! Phone number must consist of 6 to 15 digits.
 						</div> -->
-							<div *ngIf="editContact.controls.displayPhoneNumber.touched && editContact.controls.displayPhoneNumber.hasError('required')"
+						<div *ngIf="editContact.controls.displayPhoneNumber.touched && editContact.controls.displayPhoneNumber.hasError('required')"
 							class="text-danger">
 							! Phone Number is required.
 						</div>
 						<div *ngIf="editContact.controls.displayPhoneNumber.touched && editContact.get('displayPhoneNumber')?.hasError('invalidPhoneNumberLength')"
-								 class="text-danger">
-								! Invalid phone number length for the selected country.
+							class="text-danger">
+							! Invalid phone number length for the selected country.
 						</div>
-		      		</div>
-			
+					</div>
 
-				<div style="flex-direction:column">
-					<label for="floatingSelectGrid" class="required">Email</label>
-					<input class="form-control" type="text" formControlName="emailId" (input)="hangeEditContactInuts($event)" 
-					  [ngClass]="{'is-invalid' :editContact.controls.emailId.touched && editContact.controls.emailId.errors}"
-					  placeholder="Enter Email">
-					  <div *ngIf="editContact.controls.emailId.touched && editContact.controls.emailId.errors"
-					  class="text-danger">
-					  ! Please enter a valid email address.
-				     </div>
-				</div>
-					  
-				<div style="flex-direction:column">
-					<label for="floatingSelectGrid" class="required">Contact Owner<span class="text-danger">*</span></label>
-					<div class="drop-down-btn ContactOption position-relative" style="margin:0 0px 15px 0px">
-						<input class="form-control" type="text" readonly placeholder="Select Contact Owner"
-						   style="margin:0;padding:0.375rem 0.75rem;height:45px;text-align: left;"
-						   formControlName="ContactOwner" id="ContactOwner" (click)="toggleLeadStatusOption()"
-						   [ngClass]="{'is-invalid' :editContact.controls.ContactOwner.touched && editContact.controls.ContactOwner.errors}">
-                             
-						   <!-- <input *ngIf="ShowContactOwner" type="search" class="form-control mb-2 searchContact" placeholder="Search"
+
+					<div style="flex-direction:column">
+						<label for="floatingSelectGrid" class="required">Email</label>
+						<input class="form-control" type="text" formControlName="emailId"
+							(input)="hangeEditContactInuts($event)"
+							[ngClass]="{'is-invalid' :editContact.controls.emailId.touched && editContact.controls.emailId.errors}"
+							placeholder="Enter Email">
+						<div *ngIf="editContact.controls.emailId.touched && editContact.controls.emailId.errors"
+							class="text-danger">
+							! Please enter a valid email address.
+						</div>
+					</div>
+
+					<div style="flex-direction:column">
+						<label for="floatingSelectGrid" class="required">Contact Owner<span
+								class="text-danger">*</span></label>
+						<div class="drop-down-btn ContactOption position-relative" style="margin:0 0px 15px 0px">
+							<input class="form-control" type="text" readonly placeholder="Select Contact Owner"
+								style="margin:0;padding:0.375rem 0.75rem;height:45px;text-align: left;"
+								formControlName="ContactOwner" id="ContactOwner" (click)="toggleLeadStatusOption()"
+								[ngClass]="{'is-invalid' :editContact.controls.ContactOwner.touched && editContact.controls.ContactOwner.errors}">
+
+							<!-- <input *ngIf="ShowContactOwner" type="search" class="form-control mb-2 searchContact" placeholder="Search"
 							   name="Search" id="contactOwnerValue"
 							   (keyup)="filterContactOwners()" /> -->
 
-						   <div *ngIf="ShowLeadStatusOption" class="popup-dialog ContactOptiondropdown" (click)="stopPropagation($event)">
-							<input type="search" class="form-control mb-2 searchContact" placeholder="Search"
-							   name="Search" id="contactOwnerValue"
-							   (input)="filterContactOwners()" />
-							<p *ngFor="let item of filteredAgentList" (click)="hangeEditContactSelect('ContactOwner',item.name)">
-								<span>{{item.name}} {{item?.UserType == 'Admin' ? '(Admin)' :''}}</span>
-							  </p>
-						  </div>
-					</div>
-					<div *ngIf="editContact.controls.ContactOwner.touched && editContact.controls.ContactOwner.hasError('required')"
-					   class="text-danger">
-					   ! Contact Owner is required.
-			     	</div>
-	
+							<div *ngIf="ShowLeadStatusOption" class="popup-dialog ContactOptiondropdown"
+								(click)="stopPropagation($event)">
+								<input type="search" class="form-control mb-2 searchContact" placeholder="Search"
+									name="Search" id="contactOwnerValue" (input)="filterContactOwners()" />
+								<p *ngFor="let item of filteredAgentList"
+									(click)="hangeEditContactSelect('ContactOwner',item.name)">
+									<span>{{item.name}} {{item?.UserType == 'Admin' ? '(Admin)' :''}}</span>
+								</p>
+							</div>
+						</div>
+						<div *ngIf="editContact.controls.ContactOwner.touched && editContact.controls.ContactOwner.hasError('required')"
+							class="text-danger">
+							! Contact Owner is required.
+						</div>
 
-					<!-- <div *ngIf="ShowLeadStatusOption" class="popup-dialog ContactOption" (click)="stopPropagation($event)">
+
+						<!-- <div *ngIf="ShowLeadStatusOption" class="popup-dialog ContactOption" (click)="stopPropagation($event)">
 						<p *ngFor="let item of agentsList" (click)="hangeEditContactSelect('ContactOwner',item.name)">
 							<span>{{item.name}} {{item?.UserType == 'Admin' ? '(Admin)' :''}}</span>
 						  </p>
 					  </div> -->
-				</div>
+					</div>
 
-				<!-- <div style="flex-direction:column">
+					<!-- <div style="flex-direction:column">
 					<label for="floatingSelectGrid" class="required">Channel</label>
 					<div class="drop-down-btn" style="margin:0 0px 15px 0px">
 						<input class="form-control" type="text" readonly placeholder="Select Channel"
@@ -1901,66 +2207,83 @@ popupWidth='250px' popupHeight='200px'>
 						</p>
 					  </div>
 				</div> -->
-				<div>
-					<div class="py-2 row-md" *ngFor="let item of filteredCustomFields">
-						<label for="tag">{{item.displayName}}<span class="text-danger" *ngIf="item.mandatory == 1">*</span></label>
-						<input type="text" class="form-control" [formControlName]="item.ActuallName" *ngIf="item.type == 'Text'" (input)="updateValidation(item?.ActuallName,item?.mandatory)">
-						<input type="number" class="form-control" [formControlName]="item.ActuallName" *ngIf="item.type == 'Number'" (input)="updateValidation(item?.ActuallName,item?.mandatory)">
-						<input type="datetime-local" class="form-control" [formControlName]="item.ActuallName" *ngIf="item.type == 'Date Time'" (input)="updateValidation(item?.ActuallName,item?.mandatory)">
-						<input type="time" class="form-control" [formControlName]="item.ActuallName" *ngIf="item.type == 'Time'" (input)="updateValidation(item?.ActuallName,item?.mandatory)">
-						<input type="date" class="form-control" [formControlName]="item.ActuallName" *ngIf="item.type == 'Date'" (input)="updateValidation(item?.ActuallName,item?.mandatory)">
-						<!-- <input type="checkbox" class="form-control"[formControlName]="item.ActuallName" *ngIf="item.type == 'Switch'"> -->
-						<!-- <div class="row_inline d-flex align-items-center py-2" *ngIf="item.type == 'Switch'">
+					<div>
+						<div class="py-2 row-md" *ngFor="let item of filteredCustomFields">
+							<label for="tag">{{item.displayName}}<span class="text-danger"
+									*ngIf="item.mandatory == 1">*</span></label>
+							<input type="text" class="form-control" [formControlName]="item.ActuallName"
+								*ngIf="item.type == 'Text'"
+								(input)="updateValidation(item?.ActuallName,item?.mandatory)">
+							<input type="number" class="form-control" [formControlName]="item.ActuallName"
+								*ngIf="item.type == 'Number'"
+								(input)="updateValidation(item?.ActuallName,item?.mandatory)">
+							<input type="datetime-local" class="form-control" [formControlName]="item.ActuallName"
+								*ngIf="item.type == 'Date Time'"
+								(input)="updateValidation(item?.ActuallName,item?.mandatory)">
+							<input type="time" class="form-control" [formControlName]="item.ActuallName"
+								*ngIf="item.type == 'Time'"
+								(input)="updateValidation(item?.ActuallName,item?.mandatory)">
+							<input type="date" class="form-control" [formControlName]="item.ActuallName"
+								*ngIf="item.type == 'Date'"
+								(input)="updateValidation(item?.ActuallName,item?.mandatory)">
+							<!-- <input type="checkbox" class="form-control"[formControlName]="item.ActuallName" *ngIf="item.type == 'Switch'"> -->
+							<!-- <div class="row_inline d-flex align-items-center py-2" *ngIf="item.type == 'Switch'">
 						<input class="form-control-checkbox" type="checkbox" id="Opted-ins" [formControlName]="item.ActuallName"/>
 						<span>{{item.displayName}}</span>
 					</div> -->
-						<select *ngIf="item.type == 'Select'" class="form-control" [formControlName]="item.ActuallName">
-							<option *ngFor="let opt of item?.options" [value]="opt?.id">{{opt?.optionName}}</option>
-						</select>
-						<select *ngIf="item.type == 'Switch'" class="form-control" [formControlName]="item.ActuallName">
-							<option value="" selected disabled>Select {{item.displayName}}</option>
-							<option value="Yes">Yes</option>
-							<option value="No">No</option>
-						</select>
-						<ng-multiselect-dropdown *ngIf="item.type == 'Multi Select'" class="multiselect" [formControlName]="item.ActuallName"
-												 [settings]="dynamicDropdownSettings" [data]="item?.options">
-						</ng-multiselect-dropdown>
-						<div *ngIf="editContact.get(item.ActuallName)?.touched && editContact.get(item.ActuallName)?.hasError('required')"
-							 class="text-danger">
-							! {{item.displayName}} is required.
-						</div>
-						<div *ngIf="editContact.get(item.ActuallName)?.touched && editContact.get(item.ActuallName)?.errors?.['invalidYear']" class="text-danger">
-							Year must be a 4-digit number.
-						</div>
+							<select *ngIf="item.type == 'Select'" class="form-control"
+								[formControlName]="item.ActuallName">
+								<option *ngFor="let opt of item?.options" [value]="opt?.id">{{opt?.optionName}}</option>
+							</select>
+							<select *ngIf="item.type == 'Switch'" class="form-control"
+								[formControlName]="item.ActuallName">
+								<option value="" selected disabled>Select {{item.displayName}}</option>
+								<option value="Yes">Yes</option>
+								<option value="No">No</option>
+							</select>
+							<ng-multiselect-dropdown *ngIf="item.type == 'Multi Select'" class="multiselect"
+								[formControlName]="item.ActuallName" [settings]="dynamicDropdownSettings"
+								[data]="item?.options">
+							</ng-multiselect-dropdown>
+							<div *ngIf="editContact.get(item.ActuallName)?.touched && editContact.get(item.ActuallName)?.hasError('required')"
+								class="text-danger">
+								! {{item.displayName}} is required.
+							</div>
+							<div *ngIf="editContact.get(item.ActuallName)?.touched && editContact.get(item.ActuallName)?.errors?.['invalidYear']"
+								class="text-danger">
+								Year must be a 4-digit number.
+							</div>
 
+						</div>
+					</div>
+
+
+					<div style="flex-direction:column">
+						<label for="floatingSelectGrid" class="required">
+							Opt-in Status
+							<input [checked]="selectedInteraction.OptInStatus=='Yes'" type="checkbox"
+								class="form-control-checkbox ml-2" name="OptInStatus"
+								(click)="hangeEditContactInuts($event)" />
+						</label>
 					</div>
 				</div>
-
-
-				<div style="flex-direction:column">
-					<label for="floatingSelectGrid" class="required">
-						Opt-in Status
-						<input [checked]="selectedInteraction.OptInStatus=='Yes'" type="checkbox"
-							class="form-control-checkbox ml-2" name="OptInStatus"
-							(click)="hangeEditContactInuts($event)" />
-					</label>
-				</div>
-			</div>
 
 				<div class="row" class="m-0 d-flex flex-row-reverse">
 					<div class="m-0 modal-footer row popfooter">
 						<div class="inner_form col-md-6 p-0 text-right">
-							<button type="submit" [disabled]="editContact.invalid || !editContact.touched" [class.disabled]="(editContact.invalid || !editContact.touched)" class="submit-btn">Update</button>
+							<button type="submit" [disabled]="editContact.invalid || !editContact.touched"
+								[class.disabled]="(editContact.invalid || !editContact.touched)"
+								class="submit-btn">Update</button>
 						</div>
 					</div>
 				</div>
 			</form>
 		</div>
 
-		
-	<div *ngIf="ShowLeadStatusOption" class="overlay" (click)="closeLeadStatusOption()"></div>
-	<div *ngIf="ShowChannelOption" class="overlay" (click)="closeChannelOption()"></div>
-	<div *ngIf="ShowGenderOption" class="overlay" (click)="closeGenderOption()"></div>
+
+		<div *ngIf="ShowLeadStatusOption" class="overlay" (click)="closeLeadStatusOption()"></div>
+		<div *ngIf="ShowChannelOption" class="overlay" (click)="closeChannelOption()"></div>
+		<div *ngIf="ShowGenderOption" class="overlay" (click)="closeGenderOption()"></div>
 	</ng-template>
 
 
@@ -1980,12 +2303,12 @@ popupWidth='250px' popupHeight='200px'>
 					<label for="floatingSelectGrid" class="required">
 						<input [checked]="tag.status" type="checkbox" name="tags" class="form-control-checkbox ml-2"
 							value="{{tag.ID}}" (click)="addTags($event)" />
-							<span [ngClass]="{'color-dots': true}" [style.background]="tag.color"></span>
+						<span [ngClass]="{'color-dots': true}" [style.background]="tag.color"></span>
 						{{tag.name}}
 					</label>
 				</div>
 				<div *ngIf="!tagsoptios.length" class="d-flex justify-content-center">
-                    <p>No Data Available.</p>
+					<p>No Data Available.</p>
 				</div>
 			</form>
 		</div>

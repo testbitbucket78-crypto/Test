@@ -1552,7 +1552,8 @@ button {
     padding: 0px 25px;
     font-size: 12px;
     font-weight: 800;
-    margin-left: 1rem;
+    margin-bottom: 21px;
+    margin-left: 0rem;
 }
 
 span {
@@ -1769,6 +1770,12 @@ span {
     display: flex;
     flex-direction: row;
     justify-content: space-between;
+}
+
+.bot_list {
+    height: 400px;
+    overflow: auto;
+    padding: 2rem 0.5em;
 }
 
 .attachmentbox_left {

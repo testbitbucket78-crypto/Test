@@ -1,13 +1,16 @@
+import { environment } from './../../../../environments/environment';
+
 import { Component, EventEmitter, Input, Output, ViewChild } from '@angular/core';
 import { FormArray, FormBuilder, FormControl, FormGroup, Validators, AbstractControl, ValidationErrors } from '@angular/forms';
 import { NgbModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
-import { RichTextEditorComponent } from '@syncfusion/ej2-angular-richtexteditor';
+import { ContentRender, RichTextEditorComponent } from '@syncfusion/ej2-angular-richtexteditor';
 import { DatePickerComponent } from '@syncfusion/ej2-angular-calendars';
 import Drawflow from 'drawflow';
 import { RichTextEditor } from '@syncfusion/ej2-angular-richtexteditor';
 import { PhoneValidationService } from 'Frontend/dashboard/services/phone-validation.service';
 import { TeamboxService } from 'Frontend/dashboard/services';
 import { BotserviceService } from 'Frontend/dashboard/services/botservice.service';
+import Swal from 'sweetalert2';
 import {
   MAX_OPTIONS,
   MAX_BUTTONS,
@@ -19,8 +22,10 @@ import {
   BOOLEAN_OPERATORS,
   DEFAULT_ACTIONS,
   DEFAULT_TOOLS,
-  PASTE_CLEANUP_SETTINGS
+  PASTE_CLEANUP_SETTINGS, attributes, SELECT_OPERATORS, MULTI_SELECT_OPERATORS, DATE_OPERATORS, TIME_OPERATORS
 } from './constants';
+import { SettingsService } from 'Frontend/dashboard/services/settings.service';
+import { Router } from '@angular/router';
 
 declare var bootstrap: any;
 declare var $: any;
@@ -30,6 +35,7 @@ interface Attribute {
   label: string;
   type: 'text' | 'select' | 'multiselect' | 'switch' | 'number' | 'date';
   options?: { value: string, label: string }[];
+  dataTypeValues?: string;
 }
 
 interface Bot {
@@ -39,7 +45,7 @@ interface Bot {
 }
 
 interface Agent {
-  id: string | number;
+  uid: string | number;
   name: string;
   status?: string;
   email?: string;
@@ -71,6 +77,17 @@ export class CardCreationComponent {
   private readonly MAX_ROWS_PER_SECTION = MAX_ROWS_PER_SECTION;
   private readonly MAX_CHARACTERS = MAX_CHARACTERS;
 
+  daysOfWeek = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
+  selectedDays: string[] = [];
+  openingTime = '09:00';
+  closingTime = '17:00';
+  useCustomHolidays = false;
+  holidays: { date: string }[] = [];
+
+
+
+
+  isAttachmentMedia: boolean = false;
   // Component state
   showLock = true;
   nodeCounter = 1;
@@ -82,11 +99,19 @@ export class CardCreationComponent {
   selectedType = 'Text';
   selectedImageUrl: any = '';
   isEditMode = false;
+  dragAreaClass: string = '';
   currentModalRef: NgbModalRef | null = null;
   existingVariableNames: string[] = [];
   isFocused = false;
-
-  botVariables: BotVariable[] = [];
+  messageMeidaFile: any = '';
+  messageMediaFile: string = '';
+  botVariables: any[] = [];
+  showAttachmenOption: any = false;
+  errorMessage = '';
+  successMessage = '';
+  warningMessage = '';
+  attributesearch!: string;
+  attributesList: any = []
   // Form related properties
   showValidationSettings = false;
   newOptionError = '';
@@ -101,6 +126,7 @@ export class CardCreationComponent {
   Tags: string[] = [];
   searchQuery = '';
   selectedAgentDetails: Agent | null = null;
+  isUploadingLoader!: boolean;
 
   // File handling
   uploadedFile: File | null = null;
@@ -109,6 +135,8 @@ export class CardCreationComponent {
 
   // View children
   @ViewChild('chatEditor') chatEditor!: RichTextEditorComponent;
+  @ViewChild('chatEditors') chatEditors!: RichTextEditorComponent;
+  @ViewChild('chatEditorElement') chatEditorElement!: RichTextEditorComponent;
   @ViewChild('questionEditor') questionEditor!: RichTextEditorComponent;
   @ViewChild('errorEditor') errorEditor!: RichTextEditorComponent;
   @ViewChild('minDatePicker') minDatePicker!: DatePickerComponent;
@@ -125,13 +153,16 @@ export class CardCreationComponent {
   buttonOptions!: FormGroup;
   contactAttributeForm!: FormGroup;
   conditionForm!: FormGroup;
+  notesmentionForm!: FormGroup
+  whatsAppFlowForm!: FormGroup
+
 
   // Data collections
   filteredAgents: Agent[] = [];
 
   availableAgents: Agent[] = [];
 
-  availableBots: Bot[] = [];
+  botsList: Bot[] = [];
   allTags: Tag[] = [];
   sampleVariables: any = [];
   attributeList: any = [];
@@ -149,17 +180,7 @@ export class CardCreationComponent {
   // Input/Output properties
   @Input() conditions: any[] = [];
   @Input() agents: Agent[] = this.filteredAgents;
-  @Input() availableAttributes: Attribute[] = [
-    { name: 'name', label: 'Name', type: 'text' },
-    { name: 'email', label: 'Email', type: 'text' },
-    {
-      name: 'gender', label: 'Gender', type: 'select',
-      options: [
-        { value: 'male', label: 'Male' },
-        { value: 'female', label: 'Female' }
-      ]
-    }
-  ];
+  @Input() availableAttributes: any = attributes
   @Input() availableVariables = ['bot.name', 'contact.city', 'session.date'];
   @Input() selectedTags: string[] = [];
 
@@ -171,6 +192,7 @@ export class CardCreationComponent {
   @Output() timeDelaySet = new EventEmitter<{ time: number, unit: string }>();
 
   // Other properties
+  channelName: any = environment.chhanel
   maxCharacters = 4056;
   characterCount = 0;
   ParentNodeType = '';
@@ -186,27 +208,44 @@ export class CardCreationComponent {
   operationOptions = { addIfEmpty: false };
   conversationActions = { status: '' };
   openDropdown = { status: '' };
-  filteredTags: Tag[] = [...this.allTags];
+  filteredTags: Tag[] = [];
   showVarMenuFor: { index: number, field: 'comparator' | 'value' } | null = null;
   showAttribute: { index: number, field: 'comparator' | 'value' } | null = null;
   attributeDetails?: Attribute;
   // Tools and settings
-  tools = DEFAULT_TOOLS;
+  tools: any = DEFAULT_TOOLS;
   basicTools = DEFAULT_TOOLS;
+  semiAdvanceTool: any = DEFAULT_TOOLS
+  attachementTool: any = DEFAULT_TOOLS
   pasteCleanupSettings = PASTE_CLEANUP_SETTINGS
+
+  public insertImageSettings: object = {
+    width: '50px',
+    height: '50px'
+  };
 
   constructor(
     private fb: FormBuilder,
     public validation: PhoneValidationService,
-    private apiService: TeamboxService, private botService: BotserviceService
+    private apiService: TeamboxService, private botService: BotserviceService, public settingService: SettingsService, public router: Router
   ) {
     this.userDetails = JSON.parse(sessionStorage.getItem('loginDetails') || '{}');
+    //     if (!settingService?.checkRoleExist('24')) {
+    //   this.router.navigateByUrl('/login');
+    // }
     this.initForms();
   }
 
   ngOnInit(): void {
     this.initEditor();
     this.getStaticData()
+    this.getAdditionalAttributes()
+    this.getUserList()
+    this.getTagData();
+    this.getBotDetails()
+    if (environment.chhanel == 'api') {
+      this.getWhatsAppFormList()
+    }
 
   }
 
@@ -216,31 +255,13 @@ export class CardCreationComponent {
   getStaticData() {
 
     this.filteredAgents = this.botService.FILTERED_AGENTS
-    this.availableAgents = this.botService.AVAILABLE_AGENTS;
-    this.attributeList = this.botService.ATTRIBUTE_LIST;
-    this.sampleVariables = this.botService.SAMPLE_VARIABLES;
-    this.allTags = this.botService.ALL_TAGS;
-    this.availableBots = this.botService.AVAILABLE_BOTS;
+    // this.availableAgents = this.botService.AVAILABLE_AGENTS;
+    // this.attributeList = this.botService.ATTRIBUTE_LIST;
+    // this.sampleVariables = this.botService.SAMPLE_VARIABLES;
+    this.botsList = this.botService.AVAILABLE_BOTS;
 
 
 
-    // this.botService.getBots().subscribe((bots: Bot[]) => {
-    //   this.availableBots = bots.filter(bot => bot.published);
-    // });
-
-    // this.apiService.getAgents().subscribe((agents: Agent[]) => {
-    //   this.availableAgents = agents;
-    //   this.filteredAgents = agents;
-    // });
-
-    // this.apiService.getTags().subscribe((tags: Tag[]) => {
-    //   this.allTags = tags;
-    //   this.filteredTags = [...tags];
-    // });
-
-    // this.apiService.getAttributes().subscribe((attributes: Attribute[]) => {
-    //   this.availableAttributes = attributes;
-    // });
   }
   // ==================== INITIALIZATION METHODS ====================
 
@@ -311,13 +332,8 @@ export class CardCreationComponent {
       var count = 0
       // 2. If this is a connection FROM the home card
       if (source === homeCardId) {
-        console.log("source", source)
         const homeNode = drawflowData[homeCardId];
-        console.log("homeNode", homeNode)
         const existingConnections = homeNode.outputs?.output_1?.connections || [];
-        console.log("existingConnections", existingConnections)
-
-
         existingConnections.forEach((element: any) => {
           if (element.output == 'input_1') {
             count = count + 1
@@ -338,17 +354,6 @@ export class CardCreationComponent {
           return;
         }
       }
-
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -392,10 +397,78 @@ export class CardCreationComponent {
       }
     });
 
+    if (localStorage.getItem('node_FE_Json')) {
+
+      var data: any = localStorage.getItem('node_FE_Json')
+      this.loadFlow(JSON.parse(data))
+    }
+
   }
 
 
 
+  loadFlow(exportedData: any): void {
+    if (this.editor) {
+      this.editor.clear(); // Optional: clear existing data
+      this.editor.import(exportedData);
+      setTimeout(() => {
+        Object.values(this.editor.drawflow.drawflow.Home.data).forEach((node: any) => {
+          if (node?.data?.formData) {
+            this.cardType = node.data.text
+            this.ParentNodeType = node.data.category
+            this.setOutputPositionsBasedOnType(node.id, node.data.formData)
+            // this.refreshEditor()
+            this.addNodeEvent(node.id);
+            this.editor.updateConnectionNodes('node-' + node.id);
+          }
+        });
+      }, 100)
+    }
+  }
+
+
+  // refreshEditor(): void {
+  //   const exportedData = this.editor.export();
+
+  //   setTimeout(() => {
+  //     this.editor.clear();
+  //     this.editor.import(exportedData);
+  //   }, 50); // small delay helps prevent race conditions
+  // }
+
+
+  updateOutputStylesInHtml(nodeId: number): void {
+    const nodeData = this.editor.drawflow?.drawflow.Home?.data?.[nodeId];
+    console.log(nodeData)
+    if (!nodeData || !nodeData.html) return;
+
+    // Create temp container to modify HTML
+    const tempDiv = document.createElement('div');
+    tempDiv.innerHTML = nodeData.html;
+
+    const outputs = tempDiv.querySelectorAll('.output');
+    if (outputs.length === 0) return;
+
+    // Set the first output's style (from top)
+    outputs[0].setAttribute('style', 'position:absolute;top:20px;');
+
+    // Optional: Second output special case
+    if (outputs.length > 1) {
+      outputs[1].setAttribute('style', 'position:absolute;top:41px;border-color:red;');
+    }
+
+    // Remaining outputs from bottom
+    let offset = 30;
+    outputs.forEach((output, index) => {
+      if (index > 1) {
+        output.setAttribute('style', `position:absolute;bottom:${offset}px;top:unset;`);
+        offset += 45;
+      }
+    });
+
+    // Save updated inner HTML
+    nodeData.html = tempDiv.innerHTML;
+  }
 
 
 
@@ -444,6 +517,8 @@ export class CardCreationComponent {
     this.initConditionForm();
     this.initContactAttributeForm();
     this.initNotificationForm();
+    this.noteAndMentionForm()
+    this.initwhatsAppFlowForm()
   }
 
   private initSendTextForm(): void {
@@ -526,6 +601,27 @@ export class CardCreationComponent {
     this.setupFormListeners(this.listOptions);
   }
 
+
+  private initwhatsAppFlowForm(): void {
+    this.whatsAppFlowForm = this.fb.group({
+      headerText: ['', [Validators.maxLength(60)]],
+      bodyText: ['', [Validators.required, Validators.maxLength(this.MAX_CHARACTERS)]],
+      footerText: ['', [Validators.maxLength(60)]],
+      whatsAppFormName: ['', [Validators.maxLength(20)]],
+      selectedForm: [''],
+      reattemptsAllowed: [false],
+      reattemptsCount: [1],
+      errorMessage: ['', [Validators.maxLength(this.MAX_CHARACTERS)]],
+      invalidAction: ['skip'],
+      enableTimeElapse: [false],
+      timeElapseMinutes: [''],
+      timeElapseAction: ['skip'],
+      enableValidation: [false]
+    });
+
+    this.setupFormListeners(this.whatsAppFlowForm);
+  }
+
   private initOpenQuestionForm(): void {
     this.openQuestion = this.fb.group({
       questionText: ['', [Validators.required, Validators.maxLength(this.MAX_CHARACTERS)]],
@@ -562,6 +658,15 @@ export class CardCreationComponent {
     this.addCondition();
   }
 
+  private noteAndMentionForm(): void {
+    this.notesmentionForm = this.fb.group({
+      message: ['', [Validators.maxLength(1024)]],
+      file: [''],
+      mediaType: ['']
+    });
+
+  }
+
   private initContactAttributeForm(): void {
     this.contactAttributeForm = this.fb.group({
       selectedAttribute: [null, Validators.required],
@@ -575,9 +680,11 @@ export class CardCreationComponent {
 
   private initNotificationForm(): void {
     this.notificationForm = this.fb.group({
-      selectedAgentIds: ['1', Validators.required],
+      selectedAgentIds: ['0', Validators.required],
       selectedAgentName: [''],
-      textMessage: ['', [Validators.required, Validators.maxLength(this.MAX_CHARACTERS)]]
+      textMessage: ['', [Validators.required, Validators.maxLength(this.MAX_CHARACTERS)]],
+      file: [''],
+      mediaType: ['']
     });
 
     this.notificationForm.get('textMessage')?.valueChanges.subscribe(val => {
@@ -671,15 +778,17 @@ export class CardCreationComponent {
   // ==================== NODE HANDLING METHODS ====================
 
   onSubmit(formType: string = ''): void {
-    if (['questionOption', 'openQuestion', 'buttonOptions', 'listOptions'].includes(this.ParentNodeType)) {
+    if (['questionOption', 'openQuestion', 'buttonOptions', 'listOptions', 'whatsAppFlow'].includes(this.ParentNodeType)) {
       this.handleQuestionSubmit(formType);
     } else if ([
       'assignAgentModal', 'assigntoContactOwner', 'UnassignConversation',
       'UpdateConversationStatus', 'UpdateContactAttribute', 'AddTags',
       'RemoveTag', 'TimeDelayModal', 'BotTriggerModal', 'MessageOptin',
-      'NotificationModal'
+      'NotificationModal', 'WorkingHoursModal', 'NotesMentionModal'
     ].includes(formType)) {
       this.advanceOptionsSubmit(formType);
+    } else if (formType == 'setCondition') {
+      this.handleConditionSubmit(formType)
     } else {
       this.handleContentSubmit();
     }
@@ -701,6 +810,24 @@ export class CardCreationComponent {
     this.closeModal();
   }
 
+
+  handleConditionSubmit(formType: any) {
+
+    if (this.conditionForm.invalid) {
+      this.conditionForm.markAllAsTouched();
+      return;
+    }
+
+    const formData = this.conditionForm.value;
+
+    if (this.isEditMode && this.selectedNodeId !== null) {
+      this.updateExistingNode(formData);
+    } else {
+      this.createNewNodeWithData(formData);
+    }
+    this.closeModal();
+  }
+
   getDefaultValueForType(type: string): any {
     switch (type) {
       case 'text': return '';
@@ -713,6 +840,7 @@ export class CardCreationComponent {
   }
 
   private handleQuestionSubmit(formType: string): void {
+    console.log("formType", formType)
     let form: FormGroup;
     let formData: any;
 
@@ -730,6 +858,9 @@ export class CardCreationComponent {
         break;
       case 'listOptions':
         form = this.listOptions;
+        break;
+      case 'whatsAppFlow':
+        form = this.whatsAppFlowForm;
         break;
       default:
         return;
@@ -763,10 +894,9 @@ export class CardCreationComponent {
         this.botVariables.push(newVariable);
       } else {
         // Optionally show a message that variable wasn't added because it already exists
-        return;
+        // return;
       }
     }
-
 
     if (this.isEditMode && this.selectedNodeId !== null) {
       this.updateExistingNode(formData);
@@ -778,11 +908,16 @@ export class CardCreationComponent {
 
 
 
-
+  dynamiceEditor: any = ''
   private advanceOptionsSubmit(formType: string): void {
     this.closeModal();
+    this.dynamiceEditor = ''
 
     const advanceOption = { type: formType, data: {} as any };
+
+    console.log(this.notesmentionForm.value)
+
+
 
     switch (formType) {
       case 'assignAgentModal':
@@ -796,6 +931,7 @@ export class CardCreationComponent {
         advanceOption.data = this.contactAttributeForm.value;
         break;
       case 'NotificationModal':
+        this.dynamiceEditor = this.chatEditorElement
         advanceOption.data = this.notificationForm.value;
         break;
       case 'TimeDelayModal':
@@ -804,15 +940,27 @@ export class CardCreationComponent {
       case 'BotTriggerModal':
         advanceOption.data = this.selectedBot;
         break;
+      case 'NotesMentionModal':
+        var editorInstance = this.chatEditors
+        this.dynamiceEditor = this.chatEditors
+        let data = this.getOnlyUserTypedText(editorInstance)
+        this.notesmentionForm.patchValue({
+          message: data
+        })
+        advanceOption.data = this.notesmentionForm.value;
+        break;
       case 'AddTags':
       case 'RemoveTag':
         advanceOption.data = {
           tags: this.selectedTags,
           operation: this.operationOptions
         };
+        console.log("advanceOption", advanceOption)
         break;
+
     }
 
+    console.log(this.dynamiceEditor, 'this.dynamiceEditor')
     if (this.isEditMode && this.selectedNodeId !== null) {
       // Update existing node logic
       this.updateAdvanceNode(advanceOption)
@@ -847,6 +995,25 @@ export class CardCreationComponent {
 
 
 
+  getOnlyUserTypedText(editorInstance: any): string {
+    const html = editorInstance.value || ''; // Get HTML from RTE
+
+    // Create temporary DOM parser
+    const tempDiv = document.createElement('div');
+    tempDiv.innerHTML = html;
+
+    // Step 1: Remove media-related blocks (custom image container)
+    const mediaBlocks = tempDiv.querySelectorAll('.custom-class-attachmentType');
+    mediaBlocks.forEach(el => el.remove());
+
+    // Step 2: Remove inline <img>, <button>, etc. (fallback cleanup)
+    const extraMedia = tempDiv.querySelectorAll('img, button, video, audio');
+    extraMedia.forEach(el => el.remove());
+
+    // Step 3: Return remaining text
+    return (tempDiv.textContent || '').trim();
+  }
+
 
   private createNewNodeWithData(formData: any): void {
     const nodeName = this.getNodeName();
@@ -863,9 +1030,15 @@ export class CardCreationComponent {
 
     hasNodes = Object.keys(exportData.drawflow?.Home?.data).length > 0;
     let outputs = this.calculateOutputCount(formData);
+    console.log("this.cardType", this.cardType)
+    console.log("this.cardType", this.ParentNodeType)
 
-    if (this.cardType == 'Assign_Agent' || this.cardType == 'Assign_to_Contact_Owner' || this.cardType == 'Unassign_Conversation' || this.cardType == 'Update_Status' || this.cardType == 'Trigger_Bot') {
+    if (this.cardType == 'assignAgentModal' || this.cardType == 'assigntoContactOwner' || this.cardType == 'UnassignConversation' || this.cardType == 'UpdateConversationStatus' || this.cardType == 'BotTriggerModal') {
       outputs = 0;
+    }
+
+    if (this.cardType == 'setCondition' || this.cardType == 'WorkingHoursModal') {
+      outputs = 3
     }
 
 
@@ -915,6 +1088,11 @@ export class CardCreationComponent {
         this.editor.addConnection(nodeId - 1, nodeId, 'output_1', 'input_1');
       }, 100);
     }
+
+
+    setTimeout(() => {
+      this.editor.drawflow.drawflow.Home.data[nodeId].html = newHTML;
+    }, 100);
     this.nodeCounter++;
   }
 
@@ -929,6 +1107,8 @@ export class CardCreationComponent {
       outputs = (formData?.options?.length + 1) || 1;
     } else if (this.ParentNodeType === 'buttonOptions') {
       outputs = (formData?.buttons?.length + 1) || 1;
+    } else if (this.ParentNodeType === 'whatsAppFlow') {
+      outputs = 2
     }
 
     if (formData?.invalidAction === "fallback") {
@@ -947,6 +1127,7 @@ export class CardCreationComponent {
   }
 
   private setOutputPositions(nodeId: number, fallbackAction: string = ''): void {
+    console.log(nodeId, fallbackAction)
     const node = document.getElementById(`node-${nodeId}`);
     if (!node) return;
 
@@ -964,9 +1145,9 @@ export class CardCreationComponent {
       const output2 = outputs[1] as HTMLElement;
       output2.style.position = 'absolute';
       output2.style.top = '41px';
+      output2.style.borderColor = 'red'; // ✅ use camelCase
       remainingOutputs = remainingOutputs.slice(1);
     }
-
     let size = 30;
     remainingOutputs.forEach((output: any) => {
       if (output?.style) {
@@ -995,8 +1176,11 @@ export class CardCreationComponent {
       const output2 = outputs[1] as HTMLElement;
       output2.style.position = 'absolute';
       output2.style.top = '41px';
+      output2.style.borderColor = 'red'; // ✅ use camelCase
       remainingOutputs = remainingOutputs.slice(1);
     }
+
+
 
     const bottomOffsets = this.generateBottomOffsetsReversed(formData?.sections);
     remainingOutputs.forEach((output: any, index: number) => {
@@ -1038,14 +1222,7 @@ export class CardCreationComponent {
       <span class="temName">${this.getDisplayName(nodeData)}</span>
     </div>`;
 
-    if (formData.homeIcon) {
-      newHTML += `
-      <div class="home-icon-container" style="text-align: center; margin: 15px 0;">
-        <div style="font-size: 24px;">🏠</div>
-        <div style="font-size: 14px; color: #666;">Build your flow</div>
-      </div>
-    `;
-    }
+
 
     if (this.ParentNodeType !== 'Advance_Action') {
       newHTML += this.createStandardNodeContent(nodeId, nodeData, formData);
@@ -1072,9 +1249,11 @@ export class CardCreationComponent {
     const typeMap: Record<string, string> = {
       'sendMessage': 'Send',
       'questionOption': 'Question',
+      'whatsAppFlow': 'WhatsApp',
       'openQuestion': 'Open',
       'buttonOptions': 'Button',
-      'listOptions': 'List'
+      'listOptions': 'List',
+      'setConditionsModal': 'Set'
     };
     return typeMap[this.ParentNodeType] || 'Ask';
   }
@@ -1086,8 +1265,10 @@ export class CardCreationComponent {
       'openQuestion': 'background:#fce4e4',
       'buttonOptions': 'background:#fce4e4',
       'listOptions': 'background:#fce4e4',
+      'whatsAppFlow': 'background:#fce4e4',
       'List': 'background:#f93',
-      'Advance_Action': 'background:#BEDBF5'
+      'Advance_Action': 'background:#BEDBF5',
+      'setCondition': 'background:#fff9dc'
     };
     return styleMap[nodeData.text] || styleMap[this.ParentNodeType] || 'background:#4bc25a';
   }
@@ -1117,20 +1298,32 @@ export class CardCreationComponent {
       content += this.createButtonOptionsContent(nodeId, nodeData, formData);
     } else if (nodeData.text === 'listOptions') {
       content += this.createListOptionsContent(nodeId, formData);
+
+    } else if (nodeData.text === 'whatsAppFlow') {
+      content += this.createwhatsAppFlowContent(nodeId, formData);
     }
 
+    else if (nodeData.text === 'setCondition') {
+      content += this.createsetConditionContent(nodeId, formData);
+
+    }
     return content;
   }
 
   private createMediaContent(nodeData: any): string {
     let mediaContent = '<div class="textContImage">';
-    const mediaSrc = nodeData.file ? this.filePreview || this.selectedImageUrl : 'assets/img/not_found.jpg';
+    var mediaSrc = nodeData.file ? this.filePreview || this.selectedImageUrl : 'assets/img/not_found.jpg';
 
-    if (this.cardType === 'sendImage') {
+    if (mediaSrc == null) {
+      mediaSrc = nodeData.file
+    }
+    console.log("nodeData", nodeData)
+
+    if (this.cardType === 'sendImage' || nodeData.mediaType == "image/png") {
       mediaContent += `<img alt="Image Preview" src="${mediaSrc}" class="Preview" style="max-width: 100%;" class="mb-2" />`;
-    } else if (this.cardType === 'sendVideo') {
+    } else if (this.cardType === 'sendVideo' || nodeData.mediaType == "video/mp4") {
       mediaContent += `<video src="${mediaSrc}" class="Preview mb-2" controls style="max-width: 100%;"></video>`;
-    } else if (this.cardType === 'sendDocument') {
+    } else if (this.cardType === 'sendDocument' || nodeData.mediaType == "document") {
       mediaContent += `<img alt="Document Preview" src="assets/img/document.png" class="Preview" style="max-width: 100%;" class="mb-2" />`;
     }
 
@@ -1258,6 +1451,44 @@ export class CardCreationComponent {
     return content;
   }
 
+  private createwhatsAppFlowContent(nodeId: any, formData: any): string {
+    let content = '<div class="textQuestion">';
+
+    if (formData.whatsAppFormName) {
+      content += `<h6 class="section-heading font-semibold text-center mb-2">${formData.whatsAppFormName}</h6>`;
+    }
+
+    if (formData.headerText) {
+      content += `<h6 class="body_text">${formData.headerText}</h6>`;
+    }
+
+    if (formData.bodyText) {
+      content += `<h6 class="body_text">${formData.bodyText}</h6>`;
+    }
+
+    if (formData.footerText) {
+      content += `<h6 class="body_text">${formData.footerText}</h6>`;
+    }
+
+    content += '</div>';
+
+
+    let buttonHTML = '';
+
+    // buttonHTML = formData.options.map((buttonElement: any) => {
+    const uniqueId = this.generateRandom6DigitNumber();
+    buttonHTML = buttonHTML + `<button style="display:block;" class="btn btn_theme3 btn-block customButton mt-2 nodeButton-${nodeId} button_id-${uniqueId}">Submitted</button>`;
+    content += `<div class="buttons">${buttonHTML}</div>`;
+
+
+    console.log(content)
+
+
+    return content;
+
+
+  }
+
   private createAdvanceActionContent(nodeData: any, formData: any): string {
     let content = '';
 
@@ -1295,10 +1526,45 @@ export class CardCreationComponent {
       case 'NotificationModal':
         content = `<div class="textCont"><p>Notify <span style="font-size: 13px;color: #0a0a0a;font-weight: bold;">${formData.data.selectedAgentName}<span></p></div>`;
         break;
+
+      case 'NotesMentionModal':
+
+
+        if (formData.data.file != null) {
+          content += this.createMediaContent(formData.data);
+        }
+        if (formData.data.message) {
+          content += `<div class="textCont"><p>${formData.data.message}</p></div>`;
+        }
+        break;
+      case 'WorkingHoursModal':
+        let buttonHTML = '';
+
+        // buttonHTML = formData.options.map((buttonElement: any) => {
+        const uniqueId = this.generateRandom6DigitNumber();
+        buttonHTML = buttonHTML + `<button style="display:block;" class="btn btn_theme3 btn-block customButton mt-2 nodeButton-${nodeData.id} button_id-${uniqueId}">Open</button>`;
+        buttonHTML = buttonHTML + `<button style="display:block;" class="btn btn_theme3 btn-block customButton mt-2 nodeButton-${nodeData.id} button_id-${uniqueId}">Close</button>`;
+        content += `<div class="buttons">${buttonHTML}</div>`;
+        return content;
+        break;
     }
 
     return content;
   }
+
+  private createsetConditionContent(nodeId: any, formData: any): string {
+    let content = ''
+
+    let buttonHTML = '';
+
+    // buttonHTML = formData.options.map((buttonElement: any) => {
+    const uniqueId = this.generateRandom6DigitNumber();
+    buttonHTML = buttonHTML + `<button style="display:block;" class="btn btn_theme3 btn-block customButton mt-2 nodeButton-${nodeId} button_id-${uniqueId}">Condition Met</button>`;
+    buttonHTML = buttonHTML + `<button style="display:block;" class="btn btn_theme3 btn-block customButton mt-2 nodeButton-${nodeId} button_id-${uniqueId}">Condition Not Met</button>`;
+    content += `<div class="buttons">${buttonHTML}</div>`;
+    return content;
+  }
+
 
   private getNodeName(): string {
     const nodeNames: Record<string, string> = {
@@ -1309,7 +1575,9 @@ export class CardCreationComponent {
       'questionOption': 'Options',
       'openQuestion': 'Question',
       'buttonOptions': 'Options',
-      'listOptions': 'Options'
+      'listOptions': 'Options',
+      'whatsAppFlow': 'Flow',
+      'setCondition': 'Condition'
     };
     return nodeNames[this.cardType] || 'Node';
   }
@@ -1388,7 +1656,28 @@ export class CardCreationComponent {
         this.handleDeleteClick = (event: Event) => {
           event.stopPropagation();
           console.log(nodeId)
-          this.editor.removeNodeId(`node-${nodeId}`)
+          Swal.fire({
+            title: 'Are you sure?',
+            text: 'Do you really want to delete this node?',
+            icon: 'warning',
+            iconColor: '#F97316', // Optional: Customize icon color
+            showCancelButton: true,
+            confirmButtonText: 'Yes, delete it!',
+            cancelButtonText: 'Cancel',
+            customClass: {
+              popup: 'small-swal',
+              confirmButton: 'swal-btn-confirm',
+              cancelButton: 'swal-btn-cancel'
+            },
+            buttonsStyling: false
+          }).then((result) => {
+            if (result.isConfirmed) {
+              this.editor.removeNodeId(`node-${nodeId}`);
+              Swal.fire('Deleted!', 'The node has been deleted.', 'success');
+            }
+          });
+
+          // this.editor.removeNodeId(`node-${nodeId}`)
         };
         deleteNodeIconClick.addEventListener('click', this.handleDeleteClick);
       }
@@ -1416,6 +1705,12 @@ export class CardCreationComponent {
       newOutputsCount = (formData?.options?.length + 1) || 1;
     } else if (this.ParentNodeType === 'buttonOptions') {
       newOutputsCount = (formData?.buttons?.length + 1) || 1;
+    } else if (this.ParentNodeType === 'whatsAppFlow') {
+      newOutputsCount = 2;
+    }
+
+    if (formData.invalidAction == "fallback") {
+      newOutputsCount = newOutputsCount + 1
     }
 
     if ((this.ParentNodeType === 'questionOption' || this.ParentNodeType === 'listOptions' ||
@@ -1439,6 +1734,8 @@ export class CardCreationComponent {
 
     this.editor.updateNodeDataFromId(this.selectedNodeId, node.data);
     const newHTML = this.createNodeHtml(this.selectedNodeId, node.data);
+
+
     this.updateNodeHTML(this.selectedNodeId, newHTML);
   }
 
@@ -1460,7 +1757,7 @@ export class CardCreationComponent {
     if (this.ParentNodeType === 'listOptions') {
       this.setOutputPositionsForList(node.id, formData);
     } else {
-      this.setOutputPositions(node.id);
+      this.setOutputPositions(node.id, formData?.invalidAction);
     }
   }
 
@@ -1488,6 +1785,7 @@ export class CardCreationComponent {
   }
 
   closeModal(): void {
+
     if (this.currentModal) {
       this.currentModal.hide();
       this.currentModal = null;
@@ -1533,10 +1831,12 @@ export class CardCreationComponent {
 
 
   MAX_TOTAL_ROWS = 10;
+  hideAddAction: any = false
   addSection(sections: FormArray): void {
     const totalRows = this.getTotalRowCount(sections);
-
+    this.hideAddAction = false
     if (sections.length >= this.MAX_SECTIONS || totalRows >= this.MAX_TOTAL_ROWS) {
+      this.hideAddAction = true
       return;
     }
 
@@ -1559,6 +1859,7 @@ export class CardCreationComponent {
 
 
   addRow(sections: FormArray, sectionIndex: number): void {
+    this.hideAddAction = false
     const section = sections.at(sectionIndex) as FormGroup;
     const rows = section.get('rows') as FormArray;
 
@@ -1567,11 +1868,14 @@ export class CardCreationComponent {
 
     if (rows.length < this.MAX_ROWS_PER_SECTION && remainingRows > 0) {
       rows.push(this.createRow());
+    } else {
+      this.hideAddAction = true
     }
   }
 
   removeSection(sections: FormArray, index: number): void {
     if (sections.length > 1) {
+      this.hideAddAction = false
       sections.removeAt(index);
     }
   }
@@ -1581,6 +1885,7 @@ export class CardCreationComponent {
     const rows = section.get('rows') as FormArray;
 
     if (rows.length > 1) {
+      this.hideAddAction = false
       rows.removeAt(rowIndex);
     }
   }
@@ -1594,42 +1899,6 @@ export class CardCreationComponent {
 
 
 
-  // addSection(sections: FormArray): void {
-  //   if (sections.length < this.MAX_SECTIONS) {
-  //     sections.push(this.createSection());
-  //   }
-  // }
-
-  // removeSection(sections: FormArray, index: number): void {
-  //   if (sections.length > 1) {
-  //     sections.removeAt(index);
-  //   }
-  // }
-
-  // addRow(sections: FormArray, sectionIndex: number): void {
-  //   const section = sections.at(sectionIndex) as FormGroup;
-  //   const rows = section.get('rows') as FormArray;
-
-  //   if (this.getTotalRowCount(sections) < (this.MAX_SECTIONS * this.MAX_ROWS_PER_SECTION)) {
-  //     rows.push(this.createRow());
-  //   }
-  // }
-
-  // removeRow(sections: FormArray, sectionIndex: number, rowIndex: number): void {
-  //   const section = sections.at(sectionIndex) as FormGroup;
-  //   const rows = section.get('rows') as FormArray;
-
-  //   if (rows.length > 1) {
-  //     rows.removeAt(rowIndex);
-  //   }
-  // }
-
-  // getTotalRowCount(sections: FormArray): number {
-  //   return sections.controls.reduce((total, section) => {
-  //     const rows = (section as FormGroup).get('rows') as FormArray;
-  //     return total + rows.length;
-  //   }, 0);
-  // }
 
   // ==================== EDITOR EVENT HANDLERS ====================
 
@@ -1715,6 +1984,8 @@ export class CardCreationComponent {
   // ==================== EDIT NODE HANDLING ====================
 
   openEditModal(nodeId: number): void {
+
+    console.log(nodeId)
     this.closeModal();
     this.isEditMode = true;
     this.selectedNodeId = nodeId;
@@ -1733,7 +2004,6 @@ export class CardCreationComponent {
 
   private fillExistingData(nodeData: any): void {
     if (this.selectedNodeId === null) return;
-
     const nodeElement = document.getElementById(`node-${this.selectedNodeId}`);
     this.selectedImageUrl = null;
 
@@ -1760,6 +2030,12 @@ export class CardCreationComponent {
         break;
       case 'NotificationModal':
         this.fillNotificationData(nodeData);
+        break;
+      case 'NotesMentionModal':
+        this.fillNotesMentionModalData(nodeData);
+        break;
+      case 'whatsAppFlow':
+        this.fillWhatsAppFlowsData(nodeData);
         break;
     }
   }
@@ -1920,17 +2196,62 @@ export class CardCreationComponent {
     this.listOptions.setControl('sections', sectionsArray);
   }
 
+  private fillWhatsAppFlowsData(nodeData: any): void {
+    const updateForm = nodeData?.data?.formData;
+    this.whatsAppFlowForm.patchValue({
+      headerText: updateForm?.headerText,
+      bodyText: updateForm?.bodyText,
+      footerText: updateForm?.footerText,
+      whatsAppFormName: updateForm?.whatsAppFormName,
+      selectedForm: updateForm?.selectedForm,
+      reattemptsAllowed: updateForm?.reattemptsAllowed,
+      reattemptsCount: updateForm?.reattemptsCount,
+      errorMessage: updateForm?.errorMessage,
+      invalidAction: updateForm?.invalidAction,
+      enableTimeElapse: updateForm?.enableTimeElapse,
+      timeElapseMinutes: updateForm?.timeElapseMinutes,
+      timeElapseAction: updateForm?.timeElapseAction,
+      enableValidation: updateForm?.enableValidation
+    });
+
+  }
+
 
   fillNotificationData(nodeData: any) {
     const updateForm = nodeData?.data?.formData;
     console.log("updateForm======", updateForm)
+    this.dynamiceEditor = this.chatEditorElement
 
     this.notificationForm.patchValue({
       selectedAgentIds: updateForm.data.selectedAgentIds,
       selectedAgentName: updateForm.data.selectedAgentName,
-      textMessage: updateForm.data.textMessage
+      textMessage: updateForm.data.textMessage,
+      file: updateForm.data.file,
+      mediaType: updateForm.data.mediaType
+    })
+    console.log(updateForm.data.file)
+    if (updateForm.data.file != null) {
+      setTimeout(() => {
+        this.attachMedia(updateForm.data.file, updateForm.data.mediaType)
+      }, 100);
+    }
+
+  }
+  fillNotesMentionModalData(nodeData: any) {
+    const updateForm = nodeData?.data?.formData;
+    this.dynamiceEditor = this.chatEditors
+    console.log("updateForm======", updateForm)
+
+    this.notesmentionForm.patchValue({
+      message: updateForm.data.message,
+      file: updateForm.data.file,
+      mediaType: updateForm.data.mediaType,
+
     })
 
+    setTimeout(() => {
+      this.attachMedia(updateForm.data.file, updateForm.data.mediaType)
+    }, 100);
   }
   // ==================== COPY NODE HANDLING ====================
 
@@ -1989,6 +2310,9 @@ export class CardCreationComponent {
       this.setOutputPositions(Number(newNodeId), nodeCopy?.data?.formData?.invalidAction);
     }
 
+    setTimeout(() => {
+      this.editor.drawflow.drawflow.Home.data[nodeId].html = newHTML;
+    }, 100);
     this.nodeCounter++;
   }
 
@@ -2009,7 +2333,7 @@ export class CardCreationComponent {
       operator: [condition?.operator || '', Validators.required],
       value: [condition?.value || '', Validators.required],
       valueType: [condition?.valueType || ''],
-      nextJoinType: [condition?.nextJoinType || '']
+      nextJoinType: [condition?.nextJoinType || 'AND']
     });
 
     this.conditionsArray.push(conditionGroup);
@@ -2023,6 +2347,7 @@ export class CardCreationComponent {
 
   onComparatorChange(index: number): void {
     const comparatorControl = this.getConditionGroup(index).get('comparator');
+    console.log("comparatorControl", comparatorControl)
     const comparatorValue = comparatorControl?.value;
 
     const detectedType = this.detectVariableType(comparatorValue);
@@ -2066,16 +2391,31 @@ export class CardCreationComponent {
     return name.split(' ').map(part => part[0]).join('');
   }
 
-  filterTags(): void {
-    if (!this.searchTerm) {
-      this.filteredTags = [...this.allTags];
-      return;
-    }
+  filterTags(type: any): void {
+    if (type == 'removeTag') {
+      if (!this.searchTerm) {
+        this.removeTagList = [...this.allTags];
+        return;
+      }
 
-    const term = this.searchTerm.toLowerCase();
-    this.filteredTags = this.allTags.filter(tag =>
-      tag.label.toLowerCase().includes(term)
-    );
+
+      const term = this.searchTerm.toLowerCase();
+      this.removeTagList = this.allTags.filter((tag: any) =>
+        tag.TagName.toLowerCase().includes(term)
+      );
+
+    } else {
+
+      if (!this.searchTerm) {
+        this.addTagList = [...this.allTags];
+        return;
+      }
+
+      const term = this.searchTerm.toLowerCase();
+      this.addTagList = this.allTags.filter((tag: any) =>
+        tag.TagName.toLowerCase().includes(term)
+      );
+    }
   }
 
   isTagSelected(tagValue: string): boolean {
@@ -2106,19 +2446,95 @@ export class CardCreationComponent {
   // ==================== BOT SELECTION ====================
 
   getSelectedBot(botId: string): void {
-    this.selectedBot = this.availableBots.find(bot => bot.id === botId) || null;
+    this.selectedBot = this.botsList.find(bot => bot.id === botId) || null;
   }
 
   // ==================== ATTRIBUTE HANDLING ====================
 
+
+  currentAttributeList: any = []
   getAdditionalAttributes(): void {
     if (!this.userDetails?.SP_ID) return;
 
-    this.apiService.getAttributeList(this.userDetails.SP_ID).subscribe((allAttributes: any) => {
-      const attributes = allAttributes.map((attr: any) => `{{${attr.attribute_name}}}`);
-      this.showAttribute = attributes;
+    this.settingService.getNewCustomField(this.userDetails.SP_ID).subscribe((allAttributes: any) => {
+      console.log(allAttributes)
+      if (allAttributes.status == 200) {
+
+        this.currentAttributeList = allAttributes?.getfields
+        const attributes = allAttributes?.getfields?.map((attr: any) => `${attr.displayName}`);
+        this.attributeList = attributes;
+      }
+
     });
   }
+
+  agentsList: any = []
+  getUserList() {
+
+    this.settingService.getUserList(this.userDetails.SP_ID, 1).subscribe(async (result: any) => {
+      if (result) {
+
+        this.agentsList = result?.getUser.filter((item: any) => item.RoleName == 'Agent');;
+
+        this.agentsList.forEach((item: { name: string; nameInitials: string; }) => {
+          const nameParts = item.name.split(' ');
+          const firstName = nameParts[0] || '';
+          const lastName = nameParts[1] || '';
+          const nameInitials = firstName.charAt(0) + ' ' + lastName.charAt(0);
+
+          item.nameInitials = nameInitials;
+        });
+        // this.mentionAgentsList = this.agentsList.filter((item:any)=>item.uid != this.uid);
+        // this.assigineeList = this.agentsList.filter((item:any)=>item.IsActive == 1);
+      }
+    });
+  }
+
+
+  originalBotsList: any = []
+  getBotDetails() {
+    var SPID = this.userDetails?.SP_ID || 159
+    this.botService.getBotAlldetails(SPID).subscribe((res: any) => {
+      if (res.status == 200) {
+
+        this.botsList = res.bots
+        console.log(res.bots)
+        this.originalBotsList = [...this.botsList];
+      }
+
+
+    })
+  }
+
+
+  addTagList: any = []
+  removeTagList: any = []
+
+  getTagData() {
+    this.settingService.getTagData(this.userDetails.SP_ID).subscribe((result: any) => {
+      if (result?.taglist) {
+        this.addTagList = [...result.taglist];
+        this.removeTagList = [...result.taglist];
+        this.allTags = [...result.taglist]
+      }
+    });
+  }
+
+
+
+  whatsAppFormList: any = []
+  getWhatsAppFormList() {
+    this.settingService.getFlowData(this.userDetails.SP_ID).subscribe(async (result: any) => {
+      if (result) {
+
+        console.log(result)
+        this.whatsAppFormList = result?.flows;
+
+      }
+    });
+  }
+
+
 
   openAttributeOption(index: number, field: 'comparator' | 'value'): void {
     if (this.showAttribute?.index === index && this.showAttribute?.field === field) {
@@ -2138,93 +2554,52 @@ export class CardCreationComponent {
     }
   }
 
+
+  allowOnlyBackspaces(event: KeyboardEvent, index: number, field: 'comparator' | 'value') {
+    const isLocked = this.selectedFields?.[index]?.[field];
+    if (!isLocked) return; // Allow normal typing if no variable is selected
+
+    // Only allow backspace
+    if (event.key !== 'Backspace') {
+      event.preventDefault();
+    }
+  }
+
+  selectedFields: any = {}; // to track per condition input field lock
   selectVariable(index: number, field: 'comparator' | 'value', variable: any): void {
+
+    console.log(index, field, variable)
     const group = this.getConditionGroup(index);
-    group.get(field)?.setValue(`{{${variable.name}}}`);
+    group.get(field)?.setValue(`{{${variable.displayName || variable.name}}}`);
     group.get(`${field}Type`)?.setValue(variable.type);
     this.showVarMenuFor = null;
     this.showAttribute = null
+
+
+
+    if (!this.selectedFields[index]) this.selectedFields[index] = {};
+    this.selectedFields[index][field] = true;
 
     if (field === 'comparator') {
       group.get('operator')?.setValue('');
     }
   }
 
-  // ==================== SAVE & EXPORT HANDLING ====================
 
-  async saveChatbot(): Promise<void> {
-    this.orignalData = {};
-    const exportData: any = this.editor.export();
-    const exportNodesData: any = Object.values(exportData?.drawflow?.Home?.data);
-    const nodes = document.querySelectorAll('.drawflow-node');
-
-    nodes.forEach((node) => {
-      const nodeId = node.getAttribute('id');
-      const nodeContent = node.querySelector('.drawflow_content_node');
-      const nodeData = { id: Number(nodeId?.split('-')[1]) };
-      const findNode = exportNodesData.find((x: any) => x.id == nodeData.id);
-
-      this.checkNodeHaveConnection(findNode);
-    });
-
-    const flowData = this.getFullFlowJson();
-    console.log("Flow Data:", flowData);
-  }
-
-
-  inputArray: any = [];
-  outputArray: any = [];
-
-  checkNodeHaveConnection(node: any) {
-
-
-    Object.keys(node.inputs).forEach((inputKey) => {
-      if (node.inputs[inputKey].connections.length == 0) { this.inputArray.push(true) } else { this.inputArray.push(false) }
-    });
-
-    Object.keys(node.outputs).forEach((inputKey) => {
-      if (node.outputs[inputKey].connections.length == 0) { this.outputArray.push(true) } else { this.outputArray.push(false) }
-    });
-
-    let isInputConnected = this.inputArray.some((item: any) => item == true)
-    let isOutputConnected = this.outputArray.some((item: any) => item == true)
-    if (isInputConnected && isOutputConnected) {
-      return false;
+  onComparatorInput(i: number) {
+    if (this.selectedFields[i]?.comparator) {
+      delete this.selectedFields[i].comparator;
     }
-    return true;
   }
 
-  private getFullFlowJson(): any {
-    const exportData = this.editor.export();
-    const flowData: any = {
-      nodes: [],
-      connections: []
-    };
-
-    Object.entries(exportData.drawflow.Home.data).forEach(([id, node]: [string, any]) => {
-      flowData.nodes.push({
-        id: node.id,
-        name: node.name,
-        type: node.data.text,
-        category: node.data.category,
-        data: node.data.formData,
-        position: { x: node.pos_x, y: node.pos_y }
-      });
-
-      Object.entries(node.outputs).forEach(([outputKey, output]: [string, any]) => {
-        output.connections.forEach((connection: any) => {
-          flowData.connections.push({
-            sourceNode: node.id,
-            sourceOutput: outputKey,
-            targetNode: connection.node,
-            targetInput: connection.output
-          });
-        });
-      });
-    });
-
-    return flowData;
+  onValueInput(i: number) {
+    if (this.selectedFields[i]?.value) {
+      delete this.selectedFields[i].value;
+    }
   }
+
+
+  // ==================== SAVE & EXPORT HANDLING ====================
 
   // ==================== UTILITY METHODS ====================
 
@@ -2255,10 +2630,195 @@ export class CardCreationComponent {
     }
   }
 
+
+  toggleChatNotes(type: any) {
+    if (type == 'advanceTool') {
+      this.tools = {
+        items: ['Bold', 'Italic', 'StrikeThrough', 'EmojiPicker',
+          {
+            tooltipText: 'Attachment',
+            undo: true,
+            click: this.ToggleAttachmentBox.bind(this),
+            template: '<button type="button" style="width:28px;height:28px;border-radius: 35%!important;border: 1px solid #e2e2e2!important;background:#fff;" class="e-tbar-btn e-btn" tabindex="-1" id="custom_tbar"  >'
+              + '<div class="e-tbar-btn-text"><img style="width:10px;" src="/assets/img/teambox/attachment-icon.svg"></div></button>'
+          },
+          {
+            tooltipText: 'Attributes',
+            undo: true,
+            click: this.ToggleAttributesOption.bind(this),
+            template: '<button type="button" style="width:28px;height:28px;border-radius: 35%!important;border: 1px solid #e2e2e2!important;background:#fff;" class="e-tbar-btn e-btn" tabindex="-1" id="custom_tbar"  >'
+              + '<div class="e-tbar-btn-text"><img style="width:10px;" src="/assets/img/teambox/attributes.svg"></div></button>'
+          },
+          {
+            tooltipText: '@mentions',
+            undo: true,
+            click: this.ToggleShowMentionOption.bind(this),
+            template: '<button type="button" style="width:28px;height:28px;border-radius: 35%!important;border: 1px solid #e2e2e2!important;background:#fff;" class="e-tbar-btn e-btn" tabindex="-1" id="custom_tbar"  >'
+              + '<div class="e-tbar-btn-text">@</div></button>'
+          }]
+      }
+    } else if (type == 'semiTool') {
+      this.semiAdvanceTool = {
+        items: ['Bold', 'Italic', 'StrikeThrough', 'EmojiPicker', {
+          tooltipText: 'Attributes',
+          undo: true,
+          click: this.ToggleAttributesOption.bind(this),
+          template: '<button type="button" style="width:28px;height:28px;border-radius: 35%!important;border: 1px solid #e2e2e2!important;background:#fff;" class="e-tbar-btn e-btn" tabindex="-1" id="custom_tbar"  >'
+            + '<div class="e-tbar-btn-text"><img style="width:10px;" src="/assets/img/teambox/attributes.svg"></div></button>'
+        },]
+      }
+
+    } else if (type == 'attachementTool') {
+
+      this.attachementTool = {
+        items: ['Bold', 'Italic', 'StrikeThrough', 'EmojiPicker', {
+          tooltipText: 'Attachment',
+          undo: true,
+          click: this.ToggleAttachmentBox.bind(this),
+          template: '<button type="button" style="width:28px;height:28px;border-radius: 35%!important;border: 1px solid #e2e2e2!important;background:#fff;" class="e-tbar-btn e-btn" tabindex="-1" id="custom_tbar"  >'
+            + '<div class="e-tbar-btn-text"><img style="width:10px;" src="/assets/img/teambox/attachment-icon.svg"></div></button>'
+        },]
+      }
+
+    } else {
+      this.tools = DEFAULT_TOOLS
+    }
+
+
+  }
+
+
+  ToggleAttachmentBox() {
+    this.closeAllModal()
+    $("#attachfle").modal('show');
+    document.getElementById('attachfle')!.style.display = 'inherit';
+    // this.dragAreaClass = "dragarea";
+  }
+
+  lastCursorPosition: Range | null = null;
+  showMention: any = false;
+  ToggleAttributesOption() {
+    const selection = window.getSelection();
+    this.lastCursorPosition = selection?.getRangeAt(0) || null;
+    this.closeAllModal()
+    $("#atrributemodal").modal('show');
+
+  }
+
+  ToggleShowMentionOption() {
+    this.closeAllModal()
+    setTimeout(() => { this.showMention = !this.showMention }, 50)
+  }
+
+
+  closeEditMedia() {
+    $("#editTemplate").modal('show');
+    $("#attachfle").modal('hide');
+    $("#editTemplateMedia").modal('hide');
+    this.isAttachmentMedia = false;
+  }
+
+  closeAllModal() {
+
+    this.showMention = false
+
+
+    $("#editTemplateMedia").modal('hide');
+    $("#botVariable").modal('hide');
+    $("#atrributemodal").modal('hide');
+    $("#attachfle").modal('hide');
+    $("#sendfile").modal('hide');
+    $('body').removeClass('modal-open');
+    $('.modal-backdrop').remove();
+
+  }
+
+  selectVariables(variableName: string) {
+    let editor: any;
+
+    if (this.ParentNodeType === 'sendMessage' && this.chatEditor) {
+      editor = this.chatEditor;
+    } else if ((this.ParentNodeType === 'questionOption' || this.ParentNodeType === 'openQuestion') && this.questionEditor) {
+      editor = this.questionEditor;
+    } else if ((this.ParentNodeType === 'buttonOptions' || this.ParentNodeType == 'listOptions' || this.ParentNodeType == 'whatsAppFlow') && this.bodyEditor) {
+      editor = this.bodyEditor;
+    } else if (this.cardType == 'NotesMentionModal') {
+      editor = this.chatEditors;
+    }
+
+    if (editor) {
+      const editPanel = (editor?.contentModule as ContentRender).getEditPanel() as HTMLElement;
+      editPanel?.focus();
+
+      setTimeout(() => {
+        const range = document.createRange();
+        range.selectNodeContents(editPanel);
+        range.collapse(false);
+        const selection = window.getSelection();
+        selection?.removeAllRanges();
+        selection?.addRange(range);
+      }, 0);
+
+      this.insertBotVariableCommon(editor, variableName);
+    }
+
+    this.closeAllModal();
+  }
+
+
+
+  insertBotVariableCommon(editorInstance: any, variable: string) {
+    const rtePanel = (editorInstance?.contentModule as ContentRender).getEditPanel() as HTMLElement;
+    rtePanel.focus();
+
+    setTimeout(() => {
+      const selection = window.getSelection();
+      if (!selection || !this.lastCursorPosition) return;
+
+      // Restore cursor
+      selection.removeAllRanges();
+      selection.addRange(this.lastCursorPosition);
+
+      // Create variable chip
+      const variableNode = document.createElement('span');
+      variableNode.setAttribute('contenteditable', 'false');
+      variableNode.classList.add('e-mention-chip');
+      variableNode.innerHTML = `<a title="{{${variable}}}">{{${variable}}}</a>`;
+
+      const space = document.createTextNode('\u00A0');
+      const range = selection.getRangeAt(0);
+
+      range.deleteContents();
+      range.insertNode(variableNode);
+      range.collapse(false);
+      range.insertNode(space);
+
+      // Reset cursor after space
+      const newRange = document.createRange();
+      newRange.setStartAfter(space);
+      newRange.collapse(true);
+      selection.removeAllRanges();
+      selection.addRange(newRange);
+    }, 0);
+  }
+
+
   openCreateModal(modalId: string, nodeType: string): void {
     this.isEditMode = false;
     this.cardType = nodeType;
     this.ParentNodeType = modalId;
+    console.log("modalId", modalId, nodeType)
+    if (nodeType == 'NotesMentionModal') {
+      this.dynamiceEditor = this.chatEditors
+      this.toggleChatNotes('advanceTool')
+    } else if (modalId == 'sendMessage' || modalId == 'questionOption' || modalId == 'openQuestion' || modalId == 'buttonOptions' || modalId == 'listOptions' || modalId == 'whatsAppFlow') {
+      this.toggleChatNotes('semiTool')
+    } else if (nodeType == 'NotificationModal') {
+      this.dynamiceEditor = this.chatEditorElement
+      this.toggleChatNotes('attachementTool')
+    } else {
+      this.toggleChatNotes('')
+    }
 
     this.resetFormValidators();
     this.resetForms();
@@ -2298,6 +2858,12 @@ export class CardCreationComponent {
     this.questionOption.reset();
     this.openQuestion.reset();
     this.notificationForm.reset();
+    this.notesmentionForm.reset()
+    this.whatsAppFlowForm.reset()
+
+
+
+    this.conditionForm.reset()
 
 
     this.openQuestion.get('answerType')?.setValue('text');
@@ -2367,7 +2933,8 @@ export class CardCreationComponent {
   }
 
   onValidationToggle(form: FormGroup): void {
-    if (!form.get('enableValidation')?.value) {
+
+    if (form.get('enableValidation')?.value) {
       form.patchValue({
         reattemptsAllowed: false,
         enableTimeElapse: false,
@@ -2403,40 +2970,68 @@ export class CardCreationComponent {
     this.openQuestion.patchValue(resetValues);
   }
 
-  onSubmits(form: FormGroup): boolean {
-    if (form.valid) {
-      console.log('Form submitted:', form.value);
-      this.closeModal();
-      return true;
-    } else {
-      this.markFormGroupTouched(form);
-      return false;
-    }
-  }
+
 
   onAgentChange(event: any): void {
     const agentId = event.target.value;
-    const selectedAgent = this.availableAgents.find(agent => agent.id == agentId);
+    const selectedAgent = this.agentsList.find((agent: any) => agent.uid == agentId);
     this.notificationForm.patchValue({
       selectedAgentName: selectedAgent?.name || ''
     });
   }
 
+
+  selectedAttributeType: string = '';
+  isUserTyping: boolean = false;
+  selectedFromVariable: boolean = false;
+  selectedOptions: any[] = [];
   onAttributeChange(value: string): void {
+    console.log(this.contactAttributeForm.get('selectedAttribute')?.value)
+    console.log(this.currentAttributeList)
     const selectedAttr = this.contactAttributeForm.get('selectedAttribute')?.value;
-    this.attributeDetails = this.availableAttributes.find(attr => attr.name === selectedAttr);
+    this.attributeDetails = this.currentAttributeList.find((attr: any) => attr.ActuallName === selectedAttr);
+    this.selectedAttributeType = this.attributeDetails?.type || '';
+    this.selectedFromVariable = false;
+    this.isUserTyping = false;
+
+    // Handle Multi Select options
+    if (this.selectedAttributeType === 'Multi Select') {
+      try {
+        this.selectedOptions = JSON.parse(this.attributeDetails?.dataTypeValues || '[]');
+      } catch {
+        this.selectedOptions = [];
+      }
+    }
+
+    this.contactAttributeForm.get('selectedValue')?.reset();
+    console.log(this.attributeDetails)
+
+
   }
 
   selectedValues(variable: any): void {
+    console.log(variable)
     this.contactAttributeForm.patchValue({
-      selectedValue: `{{${variable?.name}}} ` || '',
+      selectedValue: `{{${variable?.displayName || variable?.name || variable?.optionName}}} ` || '',
       inputValue: '',
       selectedVariable: '',
       operation: 'replace'
     });
     this.openDropdown.status = '';
+    this.selectedFromVariable = true;
+    this.isUserTyping = false;
     this.contactAttributeForm.get('selectedValue')?.updateValueAndValidity();
   }
+
+  onTextInputChange(event: any): void {
+    const inputValue = event.target.value;
+    this.isUserTyping = !!inputValue;
+    if (this.isUserTyping) {
+      this.selectedFromVariable = false;
+    }
+  }
+
+
 
   selectAttribute(status: string): void {
     this.openDropdown.status = status;
@@ -2485,11 +3080,43 @@ export class CardCreationComponent {
   }
 
 
+
+
+
   getOperators(type: string): string[] {
-    if (type === 'string') return this.stringOperators;
-    if (type === 'number') return this.numberOperators;
-    if (type === 'boolean') return this.booleanOperators;
-    return [];
+    if (!type) return [];
+    const normalizedType = type?.toLowerCase();
+
+    switch (normalizedType) {
+      case 'text':
+      case 'string':
+        return STRING_OPERATORS;
+
+      case 'number':
+        return NUMBER_OPERATORS;
+
+      case 'boolean':
+      case 'switch':
+        return BOOLEAN_OPERATORS;
+
+      case 'select':
+        return SELECT_OPERATORS;
+
+      case 'multi select':
+        return MULTI_SELECT_OPERATORS;
+
+      case 'date':
+        return DATE_OPERATORS;
+
+      case 'time':
+        return TIME_OPERATORS;
+
+      case 'user': // if needed, treat User as Select-like
+        return SELECT_OPERATORS;
+
+      default:
+        return [];
+    }
   }
 
   onCancel() {
@@ -2542,7 +3169,524 @@ export class CardCreationComponent {
     }
     input.value = '';
 
-    console.log('File selected:', this.selectedImageUrl);
+
   }
+
+
+  onFileChange(event: any) {
+    this.isUploadingLoader = true;
+    let files: FileList = event.target.files;
+    this.saveFiles(files);
+
+  }
+
+  allowOnlyBackspace(event: KeyboardEvent): void {
+    if (event.key !== 'Backspace') {
+      event.preventDefault();
+    }
+  }
+
+
+
+  mediaType: any = '';
+  saveFiles(files: FileList) {
+    if (files[0]) {
+      let imageFile = files[0]
+      let spid = this.userDetails.SPID
+      if ((files[0].type == 'video/mp4' || files[0].type == 'application/pdf' || files[0].type == 'image/jpg' || files[0].type == 'image/jpeg' || files[0].type == 'image/png' || files[0].type == 'image/webp')) {
+        this.mediaType = files[0].type
+        let fileSize = files[0].size;
+
+        const fileSizeInMB: number = parseFloat((fileSize / (1024 * 1024)).toFixed(2));
+        const imageSizeInMB: number = parseFloat((5 * 1024 * 1024 / (1024 * 1024)).toFixed(2));
+        const docVideoSizeInMB: number = parseFloat((10 * 1024 * 1024 / (1024 * 1024)).toFixed(2));
+
+        const data = new FormData();
+        data.append('dataFile', imageFile, imageFile.name);
+
+        if ((this.mediaType == 'video/mp4' || this.mediaType == 'application/pdf') && fileSizeInMB > docVideoSizeInMB) {
+          this.showToaster('Video / Document File size exceeds 10MB limit', 'error');
+        }
+
+        else if ((this.mediaType == 'image/jpg' || this.mediaType == 'image/jpeg' || this.mediaType == 'image/png' || this.mediaType == 'image/webp') && fileSizeInMB > imageSizeInMB) {
+          this.showToaster('Image File size exceeds 5MB limit', 'error');
+        }
+
+        else {
+          let name = 'teambox'
+          this.apiService.uploadfile(data, spid, name).subscribe(uploadStatus => {
+            let responseData: any = uploadStatus
+            if (responseData.filename) {
+              console.log(responseData)
+              console.log(responseData.filename)
+
+              this.messageMediaFile = responseData.filename;
+              this.messageMeidaFile = responseData.filename;
+              console.log(this.messageMeidaFile);
+              // this.attachmentMedia = responseData.filename;
+              // this.mediaSize=responseData.fileSize
+
+              this.sendattachfile();
+              console.log(this.messageMeidaFile);
+              this.showAttachmenOption = false;
+              this.isUploadingLoader = false;
+            }
+
+          });
+        }
+      } else {
+        this.showToaster('Please select valid file type', 'error')
+      }
+
+    };
+  }
+
+  sendattachfile() {
+    console.log(this.messageMediaFile)
+    if (this.isAttachmentMedia === false) {
+      if (this.messageMediaFile !== '') {
+        $("#sendfile").modal('show');
+      } else {
+        $("#sendfile").modal('hide');
+      }
+    } else {
+      let mediaCategory;
+      if (this.mediaType.startsWith('image/')) {
+        mediaCategory = 'image';
+      } else if (this.mediaType.startsWith('video/')) {
+        mediaCategory = 'video';
+      } else if (this.mediaType === 'application/') {
+        mediaCategory = 'document';
+      }
+    }
+  }
+
+  showToaster(message: any, type: any) {
+    if (type == 'success') {
+      this.successMessage = message;
+    } else if (type == 'error') {
+      this.errorMessage = message;
+    } else {
+      this.warningMessage = message;
+    }
+    setTimeout(() => {
+      this.hideToaster()
+    }, 5000);
+
+  }
+
+  hideToaster() {
+    this.successMessage = '';
+    this.errorMessage = '';
+    this.warningMessage = '';
+  }
+
+
+  attachMedia(Link: string, media_type: string) {
+    console.log(Link)
+    console.log(media_type)
+    this.closeAllModal()
+    let mediaName
+    const fileNameWithPrefix = Link.substring(Link.lastIndexOf('/') + 1);
+    let originalName;
+    let getMimeTypePrefix = this.getMimeTypePrefix(media_type);
+    if (getMimeTypePrefix === 'video/') {
+      originalName = fileNameWithPrefix.substring(0, fileNameWithPrefix.lastIndexOf('-'));
+      originalName = originalName + fileNameWithPrefix.substring(fileNameWithPrefix.lastIndexOf('.'));
+    } else {
+      originalName = fileNameWithPrefix.substring(fileNameWithPrefix.indexOf('-') + 1);
+    }
+    console.log(getMimeTypePrefix);
+    if (getMimeTypePrefix === 'image') {
+      mediaName = '<p class="custom-class-attachmentType"><img src="/assets/img/teambox/photo-icon.svg" alt="icon"> ' + originalName + '</p>'
+    }
+    else if (getMimeTypePrefix === 'video') {
+      mediaName = '<p class="custom-class-attachmentType"><img src="/assets/img/teambox/video-icon.svg" alt="icon"> ' + originalName + '</p>'
+    }
+    else {
+      media_type = 'document';
+      getMimeTypePrefix = 'document';
+      mediaName = '<p class="custom-class-attachmentType"><img src="/assets/img/teambox/document-icon.svg" alt="icon"/>' + originalName + '</p><br>'
+    }
+    console.log("mediaName", mediaName)
+    const editorElement = this.dynamiceEditor?.contentModule?.getEditPanel?.();
+    console.log("editorElement", editorElement)
+
+    if (editorElement) {
+      const existingMediaElement = editorElement.querySelector('.custom-class-attachmentType');
+
+      if (existingMediaElement) {
+        const newElement = document.createElement('div');
+        newElement.innerHTML = mediaName + '<br>';
+        editorElement.replaceChild(newElement.firstElementChild!, existingMediaElement);
+        console.log("editorValue", editorElement)
+      } else {
+        const editorValue = this.dynamiceEditor.value ?? '<br>';
+        this.dynamiceEditor.value = mediaName + editorValue;
+        console.log("editorValue", editorValue)
+      }
+    }
+    this.mediaType = media_type
+    this.messageMediaFile = Link;
+    let item = {
+      media_type: getMimeTypePrefix,
+    }
+
+    if (this.cardType == "NotesMentionModal") {
+
+      this.notesmentionForm.patchValue({
+        file: Link,
+        mediaType: media_type
+      })
+    }
+    if (this.cardType == "NotificationModal") {
+      this.notificationForm.patchValue({
+        file: Link,
+        mediaType: media_type
+      })
+    }
+    this.addingStylingToMedia(item);
+  }
+
+
+  getMimeTypePrefix(mimeType: string): string {
+    return mimeType.split('/')[0];
+  }
+
+
+  addingStylingToMedia(item: any) {
+    if (item?.media_type === 'image' || item?.media_type === 'video' || item?.media_type === 'document') {
+      setTimeout(() => {
+        console.log(this.dynamiceEditor)
+        const editorContent = this.dynamiceEditor.element.querySelector('.e-content');
+        const mediaElements = editorContent?.querySelectorAll('img, video');
+        console.log("editorContent", editorContent)
+        console.log("mediaElements", mediaElements)
+
+        mediaElements?.forEach((element: any) => {
+          const media = element as HTMLElement;
+
+          media.style.width = '18px';
+          media.style.height = '10%';
+          media.style.position = 'inherit';
+          media.style.zIndex = '99';
+
+          const crossButton = document.createElement('button');
+          crossButton.textContent = '✖';
+          crossButton.style.position = 'absolute';
+          crossButton.style.right = '5px';
+          crossButton.style.zIndex = '100';
+          crossButton.style.background = '#ffffff';
+          crossButton.style.color = 'red';
+          crossButton.style.width = '24px';
+          crossButton.style.border = 'none';
+          crossButton.style.outline = 'none';
+          crossButton.style.borderRadius = '50%';
+          crossButton.style.cursor = 'pointer';
+          crossButton.style.pointerEvents = 'auto';
+
+          const parentElement = media.parentElement as HTMLElement;
+          parentElement.style.position = 'relative';
+          parentElement.style.width = '34%';
+          parentElement.style.overflow = 'hidden';
+          parentElement.style.textOverflow = 'ellipsis';
+          parentElement.style.whiteSpace = 'nowrap';
+          parentElement.style.paddingRight = '30px';
+          parentElement.style.border = '0.5px solid';
+          parentElement.style.padding = '4px';
+
+          parentElement.style.pointerEvents = 'none';
+          parentElement.setAttribute('contenteditable', 'false');
+          parentElement.appendChild(crossButton);
+
+          crossButton.addEventListener('click', () => {
+            const mediaNameElement = editorContent?.querySelector('.custom-class-attachmentType');
+            if (mediaNameElement) {
+              mediaNameElement.remove();
+            }
+            if (this.mediaType) {
+              this.mediaType = ''
+              this.messageMediaFile = ''
+            }
+            media.remove();
+            crossButton.remove();
+          });
+        });
+      }, 0);
+    }
+  }
+
+  openBotVariableModal() {
+    const selection = window.getSelection();
+    this.lastCursorPosition = selection?.getRangeAt(0) || null;
+    $('#botVariable').modal('show')
+  }
+
+
+  fallbackValue: any = ''
+  applyAttribute() {
+
+    this.closeAllModal();
+  }
+
+
+  stopPropagation(event: Event) {
+    event.stopPropagation();
+  }
+
+  InsertMentionOption(user: any) {
+    let content: any = this.chatEditors.value || '';
+    content = content.replace(/<p[^>]*>/g, '').replace(/<\/p>/g, '');
+    content = content + '<span contenteditable="false" class="e-mention-chip"><a _ngcontent-yyb-c67="" href="mailto:" title="">@' + user?.name + '</a></span>'
+    this.chatEditors.value = content;
+    // content = content+'<span> </span>'
+    // this.chatEditor.value = content;
+    setTimeout(() => {
+      this.attachMentionHandlers();
+    }, 10);
+    this.showMention = false;
+    //this.selectInteraction(this.selectedInteraction)
+  }
+
+  attachMentionHandlers() {
+    const mentions = document.getElementById('defaultRTE')?.querySelectorAll('.mention');
+    mentions?.forEach((mention: HTMLElement | any) => {
+      mention.addEventListener('click', this.moveCursorToEndOfMention);
+    });
+  }
+
+  moveCursorToEndOfMention(event: MouseEvent) {
+    const mention = event.target as HTMLElement;
+    if (mention && mention.nextSibling) {
+      const range = document.createRange();
+      const selection = window.getSelection();
+      range.setStartAfter(mention);
+      range.collapse(true);
+      selection?.removeAllRanges();
+      selection?.addRange(range);
+    }
+  }
+
+  get shouldShowNoData(): boolean {
+    return this.agentsList.length === 0 || !this.agentsList.some((user: any) => user.uid !== this.userDetails.uid);
+  }
+
+
+
+
+  isSidebarCollapsed = false;
+
+  // Add this method to your component class
+  toggleSidebar() {
+    this.isSidebarCollapsed = !this.isSidebarCollapsed;
+  }
+
+
+
+
+
+  async saveChatbot(type: any): Promise<void> {
+    this.orignalData = {};
+    const exportData: any = this.editor.export();
+    const exportNodesData: any = Object.values(exportData?.drawflow?.Home?.data);
+
+
+    var data = {
+      status: '',
+      node_FE_Json: JSON.stringify(exportData),
+      botId: localStorage.getItem('botId'),
+      SPID: this.userDetails.SP_ID,
+      nodes: []
+    }
+
+    if (type == 'submit') {
+      data.status = 'draft'
+
+    } else {
+      let isStructureValid = true;
+      // Check each node's inputs/outputs are connected
+      exportNodesData.forEach((node: any) => {
+        const isFullyConnected = this.checkAllInputsAndOutputsConnected(node);
+        if (!isFullyConnected) {
+          isStructureValid = false;
+          console.warn(`❌ Node ${node.id} is not fully connected`);
+        }
+      });
+
+      // Check every input/output is used only once (1-to-1)
+      const isOneToOneValid = this.checkOnlyOneToOneConnections(exportData);
+      if (!isOneToOneValid) {
+        isStructureValid = false;
+        console.warn('❌ Some inputs/outputs are connected more than once');
+      }
+
+      if (!isStructureValid) {
+        alert('Some nodes are either not fully connected or have multiple connections per port.');
+        return;
+      }
+      const flowData: any = this.getFullFlowJson();
+
+      data.status = 'publish'
+      data.nodes = flowData
+      console.log("Flow Data:", flowData);
+    }
+
+    this.botService.submitBot(data).subscribe((res: any) => {
+
+      this.showToaster('Changes saved successfully', 'success')
+
+      this.router.navigate(['/bot-builder']);
+
+    })
+    // submitBots
+  }
+
+
+  checkOnlyOneToOneConnections(drawflowData: any): boolean {
+    const nodes = drawflowData?.drawflow?.Home?.data;
+    if (!nodes) return false;
+
+    const inputMap = new Map();  // Tracks each input's connections
+    const outputMap = new Map(); // Tracks each output's connections
+
+    for (const nodeId in nodes) {
+      const node = nodes[nodeId];
+
+      // Check outputs
+      for (const outputKey in node.outputs) {
+        const connections = node.outputs[outputKey].connections;
+
+        for (const conn of connections) {
+          const outputId = `${node.id}-${outputKey}`;
+          const inputId = `${conn.node}-${conn.output}`;
+
+          // Count output usage
+          if (outputMap.has(outputId)) {
+            return false; // ❌ More than one connection from a single output
+          }
+          outputMap.set(outputId, true);
+
+          // Count input usage
+          if (inputMap.has(inputId)) {
+            return false; // ❌ More than one connection to a single input
+          }
+          inputMap.set(inputId, true);
+        }
+      }
+    }
+
+    return true; // ✅ All connections are 1-to-1
+  }
+
+
+  checkAllInputsAndOutputsConnected(node: any): boolean {
+    console.log(node)
+    if (!node || !node.inputs || !node.outputs) {
+      return false; // or handle differently based on your use case
+    }
+
+    const allInputsConnected = Object.keys(node.inputs).every(
+      key => node.inputs[key]?.connections?.length > 0
+    );
+
+    const allOutputsConnected = Object.keys(node.outputs).every(
+      key => node.outputs[key]?.connections?.length > 0
+    );
+
+    return allInputsConnected && allOutputsConnected;
+  }
+
+
+  private getFullFlowJson(): any {
+    const exportData = this.editor.export();
+    console.log("exportData", exportData)
+    const allNodes = exportData.drawflow.Home.data;
+
+    const connections: any[] = [];
+    const finalNodes: any[] = [];
+
+    // Collect all connections
+    Object.entries(allNodes).forEach(([id, node]: [string, any]) => {
+      Object.entries(node.outputs).forEach(([outputKey, output]: [string, any]) => {
+        output.connections.forEach((connection: any) => {
+          connections.push({
+            sourceNode: node.id,
+            sourceOutput: outputKey,
+            targetNode: connection.node,
+            targetInput: connection.output
+          });
+        });
+      });
+    });
+
+    // Process each node
+    Object.entries(allNodes).forEach(([id, node]: [string, any]) => {
+      const formData = node.data.formData || {};
+      console.log("formData", node.data)
+      const isQuestionOption = node.data.text === 'questionOption' || node.data.text === "buttonOptions";
+
+      // Filter and sort connections by targetNode (ascending order)
+      const nodeConnections = connections
+        .filter(conn => conn.sourceNode === node.id)
+
+      console.log()
+
+      const nodeObj: any = {
+        nodeId: node.id,
+        nodeType: node.data.text,
+        connectedId: null,
+        FallbackId: null,
+        option: [],
+        data: formData
+      };
+
+      if (nodeConnections.length > 0) {
+        nodeObj.connectedId = nodeConnections[0]?.targetNode ?? null;
+
+        // If fallback is enabled and there's a second connection
+        if (formData.invalidAction === 'fallback' && nodeConnections.length > 1) {
+          nodeObj.FallbackId = nodeConnections[1]?.targetNode ?? null;
+        }
+
+
+        if (isQuestionOption) {
+          var optionNames = formData.options || formData.buttons || [];
+
+          const skipIndexes = [0]; // Skip connectedId
+          if (formData.invalidAction === 'fallback' && nodeConnections.length > 1) {
+            skipIndexes.push(1); // Skip fallback
+          }
+          optionNames = optionNames.reverse();
+          nodeConnections.forEach((conn, idx) => {
+            if (!skipIndexes.includes(idx)) {
+              const labelIndex = idx - skipIndexes.length;
+              nodeObj.option.push({
+                optionConnectedId: conn.targetNode,
+                name: optionNames[labelIndex] || `Option ${labelIndex + 1}`
+              });
+            }
+          });
+        }
+      }
+
+      finalNodes.push(nodeObj);
+    });
+
+    return finalNodes;
+  }
+
+
+  closeBotCreateion(type: any) {
+
+    if (type == 'Publish') {
+      $('#Publish').modal('show')
+    } else {
+      $('#draft').modal('show')
+
+    }
+
+  }
+
+
 
 }

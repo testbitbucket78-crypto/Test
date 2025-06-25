@@ -1,4 +1,5 @@
-import { Component, ElementRef, HostListener, ViewChild, OnInit } from '@angular/core';
+import { Component, ElementRef, HostListener, ViewChild, OnInit, AfterViewInit } from '@angular/core';
+import { environment } from './../../../../environments/environment';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { SettingsService } from 'Frontend/dashboard/services/settings.service';
@@ -25,9 +26,11 @@ export class BotBuilderComponent implements OnInit {
   @ViewChild('createFlowModal') createFlowModal!: ElementRef;
   @ViewChild('filterBot') filterBotId!: ElementRef<any>;
 
+
   // Form Groups
   botBuilderForm!: FormGroup;
   dateRangeForm!: FormGroup;
+  private bsModalInstance: any;
 
   // Data
   botDetailsData: any = null
@@ -35,28 +38,6 @@ export class BotBuilderComponent implements OnInit {
   searchKey = '';
   channelPhoneNumber: string = '';
   channelSelected: string = '';
-  // botsList:any = [
-  //   {
-  //     id: 'BOT-001',
-  //     name: 'Customer Support Bot',
-  //     status: 'Published',
-  //     createdOn: '2025-04-25T14:35:00Z',
-  //     created_By: 'John Doe',
-  //     invoked: 120,
-  //     completed: 85,
-  //     dropped: 35,
-  //     Channel: 'WA API',
-  //     advanceAction: {
-  //       selected: [
-  //         { name: 'Assign Agent', value: 'assign_agent' },
-  //         { name: 'Update Status', value: 'update_status' }
-  //       ]
-  //     }
-  //   },
-
-  // ];
-
-
   botsList: any = [];
 
   originalBotsList: any
@@ -79,7 +60,7 @@ export class BotBuilderComponent implements OnInit {
 
   filterListStatus: FilterOption[] = [
     { value: 0, label: 'draft', checked: false },
-    { value: 1, label: 'Published', checked: false },
+    { value: 1, label: 'publish', checked: false },
     { value: 2, label: 'Deprecated', checked: false },
   ];
 
@@ -117,6 +98,44 @@ export class BotBuilderComponent implements OnInit {
   errorMessage: string = '';
   warningMessage: string = '';
   ShowAssignOption: any = false;
+
+  // Data arrays
+  agentsList: any[] = [];
+  userList: any[] = [];
+  addTagList: any[] = [];
+  removeTagList: any[] = [];
+  assignedAgentList: any[] = [];
+  assignedTagList: any[] = [];
+  assignedTagListUuid: any[] = [];
+  assignedRemoveTagList: any[] = [];
+  assignedRemoveTagListUuid: any[] = [];
+  converstatation: string[] = [];
+
+  // State
+  isAssigned = false;
+  isEditAssigned = false;
+  AssignedIndex = 0;
+  ShowRemoveTag = false;
+  ShowAddAction = false;
+  ToggleAssignOption = false;
+  selectedStatus = '';
+  selectedExclusiveAction: any = null;
+  editedText = '';
+
+  // Constants
+  converstationStatus = [
+    { name: 'Resolve', value: 'resolve' },
+    { name: 'Open', value: 'open' }
+  ];
+
+  assignActionList = [
+    { name: 'Assign to contact owner', value: 'assign_owner', selected: false },
+    { name: 'Unassign conversation', value: 'Unassign_conversation', selected: false },
+    { name: 'Assign to Agent', value: 'assign_agent', children: this.agentList, selected: false },
+    { name: 'Mark Conversation Status', value: 'Mark_Status', children: this.converstationStatus, selected: false },
+    { name: 'Add Tag', value: 'Add_Tag', children: this.tagList, multiSelect: true, selected: false },
+    { name: 'Remove Tag', value: 'Remove_Tag', children: this.removeTagList, multiSelect: true, selected: false }
+  ];
 
 
   // RTE Configuration
@@ -171,11 +190,17 @@ export class BotBuilderComponent implements OnInit {
     private router: Router,
     public botService: BotserviceService,
   ) {
-    this.profilePicture = JSON.parse(sessionStorage.getItem('loginDetails')!).profile_img;
+    this.profilePicture = JSON.parse(sessionStorage.getItem('loginDetails')!)?.profile_img;
     this.userDetails = JSON.parse(sessionStorage.getItem('loginDetails')!);
+
+
+    // if (settingsService?.checkRoleExist('24')) {
+    //   this.router.navigateByUrl('/login');
+    // }
 
     this.initForms();
   }
+
 
   ngOnInit() {
     this.getWhatsAppDetails();
@@ -184,9 +209,6 @@ export class BotBuilderComponent implements OnInit {
     this.getBotDetails()
 
     this.statusColors = this.botService.statusColors;
-
-
-    // this.originalBotsList = [...this.botsList];
   }
 
   private initForms(): void {
@@ -194,6 +216,7 @@ export class BotBuilderComponent implements OnInit {
       name: [null, [Validators.required, Validators.maxLength(20)]],
       botDescription: [null, [Validators.required, Validators.maxLength(80)]],
       botChannel: [null, Validators.required],
+      triggerKeywords: [null, Validators.required],
       botChannelId: [null, Validators.required],
       botTimeout: [null, Validators.required],
       dropOfMessage: [null],
@@ -210,7 +233,7 @@ export class BotBuilderComponent implements OnInit {
 
 
   getBotDetails() {
-    var SPID = this.userDetails.SP_ID
+    var SPID = this.userDetails?.SP_ID || 159
     this.botService.getBotAlldetails(SPID).subscribe((res: any) => {
       if (res.status == 200) {
 
@@ -221,11 +244,6 @@ export class BotBuilderComponent implements OnInit {
 
 
     })
-    // this.botService.getBotAlldetails(SPID).subscribe((res:any)=>{
-
-    //   console.log(res)
-
-    // })
   }
 
 
@@ -255,9 +273,6 @@ export class BotBuilderComponent implements OnInit {
   }
 
 
-  // applyFilterOnBotBuilder(): void {
-  //   // Implement your filtering logic here
-  // }
 
   // Modal and Form Methods
   openModal(content: any): void {
@@ -266,12 +281,14 @@ export class BotBuilderComponent implements OnInit {
   }
 
   closeModalById(modalId: string): void {
+    this.botBuilderForm.reset()
     const modalElement = document.getElementById(modalId);
     if (modalElement) {
       const modalInstance = bootstrap.Modal.getInstance(modalElement) || new bootstrap.Modal(modalElement);
       modalInstance.hide();
     }
     this.resetBotForm();
+    console.log(this.botBuilderForm.value)
   }
 
   resetBotForm(): void {
@@ -285,29 +302,85 @@ export class BotBuilderComponent implements OnInit {
     this.tempSelections = null;
     this.multiSelect = [];
     this.showAdvanceOption = false;
+    this.assignedAgentList = []
+
   }
 
+  sanitizeHTML(rawHtml: string): string {
+    return rawHtml.replace(/style="[^"]*"/g, '');
+  }
   // Bot Management Methods
-  toggleTemplatesData(item: Bot | null): void {
+  toggleTemplatesData(item: any | null): void {
     this.showCampaignDetails = !!item;
     this.botDetailsData = item;
+    console.log(item)
 
     if (item) {
       this.botBuilderForm.patchValue({
         name: item.name,
-        botDescription: item.botDescription,
-        botChannel: item.Channel,
-        botTimeout: item.botTimeout,
-        dropOfMessage: item.dropOfMessage,
-        advanceAction: {
-          selected: item?.advanceAction?.selected || []
-        }
+        botDescription: item.description,
+        botChannel: item.channel_id,
+        botChannelId: item.channel_id,
+        botTimeout: item.timeout_value,
+        dropOfMessage: this.sanitizeHTML(item.timeout_message),
+        triggerKeywords: item.keywords,
+        // advanceAction: {
+        //   selected: JSON.parse(item?.advanceAction) || []
+        // }
       });
       this.selectedAdvanceAction = null;
     }
+
+    let keywordArray = item?.keywords?.split(',').map((k: any) => k.trim());
+    console.log(keywordArray)
+    if (keywordArray == undefined) {
+      this.keywords = []
+    } else {
+      this.keywords = keywordArray
+    }
+
+
+    this.assignedAgentList = JSON.parse(item?.advanceAction) || []
+
+    const matchedActionValues: any = this.assignedAgentList
+      .filter(item => this.actionIdToValue.hasOwnProperty(item.actionTypeId))
+      .map(item => this.actionIdToValue[item.actionTypeId]);
+    console.log(matchedActionValues)
+    this.selectedExclusiveAction = matchedActionValues[0]
+
+
+    this.assignedAgentList.forEach((item: any) => {
+      if (item.actionTypeId == 1) {
+
+        this.assignedTagList = item.Value
+      } else if (item.actionTypeId == 3) {
+        this.assignedRemoveTagList = item.Value
+
+      } else if (item.actionTypeId == 4) {
+
+        this.converstatation = item.Value
+      }
+    })
+
+
+    if (this.assignedAgentList?.length > 0 || item.timeout_message != null) {
+      this.showAdvanceOption = true
+    }
+
+
   }
 
-  submitBotForm(): void {
+
+  submitBotForm(Type: any): void {
+
+    console.log("this.botBuilderForm.value", this.botBuilderForm.value)
+    Object.keys(this.botBuilderForm.controls).forEach(key => {
+      const control = this.botBuilderForm.get(key);
+      if (control && control.invalid) {
+        console.warn(`Invalid field: ${key}`, control.errors);
+      }
+    });
+
     if (this.botBuilderForm.invalid) {
       this.botBuilderForm.markAllAsTouched();
       return;
@@ -315,6 +388,9 @@ export class BotBuilderComponent implements OnInit {
 
     if (this.botBuilderForm.valid) {
       const formData = this.botBuilderForm.value;
+      // if (Type == 'copy') {
+      //   formData.name = formData.copyBotName
+      // }
       const data = {
         spid: this.userDetails.SP_ID,
         name: formData.name,
@@ -323,12 +399,19 @@ export class BotBuilderComponent implements OnInit {
         status: 'draft',
         timeout_value: formData.botTimeout,
         timeout_message: formData.dropOfMessage,
-        created_by: this.userDetails.uid,
+        created_by: this.userDetails.name,
+        keyword: formData.triggerKeywords,
+        advanceAction: this.assignedAgentList
       };
 
-      this.settingsService.saveBotDetails(data).subscribe((response: any) => {
+      this.botService.saveBotDetails(data).subscribe((response: any) => {
         if (response.status === 200) {
           this.botBuilderForm.reset();
+          localStorage.setItem('botId', response.botId)
+          this.closeModalById('createBotModal');
+          this.closeModalById('copyBot');
+          this.router.navigate(['/bot-Creation']);
+          this.showToaster('success', response.message)
         } else {
           this.showToaster('error', response.message);
         }
@@ -337,19 +420,57 @@ export class BotBuilderComponent implements OnInit {
   }
 
   updateBotForm(): void {
+    console.log("this.botBuilderForm.valid", this.botBuilderForm.valid)
+    Object.keys(this.botBuilderForm.controls).forEach(controlName => {
+      const control = this.botBuilderForm.get(controlName);
+      console.log(`${controlName} -> Valid: ${control?.valid}, Value: ${control?.value}, Errors:`, control?.errors);
+    });
     if (this.botBuilderForm.valid) {
       const formData = this.botBuilderForm.value;
-      console.log('Updated bot data:', formData);
-      this.closeModalById('editFlowModal');
-      this.router.navigate(['/bot-Creation']);
+
+      if (this.botBuilderForm.valid) {
+        const formData = this.botBuilderForm.value;
+        const data = {
+          spid: this.userDetails.SP_ID,
+          botId: this.botDetailsData.id,
+          name: formData.name,
+          description: formData.botDescription,
+          channel_id: formData.botChannelId,
+          status: 'draft',
+          timeout_value: formData.botTimeout,
+          timeout_message: formData.dropOfMessage,
+          created_by: this.userDetails.name,
+          keyword: formData.triggerKeywords,
+          advanceAction: this.assignedAgentList
+        };
+
+        this.botService.updateBotDetails(data).subscribe((response: any) => {
+          if (response.status === 200) {
+            this.botBuilderForm.reset();
+            if (this.botDetailsData.node_FE_Json) {
+              localStorage.setItem('node_FE_Json', this.botDetailsData.node_FE_Json)
+            }
+            localStorage.setItem('botId', this.botDetailsData.id)
+            this.closeModalById('editFlowModal');
+            this.router.navigate(['/bot-Creation']);
+            this.showToaster('success', response.message)
+          } else {
+            this.showToaster('error', response.message);
+          }
+        });
+
+      }
+
     }
   }
 
-  copyBot(): void {
-    this.botBuilderForm.addControl(
-      'copyBotName',
-      this.fb.control(null, [Validators.required, Validators.maxLength(20)])
-    );
+  copyBot(Type: any): void {
+    if (Type == 'copy') {
+      this.botBuilderForm.get('name')?.setValue(null)
+    } else {
+      this.botBuilderForm.get('name')?.setValue(this.botDetailsData.name)
+    }
+
   }
 
   // 	toggleAddActions() {
@@ -357,22 +478,28 @@ export class BotBuilderComponent implements OnInit {
   // 	this.ShowAddAction = !this.ShowAddAction;
   // }
 
-  copyBotForm(): void {
-    if (this.botBuilderForm.valid) {
-      const formData = this.botBuilderForm.value;
-      this.closeModalById('copyBot');
-      this.router.navigate(['/bot-Creation']);
-      // this.botBuilderForm.removeControl('copyBotName');
-    }
-  }
 
   confirmDelete(): void {
     if (!this.botDetailsData?.id) return;
 
-    this.botsList = this.botsList.filter((bot: any) => bot.id !== this.botDetailsData.id);
+    // this.botsList = this.botsList.filter((bot: any) => bot.id !== this.botDetailsData.id);
+
+    this.botService.deleteBotDetails(this.userDetails.SP_ID, this.botDetailsData.id).subscribe((response: any) => {
+      if (response.status === 200) {
+        this.botBuilderForm.reset();
+        this.closeModalById('deleteBotModal');
+        this.closeModalById('deprecated');
+        this.showToaster('success', response.message)
+        this.getBotDetails()
+      } else {
+        this.showToaster('error', response.message);
+      }
+    });
+
 
     // req.params.spid, req.params.botId
     this.closeModalById('deleteBotModal');
+    this.closeModalById('deprecated');
     this.showCampaignDetails = false;
     this.botDetailsData = null;
   }
@@ -423,82 +550,8 @@ export class BotBuilderComponent implements OnInit {
   }
 
   // UI Helper Methods
-  onDateOptionChange(option: string): void {
-    this.showDatePickers = option === 'custom';
-    if (option !== 'custom') {
-      this.dateRangeForm.patchValue({ fromDate: null, toDate: null });
-      this.dateError = null;
-    }
-  }
 
-  validateDate(): void {
-    const fromDate = this.dateRangeForm.value.fromDate;
-    const toDate = this.dateRangeForm.value.toDate;
 
-    if (fromDate && toDate) {
-      this.dateError = this.botService.validateDateRange(fromDate, toDate);
-    } else {
-      this.dateError = null;
-    }
-  }
-
-  // Advance Action Methods
-  handleActionClick(action: any): void {
-    this.selectedParentAction = action;
-
-    if (!action.children || action.children.length === 0) {
-      this.botBuilderForm.patchValue({ advanceAction: action });
-      this.showAdvanceAction = false;
-      return;
-    }
-
-    this.submenuTitle = action.name;
-    this.submenuOptions = action.children || [];
-    this.showSubmenuPanel = true;
-
-    const prev = this.botBuilderForm.value.advanceAction;
-    if (action.multiSelect) {
-      this.multiSelect = prev?.selectedChildren || [];
-    } else {
-      this.tempSelections = prev?.selectedChild || null;
-    }
-  }
-
-  selectAdvanceAction(child: any): void {
-    if (this.selectedParentAction?.multiSelect) {
-      const index = this.multiSelect.findIndex((c: any) => c.value === child.value);
-      index > -1 ? this.multiSelect.splice(index, 1) : this.multiSelect.push(child);
-    } else {
-      this.tempSelections = child;
-    }
-  }
-
-  confirmSelection(): void {
-    const actionValue = this.selectedParentAction?.multiSelect
-      ? { ...this.selectedParentAction, selectedChildren: [...this.multiSelect] }
-      : { ...this.selectedParentAction, selectedChild: this.tempSelections };
-
-    this.botBuilderForm.patchValue({ advanceAction: actionValue });
-    this.showAdvanceAction = false;
-    this.showSubmenuPanel = false;
-    this.searchText = '';
-  }
-
-  getAdvanceActionDisplayValue(): string {
-    const action = this.botBuilderForm.value.advanceAction;
-    if (!action) return '';
-
-    if (action.multiSelect && action.selectedChildren?.length) {
-      const childNames = action.selectedChildren.map((c: any) => c.name).join(', ');
-      return `${action.name} (${childNames})`;
-    }
-
-    if (action.selectedChild) {
-      return `${action.name} (${action.selectedChild.name})`;
-    }
-
-    return action.name;
-  }
 
   // Notification Methods
   showToaster(type: 'success' | 'error' | 'warning', message: string): void {
@@ -526,9 +579,7 @@ export class BotBuilderComponent implements OnInit {
     this.errorMessage = '';
     this.warningMessage = '';
   }
-  // toggleAssignOption() {
-  //   this.ShowAssignOption = !this.ShowAssignOption
-  // }
+
   updateDropdown(id: string) {
     const selectedChannel = this.channelOption.find((channel: any) => channel.connected_id === id);
     if (selectedChannel) {
@@ -543,14 +594,21 @@ export class BotBuilderComponent implements OnInit {
     this.showAdvanceOption = !this.showAdvanceOption;
   }
 
+  showTriggerOption: any = false
+  toggleOptions(type: any = '') {
+    if (type == 'bot') {
+      this.showTriggerOption = !this.showTriggerOption
+    } else {
 
-  toggleOptions() {
-    this.showOptions = !this.showOptions;
+      this.showOptions = !this.showOptions;
+    }
   }
 
-  setSelectedCategory(index: number) {
-    this.selectedCategory = index;
-  }
+  // setSelectedCategory(index: number) {
+  //   this.selectedCategory = index;
+  // }
+
+  // check
 
   updateFilter(event: any, filter: any) {
     if (event.target.checked) {
@@ -560,6 +618,8 @@ export class BotBuilderComponent implements OnInit {
       filter['checked'] = false;
     }
   }
+
+  // check
 
   clearFilters() {
     this.filterListStatus.forEach(filter => filter.checked = false);
@@ -603,13 +663,6 @@ export class BotBuilderComponent implements OnInit {
     this.ShowChannelOption = false;
   }
 
-  toggleAdvanceAction() {
-    this.showAdvanceAction = !this.showAdvanceAction;
-    // this.ShowAssignOption = true
-    this.ShowAddAction = true
-    this.showSubmenuPanel = false;
-  }
-
   filteredSubmenuOptions() {
     console.log(this.submenuOptions)
     return this.submenuOptions.filter(opt =>
@@ -630,254 +683,198 @@ export class BotBuilderComponent implements OnInit {
   }
 
 
-  confirmAndExport(modal: any) {
-    var downloadIcon = document.querySelector(".btn-circle-download");
-    if (downloadIcon) {
-      downloadIcon.classList.add("load");
+  onDateOptionChange(option: string): void {
+    this.showDatePickers = option === 'custom';
+
+    const today = new Date();
+    const yesterday = new Date(today);
+    yesterday.setDate(today.getDate() - 1);
+
+    if (option === '7Days') {
+      const fromDate = new Date(yesterday);
+      fromDate.setDate(yesterday.getDate() - 6); // 7 days including yesterday
+
+      this.dateRangeForm.patchValue({
+        fromDate: this.formatDate(fromDate),
+        toDate: this.formatDate(yesterday)
+      });
+    } else if (option === '30Days') {
+      const fromDate = new Date(yesterday);
+      fromDate.setDate(yesterday.getDate() - 29); // 30 days including yesterday
+
+      this.dateRangeForm.patchValue({
+        fromDate: this.formatDate(fromDate),
+        toDate: this.formatDate(yesterday)
+      });
+    } else if (option !== 'custom') {
+      this.dateRangeForm.patchValue({ fromDate: null, toDate: null });
     }
+
+    this.dateError = null;
+  }
+
+  formatDate(date: Date): string {
+    return date.toISOString().split('T')[0];
+  }
+
+
+  validateDate(): void {
+    const fromDate = this.dateRangeForm.value.fromDate;
+    const toDate = this.dateRangeForm.value.toDate;
+
+    if (fromDate && toDate) {
+      this.dateError = this.botService.validateDateRange(fromDate, toDate);
+    } else {
+      this.dateError = null;
+    }
+  }
+
+
+  confirmAndExport(modal: any) {
+
     if (this.dateRangeForm.valid && !this.dateError) {
       const selectedOption = this.dateRangeForm.value.dateOption;
       let fromDate, toDate;
+      console.log(this.dateRangeForm.value)
+
+      let data = {
+        spId: this.userDetails.SP_ID,
+        botId: this.botDetailsData.id,
+        startDate: this.dateRangeForm.value.fromDate,
+        endDate: this.dateRangeForm.value.toDate,
+        Channel: environment.chhanel
+      }
+
+      this.botService.exportBotDetails(data).subscribe((res: any) => {
+
+      })
+
+      // confirmAndExport
 
     }
   }
-
-
-
-
-
-
-
-  agentsList: any[] = [];
-  userList: any[] = [];
-  addTagList: any[] = [];
-  isAssigned: any = false;
-
-  getUserList() {
-    this.settingsService.getUserList(this.userDetails.SP_ID, 1)
-      .subscribe((result: any) => {
-        if (result) {
-          this.userList = result?.getUser;
-          this.userList.forEach((item: { name: string; nameInitials: string; }) => {
-            const nameParts = item.name.split(' ');
-            const firstName = nameParts[0] || '';
-            const lastName = nameParts[1] || '';
-            const nameInitials = firstName.charAt(0) + ' ' + lastName.charAt(0);
-
-            item.nameInitials = nameInitials;
-          });
-          this.agentsList = []
-          for (let i = 0; i < this.userList.length; i++) {
-            this.agentsList.push({
-              name: this.userList[i].name,
-              nameInitials: this.userList[i].nameInitials,
-              profileImg: this.userList[i].profile_img,
-              RoleName: this.userList[i].RoleName,
-              uuid: this.userList[i].uid
-            });
-          }
-        }
-
-      });
+  toggleAdvanceAction() {
+    this.showAdvanceAction = !this.showAdvanceAction;
+    this.ShowAddAction = true;
+    this.showSubmenuPanel = false;
   }
-  /*  GET TAG LIST  */
-  ShowRemoveTag = false;
-  removeTagList: any = []
-  getTagData() {
-    this.settingsService.getTagData(this.userDetails.SP_ID)
-      .subscribe(result => {
-        if (result) {
-          let tagListData = result.taglist;
-          this.addTagList = [...tagListData];
-          this.removeTagList = tagListData;
-        }
 
-      })
+
+  toggleAssignOptions() {
+    console.log(this.ShowAssignOption)
+    this.ShowAssignOption = !this.ShowAssignOption
+  }
+
+  // Methods
+  getUserList() {
+    this.settingsService.getUserList(this.userDetails.SP_ID, 1).subscribe((result: any) => {
+      if (result?.getUser) {
+        this.userList = result.getUser.map((user: any) => ({
+          ...user,
+          nameInitials: user.name.split(' ').map((part: any) => part.charAt(0)).join('')
+        }));
+        this.agentsList = this.userList.map(user => ({
+          name: user.name,
+          nameInitials: user.nameInitials,
+          profileImg: user.profile_img,
+          RoleName: user.RoleName,
+          uuid: user.uid
+        }));
+      }
+    });
+  }
+
+  getTagData() {
+    this.settingsService.getTagData(this.userDetails.SP_ID).subscribe(result => {
+      if (result?.taglist) {
+        this.addTagList = [...result.taglist];
+        this.removeTagList = [...result.taglist];
+      }
+    });
   }
 
   checkTagStatus(val: any, id: any) {
-    if (this.assignedTagList.includes(val) && id == 0) {
-      return true;
-    } if (this.assignedRemoveTagList.includes(val) && id == 1) {
-      return true;
-    } if (this.converstatation.includes(val) && id == 1) {
-      return true;
-    } else {
-      return false;
-    }
+    return (id === 0 && this.assignedTagList.includes(val)) ||
+      (id === 1 && this.assignedRemoveTagList.includes(val)) ||
+      (id === 2 && this.converstatation.includes(val));
   }
 
-  assignedAgentList: any[] = [];
-  isEditAssigned: boolean = false;
-  AssignedIndex: number = 0;
   assignConversation(index: number) {
-    var isExist = false;
-    this.assignedAgentList.forEach(item => {
-      if (item.ActionID == 2) {
-        if (item.Value == this.agentsList[index].name)
-          isExist = true;
-      }
-    })
-    if (!isExist) {
+    const agent = this.agentsList[index];
+    if (!this.assignedAgentList.some(item => item.actionTypeId === 2 && item.Value === agent.name)) {
       this.isAssigned = true;
-      if (this.isEditAssigned) {
-        this.assignedAgentList[this.AssignedIndex] = { ActionID: 2, Value: this.agentsList[index].name, ValueUuid: this.agentsList[index].uuid }
-      } else {
-        this.assignedAgentList.push({ ActionID: 2, Value: this.agentsList[index].name, ValueUuid: this.agentsList[index].uuid })
-      }
+      const assignment = { actionTypeId: 2, Value: agent.name, ValueUuid: agent.uuid };
+      this.isEditAssigned ? this.assignedAgentList[this.AssignedIndex] = assignment : this.assignedAgentList.push(assignment);
     }
-
   }
 
-  editedText:string ='';
-  	onActionEdit(Text: string) {
-		this.editedText = Text;
-
-	}
+  onActionEdit(text: string) { this.editedText = text; }
 
   toggleEditable(index: number) {
-  		// this.editableMessageIndex = index ;
-		if(this.assignedAgentList[index]?.ValueUuid){
-			this.ShowAssignOption = true;
-			this.isEditAssigned =true;
-			this.AssignedIndex = index;
-		}
+    if (this.assignedAgentList[index]?.ValueUuid) {
+      this.ShowAssignOption = true;
+      this.isEditAssigned = true;
+      this.AssignedIndex = index;
+    }
   }
 
-  	removeAction(index: number) {
+  removeAction(index: number) {
+    const action = this.assignedAgentList[index];
+    const actionMap: any = { 2: 'assign_agent', 4: 'Mark_Status', 5: 'assign_owner', 6: 'Unassign_conversation' };
+    if (actionMap[action.actionTypeId]) this.removeExclusiveAction(actionMap[action.actionTypeId]);
+    else this.assignedAgentList.splice(index, 1);
+  }
 
-		this.assignedAgentList.forEach(item => {
-			if (!item.Message) {
-				this.assignedAgentList.splice(index, 1);
-					
-			}
-		})
-		
-	}
+  toggleRemoveTag(type: 'addTag' | 'RemoveTag') {
+    $(`#${type}Modal`).modal('show');
+    this.ShowRemoveTag = true;
+  }
 
+  toggleEditableConverstion() {
+    $("#resolveAndOpen").modal('show');
+    this.ShowRemoveTag = false;
+  }
 
-  
-	toggleRemoveTag(type:any) {
+  removeAddTag(index: number) {
+    this.assignedTagList = [];
+    this.assignedAgentList.splice(index, 1);
+  }
 
-    if (type == 'addTag') {
-      $("#addTagModal").modal('show'); 
-    }else{
-      $("#RemoveTagModal").modal('show'); 
-      
-    }
-		this.ShowRemoveTag = true;
+  manageTags(index: number, e: any, listType: 'add' | 'remove') {
+    const list = listType === 'add' ? this.addTagList : this.removeTagList;
+    const tag = list[index];
+    const isChecked = e.target.checked;
+    const actionTypeId = listType === 'add' ? 1 : 3;
 
-	}
+    let existingAction = this.assignedAgentList.find(item => item.actionTypeId === actionTypeId) ||
+      { actionTypeId: actionTypeId, Value: [], ValueUuid: [], actionType: actionTypeId == 1 ? 'Add_Tag' : 'Remove_Tag' };
+    if (!this.assignedAgentList.some(item => item.actionTypeId === actionTypeId)) this.assignedAgentList.push(existingAction);
 
-  	removeAddTag(index: number) {
-		this.assignedTagList = [];
-		this.assignedAgentList.splice(index, 1);
+    const targetList = listType === 'add' ? this.assignedTagList : this.assignedRemoveTagList;
+    const targetUuidList = listType === 'add' ? this.assignedTagListUuid : this.assignedRemoveTagListUuid;
 
-	}
-
-
-  assignedTagList: any = []
-  assignedTagListUuid: any = []
-  addTags(index: number, e: any) {
-    console.log(e, index);
-    var isExist = false;
-    console.log(this.assignedTagList, ' tags list');
-    this.assignedAgentList.forEach(item => {
-      console.log(item)
-      if (item.ActionID == 1) {
-        isExist = true;
-        if (e.target.checked) {
-          if (!item.Value.includes(this.addTagList[index])) {
-            console.log(this.addTagList[index]);
-            // item.Value.push(this.addTagList[index]);
-            this.assignedTagList.push(this.addTagList[index].TagName);
-            this.assignedTagListUuid.push(this.addTagList[index].ID);
-          }
-        }
-        else {
-          var idx = this.assignedTagList.findIndex((item: any) => item == this.addTagList[index]?.TagName)
-          console.log(idx);
-          console.log(this.assignedTagList[idx]);
-          this.assignedTagList.splice(idx, 1);
-          this.assignedTagListUuid.splice(idx, 1);
-        }
-
+    if (isChecked) {
+      existingAction.Value.push(tag.TagName);
+      existingAction.ValueUuid.push(tag.ID);
+    } else {
+      const idx = existingAction.Value.indexOf(tag.TagName);
+      if (idx > -1) {
+        existingAction.Value.splice(idx, 1);
+        existingAction.ValueUuid.splice(idx, 1);
       }
-    })
-    if (!isExist) {
-      this.assignedTagList = [];
-      this.assignedTagList.push(this.addTagList[index].TagName);
-      this.assignedTagListUuid.push(this.addTagList[index].ID);
-      this.assignedAgentList.push({ ActionID: 1, Value: this.assignedTagList, ValueUuid: this.assignedTagListUuid, });
     }
-
   }
 
-  assignedRemoveTagList: any = []
-  assignedRemoveTagListUuid: any = []
-  RemoveTags(index: number, e: any) {
-    console.log(e, index);
-    var isExist = false;
-    this.assignedAgentList.forEach(item => {
-      if (item.ActionID == 3) {
-        isExist = true;
-        if (e.target.checked) {
-          if (!item.Value.includes(this.removeTagList[index])) {
-            this.assignedRemoveTagList.push(this.removeTagList[index].TagName);
-            this.assignedRemoveTagListUuid.push(this.removeTagList[index].ID);
-          }
-        }
-        else {
-          var idx = this.assignedRemoveTagList.findIndex((item: any) => item == this.removeTagList[index]?.TagName)
-          this.assignedRemoveTagList.splice(idx, 1);
-          this.assignedRemoveTagListUuid.splice(idx, 1);
-        }
-
-      }
-    })
-    if (!isExist) {
-      this.assignedRemoveTagList = [];
-      this.assignedRemoveTagList.push(this.removeTagList[index].TagName);
-      this.assignedRemoveTagListUuid.push(this.removeTagList[index].ID);
-      this.assignedAgentList.push({ ActionID: 3, Value: this.assignedRemoveTagList, ValueUuid: this.assignedRemoveTagListUuid });
-    }
-
+  openConverstaion(index: number) {
+    this.selectedStatus = this.converstationStatus[index].name;
+    this.converstatation = [this.selectedStatus];
+    const existingAction = this.assignedAgentList.find(item => item.actionTypeId === 4) ||
+      { actionTypeId: 4, Value: [this.selectedStatus], actionType: 'Mark_Status' };
+    if (!this.assignedAgentList.some(item => item.actionTypeId === 4)) this.assignedAgentList.push(existingAction);
+    else existingAction.Value = [this.selectedStatus];
   }
 
-
-  converstatation: any = []
-  openConverstaion(index: number, e: any) {
-    console.log(e, index);
-    var isExist = false;
-    this.assignedAgentList.forEach(item => {
-      console.log(item)
-      if (item.ActionID == 4) {
-        isExist = true;
-        if (e.target.checked) {
-          if (!item.Value.includes(this.converstationStatus[index])) {
-            this.converstatation.push(this.converstationStatus[index].name);
-          }
-        }
-        else {
-          var idx = this.converstatation.findIndex((item: any) => item == this.converstationStatus[index]?.name)
-          console.log(idx);
-          console.log(this.assignedRemoveTagList[idx]);
-          this.converstatation.splice(idx, 1);
-        }
-
-      }
-    })
-    if (!isExist) {
-      this.converstatation = [];
-      this.converstatation.push(this.converstationStatus[index].name);
-      this.assignedAgentList.push({ ActionID: 4, Value: this.converstatation });
-    }
-
-  }
-
-
-
-  ToggleAssignOption: boolean = false
+  showTagPopup: any = false
   closeAssignOption() {
     this.ShowAssignOption = false;
     this.ToggleAssignOption = !this.ToggleAssignOption;
@@ -886,124 +883,150 @@ export class BotBuilderComponent implements OnInit {
 
 
 
+  openAddTagModal() {
+    this.bsModalInstance.show(); // open modal
+  }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-  converstationStatus = [{ name: 'Resolve', value: 'resolve' }, { name: 'Open', value: 'open' }]
-  assignActionList = [{
-    name: 'Assign to contact owner',
-    value: 'assign_owner', selected: false
-  },
-  {
-    name: 'Unassign conversation',
-    value: 'Unassign_conversation', selected: false
-  },
-  {
-    name: 'Assign to Agent',
-    value: 'assign_agent',
-    children: this.agentList, selected: false
-  },
-  {
-    name: 'Mark Conversation Status',
-    value: 'Mark_Status',
-    children: [{ name: 'Resolve', value: 'resolve' }, { name: 'Open', value: 'open' }], selected: false
-  },
-  {
-    name: 'Add Tag',
-    value: 'Add_Tag',
-    children: this.tagList,
-    multiSelect: true, selected: false
-  },
-  {
-    name: 'Remove Tag',
-    value: 'Remove_Tag',
-    children: this.removeTagList,
-    multiSelect: true, selected: false
-  }];
-
-  ShowAddAction: any = false
   toggleAssignOption(index: number) {
-    const selectedValue = this.assignActionList[index].value;
-    const exclusiveActions = ['assign_owner', 'Unassign_conversation', 'Mark_Status', 'assign_agent'];
 
-    if (exclusiveActions.includes(selectedValue)) {
-      // Toggle selection - select if not selected, deselect if already selected
-      this.selectedExclusiveAction = this.selectedExclusiveAction === selectedValue ? '' : selectedValue;
-    }
+    console.log(this.assignActionList, index)
+    const action = this.assignActionList[index];
+    const modalMap: any = {
+      'Mark_Status': 'resolveAndOpen',
+      'Add_Tag': 'addTagModal',
+      'Remove_Tag': 'RemoveTagModal'
+    };
 
-    // Handle the specific actions
-    if (selectedValue === "assign_agent") {
+    console.log("modalMap", modalMap, modalMap[action.value])
+    if (modalMap[action.value]) {
+
+
+      $(`#${modalMap[action.value]}`).modal('show');
+      this.ShowAddAction = false;
+    } else if (action.value === "assign_agent") {
       this.ShowAssignOption = !this.ShowAssignOption;
       this.ShowAddAction = false;
     }
-    if (selectedValue === "Mark_Status") {
-      this.ShowRemoveTag = false;
-      $("#resolveAndOpen").modal('show');
-      this.ShowAddAction = false;
-    }
-    else if (selectedValue === "Add_Tag") {
-      this.ShowRemoveTag = false;
-      $("#addTagModal").modal('show');
-      this.ShowAddAction = false;
-    }
-    else if (selectedValue === "Remove_Tag") {
-      this.ShowRemoveTag = false;
-      $("#RemoveTagModal").modal('show');
-      this.ShowAddAction = false;
 
-    }
-
-    if (!this.assignActionList[index].selected) {
-
-      this.assignActionList[index].selected = true
-    } else {
-      this.assignActionList[index].selected = false
-    }
+    action.selected = !action.selected;
     this.ShowAddAction = false;
+
+    if (this.isOptionDisabled(action.value)) return;
+
+    if (this.exclusiveActions.includes(action.value)) {
+      this.selectedExclusiveAction = this.selectedExclusiveAction === action.value ? null : action.value;
+      this.selectedExclusiveAction === action.value ? this.addExclusiveAction(action) : this.removeExclusiveAction(action.value);
+    }
   }
 
+  actionIdToValue: any = { 2: 'assign_agent', 4: 'Mark_Status', 5: 'assign_owner', 6: 'Unassign_conversation' };
 
-  selectedExclusiveAction: string = '';
+  addExclusiveAction(action: any) {
+    const actionMap: any = {
+      'assign_owner': { actionTypeId: 5, Value: 'Assigned to contact owner', actionType: 'assign_owner' },
+      'Unassign_conversation': { actionTypeId: 6, Value: 'Conversation unassigned', actionType: 'Unassign_conversation' }
+    };
+
+    if (actionMap[action.value]) {
+      this.assignedAgentList = this.assignedAgentList.filter(item => !this.exclusiveActions.includes(this.actionIdToValue[item.actionTypeId]));
+      this.assignedAgentList.push(actionMap[action.value]);
+    }
+  }
+
+  removeExclusiveAction(actionValue: string) {
+    this.assignedAgentList = this.assignedAgentList.filter(item => this.actionIdToValue[item.actionTypeId] !== actionValue);
+    this.selectedExclusiveAction = null;
+    if (actionValue === 'assign_agent') this.isAssigned = false;
+    if (actionValue === 'Mark_Status') {
+      this.selectedStatus = '';
+      this.converstatation = [];
+    }
+  }
+
+  exclusiveActions = ['assign_owner', 'Unassign_conversation', 'Mark_Status', 'assign_agent'];
 
   isOptionDisabled(optionValue: string): boolean {
-    const exclusiveActions = ['assign_owner', 'Unassign_conversation', 'Mark_Status', 'assign_agent'];
+    return this.exclusiveActions.includes(optionValue) &&
+      this.selectedExclusiveAction !== null &&
+      this.selectedExclusiveAction !== optionValue;
+  }
 
-    // Only disable if this is an exclusive action and another exclusive action is selected
-    if (exclusiveActions.includes(optionValue)) {
-      return this.selectedExclusiveAction !== '' && this.selectedExclusiveAction !== optionValue;
+  checkList() { return this.assignedAgentList.some(agent => agent.actionTypeId === 2); }
+  closeAddAction() {
+    this.ShowAddAction = false;
+  }
+
+  RemoveTags(index: number, e: any) {
+    const isChecked = e.target.checked;
+    const tag = this.removeTagList[index];
+
+    let existingAction = this.assignedAgentList.find(item => item.actionTypeId == 3);
+    if (!existingAction) {
+      existingAction = { actionTypeId: 3, Value: [], ValueUuid: [], actionType: 'Remove_Tag' };
+      this.assignedAgentList.push(existingAction);
     }
 
-    // Never disable non-exclusive actions (Add_Tag, Remove_Tag)
-    return false;
+    if (isChecked) {
+      existingAction.Value.push(tag.TagName);
+      existingAction.ValueUuid.push(tag.ID);
+    } else {
+      const idx = existingAction.Value.indexOf(tag.TagName);
+      if (idx > -1) {
+        existingAction.Value.splice(idx, 1);
+        existingAction.ValueUuid.splice(idx, 1);
+      }
+    }
   }
 
-  checkList() {
-    return this.assignedAgentList.some(agent => agent.ActionID === 2);
+
+
+  // Add these to your component class
+  keywords: string[] = [];
+  newKeyword = '';
+  keywordsError = '';
+
+  addKeyword() {
+    if (!this.newKeyword.trim()) return;
+
+    var data = {
+      keyword: this.newKeyword,
+      spid: this.userDetails.SP_ID
+
+    }
+    if (this.keywords.includes(this.newKeyword.trim())) {
+      this.keywordsError = 'This keyword already exists';
+      return;
+    }
+
+    this.botService.checkKeyword(data).subscribe((res: any) => {
+      if (res.status == 409) {
+        this.keywordsError = res.message;
+        return
+      } else {
+        this.keywords.push(this.newKeyword.trim());
+        this.newKeyword = '';
+        this.keywordsError = '';
+
+        // Update form control if needed
+        this.botBuilderForm.patchValue({
+          triggerKeywords: this.keywords.join(',')
+        });
+      }
+
+    })
+
+    // Check for duplicates
+
+
   }
-  closeAddAction() {
-    // Close the dialog when clicking outside
-    this.ShowAddAction = false;
+
+  removeKeyword(index: number) {
+    this.keywords.splice(index, 1);
+    this.keywordsError = '';
+
+    // Update form control if needed
+    this.botBuilderForm.patchValue({
+      triggerKeywords: this.keywords.join(',')
+    });
   }
 }

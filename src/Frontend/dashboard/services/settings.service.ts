@@ -333,7 +333,7 @@ const headers = new HttpHeaders({
 }
   
   getFlowData(spId: number): Observable<any> {
-    return this.http.get<any>(`http://localhost:3004/getFlows/${spId}`);
+    return this.http.get<any>(`${this.API_URL}/getFlows/${spId}`);
   }
   
   getFlowDetail(spId: number,flowId:number): Observable<any> {
@@ -640,15 +640,5 @@ const headers = new HttpHeaders({
 
 
 
-    saveBotDetails(data:any): Observable<any> {
-    return this.http.post<any>(`${this.API_URL_bot}/addBot`,data);
-  }
-
-
-    getBotAlldetails(SPID:any){
-    // console.log(Bot_API_URL+`/getAllBots`)
-    var SP_ID = {'SPID':SPID}
-    return this.http.post(`${this.API_URL_bot}/getAllBots`,SP_ID);
-  }
 
 }
