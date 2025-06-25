@@ -367,18 +367,20 @@
 
 
 
-    <div class="setting-card api-card" *ngIf="selectedTab==2 && !settingsService.checkRoleExist('46')">
+    <!-- <div class="setting-card api-card" *ngIf="selectedTab==2 && !settingsService.checkRoleExist('46')">
         <div class="account-card-header">
             <h4>API Token</h4>
-            <button class="new-token-btn" data-bs-toggle="modal" data-bs-target="#createTokenModal" [disabled]="apiKeyData">
+            <button class="new-token-btn" data-bs-toggle="modal" data-bs-target="#createTokenModal">
                 <img src="../../../../assets/img/teambox/add.svg" class="pr-1">
                 New API Token</button>
         </div>
-        <div *ngIf="apiKeyData">
+        <div *ngIf="apiKeyData" >
             <div class="connection-card tokens-card" >
             <div class="account-card-header">
                 <div>
-                    <span class="api-card-desc">{{apiName}}</span>
+                    <span class="api-card-desc">{{apiName}}</span><br>
+                    <span class="api-card-desc">127.1.1.0</span> <br>
+                    <small>12 June 2025 | 13 june 2025</small>
                     <div class="word-wrapper">
                         
                     <span *ngFor="let item of apiKeyData?.ips; trackBy: trackByIndex">"{{item}}", &nbsp;</span>
@@ -388,13 +390,9 @@
                     <button class="account-white-btn mx-1" (click)="editToken()">
                         <img class="p-0" src="../../../../assets/img/edit.png">
                     </button>
-                    <!-- <button class="account-white-btn mx-1" (click)="deleteToken()">
+                    <button class="account-white-btn mx-1" (click)="deleteToken()">
                         <img class="p-0" src="/assets/img/teambox/delete.svg">
-                    </button> -->
-                    <!-- <button class="account-white-btn mx-1" data-bs-toggle="modal" data-bs-target="#deleteModal">
-                        <img class="p-0" src="../../../../assets/img/delete.png">
-                    </button> -->
-                    <!-- <button class="account-white-btn mx-1">Enable</button> -->
+                    </button>
                     <button class="disable-btn ml-2 " >
                         <div class="active-toggle">
                             <span>Enable</span>
@@ -410,8 +408,12 @@
                     </button>
                 </div>
             </div>
-            <div class="account-card-header">
-                <p class="api-time">{{settingsService?.getDateTimeFormate(apiKeyData?.updatedAt)}}</p>
+            <div class="d-flex align-items-center justify-content-between">
+                <p class="api-time mb-0">{{settingsService?.getDateTimeFormate(apiKeyData?.updatedAt)}}</p>
+                                 <sb-dropdown style="width: 220px" [channelOption]="channelOption"
+                                [ShowAssignOption]="ShowAssignOption"
+                                [customWidth]="'110%'">
+                            </sb-dropdown>
                 <button class="account-btn" (click)="regenrateApiKey()">Regenerate</button>
             </div>
             </div>
@@ -423,8 +425,68 @@
                 <span class="text-bold">Generate New API Token</span>
             </div>
         </div>
-    </div>
+    </div> -->
 
+       <div class="setting-card api-card" *ngIf="selectedTab==2 && !settingsService.checkRoleExist('46')">
+        <div class="account-card-header">
+            <h4>API Token</h4>
+            <button class="new-token-btn" data-bs-toggle="modal" data-bs-target="#createTokenModal" (click)="newAPIToken()">
+                <img src="../../../../assets/img/teambox/add.svg" class="pr-1">
+                New API Token</button>
+        </div>
+        <div *ngFor = "let item of apiKeyData">
+            <div class="connection-card tokens-card" >
+            <div class="account-card-header">
+                <div>
+                    <span class="api-card-desc">{{item.tokenName}}</span><br>
+                    <span class="api-card-desc">127.1.1.0</span> <br>
+                    <small>{{settingsService?.getDateTimeFormate(item.createdAt)}} | {{settingsService?.getDateTimeFormate(item.updatedAt)}}</small>
+                    <div class="word-wrapper">
+                        
+                    <!-- <span *ngFor="let item of apiKeyData?.ips; trackBy: trackByIndex">"{{item}}", &nbsp;</span> -->
+                    </div>
+                </div>
+                <div class="min-button-width">
+                    <button class="account-white-btn mx-1" (click)="editToken(item.id)">
+                        <img class="p-0" src="../../../../assets/img/edit.png">
+                    </button>
+                    <button class="account-white-btn mx-1" (click)="deleteToken(item.id)">
+                        <img class="p-0" src="/assets/img/teambox/delete.svg">
+                    </button>
+                    <button class="disable-btn ml-2 " >
+                        <div class="active-toggle">
+                            <span>Enable</span>
+                            <div class="px-2 switch-toggle">
+                                <label class="m-0 switch">
+                                    <input type="checkbox" class="m-0 form-control-checkbox"(click)="disableApiKeyData()" [(ngModel)]="item.isEnabled"
+                                           data-bs-toggle="modal"
+                                           data-bs-target="#disableModal" />
+                                    <span class="slider"></span>
+                                </label>
+                            </div>
+                        </div>
+                    </button>
+                </div>
+            </div>
+            <div class="d-flex align-items-center justify-content-between">
+                <p class="api-time mb-0">{{item.apiToken}}</p>
+                                 <sb-dropdown style="width: 160px" [channelOption]="channelOption"
+                                [ShowAssignOption]="ShowAssignOption"
+                                [customWidth]="'110%'">
+                            </sb-dropdown>
+                <button class="account-btn" (click)="regenrateApiKey(item.id)">Regenerate</button>
+            </div>
+            </div>
+        </div>
+        <div *ngIf="!apiKeyData" class="save-empty-card">
+            <div>
+                <img class="p-0" src="../../../../assets/img/settings/image.png">
+                <br>
+                <span class="text-bold">Generate New API Token</span>
+            </div>
+        </div>
+    </div>
+  
 
     <div class="setting-card api-card" *ngIf="selectedTab==3 ">
 
@@ -725,7 +787,7 @@
                         <span class="token-heading">API Token Sucessfully Created</span>
                        <p>Kindly copy and keep the API token securely, we will not able to display the API Token again once this window is closed</p>
                        <div class="d-flex justify-content-center">
-                           <input type="text" class="token-input-form" [value]="apiKeyData?.apiKey" readonly>
+                           <input type="text" class="token-input-form" [value]="currentAPIkey" readonly>
                            <img class="copy-btn" (click)="copyToClipboard()" src="../../../../assets/img/settings/attribute-button.svg">
                        </div><br>
                        <div class="token-checkbox">
