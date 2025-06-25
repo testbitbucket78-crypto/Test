@@ -1,10 +1,12 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
+import { environment } from 'environments/environment';
 import moment from 'moment';
 import { Observable } from 'rxjs';
 
+environment
 // 3012
-const Bot_API_URL = 'http://localhost:3012';;
+const Bot_API_URL = environment.botsAPI;;
 
 @Injectable({
   providedIn: 'root'

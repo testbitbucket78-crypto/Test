@@ -7,6 +7,7 @@ export const environment = {
     baseUrl: 'https://authapi.sampanatechnologies.com',
     API_URL: 'https://settings.stacknize.com',
     AdminbaseUrl: 'https://adminapi.stacknize.com',
+    botsAPI: 'https://bots.stacknize.com',
     // AdminbaseUrl: 'http://localhost:4000',
     API_Keyword: 'stacknize',
     // chhanel: 'web'
