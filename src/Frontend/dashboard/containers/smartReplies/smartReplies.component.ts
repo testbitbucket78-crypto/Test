@@ -307,7 +307,7 @@ export class SmartRepliesComponent implements OnInit,OnDestroy {
 
 
 
-	    getBotDetails() {
+ getBotDetails() {
     var SPID = this.loginDetails.SP_ID
     this.botService.getBotAlldetails(SPID).subscribe((res: any) => {
       if (res.status == 200) {

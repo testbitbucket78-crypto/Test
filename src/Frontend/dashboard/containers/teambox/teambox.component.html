@@ -300,6 +300,7 @@
 												<img *ngIf="message.message_direction !='IN' &&  message.assignAgent == -4"
 													class="hover-image" src="/assets/img/teambox/boticon.svg"
 													style="cursor:pointer; width: 24px; height: 24px">
+
 												<div class="hover-text">{{message.assignAgent ==-2 ?'Automation':
 													message.assignAgent ==-3 ? 'Send&nbsp;API': message.assignAgent ==
 													-4?'Bot':'Campaign'}}</div>
@@ -309,9 +310,7 @@
 													class="hover-image"
 													src="/assets/img/teambox/campaign-chat-stamp.svg"
 													style="cursor:pointer;">
-												<img *ngIf="message.message_direction !='IN' && message.assignAgent ==-4"
-													class="hover-image" src="/assets/img/teambox/api.svg"
-													style="cursor:pointer; width: 24px; height: 24px">
+												
 											</div>
 										</div>
 										<div class="content" (mouseover)="markItRead()">

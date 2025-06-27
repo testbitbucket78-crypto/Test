@@ -14,8 +14,8 @@ export class JwtInterceptor implements HttpInterceptor {
     intercept(request: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
         var token = localStorage.getItem('bearerToken')
         if (token != null) {
-            // const isApiUrl = request.url.includes(environment.API_Keyword);
-            if (token != null && token != "" ) {
+           const isApiUrl = request.url.includes(environment.API_Keyword);
+            if (token != null && token != "" && isApiUrl) {
                 request = request.clone({
                     setHeaders: {
                         Authorization: `Bearer ${localStorage.getItem('bearerToken')}`,

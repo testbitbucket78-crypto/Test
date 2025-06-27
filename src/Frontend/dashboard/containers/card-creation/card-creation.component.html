@@ -178,123 +178,103 @@
   </div>
 </div>
 
+
+
+
 <div class="modal fade" id="sendMessage" tabindex="-1" aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered custom-modal" role="document">
-    <div class="modal-content p-4" style="background-color: #fff6f4; border-radius: 20px">
+    <div class="modal-content p-4" style="background-color: #fff6f4; border-radius: 20px;">
+      
       <!-- Header -->
       <div class="d-flex justify-content-between align-items-center mb-3">
         <h6 class="fw-bold m-0" style="color: #6b46c1">
           {{
-          cardType === 'sendText'
-          ? 'Send Text'
-          : cardType === 'sendImage'
-          ? 'Send Image'
-          : cardType === 'sendVideo'
-          ? 'Send Video'
-          : 'Send Document'
+            cardType === 'sendText' ? 'Send Text' :
+            cardType === 'sendImage' ? 'Send Image' :
+            cardType === 'sendVideo' ? 'Send Video' :
+            'Send Document'
           }}
         </h6>
       </div>
 
+      <!-- Form -->
       <form [formGroup]="sendTextForm" (ngSubmit)="onSubmit()">
+
         <!-- File Upload -->
-        <div *ngIf="
-                        cardType === 'sendImage' ||
-                        cardType === 'sendVideo' ||
-                        cardType === 'sendDocument'
-                    " class="mb-3 text-center">
-          <div class="upload-box d-flex flex-column align-items-center justify-content-center mb-3" style="
-                            background-color: white;
-                            border-radius: 16px;
-                            height: 140px;
-                            border: 1px dashed #ccc;
-                            cursor: pointer;
-                        " (click)="fileInput.click()">
+        <div *ngIf="cardType === 'sendImage' || cardType === 'sendVideo' || cardType === 'sendDocument'" class="mb-3 text-center">
+          <div class="upload-box d-flex flex-column align-items-center justify-content-center mb-3"
+               style="background-color: white; border-radius: 16px; height: 140px; border: 1px dashed #ccc; cursor: pointer;"
+               (click)="fileInput.click()">
+            
             <ng-container *ngIf="!selectedImageUrl; else preview">
               <i class="fa fa-plus text-primary"></i>
               <label>
                 {{
-                cardType === 'sendImage'
-                ? 'Upload Image'
-                : cardType === 'sendVideo'
-                ? 'Upload Video'
-                : 'Upload Document'
+                  cardType === 'sendImage' ? 'Upload Image' :
+                  cardType === 'sendVideo' ? 'Upload Video' :
+                  'Upload Document'
                 }}
               </label>
             </ng-container>
 
             <ng-template #preview>
-              <img *ngIf="
-                                    selectedFileType === 'image' || selectedFileType === 'document'
-                                " [src]="selectedImageUrl" alt="Preview" class="preview-img"
-                style="max-height: 120px" />
-              <video *ngIf="selectedFileType === 'video'" [src]="selectedImageUrl" controls
-                style="max-height: 140px; width: 100%; border-radius: 8px"></video>
+              <img *ngIf="selectedFileType === 'image' || selectedFileType === 'document'" [src]="selectedImageUrl" alt="Preview" class="preview-img" style="max-height: 120px;" />
+              <video *ngIf="selectedFileType === 'video'" [src]="selectedImageUrl" controls style="max-height: 140px; width: 100%; border-radius: 8px;"></video>
             </ng-template>
 
             <input type="file" [accept]="getFileAccept()" hidden (change)="onFileSelectedData($event)" #fileInput />
 
             <div *ngIf="sendTextForm.get('file')?.touched && sendTextForm.get('file')?.errors?.['required']"
-              style="color: red; font-size: 12px">
+                 style="color: red; font-size: 12px;">
               {{
-              cardType === 'sendImage'
-              ? 'Image'
-              : cardType === 'sendVideo'
-              ? 'Video'
-              : 'Document'
-              }}
-              is required.
+                cardType === 'sendImage' ? 'Image' :
+                cardType === 'sendVideo' ? 'Video' :
+                'Document'
+              }} is required.
             </div>
           </div>
         </div>
 
         <!-- Rich Text Editor -->
         <div class="form-group">
-          <label *ngIf="cardType == 'sendText'" style="margin-top: 5px; position: absolute">Text Message</label>
-          <span *ngIf="cardType == 'sendText'" style="font-size: 13px; color: #6b7280; margin-left: 269px">
-            Characters
-          </span>
-          <label *ngIf="
-                            cardType === 'sendImage' ||
-                            cardType === 'sendVideo' ||
-                            cardType === 'sendDocument'
-                        " style="margin-top: 5px; position: absolute">Text Message (Optional)
-          </label>
-          <span *ngIf="
-                            cardType === 'sendImage' ||
-                            cardType === 'sendVideo' ||
-                            cardType === 'sendDocument'
-                        " style="font-size: 13px; color: #6b7280; margin-left: 269px">
-            Characters
-          </span>
+          <label *ngIf="cardType === 'sendText'" style="margin-top: 5px; position: absolute;">Text Message</label>
+          <span *ngIf="cardType === 'sendText'" style="font-size: 13px; color: #6b7280; margin-left: 269px;">Characters</span>
 
-          <div class="rte-wrapper" style="position: relative">
-            <ejs-richtexteditor id="defaultRTE" #chatEditor [toolbarSettings]="semiAdvanceTool" [width]="'100%'"
-              placeholder="Type Message..." (keyup)="onTextChange()" [pasteCleanupSettings]="pasteCleanupSettings"
-              [maxLength]="cardType === 'sendText' ? 1024 : 1024" [showCharCount]="true" formControlName="textMessage">
+          <label *ngIf="cardType === 'sendImage' || cardType === 'sendVideo' || cardType === 'sendDocument'" style="margin-top: 5px; position: absolute;">Text Message (Optional)</label>
+          <span *ngIf="cardType === 'sendImage' || cardType === 'sendVideo' || cardType === 'sendDocument'" style="font-size: 13px; color: #6b7280; margin-left: 269px;">Characters</span>
+
+          <div class="rte-wrapper" style="position: relative;">
+            <ejs-richtexteditor
+              id="defaultRTE"
+              #chatEditor
+              [toolbarSettings]="semiAdvanceTool"
+              [width]="'100%'"
+              placeholder="Type Message..."
+              (keyup)="onTextChange()"
+              [pasteCleanupSettings]="pasteCleanupSettings"
+              [maxLength]="cardType === 'sendText' ? 1024 : 1024"
+              [showCharCount]="true"
+              formControlName="textMessage">
             </ejs-richtexteditor>
 
-            <!-- Bot Var Button Positioned Absolutely Within RTE Wrapper -->
+            <!-- Bot Var Button -->
             <button id="add-action-dropdown" type="button" (click)="openBotVariableModal()">
               <img src="assets/img/teambox/add.svg" /> Bot var
             </button>
           </div>
 
           <div *ngIf="sendTextForm.get('textMessage')?.touched && sendTextForm.get('textMessage')?.errors?.['required']"
-            style="color: red; font-size: 12px">
+               style="color: red; font-size: 12px;">
             Text is required.
           </div>
         </div>
 
         <!-- Footer Buttons -->
         <div class="d-flex justify-content-end gap-2">
-          <button type="button" class="btn btn-light" data-bs-dismiss="modal">
-            Cancel
-          </button>
-          <button class="btn btn-primary" style="background-color: #6b46c1; border: none; margin-left: 11px">
-            Save
-          </button>
+          <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cancel</button>
+          <button class="btn btn-primary" style="background-color: #6b46c1; border: none; margin-left: 11px;">Save</button>
         </div>
+
       </form>
     </div>
   </div>
@@ -305,24 +285,14 @@
     <div class="modal-content p-4 scroller" style="background-color: #fff6f4; border-radius: 20px">
       <div class="d-flex justify-content-between align-items-center mb-3">
         <h6 class="fw-bold m-0" style="color: #6b46c1">Question Option</h6>
-
-        <!-- <button type="button" class="btn-close" aria-label="Close"></button> -->
       </div>
       <div class="modal-body" style="padding: 16px 24px">
         <form [formGroup]="questionOption" (ngSubmit)="onSubmit('questionOption')">
           <!-- Question Text -->
           <div class="form-group">
-            <label style="
-                                font-size: 14px;
-                                color: #374151;
-                                font-weight: 500;
-                                margin-bottom: -25px;
-                            ">Question Text</label>
-            <span style="font-size: 13px; color: #6b7280; margin-left: 316px">
-              Characters
-            </span>
+            <label style="font-size: 14px; color: #374151; font-weight: 500; margin-bottom: -25px;">Question Text</label>
+            <span style="font-size: 13px; color: #6b7280; margin-left: 316px">Characters</span>
 
-            <!-- </div> -->
             <div class="rte-wrapper" style="position: relative">
               <ejs-richtexteditor id="questionRTE" #questionEditor [toolbarSettings]="semiAdvanceTool" [width]="'100%'"
                 placeholder="Enter question..." [pasteCleanupSettings]="pasteCleanupSettings"
@@ -333,18 +303,16 @@
                 <img src="assets/img/teambox/add.svg" /> Bot var
               </button>
             </div>
-
           </div>
 
+          <div class="mt-3">
+        <input type="text" class="form-control" formControlName="promptMessage"
+            style="border: 1px solid #e5e7eb; border-radius: 8px; padding: 10px 12px; font-size: 14px;"
+          placeholder="Please type a number from 1 to {{ options.length }} for your reply" />
+      </div>
           <!-- Answer Options Section -->
           <div class="mb-4">
-            <label style="
-                                font-size: 14px;
-                                color: #374151;
-                                font-weight: 500;
-                                margin-bottom: 12px;
-                                display: block;
-                            ">
+            <label style="font-size: 14px; color: #374151; font-weight: 500; margin-bottom: 12px; display: block;">
               Add Answer Option
             </label>
 
@@ -352,27 +320,12 @@
               <div *ngFor="let option of options?.controls; let i = index" class="mb-3">
                 <div class="d-flex align-items-center justify-content-between" style="gap: 8px; flex-wrap: wrap">
                   <div style="position: relative; flex-grow: 1; width: 100%">
-                    <span style="
-                                                position: absolute;
-                                                top: -18px;
-                                                right: 10px;
-                                                font-size: 12px;
-                                                color: #6b7280;
-                                                z-index: 1;
-                                            ">
+                    <span style="position: absolute; top: -18px; right: 10px; font-size: 12px; color: #6b7280; z-index: 1;">
                       {{ option.value?.length || 0 }}/20 Character
                     </span>
                     <input type="text" formControlName="{{ i }}" class="form-control"
-                      [attr.placeholder]="'Option ' + (i + 1)" maxlength="20" style="
-                                                border: 1px solid #e5e7eb;
-                                                border-radius: 12px;
-                                                padding: 10px 14px;
-                                                font-size: 14px;
-                                                background-color: #fff;
-                                                width: 100%;
-                                            " />
-
-                    <!-- Character Count on the right -->
+                      [attr.placeholder]="'Option ' + (i + 1)" maxlength="20"
+                      style="border: 1px solid #e5e7eb; border-radius: 12px; padding: 10px 14px; font-size: 14px; background-color: #fff; width: 100%;" />
                   </div>
 
                   <!-- Remove Button -->
@@ -386,12 +339,9 @@
               </div>
 
               <!-- Add Option Button -->
-              <button type="button" class="btn btn-link text-primary p-0" style="
-                                    font-size: 12px;
-                                    color: #6b46c1 !important;
-                                    text-align: right;
-                                    text-decoration: none;
-                                " (click)="addOption(options)">
+              <button type="button" class="btn btn-link text-primary p-0"
+                style="font-size: 12px; color: #6b46c1 !important; text-align: right; text-decoration: none;"
+                (click)="addOption(options)">
                 + Add
               </button>
             </div>
@@ -400,16 +350,6 @@
               {{ newOptionError }}
             </div>
           </div>
-
-          <!-- Save answer in Variable -->
-          <!-- <div class="mb-3">
-            <label style="font-size: 14px; color: #374151; font-weight: 500; margin-bottom: 8px; display: block;">
-              Save answer in Variable
-            </label>
-            <input type="text" class="form-control mb-2"
-              style="border: 1px solid #E5E7EB; border-radius: 8px; padding: 10px 12px; font-size: 14px;"
-              placeholder="@ Enter value" formControlName="saveAnswerVariable">
-          </div> -->
 
           <div class="mb-3">
             <div class="form-check mb-2">
@@ -422,46 +362,24 @@
 
             <div *ngIf="questionOption.get('saveAsVariable')?.value" class="ps-4">
               <div class="mb-2">
-                <label style="
-                                        font-size: 14px;
-                                        color: #374151;
-                                        font-weight: 500;
-                                        margin-bottom: 8px;
-                                        display: block;
-                                    ">
+                <label style="font-size: 14px; color: #374151; font-weight: 500; margin-bottom: 8px; display: block;">
                   Variable Name
                 </label>
-                <input type="text" class="form-control" formControlName="variableName" style="
-                                        border: 1px solid #e5e7eb;
-                                        border-radius: 8px;
-                                        padding: 10px 12px;
-                                        font-size: 14px;
-                                    " placeholder="Enter variable name" />
-                <div *ngIf="
-                                        questionOption.get('variableName')?.invalid &&
-                                        questionOption.get('variableName')?.touched
-                                    " class="text-danger small mt-1">
-                  Must start with a letter, only underscores allowed, and must be
-                  unique
+                <input type="text" class="form-control" formControlName="variableName"
+                  style="border: 1px solid #e5e7eb; border-radius: 8px; padding: 10px 12px; font-size: 14px;"
+                  placeholder="Enter variable name" />
+                <div *ngIf="questionOption.get('variableName')?.invalid && questionOption.get('variableName')?.touched"
+                  class="text-danger small mt-1">
+                  Must start with a letter, only underscores allowed, and must be unique
                 </div>
               </div>
 
               <div class="mb-2">
-                <label style="
-                                        font-size: 14px;
-                                        color: #374151;
-                                        font-weight: 500;
-                                        margin-bottom: 8px;
-                                        display: block;
-                                    ">
+                <label style="font-size: 14px; color: #374151; font-weight: 500; margin-bottom: 8px; display: block;">
                   Data Type
                 </label>
-                <select class="form-select" formControlName="variableDataType" style="
-                                        border: 1px solid #e5e7eb;
-                                        border-radius: 8px;
-                                        padding: 10px 12px;
-                                        font-size: 14px;
-                                    ">
+                <select class="form-select" formControlName="variableDataType"
+                  style="border: 1px solid #e5e7eb; border-radius: 8px; padding: 10px 12px; font-size: 14px;">
                   <option value="text">Text</option>
                   <option value="number">Number</option>
                   <option value="boolean">Boolean</option>
@@ -472,14 +390,13 @@
               </div>
             </div>
           </div>
-          <!-- Validation Section -->
+
           <!-- Validation Settings Section -->
           <div class="mb-3">
             <div class="d-flex justify-content-between align-items-center mb-2">
               <label style="font-size: 14px; color: #374151; font-weight: 500">Additional Validation Settings</label>
               <label class="switch">
-                <input type="checkbox" formControlName="enableValidation"
-                  (change)="onValidationToggle(questionOption)" />
+                <input type="checkbox" formControlName="enableValidation" (change)="onValidationToggle(questionOption)" />
                 <span class="slider round"></span>
               </label>
             </div>
@@ -496,50 +413,30 @@
                   </label>
                 </div>
                 <div *ngIf="questionOption.get('reattemptsAllowed')?.value" class="ps-4">
-                  <input type="number" min="1" class="form-control" formControlName="reattemptsCount" style="
-                                            border: 1px solid #e5e7eb;
-                                            border-radius: 8px;
-                                            padding: 10px 12px;
-                                            font-size: 14px;
-                                        " placeholder="Enter number of reattempts" />
+                  <input type="number" min="1" class="form-control" formControlName="reattemptsCount"
+                    style="border: 1px solid #e5e7eb; border-radius: 8px; padding: 10px 12px; font-size: 14px;"
+                    placeholder="Enter number of reattempts" />
                 </div>
               </div>
 
               <!-- Validation Error Message -->
               <div class="mb-3">
-                <label style="
-                                        font-size: 14px;
-                                        color: #374151;
-                                        font-weight: 500;
-                                        margin-bottom: 8px;
-                                        display: block;
-                                    ">
+                <label style="font-size: 14px; color: #374151; font-weight: 500; margin-bottom: 8px; display: block;">
                   Validation Error Message
                   <span *ngIf="questionOption.get('reattemptsAllowed')?.value" class="text-danger">*</span>
                 </label>
 
-                <span style="font-size: 13px; color: #6b7280; margin-left: 282px">
-                  Characters
-                </span>
+                <span style="font-size: 13px; color: #6b7280; margin-left: 282px">Characters</span>
 
                 <ejs-richtexteditor id="questionRTE" #errorEditor [toolbarSettings]="tools" [width]="'100%'"
                   placeholder="Enter question..." [pasteCleanupSettings]="pasteCleanupSettings"
                   formControlName="errorMessage" style="" [maxLength]="1024" [showCharCount]="true">
                 </ejs-richtexteditor>
-                <!-- <div class="text-end" style="font-size: 12px; color: #6B7280;">
-                  {{ errorMessageLength }}/1024 characters
-                </div> -->
               </div>
 
               <!-- Invalid Response Action -->
               <div class="mb-3">
-                <label style="
-                                        font-size: 14px;
-                                        color: #374151;
-                                        font-weight: 500;
-                                        margin-bottom: 8px;
-                                        display: block;
-                                    ">
+                <label style="font-size: 14px; color: #374151; font-weight: 500; margin-bottom: 8px; display: block;">
                   Invalid Response Action
                 </label>
                 <div class="form-check mb-2">
@@ -557,8 +454,7 @@
                   </label>
                 </div>
                 <div class="form-check">
-                  <input class="form-check-input" type="radio" id="endBot" value="end"
-                    formControlName="invalidAction" />
+                  <input class="form-check-input" type="radio" id="endBot" value="end" formControlName="invalidAction" />
                   <label class="form-check-label" for="endBot" style="font-size: 14px; color: #374151">
                     End the Bot
                   </label>
@@ -568,19 +464,16 @@
               <!-- Time Elapse Settings -->
               <div class="mb-3">
                 <div class="form-check mb-2">
-                  <input class="form-check-input" type="checkbox" id="enableTimeElapse"
-                    formControlName="enableTimeElapse" (change)="onTimeElapseChange($event, questionOption)" />
+                  <input class="form-check-input" type="checkbox" id="enableTimeElapse" formControlName="enableTimeElapse"
+                    (change)="onTimeElapseChange($event, questionOption)" />
                   <label class="form-check-label" for="enableTimeElapse" style="font-size: 14px; color: #374151">
                     Time Elapse
                   </label>
                 </div>
                 <div *ngIf="questionOption.get('enableTimeElapse')?.value" class="ps-4">
-                  <input type="number" min="1" class="form-control mb-2" formControlName="timeElapseMinutes" style="
-                                            border: 1px solid #e5e7eb;
-                                            border-radius: 8px;
-                                            padding: 10px 12px;
-                                            font-size: 14px;
-                                        " placeholder="Set reply wait time in minutes" />
+                  <input type="number" min="1" class="form-control mb-2" formControlName="timeElapseMinutes"
+                    style="border: 1px solid #e5e7eb; border-radius: 8px; padding: 10px 12px; font-size: 14px;"
+                    placeholder="Set reply wait time in minutes" />
 
                   <div class="form-check mb-2">
                     <input class="form-check-input" type="radio" id="skipOnTimeElapse" value="skip"
@@ -603,19 +496,16 @@
 
           <!-- Footer Buttons -->
           <div class="d-flex justify-content-end gap-2">
-            <button type="button" class="btn btn-light" data-bs-dismiss="modal">
-              Cancel
-            </button>
+            <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cancel</button>
             <button type="submit" class="btn btn-primary"
-              style="background-color: #6b46c1; border: none; margin-left: 11px">
-              Save
-            </button>
+              style="background-color: #6b46c1; border: none; margin-left: 11px">Save</button>
           </div>
         </form>
       </div>
     </div>
   </div>
 </div>
+
 
 <div class="modal fade" id="openQuestion" tabindex="-1" aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered custom-modal" style="width: 32%">
@@ -639,7 +529,7 @@
                                     margin-bottom: -25px;
                                 ">Question Text</label>
               <!-- <span style="font-size: 12px; color: #6B7280;">{{ questionTextLength }}/1024 characters</span> -->
-              <span style="font-size: 13px; color: #6b7280; margin-left: 316px">
+              <span style="font-size: 13px; color: #6b7280; margin-left: 318px">
                 Characters
               </span>
             </div>
@@ -1154,7 +1044,7 @@
                 </label>
 
                 <!-- File Input (hidden) -->
-                <input id="mediaUpload" type="file" class="d-none" (change)="onFileSelected($event)" [accept]="
+                <input id="mediaUpload" type="file" class="d-none" (change)="onFileSelectedData($event,'buttonOption')" [accept]="
                                         getFileAcceptType(buttonOptions.get('headerType')?.value)
                                     " />
 

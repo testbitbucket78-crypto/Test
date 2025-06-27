@@ -233,6 +233,8 @@ export class BotBuilderComponent implements OnInit {
 
 
   getBotDetails() {
+    localStorage.removeItem('node_FE_Json')
+    localStorage.removeItem('botId')
     var SPID = this.userDetails?.SP_ID || 159
     this.botService.getBotAlldetails(SPID).subscribe((res: any) => {
       if (res.status == 200) {
@@ -307,7 +309,7 @@ export class BotBuilderComponent implements OnInit {
   }
 
   sanitizeHTML(rawHtml: string): string {
-    return rawHtml.replace(/style="[^"]*"/g, '');
+    return rawHtml?.replace(/style="[^"]*"/g, '');
   }
   // Bot Management Methods
   toggleTemplatesData(item: any | null): void {

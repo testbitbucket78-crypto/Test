@@ -401,6 +401,7 @@ export class CardCreationComponent {
 
       var data: any = localStorage.getItem('node_FE_Json')
       this.loadFlow(JSON.parse(data))
+      // this.loadFlow(data)
     }
 
   }
@@ -535,9 +536,10 @@ export class CardCreationComponent {
   private initQuestionOptionForm(): void {
     this.questionOption = this.fb.group({
       questionText: ['', [Validators.required, Validators.maxLength(4056)]],
-      options: this.fb.array(['']),
+      questionTextMessage: [''],
+      options: this.fb.array([this.fb.control('')]),
       saveAnswerVariable: [''],
-
+      promptMessage: [this.getPromptMessage()],
       reattemptsAllowed: [false],
       reattemptsCount: [1],
       errorMessage: ['', [Validators.maxLength(this.MAX_CHARACTERS)]],
@@ -552,7 +554,22 @@ export class CardCreationComponent {
     });
 
     this.setupFormListeners(this.questionOption);
+
+      this.options.valueChanges.subscribe((vals: string[]) => {
+    const defaultPrompt = this.getPromptMessage();
+    const currentPrompt = this.questionOption.get('promptMessage')?.value;
+
+    if (!currentPrompt || currentPrompt.startsWith('Please type a number from')) {
+      this.questionOption.get('promptMessage')?.setValue(defaultPrompt);
+    }
+  });
   }
+
+  getPromptMessage(): string {
+    console.log(this.options)
+  const count = this.options.length;
+  return `Please type a number from 1 to ${count} for your reply`;
+}
 
   private initButtonOptionsForm(): void {
     this.buttonOptions = this.fb.group({
@@ -775,6 +792,31 @@ export class CardCreationComponent {
     });
   }
 
+
+
+createCombinedVariable() {
+  // Get the form values
+  const formValue = this.questionOption.value;
+  
+  // Get question text (remove HTML tags if needed)
+  const questionText = formValue.questionText || '';
+  const plainQuestionText = questionText.replace(/<[^>]*>/g, '').trim();
+  
+  // Get prompt message (if you have this field)
+  const promptMessage = formValue.promptMessage || '';
+  
+  // Get all options
+  const options = formValue.options || [];
+  const formattedOptions = options.map((opt:any) => `* ${opt}`).join('\n');
+  
+  // Combine everything
+  const combinedVariable = `${plainQuestionText}\n\n${promptMessage}\n\n${formattedOptions}`;
+  
+  // Now you can use this combinedVariable as needed
+  console.log(combinedVariable);
+  return combinedVariable;
+}
+
   // ==================== NODE HANDLING METHODS ====================
 
   onSubmit(formType: string = ''): void {
@@ -848,6 +890,9 @@ export class CardCreationComponent {
 
     switch (formType) {
       case 'questionOption':
+        this.questionOption.patchValue({
+  questionTextMessage: this.createCombinedVariable(),
+});
         form = this.questionOption;
         break;
       case 'openQuestion':
@@ -936,6 +981,9 @@ export class CardCreationComponent {
         break;
       case 'TimeDelayModal':
         advanceOption.data = { time: this.delayTime, unit: this.delayUnit };
+        break;
+      case "WorkingHoursModal":
+        advanceOption.data = { options:["open",'close'] };
         break;
       case 'BotTriggerModal':
         advanceOption.data = this.selectedBot;
@@ -1119,6 +1167,7 @@ export class CardCreationComponent {
   }
 
   private setOutputPositionsBasedOnType(nodeId: any, formData: any): void {
+    console.log("nodeId: any, formData: any",nodeId, formData)
     if (this.ParentNodeType === 'listOptions') {
       this.setOutputPositionsForList(nodeId, formData);
     } else {
@@ -1143,9 +1192,12 @@ export class CardCreationComponent {
 
     if (fallbackAction === "fallback") {
       const output2 = outputs[1] as HTMLElement;
-      output2.style.position = 'absolute';
-      output2.style.top = '41px';
-      output2.style.borderColor = 'red'; // ✅ use camelCase
+      console.log("output2",output2)
+      if(output2 != undefined){
+        output2.style.position = 'absolute';
+        output2.style.top = '41px';
+        output2.style.borderColor = 'red'; // ✅ use camelCase
+      }
       remainingOutputs = remainingOutputs.slice(1);
     }
     let size = 30;
@@ -1385,6 +1437,10 @@ export class CardCreationComponent {
 
   private createHeaderMediaContent(nodeData: any, headerType: string): string {
     let mediaContent = '<div class="textContImage">';
+    console.log(nodeData)
+    if(nodeData.file == null){
+      nodeData.file = nodeData.formData.fileLink
+    }
     const mediaSrc = nodeData.file ? this.filePreview || this.selectedImageUrl : 'assets/img/not_found.jpg';
 
     switch (headerType) {
@@ -2078,7 +2134,9 @@ export class CardCreationComponent {
 
     this.questionOption.patchValue({
       questionText: updateForm?.questionText,
+      promptMessage:updateForm?.promptMessage,
       saveAnswerVariable: updateForm?.saveAnswerVariable,
+       questionTextMessage: this.createCombinedVariable(),
       reattemptsAllowed: updateForm?.reattemptsAllowed,
       reattemptsCount: updateForm?.reattemptsCount,
       errorMessage: updateForm?.errorMessage,
@@ -2215,6 +2273,8 @@ export class CardCreationComponent {
     });
 
   }
+
+
 
 
   fillNotificationData(nodeData: any) {
@@ -3045,7 +3105,7 @@ export class CardCreationComponent {
   // ==================== GETTERS ====================
 
   get options(): FormArray {
-    return this.questionOption.get('options') as FormArray;
+ return (this.questionOption?.get('options') as FormArray) || this.fb.array([]);
   }
 
   get buttons(): FormArray {
@@ -3124,53 +3184,119 @@ export class CardCreationComponent {
     this.closeModal()
   }
 
-  onFileSelectedData(event: any) {
 
-    const file = event.target.files[0];
-    const input = event.target as HTMLInputElement;
-    if (file) {
-      const mimeType = file.type;
 
-      let headerType: 'image' | 'video' | 'document' | 'unknown' = 'unknown';
+  onFileSelectedData(event: any,type:any='') {
+  const file = event.target.files[0];
+  const input = event.target as HTMLInputElement;
 
-      if (mimeType.startsWith('image/')) {
-        headerType = 'image';
-      } else if (mimeType.startsWith('video/')) {
-        headerType = 'video';
-      } else if (
-        mimeType === 'application/pdf' ||
-        mimeType === 'application/msword' ||
-        mimeType.includes('spreadsheet') || // for Excel
-        mimeType.includes('document')
-      ) {
-        headerType = 'document';
-      }
-      const maxSize = headerType === 'image' ? 5 * 1024 * 1024 : 10 * 1024 * 1024;
+  if (file) {
+    const mimeType = file.type;
+    let headerType: 'image' | 'video' | 'document' | 'unknown' = 'unknown';
 
-      if (file.size > maxSize) {
-        alert(`File size exceeds maximum allowed (${headerType === 'image' ? '5MB' : '10MB'})`);
-        return;
-      }
-
-      this.sendTextForm.patchValue({ file: file });
-      console.log('Selected file:', file);
-      this.uploadedFile = file;
-      this.selectedFileType = headerType;
-      this.selectedFileUrl = URL.createObjectURL(file);
-
-      console.log('Selected file URL:', this.selectedFileType);
-      if (headerType === 'image') {
-        this.selectedImageUrl = this.selectedFileUrl;
-      } else if (headerType === 'document') {
-        this.selectedImageUrl = 'assets/img/document.png'; // Placeholder for document preview
-      } else if (headerType === 'video') {
-        this.selectedImageUrl = this.selectedFileUrl; // Placeholder for video preview
-      }
+    if (mimeType.startsWith('image/')) {
+      headerType = 'image';
+    } else if (mimeType.startsWith('video/')) {
+      headerType = 'video';
+    } else if (
+      mimeType === 'application/pdf' ||
+      mimeType === 'application/msword' ||
+      mimeType.includes('spreadsheet') ||
+      mimeType.includes('document')
+    ) {
+      headerType = 'document';
     }
-    input.value = '';
+
+    const maxSize = headerType === 'image' ? 5 * 1024 * 1024 : 10 * 1024 * 1024;
+    if (file.size > maxSize) {
+      alert(`File size exceeds maximum allowed (${headerType === 'image' ? '5MB' : '10MB'})`);
+      return;
+    }
 
 
+    this.uploadedFile = file;
+    this.selectedFileType = headerType;
+    this.selectedFileUrl = URL.createObjectURL(file);
+     this.selectedFileType = headerType;
+  this.sendTextForm.patchValue({ file }); // 👈 Patch the form field
+
+    if (headerType === 'image') {
+      this.selectedImageUrl = this.selectedFileUrl;
+    } else if (headerType === 'document') {
+      this.selectedImageUrl = 'assets/img/document.png';
+    } else if (headerType === 'video') {
+      this.selectedImageUrl = this.selectedFileUrl;
+    }
+
+    console.log(file)
+    // Trigger the upload
+    this.saveFilesUpload(file,type);
   }
+
+  input.value = '';
+}
+
+
+
+  saveFilesUpload(file: File,type:any) {
+    console.log("file",file)
+  if (!file) return;
+
+  const spid = this.userDetails.SPID;
+  const validTypes = ['video/mp4', 'application/pdf', 'image/jpg', 'image/jpeg', 'image/png', 'image/webp','image/svg+xml'];
+
+  if (!validTypes.includes(file.type)) {
+    this.showToaster('Please select valid file type', 'error');
+    return;
+  }
+
+  this.mediaType = file.type;
+  const fileSizeInMB = parseFloat((file.size / (1024 * 1024)).toFixed(2));
+  const imageSizeLimitMB = 5;
+  const docVideoLimitMB = 10;
+
+  const formData = new FormData();
+  formData.append('dataFile', file, file.name);
+
+  if ((this.mediaType === 'video/mp4' || this.mediaType === 'application/pdf') && fileSizeInMB > docVideoLimitMB) {
+    this.showToaster('Video / Document File size exceeds 10MB limit', 'error');
+    return;
+  }
+
+  if (
+    ['image/jpg', 'image/jpeg', 'image/png', 'image/webp'].includes(this.mediaType) &&
+    fileSizeInMB > imageSizeLimitMB
+  ) {
+    this.showToaster('Image File size exceeds 5MB limit', 'error');
+    return;
+  }
+
+  const uploadPath = 'BotBuilder';
+  console.log("formData, spid, uploadPath",formData, spid, uploadPath)
+  this.apiService.uploadfile(formData, spid, uploadPath).subscribe({
+    next: (res: any) => {
+      if (res.filename) {
+        this.messageMediaFile = res.filename;
+        this.messageMeidaFile = res.filename;
+        this.selectedImageUrl =  res.filename
+  
+   this.selectedFileUrl = res.filename
+       if(type == 'buttonOption'){
+      this.buttonOptions.patchValue({fileLink:res.filename})
+    }else{
+      this.sendTextForm.patchValue({
+      file: res.filename  // or use `res.filename` if saving just name
+    });
+    }
+        this.showAttachmenOption = false;
+        this.isUploadingLoader = false;
+      }
+    },
+    error: () => {
+      this.showToaster('File upload failed', 'error');
+    }
+  });
+}
 
 
   onFileChange(event: any) {
@@ -3530,9 +3656,10 @@ export class CardCreationComponent {
       data.nodes = flowData
       console.log("Flow Data:", flowData);
     }
+     localStorage.setItem('node_FE_Json',data.node_FE_Json)
 
     this.botService.submitBot(data).subscribe((res: any) => {
-
+      
       this.showToaster('Changes saved successfully', 'success')
 
       this.router.navigate(['/bot-builder']);
@@ -3623,7 +3750,7 @@ export class CardCreationComponent {
     Object.entries(allNodes).forEach(([id, node]: [string, any]) => {
       const formData = node.data.formData || {};
       console.log("formData", node.data)
-      const isQuestionOption = node.data.text === 'questionOption' || node.data.text === "buttonOptions";
+      const isQuestionOption = node.data.text === 'questionOption' || node.data.text === "buttonOptions" ||  node.data.text ==="WorkingHoursModal";
 
       // Filter and sort connections by targetNode (ascending order)
       const nodeConnections = connections
@@ -3650,13 +3777,14 @@ export class CardCreationComponent {
 
 
         if (isQuestionOption) {
-          var optionNames = formData.options || formData.buttons || [];
+          var optionNames = formData.options || formData.buttons || formData.data.options || [];
 
           const skipIndexes = [0]; // Skip connectedId
           if (formData.invalidAction === 'fallback' && nodeConnections.length > 1) {
             skipIndexes.push(1); // Skip fallback
           }
           optionNames = optionNames.reverse();
+          console.log(optionNames)
           nodeConnections.forEach((conn, idx) => {
             if (!skipIndexes.includes(idx)) {
               const labelIndex = idx - skipIndexes.length;
