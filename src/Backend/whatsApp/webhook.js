@@ -23,7 +23,8 @@ let metaPhoneNumberID = 211544555367892 //todo need to make it dynamic
 //new imports 
 const { WhapiIncomingMessage } = require('../webJS/model/whapiModel');
 const WhapiProvider = require("../webJS/whapi.js");
-
+const { messageRecieved, conversationStatus, templateStatus } = require('../common/webhookEvents.js');
+const { ConversationStatusMap } = require('../enum')
 app.listen(process.env.PORT, () => {
   console.log('Server is running on port ' + process.env.PORT);
 });
@@ -149,12 +150,13 @@ async function extractDataFromMessage(body) {
     let phone_number_id = changes.value.metadata.phone_number_id;
     let display_phone_number = changes.value.metadata.display_phone_number;
     let firstMessage = changes.value.messages[0];
-
+    var SPID = await db.excuteQuery('select SP_ID from user where mobile_number =? limit 1', [display_phone_number])
     let from = firstMessage.from; // extract the phone number from the webhook payload
 
     let contact = changes.value.contacts && changes.value.contacts.length > 0 ? changes.value.contacts[0] : null;
 
     let contactName = contact.profile.name ? contact.profile.name : from;
+    let contactDetail;
 
 
     let phoneNo = contact.wa_id;
@@ -206,9 +208,11 @@ async function extractDataFromMessage(body) {
         let media_type = messageData[0]?.media_type;
         let button = messageData[0]?.button;
         if(message_direction == 'IN'){
-        let agentName = await db.excuteQuery('SELECT e.name FROM Interaction i JOIN EndCustomer e ON i.customerId = e.customerId WHERE i.interactionId = ?;', [Interaction_id]);
-        if(agentName?.length > 0)
+        let agentName = await db.excuteQuery('SELECT e.name,i.customerId,e.Phone_number FROM Interaction i JOIN EndCustomer e ON i.customerId = e.customerId WHERE i.interactionId = ?;', [Interaction_id]);
+        if(agentName?.length > 0){
+          contactDetail = agentName[0];
           repliedMessageTo = agentName[0]?.name;
+        }
       }else{
         repliedMessageTo = 'You';
       }
@@ -228,12 +232,14 @@ async function extractDataFromMessage(body) {
             message_text = 'Form sent';
             let flow_reply_Json = JSON.stringify(firstMessage?.interactive?.nfm_reply?.response_json);
             let flow_reply = JSON.parse(firstMessage?.interactive?.nfm_reply?.response_json);
-            let flow_token = flow_reply?.flow_token?.custom_info;
+            let flow_token = JSON.parse(flow_reply?.flow_token)?.custom_info;
             console.log("flow_token", flow_token)
-            const query = `INSERT INTO FlowsData (spid, flowid,flowresponse) VALUES ?`;
-            await db.excuteQuery(query, [spid,flow_token,flow_reply_Json]);
+            const query = `INSERT INTO FlowsData (spid, flowid,flowresponse,customerId,name,phoneNumber) VALUES ?`;
+            await db.excuteQuery(query, [SPID[0]?.SP_ID,flow_token,flow_reply_Json, contactDetail?.customerId, contactDetail?.name, contactDetail?.Phone_number]);
             const flowquery = `UPDATE Flows SET responses = responses + 1 WHERE flowid = ?`;
             await db.excuteQuery(flowquery, [flow_token]);
+            let body= { mapping: flow_reply?.mapping, spId: SPID[0]?.SP_ID, customerId: contactDetail?.customerId, flowresponse: flow_reply_Json }
+            updatePreviousValue(body);
           }
       }
     }
@@ -323,6 +329,7 @@ async function extractDataFromMessage(body) {
 
             // Update your database
             await updateTemplateStatus(templateId, newStatus);
+            templateStatus(change?.value, SPID[0]?.SP_ID);
             console.log(`Template ${templateId} status updated to ${newStatus}`);
           } else if (change.field === 'account_update') {
             const waba_id = change.value.waba_info.waba_id;
@@ -352,6 +359,26 @@ async function extractDataFromMessage(body) {
 
 }
 
+
+async function updatePreviousValue(body){
+    try {
+           let mapping =  body.mapping;
+           let flowresponse= JSON.parse(JSON.parse(body?.flowresponse));
+              mapping.forEach((map) => {
+                  let value= flowresponse[map?.ActuallName];
+                  if(map.attributeMapped != "" && map?.isOverride && value){
+                    let updateQuery = `UPDATE EndCustomer SET ${map.attributeMapped}=? WHERE SP_ID=? AND customerId=?`;
+                    db.excuteQuery(updateQuery, [value, body.spId, body.customerId]);
+                } else if(map.attributeMapped != "" && !map?.isOverride && value){
+                    let updateQuery = `UPDATE EndCustomer SET ${map.attributeMapped} =? WHERE SP_ID =? AND customerId =? AND (${map.attributeMapped} IS NULL OR ${map.attributeMapped} = '')`;
+                    db.excuteQuery(updateQuery, [value, body.spId, body.customerId]);
+                }
+        });
+    } catch (err) {
+        console.log(err)
+        res.send(err)
+    }
+}
 
 
 async function isMessageExist(messageId) {
@@ -432,7 +459,7 @@ async function saveIncommingMessages(from, firstMessage, phone_number_id, displa
       message_text = 'Message Type not supported';
     }
     var saveMessage = await db.excuteQuery(process.env.query, [phoneNo, 'IN', message_text, message_media, Message_template_id, Quick_reply_id, Type, ExternalMessageId, display_phone_number, contactName, media_type, 'NULL', 'WA API', message_time, countryCode, EcPhonewithoutcountryCode,repliedMessageTo,replyMessageText,replyMessageId]);
-
+    messageRecieved(saveMessage[0][0]['@sid'], phoneNo, 'IN', message_text, message_media, Message_template_id, Quick_reply_id, Type, ExternalMessageId, display_phone_number, contactName, media_type, 'NULL', 'WA API', message_time, countryCode, EcPhonewithoutcountryCode,repliedMessageTo,replyMessageText,replyMessageId );
     console.log("====SAVED MESSAGE====" + " replyValue length  " + JSON.stringify(saveMessage));
     logger.info(`====SAVED MESSAGE====   ${JSON.stringify(saveMessage)}`)
 
@@ -538,10 +565,13 @@ async function getDetatilsOfSavedMessage(saveMessage, message_text, phone_number
           if (defaultReplyAction >= 0) {
             let isEmptyInteraction = await commonFun.isStatusEmpty(newId, sid, custid)
             let ResolveOpenChat = await db.excuteQuery('UPDATE Interaction SET interaction_status =? WHERE InteractionId !=? and customerId=?', ['Resolved', newId, custid]);
+            conversationStatus(sid, ConversationStatusMap.Resolved, newId);
             console.log("ResolveOpenChat *********", ResolveOpenChat)
             let updateInteraction = await db.excuteQuery('UPDATE Interaction SET interaction_status=? ,interaction_open_datetime=? WHERE InteractionId=?', ['Open', updated_at, newId])
+            conversationStatus(sid, ConversationStatusMap.Open, newId);
             if (isEmptyInteraction == 1) {
               updateInteraction = await db.excuteQuery('UPDATE Interaction SET interaction_status=?,updated_at=? ,interaction_open_datetime=? WHERE InteractionId=?', ['Open', updated_at, updated_at, newId])
+              conversationStatus(sid, ConversationStatusMap.Resolved, newId);
             }
             console.log("commonFun", updateInteraction)
             if (updateInteraction?.affectedRows > 0) {
@@ -567,10 +597,12 @@ async function getDetatilsOfSavedMessage(saveMessage, message_text, phone_number
 
         let ResolveOpenChat = await db.excuteQuery('UPDATE Interaction SET interaction_status =? WHERE InteractionId !=? and customerId=?', ['Resolved', newId, custid]);
         console.log("ResolveOpenChat -----", ResolveOpenChat)
-
+        conversationStatus(sid, ConversationStatusMap.Resolved, newId);
         let updateInteraction = await db.excuteQuery('UPDATE Interaction SET interaction_status=? WHERE InteractionId=?', ['Open', newId])
+        conversationStatus(sid, ConversationStatusMap.Open, newId);
         if (isEmptyInteraction == 1) {
           updateInteraction = await db.excuteQuery('UPDATE Interaction SET interaction_status=?,updated_at=? WHERE InteractionId=?', ['Open', updated_at, newId])
+          conversationStatus(sid, ConversationStatusMap.Open, newId);
         }
         if (updateInteraction?.affectedRows > 0) {
           notify.NotifyServer(display_phone_number, false, newId, 0, 'IN', 'Status changed')

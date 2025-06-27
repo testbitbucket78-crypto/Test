@@ -33,4 +33,46 @@ Disabled : 2,
 Deleted : 5
 }
 
-module.exports = { MessagingLimitTiers, MessagingName, channelName, channelForSendingMessage, channelsForTemplates,userStatus }
+const  WebhookEventType = {
+    ContactCreated : 'contact.created',
+    ContactUpdated : 'contact.updated',
+    ContactDeleted : 'contact.deleted',
+    ContactBulkUpdate : 'contact.bulkupdate',
+    MessageReceived : 'message.received',
+    MessageStatus : 'message.status',
+    MessageFlowReceived : 'message.flow.received',
+    ConversationCreated : 'conversation.created',
+    // ConversationOpen : 'conversation.open',
+    // ConversationResolved : 'conversation.resolved',
+    ConversationStatusUpdate : 'conversation.status.update',
+    //ConversationAssigned : 'conversation.assigned',
+    ConversationAssigned : 'conversation.assignment.update',
+    TemplateStatus : 'template.status',
+  }
+
+//   const ConversationStatusMap = { // todo deprecated
+//     Open: 'conversation.open',
+//     Resolved: 'conversation.resolved',
+//     Assigned: 'conversation.assigned',
+//     Created: 'conversation.created'
+//   };
+  const ConversationStatusMap = {
+    Open: 'Open',
+    Resolved: 'Resolved',
+    Assigned: 'conversation.assigned',
+    Created: 'conversation.created'
+  };
+  
+    const messageAckStatus = {
+    1: 'SENT',
+    2: 'DELIVERED',
+    3: 'READ',
+    4: 'FAILED',
+    5: 'REJECTED',
+    6: 'EXPIRED',
+    7: 'QUEUED',
+    8: 'SENDING'
+  };
+
+
+module.exports = { MessagingLimitTiers, MessagingName, channelName, channelForSendingMessage, channelsForTemplates,userStatus, WebhookEventType, ConversationStatusMap, messageAckStatus }

@@ -7,6 +7,8 @@ const awsHelper = require('../awsHelper');
 const middleWare = require('../middleWare')
 const removeTags = require('../removeTagsFromRichTextEditor')
 const moment = require('moment');
+const { Parser } = require('json2csv');
+const nodemailer = require('nodemailer');
 const cors = require('cors');
 app.use(bodyParser.json());
 app.use(cors());
@@ -18,6 +20,10 @@ let fs = require('fs-extra');
 const path = require("path");
 const FormData = require('form-data');
 const { channelForSendingMessage, channelsForTemplates } = require("../enum")
+
+const XLSX = require('xlsx');
+const { EmailConfigurations } =  require('../Authentication/constant');
+const { MessagingName }= require('../enum');
 const commonFun = require('../common/resuableFunctions.js')
 const addCampaignTimings = async (req, res) => {
     try {
@@ -707,6 +713,9 @@ const addTemplate = async (req, res) => {
             spid = req.body.spid,
             created_By = req.body.created_By,
             category_id = req.body.category_id
+            interactiveButtons = req.body.interactiveButtonsPayload;
+            
+
         let myUTCString = new Date().toUTCString();
         const created_at = moment.utc(myUTCString).format('YYYY-MM-DD HH:mm:ss');
         isTemplate = req.body.isTemplate
@@ -727,18 +736,18 @@ const addTemplate = async (req, res) => {
     
                     status = templateStatus.status
                     if (templateStatus.status){
-                    let temValues = [[TemplateName, Channel, Category, Language, media_type, Header, BodyText, image, FooterText, JSON.stringify(template_json), status, spid, created_By, created_at, isTemplate, industry, category_id,templateStatus.id,buttons,categoryChange,'UNKNOWN']]
+                    let temValues = [[TemplateName, Channel, Category, Language, media_type, Header, BodyText, image, FooterText, JSON.stringify(template_json), status, spid, created_By, created_at, isTemplate, industry, category_id,templateStatus.id,buttons,categoryChange,'UNKNOWN',interactiveButtons]]
                     addedtem = await db.excuteQuery(val.addTemplates, [temValues])
                     }else{
                         statusCode = 400;
                     }
                 }else if (isTemplate == 0 || isCopied == 1  || status == 'draft') {
-                    let temValues = [[TemplateName, Channel, Category, Language, media_type, Header, BodyText, image, FooterText, JSON.stringify(template_json), req.body.status, spid, created_By, created_at, isTemplate, industry, category_id,'',buttons,categoryChange,'UNKNOWN']]
+                    let temValues = [[TemplateName, Channel, Category, Language, media_type, Header, BodyText, image, FooterText, JSON.stringify(template_json), req.body.status, spid, created_By, created_at, isTemplate, industry, category_id,'',buttons,categoryChange,'UNKNOWN',interactiveButtons]]
                     addedtem = await db.excuteQuery(val.addTemplates, [temValues])
                 }
             } else if (Channel == 'WhatsApp Web' || Channel == 'WA Web') {
 
-                let temValues = [[TemplateName, Channel, Category, Language, media_type, Header, BodyText, image, FooterText, JSON.stringify(template_json), status, spid, created_By, created_at, isTemplate, industry, category_id,'','',categoryChange,'UNKNOWN']]
+                let temValues = [[TemplateName, Channel, Category, Language, media_type, Header, BodyText, image, FooterText, JSON.stringify(template_json), status, spid, created_By, created_at, isTemplate, industry, category_id,'','',categoryChange,'UNKNOWN',interactiveButtons]]
                 addedtem = await db.excuteQuery(val.addTemplates, [temValues])
             }
             res.status(200).send({
@@ -1171,7 +1180,7 @@ const getFlows = async (req,res) =>{
         });
         let Flows = await db.excuteQuery(val.getflows, [req.params.spid]);
             console.log(Flows,'Flows')
-         // Filter the flows locally to return only those with status 'PUBLISHED'
+        // Filter the flows locally to return only those with status 'PUBLISHED'
         // const publishedFlows = response.data.data.filter(flow => flow.status === 'PUBLISHED');
          const publishedFlows = response.data.data;
          const existingFlowIds = new Set(Flows.map(row => row.flowid));
@@ -1182,10 +1191,12 @@ const getFlows = async (req,res) =>{
         const insertValues = newData.map(item => [req.params.spid,item.id, item.name,item.status, 0]); 
         const query = `INSERT INTO Flows (spid, flowid, flowname,status, responses) VALUES ?`;
         await db.excuteQuery(query, [insertValues]);
-        }
+
+    }
+    let FlowsData = await db.excuteQuery(val.getflows, [req.params.spid]);
         res.send({
             status: 200,
-            flows: publishedFlows
+            flows: FlowsData
         })
     }else{
         res.send({
@@ -1219,26 +1230,267 @@ const getFlowDetail = async (req, res) => {
 const saveFlowMapping = async (req, res) => {
     try {
             let flowId = req.body?.flowId;
-            let spid = req.body.spid;
-            let ColumnMapping = req.body.ColumnMapping;
+            let spid = req.body.spId;
+            let ColumnMapping = req.body.mapping;
        
-            let save = await db.excuteQuery(val.saveflowMapping, [ColumnMapping,spid,flowId]);
+            let save = await db.excuteQuery(val.saveflowMapping, [JSON.stringify(ColumnMapping),spid,flowId]);
+            if(req.body.isUpdateValues){
+                 updatePreviousValue(req); 
+            }
 
             res.send({
                 status: 200,
                 flows: save
             })
     } catch (err) {
-        console.log(err)
-        db.errlog(err);
+        console.log(err);
         res.send(err)
     }
 }
 
+async function updatePreviousValue(req){
+    try {
+        let FlowDetail = await db.excuteQuery(val.getflowDetail, [req.body.spId, req.body?.flowId]);
+        FlowDetail.forEach((record) => {
+           let mapping =  req.body.mapping;
+           let flowresponse= JSON.parse(JSON.parse(record?.flowresponse));
+              mapping.forEach((map) => {
+                  let value= flowresponse[map?.ActuallName];
+                  if(map.attributeMapped != "" && map?.isOverride && value){
+                    let updateQuery = `UPDATE EndCustomer SET ${map.attributeMapped}=? WHERE SP_ID=? AND customerId=?`;
+                    db.excuteQuery(updateQuery, [value, req.body.spId, record.customerId]);
+                } else if(map.attributeMapped != "" && !map?.isOverride && value){
+                    let updateQuery = `UPDATE EndCustomer SET ${map.attributeMapped} =? WHERE SP_ID =? AND customerId =? AND (${map.attributeMapped} IS NULL OR ${map.attributeMapped} = '')`;
+                    db.excuteQuery(updateQuery, [value, req.body.spId, record.customerId]);
+                }
+              })
+        });
+    } catch (err) {
+        console.log(err)
+        res.send(err)
+    }
+}
+
+
+const exportFlowData = async (req, res) => {
+    try {
+      console.log(req.body)
+      var data = req.body.data
+      let SP_ID = req.body.spId
+      let Channel = req?.body?.Channel
+      let emailSender = MessagingName[Channel];
+      const transporter = getTransporter(emailSender);
+      const senderConfig = EmailConfigurations[emailSender];
+  
+      let isDateTime = await processData(data)
+      if (data.length > 0 && isDateTime) {
+        let result = await formatterDateTime(data, SP_ID);
+        if (result) {
+          data = result
+        }
+      }
+      // Create a unique directory for temporary files
+      const uniqueDir = path.join(__dirname, `temp_${Date.now()}`);
+      if (!fs.existsSync(uniqueDir)) {
+        fs.mkdirSync(uniqueDir);
+      }
+  
+      const json2csvParser = new Parser();
+      const csv = json2csvParser.parse(data);
+      const filePath = path.join(uniqueDir, 'data.csv'); 
+      fs.writeFileSync(filePath, csv, function (err) {
+        if (err) {
+          res.send(err);
+        }
+        console.log('File Saved')
+      })
+      const xlsxPath = await convertCsvToXlsx(csv, path.join(uniqueDir, 'data.xlsx'));
+      res.attachment("data.csv")
+      const timestamp = Date.now();
+      const randomNumber = Math.floor(Math.random() * 10000);
+      var mailOptions = {
+        from: senderConfig.email,
+        to: req.body.loginData,
+        subject: `${emailSender} - Contacts export report`,
+        html: `
+          <p>Dear ${req.body?.Name},</p>
+          <p>Please find attached here the file containing your exported contacts from your ${emailSender} account.</p>
+          <p>Thank you,</p>
+          <p>Team ${emailSender}</p>
+        `,
+        attachments: [
+          {
+            filename: `${timestamp}-${randomNumber}.xlsx`,
+            path: xlsxPath,
+          },
+        ]
+      };
+  
+      transporter.sendMail(mailOptions, (error, info) => {
+        if (error) {
+          logger.error(`export contact email send error ${error}`)
+          fs.rmSync(uniqueDir, { recursive: true, force: true });
+          // res.send(error);
+        } else {
+          console.log('Preview URL: %s', nodemailer.getTestMessageUrl(info));
+          logger.info(`Message sent: %s, ${info.messageId}`)
+          fs.rmSync(uniqueDir, { recursive: true, force: true });
+          // res.status(200).send({ msg: "data has been sent" });
+        }
+  
+      });
+  
+      return res.status(200).send({ msg: "Contacts exported sucessfully!" });
+    } catch (err) {
+        console.log(err)
+      res.send(err);
+    }  
+  }
+  function convertCsvToXlsx(fileBuffer, outputFileName = 'Converted_File.xlsx') {
+    // using utf-8 encodign to avoid edge cases of CSV
+    return new Promise((resolve, reject) => {
+      try {
+        const csvString = typeof fileBuffer === 'string' ? fileBuffer : fileBuffer.toString('utf-8');
+        if (!csvString.trim()) {
+          return reject(new Error('Input CSV is empty.'));
+        }
+  
+        const workbook = XLSX.read(csvString, { type: 'string', codepage: 65001 });
+        const worksheet = workbook.Sheets[workbook.SheetNames[0]] || XLSX.utils.aoa_to_sheet([]);
+        for (const cell in worksheet) {
+          if (cell[0] === "!") continue;
+          let value = worksheet[cell].v;
+          if (typeof value === 'number') {
+            worksheet[cell].v = value.toString();
+            worksheet[cell].z = '0'; 
+          }
+  
+          if (typeof value !== 'number') {
+            worksheet[cell].z = '@'; 
+          }
+        }
+        
+        const newWorkbook = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(newWorkbook, worksheet, 'Sheet1');
+        XLSX.writeFile(newWorkbook, outputFileName);
+  
+        console.log(`XLSX file created successfully: ${outputFileName}`);
+        resolve(outputFileName);
+      } catch (error) {
+        console.error(`Error during conversion: ${error.message}`);
+        reject(error);
+      }
+    });
+  }
+  
+
+  async function processData(data) {
+    if (data.length > 0) {
+      let containsDateOrTime = false;
+  
+      const datePatterns = [
+        /\b\d{4}-\d{2}-\d{2}\b/,       // YYYY-MM-DD
+        /\b\d{2}\/\d{2}\/\d{4}\b/,     // DD/MM/YYYY
+        /\b\d{2}-\d{2}-\d{4}\b/,       // DD-MM-YYYY
+        /\b\d{4}\/\d{2}\/\d{2}\b/      // YYYY/MM/DD
+      ];
+  
+      const timePatterns = [
+        /\b([01]?\d|2[0-3]):[0-5]\d:[0-5]\d\b/,         // HH:MM:SS in 24-hour format
+        /\b([01]?\d|2[0-3]):[0-5]\d\b/,                 // HH:MM in 24-hour format
+        /\b(1[0-2]|0?[1-9]):[0-5]\d\s?(AM|PM)\b/i,      // HH:MM AM/PM in 12-hour format
+        /\b(1[0-2]|0?[1-9]):[0-5]\d:[0-5]\d\s?(AM|PM)\b/i // HH:MM:SS AM/PM in 12-hour format
+      ];
+  
+      for (const item of data) {
+        // Loop through each key-value pair in the object
+        for (const key in item) {
+          if (item.hasOwnProperty(key)) {
+            const value = item[key];
+            const isDate = datePatterns.some(pattern => pattern.test(value));
+            const isTime = timePatterns.some(pattern => pattern.test(value));
+  
+            if (isDate || isTime) {
+              containsDateOrTime = true;
+              break; // Exit inner loop if a date or time value is found
+            }
+          }
+        }
+        if (containsDateOrTime) break; // Exit outer loop if a date or time value is found
+      }
+    }
+  }
+
+  function getTransporter(channel) {
+    const senderConfig = EmailConfigurations[channel];
+    if (!senderConfig) {
+        throw new Error(`Invalid channel: ${channel}`);
+    }
+  
+    return nodemailer.createTransport({
+        host: senderConfig.emailHost,
+        port: senderConfig.port,
+        secure: true,
+        auth: {
+            user: senderConfig.email,
+            pass: senderConfig.appPassword,
+        },
+    });
+  }
+  
+
+  async function formatterDateTime(data, sp_id) {
+    const select = 'SELECT * FROM localDetails WHERE SP_ID = ?';
+    const formatSettings = await db.excuteQuery(select, [sp_id]);
+  
+    if (!formatSettings || formatSettings.length === 0) {
+       return data;
+    }
+  
+    let { Date_Format, Time_Format } = formatSettings[0];
+    for (let i = 0; i < data.length; i++) {
+        const record = data[i];
+        const { Date: originalDate, Time: originalTime } = record;
+  
+        try {
+            const date = moment(originalDate);
+            const time = moment(originalTime, 'HH:mm'); 
+            if(Date_Format) Date_Format = convertToUppercaseFormat(Date_Format)
+            let formattedDate = date.format(Date_Format || 'MM/DD/YYYY');
+            if(formattedDate == 'Invalid date'){formattedDate = originalDate};
+            let formattedTime = time.format(Time_Format === '12' ? 'h:mm A' : 'HH:mm');
+            if(formattedTime == 'Invalid date') {formattedTime = originalTime};
+            
+            data[i] = {
+                ...record,
+                Date: formattedDate,
+                Time: formattedTime
+            };
+        } catch (error) {
+            console.error('Error formatting record:', error);
+        }
+    }
+  
+    return data;
+  }
+
+  function convertToUppercaseFormat(format) {
+    const formatMapping = {
+        'd': 'D', 
+        'dd': 'DD', 
+        'm': 'M', 
+        'mm': 'MM',
+        'yy': 'YY', 
+        'yyyy': 'YYYY'
+    };
+  
+    return format.replace(/d{1,2}|m{1,2}|y{2,4}/gi, match => formatMapping[match.toLowerCase()] || match);
+  }
+  
 module.exports = {
     addCampaignTimings, updateCampaignTimings, selectCampaignTimings, getUserList, addAndUpdateCampaign,
     selectCampaignAlerts, addCampaignTest, selectCampaignTest, addTag, gettags, deleteTag, addTemplate, getTemplate, deleteTemplates,
     testCampaign, addCustomField, editCustomField, getCustomField, deleteCustomField, getCustomFieldById, enableMandatoryfield,
-    enableStatusfield, getApprovedTemplate, addGallery, getGallery, isExistTemplate ,uploadMediaOnMeta,getFlows, getTemplateForGallery,getFlowDetail,saveFlowMapping
+    enableStatusfield, getApprovedTemplate, addGallery, getGallery, isExistTemplate ,uploadMediaOnMeta,getFlows, getTemplateForGallery,getFlowDetail,saveFlowMapping,exportFlowData
 
 }

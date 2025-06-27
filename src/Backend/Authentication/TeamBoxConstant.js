@@ -164,7 +164,7 @@ var selectInteractionByIdQuery = "SELECT * FROM Interaction WHERE Interaction.In
 var getAllMessagesByInteractionId = "SELECT Message.* ,Author.name As AgentName, DelAuthor.name As DeletedBy from Message LEFT JOIN user AS DelAuthor ON Message.Agent_id= DelAuthor.uid LEFT JOIN user AS Author ON Message.Agent_id= Author.uid where  Message.interaction_id=? and Type=?"
 
 
-var insertMessageQuery = "INSERT INTO Message (SPID,Type,ExternalMessageId, interaction_id, Agent_id, message_direction,message_text,message_media,media_type,Message_template_id,Quick_reply_id,created_at,updated_at,mediaSize,assignAgent,button) VALUES ?"
+var insertMessageQuery = "INSERT INTO Message (SPID,Type,ExternalMessageId, interaction_id, Agent_id, message_direction,message_text,message_media,media_type,Message_template_id,Quick_reply_id,created_at,updated_at,mediaSize,assignAgent,button,interactive_buttons) VALUES ?"
 
 
 
@@ -254,11 +254,11 @@ var interactions = `WITH LatestInteraction AS (
 LatestInteractionMapping AS (
     SELECT 
         InteractionId,
-        MAX(created_at) AS LatestMappingInfo
+        created_at AS LatestMappingInfo
     FROM 
         InteractionMapping
-    GROUP BY 
-        InteractionId
+    WHERE 
+        is_active = 1
 ),
 TagSplit AS (
     SELECT 
@@ -376,6 +376,7 @@ getallMessagesWithScripts = `(
         Message.mediaSize,
         Message.assignAgent,
         Message.button,
+        Message.interactive_buttons,
         Message.repliedMessageTo,
         Message.repliedMessage,
         Message.repliedMessageId,
@@ -434,6 +435,7 @@ UNION
         NULL AS mediaSize,
         NULL AS assignAgent,
         NULL AS button,
+        NULL AS interactive_buttons,
         NULL AS AgentName,
         NULL AS DeletedBy,
          NULL AS repliedMessageTo,
@@ -482,6 +484,7 @@ getMediaMessage = `(
         Message.mediaSize,
         Message.assignAgent,
         Message.button,
+        Message.interactive_buttons,
          Message.repliedMessageTo,
         Message.repliedMessage,
         Message.repliedMessageId,
@@ -535,6 +538,7 @@ UNION
         NULL AS mediaSize,
         NULL AS assignAgent,
         NULL AS button,
+        NULL AS interactive_buttons,
         InteractionEvents.action,
         InteractionEvents.action_at,
         InteractionEvents.action_by
@@ -783,7 +787,8 @@ getmessageBymsgId =`
         Message.system_message_type_id,
         Message.mediaSize,
         Message.assignAgent,
-        Message.button,        
+        Message.button,    
+        Message.interactive_buttons,    
         Message.repliedMessageTo,
         Message.repliedMessage,
         Message.repliedMessageId,

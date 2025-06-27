@@ -1966,3 +1966,11 @@ input[type="radio"]:checked + label::before {
     text-align: center;
     font-weight: bold;
 }
+.small-input {
+     font-size: 13px;
+}
+::ng-deep input.small-input:focus {
+  outline: none !important;
+  border: none !important;
+  box-shadow: none !important;
+}

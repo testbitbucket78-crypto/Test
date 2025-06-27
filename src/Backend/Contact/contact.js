@@ -23,7 +23,8 @@ const commonFun = require('../common/resuableFunctions.js')
 const XLSX = require('xlsx');
 const { EmailConfigurations } =  require('../Authentication/constant');
 const { MessagingName }= require('../enum');
-
+const { addContact, updateContacts, ContactBulkUpdate, deleteContacts } = require('../common/webhookEvents.js')
+const variables = require('../common/constant.js')
 /**
  * @swagger
  * tags:
@@ -96,7 +97,7 @@ app.post('/getFilteredList', authenticateToken, async (req, res) => {
 
 app.post('/addCustomContact', async (req, res) => {
   try {
-    // Construct the INSERT query dynamically
+   // Construct the INSERT query dynamically
     let data = req.body.result
 
     // Check if data is an array
@@ -207,8 +208,14 @@ app.post('/addCustomContact', async (req, res) => {
     }
 
     // Construct the INSERT query dynamically
+    let result;
     let insertQuery = `INSERT INTO EndCustomer (${columns.join(', ')}) VALUES (${placeholders.join(', ')})`;
-    let result = await db.excuteQuery(insertQuery, values);
+    if(variables.webhookSPIDs.includes(String(req?.body?.SP_ID))){
+      result = await addContact(req?.body?.SP_ID, insertQuery, values);
+    }else{
+      result = await db.excuteQuery(insertQuery, values);
+    }
+
     res.status(200).json({ status: 200, result });
   } catch (err) {
     console.log(err);
@@ -263,7 +270,12 @@ app.post('/editCustomContact', authenticateToken, async (req, res) => {
     values.push(spid);
     console.log(values);
     console.log(query);
-    let result = await db.excuteQuery(query, values);
+    let result
+    if(variables.webhookSPIDs.includes(String(spid))){
+      result = await updateContacts(spid, query, values);
+    } else{
+      result = await db.excuteQuery(query, values);
+    }
     if (req.body?.event == 'teamBox') {
       let getInteractionWithCId = await db.excuteQuery('select * FROM Interaction where customerId = ?  and   is_deleted !=1 order by created_at desc limit 1 ', [id])
 
@@ -456,6 +468,7 @@ app.post('/deletContact', authenticateToken, (req, res) => {
 
     var Ids = req.body.customerId;
     console.log(req.body)
+    deleteContacts(req.body);
     db.runQuery(req, res, val.delet, [req.body.customerId, req.body.SP_ID])
   } catch (err) {
     console.error(err);
@@ -560,7 +573,7 @@ app.post('/importContact', authenticateToken, async (req, res) => {
     if (purpose === 'Add new contact only') {
       try {
 
-        let addNewUserOnly = await addOnlynewContact(CSVdata, identifier, SP_ID)
+        let addNewUserOnly = await addOnlynewContact(CSVdata, identifier, SP_ID, user)
 
         sendMailAfterImport(emailId, user, addNewUserOnly?.count,Channel)
         res.status(200).send({
@@ -719,7 +732,8 @@ async function findTagId(TagNames, spid) {
 
 }
 
-async function addOnlynewContact(CSVdata, identifier, SP_ID) {
+
+async function addOnlynewContact(CSVdata, identifier, SP_ID, user) {
   try {
     let result;
     let count = 0;
@@ -753,15 +767,21 @@ async function addOnlynewContact(CSVdata, identifier, SP_ID) {
         WHERE ${identifier} = ? AND SP_ID = ?
       `;
         const updateValues = set.map((field) => field.displayName).concat([identifierValue, SP_ID]);
+        if(variables.webhookSPIDs.includes(String(SP_ID))) {
+          await ContactBulkUpdate(CSVdata?.length, SP_ID, updateQuery, updateValues, user);
+        }
         result = await db.excuteQuery(updateQuery, updateValues);
       }
       else {
         let query = `INSERT INTO EndCustomer (${fieldNames}) SELECT ? WHERE NOT EXISTS (SELECT * FROM EndCustomer WHERE ${identifier}=? and SP_ID=? AND (isDeleted IS NULL OR isDeleted = 0) AND (isBlocked IS NULL OR isBlocked = 0));`;
         const values = set.map((field) => field.displayName);
-      //  console.log(values, fieldNames);
-
+        //  console.log(values, fieldNames);
         // Ensure db.executeQuery returns a promise
-        result = await db.excuteQuery(query, [values, identifierValue, SP_ID]);
+        if(variables.webhookSPIDs.includes(String(SP_ID))) {
+          await ContactBulkUpdate(CSVdata?.length, SP_ID, query, values, user);
+        } 
+        result = await db.excuteQuery(query, [values,  identifierValue, SP_ID]);
+        
       }
       if (result?.affectedRows == 1) {
         count++;

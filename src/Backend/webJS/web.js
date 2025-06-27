@@ -27,6 +27,8 @@ const fs = require('fs')
 const path = require("path");
 const { EmailConfigurations } =  require('../Authentication/constant');
 const { MessagingName, channelName }= require('../enum');
+
+const { sendEmail } = require('../Services/EmailService');
 let clientSpidMapping = {};
 let clientPidMapping = {};
 let clientSpidInprogress = {};
@@ -35,6 +37,9 @@ let undefinedCount = 0;
 let updateUserQuery = `update user set mobile_number=? , isAutoScanOnce =? where SP_ID=? and ParentId is null and isDeleted !=1 and IsActive !=2`
 let notifyInteraction = `SELECT InteractionId FROM Interaction WHERE customerId IN (SELECT customerId FROM EndCustomer WHERE Phone_number = ? and SP_ID=? ) and is_deleted !=1   order by created_at desc`
 let isSessionAlreadyExistMap = {};
+const { messageRecieved, messageStatus, conversationStatus } = require('../common/webhookEvents.js');
+const { ConversationStatusMap } = require('../enum')
+
 async function createClientInstance(spid, phoneNo) {
   const sessionId = spid;
   const baseDir = path.resolve(__dirname, ".wwebjs_auth");
@@ -573,6 +578,7 @@ function ClientInstance(spid, authStr, phoneNo) {
 
         try {
           let phoneNumber = (message.to).replace(/@c\.us$/, "");
+          messageStatus(message, ack, spid);
           if (ack == '1') {
             let d = new Date(message.timestamp * 1000).toUTCString();
             
@@ -1229,6 +1235,7 @@ async function actionsOflatestLostMessage(message_text, phone_number_id, from, d
         if (ifgot == 'If not exist') {
 
           let updateInteraction = await db.excuteQuery('UPDATE Interaction SET interaction_status=?,updated_at=? WHERE InteractionId=?', ['Resolved', updated_at, newId]);
+          conversationStatus(sid, ConversationStatusMap.Resolved, newId);
           if (updateInteraction?.affectedRows > 0) {
             console.log(newId, "ist time and triggere smart reply")
             notify.NotifyServer(display_phone_number, false, newId, 0, 'IN', 'Status changed')
@@ -1243,10 +1250,13 @@ async function actionsOflatestLostMessage(message_text, phone_number_id, from, d
           if (smartReplyActions >= 0) {
             let isEmptyInteraction = await commonFun.isStatusEmpty(newId, sid, custid)
             let ResolveOpenChat = await db.excuteQuery('UPDATE Interaction SET interaction_status =? WHERE InteractionId !=? and customerId=?', ['Resolved', newId, custid]);
+            conversationStatus(sid, ConversationStatusMap.Resolved, newId);
             console.log("ResolveOpenChat -----", ResolveOpenChat)
             let updateInteraction = await db.excuteQuery('UPDATE Interaction SET interaction_status=? WHERE InteractionId=?', ['Open', newId])
+            conversationStatus(sid, ConversationStatusMap.Open, newId);
             if (isEmptyInteraction == 1) {
               updateInteraction = await db.excuteQuery('UPDATE Interaction SET interaction_status=?,updated_at=? WHERE InteractionId=?', ['Open', updated_at, newId])
+              conversationStatus(sid, ConversationStatusMap.Open, newId);
             }
             if (updateInteraction?.affectedRows > 0) {
               console.log(newId, "assign conversation triggere smart reply")
@@ -1262,10 +1272,13 @@ async function actionsOflatestLostMessage(message_text, phone_number_id, from, d
 
         let isEmptyInteraction = await commonFun.isStatusEmpty(newId, sid, custid)
         let ResolveOpenChat = await db.excuteQuery('UPDATE Interaction SET interaction_status =? WHERE InteractionId !=? and customerId=?', ['Resolved', newId, custid]);
+        conversationStatus(sid, ConversationStatusMap.Resolved, newId);
         console.log("ResolveOpenChat -----", ResolveOpenChat)
         let updateInteraction = await db.excuteQuery('UPDATE Interaction SET interaction_status=? WHERE InteractionId=?', ['Open', newId])
+        conversationStatus(sid, ConversationStatusMap.Open, newId);
         if (isEmptyInteraction == 1) {
           updateInteraction = await db.excuteQuery('UPDATE Interaction SET interaction_status=?,updated_at=? WHERE InteractionId=?', ['Open', updated_at, newId])
+          conversationStatus(sid, ConversationStatusMap.Open, newId);
         }
 
         if (updateInteraction?.affectedRows > 0) {
@@ -1335,10 +1348,11 @@ async function saveIncommingMessages(message_direction, from, firstMessage, phon
   let EcPhonewithoutcountryCode = countryCodeObj?.localNumber;
   countryCode = countryCodeObj?.country + " +" + countryCodeObj?.countryCode;
 
-  if ((message_text.length > 0 || message_media.length > 0) && Type != 'e2e_notification') {
+  if ((message_text.length > 0 || (message_media != 'text' && message_media.length > 0)) && Type != 'e2e_notification') {
     let query = "CALL webhook_2(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)"
     // console.log([phoneNo, message_direction, message_text, message_media, Message_template_id, Quick_reply_id, Type, ExternalMessageId, display_phone_number, contactName, media_type, ackStatus, 'WA Web', timestramp, countryCode])
     var saveMessage = await db.excuteQuery(query, [phoneNo, message_direction, message_text, message_media, Message_template_id, Quick_reply_id, Type, ExternalMessageId, display_phone_number, contactName, media_type, ackStatus, 'WA Web', timestramp, countryCode, EcPhonewithoutcountryCode,'','',0]);
+    messageRecieved(saveMessage[0][0]['@sid'], phoneNo, message_direction, message_text, message_media, Message_template_id, Quick_reply_id, Type, ExternalMessageId, display_phone_number, contactName, media_type, ackStatus, 'WA Web', timestramp, countryCode, EcPhonewithoutcountryCode,'','',0 );
     notify.NotifyServer(display_phone_number, true);
     //console.log("====SAVED MESSAGE====" + " replyValue length  " + JSON.stringify(saveMessage), "****", phoneNo, phone_number_id);
 
@@ -1465,6 +1479,7 @@ async function getDetatilsOfSavedMessage(saveMessage, message_text, phone_number
     let messageCount = checkIfFirstMessage[0]?.totalMessages || 0;
     if (messageCount == 1 && newId) {
         let updateInteraction = await db.excuteQuery('UPDATE Interaction SET interaction_status=? WHERE InteractionId=?', ['Open', newId])
+        conversationStatus(sid, ConversationStatusMap.Open, newId);
     }
 
     const currentAssignedUser = await currentlyAssigned(newId);
@@ -1497,6 +1512,7 @@ async function getDetatilsOfSavedMessage(saveMessage, message_text, phone_number
         if (ifgot == 'If not exist') {
 
           let updateInteraction = await db.excuteQuery('UPDATE Interaction SET interaction_status=?,updated_at=? WHERE InteractionId=?', ['Resolved', updated_at, newId]);
+          conversationStatus(sid, ConversationStatusMap.Resolved, newId);
           if (updateInteraction?.affectedRows > 0) {
             notify.NotifyServer(display_phone_number, false, newId, 0, 'IN', 'Status changed')
             let updateMapping = await db.excuteQuery(`update InteractionMapping set AgentId='-1' where InteractionId =?`, [newId]);
@@ -1512,8 +1528,10 @@ async function getDetatilsOfSavedMessage(saveMessage, message_text, phone_number
             let ResolveOpenChat = await db.excuteQuery('UPDATE Interaction SET interaction_status =? WHERE InteractionId !=? and customerId=?', ['Resolved', newId, custid]);
             console.log("ResolveOpenChat (((((((((((", ResolveOpenChat)
             let updateInteraction = await db.excuteQuery('UPDATE Interaction SET interaction_status=? WHERE InteractionId=?', ['Open', newId])
+            conversationStatus(sid, ConversationStatusMap.Open, newId);
             if (isEmptyInteraction == 1) {
               updateInteraction = await db.excuteQuery('UPDATE Interaction SET interaction_status=?,updated_at=? WHERE InteractionId=?', ['Open', updated_at, newId])
+              conversationStatus(sid, ConversationStatusMap.Open, newId);
             }
 
             if (updateInteraction?.affectedRows > 0) {
@@ -1537,8 +1555,10 @@ async function getDetatilsOfSavedMessage(saveMessage, message_text, phone_number
         let ResolveOpenChat = await db.excuteQuery('UPDATE Interaction SET interaction_status =? WHERE InteractionId !=? and customerId=?', ['Resolved', newId, custid]);
         console.log("ResolveOpenChat *********************", ResolveOpenChat)
         let updateInteraction = await db.excuteQuery('UPDATE Interaction SET interaction_status=? WHERE InteractionId=?', ['Open', newId])
+        conversationStatus(sid, ConversationStatusMap.Open, newId);
         if (isEmptyInteraction == 1) {
           updateInteraction = await db.excuteQuery('UPDATE Interaction SET interaction_status=?,updated_at=? WHERE InteractionId=?', ['Open', updated_at, newId])
+          conversationStatus(sid, ConversationStatusMap.Open, newId);
         }
         if (updateInteraction?.affectedRows > 0) {
           logger.info(`Status changed notify gone *********************`)
@@ -1608,6 +1628,89 @@ async function autoReconnectSessions() {
   }
 }
 
+// if (sessions.length > 0) {
+//   const placeholders = sessions.map(() => '?').join(', ');
+//   const sql = `
+//     SELECT * FROM user 
+//     WHERE SP_ID IN (${placeholders}) 
+//     AND isDeleted != 1 
+//     AND ParentId IS NULL
+//   `;
+
+//   const userlist = await db.excuteQuery(sql, sessions);
+//   console.log(result);
+// } else {
+//   console.log('No sessions to query.');
+// }
 
 
-module.exports = { createClientInstance, sendMessages, isActiveSpidClient, sendFunnel, whatsappWebStatus, autoReconnectSessions }
+async function sendMail() {
+  const baseDir = path.resolve(__dirname, ".wwebjs_auth");
+  const sessions = fs.readdirSync(baseDir)
+    .filter(name => name.startsWith("session-"))
+    .map(name => name.replace("session-", ""));
+
+  if (sessions.length === 0) {
+    console.log("No saved sessions found.");
+    return;
+  }
+  //const sessions = ['1065', '1071'];
+
+  try {
+    const placeholders = sessions.map(() => '?').join(', ');
+    const sql = `
+      SELECT * FROM user 
+      WHERE SP_ID IN (${placeholders}) 
+      AND isDeleted != 1 
+      AND ParentId IS NULL
+    `;
+
+    const results = await db.excuteQuery(sql, sessions);
+
+    if (!results || results.length === 0) {
+      console.log("No matching users found in DB for the given SP_IDs.");
+      return;
+    }
+
+    for (const user of results) {
+      const spid = user.SP_ID;
+      const phoneNo = user?.mobile_number;
+
+      if (!phoneNo) {
+        console.log(`Phone number missing for SP_ID: ${spid}`);
+        continue;
+      }
+
+      let emailSender = MessagingName[user?.Channel];
+      const subject = `Your ${emailSender} Channel might got disconnected`;
+      const body = `
+        <p>Hello <strong>${user?.name}</strong>,</p>
+
+        <p>Your channel might got disconnected please check the channel.</p>
+        
+        <p>We are here to assist you with any questions or concerns you may have.</p>
+        <p>For a more detailed report and insights, please log in to your account.</p>
+          
+        <p>Best regards,<br>Team ${emailSender}</p>
+      `;
+
+      const emailOptions = {
+        to: user?.email_id,
+        subject,
+        html: body,
+        fromChannel: emailSender,
+      };
+
+      if (body) {
+        let emailSent = sendEmail(emailOptions);
+      }
+    }
+  } catch (err) {
+    console.log(`Failed to send emails:`, err);
+  }
+}
+
+
+
+
+module.exports = { createClientInstance, sendMessages, isActiveSpidClient, sendFunnel, whatsappWebStatus, autoReconnectSessions,sendMail }

@@ -7,9 +7,13 @@
     "is-port-reachable": "^4.0.0",
     "moment": "^2.29.4",
     "mysql": "^2.18.1",
+    "json2csv": "^6.0.0-alpha.2",
     "node-cron": "^3.0.2",
+    "nodemailer": "^6.8.0",
     "node-schedule": "^2.1.1",
     "winston": "^3.13.1",
-    "winston-daily-rotate-file": "^5.0.0"
+    "xlsx": "^0.18.5",
+    "winston-daily-rotate-file": "^5.0.0",
+    "jsonwebtoken": "^8.5.1"
   }
 }

@@ -21,11 +21,12 @@
             <div class="mx-2">
                 <select class="input-form select-flow" id="select" (change)="onFilterChange($event)">
                     <option value="">Select</option>
-                    <option value="Published">Published</option>
-                    <option value="Draft">Draft</option>
-                    <option value="Deprecated">Deprecated</option>
-                    <option value="Blocked">Blocked</option>
-                    <option value="Throttled">Throttled</option>
+                    <option value="All">All</option>
+                    <option value="PUBLISHED">PUBLISHED</option>
+                    <option value="DRAFT">DRAFT</option>
+                    <option value="DEPRECATED">DEPRECATED</option>
+                    <option value="BLOCKED">BLOCKED</option>
+                    <option value="THROTTLED">THROTTLED</option>
                 </select>
             </div>
             <div class="D-whatsApp mx-2">
@@ -85,6 +86,6 @@
     </div>
 </div>
 
-    <sb-whatsapp-flow-detail *ngIf="isShowDetails" [flowId]="flowId" [flowName]="flowName" (closeFlowDetail)="isShowDetails = false"></sb-whatsapp-flow-detail>
+    <sb-whatsapp-flow-detail *ngIf="isShowDetails" [flowId]="flowId" [flowName]="flowName" [ColumnMapping]="mapping" (closeFlowDetail)="isShowDetails = false"></sb-whatsapp-flow-detail>
 	
 </sb-layout-dashboard>

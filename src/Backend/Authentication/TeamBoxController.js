@@ -13,6 +13,8 @@ const removeTags = require('../removeTagsFromRichTextEditor')
 const logger = require('../common/logger.log');
 const commonFun = require('../common/resuableFunctions.js')
 app.use(bodyParser.json());
+const { conversationStatus, conversationAssigned, conversationCreated } = require('../common/webhookEvents.js');
+const { ConversationStatusMap } = require('../enum');
 
 app.use(bodyParser.urlencoded({ extended: true }));
 
@@ -149,6 +151,7 @@ const insertCustomers = async (req, res) => {
                 let insertedCon = await db.excuteQuery(insertQuery, [values]);
                 customerId = insertedCon?.insertId;
                 interactionId = await db.excuteQuery('select * from Interaction where customerId=? and is_deleted !=1 and SP_ID=? order by created_at desc', [customerId, SP_ID]);
+                conversationCreated(SP_ID, customerId, displayPhoneNumber, req?.body?.userId);
                 res.status(200).send({
                     msg: 'Contact added successfully.',
                     status: 200,
@@ -325,8 +328,10 @@ const updateInteraction = async (req, res) => {
 
             await db.excuteQuery(actionQuery, [req.body.InteractionId, req.body?.action, req.body?.action_at, req.body?.action_by, utcTimestamp, req.body?.SP_ID, 'text']);
             updateQuery = "UPDATE Interaction SET interaction_status ='" + req.body.Status + "' ,updated_at ='" + utcTimestamp + "' WHERE InteractionId =" + req.body.InteractionId;
+            conversationStatus(req.body?.SP_ID, req.body.Status == "Open" ? ConversationStatusMap.Open : ConversationStatusMap.Resolved, req.body.InteractionId);
             if (req.body.Status == 'Open') {
                 let ResolveOpenChat = await db.excuteQuery('UPDATE Interaction SET interaction_status =? WHERE InteractionId !=? and customerId=?', ['Resolved', req.body.InteractionId, req.body?.customerId]);
+                // conversationStatus(req.body?.SP_ID, ConversationStatusMap.Resolved, req.body.InteractionId);
                 logger.info(`ResolveOpenChat if previous is open already ${req.body?.customerId}`)
             }
         }
@@ -370,7 +375,7 @@ const getAllFilteredInteraction = async (req, res) => {
             if (filterBy === 'Open' || filterBy === 'Resolved') {
                 queryPath += " and ic.interaction_status='" + filterBy + "'";
             } else if (filterBy === 'Unassigned') {
-                queryPath += " and ic.InteractionId NOT IN (SELECT InteractionId FROM InteractionMapping where AgentId != -1) and ic.interaction_status='Open' ";
+                queryPath += " and ic.InteractionId NOT IN (SELECT InteractionId FROM InteractionMapping where AgentId != -1 and is_active=1) and ic.interaction_status='Open' ";
             } else if (filterBy === 'Mine') {
                 queryPath += " and ic.InteractionId  IN (SELECT InteractionId FROM InteractionMapping where AgentId=" + req.body.AgentId + " and is_active=1)";
             } else if (filterBy === 'Mentioned') {
@@ -685,6 +690,7 @@ const insertMessage = async (req, res) => {
             var header = req.body?.headerText
             var body = req.body?.bodyText
             let DynamicURLToBESent;
+            let Interactive_buttons = typeof req.body?.interactiveButtonsPayload == 'string' ? req.body?.interactiveButtonsPayload : JSON.stringify(req.body?.interactiveButtonsPayload);
             let buttonsVariable = typeof req.body?.buttonsVariable === 'string' ? JSON.parse(req.body?.buttonsVariable) : req.body?.buttonsVariable;
             if(!commonFun.isInvalidParam(req.body?.buttonsVariable) && buttonsVariable.length > 0) {
                DynamicURLToBESent = await removeTags.getDynamicURLToBESent(buttonsVariable, SPID, customerId);
@@ -697,7 +703,7 @@ const insertMessage = async (req, res) => {
             let buttons = JSON.stringify(req?.body?.buttons);
             const channel = channelType.length > 0 ? channelType[0].channel : spchannel[0]?.channel_id;
 
-            var values = [[SPID, Type, ExternalMessageId, interaction_id, Agent_id, message_direction, message_text, message_media, media_type, Message_template_id, Quick_reply_id, created_at, created_at, mediaSize, assignAgent, buttons]];
+            var values = [[SPID, Type, ExternalMessageId, interaction_id, Agent_id, message_direction, message_text, message_media, media_type, Message_template_id, Quick_reply_id, created_at, created_at, mediaSize, assignAgent, buttons, Interactive_buttons]];
             let msg_id = await db.excuteQuery(messageQuery, [values]);
             //  logger.debug('Message ID:', msg_id);
             let updateInteraction = await db.excuteQuery(val.updateTempInteractionQuery, [0, interaction_id])
@@ -764,8 +770,11 @@ const insertMessage = async (req, res) => {
 
             let middlewareresult = "";
             if (Type != 'notes') {
-                if (channelType[0].isBlocked != 1) {
-                    if (req?.body?.isTemplate == true && channel == 'WA API') {
+                if (channelType[0]?.isBlocked != 1) {
+                    if(req?.body?.isTemplate == true && req.body?.interactiveButtonsPayload  && channel != 'WA API'){
+                        middlewareresult = await middleWare.sendingTemplate(SPID, req.body.messageTo, header, content, req.body?.interactiveButtonsPayload);
+                    }
+                    else if (req?.body?.isTemplate == true && channel == 'WA API') {
                         const mediaType = determineMediaType(media_type);
                         //get header and body variable 
                         console.log('line 770');
@@ -1024,12 +1033,12 @@ const updateInteractionMapping = async (req, res) => {
         const MappedBy = req.body.MappedBy;
         const is_active = 1;
         logger.debug('InteractionId:', InteractionId, 'AgentId:', AgentId, 'MappedBy:', MappedBy);
-
+        conversationAssigned(req.body );
         const querryToGetPreviousAgent = "SELECT * FROM InteractionMapping WHERE InteractionId = ? order by 1 desc limit 1";
         const PreviousAgent = await db.excuteQuery(querryToGetPreviousAgent, [InteractionId]);
         let PreviousAgentId;
         if(PreviousAgent.length > 0) {
-            PreviousAgentId = PreviousAgent[0]?.AgentId;
+             PreviousAgentId = PreviousAgent[0]?.AgentId;
         }
         const values = [[is_active, InteractionId, AgentId, MappedBy, PreviousAgentId]];
         if (AgentId != -1) {

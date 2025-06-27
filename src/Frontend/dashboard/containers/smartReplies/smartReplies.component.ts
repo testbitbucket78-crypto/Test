@@ -12,6 +12,7 @@ import { SettingsService } from 'Frontend/dashboard/services/settings.service';
 import { ToolbarService, NodeSelection, LinkService, ImageService } from '@syncfusion/ej2-angular-richtexteditor';
 import { RichTextEditorComponent, HtmlEditorService,EmojiPickerService } from '@syncfusion/ej2-angular-richtexteditor';
 import { hasEmptyValues } from '../common/Utils/file-utils';
+import { InteractiveButtonPayload } from 'Frontend/dashboard/models/interactiveButtons.model';
 import { BotserviceService } from 'Frontend/dashboard/services/botservice.service';
 
 declare var $: any;
@@ -1064,7 +1065,7 @@ showAddSmartRepliesModal() {
 			this.showInfo = true;
 		}
 	}
-	  
+	interactive_buttons: InteractiveButtonPayload[] = [];
 	insertTemplateInChat(item:any){
 		// $("#templatePreview").modal('hide');
 		this.closeAllModal();
@@ -1096,6 +1097,7 @@ showAddSmartRepliesModal() {
 		this.templateName =item?.TemplateName;
 		this.templatelanguage =item?.Language;
 		this.templateButton  =item?.buttons;
+		this.interactive_buttons = item?.interactive_buttons;
 		this.addMessage(true,htmlcontent,item?.Header,item?.BodyText);
 	}
 
@@ -1256,7 +1258,8 @@ showAddSmartRepliesModal() {
 				name: this.templateName,
 				language: this.templatelanguage,
 				buttons: this.templateButton,
-				buttonsVariable: this.buttonsVariable
+				buttonsVariable: this.buttonsVariable,
+				interactive_buttons: this.interactive_buttons
 			});
 		}
 		this.messageMeidaFile = '';
@@ -1506,7 +1509,7 @@ stopPropagation(event: Event) {
 		if(!isExist) {
 			this.isAssigned = true;
 			if(this.isEditAssigned){
-				this.assignedAgentList[this.AssignedIndex] = { Message: '', ActionID: 2, Value: this.agentsList[index].name,ValueUuid: this.agentsList[index].uuid, Media: '', MessageVariables: '', media_type : '',isTemplate:false,headerText: '',bodyText: '',buttons:[],language:'',name:'',buttonsVariable:[]}
+				this.assignedAgentList[this.AssignedIndex] = { Message: '', ActionID: 2, Value: this.agentsList[index].name,ValueUuid: this.agentsList[index].uuid, Media: '', MessageVariables: '', media_type : '',isTemplate:false,headerText: '',bodyText: '',buttons:[],language:'',name:'',buttonsVariable:[], interactive_buttons: []}
 			}else{
 				this.assignedAgentList.push({ Message: '', ActionID: 2, Value: this.agentsList[index].name,ValueUuid: this.agentsList[index].uuid, Media: '', MessageVariables: '', media_type: '',isTemplate:false,headerText: '',bodyText: '',buttons:[],language:'',name:'',buttonsVariable:[]})
 			}
@@ -1564,7 +1567,7 @@ stopPropagation(event: Event) {
 			this.assignedTagList = [];
 			this.assignedTagList.push(this.addTagList[index].TagName);
 			this.assignedTagListUuid.push(this.addTagList[index].ID);
-			this.assignedAgentList.push({ Message: '', ActionID: 1, Value: this.assignedTagList,ValueUuid: this.assignedTagListUuid,Media: '', MessageVariables: '', media_type: '',isTemplate:false,headerText: '',bodyText: '',buttons:[],language:'',name:'',buttonsVariable:[]});
+			this.assignedAgentList.push({ Message: '', ActionID: 1, Value: this.assignedTagList,ValueUuid: this.assignedTagListUuid,Media: '', MessageVariables: '', media_type: '',isTemplate:false,headerText: '',bodyText: '',buttons:[],language:'',name:'',buttonsVariable:[],interactive_buttons: []});
 			console.log('new value');
 		}
 		console.log(this.assignedAgentList);
@@ -1982,6 +1985,7 @@ stopPropagation(event: Event) {
 							Value: this.data[i].Value,
 							Media: this.data[i].Media,
 							buttons: JSON.parse(this.data[i].buttons),
+							interactive_buttons : this.data[i].interactive_buttons
 						});
 				   }
 			}
@@ -2054,7 +2058,8 @@ console.log(sortedData)
 					name: sortedData[i]?.templateName,
 					language: sortedData[i]?.templatelanguage,
 					buttons: sortedData[i]?.buttons? JSON.parse(sortedData[i]?.buttons) : sortedData[i]?.templateButton,
-					buttonsVariable: sortedData[i]?.buttonsVariable
+					buttonsVariable: sortedData[i]?.buttonsVariable,
+					interactive_buttons: this.interactive_buttons
 				});
 		}
 		console.log(this.assignedAgentList,'MESSAGE DATA')

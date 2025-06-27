@@ -337,11 +337,16 @@ const headers = new HttpHeaders({
   }
   
   getFlowDetail(spId: number,flowId:number): Observable<any> {
-    return this.http.get<any>(`http://localhost:3004/getFlowDetail/${spId}/${flowId}`);
+    return this.http.get<any>(`${this.API_URL}/getFlowDetail/${spId}/${flowId}`);
   }
   
   saveFlowMapping(data: any): Observable<any> {
-    return this.http.post<any>(`http://localhost:3004/saveFlowMapping`,data);
+    return this.http.post<any>(`${this.API_URL}/saveFlowMapping`,data);
+  }
+
+  
+  exportFlowData(data: any): Observable<any> {
+    return this.http.post<any>(`${this.API_URL}/exportFlowData`,data);
   }
 
   saveCompanyDetail(companyData:companyDetail): Observable<any> {
@@ -548,7 +553,24 @@ const headers = new HttpHeaders({
   testWebhook(tagData:any): Observable<any> {
     return this.http.post<any>(`${this.API_URL}/testwebhook`,tagData);
   } 
-
+  testWebhooks(data:any): Observable<any> {
+    return this.http.post<any>(`${this.API_URL}/testWebhooks`,data);
+  }
+  deleteToken(data:any): Observable<any> {
+    return this.http.post<any>(`${this.API_URL}/deleteToken`,data);
+  }
+  Webhooks(Data:any): Observable<any> {
+    return this.http.post<any>(`${this.API_URL}/Webhooks`,Data);
+  }
+  exportLogs(Data:any): Observable<any> {
+    return this.http.post<any>(`${this.API_URL}/exportLogs`,Data);
+  }
+  getWebhooks(spid:any): Observable<any> {
+    return this.http.get<any>(`${this.API_URL}/getWebhooks/${spid}`);
+  }
+  deleteWebhook(id:any): Observable<any> {
+    return this.http.get<any>(`${this.API_URL}/deleteWebhook/${id}`);
+  }
   saveWebhook(tagData:any): Observable<any> {
     return this.http.post<any>(`${this.API_URL}/saveWebhookUrl`,tagData);
   } 

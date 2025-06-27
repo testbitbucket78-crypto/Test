@@ -221,18 +221,29 @@ class WhapiIncomingMessage {
     }
 }
 
+// class WhapiMessageRequest { // deprecated
+//     constructor({
+//         to,
+//         body,
+//         media = undefined,
+//     }) {
+//         this.to = to;
+//         this.body = body;
+//         if(media )this.media = media;
+//     }
+// }
 class WhapiMessageRequest {
-    constructor({
-        to,
-        body,
-        media = undefined,
-    }) {
-        this.to = to;
-        this.body = body;
-        if(media )this.media = media;
-    }
-}
+  constructor({ to, body, media = undefined }) {
+    this.to = String(to);
 
+    if (media) {
+      this.media = media;
+      this.caption = body; 
+    } else {
+      this.body = body;
+    }
+  }
+}
 class WhapiMessageResponse {
     constructor(success, status, msgId = null, message = null, error = null) {
         this.success = success;
@@ -260,7 +271,96 @@ class WhapiMessageResponse {
             apiError?.error?.message ?? "Unknown error"
         );
     }
+    
 }
+class WhapiInteractiveButtons {
+    constructor(to, interactiveButtons, bodyText = '') {
+      this.to = to;
+      this.interactiveButtons = this.parseButtons(interactiveButtons);
+      this.bodyText = bodyText;
+    }
+  
+    parseButtons(buttons) {
+  if (typeof buttons === 'string') {
+    try {
+      const parsed = JSON.parse(buttons);
+
+      // ✅ If it's a list type
+      if (parsed?.type === 'list' && parsed?.action?.list) {
+        return parsed; // Keep entire object for special handling later
+      }
+
+      if (Array.isArray(parsed)) {
+        return parsed;
+      } else if (parsed && parsed.action && Array.isArray(parsed.action.buttons)) {
+        return parsed.action.buttons;
+      } else {
+        throw new Error('Parsed interactiveButtons is not valid');
+      }
+    } catch (error) {
+      throw new Error('Invalid interactiveButtons JSON string');
+    }
+  }
+
+  if (Array.isArray(buttons)) {
+    return buttons;
+  } else if (buttons?.type === 'list' && buttons?.action?.list) {
+    return buttons; // ✅ Non-string list payload
+  } else if (buttons && buttons.action && Array.isArray(buttons.action.buttons)) {
+    return buttons.action.buttons;
+  }
+
+  throw new Error('interactiveButtons must be an array or object with action.buttons');
+}
+  
+buildPayload() {
+  // ✅ Handle list type
+  if (this.interactiveButtons?.type === 'list' && this.interactiveButtons?.action?.list) {
+    return {
+      to: this.to,
+      type: 'list',
+      body: {
+        text: this.bodyText || this.interactiveButtons.action.list.label || 'Choose an option'
+      },
+      action: {
+        list: this.interactiveButtons.action.list
+      }
+    };
+  }
+
+  // ✅ Handle button type
+  return {
+    to: this.to,
+    type: 'button',
+    body: {
+      text: this.bodyText
+    },
+    action: {
+      buttons: this.interactiveButtons.map((btn, index) => {
+        const button = {
+          id: `${index + 1}`,
+          type: btn.type,
+          title: btn.title
+        };
+
+        if (btn.type === 'copy' && btn.copy_code) {
+          button.copy_code = btn.copy_code;
+        }
+
+        if (btn.type === 'call' && btn.phone_number) {
+          button.phone_number = btn.phone_number;
+        }
+
+        if (btn.type === 'url' && btn.url) {
+          button.url = btn.url;
+        }
+
+        return button;
+      })
+    }
+  };
+}
+  }
 
 module.exports = {
     CreateChannelRequest,
@@ -268,5 +368,6 @@ module.exports = {
     extendChannelValidity,
     WhapiIncomingMessage,
     WhapiMessageRequest,
-    WhapiMessageResponse
+    WhapiMessageResponse,
+    WhapiInteractiveButtons
 };

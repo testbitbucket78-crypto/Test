@@ -1,4 +1,4 @@
-import { Component, ElementRef, HostListener, OnInit, Renderer2, ViewChild } from '@angular/core';
+import { Component, ElementRef, HostListener, OnInit, Renderer2, ViewChild, ChangeDetectorRef } from '@angular/core';
 import { AbstractControl, FormControl, FormGroup, ValidationErrors, Validators } from '@angular/forms';
 import { newTemplateFormData, quickReplyButtons, templateMessageData,} from 'Frontend/dashboard/models/settings.model';
 import { SettingsService } from 'Frontend/dashboard/services/settings.service';
@@ -9,7 +9,8 @@ import { RichTextEditorComponent, HtmlEditorService } from '@syncfusion/ej2-angu
 import { faSmileWink } from '@fortawesome/free-solid-svg-icons';
 import { PhoneValidationService } from 'Frontend/dashboard/services/phone-validation.service';
 import { environment } from 'environments/environment';
-
+import { InteractiveButtonPayload, InteractiveMessagePayload } from 'Frontend/dashboard/models/interactiveButtons.model';
+import { ToastService } from 'assets/toast/toast.service';
 declare var $: any;
 @Component({
     selector: 'sb-template-message',
@@ -240,6 +241,7 @@ export class TemplateMessageComponent implements OnInit {
     };
     newTemplateForm!: FormGroup;
     buttonsArray:any[] =[];
+    channel='whapi'; // todo make it dynamic
     isPopupVisible:boolean = false;
     isAllButtonPopupVisible:boolean = false;
     channelQualityTooltip:boolean = false;
@@ -250,7 +252,9 @@ export class TemplateMessageComponent implements OnInit {
     constructor(public apiService: SettingsService,
         private renderer: Renderer2,
         private phoneValidationService: PhoneValidationService,
-        public settingsService: SettingsService, private _teamboxService: TeamboxService) {}
+        public settingsService: SettingsService, private _teamboxService: TeamboxService, public cdr : ChangeDetectorRef, public toast: ToastService) {
+            this.countryCodeList = this.apiService.countryCodes;
+        }
 
     errorMessage = '';
     successMessage = '';
@@ -370,9 +374,13 @@ export class TemplateMessageComponent implements OnInit {
 
     showMessageType() {
         // this.selectedType = type;
+                debugger;
         this.newTemplateForm.get('Links')?.setValue(null);
         this.newTemplateForm.get('Header')?.setValue('');
         this.selectedPreview = '';
+       if (this.selectedType !== '' && this.selectedType !== 'text') {
+            this.toast.warning('Attention: Buttons are allowed only when the header type is "Text" or "None"');
+        }
     }
  
     applyGalleryFilter() {
@@ -824,6 +832,7 @@ checkTemplateName(e:any){
         copyTemplateForm.status = 'draft';
         copyTemplateForm.isCopied = 1;
         copyTemplateForm.template_id = this.templatesMessageDataById.template_id;
+        copyTemplateForm.interactiveButtonsPayload= typeof this.templatesMessageDataById?.interactive_buttons == 'string' ? this.templatesMessageDataById?.interactive_buttons : JSON.parse(this.templatesMessageDataById?.interactive_buttons);
       //  if(this.templatesMessageDataById.Category=='WA API') {
             copyTemplateForm.template_json = this.templatesMessageDataById?.template_json;
 
@@ -884,6 +893,7 @@ checkTemplateName(e:any){
         newTemplateForm.template_id = 0;
         newTemplateForm.isCopied = 0;
         newTemplateForm.template_json = [];
+        newTemplateForm.interactiveButtonsPayload= JSON.stringify(this.interactiveButtonsPayload);
         if(this.newTemplateForm.controls.Channel.value == 'WA API') {
             let buttons:any[] =[];
             let headerAtt = this.getVariables(this.newTemplateForm.controls.Header.value, "{{", "}}", true);
@@ -1235,6 +1245,11 @@ triggerRichTextEditorChange() {
     
 
     previewTemplate() {
+        if(!this.validateRenderedButtons(this.renderedButtons)){
+           this.toast.error('Buttons text should not be empty');
+           return;
+        }
+        this.interactiveButtonsPayload = this.generateInteractivePayload('');
         this.allVariablesValueList =[];
         console.log(this.newTemplateForm.controls.BodyText.value);
         if(this.validateItems()){
@@ -1706,7 +1721,14 @@ openButtonPopUp(event: Event) {
     event.stopPropagation(); // Prevents event bubbling
     this.isPopupVisible = !this.isPopupVisible;
   }
-
+  openinteractiveButtonPopUp(event: Event) {
+     event.stopPropagation(); 
+     this.interactiveButtonspopup = !this.interactiveButtonspopup;
+  }
+  openButtonPopUpWeb(event: Event){
+    event.stopPropagation();
+    this.isPopupVisible = !this.isPopupVisible;
+  }
   // Close when clicking outside
   @HostListener('document:click', ['$event'])
   closeAddButtonsOnOutsideClick(event: Event) {
@@ -1720,4 +1742,432 @@ openButtonPopUp(event: Event) {
   }
 
 
+    selectedButtons: string[] = [];
+    renderedButtons: any[] = [];
+    countryCodeList: any = [];
+    interactiveButtonspopup!: boolean ;
+    interactiveButtonsPayload: any ;
+      interactiveButtons: any[] = [
+          {
+            title: "",
+            details: [
+              {
+                  id: "quick_reply",
+                  name: "Quick Reply",
+                  icon_path: "../../../../assets/img/settings/reply-arrow.svg",
+                  maximum_buttons: 3,
+                  enabledButton: [],
+                  children: {
+                      button_text: '',
+                      button_text_length: 25,
+                      button_text_placeholder: "e.g. Yes",
+                  }
+              },  
+              {
+                  id: "list_messages",
+                  name: "List Messages",
+                  icon_path: "../../../../assets/img/options-lines.svg",
+                  maximum_buttons: 10,
+                  enabledButton: [],
+                  children: {
+                      button_text: '',
+                      button_text_length: 25,
+                      button_text_placeholder: "e.g. Yes",
+                      extra_field: [
+                          {
+                              id: "row",
+                              name: "Row",
+                              extra_field_text: '',
+                              character_length: 25,
+                              placeholder: "e.g. Red"
+                          }
+                      ]
+                  }
+              }
+            ],
+          },
+          {
+            title: "Call to actions buttons",
+            details: [
+              {
+                  id: "url",
+                  name: "URL",
+                  icon_path: "../../../../assets/img/settings/open-in-new.svg",
+                  maximum_buttons: 1,
+                  enabledButton: ["phone"],
+                  children: {
+                      button_text: '',
+                      button_text_length: 25,
+                      button_text_placeholder: "e.g. Visit Website",
+                      extra_field: [
+                          {
+                              id: "hyperlink",
+                              name: "Website URL",
+                              character_length: 2000,
+                              extra_field_text: '',
+                              placeholder: "e.g. https://www.example.com",
+                              type: "static",
+                              type_title: "URL type",
+                          }
+                      ]
+                  }
+              },
+              {
+                  id: "phone",
+                  name: "Phone",
+                  icon_path: "../../../../assets/img/settings/phone-call.svg",
+                  maximum_buttons: 1,
+                  enabledButton: ["url"],
+                  children: {
+                      button_text: '',
+                      button_text_length: 25,
+                      button_text_placeholder: "e.g. Call Us",
+                      extra_field: [
+                          {
+                              id: "phone_number",
+                              name: "Phone Number",
+                              character_length: 20,
+                              extra_field_text: '',
+                              placeholder: "e.g. 8627019494",
+                              default_value: "IN +91",
+                              selected_country_code: "IN +91",
+                              dropdown_field: true,
+                              dropdown_title: "Country",
+                              country_code_list: this.countryCodes,
+                          }
+                      ]
+                  }
+              },
+              {
+                  id: "copy_button",
+                  name: "Copy Button",
+                  icon_path: "../../../../assets/img/settings/copy.svg",
+                  maximum_buttons: 1,
+                  enabledButton: [],
+                  children: {
+                      button_text: '',
+                      button_text_length: 25,
+                      button_text_placeholder: "e.g. Copy Offer Code",
+                      extra_field: [
+                          {
+                              id: "offer_code",
+                              name: "Sample offer code",
+                              character_length: 15,
+                              extra_field_text: '',
+                              placeholder: "e.g. Get50Off",
+                          }
+                      ]
+                  }
+              }
+           ],
+          },
+      ];
+
+      a(event: Event){
+      }
+
+      trackByFn(index: number, item: any) {
+        return item.id || index; // Use an ID if available, otherwise index
+      }
+      trackByRowId(index: number, item: any) {
+        return  item.id || index; // Use an ID if available, otherwise index
+      }
+
+  onInteractiveButtonClick(button: any) {
+      button = JSON.parse(JSON.stringify(button));
+      const isPhoneOrUrl = button.id === 'phone' || button.id === 'url';
+      const hasPhone = this.selectedButtons.includes('phone');
+      const hasUrl = this.selectedButtons.includes('url');
+      const hasOther = this.selectedButtons.some(id => id !== 'phone' && id !== 'url');
+
+      // Block duplicates
+      if (this.selectedButtons.includes(button.id)) {
+          return;
+      }
+
+      // Allow phone + url combination only
+      if (isPhoneOrUrl) {
+          if ((button.id === 'phone' && hasUrl) || (button.id === 'url' && hasPhone)) {
+              this.selectedButtons.push(button.id);
+              this.renderUIForButton(button);
+              return;
+          }
+
+          if (!hasPhone && !hasUrl && !hasOther) {
+              this.selectedButtons.push(button.id);
+              this.renderUIForButton(button);
+              return;
+          }
+      }
+
+      // For non-phone/url, allow only if no button is selected yet
+      if (!isPhoneOrUrl && this.selectedButtons.length === 0) {
+          this.selectedButtons.push(button.id);
+          this.renderUIForButton(button);
+      }
+  }
+    
+
+  isButtonDisabled(buttonId: string): boolean {
+      if (this.selectedButtons.includes(buttonId)) return true;
+
+      const isPhoneOrUrl = buttonId === 'phone' || buttonId === 'url';
+      const hasPhone = this.selectedButtons.includes('phone');
+      const hasUrl = this.selectedButtons.includes('url');
+      const hasOther = this.selectedButtons.some(id => id !== 'phone' && id !== 'url');
+
+      if (hasOther) {
+          // No other buttons allowed with anything else
+          return true;
+      }
+
+      if (hasPhone) {
+          return buttonId !== 'url';
+      }
+
+      if (hasUrl) {
+          return buttonId !== 'phone';
+      }
+
+      return false;
+  }
+
+  renderUIForButton(button: any): void {
+      const currentCount = this.renderedButtons.filter(rb => rb.id === button.id).length;
+
+      if (currentCount < button.maximum_buttons) {
+          this.renderedButtons.push(button);
+      }
+  }
+
+
+  canAddMoreButtons(buttonId: string, max: number): boolean {
+      const count = this.renderedButtons.filter(b => b.id === buttonId).length;
+      return count < max;
+  }
+
+    removeButton(id: string, index: number) {
+        if (id === 'list_messages') {
+            this.renderedButtons[0].children.extra_field.splice(index, 1);
+            if (this.renderedButtons[0].children.extra_field.length === 0)
+                this.renderedButtons = [];
+        } else
+            this.renderedButtons.splice(index, 1);
+
+        if (id === 'phone' || id === 'url')
+            return this.selectedButtons.splice(this.selectedButtons.indexOf(id), 1)
+        
+        if (this.renderedButtons.length === 0)
+            this.selectedButtons.splice(this.selectedButtons.indexOf(id), 1);
+
+    }
+
+    addButton(id: string): void {
+        const isSelected = this.selectedButtons.includes(id);
+        if (!isSelected) return;
+      
+        const buttonSchema = this.findButtonSchemaById(id);
+        if (!buttonSchema) return;
+      
+        if (id === 'list_messages') {
+            const rowField = buttonSchema.children?.extra_field?.find((field: any) => field.id === 'row');
+            if (!rowField) return;
+            const deepClonedrowField = JSON.parse(JSON.stringify(rowField));
+            deepClonedrowField.extra_field_text = '';
+            this.renderedButtons[0].children.extra_field.push(deepClonedrowField);
+            return;
+          }
+          
+          const deepClonedSchema = JSON.parse(JSON.stringify(buttonSchema));
+          deepClonedSchema.children.button_text = '';
+        this.renderedButtons.push(deepClonedSchema);
+      }
+
+   findButtonSchemaById(id: string): any | undefined {
+      for (const section of this.interactiveButtons) {
+        const found = section.details.find((btn: any) => btn.id === id);
+        if (found) return found;
+      }
+      return undefined;
+    }
+    validateRenderedButtons(renderedButtons: any[]):boolean {
+        let boolean =  true;
+        renderedButtons.forEach((detail: any) => {
+        // Skip buttons that are not selected
+        //if (!detail.enabledButton || detail.enabledButton.length === 0) return;
+
+        // 1. Check button text
+        if (!detail.children?.button_text || detail.children.button_text.trim() === '') {
+            boolean = false
+            return;
+        }
+
+        // 2. Check extra fields
+        if (Array.isArray(detail.children?.extra_field)) {
+            detail.children.extra_field.forEach((field: any) => {
+            if (!field.extra_field_text || field.extra_field_text.trim() === '') {
+                boolean = false
+                return
+            }
+
+            // For dropdowns
+            if (field.dropdown_field && (!field.selected_country_code || field.selected_country_code.trim() === '')) {
+            boolean = false
+            return
+            }
+            });
+        }
+
+        // 3. Special case for list_messages -> rows
+        if (detail.id === 'list_messages' && Array.isArray(detail.children?.extra_field)) {
+            detail.children.extra_field.forEach((row: any) => {
+            if (!row.extra_field_text || row.extra_field_text.trim() === '') {
+            boolean = false
+            return;
+            }
+            });
+        }
+        });
+       return boolean;
+}
+
+    generateInteractivePayload(to: string): InteractiveMessagePayload {
+        let listPayload: any = null;
+        const buttons: InteractiveButtonPayload[] = [];
+        
+
+
+        this.renderedButtons.forEach(group => {
+            // Ignore if no text entered
+                const buttonText = group.children.button_text?.trim();
+                if (!buttonText) return;
+
+            if (group.children.button_text.trim()) {
+              const button: InteractiveButtonPayload = {
+                type: this.getButtonType(group.id),
+                title: group.children.button_text,
+                id: group.id
+              };
+      
+              // Add extra fields if required based on type
+              if (group.id === 'url') {
+                const extra = group.children.extra_field?.find((e:any) => e.id === 'hyperlink');
+                if (extra && extra.extra_field_text) {
+                  button.url = extra.extra_field_text;
+                }
+              }
+      
+              if (group.id === 'phone') {
+                const extra = group.children.extra_field?.find((e: any) => e.id === 'phone_number');
+                if (extra && extra.extra_field_text) {
+                  button.phone_number = extra.extra_field_text;
+                }
+              }
+      
+              if (group.id === 'copy_button') {
+                const extra = group.children.extra_field?.find((e: any) => e.id === 'offer_code');
+                if (extra && extra.extra_field_text) {
+                  button.copy_code = extra.extra_field_text;
+                }
+              }
+                  if (group.id === 'list_messages') {
+                    const rows = group.children.extra_field.map((item: any, index: number) => ({
+                        title: item.extra_field_text?.trim() || `Option ${index + 1}`,
+                        description: item.placeholder?.trim() || '',
+                        id: item.id?.trim() || `row${index + 1}`
+                    }));
+
+                    listPayload = {
+                        label: buttonText,
+                        sections: [
+                        {
+                            title: buttonText,
+                            rows
+                        }
+                        ]
+                    };
+                  }
+      
+              buttons.push(button);
+            }
+
+        });
+      
+        const payload: InteractiveMessagePayload = {
+          to,
+          action: {
+            buttons
+          }
+        };
+
+        if (listPayload) {
+            payload.type = 'list';
+            payload.action.list = listPayload;
+        } else if (buttons.length) {
+            payload.action.buttons = buttons;
+        }
+
+        return payload;
+      }
+      getButtonType(id: string): string {
+        switch (id) {
+          case 'quick_reply':
+            return 'quick_reply';
+          case 'url':
+            return 'url';
+          case 'phone':
+            return 'call';
+          case 'copy_button':
+            return 'copy';
+          case 'list_messages':
+          return 'list';
+          default:
+            return 'reply';
+        }
+      }
+      countMaximumBtn(id: string): number {
+        if(id == 'list_messages'){
+            const countBtn = this.renderedButtons[0].children.extra_field?.filter((item:any)=> item.id.startsWith('row'))?.length;
+            return countBtn;
+        }
+       const countBtn = this.renderedButtons.filter((item:any)=> item.id == id)?.length;
+       return countBtn;
+      }
+
+      getInputCharacterCount(event : Event, id: any, idx: number): number {
+        return 1;
+      }
+
+addRow(id: string): void {
+  const buttonIndex = this.renderedButtons.findIndex(b => b.id === id);
+  if (buttonIndex === -1) return;
+
+  const button = this.renderedButtons[buttonIndex];
+  const rowSchema = this.findButtonSchemaById(id)?.children?.extra_field?.find((field: any) => field.id === 'row');
+
+  if (!rowSchema) return;
+
+  const newRow = JSON.parse(JSON.stringify(rowSchema));
+   const colors = ['Red', 'Orange', 'Yellow', 'Green', 'Blue', 'White', 'Gray', 'Pink', 'Brown', 'Black'];
+   newRow.placeholder = colors[Math.floor(Math.random() * colors.length)];
+  //newRow.extra_field_text = '';
+  newRow.id = 'row' + (button.children.extra_field.length + 1); // Ensure unique ID
+  button.children.extra_field.push(newRow);
+  this.cdr.detectChanges(); // Ensure view updates immediately
+}
+removeRow(id: string, rowIndex: number): void {
+  const buttonIndex = this.renderedButtons.findIndex(b => b.id === id);
+  if (buttonIndex === -1) return;
+
+  const button = this.renderedButtons[buttonIndex];
+
+  button.children.extra_field.splice(rowIndex, 1);
+
+  // If all rows are removed, you may want to clear out list_messages button entirely
+  if (button.children.extra_field.length === 0) {
+    this.renderedButtons.splice(buttonIndex, 1);
+    const selectedIndex = this.selectedButtons.indexOf(id);
+    if (selectedIndex !== -1) this.selectedButtons.splice(selectedIndex, 1);
+  }
+}
 }

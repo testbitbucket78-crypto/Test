@@ -12,6 +12,11 @@
     font-family: 'Manrope';
 }
 
+::ng-deep .button img {
+    height: 15px !important;
+    width: 15px !important;
+}  
+
 .button.active {
     color: #FFFFFF !important;
     background: #6149CD;
@@ -21,9 +26,9 @@
 }
 
 .button.secondary {
-    background: #6C757D;
-    color: #FFFFFF;
-    border: none;
+    background: white !important;
+    color: #000000;
+    border: 1px solid #0000001e !important;
     outline: none;
 }
 

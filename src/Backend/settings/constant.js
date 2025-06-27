@@ -409,7 +409,7 @@ let getCustomColumnById = `SELECT * FROM SPIDCustomContactFields WHERE id=? AND 
 
 //________________________________________TEMPLATE SETTINGS__________________________//
 
-var addTemplates = `INSERT INTO templateMessages (TemplateName,Channel,Category,Language,media_type,Header,BodyText,Links,FooterText,template_json,status,spid,created_By,created_at,isTemplate,industry,category_id,templateID,buttons,categoryChange,quality) VALUES ?`
+var addTemplates = `INSERT INTO templateMessages (TemplateName,Channel,Category,Language,media_type,Header,BodyText,Links,FooterText,template_json,status,spid,created_By,created_at,isTemplate,industry,category_id,templateID,buttons,categoryChange,quality,interactive_buttons) VALUES ?`
 var selectTemplate = `SELECT * FROM templateMessages WHERE spid=? and isDeleted !=1 and isTemplate=?`
 var selectTemplateForGallery = `SELECT * FROM templateMessages WHERE spid=? and isDeleted !=1 and isTemplate=? and Channel=?`
 
@@ -451,15 +451,18 @@ var updateUserAPIKeysAndTokenName = `UPDATE UserAPIKeys SET tokenName = ?, ips =
 var updateUserAPIKeysAndKeyGenerate = `UPDATE UserAPIKeys SET api_key = ?, ips = ?, updated_at = CURRENT_TIMESTAMP WHERE spid = ?`
 var getUserAPIKeys = `select * from UserAPIKeys where spid = ?`
 var updateAPIkeysState = `UPDATE UserAPIKeys SET is_enabled = ?, updated_at = CURRENT_TIMESTAMP WHERE spid = ?`
+const deleteAPIKey = `DELETE FROM UserAPIKeys WHERE spid = ?`;
 var updateWebhookUrl = `UPDATE UserAPIKeys  SET webhook_url = ?, updated_at = CURRENT_TIMESTAMP WHERE spid = ?`
 var getAgentId = `select * from user where SP_ID = ? and ParentId is null`
 var getChannel = `SELECT channel_id, connected_id FROM WhatsAppWeb WHERE spid = ?`
 var getRateLimit = `select count(*) AS Count from Message WHERE (created_at >= NOW() - INTERVAL 1 MINUTE) and message_direction = 'Out' and SPID =?`
 
 // ------------------------- WhatsApp Flow ----------------------------------//
-var getflowDetail = `select * from FlowsData where spid = ? and flowid = ?`
-var getflows = `select * from Flows where spid = ? `
-var saveflowMapping = `update Flows SET col_Mapping =? where spid = ? and flowid = ?`
+var getflowDetail = `select * from FlowsData where spid =? and flowid =?`
+//var getflowDetail = `select * from FlowsData where spid = ? and flowid = ?`
+var getflows = `select * from Flows where spid =? `
+var saveflowMapping = `update Flows SET col_Mapping =? where spid =? and flowid =?`
+//var saveflowMapping = `update Flows SET col_Mapping =? where spid = ? and flowid = ?`
 
 
 module.exports = {
@@ -477,5 +480,5 @@ module.exports = {
     Whatsappdetails,addTokenQuery,updateTokenQuery,deleteTokenQuery,selectTokenQuery,isEnableQuery,baseURL,accessToken,deleteIPQuery,insertIPAddress,updateNotification,
     getColCount,addcolumn,getcolumn,deletecolumn,getcolumnid,enableMandatory,enablestatus,editfield ,selectApprovedTemplate ,addGallery ,getGallery,selectUserByIdQuery,
     content_type,access_token,url,selectActiveQuery,getAllUserQuery,checkDeletedColumn,getCustomColumnById,permanentDeleteColumn,selectHealthStatus,insertHealthStatus, insertUserAPIKeys, updateUserAPIKeysAndTokenName
-    ,getUserAPIKeys, updateAPIkeysState, updateWebhookUrl, getAgentId, getChannel, getRateLimit, getCampaignId, updateUserAPIKeysAndKeyGenerate, selectTemplateForGallery,getflowDetail,getflows,saveflowMapping
+    ,getUserAPIKeys, updateAPIkeysState, updateWebhookUrl, getAgentId, getChannel, getRateLimit, getCampaignId, updateUserAPIKeysAndKeyGenerate, selectTemplateForGallery,getflowDetail,getflows,saveflowMapping, deleteAPIKey
 }

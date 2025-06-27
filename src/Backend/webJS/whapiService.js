@@ -217,16 +217,33 @@ class whapiService {
         }
     }
 
-    static async SendMessage(apiUrl, token, dataToSend){
-        const response = await axios.post(apiUrl, dataToSend, {
-            headers: {
-                'accept': 'application/json',
-                'authorization': `Bearer ${token}`,   
-                'content-type': 'application/json'
-            }
-        });
-        return response.data; // Return response data
-    }
+    // static async SendMessage(apiUrl, token, dataToSend){// todo deprecated
+    //     const response = await axios.post(apiUrl, dataToSend, {
+    //         headers: {
+    //             'accept': 'application/json',
+    //             'authorization': `Bearer ${token}`,   
+    //             'content-type': 'application/json'
+    //         }
+    //     });
+    //     return response.data; // Return response data
+    // }
+static async SendMessage(apiUrl, token, dataToSend){
+  try {
+    const response = await axios.post(apiUrl, dataToSend, {
+      headers: {
+        'accept': 'application/json',
+        'authorization': `Bearer ${token}`,
+        'content-type': 'application/json'
+      }
+    });
+    return response.data;
+  } catch (error) {
+    console.error("ERROR:", error.message);
+    console.error("RESPONSE STATUS:", error.response?.status);
+    console.error("RESPONSE DATA:", error.response?.data);
+    throw error;
+  }
+}
 
     static async getSessionStatus(token) {
         try {
@@ -335,6 +352,28 @@ class whapiService {
     
             console.log(`Channel ${channelId} deleted successfully.`);
             return true;
+        } catch (error) {
+            console.error(`Failed to delete channel ${channelId}:`, error.response?.data || error.message);
+            return false;
+        }
+    }
+
+    static async interactiveButtons(payload, token) {
+        try {
+            const response = await axios.post(
+                'https://gate.whapi.cloud/messages/interactive',
+                payload,
+                {
+                    headers: {
+                        accept: 'application/json',
+                        authorization: `Bearer ${token}`,
+                        'content-type': 'application/json'
+                    }
+                }
+            );
+
+            console.log(`Message sent successfully to`, response.data);
+            return response.data;
         } catch (error) {
             console.error(`Failed to delete channel ${channelId}:`, error.response?.data || error.message);
             return false;

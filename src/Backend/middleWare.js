@@ -77,6 +77,11 @@ async function channelssetUp(spid, channelType, mediaType, messageTo, message_bo
     }
 }
 
+async function sendingTemplate(spid, to, header, body, interactiveButtons){
+    messages = await Whapi.sendTemplateViaWhapi(spid, to, header, body, interactiveButtons)
+    return messages;
+}
+
 async function sendMessagesThroughWhatsAppOfficial(phoneNumber, mediaType, message_body, media) {
     try {
 
@@ -488,7 +493,10 @@ async function createWhatsAppPayload(type, to, templateName, languageCode, heade
         }
     }
     if (button.length > 0) {
+        let dynamicUrlCount = 0;
+        let initDynamicCount = 0;
         let buttonComponents = button.map((btn,idx) => {
+            dynamicUrlCount = initDynamicCount;
             if (btn?.type === 'Copy offer Code') {
                 return {
                     type: "button",
@@ -502,7 +510,8 @@ async function createWhatsAppPayload(type, to, templateName, languageCode, heade
                     ]
                 };
             }
-            if (btn.webType === 'Dynamic' && DynamicURLToBESent[idx]) {
+            if (btn.webType === 'Dynamic' && DynamicURLToBESent[dynamicUrlCount]) {
+                initDynamicCount++;
                 return {
                     type: "button",
                     sub_type: "url",
@@ -510,7 +519,7 @@ async function createWhatsAppPayload(type, to, templateName, languageCode, heade
                     parameters: [
                         {
                             type: "text",
-                            text: DynamicURLToBESent[idx].trim()
+                            text: DynamicURLToBESent[dynamicUrlCount]?.trim()
                         }
                     ]
                 };
@@ -586,4 +595,4 @@ function simpleEncrypt(number, key = 12345) {
 // const payload = createWhatsAppPayload('text', '918130818921', 'cip_attribute', 'en', headerVariables, bodyVariables, 'https://picsum.photos/id/1/200/300');
 // console.log(JSON.stringify(payload, null, 2));
 
-module.exports = { channelssetUp, postDataToAPI, sendDefultMsg, createWhatsAppPayload,getQualityRating,getVerificationStatus, registerWebhook, registerWhatsApp }
+module.exports = { channelssetUp, postDataToAPI, sendDefultMsg, createWhatsAppPayload,getQualityRating,getVerificationStatus, registerWebhook, registerWhatsApp, sendingTemplate }

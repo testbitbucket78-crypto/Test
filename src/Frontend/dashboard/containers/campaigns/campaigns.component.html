@@ -254,6 +254,7 @@ It is determined by a combination of user feedback signals like blocks, reports 
 						</div>
 						</div>
 					</div>
+					<interactive-button *ngIf="selectedCampaign?.interactive_buttons" [width]="'100%'" [interactiveButtons]="selectedCampaign?.interactive_buttons"></interactive-button>
 
 					</div>
 					<!-- <div class="template_btn" *ngIf="selectedCampaign.channel_label == 'WhatsApp Official'">
@@ -537,6 +538,8 @@ It is determined by a combination of user feedback signals like blocks, reports 
 										{{(i==2 && template?.buttons?.length>3) ? 'Show All Buttons' : item?.buttonText }}</button> </div>
 									</div>
 								</div>
+					            <interactive-button *ngIf="template?.interactive_buttons" [width]="'100%'" [interactiveButtons]="template?.interactive_buttons"></interactive-button>
+
 							</div>
 
 							<div class="template_btn">
@@ -581,7 +584,8 @@ It is determined by a combination of user feedback signals like blocks, reports 
 										{{(i==2 && selectedTemplate?.buttons?.length>3) ? 'Show All Buttons' : item?.buttonText }}</button> </div>
 									</div>
 								</div>
-		
+		                        <interactive-button *ngIf="selectedTemplate?.interactive_buttons" [width]="'100%'" [interactiveButtons]="selectedTemplate?.interactive_buttons"></interactive-button>
+
 							</div>
 							<div class="template_btn">
 								<!-- <button type="button" class="btn">YES</button>
@@ -688,7 +692,7 @@ It is determined by a combination of user feedback signals like blocks, reports 
 										{{(i==2 && selectedTemplate?.buttons?.length>3) ? 'Show All Buttons' : item?.buttonText }}</button> </div>
 									</div>
 								</div>
-		
+		                        <interactive-button *ngIf="selectedTemplate?.interactive_buttons" [width]="'100%'" [interactiveButtons]="selectedTemplate?.interactive_buttons"></interactive-button>
 							</div>
 							
 						</div>
@@ -736,6 +740,7 @@ It is determined by a combination of user feedback signals like blocks, reports 
 									{{(i==2 && selectedTemplate?.buttons?.length>3) ? 'Show All Buttons' : item?.buttonText }}</button> </div>
 								</div>
 							</div>
+							<interactive-button *ngIf="selectedTemplate?.interactive_buttons" [width]="'100%'" [interactiveButtons]="selectedTemplate?.interactive_buttons"></interactive-button>
 	
 						</div>
 						<!-- <div class="template_btn" *ngIf="this.newCampaignDetail.get('channel_id').value ==1">

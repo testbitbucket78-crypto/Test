@@ -10,6 +10,8 @@ export class DropdownComponent {
   @Input() channelSelected: string = '';
   @Input() channelPhoneNumber: string = '';
   @Input() ShowAssignOption: boolean = false;
+  @Input() type: 'primary' | 'secondary' = 'primary';
+  @Input() isOpen: boolean = false;
   @Input() customWidth: string = '200px';
   @Output() selectionChange = new EventEmitter<string>();
 

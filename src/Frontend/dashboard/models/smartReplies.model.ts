@@ -13,6 +13,7 @@ export interface agentMessageList{
     bodyText:string;
 	buttons: any;
     buttonsVariable: any;
+    interactive_buttons: any;
 }
 
 export interface repliesList {
@@ -36,5 +37,6 @@ export interface actionData {
     Value:any;
     Media:any;
     buttons: any;
+    interactive_buttons: any;
 }
 

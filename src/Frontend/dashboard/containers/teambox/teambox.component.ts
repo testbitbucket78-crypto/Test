@@ -161,26 +161,27 @@ export class TeamboxComponent implements OnInit {
 	SIPmaxMessageLimt = 100;
 	SIPthreasholdMessages = 1;
 	isTemplate: boolean = false;
-	headerText: string = '';
-	bodyText: string = '';
-	showFullProfile = false;
-	showAttachedMedia = false;
-	showattachmentbox = false;
-	ShowFilerOption = false;
-	ShowContactOption = false;
-	showfilter = false;
-	AutoReplyOption = false;
-	ShowConversationStatusOption = false;
-	ShowAssignOption = false;
-	selectedInteraction: any = [];
-	selectedNote: any = [];
-	contactList: any = [];
-	contactListInit: any = [];
-	contactId: number = 0;
-	interactionList: any = [];
-	unreadList: number = 0;
-	interactionListMain: any = [];
-	selectedTemplate: any = [];
+	headerText:string = '';
+	bodyText:string = '';
+	showFullProfile=false;
+	showAttachedMedia=false;
+	showattachmentbox=false;
+	ShowFilerOption=false;
+	ShowContactOption=false;
+    showfilter=false;
+	AutoReplyOption=false;
+	ShowConversationStatusOption=false;
+	ShowAssignOption=false;
+	isDisableSendButton=false;
+	selectedInteraction:any = [];
+	selectedNote:any=[];
+	contactList:any = [];
+	contactListInit:any = [];
+    contactId:number = 0;
+	interactionList:any = [];
+	unreadList:number = 0;
+	interactionListMain:any=[];
+	selectedTemplate:any  = [];
 	messageMediaFile: string = '';
 	variableValues: string[] = [];
 	agentsList: any = [];
@@ -291,7 +292,7 @@ export class TeamboxComponent implements OnInit {
 	isAgmodalOpened!: boolean;
 	templateName: string = '';
 	templatelanguage: string = '';
-	templateButton: any[] = [];
+    templateButton: any[] = [];
 	public insertImageSettings: object = {
 		width: '50px',
 		height: '50px'
@@ -679,13 +680,13 @@ export class TeamboxComponent implements OnInit {
 		this.closeAllModal()
 		let mediaContent;
 		let mediaName;
-		const fileNameWithPrefix = item?.Links.substring(item.Links.lastIndexOf('/') + 1);
+		const fileNameWithPrefix = item?.Links?.substring(item?.Links?.lastIndexOf('/') + 1) ? item?.Links?.substring(item?.Links?.lastIndexOf('/') + 1) : '';
 		let originalName;
 		if (item.media_type === 'video') {
 			originalName = fileNameWithPrefix.substring(0, fileNameWithPrefix.lastIndexOf('-'));
-			originalName = originalName + fileNameWithPrefix.substring(fileNameWithPrefix.lastIndexOf('.'));
+			originalName = originalName + fileNameWithPrefix?.substring(fileNameWithPrefix?.lastIndexOf('.'));
 		} else {
-			originalName = fileNameWithPrefix.substring(fileNameWithPrefix.indexOf('-') + 1);
+			originalName = fileNameWithPrefix?.substring(fileNameWithPrefix.indexOf('-') + 1);
 		}
 		if (item?.media_type === 'image') {
 			mediaContent = '<p><img style="width:100%; height:100%" src="' + item?.Links + '"></p>';
@@ -725,6 +726,7 @@ export class TeamboxComponent implements OnInit {
 		this.messageMeidaFile = item?.Links;
 		this.templateButton = item?.buttons
 		this.addingStylingToMedia(item);
+		this.interactiveButtonsPayload = item?.interactive_buttons;
 		console.log(htmlcontent);
 		this.sendMessage(true, htmlcontent);
 	}
@@ -3452,208 +3454,210 @@ export class TeamboxComponent implements OnInit {
 			}
 		});
 
-		return uids;
+    return uids;
+}
+sendMessage(isTemplate:boolean=false,templateTxt:string=''){
+	this.isDisableSendButton = true;
+	console.log('is sendMessage')
+	var tempDivElement = document.createElement("div");   
+
+	let value =isTemplate ?templateTxt :(this.chatEditor.value || "");
+	tempDivElement.innerHTML = value;
+    let val = tempDivElement.textContent || tempDivElement.innerText || "";
+//	if(!isTemplate){
+	if (value == null || val.trim()=='') {
+		this.showToaster('! Please enter a message before sending.','error');
+		this.isDisableSendButton = false;
+		return;
 	}
-	sendMessage(isTemplate: boolean = false, templateTxt: string = '', type: any = '') {
-		var tempDivElement = document.createElement("div");
-
-		let value = isTemplate ? templateTxt : (this.chatEditor.value || "");
-		tempDivElement.innerHTML = value;
-		let val = tempDivElement.textContent || tempDivElement.innerText || "";
-		//	if(!isTemplate){
-		if (value == null || val.trim() == '') {
-			this.showToaster('! Please enter a message before sending.', 'error');
-			return;
+  // }
+ 
+	 else {
+		let postAllowed =false;
+		if(this.loginAs == 'Manager' || this.loginAs == 'Admin' || this.showChatNotes == 'notes'){
+			postAllowed =true;
+		}else if(this.selectedInteraction.assignTo && this.selectedInteraction.assignTo.AgentId == this.AgentId){
+			postAllowed =true;
 		}
-		// }
-
-		else {
-			let postAllowed = false;
-			if (this.loginAs == 'Manager' || this.loginAs == 'Admin' || this.showChatNotes == 'notes') {
-				postAllowed = true;
-			} else if (this.selectedInteraction.assignTo && this.selectedInteraction.assignTo.AgentId == this.AgentId) {
-				postAllowed = true;
+		
+		if(postAllowed){
+		if(this.SIPthreasholdMessages>0){
+		let objectDate = new Date();
+		var cMonth = String(objectDate.getMonth() + 1).padStart(2, '0');
+		var cDay = String(objectDate.getDate()).padStart(2, '0');
+		var createdAt = objectDate.getFullYear()+'-'+cMonth+'-'+cDay+'T'+objectDate.getHours()+':'+objectDate.getMinutes()+':'+objectDate.getSeconds()
+		if(this.messageMediaFile != ''){
+			this.messageMeidaFile = this.messageMediaFile;
+			value = this.processMediaType(this.mediaType,this.messageMeidaFile,value)
+			this.messageMediaFile = '';
+		} else if(this.messageMeidaFile){
+            value = this.processMediaType(this.mediaType,this.messageMeidaFile,value)
+		} else{
+			console.log(value);
+			value = this.ensureSpaceBeforeTags(value);
+			console.log(value);
+		}
+	let agentName = this.userList.filter((items:any) => items.uid == this.uid)[0]?.name;
+	let uidMentioned: number[] = [];
+	   if(value){ 
+		const userMentioned = this.getUserListFromMessage(value);
+		if(userMentioned && userMentioned.length) { 
+			 uidMentioned = this.getUIDsFromNames(userMentioned);
+		}
+	   }
+		var bodyData = {
+			InteractionId: this.selectedInteraction.InteractionId,
+			CustomerId: this.selectedInteraction.customerId,
+			SPID:this.SPID,
+			SP_ID:this.SPID,
+			AgentId: this.AgentId,
+			messageTo:this.selectedInteraction.Phone_number,
+			message_text: value || "",
+			Message_id:this.newMessage.value.Message_id,
+			message_media: this.messageMeidaFile ? this.messageMeidaFile :'text',
+			media_type: this.mediaType,
+			quick_reply_id: '',
+			template_id:'',
+			message_type: this.showChatNotes,
+			created_at:new Date(),
+			mediaSize:this.mediaSize,
+			spNumber: this.spNumber,
+			isTemplate:this.isTemplate,
+			headerText: this.headerText,
+			bodyText: this.bodyText,
+			MessageVariables: this.allVariables,
+			action:'edited by ' + agentName,
+			action_at:new Date(),
+			action_by:name,
+			uidMentioned: uidMentioned,
+			name: this.templateName,
+			language: this.templatelanguage,
+			buttons: this.templateButton,
+			buttonsVariable: JSON.stringify(this.buttonsVariable),
+			interactiveButtonsPayload: this.interactiveButtonsPayload
+		}
+		console.log(bodyData,'Bodydata')
+		let input = {
+			spid: this.SPID,
+		};
+		if(this.newMessage.value.Message_id == ''){
+		this.settingService.clientAuthenticated(input).subscribe(response => {
+			console.log('is clientAuthenticated')
+			if (response.status === 404 && this.showChatNotes != 'notes' && this.selectedInteraction?.channel!='WA API') {
+				this.showToaster('The Channel of this conversation is currently disconnected. Please Reconnect this channel from Account Settings to use it.','error');
+				this.isDisableSendButton = false;
+				return;
 			}
-			console.log('value----------', value)
-			if (postAllowed) {
-				if (this.SIPthreasholdMessages > 0) {
-					let objectDate = new Date();
-					var cMonth = String(objectDate.getMonth() + 1).padStart(2, '0');
-					var cDay = String(objectDate.getDate()).padStart(2, '0');
-					var createdAt = objectDate.getFullYear() + '-' + cMonth + '-' + cDay + 'T' + objectDate.getHours() + ':' + objectDate.getMinutes() + ':' + objectDate.getSeconds()
-					if (this.messageMediaFile != '') {
-						this.messageMeidaFile = this.messageMediaFile;
-						value = this.processMediaType(this.mediaType, this.messageMeidaFile, value)
-						this.messageMediaFile = '';
-					} else if (this.messageMeidaFile) {
-						value = this.processMediaType(this.mediaType, this.messageMeidaFile, value)
-					} else {
-						console.log(value);
-						value = this.ensureSpaceBeforeTags(value);
-						console.log(value);
-					}
+			//(response.status === 200 && response.message === 'Client is ready !' ) || this.showChatNotes == 'notes'
 
-					console.log('value----------', value)
-					let agentName = this.userList.filter((items: any) => items.uid == this.uid)[0]?.name;
-					let uidMentioned: number[] = [];
-					if (value) {
-						const userMentioned = this.getUserListFromMessage(value);
-						if (userMentioned && userMentioned.length) {
-							uidMentioned = this.getUIDsFromNames(userMentioned);
-						}
-					}
-					var bodyData = {
-						InteractionId: this.selectedInteraction.InteractionId,
-						CustomerId: this.selectedInteraction.customerId,
-						SPID: this.SPID,
-						SP_ID: this.SPID,
-						AgentId: this.AgentId,
-						messageTo: this.selectedInteraction.Phone_number,
-						message_text: value || "",
-						Message_id: this.newMessage.value.Message_id,
-						message_media: this.messageMeidaFile ? this.messageMeidaFile : 'text',
-						media_type: this.mediaType,
-						quick_reply_id: '',
-						template_id: '',
-						message_type: this.showChatNotes,
-						created_at: new Date(),
-						mediaSize: this.mediaSize,
-						spNumber: this.spNumber,
-						isTemplate: this.isTemplate,
-						headerText: this.headerText,
-						bodyText: this.bodyText,
-						MessageVariables: this.allVariables,
-						action: 'edited by ' + agentName,
-						action_at: new Date(),
-						action_by: name,
-						uidMentioned: uidMentioned,
-						name: this.templateName,
-						language: this.templatelanguage,
-						buttons: this.templateButton,
-						buttonsVariable: JSON.stringify(this.buttonsVariable),
-						botName: this.selectedBotobj?.name ?? '',
-						botId: this.selectedBotobj?.id ?? 0
-					}
-
-					console.log(bodyData, 'Bodydata')
-					let input = {
-						spid: this.SPID,
-					};
-					if (this.newMessage.value.Message_id == '') {
-						this.settingService.clientAuthenticated(input).subscribe(response => {
-
-							if (response.status === 404 && this.showChatNotes != 'notes' && this.selectedInteraction?.channel != 'WA API') {
-								this.showToaster('The Channel of this conversation is currently disconnected. Please Reconnect this channel from Account Settings to use it.', 'error')
-								return;
-							}
-							//(response.status === 200 && response.message === 'Client is ready !' ) || this.showChatNotes == 'notes'
-
-							else if ((response.status === 200 && response.message === 'Client is ready !') || this.showChatNotes == 'notes' || (this.selectedInteraction?.channel == 'WA API')) {
-								this.apiService.sendNewMessage(bodyData).subscribe(async data => {
-									var responseData: any = data
-									if (this.newMessage.value.Message_id == '') {
-										var insertId: any = responseData.insertId
-										if (insertId) {
-											let agentName = this.userList.filter((items: any) => items.uid == this.uid)[0]?.name
-											var lastMessage = {
-												"interaction_id": bodyData.InteractionId,
-												"Message_id": insertId,
-												"message_direction": "Out",
-												"Agent_id": bodyData.AgentId,
-												"message_text": bodyData.message_text,
-												"message_media": bodyData.message_media,
-												"media_type": bodyData.media_type,
-												"Message_template_id": bodyData.message_media,
-												"Quick_reply_id": bodyData.message_media,
-												"Type": bodyData.message_media,
-												"ExternalMessageId": bodyData.message_media,
-												"created_at": createdAt,
-												"mediaSize": bodyData.mediaSize,
-												"AgentName": agentName,
-												//"created_at":new Date()
-											}
-
-											if (this.showChatNotes == 'text') {
-												// var allmessages =this.selectedInteraction.allmessages
-												// this.selectedInteraction.lastMessage= lastMessage
-												// allmessages.push(lastMessage)
-												// this.selectedInteraction.messageList =this.groupMessageByDate(allmessages)
-												// console.log(this.selectedInteraction.messageList);
-												this.getMessagesById(insertId);
-												let idx = this.interactionList.findIndex((items: any) => items.InteractionId == this.selectedInteraction.InteractionId);
-												if (idx > 0) {
-													this.interactionList[idx].message_text = bodyData?.message_text;
-													this.interactionList[idx].message_media = this.messageMeidaFile ? this.messageMeidaFile : 'text';
-													this.interactionList[idx].media_type = this.mediaType;
-													this.interactionList = this.moveItemToFirstPosition(this.interactionList, idx);
-													this.interactionListMain = JSON.parse(JSON.stringify(this.interactionList));
-												}
-												setTimeout(() => {
-													this.chatSection?.nativeElement.scroll({ top: this.chatSection?.nativeElement.scrollHeight })
-												}, 500);
-
-											} else {
-												// var allnotes =this.selectedInteraction.allnotes
-												// allnotes.push(lastMessage)
-												// this.selectedInteraction.notesList =this.groupMessageByDate(allnotes)
-												setTimeout(() => {
-													this.notesSection?.nativeElement.scroll({ top: this.notesSection?.nativeElement.scrollHeight })
-												}, 500);
-												this.getNoteData(this.selectedInteraction);
-												this.selectedNote = [];
-
-											}
-											this.chatEditor.value = '';
-											this.messageMeidaFile = '';
-											this.mediaType = '';
-											this.SIPthreasholdMessages = this.SIPthreasholdMessages - 1;
-											this.isTemplate = false
-											this.headerText = '';
-											this.bodyText = '';
-											this.templateButton = [];
-											this.buttonsVariable = [];
-										}
-
-
-									} else {
-										this.selectedNote.message_text = bodyData.message_text
+			else if ((response.status === 200 && response.message === 'Client is ready !' ) || this.showChatNotes == 'notes' || (this.selectedInteraction?.channel =='WA API')) {
+				this.apiService.sendNewMessage(bodyData).subscribe(async data => {
+					var responseData:any = data
+						if(this.newMessage.value.Message_id==''){
+							var insertId:any = responseData.insertId
+							if(insertId){
+								let agentName = this.userList.filter((items:any) => items.uid == this.uid)[0]?.name
+								var lastMessage ={
+									"interaction_id": bodyData.InteractionId,
+									"Message_id": insertId,
+									"message_direction": "Out",
+									"Agent_id": bodyData.AgentId,
+									"message_text": bodyData.message_text,
+									"message_media": bodyData.message_media,
+									"media_type": bodyData.media_type,
+									"Message_template_id": bodyData.message_media,
+									"Quick_reply_id": bodyData.message_media,
+									"Type": bodyData.message_media,
+									"ExternalMessageId": bodyData.message_media,
+									"created_at": createdAt,
+									"mediaSize":bodyData.mediaSize,
+									"AgentName":agentName,
+									//"created_at":new Date()
+								}
+								
+								if(this.showChatNotes=='text'){
+									// var allmessages =this.selectedInteraction.allmessages
+									// this.selectedInteraction.lastMessage= lastMessage
+									// allmessages.push(lastMessage)
+									// this.selectedInteraction.messageList =this.groupMessageByDate(allmessages)
+									// console.log(this.selectedInteraction.messageList);
+									this.getMessagesById(insertId);
+									let idx =  this.interactionList.findIndex((items:any) => items.InteractionId == this.selectedInteraction.InteractionId);
+									if(idx >0){
+										this.interactionList[idx].message_text = bodyData?.message_text;
+										this.interactionList[idx].message_media= this.messageMeidaFile ? this.messageMeidaFile :'text';
+										this.interactionList[idx].media_type = this.mediaType;
+										this.interactionList = this.moveItemToFirstPosition(this.interactionList,idx);
+										this.interactionListMain = JSON.parse(JSON.stringify(this.interactionList));
 									}
-
-
-									this.newMessage.reset({
-										Message_id: ''
-									});
-								});
+									setTimeout(() => {
+										this.chatSection?.nativeElement.scroll({top:this.chatSection?.nativeElement.scrollHeight})
+									}, 500);
+				
+								}else{
+									// var allnotes =this.selectedInteraction.allnotes
+									// allnotes.push(lastMessage)
+									// this.selectedInteraction.notesList =this.groupMessageByDate(allnotes)
+									setTimeout(() => {
+										this.notesSection?.nativeElement.scroll({top:this.notesSection?.nativeElement.scrollHeight})
+									}, 500);
+									this.getNoteData(this.selectedInteraction);
+									this.selectedNote =[];
+								
+								}
+								this.chatEditor.value ='';
+								this.isDisableSendButton = false;
+								this.messageMeidaFile='';
+								this.mediaType='';
+								this.SIPthreasholdMessages=this.SIPthreasholdMessages-1;
+								this.isTemplate = false
+								this.headerText = '';
+								this.bodyText = '';
+								this.templateButton = [];
+								this.buttonsVariable =[];
 							}
-							// },
-							// (error)=> {
-							// 	if(error.status === 500) {
-							// 		this.showToaster('! Internal Server Error Please Contact System Adminstrator','error');
-							// 	}
-							// 	else {
-							// 		this.showToaster(error.message,'error');
-							// 	}
-						});
-					}
-					else {
-						this.apiService.editNotes(bodyData).subscribe(async data => {
-							this.selectedNote.message_text = bodyData.message_text;
+				
+				
+							}else{
+								this.selectedNote.message_text= bodyData.message_text
+							}
+							
+							//this.isDisableSendButton = false;
 							this.newMessage.reset({
 								Message_id: ''
 							});
-							this.chatEditor.value = '';
-							// this.getMessageData(this.selectedInteraction,true)
-							this.getNoteData(this.selectedInteraction);
-							this.selectedNote = [];
-						})
-					}
-				} else {
-					this.showToaster('Oops! CIP message limit exceed please wait for 5 min...', 'warning')
-				}
-			} else {
-				this.showToaster('Oops! You are not allowed to post content', 'warning')
+				});
 			}
+		// },
+		// (error)=> {
+		// 	if(error.status === 500) {
+		// 		this.showToaster('! Internal Server Error Please Contact System Adminstrator','error');
+		// 	}
+		// 	else {
+		// 		this.showToaster(error.message,'error');
+		// 	}
+		 });
 		}
+		 else{
+			this.apiService.editNotes(bodyData).subscribe(async data => {
+				this.selectedNote.message_text= bodyData.message_text;						
+				this.newMessage.reset({
+					Message_id: ''
+				});
+				this.chatEditor.value ='';	
+				this.isDisableSendButton = false;				
+				// this.getMessageData(this.selectedInteraction,true)
+				this.getNoteData(this.selectedInteraction);
+				this.selectedNote =[];
+			})
+		 }
+		}else{
+			this.showToaster('Oops! CIP message limit exceed please wait for 5 min...','warning')
+		}
+	}else {
+		this.showToaster('Oops! You are not allowed to post content','warning')
+	 }
+	}
 
 
 	}
