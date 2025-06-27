@@ -9,6 +9,6 @@ app.use(bodyParser.urlencoded({ limit: '10mb', extended: true }));
 app.use('/',router);
 app.use(express.json());
 
-app.listen(3012, () => {
+app.listen(3013, () => {
     console.log('Server is running on port 3012');
 });
