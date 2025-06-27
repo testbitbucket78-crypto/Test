@@ -1511,7 +1511,7 @@ stopPropagation(event: Event) {
 			if(this.isEditAssigned){
 				this.assignedAgentList[this.AssignedIndex] = { Message: '', ActionID: 2, Value: this.agentsList[index].name,ValueUuid: this.agentsList[index].uuid, Media: '', MessageVariables: '', media_type : '',isTemplate:false,headerText: '',bodyText: '',buttons:[],language:'',name:'',buttonsVariable:[], interactive_buttons: []}
 			}else{
-				this.assignedAgentList.push({ Message: '', ActionID: 2, Value: this.agentsList[index].name,ValueUuid: this.agentsList[index].uuid, Media: '', MessageVariables: '', media_type: '',isTemplate:false,headerText: '',bodyText: '',buttons:[],language:'',name:'',buttonsVariable:[]})
+				this.assignedAgentList.push({ Message: '', ActionID: 2, Value: this.agentsList[index].name,ValueUuid: this.agentsList[index].uuid, Media: '', MessageVariables: '', media_type: '',isTemplate:false,headerText: '',bodyText: '',buttons:[],language:'',name:'',buttonsVariable:[],interactive_buttons: []})
 			}
 		}
 			
@@ -1530,9 +1530,9 @@ stopPropagation(event: Event) {
 			this.isAdded = true;
 			console.log(this.isAdded)
 			if(this.isEditBot){
-				this.assignedAgentList[this.botIndex] = { Message: '', ActionID: 3, Value: this.botsList[index].name,ValueUuid: this.botsList[index].id, Media: '', MessageVariables: '', media_type : '',isTemplate:false,headerText: '',bodyText: '',buttons:[],language:'',name:'',buttonsVariable:[]}
+				this.assignedAgentList[this.botIndex] = { Message: '', ActionID: 3, Value: this.botsList[index].name,ValueUuid: this.botsList[index].id, Media: '', MessageVariables: '', media_type : '',isTemplate:false,headerText: '',bodyText: '',buttons:[],language:'',name:'',buttonsVariable:[],interactive_buttons: []}
 			}else{
-				this.assignedAgentList.push({ Message: '', ActionID: 3, Value: this.botsList[index].name,ValueUuid: this.botsList[index].id, Media: '', MessageVariables: '', media_type: '',isTemplate:false,headerText: '',bodyText: '',buttons:[],language:'',name:'',buttonsVariable:[]})
+				this.assignedAgentList.push({ Message: '', ActionID: 3, Value: this.botsList[index].name,ValueUuid: this.botsList[index].id, Media: '', MessageVariables: '', media_type: '',isTemplate:false,headerText: '',bodyText: '',buttons:[],language:'',name:'',buttonsVariable:[],interactive_buttons: []})
 			}
 		}
 			

@@ -293,6 +293,7 @@ export class TeamboxComponent implements OnInit {
 	templateName: string = '';
 	templatelanguage: string = '';
     templateButton: any[] = [];
+	interactiveButtonsPayload:any;
 	public insertImageSettings: object = {
 		width: '50px',
 		height: '50px'
@@ -3456,7 +3457,7 @@ export class TeamboxComponent implements OnInit {
 
     return uids;
 }
-sendMessage(isTemplate:boolean=false,templateTxt:string=''){
+sendMessage(isTemplate:boolean=false,templateTxt:string='',type: any = ''){
 	this.isDisableSendButton = true;
 	console.log('is sendMessage')
 	var tempDivElement = document.createElement("div");   
@@ -3534,7 +3535,9 @@ sendMessage(isTemplate:boolean=false,templateTxt:string=''){
 			language: this.templatelanguage,
 			buttons: this.templateButton,
 			buttonsVariable: JSON.stringify(this.buttonsVariable),
-			interactiveButtonsPayload: this.interactiveButtonsPayload
+			interactiveButtonsPayload: this.interactiveButtonsPayload,
+			botName: this.selectedBotobj?.name ?? '',
+						botId: this.selectedBotobj?.id ?? 0
 		}
 		console.log(bodyData,'Bodydata')
 		let input = {
