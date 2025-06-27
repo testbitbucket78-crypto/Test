@@ -312,7 +312,7 @@ export class SmartRepliesComponent implements OnInit,OnDestroy {
     var SPID = this.loginDetails.SP_ID
     this.botService.getBotAlldetails(SPID).subscribe((res: any) => {
       if (res.status == 200) {
-        this.botsList = res.bots
+		this.botsList = res.bots.filter((result:any)=> result.status == 'publish')
       }
 
 

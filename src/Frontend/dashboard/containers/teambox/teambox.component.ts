@@ -4233,7 +4233,7 @@ sendMessage(isTemplate:boolean=false,templateTxt:string='',type: any = ''){
 		this.botService.getBotAlldetails(this.SPID).subscribe((res: any) => {
 
 			if (res.status == 200) {
-				this.botsList = res.bots
+				this.botsList = res.bots.filter((result:any)=> result.status == 'publish')
 				this.originalBotsList = [...this.botsList];
 			}
 		})
