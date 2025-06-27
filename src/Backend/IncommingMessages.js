@@ -1096,9 +1096,6 @@ async function isWorkingHour(){
   return ((isWorkingTime(workingData, currentTime)) && isTodayHoliday == false) ? true : false;
 }
 
-function updateAttribute(){
-  console.log('attribute');
-}
 
 async function botExit(){
   var updateBotSessionQuery = "update BotSessions set status=3 where botId =? and status=2";
@@ -1174,11 +1171,13 @@ async function identifyNode(data){
       await removeTag(value, custid);
       data.nodeId = json?.connectedId;
       identifyNode(data);
-    }else if(type == 'updateAttribute'){
-      updateAttribute();
-      data.nodeId = json?.connectedId;
-      identifyNode(data);
-    }else if(type == 'question' || type == 'openoption' || type =='buttonOptions'){ 
+    }
+    // else if(type == 'updateAttribute'){
+    //   updateAttribute();
+    //   data.nodeId = json?.connectedId;
+    //   identifyNode(data);
+    // }
+    else if(type == 'question' || type == 'openoption' || type =='buttonOptions'){ 
       if(data.isWating == true){        
         let selectedOption = json.option.filter((item) => (item.name)  == (data?.message));
         if(selectedOption.length > 0){
@@ -1195,7 +1194,6 @@ async function identifyNode(data){
     }else if(type == 'conversationStatus'){
       let ResolveOpenChat = await db.excuteQuery('UPDATE Interaction SET interaction_status =? WHERE InteractionId !=? and customerId=?', [json?.data?.status, req.body.InteractionId, req.body?.customerId]);
       botExit();
-    }else if(type == 'replyWithAction'){
     }else if(type == 'Notify'){
        let notifyvalues = [[SPID, '@Mention in the Notes', 'You have a been mentioned in the Notes', uid, 'teambox', uid, utcTimestamp]];
       let mentionRes = await db.excuteQuery('INSERT INTO Notification(sp_id,subject,message,sent_to,module_name,uid,created_at) values ?', [notifyvalues]);
@@ -1206,8 +1204,6 @@ async function identifyNode(data){
       await db.excuteQuery(optInQuery, [json?.data?.status, data.custid, data.sid]);
       data.nodeId = json?.connectedId;
       identifyNode(data);
-    }else if(type == 'notes&mention'){
-      
     }else if(type == 'WorkingHoursModal'){
       if(isWorkingHour()){
         let selectedOption = json.option.filter((item) => (item.name)  == 'open');
