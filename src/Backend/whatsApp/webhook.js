@@ -207,10 +207,10 @@ async function extractDataFromMessage(body) {
         let message_direction = messageData[0]?.message_direction;
         let media_type = messageData[0]?.media_type;
         let button = messageData[0]?.button;
+        let agentName = await db.excuteQuery('SELECT e.name,i.customerId,e.Phone_number FROM Interaction i JOIN EndCustomer e ON i.customerId = e.customerId WHERE i.interactionId = ?', [Interaction_id]);
+        contactDetail = agentName[0];
         if(message_direction == 'IN'){
-        let agentName = await db.excuteQuery('SELECT e.name,i.customerId,e.Phone_number FROM Interaction i JOIN EndCustomer e ON i.customerId = e.customerId WHERE i.interactionId = ?;', [Interaction_id]);
-        if(agentName?.length > 0){
-          contactDetail = agentName[0];
+        if(agentName?.length > 0)
           repliedMessageTo = agentName[0]?.name;
         }
       }else{
@@ -235,13 +235,17 @@ async function extractDataFromMessage(body) {
             let flow_token = JSON.parse(flow_reply?.flow_token)?.custom_info;
             console.log("flow_token", flow_token)
             const query = `INSERT INTO FlowsData (spid, flowid,flowresponse,customerId,name,phoneNumber) VALUES ?`;
-            await db.excuteQuery(query, [SPID[0]?.SP_ID,flow_token,flow_reply_Json, contactDetail?.customerId, contactDetail?.name, contactDetail?.Phone_number]);
+            await db.excuteQuery(query, [[[SPID[0]?.SP_ID,flow_token,flow_reply_Json, contactDetail?.customerId, contactDetail?.name, contactDetail?.Phone_number]]]);
             const flowquery = `UPDATE Flows SET responses = responses + 1 WHERE flowid = ?`;
             await db.excuteQuery(flowquery, [flow_token]);
-            let body= { mapping: flow_reply?.mapping, spId: SPID[0]?.SP_ID, customerId: contactDetail?.customerId, flowresponse: flow_reply_Json }
+            const mappingQuery = `select col_Mapping from Flows where flowid=?`;
+            const mapping = await db.excuteQuery(mappingQuery, [flow_token]);
+            if(mapping?.length > 0 && mapping[0]?.col_Mapping && mapping[0]?.col_Mapping?.length > 0 ){
+            let body= { mapping: mapping[0].col_Mapping, spId: SPID[0]?.SP_ID, customerId: contactDetail?.customerId, flowresponse: flow_reply_Json }
             updatePreviousValue(body);
+            }
           }
-      }
+        }
     }
          //console.log( spid, "campaignReplied*******", campaignReplied?.affectedRows)
       }
@@ -356,13 +360,12 @@ async function extractDataFromMessage(body) {
 
     }
   }
-
 }
 
 
 async function updatePreviousValue(body){
     try {
-           let mapping =  body.mapping;
+      let mapping = typeof body.mapping === 'string' ? JSON.parse(body.mapping) : body.mapping;
            let flowresponse= JSON.parse(JSON.parse(body?.flowresponse));
               mapping.forEach((map) => {
                   let value= flowresponse[map?.ActuallName];
