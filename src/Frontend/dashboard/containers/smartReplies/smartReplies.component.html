@@ -399,6 +399,24 @@
 										  <button class="px-1 msg-del-btn" (click)="removeAction(i)"><img src="assets/img/delete.png"></button>
 										</div>
 									  </div>
+
+									  <div class="d-flex justify-content-between align-items-center" *ngIf="message.ActionID == 3">
+										<div class="col-6 assign-conversation">
+											<p class="m-0 py-1 px-2" id="msgbox-head1">Action</p>
+											<div class="d-flex flex-wrap assign-container">
+											 
+											  <p class="py-1 px-2 m-0" id="msgbox-body1"><b>Add Bot</b></p>
+											  <p class="py-1 m-0" id="msgbox-body2" >
+												{{message.Value}}</p>
+											</div>
+										</div>
+						
+										<div class="col-6 assign-buttons ">
+										  <button class="px-2 msg-edit-btn btn-2"
+										  (click)="toggleEditableBot(i)"><img src="assets/img/edit.png"></button>
+										  <button class="px-1 msg-del-btn" (click)="removeBot(i)"><img src="assets/img/delete.png"></button>
+										</div>
+									  </div>
 						   
 									  
 									  <div class="d-flex justify-content-between align-items-center" *ngIf="message.ActionID == 1">
@@ -469,12 +487,25 @@
 								  </p>
 								  <div *ngIf="ShowAssignOption" class="overlay" (click)="closeAssignOption()"></div>
 								</div>
+
+
+
+								<div *ngIf="ShowAddBotOption && botsList.length > 0" (click)="stopPropagation($event)" class="popup-dialog AssignOption" [class.disabled]="isAdded">
+								  <p class="label">Add Bot</p>
+								  <p class="d-flex align-items-center px-2 py-1" *ngFor="let bot of botsList; let k = index" (click)="addBot(k)"
+									(click)="closeAddBotOption()">
+									<!-- <span *ngIf="!bot.profileImg" class="text-capitalize initials mt-0 w-25"> {{ bot.name }} </span> -->
+									<!-- <img *ngIf="bot.profileImg" class="rounded-circle mt-0" style="width: 30px; height: 30px; margin-left: 11px;" src="{{bot.profileImg}}" /> -->
+									<span key={k} class="agentName mt-0 w-75">{{bot.name}}</span>
+								  </p>
+								  <div *ngIf="ShowAssignOption" class="overlay" (click)="closeAddBotOption()"></div>
+								</div>
 					  
 								<div *ngIf="ShowAddAction" class="popup-dialog AssignAction" (click)="stopPropagation($event)">
 								  <p class="label">Add Action</p>
 								  <p class="d-flex justify-content-around" *ngFor="let assignAction of assignActionList; let m = index"
 									(click)="toggleAssignOption(m)"
-									[ngClass]="{'fade-out': assignAction == 'Assign Conversation' && assignedAgentList.length > 0 && checkList()}">
+									[ngClass]="{'fade-out': assignAction == 'Assign Conversation' && assignedAgentList.length > 0 && checkList() || assignAction == 'Add Bot' && assignedAgentList.length > 0 && checkBotList()}">
 									<span>{{assignAction}}</span><img class="pr-3 arrow-sign" src="../../../../assets/img/arrow-sign.svg" />
 								  </p>
 								  <div *ngIf="ShowAddAction" class="overlay" (click)="closeAddAction()"></div>

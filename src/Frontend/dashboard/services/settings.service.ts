@@ -10,6 +10,7 @@ import { DatePipe } from '@angular/common';
 
 export class SettingsService {
   API_URL:string='https://settings.stacknize.com';
+  API_URL_bot:string='http://localhost:3012';
   //API_URL:string='http://localhost:3004';
   token = 'cXlkZE04VzM3MTVaSkNwWlhINVlDNEY3eEJGV1V0S21FMGROaTJFWg==';
   subprivilages!:any;
@@ -656,5 +657,10 @@ const headers = new HttpHeaders({
   //   return this.http.get<any>(`${this.API_URL}/getWhatsAppDetails/${spid}`);
   // }
   
+
+
+
+
+
 
 }

@@ -46,6 +46,8 @@ import { ParseJsonPipe } from './containers/parseJSON/parseJSON.pipe';
 import { FilterMediaPipe } from './pipe/filter-media.pipe';
 import { WhatsAppFlowsComponent } from './containers/whats-app-flows/whats-app-flows.component';
 import { WhatsappFlowDetailComponent } from './containers/whatsapp-flow-detail/whatsapp-flow-detail.component';
+import { BotBuilderComponent } from './containers/bot-builder/bot-builder.component';
+import { CardCreationComponent } from './containers/card-creation/card-creation.component';
 
 @NgModule({
     imports: [
@@ -86,7 +88,9 @@ import { WhatsappFlowDetailComponent } from './containers/whatsapp-flow-detail/w
             FilterMediaPipe,
             WhatsAppFlowsComponent,
             WhatsappFlowDetailComponent,
-            ToastComponent
+            ToastComponent,
+            BotBuilderComponent,
+            CardCreationComponent
         ],
     exports: [...dashboardContainers.containers,
               ...dashboardComponents.components,

@@ -94,6 +94,22 @@ export class PhoneValidationService {
   ];
 
 
+
+  richTextRequiredValidator(): ValidatorFn {
+  return (control: AbstractControl): ValidationErrors | null => {
+    if (!control.value) return { required: true };
+
+    const textOnly = control.value
+      .replace(/<[^>]*>/g, '')     // Remove HTML tags
+      .replace(/&nbsp;/g, '')      // Remove non-breaking spaces
+      .replace(/\u200B/g, '')      // Remove zero-width space
+      .trim();
+
+    return textOnly.length === 0 ? { required: true } : null;
+  };
+}
+
+
 phoneNumberValidator(countryControl: AbstractControl | null): ValidatorFn {
   return (control: AbstractControl): ValidationErrors | null => {
     const countryCode = countryControl?.value;
@@ -118,3 +134,6 @@ getPhoneNumberLength(code:any){
 }
 
 }
+
+
+

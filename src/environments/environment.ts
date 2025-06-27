@@ -5,11 +5,14 @@
 export const environment = {
     production: false,
     baseUrl: 'https://authapi.sampanatechnologies.com',
-    API_URL:'https://settings.stacknize.com',
+    API_URL: 'https://settings.stacknize.com',
     AdminbaseUrl: 'https://adminapi.stacknize.com',
+    // botsAPI: 'https://bots.stacknize.com',
+    botsAPI: 'http://localhost:3012',
     // AdminbaseUrl: 'http://localhost:4000',
-    API_Keyword:'stacknize',
-    chhanel:'web'
+    API_Keyword: 'stacknize',
+    // chhanel: 'web'
+    chhanel: 'api'
 };
 
 /*

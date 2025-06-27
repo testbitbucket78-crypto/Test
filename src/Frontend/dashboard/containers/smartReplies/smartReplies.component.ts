@@ -13,6 +13,7 @@ import { ToolbarService, NodeSelection, LinkService, ImageService } from '@syncf
 import { RichTextEditorComponent, HtmlEditorService,EmojiPickerService } from '@syncfusion/ej2-angular-richtexteditor';
 import { hasEmptyValues } from '../common/Utils/file-utils';
 import { InteractiveButtonPayload } from 'Frontend/dashboard/models/interactiveButtons.model';
+import { BotserviceService } from 'Frontend/dashboard/services/botservice.service';
 
 declare var $: any;
 
@@ -44,6 +45,7 @@ export class SmartRepliesComponent implements OnInit,OnDestroy {
 	public saveSelection: NodeSelection | any;
 
 	AgentName = (JSON.parse(sessionStorage.getItem('loginDetails')!)).name
+	loginDetails = (JSON.parse(sessionStorage.getItem('loginDetails')!))
 
 	isEdit: boolean = false;
 	isShowSmartReplies: boolean = false;
@@ -59,6 +61,9 @@ export class SmartRepliesComponent implements OnInit,OnDestroy {
 	repliesData!:repliesList;
 	replies:[] =[];
 
+	isAdded = false
+	botIndex = 0
+	isEditBot = false
  // Add SmartReplies Section //
 
 	stepper: any;
@@ -100,7 +105,7 @@ export class SmartRepliesComponent implements OnInit,OnDestroy {
 	showattachmentbox = false;
 	agentsList:any;
 	ShowAssignOption = false;
-	assignActionList = ["Assign Conversation", "Add Contact Tag"]; //,"Trigger Flow", "Name Update", "Resolve Conversation" "Remove Tags"
+	assignActionList = ["Assign Conversation", "Add Bot","Add Contact Tag"]; //,"Trigger Flow", "Name Update", "Resolve Conversation" "Remove Tags"
 	ShowAddAction = false;
 	AutoReplyEnableOption = ['Flow New Launch', 'Flow Help', 'Flow Buy Product', 'Flow Return Product'];
 	ShowAutoReplyOption = false;
@@ -112,6 +117,7 @@ export class SmartRepliesComponent implements OnInit,OnDestroy {
 	ShowRemoveTag = false;
 	ToggleRemoveTags = false;
 	ShowNameUpdate = false;
+	ShowAddBotOption = false
     errorMessage = '';
 	successMessage = '';
 	warnMessage = '';
@@ -184,6 +190,7 @@ export class SmartRepliesComponent implements OnInit,OnDestroy {
 		attributesList!:any;
 		userList:any;
 		userId!:number;
+		botsList:any=[]
 		ShowChannelOption:any=false;
 		isAssigned:any=false;
 		isEditAssigned:any=false;
@@ -236,7 +243,7 @@ export class SmartRepliesComponent implements OnInit,OnDestroy {
 	isSendButtonDisabled=false
 	click: any;
 	selecetdpdf: any='';
-	constructor(config: NgbModalConfig, private modalService: NgbModal, private apiService: DashboardService, private fb: FormBuilder, private router:Router, private tS :TeamboxService,public settingsService:SettingsService,private elementRef: ElementRef,private location:Location) {
+	constructor(config: NgbModalConfig,public botService:BotserviceService, private modalService: NgbModal, private apiService: DashboardService, private fb: FormBuilder, private router:Router, private tS :TeamboxService,public settingsService:SettingsService,private elementRef: ElementRef,private location:Location) {
 		// customize default values of modals used by this component tree
 		config.backdrop = 'static';
 		config.keyboard = false;
@@ -273,6 +280,7 @@ export class SmartRepliesComponent implements OnInit,OnDestroy {
 		 this.routerGuard();
 		 this.getReplies();
 		 this.getWhatsAppDetails();
+		 this.getBotDetails()
 		}
 
 	ngAfterViewInit() {
@@ -296,6 +304,21 @@ export class SmartRepliesComponent implements OnInit,OnDestroy {
         chatWindowElement.scrollTop = chatWindowElement.scrollHeight;
 	    chatWindowElement.querySelector('.e-toolbar');
 	  }
+
+
+
+
+ getBotDetails() {
+    var SPID = this.loginDetails.SP_ID
+    this.botService.getBotAlldetails(SPID).subscribe((res: any) => {
+      if (res.status == 200) {
+		this.botsList = res.bots.filter((result:any)=> result.status == 'publish')
+      }
+
+
+    })
+  
+  }
 
 
 // add smart replies //
@@ -1293,6 +1316,12 @@ showAddSmartRepliesModal() {
 		
 	}
 
+	removeBot(index: number) {
+
+	this.assignedAgentList.splice(index, 1);
+		
+	}
+
 
 	removeAddTag(index: number) {
 		this.assignedTagList = [];
@@ -1356,9 +1385,21 @@ showAddSmartRepliesModal() {
 			
 		  }
 		}
-		
 	  }
 	
+
+/* edit message and assinged conversation */ 
+	toggleEditableBot(index: number) {
+		//this.isEditable[index] = !this.isEditable[index];
+		//this.editableMessageIndex = this.isEditable[index] ? index : null;
+		this.editableMessageIndex = index ;
+		if(this.assignedAgentList[index]?.ValueUuid){
+			this.ShowAddBotOption = true;
+			this.isEditBot =true;
+			this.botIndex = index;
+		}
+	}
+
 	  closeAddAction() {
 		// Close the dialog when clicking outside
 		this.ShowAddAction = false;
@@ -1389,8 +1430,11 @@ showAddSmartRepliesModal() {
 	  this.ShowRemoveTag =false;
 	  $("#addTagModal").modal('show'); 
 	  this.ShowAddAction = false;
-
+  }else if(this.assignActionList[index] === "Add Bot"){
+	this.ShowAddBotOption= !this.ShowAddBotOption;
+this.ShowAddAction = false;
   }
+
 //   else if (this.assignActionList[index] === "Trigger Flow") {
 // 	  this.AutoReplyOption = !this.AutoReplyOption;
 //   }
@@ -1427,6 +1471,11 @@ stopPropagation(event: Event) {
 	closeAssignOption() {
 		this.ShowAssignOption = false;
 		this.ToggleAssignOption = !this.ToggleAssignOption;
+		
+	}
+
+	closeAddBotOption() {
+		this.ShowAddBotOption = false;
 	}
 
 	toggleAutoReply() {
@@ -1462,7 +1511,28 @@ stopPropagation(event: Event) {
 			if(this.isEditAssigned){
 				this.assignedAgentList[this.AssignedIndex] = { Message: '', ActionID: 2, Value: this.agentsList[index].name,ValueUuid: this.agentsList[index].uuid, Media: '', MessageVariables: '', media_type : '',isTemplate:false,headerText: '',bodyText: '',buttons:[],language:'',name:'',buttonsVariable:[], interactive_buttons: []}
 			}else{
-				this.assignedAgentList.push({ Message: '', ActionID: 2, Value: this.agentsList[index].name,ValueUuid: this.agentsList[index].uuid, Media: '', MessageVariables: '', media_type: '',isTemplate:false,headerText: '',bodyText: '',buttons:[],language:'',name:'',buttonsVariable:[], interactive_buttons: []})
+				this.assignedAgentList.push({ Message: '', ActionID: 2, Value: this.agentsList[index].name,ValueUuid: this.agentsList[index].uuid, Media: '', MessageVariables: '', media_type: '',isTemplate:false,headerText: '',bodyText: '',buttons:[],language:'',name:'',buttonsVariable:[],interactive_buttons: []})
+			}
+		}
+			
+	}
+
+	
+	addBot(index: number) {
+		var isExist = false;
+		this.assignedAgentList.forEach(item=> {
+			if(item.ActionID == 3) {
+				if(item.Value == this.botsList[index].name) 
+				isExist = true;
+			}
+		})
+		if(!isExist) {
+			this.isAdded = true;
+			console.log(this.isAdded)
+			if(this.isEditBot){
+				this.assignedAgentList[this.botIndex] = { Message: '', ActionID: 3, Value: this.botsList[index].name,ValueUuid: this.botsList[index].id, Media: '', MessageVariables: '', media_type : '',isTemplate:false,headerText: '',bodyText: '',buttons:[],language:'',name:'',buttonsVariable:[],interactive_buttons: []}
+			}else{
+				this.assignedAgentList.push({ Message: '', ActionID: 3, Value: this.botsList[index].name,ValueUuid: this.botsList[index].id, Media: '', MessageVariables: '', media_type: '',isTemplate:false,headerText: '',bodyText: '',buttons:[],language:'',name:'',buttonsVariable:[],interactive_buttons: []})
 			}
 		}
 			
@@ -1967,6 +2037,9 @@ console.log(sortedData)
 			if (this.repliesData.ActionList[i].Name == 'Assign Conversation') {
 				ActionId = 2
 			}
+			if (this.repliesData.ActionList[i].Name == 'Add Bot') {
+				ActionId = 3
+			}
 			if (this.repliesData.ActionList[i].Name == 'Add Contact Tag') {
 				ActionId = 1
 				Value = JSON.parse(sortedData[i].Value)
@@ -2050,6 +2123,9 @@ console.log(sortedData)
 		
 		checkList(){
 			return this.assignedAgentList.some(agent => agent.ActionID === 2);
+		}
+		checkBotList(){
+			return this.assignedAgentList.some(agent => agent.ActionID === 3);
 		}
 
   }

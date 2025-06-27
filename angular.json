@@ -22,14 +22,19 @@
             "main": "src/main.ts",
             "polyfills": "src/polyfills.ts",
             "tsConfig": "tsconfig.app.json",
-            "aot": true,
-            "buildOptimizer": true,
+            "aot": false,
+            "buildOptimizer": false,
             "assets": [
               "src/favicon.ico",
               "src/assets"
             ],
             "styles": [
-              "src/styles/styles.scss"
+              "node_modules/@iconscout/unicons/css/line.css",
+              "src/styles/styles.scss",
+              "node_modules/drawflow/dist/drawflow.min.css"
+            ],
+             "scripts": [
+              "node_modules/drawflow/dist/drawflow.min.js"
             ],
             "stylePreprocessorOptions": {
               "includePaths": [
@@ -46,21 +51,14 @@
                   "with": "src/environments/environment.api.ts"
                 }
               ],
-              "optimization": {
-                "scripts": true,
-                "styles": {
-                  "minify": true,
-                  "inlineCritical": false
-                },
-                "fonts": true
-              },
-              "outputHashing": "all",
-              "sourceMap": false,
-              "namedChunks": false,
-              "aot": true,
-              "extractLicenses": true,
-              "vendorChunk": false,
-              "buildOptimizer": true,
+              "optimization": false,
+              "outputHashing": "none",
+              "sourceMap": true,
+              "namedChunks": true,
+              "aot": false,
+              "extractLicenses": false,
+              "vendorChunk": true,
+              "buildOptimizer": false,
               "budgets": [
                 {
                   "type": "initial",
@@ -81,21 +79,14 @@
                   "with": "src/environments/environment.prod.ts"
                 }
               ],
-              "optimization": {
-                "scripts": true,
-                "styles": {
-                  "minify": true,
-                  "inlineCritical": false
-                },
-                "fonts": true
-              },
-              "outputHashing": "all",
-              "sourceMap": false,
-              "namedChunks": false,
-              "aot": true,
-              "extractLicenses": true,
-              "vendorChunk": false,
-              "buildOptimizer": true,
+              "optimization": false,
+              "outputHashing": "none",
+              "sourceMap": true,
+              "namedChunks": true,
+              "aot": false,
+              "extractLicenses": false,
+              "vendorChunk": true,
+              "buildOptimizer": false,
               "budgets": [
                 {
                   "type": "initial",
@@ -108,9 +99,18 @@
                   "maximumError": "100kb"
                 }
               ]
+            },
+            "development": {
+              "optimization": false,
+              "outputHashing": "none",
+              "sourceMap": true,
+              "namedChunks": true,
+              "aot": false,
+              "extractLicenses": false,
+              "vendorChunk": true,
+              "buildOptimizer": false
             }
           }
-
         },
         "serve": {
           "builder": "@angular-devkit/build-angular:dev-server",
@@ -120,12 +120,12 @@
           "configurations": {
             "production": {
               "browserTarget": "sb-admin-angular:build:production"
-
-
-
+            },
+            "development": {
+              "browserTarget": "sb-admin-angular:build:development"
             }
           }
-
+       
         },
         "extract-i18n": {
           "builder": "@angular-devkit/build-angular:extract-i18n",
@@ -184,9 +184,10 @@
       }
     }
   },
-  "defaultProject": "sb-admin-angular",
   "cli": {
     "analytics": "85b36ccb-eed5-4d70-8666-ca4bd5f177da"
   }
-  
 }
+
+
+

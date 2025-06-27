@@ -27,11 +27,16 @@
             "@modules/*": ["modules/*"],
             "@testing/*": ["testing/*"]
         },
+         
         "resolveJsonModule": true,
         "sourceMap": true,
         "strict": true,
         "target": "es2022",
         "typeRoots": ["node_modules/@types", "src/typings"],
         "types": ["@angular/localize"]
-    }
+    },
+    "include": [
+        "src/**/*",
+        "index.d.ts",   // declaration file path
+      ],
 }
