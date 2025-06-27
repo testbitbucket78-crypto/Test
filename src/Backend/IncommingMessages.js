@@ -78,7 +78,12 @@ async function autoReplyDefaultAction(isAutoReply, autoReplyTime, isAutoReplyDis
   console.log(isAutoReply, autoReplyTime, isAutoReplyDisable)
   let assignAgent = await db.excuteQuery('select * from InteractionMapping where InteractionId =? order by created_at desc limit 1', [newId]);
   let interactionStatus = await db.excuteQuery('select * from Interaction where InteractionId = ? and is_deleted !=1 ', [newId])
-
+  if(assignAgent.length > 0) {
+    if( assignAgent[0].AgentId == -3) {
+      botOperations();
+      return false;
+    }
+  }
   const timeoutDuration = inactiveTimeOut * 60 * 1000; // Convert minutes to milliseconds
   console.log(timeoutDuration, inactiveTimeOut)
   // Set timeout to trigger inactivity check after the specified period
@@ -975,7 +980,8 @@ async function messageThroughselectedchannel(spid, from, type, text, media, phon
     return false;
   }
 }
-const variable = require('./common/constant')
+const variable = require('./common/constant');
+const { identity } = require("rxjs");
 async function SreplyThroughselectedchannel(spid, from, type, text, media, phone_number_id, channelType, agentId, interactionId, testMessage, media_type, display_phone_number,
   isTemplate,
   laungage,
@@ -1036,4 +1042,188 @@ async function SreplyThroughselectedchannel(spid, from, type, text, media, phone
   }
 }
 
-module.exports = { autoReplyDefaultAction, sReplyActionOnlostMessage }
+
+async function AssignToContactOwner(sid, newId, custid) {
+  try {
+    let agid = -3;
+    console.log("AssignToContactOwner", sid, newId, agid, custid);
+
+    let contactOwner = await db.excuteQuery('SELECT * FROM EndCustomer WHERE customerId =? and SP_ID=?  and isDeleted !=1', [custid, sid]);
+    let contactOwnerUid = contactOwner[0]?.uid;
+      let isActiveStaus = await isAgentActive(sid, contactOwnerUid);
+      if (contactOwnerUid != undefined && contactOwnerUid != null && isActiveStaus == true) {
+        let updateInteractionMapQuery = `INSERT INTO InteractionMapping (InteractionId, AgentId, MappedBy, is_active) VALUES ?`;
+        let values = [[newId, contactOwnerUid, agid, 1]]; // 2nd agid is MappedBy values in teambox uid is used here also
+        let updateInteractionMap = await db.excuteQuery(updateInteractionMapQuery, [values]);
+        console.log("AssignToContactOwner --- contact owner assign", updateInteractionMap);
+        if (updateInteractionMap?.affectedRows > 0) {
+          let myUTCString = new Date().toUTCString();
+          const utcTimestamp = moment.utc(myUTCString).format('YYYY-MM-DD HH:mm:ss');
+          const currentAssignedUser = await commonFun.currentlyAssigned(newId);
+          const check = await commonFun.notifiactionsToBeSent(currentAssignedUser,2);
+          if(check){
+          let notifyvalues = [[sid, 'New Chat Assigned to You', 'A new Chat has been Assigned to you', agid, 'Routing rules', currentAssignedUser, utcTimestamp]];
+          let mentionRes = await db.excuteQuery(`INSERT INTO Notification(sp_id,subject,message,sent_to,module_name,uid,created_at) values ?`, [notifyvalues]);
+          }
+          return true; // Return true if insertion is successful
+        } else {
+          return { message: "Insertion into InteractionMapping failed" };
+        }
+      } 
+  } catch (err) {
+    console.log("ERR _ _ _ AssignToContactOwner", err);
+    return { error: err.message }; // Return the error message
+  }
+}
+
+
+
+async function botOperations(data){
+  const createBotSession = `INSERT INTO BotSessions (spid,customerId,botId, status, current_nodeId) VALUES (?, ?, ?)`;
+  await db.excuteQuery(createBotSession, [data?.spid,data?.custid,data?.botId,2, 1]);
+ // const updateBotSession = `UPDATE BotSessions SET status = ?, current_nodeId = ? WHERE botId = ?`;
+ data['nodeId'] = 1;
+  await identifyNode(1);
+}
+
+async function isWorkingHour(){
+  const currentTime = new Date();
+  let workingHourQuery = `select * from WorkingTimeDetails where SP_ID=? and isDeleted !=1`;
+  var workingData = await db.excuteQuery(workingHourQuery, [sid]);
+  console.log(currentTime, "working", (isWorkingTime(workingData, currentTime)));
+  let isWorkingHour = isWorkingTime(workingData, currentTime)
+  let isTodayHoliday = await isHolidays(sid);
+  return ((isWorkingTime(workingData, currentTime)) && isTodayHoliday == false) ? true : false;
+}
+
+function updateAttribute(){
+  console.log('attribute');
+}
+
+async function botExit(){
+  var updateBotSessionQuery = "update BotSessions set status=3 where botId =? and status=2";
+  let updateBotSession = await db.excuteQuery(updateBotSessionQuery, [botId]);
+  botAdvanceAction();
+}
+
+async function botAdvanceAction(botId,custid,interactionId,spid,display_phone_number){  
+  let advanceQuery = "select * from Bots where id =? and isDeleted !=1";
+  let advanceAction = await db.excuteQuery(advanceQuery, [botId]);
+  //let actions= [{"actionTypeId":1,"Value":["Radio","Ola"],"ValueUuid":[274,275],"actionType":"Add_Tag"},{"actionTypeId":3,"Value":["loop one","Two"],"ValueUuid":[283,278],"actionType":"Remove_Tag"}]
+  if(advanceAction.length > 0 && advanceAction[0].isAdvanceAction == 1){
+    let action = advanceAction[0].action;
+    if(action && action.length > 0){
+      for(let i=0; i<action.length; i++){
+        let actionType = action[i].actionType;
+        let value = action[i].value;
+        if(actionType == 'Add_Tag'){
+          await addTag(action[i]?.ValueUuid, spid, custid);
+        }else if(actionType == 'Remove_Tag'){
+          await removeTag(action[i]?.ValueUuid, custid);
+        }else if(actionType == 'Assign_Agent'){
+          await assignAction(action[i]?.agentId, -3, interactionId, custid, spid, display_phone_number);
+        }else if(actionType == 'assign_owner'){
+          let assignOwner = await AssignToContactOwner(spid,interactionId ,custid);
+          if(assignOwner){
+            console.log("assignOwner", assignOwner)
+          }
+      }else if(actionType =='conversationStatus'){
+        let ResolveOpenChat = await db.excuteQuery('UPDATE Interaction SET interaction_status =? WHERE InteractionId !=? and customerId=?', [value[0], interactionId, custid]);        
+      }
+    }
+    
+  }
+}
+
+async function getrunningNode(){
+  var currentNodeQuery = "select current_nodeId from BotSessions where botId =? and status=2";
+  let currentNode = await db.excuteQuery(currentNodeQuery, [botId]);
+  if(currentNode.length > 0){
+    return currentNode[0].current_nodeId;
+  }
+}
+
+async function identifyNode(data){
+  var identityNodeQuery = "select * from BotNodes where tempNodeId =? and botId=? and isDeleted !=1";
+  let identityNode = await db.excuteQuery(identityNodeQuery, [data?.nodeId]);
+  if(identityNode.length > 0){
+    let type = identityNode[0].type;
+    let json = JSON.parse(identityNode[0].payload_json);
+    let nextNodeId = identityNode[0].connectedId;
+    if(type == 'sendText'|| type == 'sendImage' || type == 'sendVideo'|| type == 'sendDocument'){ 
+      let messageType = type == 'sendImage' ? 'image' : type == 'sendVideo' ? 'video' : type == 'sendDocument' ? 'document' : 'text';
+      let message_text = await getExtraxtedMessage(json?.data?.textMessage, data.sid, data.custid)
+      result = await messageThroughselectedchannel(data.sid, data?.from, 'text', message_text, json?.data?.link, phone_number_id, channelType, -4, data.interactionId, 'text', message_text)
+      data.nodeId = json?.connectedId;
+      identifyNode(data);
+    }else if(type == 'assignAgentModal'){
+      await assignAction(json.data?.uid, -4, data.interactionId, data.custid, data.sid, data.display_phone_number);
+      botExit();
+    } else if(type == 'UnassignConversation'){
+      await assignAction(-1, -4, data.interactionId, data.custid, data.sid, data.display_phone_number);
+      botExit();
+    } else if(type == 'assigntoContactOwner'){
+      let assignOwner = await AssignToContactOwner(data.sid, data.interactionId, data.custid);      
+      botExit();
+    }
+    else if(type == 'addTag'){
+      await addTag(value,spid, custid);
+      data.nodeId = json?.connectedId;
+      identifyNode(data);
+    }else if(type == 'removeTag'){
+      await removeTag(value, custid);
+      data.nodeId = json?.connectedId;
+      identifyNode(data);
+    }else if(type == 'updateAttribute'){
+      updateAttribute();
+      data.nodeId = json?.connectedId;
+      identifyNode(data);
+    }else if(type == 'question' || type == 'openoption' || type =='buttonOptions'){ 
+      if(data.isWating == true){        
+        let selectedOption = json.option.filter((item) => (item.name)  == (data?.message));
+        if(selectedOption.length > 0){
+          let connectNodeId = selectedOption[0].optionConnectedId;
+          data.nodeId = connectNodeId;
+          identifyNode(data);
+        }
+      }
+      else{    
+        sendQuestion(); 
+        var updateBotSessionQuery = "update BotSessions set isWaiting=1,current_nodeId=? where botId =? and status=2";
+        let updateBotSession = await db.excuteQuery(updateBotSessionQuery, [json?.connectedId,botId]);
+      }
+    }else if(type == 'conversationStatus'){
+      let ResolveOpenChat = await db.excuteQuery('UPDATE Interaction SET interaction_status =? WHERE InteractionId !=? and customerId=?', [json?.data?.status, req.body.InteractionId, req.body?.customerId]);
+      botExit();
+    }else if(type == 'replyWithAction'){
+    }else if(type == 'Notify'){
+       let notifyvalues = [[SPID, '@Mention in the Notes', 'You have a been mentioned in the Notes', uid, 'teambox', uid, utcTimestamp]];
+      let mentionRes = await db.excuteQuery('INSERT INTO Notification(sp_id,subject,message,sent_to,module_name,uid,created_at) values ?', [notifyvalues]);
+      data.nodeId = json?.connectedId;
+      identifyNode(data);
+    }else if(type == 'MessageOptin'){
+      let optInQuery = 'UPDATE EndCustomer SET OptInStatus = ? where customerId = ? and SP_ID = ?';
+      await db.excuteQuery(optInQuery, [json?.data?.status, data.custid, data.sid]);
+      data.nodeId = json?.connectedId;
+      identifyNode(data);
+    }else if(type == 'notes&mention'){
+      
+    }else if(type == 'WorkingHoursModal'){
+      if(isWorkingHour()){
+        let selectedOption = json.option.filter((item) => (item.name)  == 'open');
+        let connectNodeId = selectedOption[0].optionConnectedId;
+          data.nodeId = connectNodeId;
+          identifyNode(data);
+      }else{
+        let selectedOption = json.option.filter((item) => (item.name)  == 'close');
+        let connectNodeId = selectedOption[0].optionConnectedId;
+          data.nodeId = connectNodeId;
+          identifyNode(data);
+      }
+    }
+  }
+}
+
+}
+
+module.exports = { autoReplyDefaultAction, sReplyActionOnlostMessage,identifyNode }
