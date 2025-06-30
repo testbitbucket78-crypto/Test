@@ -16,7 +16,8 @@ const middleWare = require('../middleWare')
 const commonFun = require('../common/resuableFunctions');
 const { APIKeyManager, sendMessageBody, spPhoneNumber, ApiResponse, Webhooks, 
     textMessageBody, mediaMessageBody, TemplateStatus, SessionStatus, 
-    TemplateAPI, TemplateWHAPI, TemplateWEB, Template, sendTemplateBody }= require('./model/accountModel');
+    TemplateAPI, TemplateWHAPI, TemplateWEB, Template, sendTemplateBody, 
+    spCreadential, sendTemplateBodyAPI }= require('./model/accountModel');
 const { WebSocketManager } = require("../whatsApp/PushNotifications")
 const {mapCountryCode} = require('../Contact/utils')
 const variables = require('../common/constant')
@@ -230,11 +231,16 @@ const addGetAPIKey = async (req, res) => {
             }
         }
     } catch (err) {
-        console.log(err)
-        res.send(err)
-    }
+          const statusCode = err.statusCode || 500;
+          const message = err.message || "Internal Server Error";
+          return res.status(statusCode).json({
+            success: false,
+            message
+          });
+   }
 }
 async function SaveOrUpdate(APIKeyManagerInstance) {
+  try{
     const keyGenerated = APIKeyManagerInstance.generateKey();
     const api_token = APIKeyManagerInstance.generateKey2();
     let checkIfAlreadyExists = await GetAPIKeyData(APIKeyManagerInstance);
@@ -250,9 +256,24 @@ async function SaveOrUpdate(APIKeyManagerInstance) {
         }
         return { success: true, data: { spid: APIKeyManagerInstance.spId, ips } };
     } else {
+      let query = `SELECT * FROM UserAPIKeys WHERE spid = ?`;
+      let result = await db.excuteQuery(query, [APIKeyManagerInstance.spId]);
+
+      if (result && result.length > 0) {
+        let tokenExists = result.some(item => item.tokenName === APIKeyManagerInstance.tokenName);
+        
+        if (tokenExists) {
+           throw new Error("This name already exists");
+        }
+      }
         let checking = await db.excuteQuery(val.insertUserAPIKeys, [APIKeyManagerInstance.spId, keyGenerated, ips, APIKeyManagerInstance.tokenName, api_token]);
         return { success: true, data: { spid: APIKeyManagerInstance.spId, ips } };
     }
+  }
+  catch(err){ 
+       throw err;
+  }
+
 }
 async function GetAPIKeyData(APIKeyManagerInstance) {
     let result = await db.excuteQuery(val.getUserAPIKeys, [APIKeyManagerInstance.spId]);
@@ -1162,7 +1183,7 @@ const updateContact = async (req, res) => {
 const createTemplatesAPI = async (req, res) => {
   try {
     const spId = req.spid
-    const instanceAPI = new TemplateAPI(req.body);
+    const instanceAPI = new TemplateAPI(req.body, spId);
 
     const apiUrl = `${variables.ENV_URL.settings}/addTemplateWrapper`;
     const response = await axios.post(apiUrl, instanceAPI);
@@ -1265,6 +1286,43 @@ const sendTemplates = async (req, res) => {
   }
 };
 
+
+const SendInteractiveButtons = async (req, res) => {
+  try {
+    const spId = req.spid;
+    const query = `SELECT * FROM WA_API_Details WHERE spid = ?`;
+    const result = await db.excuteQuery(query, [spId]);
+
+    if (result.length === 0) {
+      throw new Error("No WA API Details found for the given spId.");
+    }
+
+    const instance = new spCreadential(result[0], spId);
+    const template = new sendTemplateBodyAPI(req.body, spId);
+
+    // Now send WhatsApp API request
+    const response = await axios.post(
+      `https://graph.facebook.com/v17.0/${instance.phoneNumberId}/messages`,
+      template.interactiveButtonsPayload,
+      {
+        headers: {
+          Authorization: `Bearer ${instance.token}`,
+          'Content-Type': 'application/json'
+        }
+      }
+    );
+
+    res.status(200).send({
+      status: 'success',
+      data: response?.data
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(500).send({
+      error: err?.response?.data || err.message || "Internal server error"
+    });
+  }
+};
 
 
 async function insertInteractionAndRetrieveId(phoneNo, sid, channel) {
@@ -1448,5 +1506,5 @@ async function getQualityRatings(phoneNumberId, access_token) {
 module.exports = {
     insertAndEditWhatsAppWeb, selectDetails, addToken, deleteToken, enableToken, selectToken,
     createInstance, getQRcode, generateQRcode, editToken, testWebhook,getQualityRating, addWAAPIDetails, addGetAPIKey, APIkeysState, saveWebhookUrl, sendMessage, saveOrUpdateWebhook, getWebhooks, deleteWebhook, testWebhooks, deleteAPIToken, exportLogs, textMessage, mediaMessage, getTemplate, getTemplateStatus
-    , getSessionStatus, getContacts, deleteContacts, getUsers, getCustomFields, createContact, updateContact, createTemplatesAPI, createTemplatesWEB, createTemplatesWHAPI, sendTemplates
+    , getSessionStatus, getContacts, deleteContacts, getUsers, getCustomFields, createContact, updateContact, createTemplatesAPI, createTemplatesWEB, createTemplatesWHAPI, sendTemplates, SendInteractiveButtons
 }

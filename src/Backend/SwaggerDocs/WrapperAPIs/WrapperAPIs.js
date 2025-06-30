@@ -1,10 +1,10 @@
 /**
  * @swagger
- * /text:
+ *  /v1/whatsapp/text:
  *   post:
  *     summary: Send a message - wrapper API
  *     tags:
- *       - Messaging
+ *       - Wrapper APIs
  *     requestBody:
  *       required: true
  *       content:
@@ -15,21 +15,9 @@
  *               messageTo:
  *                 type: string
  *                 example: "91940000000000"
- *               headerText:
- *                 type: string
- *                 example: ""
- *               bodyText:
- *                 type: string
- *                 example: ""
-  *               FooterText:
- *                 type: string
- *                 example: ""
  *               message_text:
  *                 type: string
  *                 example: "<p>Text Here: {{Name}}</p>"
- *               message_type:
- *                 type: string
- *                 example: "text"
  *               apiKey:
  *                 type: string
  *                 example: "key-e8dihe8e3u-1735230342734"
@@ -56,11 +44,11 @@
 
 /**
  * @swagger
- * /media:
+ * /v1/whatsapp/media:
  *   post:
  *     summary: Send a message
  *     tags:
- *       - Messaging
+ *       - Wrapper APIs
  *     requestBody:
  *       required: true
  *       content:
@@ -71,15 +59,9 @@
  *               messageTo:
  *                 type: string
  *                 example: "91940000000000"
- *               headerText:
- *                 type: string
- *                 example: ""
  *               message_text:
  *                 type: string
  *                 example: "<p>Text Here: {{Name}}</p>"
- *               message_type:
- *                 type: string
- *                 example: "text"
  *               mediaDetails:
  *                 type: object
  *                 properties:
@@ -118,11 +100,11 @@
 
 /**
  * @swagger
- * /getTemplateStatus:
+ * /v1/whatsapp/getTemplateStatus:
  *   post:
  *     summary: Get the status of a specific template by name
  *     tags:
- *       - Messaging
+ *       - Wrapper APIs
  *     requestBody:
  *       required: true
  *       content:
@@ -163,11 +145,11 @@
 
 /**
  * @swagger
- * /getSessionStatus:
+ * /v1/whatsapp/getSessionStatus:
  *   post:
  *     summary: Get the latest inbound message time for a customer's most recent interaction
  *     tags:
- *       - Messaging
+ *       - Wrapper APIs
  *     requestBody:
  *       required: true
  *       content:
@@ -225,11 +207,11 @@
 
 /**
  * @swagger
- * /getContacts:
+ * /v1/whatsapp/getContacts:
  *   post:
  *     summary: Get list of contacts for the current service provider
  *     tags:
- *       - Messaging
+ *       - Wrapper APIs
  *     requestBody:
  *       required: false
  *     responses:
@@ -273,11 +255,11 @@
 
 /**
  * @swagger
- * /deleteContacts:
+ * /v1/whatsapp/deleteContacts:
  *   post:
  *     summary: Delete one or more contacts by customerId
  *     tags:
- *       - Messaging
+ *       - Wrapper APIs
  *     requestBody:
  *       required: true
  *       content:
@@ -307,11 +289,11 @@
 
 /**
  * @swagger
- * /getUsers:
+ * /v1/whatsapp/getUsers:
  *   post:
  *     summary: Retrieve a list of users
  *     tags:
- *       - Messaging
+ *       - Wrapper APIs
  *     description: Fetch all users from the system. No input is required for this request.
  *     responses:
  *       200:
@@ -352,11 +334,11 @@
 
 /**
  * @swagger
- * /getCustomFields:
+ * /v1/whatsapp/getCustomFields:
  *   post:
  *     summary: Retrieve custom fields for the service provider
  *     tags:
- *       - Messaging
+ *       - Wrapper APIs
  *     responses:
  *       200:
  *         description: Successfully fetched custom fields
@@ -390,11 +372,11 @@
 
 /**
  * @swagger
- * /createContact:
+ * /v1/whatsapp/createContact:
  *   post:
  *     summary: Add a new custom contact
  *     tags:
- *       - Messaging
+ *       - Wrapper APIs
  *     requestBody:
  *       required: true
  *       content:
@@ -478,11 +460,11 @@
 
 /**
  * @swagger
- * /updateContact:
+ * /v1/whatsapp/updateContact:
  *   post:
  *     summary: Edit a custom contact
  *     tags:
- *       - Messaging
+ *       - Wrapper APIs
  *     parameters:
  *       - in: query
  *         name: customerId
@@ -572,11 +554,11 @@
 
 /**
  * @swagger
- * /createTemplatesEK:
+ * /v1/whatsapp/createTemplatesEK:
  *   post:
  *     summary: Create a new template
  *     tags:
- *       - Messaging
+ *       - Wrapper APIs
  *     requestBody:
  *       required: true
  *       content:
@@ -673,11 +655,11 @@
 
 /**
  * @swagger
- * /createTemplatesBUTTON:
+ * /v1/whatsapp/createTemplatesBUTTON:
  *   post:
  *     summary: Create a new WHAPI template
  *     tags:
- *       - Messaging
+ *       - Wrapper APIs
  *     requestBody:
  *       required: true
  *       content:
@@ -772,11 +754,11 @@
 
 /**
  * @swagger
- * /createTemplatesWEB:
+ * /v1/whatsapp/createTemplatesWEB:
  *   post:
  *     summary: Create a new WhatsApp Web template
  *     tags:
- *       - Messaging
+ *       - Wrapper APIs
  *     requestBody:
  *       required: true
  *       content:
@@ -834,11 +816,11 @@
 
 /**
  * @swagger
- * /sendTemplates:
+ * /v1/whatsapp/sendTemplates:
  *   post:
  *     summary: Send an existing template message
  *     tags:
- *       - Messaging
+ *       - Wrapper APIs
  *     requestBody:
  *       required: true
  *       content:
@@ -894,6 +876,96 @@
  *                   description: Structured API response from sendMessageInstance
  *       400:
  *         description: Bad request or template not found
+ *       500:
+ *         description: Server error
+ */
+
+/**
+ * @swagger
+ * /v1/whatsapp/sendInteractive:
+ *   post:
+ *     summary: Create a new template
+ *     tags:
+ *       - Wrapper APIs
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               TemplateName:
+ *                 type: string
+ *                 example: "tests11"
+ *               Header:
+ *                 type: string
+ *                 example: "Header Text"
+ *               BodyText:
+ *                 type: string
+ *                 example: "<p>Body Text</p>"
+ *               FooterText:
+ *                 type: string
+ *                 example: "<em>Footer Text</em>"
+ *               messageTo:
+ *                 type: string
+ *                 description: WhatsApp number of the recipient in international format (e.g., 919876543210)
+ *                 example: "919876543210"
+ *               hasButtons:
+ *                 type: boolean
+ *                 example: true
+ *               buttons:
+ *                 type: array
+ *                 description: Only required if hasButtons is true
+ *                 items:
+ *                   type: object
+ *                   required:
+ *                     - type
+ *                   properties:
+ *                     type:
+ *                       type: string
+ *                       enum: [QUICK_REPLY, URL, PHONE, COUPON_CODE, FLOW]
+ *                       example: QUICK_REPLY, URL, PHONE, COUPON_CODE, FLOW
+ *                     buttonText:
+ *                       type: string
+ *                       description: Required for QUICK_REPLY
+ *                       example: "Quick Response"
+ *                     url:
+ *                       type: string
+ *                       description: Required for URL button type
+ *                       example: "https://example.com"
+ *                     CountryCode:
+ *                       type: string
+ *                       description: Required for PHONE button type
+ *                       example: "IN +91"
+ *                     phoneNumber:
+ *                       type: string
+ *                       description: Required for PHONE button type
+ *                       example: "+1234567890"
+ *                     couponCode:
+ *                       type: string
+ *                       description: Required for COUPON_CODE button type
+ *                       example: "DISCOUNT50"
+ *                     flowId:
+ *                       type: string
+ *                       description: Required for FLOW button type
+ *                       example: "flow_abc123"
+ *               Links:
+ *                 type: string
+ *                 example: ""
+ *               media_type:
+ *                 type: string
+ *                 example: "text"
+ *               apiKey:
+ *                 type: string
+ *                 example: "key-e8dihe8e3u-1735230342734"
+ *               apiToken:
+ *                 type: string
+ *                 example: "yfn1k1j1xuvxpi3f3wp9hfjbrqk3tilm"
+ *     responses:
+ *       200:
+ *         description: Template created successfully
+ *       400:
+ *         description: Invalid payload
  *       500:
  *         description: Server error
  */

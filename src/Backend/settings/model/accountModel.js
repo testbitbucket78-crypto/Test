@@ -269,7 +269,7 @@ class textMessageBody {
   constructor({ spId, PhoneNo, AgentId, CustomerId, InteractionId, message_text, media_type, message_media,
     template_id, quick_reply_id, message_type, created_at, mediaSize, spNumber, assignAgent, MessageVariables,
     headerText, bodyText, buttonsVariable, Message_id, messageTo, optInStatus, title, isTemplate, action, action_at
-    ,action_by, uidMentioned, name, language, buttons, hasMedia, templateDetails, mediaDetails
+    ,action_by, uidMentioned, name, language, buttons, hasMedia = false, templateDetails, mediaDetails
    }) {
     this.SPID = spId || null;
     this.phoneNo = PhoneNo;
@@ -284,7 +284,7 @@ class textMessageBody {
 
     this.template_id = template_id;
     this.quick_reply_id = quick_reply_id;
-    this.message_type = message_type;
+    this.message_type = 'text';
     this.created_at =  created_at ? new Date(created_at).toISOString() : new Date().toISOString();
     this.mediaSize = mediaSize;
     this.spNumber = spNumber;
@@ -349,7 +349,7 @@ class mediaMessageBody {
 
     this.template_id = template_id;
     this.quick_reply_id = quick_reply_id;
-    this.message_type = message_type;
+    this.message_type = 'text';
     this.created_at =  created_at ? new Date(created_at).toISOString() : new Date().toISOString();
     this.mediaSize = mediaSize;
     this.spNumber = spNumber;
@@ -477,7 +477,7 @@ if (!result || result.length === 0) {
 }
 
 class TemplateAPI {
-  constructor(body) {
+  constructor(body, spId) {
     this.TemplateName = body.TemplateName;
     this.Category = body.Category;
     this.category_id = body.category_id;
@@ -500,7 +500,7 @@ class TemplateAPI {
     this.ID = 0;
     this.template_id = 0;
     this.Channel = "WhatsApp Official";
-    this.spid = 55;
+    this.spid = spId || null;
 
     // 👇 Construct template_json
     this.template_json = [
@@ -851,6 +851,170 @@ static async getBodyText(name) {
     return { Header, BodyText, FooterText };
   }
 }
+
+class spCreadential {
+  constructor(body, spid){
+    this.spid = spid;
+    this.token = body.token;
+    this.wabaId =- body.waba_id;
+    this.phoneNumberId = body.phoneNumber_id;
+  }
+}
+
+class sendTemplateBodyAPI {
+  constructor(body, spId) {
+    this.TemplateName = body.TemplateName;
+    this.Category = 'Marketing';
+    this.category_id = 1;
+    this.categoryChange = 'Yes';
+    this.Language = 'English';
+    this.Header = body.Header;
+    this.BodyText = body.BodyText;
+    this.FooterText = body.FooterText;
+    this.hasButtons = true;
+    this.Links = body.Links;
+    this.media_type = body.media_type;
+    this.created_By = body.created_By;
+    this.spid = spId;
+    this.ID = 0;
+    this.template_id = 0;
+    this.isCopied = 0;
+    this.status = 'saved';
+    this.Channel = "WhatsApp Official";
+    this.isTemplate = 1;
+
+    this.interactiveButtonsPayload = this.constructInteractivePayload(body);
+  }
+
+  constructInteractivePayload(body) {
+    const to = body?.messageTo;
+
+    const payload = {
+      messaging_product: "whatsapp",
+      recipient_type: "individual",
+      to: to,
+      type: "interactive",
+      interactive: {}
+    };
+
+    // Header
+    if (this.media_type === "text" && body.Header) {
+      payload.interactive.header = {
+        type: "text",
+        text: this.stripHTML(body.Header)
+      };
+    } else if (this.media_type === "image" && body.imageUrl) {
+      payload.interactive.header = {
+        type: "image",
+        image: { link: body.imageUrl }
+      };
+    } else if (this.media_type === "video" && body.videoUrl) {
+      payload.interactive.header = {
+        type: "video",
+        video: { link: body.videoUrl }
+      };
+    } else if (this.media_type === "document" && body.documentUrl) {
+      payload.interactive.header = {
+        type: "document",
+        document: { link: body.documentUrl }
+      };
+    }
+
+    // Body
+    payload.interactive.body = {
+      text: this.stripHTML(body.BodyText)
+    };
+
+    // Footer
+    if (body.FooterText) {
+      payload.interactive.footer = {
+        text: this.stripHTML(body.FooterText)
+      };
+    }
+
+    // Buttons Handling
+    if (body.hasButtons && Array.isArray(body.buttons)) {
+      const buttons = body.buttons;
+      const quickReplyButtons = [];
+      let isCTABased = false;
+
+      for (let i = 0; i < buttons.length; i++) {
+        const btn = buttons[i];
+
+        switch (btn.type) {
+          case "QUICK_REPLY":
+            quickReplyButtons.push({
+              type: "reply",
+              reply: {
+                id: `btn_${i + 1}`,
+                title: btn.buttonText
+              }
+            });
+            break;
+
+          case "URL":
+            isCTABased = true;
+            payload.interactive.type = "cta_url";
+            payload.interactive.action = {
+              name: "cta_url",
+              parameters: {
+                display_text: btn.buttonText,
+                url: btn.url
+              }
+            };
+            break;
+
+          case "PHONE":
+            isCTABased = true;
+            payload.interactive.type = "cta_url";
+            payload.interactive.action = {
+              name: "cta_url",
+              parameters: {
+                display_text: btn.buttonText,
+                phone_number: btn.phoneNumber
+              }
+            };
+            break;
+
+          case "COUPON_CODE":
+            quickReplyButtons.push({
+              type: "reply",
+              reply: {
+                id: `btn_coupon_${i + 1}`,
+                title: `${btn.buttonText} - ${btn.couponCode}`
+              }
+            });
+            break;
+
+          case "FLOW":
+            isCTABased = true;
+            payload.interactive.type = "flow";
+            payload.interactive.action = {
+              flow: {
+                name: btn.buttonText,
+                flow_id: btn.flowId
+              }
+            };
+            break;
+        }
+      }
+
+      // Final button structure
+      if (!isCTABased && quickReplyButtons.length > 0) {
+        payload.interactive.type = "button";
+        payload.interactive.action = {
+          buttons: quickReplyButtons
+        };
+      }
+    }
+
+    return payload;
+  }
+
+  stripHTML(html) {
+    return html?.replace(/<[^>]*>/g, '').trim() || '';
+  }
+}
   module.exports = {APIKeyManager, sendMessageBody, spPhoneNumber, ApiResponse, Webhooks, textMessageBody, mediaMessageBody, TemplateStatus
-    , SessionStatus, TemplateAPI, TemplateWHAPI, TemplateWEB, Template, sendTemplateBody
+    , SessionStatus, TemplateAPI, TemplateWHAPI, TemplateWEB, Template, sendTemplateBody, spCreadential, sendTemplateBodyAPI
   };

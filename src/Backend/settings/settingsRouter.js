@@ -226,34 +226,34 @@ router.get('/deleteWebhook/:id',authenticateToken,accountController.deleteWebhoo
 router.post('/exportLogs',authenticateToken,accountController.exportLogs)
 
 //Messages (within service window)
-router.post('/sendMessage' ,dynamicRateLimiter,accountController.sendMessage)
-router.post('/text' , verifyAPIKeyAndToken, accountController.textMessage)
-router.post('/media' ,verifyAPIKeyAndToken, accountController.mediaMessage)
-
+router.post('sendMessage' ,dynamicRateLimiter,accountController.sendMessage)
+router.post('/v1/whatsapp/text' , verifyAPIKeyAndToken, accountController.textMessage)
+router.post('/v1/whatsapp/media' ,verifyAPIKeyAndToken, accountController.mediaMessage)
+router.post('/v1/whatsapp/sendInteractive' , accountController.SendInteractiveButtons) // Interactive Buttons.
 //Templates
 //Send.Template
-router.post('/sendTemplates' ,verifyAPIKeyAndToken, accountController.sendTemplates)
+router.post('/v1/whatsapp/sendTemplates' ,verifyAPIKeyAndToken, accountController.sendTemplates)
 
 
 //Create.Template
-router.post('/createTemplatesEK' ,verifyAPIKeyAndToken, accountController.createTemplatesAPI)
-router.post('/createTemplatesWEB' ,verifyAPIKeyAndToken, accountController.createTemplatesWEB)
-router.post('/createTemplatesBUTTON' ,verifyAPIKeyAndToken, accountController.createTemplatesWHAPI)
+router.post('/v1/whatsapp/createTemplatesEK' ,verifyAPIKeyAndToken, accountController.createTemplatesAPI)
+router.post('/v1/whatsapp/createTemplatesWEB' ,verifyAPIKeyAndToken, accountController.createTemplatesWEB)
+router.post('/v1/whatsapp/createTemplatesBUTTON' ,verifyAPIKeyAndToken, accountController.createTemplatesWHAPI)
 
-router.post('/getTemplates' ,verifyAPIKeyAndToken, accountController.getTemplate)
-router.post('/getTemplateStatus' ,verifyAPIKeyAndToken, accountController.getTemplateStatus) //Get.Template.Status
-router.post('/getSessionStatus' ,verifyAPIKeyAndToken, accountController.getSessionStatus) //Get.Session.status
+router.post('/v1/whatsapp/getTemplates' ,verifyAPIKeyAndToken, accountController.getTemplate)
+router.post('/v1/whatsapp/getTemplateStatus' ,verifyAPIKeyAndToken, accountController.getTemplateStatus) //Get.Template.Status
+router.post('/v1/whatsapp/getSessionStatus' ,verifyAPIKeyAndToken, accountController.getSessionStatus) //Get.Session.status
 
 //Contacts
-router.post('/createContact' ,verifyAPIKeyAndToken, accountController.createContact) //Create.Contact
-router.post('/updateContact' ,verifyAPIKeyAndToken, accountController.updateContact) //Update.Contact
-router.post('/getContacts' ,verifyAPIKeyAndToken, accountController.getContacts) //Get.Contacts
-router.post('/deleteContacts' ,verifyAPIKeyAndToken, accountController.deleteContacts)   //Delete.Contact
+router.post('/v1/whatsapp/createContact' ,verifyAPIKeyAndToken, accountController.createContact) //Create.Contact
+router.post('/v1/whatsapp/updateContact' ,verifyAPIKeyAndToken, accountController.updateContact) //Update.Contact
+router.post('/v1/whatsapp/getContacts' ,verifyAPIKeyAndToken, accountController.getContacts) //Get.Contacts
+router.post('/v1/whatsapp/deleteContacts' ,verifyAPIKeyAndToken, accountController.deleteContacts)   //Delete.Contact
 
 
 //Conversations
-router.post('/getUsers' ,verifyAPIKeyAndToken, accountController.getUsers) //Get.Users
-router.post('/getCustomFields' ,verifyAPIKeyAndToken, accountController.getCustomFields) //Get.CustomFields
+router.post('/v1/whatsapp/getUsers' ,verifyAPIKeyAndToken, accountController.getUsers) //Get.Users
+router.post('/v1/whatsapp/getCustomFields' ,verifyAPIKeyAndToken, accountController.getCustomFields) //Get.CustomFields
 // Update.Conversation.Status (Mark open/resolve and Assign user)
 
 

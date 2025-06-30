@@ -1,4 +1,4 @@
-const db = require('../dbhelper'); // adjust path as needed
+const db = require('../dbhelper');
 
 const verifyAPIKeyAndToken = async (req, res, next) => {
   const { apiKey, apiToken } = req.body;
