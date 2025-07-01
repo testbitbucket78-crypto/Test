@@ -249,6 +249,27 @@ export class BotBuilderComponent implements OnInit {
   }
 
 
+  errorMessageBot:any=''
+  checkBotName(event: any) {
+
+    this.errorMessageBot= ''
+    var SPID = this.userDetails?.SP_ID || 159
+    console.log("SPID", SPID)
+
+    let data = {  spid: SPID ,name:(event.target as HTMLInputElement).value}
+    this.botService.checkExistingBot(data).subscribe((res: any) => {
+      if (res.status == 200) {
+        this.errorMessageBot = ""
+      }else if(res.status == 409){
+
+        this.errorMessageBot = "Bot Name already exist"
+      }
+
+
+    })
+  }
+
+
 
 
 
@@ -382,6 +403,11 @@ export class BotBuilderComponent implements OnInit {
         console.warn(`Invalid field: ${key}`, control.errors);
       }
     });
+
+
+    if(this.errorMessageBot != '') {
+return
+    }
 
     if (this.botBuilderForm.invalid) {
       this.botBuilderForm.markAllAsTouched();

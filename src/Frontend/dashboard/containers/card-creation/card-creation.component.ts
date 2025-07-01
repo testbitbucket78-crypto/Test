@@ -861,6 +861,7 @@ createCombinedVariable() {
     }
 
     const formData = this.conditionForm.value;
+formData.options = ["True", "False"];
 
     if (this.isEditMode && this.selectedNodeId !== null) {
       this.updateExistingNode(formData);
@@ -3750,7 +3751,7 @@ createCombinedVariable() {
     Object.entries(allNodes).forEach(([id, node]: [string, any]) => {
       const formData = node.data.formData || {};
       console.log("formData", node.data)
-      const isQuestionOption = node.data.text === 'questionOption' || node.data.text === "buttonOptions" ||  node.data.text ==="WorkingHoursModal";
+      const isQuestionOption = node.data.text === 'questionOption' || node.data.text === "buttonOptions" ||  node.data.text ==="WorkingHoursModal" || node.data.text === "setCondition";
 
       // Filter and sort connections by targetNode (ascending order)
       const nodeConnections = connections
