@@ -1,7 +1,7 @@
 const swaggerJSDoc = require('swagger-jsdoc');
 
 
-const isServer = true;
+const isServer = true; // false
 const basePath = isServer ? '..' : 'src/Backend';
 
 const swagger = swaggerJSDoc({
@@ -108,7 +108,8 @@ const swagger = swaggerJSDoc({
         `${basePath}/SwaggerDocs/OrganizationalSetting/WorkingHoursSetting.js`, // Working Hours - Setting
         `${basePath}/SwaggerDocs/OrganizationalSetting/RolesSetting.js`, // Roles - Setting
         `${basePath}/SwaggerDocs/OrganizationalSetting/UsersSettings.js`, // Users - Setting
-
+        `${basePath}/SwaggerDocs/WrapperAPIs/WrapperAPIs.js`, // Wrapper APIs 
+        
         `${basePath}/SwaggerDocs/ContactSetting/CustomField.js`, // Contact - Setting
         `${basePath}/SwaggerDocs/ContactSetting/TagSetting.js`, // Tags - Setting
 

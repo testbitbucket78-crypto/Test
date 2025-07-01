@@ -1,7 +1,7 @@
 const express = require('express');
 const router=express.Router();
 const authenticateToken = require('../Authorize');
-
+const verifyAPIKeyAndToken = require('../Middlewares/authenticateToken'); // Middleware to verify API key and token
 const organizationController=require('./organizationController');
 const profileController=require('./profileController');
 const notification=require('./NotifyClients')
@@ -111,7 +111,8 @@ router.post('/deleteTag',authenticateToken,campaignController.deleteTag)
 
 router.post('/addCustomField',authenticateToken,campaignController.addCustomField)
 router.post('/editCustomField',authenticateToken,campaignController.editCustomField)
-router.get('/getCustomField/:spid',authenticateToken,campaignController.getCustomField)
+router.get('/getCustomField/:spid',authenticateToken,campaignController.getCustomField);
+router.get('/wrapperGetCustomField/:spid',campaignController.getCustomField) //wrapper 
 router.get('/getCustomFieldById/:id',authenticateToken,campaignController.getCustomFieldById)
 router.post('/deleteCustomField/:id/:spid',authenticateToken,campaignController.deleteCustomField)
 router.post('/enableMandatory',authenticateToken,campaignController.enableMandatoryfield)
@@ -120,6 +121,8 @@ router.post('/enableStatus',authenticateToken,campaignController.enableStatusfie
 //_______________________TEMPLATE_________________________//
 
 router.post('/addTemplate',authenticateToken,campaignController.addTemplate)  //  isTemplate  value 0 for quick response , 1 for template ,(2 for gallary and spid =0 )
+router.post('/addTemplateWrapper',campaignController.addTemplate)  // for Wrapper API Only
+
 router.get('/getTemplate/:spid/:isTemplate',authenticateToken,campaignController.getTemplate)
 router.get('/getTemplateForGallery/:spid/:isTemplate/:channel',authenticateToken,campaignController.getTemplateForGallery)
 router.get('/getApprovedTemplate/:spid/:isTemplate',authenticateToken,campaignController.getApprovedTemplate)
@@ -222,7 +225,39 @@ router.get('/getWebhooks/:spid',authenticateToken,accountController.getWebhooks)
 router.get('/deleteWebhook/:id',authenticateToken,accountController.deleteWebhook)
 router.post('/exportLogs',authenticateToken,accountController.exportLogs)
 
-router.post('/sendMessage' ,dynamicRateLimiter,accountController.sendMessage)
+//Messages (within service window)
+router.post('sendMessage' ,dynamicRateLimiter,accountController.sendMessage)
+router.post('/v1/whatsapp/text' , verifyAPIKeyAndToken, accountController.textMessage)
+router.post('/v1/whatsapp/media' ,verifyAPIKeyAndToken, accountController.mediaMessage)
+router.post('/v1/whatsapp/sendInteractive' , accountController.SendInteractiveButtons) // Interactive Buttons.
+//Templates
+//Send.Template
+router.post('/v1/whatsapp/sendTemplates' ,verifyAPIKeyAndToken, accountController.sendTemplates)
+
+
+//Create.Template
+router.post('/v1/whatsapp/createTemplatesEK' ,verifyAPIKeyAndToken, accountController.createTemplatesAPI)
+router.post('/v1/whatsapp/createTemplatesWEB' ,verifyAPIKeyAndToken, accountController.createTemplatesWEB)
+router.post('/v1/whatsapp/createTemplatesBUTTON' ,verifyAPIKeyAndToken, accountController.createTemplatesWHAPI)
+
+router.post('/v1/whatsapp/getTemplates' ,verifyAPIKeyAndToken, accountController.getTemplate)
+router.post('/v1/whatsapp/getTemplateStatus' ,verifyAPIKeyAndToken, accountController.getTemplateStatus) //Get.Template.Status
+router.post('/v1/whatsapp/getSessionStatus' ,verifyAPIKeyAndToken, accountController.getSessionStatus) //Get.Session.status
+
+//Contacts
+router.post('/v1/whatsapp/createContact' ,verifyAPIKeyAndToken, accountController.createContact) //Create.Contact
+router.post('/v1/whatsapp/updateContact' ,verifyAPIKeyAndToken, accountController.updateContact) //Update.Contact
+router.post('/v1/whatsapp/getContacts' ,verifyAPIKeyAndToken, accountController.getContacts) //Get.Contacts
+router.post('/v1/whatsapp/deleteContacts' ,verifyAPIKeyAndToken, accountController.deleteContacts)   //Delete.Contact
+
+
+//Conversations
+router.post('/v1/whatsapp/getUsers' ,verifyAPIKeyAndToken, accountController.getUsers) //Get.Users
+router.post('/v1/whatsapp/getCustomFields' ,verifyAPIKeyAndToken, accountController.getCustomFields) //Get.CustomFields
+// Update.Conversation.Status (Mark open/resolve and Assign user)
+
+
+
 
 
 

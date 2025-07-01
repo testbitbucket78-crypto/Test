@@ -446,12 +446,12 @@ var insertHealthStatus = `INSERT INTO businessHealth (phone_number_id, channel_p
 var selectHealthStatus = `SELECT * FROM businessHealth WHERE phone_number_id = ? and SP_ID = ?`
 
 //---------------------------------UserAPIKeys-----------------------------------//
-var insertUserAPIKeys = `INSERT INTO UserAPIKeys (spid,api_key,ips,tokenName) values (?,?,?,?)`
-var updateUserAPIKeysAndTokenName = `UPDATE UserAPIKeys SET tokenName = ?, ips = ?, updated_at = CURRENT_TIMESTAMP WHERE spid = ?`
-var updateUserAPIKeysAndKeyGenerate = `UPDATE UserAPIKeys SET api_key = ?, ips = ?, updated_at = CURRENT_TIMESTAMP WHERE spid = ?`
+var insertUserAPIKeys = `INSERT INTO UserAPIKeys (spid,api_key,ips,tokenName, api_token) values (?,?,?,?,?)`
+var updateUserAPIKeysAndTokenName = `UPDATE UserAPIKeys SET tokenName = ?, ips = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?`
+var updateUserAPIKeysAndKeyGenerate = `UPDATE UserAPIKeys SET api_key = ?, ips = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?`
 var getUserAPIKeys = `select * from UserAPIKeys where spid = ?`
 var updateAPIkeysState = `UPDATE UserAPIKeys SET is_enabled = ?, updated_at = CURRENT_TIMESTAMP WHERE spid = ?`
-const deleteAPIKey = `DELETE FROM UserAPIKeys WHERE spid = ?`;
+const deleteAPIKey = `DELETE FROM UserAPIKeys WHERE id = ?`;
 var updateWebhookUrl = `UPDATE UserAPIKeys  SET webhook_url = ?, updated_at = CURRENT_TIMESTAMP WHERE spid = ?`
 var getAgentId = `select * from user where SP_ID = ? and ParentId is null`
 var getChannel = `SELECT channel_id, connected_id FROM WhatsAppWeb WHERE spid = ?`
