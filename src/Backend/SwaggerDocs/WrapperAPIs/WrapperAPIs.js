@@ -213,7 +213,18 @@
  *     tags:
  *       - Wrapper APIs
  *     requestBody:
- *       required: false
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               apiKey:
+ *                 type: string
+ *                 example: "key-e8dihe8e3u-1735230342734"
+ *               apiToken:
+ *                 type: string
+ *                 example: "yfn1k1j1xuvxpi3f3wp9hfjbrqk3tilm"
  *     responses:
  *       200:
  *         description: Successfully fetched the contact list
@@ -635,6 +646,13 @@
  *               media_type:
  *                 type: string
  *                 example: "text"
+ *               detectVariables:
+ *                 type: boolean
+ *                 description: Set to true to auto-detect variables like {{Name}} in the body
+ *                 example: true
+ *               isHeaderImage:
+ *                 type: boolean
+ *                 description: "Set to true if header is an image and Header text is empty"
  *               created_By:
  *                 type: string
  *                 example: "EngageKart"

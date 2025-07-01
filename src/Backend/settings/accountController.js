@@ -1183,8 +1183,13 @@ const updateContact = async (req, res) => {
 const createTemplatesAPI = async (req, res) => {
   try {
     const spId = req.spid
-    const instanceAPI = new TemplateAPI(req.body, spId);
 
+    let mediaId = null;
+    if (req.body.isHeaderImage && req.body.Links?.trim() && !req.body.Header?.trim()) {
+      mediaId = await uploadImageToMetaWrapper(spId, req.body.Links.trim());
+    }
+    const instanceAPI = new TemplateAPI(req.body, spId, mediaId);
+    
     const apiUrl = `${variables.ENV_URL.settings}/addTemplateWrapper`;
     const response = await axios.post(apiUrl, instanceAPI);
     const responseData = response?.data;
@@ -1198,6 +1203,66 @@ const createTemplatesAPI = async (req, res) => {
     res.status(500).send({
       error: err?.message || "Internal server error",
     });
+  }
+};
+
+const FormData = require('form-data');
+const { default: fetch } = require('node-fetch'); // Or you can use axios directly
+const mime = require('mime-types');
+
+const MAX_IMAGE_SIZE_MB = 5;
+const MAX_DOC_VIDEO_SIZE_MB = 10;
+
+const uploadImageToMetaWrapper = async (spId, imageUrl) => {
+  try {
+    // 1. Download the image from S3
+    const response = await fetch(imageUrl);
+    const buffer = await response.buffer();
+    const contentType = response.headers.get('content-type') || 'image/png';
+    const fileSize = parseInt(response.headers.get('content-length'), 10);
+
+    const fileSizeInMB = fileSize / (1024 * 1024);
+
+    // 2. Enforce size limits like the frontend
+    if (
+      (['video/mp4', 'application/pdf'].includes(contentType) && fileSizeInMB > MAX_DOC_VIDEO_SIZE_MB) ||
+      (['image/jpg', 'image/jpeg', 'image/png'].includes(contentType) && fileSizeInMB > MAX_IMAGE_SIZE_MB)
+    ) {
+      throw new Error(`File size exceeds allowed limit for ${contentType}`);
+    }
+
+    const ext = mime.extension(contentType) || 'png';
+    const filename = `upload.${ext}`;
+
+    // 3. Prepare form-data
+    const form = new FormData();
+    form.append('dataFile', buffer, {
+      filename,
+      contentType,
+    });
+    form.append('mediaType', contentType);
+
+    // 4. POST to Meta wrapper endpoint
+    const uploadResponse = await axios.post(
+      `${variables.ENV_URL.settings}/uploadfiletoMeta/${spId}/template-message`,
+      form,
+      {
+        headers: {
+          ...form.getHeaders(),
+        },
+        maxContentLength: Infinity,
+        maxBodyLength: Infinity,
+      }
+    );
+
+    if (uploadResponse.status === 200 && uploadResponse.data?.metaUploadedId?.h) {
+      return uploadResponse.data.metaUploadedId.h;
+    } else {
+      throw new Error('Meta media ID not found in response');
+    }
+  } catch (error) {
+    console.error('Error uploading image to Meta:', error.message);
+    throw error;
   }
 };
 

@@ -477,7 +477,7 @@ if (!result || result.length === 0) {
 }
 
 class TemplateAPI {
-  constructor(body, spId) {
+  constructor(body, spId, mediaId) {
     this.TemplateName = body.TemplateName;
     this.Category = body.Category;
     this.category_id = body.category_id;
@@ -509,7 +509,7 @@ class TemplateAPI {
         category: body.Category,
         allow_category_change: body.categoryChange === 'Yes',
         language: this.mapLanguageCode(body.Language),
-        components: this.buildComponents(body),
+        components: this.buildComponents(body, mediaId),
       },
     ];
   }
@@ -523,10 +523,19 @@ class TemplateAPI {
     return langMap[language] || 'en';
   }
 
-  buildComponents(body) {
-    const components = [];
+ buildComponents(body, mediaId) {
+  const components = [];
 
-    if (body.Header?.trim()) {
+  // HEADER: Use image if Header is empty and isHeaderImage is true
+    if (mediaId && body.isHeaderImage && !body.Header?.trim()) {
+      components.push({
+        type: 'HEADER',
+        format: 'image',
+        example: {
+          header_handle: [mediaId],
+        },
+      });
+    } else if (body.Header?.trim()) {
       components.push({
         type: 'HEADER',
         format: 'text',
@@ -534,31 +543,41 @@ class TemplateAPI {
       });
     }
 
-    if (body.BodyText?.trim()) {
-      components.push({
-        type: 'BODY',
-        text: body.BodyText,
-      });
-    }
+  const bodyComponent = {
+    type: 'BODY',
+    text: body.BodyText
+  };
 
-    if (body.FooterText?.trim()) {
-      const cleanFooter = body.FooterText.replace(/<[^>]*>?/gm, '').trim();
-      components.push({
-        type: 'FOOTER',
-        text: cleanFooter,
-      });
+  if (body.detectVariables) {
+    const matches = [...body.BodyText.matchAll(/{{(.*?)}}/g)];
+    if (matches.length) {
+      bodyComponent.example = {
+        body_text: [
+          matches.map((m, i) => `var${i + 1}`)
+        ]
+      };
     }
-
-    const parsedButtons = this.parseButtons(this.buttons);
-    if (parsedButtons.length > 0) {
-      components.push({
-        type: 'BUTTONS',
-        buttons: parsedButtons,
-      });
-    }
-
-    return components;
   }
+  components.push(bodyComponent);
+
+  if (body.FooterText?.trim()) {
+    const cleanFooter = body.FooterText.replace(/<[^>]*>?/gm, '').trim();
+    components.push({
+      type: 'FOOTER',
+      text: cleanFooter,
+    });
+  }
+
+  const parsedButtons = this.parseButtons(this.buttons);
+  if (parsedButtons.length > 0) {
+    components.push({
+      type: 'BUTTONS',
+      buttons: parsedButtons,
+    });
+  }
+
+  return components;
+}
 
 formatButtonsForAPI(buttonsArray) {
   if (!Array.isArray(buttonsArray)) return '[]';
