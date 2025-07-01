@@ -12,6 +12,7 @@ const moment = require('moment');
 const removeTags = require('../removeTagsFromRichTextEditor')
 const logger = require('../common/logger.log');
 const commonFun = require('../common/resuableFunctions.js')
+const incommingmsg = require('../IncommingMessages')
 app.use(bodyParser.json());
 const { conversationStatus, conversationAssigned, conversationCreated } = require('../common/webhookEvents.js');
 const { ConversationStatusMap } = require('../enum');
@@ -686,10 +687,10 @@ const insertMessage = async (req, res) => {
             let spNumber = req.body?.spNumber;
             let assignAgent = req.body?.assignAgent;
             var msgVar = req.body?.MessageVariables;
-
+            let botId = req.body?.botId || null; // Optional botId, default to null if not provided
             var header = req.body?.headerText
             var body = req.body?.bodyText
-            let DynamicURLToBESent;
+            let DynamicURLToBESent;            
             let Interactive_buttons = typeof req.body?.interactiveButtonsPayload == 'string' ? req.body?.interactiveButtonsPayload : JSON.stringify(req.body?.interactiveButtonsPayload);
             let buttonsVariable = typeof req.body?.buttonsVariable === 'string' ? JSON.parse(req.body?.buttonsVariable) : req.body?.buttonsVariable;
             if(!commonFun.isInvalidParam(req.body?.buttonsVariable) && buttonsVariable.length > 0) {
@@ -705,6 +706,17 @@ const insertMessage = async (req, res) => {
 
             var values = [[SPID, Type, ExternalMessageId, interaction_id, Agent_id, message_direction, message_text, message_media, media_type, Message_template_id, Quick_reply_id, created_at, created_at, mediaSize, assignAgent, buttons, Interactive_buttons]];
             let msg_id = await db.excuteQuery(messageQuery, [values]);
+
+            if(botId) {
+                let data = {
+                    botId: botId,
+                    sid: SPID,
+                    interactionId:interaction_id,
+                    custid:customerId
+                }
+                incommingmsg.runBotOperation(data);
+                res.send({status: 200, insertId: msg_id.insertId });
+            }
             //  logger.debug('Message ID:', msg_id);
             let updateInteraction = await db.excuteQuery(val.updateTempInteractionQuery, [0, interaction_id])
             if (agentName.length >= 0) {

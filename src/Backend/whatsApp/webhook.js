@@ -211,8 +211,7 @@ async function extractDataFromMessage(body) {
         contactDetail = agentName[0];
         if(message_direction == 'IN'){
         if(agentName?.length > 0)
-          repliedMessageTo = agentName[0]?.name;
-        }
+          repliedMessageTo = agentName[0]?.name;        
       }else{
         repliedMessageTo = 'You';
       }
@@ -246,7 +245,8 @@ async function extractDataFromMessage(body) {
             }
           }
         }
-    }
+      }
+    
          //console.log( spid, "campaignReplied*******", campaignReplied?.affectedRows)
       }
 

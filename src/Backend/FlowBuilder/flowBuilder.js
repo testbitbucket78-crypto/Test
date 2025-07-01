@@ -75,15 +75,15 @@ const submitBots = async (request, res) => {
     let bot = await db.excuteQuery(val.updateBotStatus, [req.status, nodeJson, published_at, req.botId]);
     // let deleteBotNode = await db.excuteQuery(val.deleteBotsNode, [req.botId]); 
       nodes.forEach((node) => {
-
+        let node_Json = JSON.stringify(node);
         node.spid = req.spid;
         let Node =[
             req.botId,
-             node.type,
-             node.message,
-             node.node_Json,
+             node?.nodeType || '', 
+             node?.message || '',
+             node_Json,
              node.nodeId,
-             node.previous_Node_Id,
+             node?.previous_Node_Id,
         ]
         let nods =  db.excuteQuery(val.insertNode, [[Node]])
       })

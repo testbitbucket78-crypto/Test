@@ -79,8 +79,24 @@ async function autoReplyDefaultAction(isAutoReply, autoReplyTime, isAutoReplyDis
   let assignAgent = await db.excuteQuery('select * from InteractionMapping where InteractionId =? order by created_at desc limit 1', [newId]);
   let interactionStatus = await db.excuteQuery('select * from Interaction where InteractionId = ? and is_deleted !=1 ', [newId])
   if(assignAgent.length > 0) {
-    if( assignAgent[0].AgentId == -3) {
-      botOperations();
+    if( assignAgent[0].AgentId == -4) {
+      let data = {
+        "interactionId": newId,
+        "sid": sid,
+        "agid": agid,
+        "custid": custid,
+        "from": from,
+        "incommingMessage": message_text,
+        "channelType": channelType,
+        "phone_number_id": phone_number_id,
+        "display_phone_number": display_phone_number,
+      }
+      let sessionData= getBotId(data);
+      data['botId'] = sessionData?.botId;
+      data['nodeId'] = sessionData?.current_nodeId;
+      data['isWating']= sessionData?.isWating;
+      console.log("sessionData", sessionData)
+      identifyNode(data);
       return false;
     }
   }
@@ -630,7 +646,13 @@ async function PerformingSReplyActions(actionId, value, sid, custid, agid, newId
       let removedTagRes = await removeTag(value, custid);
       break;
     case 4:
-      // console.log(`Performing action 4 for Trigger Flow: ${value}`);
+      let data = {
+        "interactionId": newId,
+        "sid": sid,
+        "custid": custid,
+        "botId": value
+      }
+      await runBotOperation(data);
       break;
     case 5:
       // console.log(`Performing action 5 for Name Update: ${value}`);
@@ -982,6 +1004,7 @@ async function messageThroughselectedchannel(spid, from, type, text, media, phon
 }
 const variable = require('./common/constant');
 const { identity } = require("rxjs");
+const { data } = require("jquery");
 async function SreplyThroughselectedchannel(spid, from, type, text, media, phone_number_id, channelType, agentId, interactionId, testMessage, media_type, display_phone_number,
   isTemplate,
   laungage,
@@ -1042,7 +1065,7 @@ async function SreplyThroughselectedchannel(spid, from, type, text, media, phone
   }
 }
 
-
+ 
 async function AssignToContactOwner(sid, newId, custid) {
   try {
     let agid = -3;
@@ -1079,11 +1102,26 @@ async function AssignToContactOwner(sid, newId, custid) {
 
 
 async function botOperations(data){
-  const createBotSession = `INSERT INTO BotSessions (spid,customerId,botId, status, current_nodeId) VALUES (?, ?, ?)`;
-  await db.excuteQuery(createBotSession, [data?.spid,data?.custid,data?.botId,2, 1]);
+  console.log("botOperations started");
+  let botQuery = "select timeout_value from Bots where id =? and isDeleted !=1";
+  let botData = await db.excuteQuery(botQuery, [data?.botId]);
+  console.log(botData);
+  if(botData?.length > 0){
+    let time = botData[0]?.timeout_value || 1; // Default to 1 hour if not set
+    let hour = time?.split(':')[0];
+    let minute = time?.split(time, ':')[1] || 0;
+  let botTimeout =  getDateTime(hour,minute);
+  console.log('botTimeout---', botTimeout);
+  const createBotSession = `INSERT INTO BotSessions (spid,customerId,botId, status, current_nodeId,bot_Timeout) VALUES ?`;
+  await db.excuteQuery(createBotSession, [[[data?.sid,data?.custid,data?.botId,2, 1,botTimeout]]]);
  // const updateBotSession = `UPDATE BotSessions SET status = ?, current_nodeId = ? WHERE botId = ?`;
  data['nodeId'] = 1;
-  await identifyNode(1);
+  await identifyNode(data);
+  }
+}
+
+async function botOperationsWithNode(data, json) {
+
 }
 
 async function isWorkingHour(){
@@ -1096,16 +1134,38 @@ async function isWorkingHour(){
   return ((isWorkingTime(workingData, currentTime)) && isTodayHoliday == false) ? true : false;
 }
 
+async function questionOperations(data,json){
 
-async function botExit(){
-  var updateBotSessionQuery = "update BotSessions set status=3 where botId =? and status=2";
-  let updateBotSession = await db.excuteQuery(updateBotSessionQuery, [botId]);
-  botAdvanceAction();
 }
+
+async function sendDropOffMessage(data) {
+  let botQuery = "select * from Bots where id =? and isDeleted !=1";
+  let botData = await db.excuteQuery(botQuery, [data?.botId]);
+  if(botData.length >0){
+    if(botData[0]?.timeout_message){
+      let message_text = await getExtraxtedMessage(botData[0]?.timeout_message, data.sid, data.custid);
+      let result = await messageThroughselectedchannel(data.sid, data?.from, 'text', message_text, '', data.phone_number_id, data.channelType, -4, data.interactionId, 'text', message_text);
+      // var updateBotSessionQuery = "update BotSessions set isWaiting=1,current_nodeId=? where botId =? and status=2";
+      //   let updateBotSession = await db.excuteQuery(updateBotSessionQuery, [json?.connectedId,data?.botId]);
+      if(result){
+        botExit(data, 3);
+      }
+    }
+  }
+}
+
+
+async function botExit(data, status){
+  var updateBotSessionQuery = "update BotSessions set status=? where botId =? and status=2";
+  let updateBotSession = await db.excuteQuery(updateBotSessionQuery, [status,data?.botId]);
+  botAdvanceAction(data?.botId, data.custid, data.interactionId, data.sid, data.display_phone_number);
+}
+
 
 async function botAdvanceAction(botId,custid,interactionId,spid,display_phone_number){  
   let advanceQuery = "select * from Bots where id =? and isDeleted !=1";
   let advanceAction = await db.excuteQuery(advanceQuery, [botId]);
+  console.log("advanceAction--", advanceAction)
   //let actions= [{"actionTypeId":1,"Value":["Radio","Ola"],"ValueUuid":[274,275],"actionType":"Add_Tag"},{"actionTypeId":3,"Value":["loop one","Two"],"ValueUuid":[283,278],"actionType":"Remove_Tag"}]
   if(advanceAction.length > 0 && advanceAction[0].isAdvanceAction == 1){
     let action = advanceAction[0].action;
@@ -1131,71 +1191,117 @@ async function botAdvanceAction(botId,custid,interactionId,spid,display_phone_nu
     
   }
 }
+}
 
-async function getrunningNode(){
-  var currentNodeQuery = "select current_nodeId from BotSessions where botId =? and status=2";
+async function getrunningSession(botId){
+  var currentNodeQuery = "select * from BotSessions where botId =? and status=2";
   let currentNode = await db.excuteQuery(currentNodeQuery, [botId]);
   if(currentNode.length > 0){
-    return currentNode[0].current_nodeId;
+    return currentNode[0];
   }
 }
 
 async function identifyNode(data){
-  var identityNodeQuery = "select * from BotNodes where tempNodeId =? and botId=? and isDeleted !=1";
-  let identityNode = await db.excuteQuery(identityNodeQuery, [data?.nodeId]);
+  try {
+  var identityNodeQuery = "select * from botNodes where tempNodeId =? and botId=?";
+  let identityNode = await db.excuteQuery(identityNodeQuery, [data?.nodeId,data?.botId]);
+  console.log('nodeId---', data?.nodeId);
+  console.log('identityNode---', identityNode);
   if(identityNode.length > 0){
     let type = identityNode[0].type;
     let json = JSON.parse(identityNode[0].payload_json);
     let nextNodeId = identityNode[0].connectedId;
+    console.log('type---',identityNode[0] )
     if(type == 'sendText'|| type == 'sendImage' || type == 'sendVideo'|| type == 'sendDocument'){ 
+      
       let messageType = type == 'sendImage' ? 'image' : type == 'sendVideo' ? 'video' : type == 'sendDocument' ? 'document' : 'text';
       let message_text = await getExtraxtedMessage(json?.data?.textMessage, data.sid, data.custid)
-      result = await messageThroughselectedchannel(data.sid, data?.from, 'text', message_text, json?.data?.link, phone_number_id, channelType, -4, data.interactionId, 'text', message_text)
+      result = await messageThroughselectedchannel(data.sid, data?.from, 'text', message_text, json?.data?.link, data?.phone_number_id, data?.channelType, -4, data.interactionId, 'text', message_text)
       data.nodeId = json?.connectedId;
-      identifyNode(data);
+      await identifyNode(data);
     }else if(type == 'assignAgentModal'){
       await assignAction(json.data?.uid, -4, data.interactionId, data.custid, data.sid, data.display_phone_number);
-      botExit();
+      botExit(data, 2);
     } else if(type == 'UnassignConversation'){
       await assignAction(-1, -4, data.interactionId, data.custid, data.sid, data.display_phone_number);
-      botExit();
+      botExit(data, 2);
     } else if(type == 'assigntoContactOwner'){
       let assignOwner = await AssignToContactOwner(data.sid, data.interactionId, data.custid);      
-      botExit();
+      botExit(data, 2);
     }
     else if(type == 'addTag'){
-      await addTag(value,spid, custid);
+      await addTag(value,spid, data.custid);
       data.nodeId = json?.connectedId;
       identifyNode(data);
     }else if(type == 'removeTag'){
-      await removeTag(value, custid);
+      await removeTag(value, data.custid);
       data.nodeId = json?.connectedId;
       identifyNode(data);
     }
-    // else if(type == 'updateAttribute'){
-    //   updateAttribute();
-    //   data.nodeId = json?.connectedId;
-    //   identifyNode(data);
-    // }
-    else if(type == 'question' || type == 'openoption' || type =='buttonOptions'){ 
-      if(data.isWating == true){        
-        let selectedOption = json.option.filter((item) => (item.name)  == (data?.message));
+    else if(type == 'updateAttribute'){
+      await updateAttribute();
+      data.nodeId = json?.connectedId;
+      identifyNode(data);
+    }
+    else if(type == 'questionOption' || type == 'openoption' || type =='buttonOptions'){ 
+      if(data.isWating == 1){        
+        if(type =='buttonOptions'){
+        let selectedOption = json.option.filter((item) => (item.name)  == (data?.incommingMessage));
         if(selectedOption.length > 0){
           let connectNodeId = selectedOption[0].optionConnectedId;
           data.nodeId = connectNodeId;
           identifyNode(data);
+        } else{
+          invalidQuestionResponse(data,json);
+        }
+      } else if(type =='questionOption'){
+        if(isValidNumber(data?.incommingMessage) && data?.incommingMessage >json?.option?.length){
+          let connectNodeId = json.option[data?.incommingMessage-1].optionConnectedId;
+          data.nodeId = connectNodeId;
+          identifyNode(data);
+        } else{
+          invalidQuestionResponse(data,json);
+        }
+      } else if(type =='openoption'){
+        if(data?.imcommingMessage){
+          data.nodeId = json?.connectedId;
+          identifyNode(data);
         }
       }
+      }
       else{    
-        sendQuestion(); 
-        var updateBotSessionQuery = "update BotSessions set isWaiting=1,current_nodeId=? where botId =? and status=2";
-        let updateBotSession = await db.excuteQuery(updateBotSessionQuery, [json?.connectedId,botId]);
+        if(type == 'buttonOptions'){
+          let payload = WaApiButtons( data?.toPhoneNumber, json?.data);
+          let result = await createWhatsAppPayload(data.sid, payload);
+          if (result?.status == 200) {
+            let messageValu = [[spid, 'text', "", interactionId, agentId, 'Out', Message_text, (media ? media : 'text'), media_type, result.message.messages[0].id, "", time, time, "", -4, 1,'',null]]
+            let saveMessage = await db.excuteQuery(insertMessageQuery, [messageValu]);
+          }
+        } else if(type == 'openoption'){
+          let payload = WaApiListPayload( data?.toPhoneNumber, json?.data);
+          let result = await createWhatsAppPayload(data.sid, payload);
+          if (result?.status == 200) {
+            let messageValu = [[data.sid, 'text', "", data?.interactionId, -4, 'Out', Message_text, (media ? media : 'text'), media_type, result.message.messages[0].id, "", time, time, "", -2, 1,'']]
+            let saveMessage = await db.excuteQuery(insertMessageQuery, [messageValu]);
+          }
+        } else if(type == 'questionOption'){
+          let message_text = await getExtraxtedMessage(json?.data?.questionTextquestionText, data.sid, data.custid)
+              result = await messageThroughselectedchannel(data.sid, data?.from, 'text', message_text, '', data?.phone_number_id, data?.channelType, -4, data.interactionId, 'text', message_text)
+
+        }
+        questionOperations();
+        let nodeTimeout = null;
+        if(json?.data?.enableTimeElapse && json?.data?.timeElapseMinutes && json?.data?.timeElapseMinutes > 0){
+          nodeTimeout =  getDateTime(0,json?.data?.timeElapseMinutes);
+        }
+        var updateBotSessionQuery = "update BotSessions set isWaiting=1,current_nodeId=?,node_timeout=? where botId =? and status=2";
+        let updateBotSession = await db.excuteQuery(updateBotSessionQuery, [json?.connectedId,nodeTimeout,data?.botId]);
       }
     }else if(type == 'conversationStatus'){
-      let ResolveOpenChat = await db.excuteQuery('UPDATE Interaction SET interaction_status =? WHERE InteractionId !=? and customerId=?', [json?.data?.status, req.body.InteractionId, req.body?.customerId]);
+      let ResolveOpenChat = await db.excuteQuery('UPDATE Interaction SET interaction_status =? WHERE InteractionId !=? and customerId=?', [json?.data?.status, data?.interactionId, data?.custid]);
       botExit();
     }else if(type == 'Notify'){
-       let notifyvalues = [[SPID, '@Mention in the Notes', 'You have a been mentioned in the Notes', uid, 'teambox', uid, utcTimestamp]];
+       let notifyvalues = [[data?.sid, '@Mention in the Notes', 'You have a been mentioned in the Notes', json?.data?.AgentId, 'bot', json?.data?.AgentId, utcTimestamp]];
       let mentionRes = await db.excuteQuery('INSERT INTO Notification(sp_id,subject,message,sent_to,module_name,uid,created_at) values ?', [notifyvalues]);
       data.nodeId = json?.connectedId;
       identifyNode(data);
@@ -1216,10 +1322,238 @@ async function identifyNode(data){
           data.nodeId = connectNodeId;
           identifyNode(data);
       }
+    }else{
+      console.log("else", json?.connectedId)
+      data.nodeId = json?.connectedId;
+      identifyNode(data);
     }
+  }
+  return true;
+} catch (err) {
+  console.log("Error in identifyNode", err);
+  data.nodeId = json?.connectedId;
+  identifyNode(data);
+}
+}
+
+function isValidNumber(value) {
+  return typeof value !== 'boolean' && !isNaN(value) && value !== null && value !== '';
+}
+
+async function invalidQuestionResponse(data,json){
+  let sessionDetail = await getrunningSession(data.botId);
+            if(json?.data?.reattemptsAllowed && (json?.data?.reattemptsCount >sessionDetail?.node_retry_count)){
+              let message_text = await getExtraxtedMessage(json?.data?.errorMessage, data.sid, data.custid)
+              result = await messageThroughselectedchannel(data.sid, data?.from, 'text', message_text, json?.data?.link, data?.phone_number_id, data?.channelType, -4, data.interactionId, 'text', message_text)
+            } else{
+              if(json?.data?.invalidAction =='fallback'){
+                data.nodeId = json?.FallbackId;
+                identifyNode(data);
+              }else if(json?.data?.invalidAction =='skip'){
+                data.nodeId = json?.connectedId;
+                identifyNode(data);
+              } else if(json?.data?.invalidAction =='endBot'){
+                await sendDropOffMessage();
+              }
+            }
+}
+
+
+function WaApiButtons(toPhoneNumber,data){
+  let buttons =[];
+  let buttonList = data?.buttons;
+if (buttonList && buttonList.length > 0) {
+  for (let i = 0; i < buttonList.length; i++) {
+    buttons.push({
+      "type": "reply",
+      "reply": {
+        "id": i,
+        "title": buttonList[i]
+      }
+    });
+  }
+}
+  let button = {
+    "messaging_product": "whatsapp",
+    "recipient_type": "individual",
+    "to": toPhoneNumber,
+    "type": "interactive",
+    "interactive": {
+      "type": "button",
+      "header": {"type":"text","text":data?.headerText || ''},
+      "body": {"text": data?.bodyText || ''},
+      "footer": {"text": data?.footerText || ''},
+      "action": {"buttons": buttons}
+    }
+  }
+  return button;
+}
+
+function WaApiListPayload(toPhoneNumber, data) {
+  let section = data?.section;
+let sections = [];
+if (section && section.length > 0) {
+  for (let i = 0; i < section.length; i++) {
+    let rows = [];
+    if (section[i]?.rows && section[i]?.rows?.length > 0) {
+      for (let j = 0; j < section[i]?.rows?.length; j++) {
+        rows.push({
+          "id": j,
+          "title": section[i]?.rows[j]?.rowName,
+          "description": section[i]?.rows[j]?.rowDescription
+        });
+      }
+    }
+    sections.push({
+      "title": section[i].sectionHeading,
+      "rows": rows
+    });
   }
 }
 
+  let listPayload = {
+    "messaging_product": "whatsapp",
+    "recipient_type": "individual",
+    "to": toPhoneNumber,
+    "type": "interactive",
+    "interactive": {
+      "type": "list",
+      "header": {
+        "type": "text",
+        "text": data?.headerText || ''
+      },
+      "body": {
+        "text": data?.bodyText
+      },
+      "footer": {
+        "text": data?.footerText || ''
+      },
+      "action": {
+        "button": data?.listHeader,
+        "sections": sections
+      }
+    }
+  }
+  return listPayload
 }
 
-module.exports = { autoReplyDefaultAction, sReplyActionOnlostMessage,identifyNode }
+
+async function createWhatsAppPayload( spid,payload) {
+    try{
+    let WAdetails = await getWAdetails(spid);   
+    const response = await axios({
+        method: "POST",
+        url: `https://graph.facebook.com/v19.0/${WAdetails[0].phoneNumber_id}/messages?access_token=${WAdetails[0].token}`,
+        data: payload, // Use the video message structure
+        headers: { "Content-Type": "application/json" },
+    })
+    console.log("****META APIS****",payload );
+    return {
+        status: 200,
+        message: response.data
+    };
+   // return payload;
+}catch(err){
+    console.log("error", err.response ? err.response.data : err.message);
+    return {
+        status: 500,
+        message: err.message
+    };
+}
+}
+
+
+async function getWAdetails(spid) {
+    try {
+        let details = await db.excuteQuery('select * from WA_API_Details where spid=? and isDeleted !=1', [spid]);
+        if (details?.length == 1) {
+            return details;
+        }
+        return 'not exist';
+    } catch (err) {
+        return 'not exist';
+    }
+}
+
+async function getBotId(data){
+  let getBotQuery = 'SELECT * FROM BotSessions WHERE customerId = ? and status =2 order by 1 desc limit 1'; 
+  let botData = await db.excuteQuery(getBotQuery, [data?.custid]);
+  return botData[0] || null;
+}
+
+async function getData(data){
+let interactionIdQuery = 'select InteractionId from Interaction where customerId=? and SP_ID=? order by 2 desc limit 1';
+let interaction = await db.excuteQuery(interactionIdQuery, [data?.custid, data?.sid]);
+let toPhoneNumberQuery = 'select Phone_number from EndCustomer where customerId=? and SP_ID=?';
+let toPhoneNumber = await db.excuteQuery(toPhoneNumberQuery, [data?.custid, data?.sid]);
+let userDetailQuery = 'SELECT mobile_number,Channel, FROM user WHERE SP_ID =? AND isDeleted != 1 AND ParentId IS NULL';
+let userDetail = await db.excuteQuery(userDetailQuery, [data?.sid]);
+data['interactionId'] = data?.interactionId || interaction[0]?.InteractionId ; 
+data['toPhoneNumber'] = toPhoneNumber[0]?.Phone_number || data?.toPhoneNumber;
+data['from'] = data?.from || userDetail[0]?.mobile_number;
+data['channelType'] = data?.channelType || userDetail[0]?.Channel;
+data['display_phone_number'] = data?.display_phone_number || userDetail[0]?.mobile_number;
+
+return data;
+}
+
+async function runBotOperation(data){
+  let completeData = await getData(data);
+  botOperations(completeData);
+}
+
+async function timeOut(data, type){
+  let completeData = await getData(data);
+  if(type == 'bot'){
+    await sendDropOffMessage(completeData);
+  } else{
+    await nodeTimeOut(completeData);
+  }
+}
+
+async function nodeTimeOut(data){
+  let session = getrunningSession(data?.botId);
+  var identityNodeQuery = "select * from botNodes where tempNodeId =? and botId=?";
+  let identityNode = await db.excuteQuery(identityNodeQuery, [session?.current_nodeId,data?.botId]);
+  if(identityNode.length > 0){
+    let type = identityNode[0].type;
+    let json = JSON.parse(identityNode[0].payload_json);
+    if(json?.data?.timeElapseAction == "skip"){
+      data.nodeId = json?.connectedId;
+      identifyNode(data);
+  } else if(json?.data?.timeElapseAction == "fallback"){
+    data.nodeId = json?.FallbackId;
+    identifyNode(data);
+  }
+}
+}
+
+function getDateTime(hours, minutes) {
+  const now = new Date(); // current date-time
+const utcNow = new Date(now.toISOString()); 
+utcNow.setUTCHours(utcNow.getUTCHours() + hours);
+utcNow.setUTCMinutes(utcNow.getUTCMinutes() + minutes);
+const formatted = utcNow.toISOString().slice(0, 19).replace('T', ' ');
+return formatted;
+}
+
+
+
+let mainData = {
+  "sid": 163,
+  "custid": 85473,
+  "interactionId": 6569,
+  "display_phone_number": 911724621927,
+  "from": 911724621927,
+  "toPhoneNumber": 917618157986,
+  "channelType": "WA API", // or 1 for WA API
+  "phone_number_id": 631644263356652,
+  "botId": 17,
+}
+setTimeout(() => {
+  // console.log("mainData", mainData);
+  // console.log(typeof identifyNode);
+  //botOperations(mainData);
+}, 1000); 
+
+module.exports = { autoReplyDefaultAction, sReplyActionOnlostMessage,identifyNode,timeOut,runBotOperation }

@@ -29,9 +29,14 @@
 
 const { Queue, Worker } = require('bullmq');
 const Redis = require('ioredis');
-const incommingmsg = require('../IncommingMessages')
-const redis = new Redis();
-
+//const incommingmsg = require('../IncommingMessages')
+// const IORedis = new Redis();
+const redis = new Redis({
+  host: '52.66.172.213',
+  port: 6379,
+  username: 'engagekart',
+  password: 'enGaGEkart3214!'
+});
 const messageQueue = new Queue('messageQueue', {
   connection: redis
 });
@@ -59,17 +64,18 @@ async function addJobs(botId, data,delaySeconds) {
 
 const worker = new Worker('messageQueue', async job => {
   //const { botId, nodeId } = job;
-  incommingmsg.identifyNode(job?.data)
+  console.log(job)
     }, { redis });
     
 
-// (async () => {
-//   await addJobs(100);
-//   await addJobs(300);
-//   await addJobs(1000);
+(async () => {
+  await addJobs(1,'abc',1000);
+  await addJobs(2,'bcd',3000);
+  await addJobs(3,'def',9000);
+  await addJobs(3,'def',9000);
 
-//   await messageQueue.close();
-//   redis.disconnect();
-// })();
+  await messageQueue.close();
+  redis.disconnect();
+})();
 
 module.exports = { addJobs }

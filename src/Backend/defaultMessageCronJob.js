@@ -12,6 +12,7 @@ const moment = require('moment');
 const removeTags = require('./removeTagsFromRichTextEditor')
 const commonFun = require('./common/resuableFunctions')
 const logger = require('./common/logger.log');
+const incommingmsg = require('../IncommingMessages')
 const lostMessageTimeGap = 6;
 app.use(bodyParser.json());
 app.use(cors());
@@ -553,6 +554,43 @@ async function workingHoursDetails(sid) {
   return false;
 }
 
+async function botTimeOperations(){
+    let getSessionsData = `SELECT *,DATE_FORMAT(bot_Timeout, '%Y-%m-%d %H:%i:%s') AS botTimeout,DATE_FORMAT(node_timeout, '%Y-%m-%d %H:%i:%s') AS nodeTimeout FROM BotSessions WHERE status = 2 AND isDeleted != 1`;
+    let botSessions = await db.excuteQuery(getSessionsData, []);
+
+    let botTimeData = await db.excuteQuery(settingVal.getBotTimeOperation, []);
+    logger.info(`botTimeOperations, ${botTimeData?.length}, ${new Date()}`);
+    
+    if (botTimeData?.length > 0) {
+      let currentDateTime = new Date();
+      for (const data of botTimeData) {
+        try {
+          let bot_timeout = new Date(data.botTimeout +'Z');
+          let node_timeout = new Date(data.nodeTimeout +'Z');
+          let data = {
+            sid: data.spid,
+            botId: data.botId,
+            custid:data.customerId
+          };
+          if (bot_timeout <= currentDateTime ) {            
+            incommingmsg?.timeOut(data,'bot');
+            logger.info(`Bot operations for SPID: ${data.spid} are being processed`, { timestamp: new Date() });
+          }
+
+          if(node_timeout <= currentDateTime && data.nodeTimeout != null && data.isWaiting == 1) {
+            incommingmsg?.timeOut(data,'node');
+            logger.info(`Node timeout for SPID: ${data?.spid}, botId: ${data?.botId} are being processed`, { timestamp: new Date() });
+          }
+        } catch (error) {
+          logger.error(`Error processing bot time operations for SPID ${data.SPID}: ${error.message}`, { timestamp: new Date() });
+        }
+      }
+    }
+  } catch (error) {
+    logger.error(`Error in botTimeOperations: ${error.message}`, { timestamp: new Date() });
+  }
+}
+
 // // Calculate the initial delay
 // function calculateInitialDelay() {
 //   const now = new Date();
@@ -590,6 +628,7 @@ async function workingHoursDetails(sid) {
     NoCustomerReplyReminder();  // system_message_type_id  = 5
     NoCustomerReplyTimeout();     // system_message_type_id  = 6
     NoAgentReplyTimeOut();         // system_message_type_id = 4
+    botTimeOperations();
 
   });
 //}

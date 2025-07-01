@@ -2,8 +2,8 @@ const getGalleryQuery =`SELECT * FROM FlowBuilderGallery` ;
 const insertBot = `INSERT INTO Bots (spid, name, description, channel_id, status, timeout_value, timeout_message, created_by,advanceAction,keywords) VALUES ?`;
 const  updateBots = `UPDATE Bots SET name=?, description=?, channel_id=?, timeout_value=?, timeout_message=?,advanceAction=?,keywords=?,status=? WHERE id=?`;
 const deleteBotsNode = `UPDATE botNodes SET isDeleted=1 WHERE botId=?`;
-const insertNode = `INSERT INTO botNodes (botId, type, message, node_Json, tempNodeId, previous_Node_Id)
-        VALUES (?, ?, ?, ?, ?, ?)`;
+const insertNode = `INSERT INTO botNodes (botId, type, message, payload_json, tempNodeId, previous_Node_Id)
+        VALUES ?`;
 const updateBotStatus= `UPDATE Bots SET status=? ,node_FE_Json=?,published_at=?  WHERE id=?`;
 
 const isBotExist= `SELECT * FROM Bots WHERE spid=? and isDeleted !=1 and name=?`;
