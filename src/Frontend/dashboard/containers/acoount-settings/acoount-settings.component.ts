@@ -690,14 +690,27 @@ saveWebhook(){
     this.showToaster('web socket url should not be empty','error');
 }
 
-getApiKeyData(isSave:boolean,isRegenrate:boolean=false){
+newAPIToken(){
+  this.isEdit = false;
+  this.apiName = '';
+  this.ipAddress = [''];
+  this.webSocketUrl = '';
+  this.isNew = true;
+
+}
+currentAPIkey: string = '';
+isNew : boolean = false;
+SelectedIdToken : number = 0;
+getApiKeyData(isSave:boolean,isRegenrate:boolean=false, id?:number){
   //isSave = !isSave;
-  let data: { spId: number; ip: string[]; isSave: boolean; isRegenerate: boolean,tokenName:string } = {
+  let data: { spId: number; ip: string[]; isSave: boolean; isRegenerate: boolean,tokenName:string, id : number,isNew:boolean } = {
     spId : this.spid,
+    id : id ? id : this.SelectedIdToken,
     ip:[],
     isSave :!isSave ,
     isRegenerate: this.isEdit ? false :isRegenrate,
-    tokenName:this.apiName ? this.apiName : ''
+    tokenName:this.apiName ? this.apiName : '',
+    isNew: this.isNew
   }
   if(isSave){
     console.log(this.ipAddress);
@@ -738,10 +751,15 @@ getApiKeyData(isSave:boolean,isRegenrate:boolean=false){
       }
       this.isEdit = false;
       this.apiKeyData = response;
-      this.isEnabled = this.apiKeyData?.isEnabled;
-      this.apiName = this.apiKeyData?.tokenName;
-      this.webSocketUrl = response?.webhookURL;
-      this.ipAddress = this.apiKeyData?.ips ? JSON.parse( JSON.stringify(this.apiKeyData?.ips)) : [''];
+      if (this.apiKeyData.length > 0) {
+        const last = this.apiKeyData[this.apiKeyData.length - 1];
+
+        this.isEnabled = last?.isEnabled;
+        this.apiName = last?.tokenName;
+        this.webSocketUrl = last?.webhookURL;
+        this.ipAddress = last?.ips ? JSON.parse(JSON.stringify(last.ips)) : [''];
+        this.currentAPIkey = last?.apiKey;
+      }
       if(this.ipAddress?.length == 0)
       this.ipAddress =[''];
       //apiKey
@@ -765,8 +783,8 @@ areArraysEqual(arr1: any[], arr2: any[]): boolean {
   return arr1.every((value, index) => value === arr2[index]);
 }
 
-regenrateApiKey(){
-  this.getApiKeyData(true,true);
+regenrateApiKey(id : number){
+  this.getApiKeyData(true,true,id);
 }
 
 
@@ -797,7 +815,8 @@ disableApiKeyData(){
 });
 }
 
-editToken(){
+editToken(id: number){
+  this.SelectedIdToken = id;
   this.isEdit = true;
   $("#createTokenModal").modal('show');
   this.ipAddress = JSON.parse( JSON.stringify(this.apiKeyData?.ips));
@@ -1009,14 +1028,16 @@ resetWebhookForm(){
   this.channelSelected = 'Select Channel';
 }
 
-deleteToken(){
+deleteToken(id : number){
   let payload = {
-    spId: this.spid
+    spId: this.spid,
+    id: id
   }
   this.apiService.deleteToken(payload).subscribe({
     next: (response) => {
       if (response) {
         this.resetAPIKeyData();
+        this.getApiKeyData(false);
         this._toastService.success("Token Deleted successfully!");
       } else {
         this._toastService.error(response?.msg || 'Unknown error occurred.');
