@@ -741,7 +741,7 @@ async function messageThroughselectedchannel(spid, from, type, text, media, phon
     if (channelType == 'WhatsApp Official' || channelType == 1 || channelType == 'WA API') {
       if (message.isPaused != 0 || message.isDisable != 0 || message.isDeleted != 0) {
         var errorMessaage = message.isDeleted != 0 ? 'Attention! Your account has been DELETED. Please contact your solution provider': message.isDisable != 0 ? 'Attention! Your account has been DISABLED. Please contact your solution provider' : 'Attention! Your account has been PAUSED. Please contact your solution provider'
-        let saveSendedMessage = await saveMessage(from, spid, '', message_content, media, type, type, 'WA API', "Official campaign message", 9,buttons);
+        let saveSendedMessage = await saveMessage(from, spid, '', message_content, media, type, type, errorMessaage, 9,buttons,interactive_buttons);
         let saveInCampaignMessage = await sendMessages(from, text, campaignId, message, 403, text, saveSendedMessage, 'WA API', 403, errorMessaage)
         return response = { status: 403, message: errorMessaage };
       }
@@ -770,7 +770,7 @@ async function messageThroughselectedchannel(spid, from, type, text, media, phon
     } if (channelType == 'WhatsApp Web' || channelType == 2 || channelType == 'WA Web') {
       if (message.isPaused != 0 || message.isDisable != 0 || message.isDeleted != 0) {
         var errorMessaage = message.isDeleted != 0 ? 'Attention! Your account has been DELETED. Please contact your solution provider': message.isDisable != 0 ? 'Attention! Your account has been DISABLED. Please contact your solution provider' : 'Attention! Your account has been PAUSED. Please contact your solution provider'
-         let saveSendedMessage = await saveMessage(from, spid, '', message_content, media, type, type, 'WA API', "Official campaign message", 9,buttons);
+         let saveSendedMessage = await saveMessage(from, spid, '', message_content, media, type, type, errorMessaage, 9,buttons,interactive_buttons);
         let saveInCampaignMessage = await sendMessages(from, text, campaignId, message, 403, text, saveSendedMessage, 'WA API', 403, errorMessaage)
         return response = { status: 403, message: errorMessaage };
       }
