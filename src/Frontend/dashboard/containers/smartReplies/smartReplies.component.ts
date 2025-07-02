@@ -1521,7 +1521,7 @@ stopPropagation(event: Event) {
 	addBot(index: number) {
 		var isExist = false;
 		this.assignedAgentList.forEach(item=> {
-			if(item.ActionID == 3) {
+			if(item.ActionID == 4) {
 				if(item.Value == this.botsList[index].name) 
 				isExist = true;
 			}
@@ -1530,9 +1530,9 @@ stopPropagation(event: Event) {
 			this.isAdded = true;
 			console.log(this.isAdded)
 			if(this.isEditBot){
-				this.assignedAgentList[this.botIndex] = { Message: '', ActionID: 3, Value: this.botsList[index].name,ValueUuid: this.botsList[index].id, Media: '', MessageVariables: '', media_type : '',isTemplate:false,headerText: '',bodyText: '',buttons:[],language:'',name:'',buttonsVariable:[],interactive_buttons: []}
+				this.assignedAgentList[this.botIndex] = { Message: '', ActionID: 4, Value: this.botsList[index].name,ValueUuid: this.botsList[index].id, Media: '', MessageVariables: '', media_type : '',isTemplate:false,headerText: '',bodyText: '',buttons:[],language:'',name:'',buttonsVariable:[],interactive_buttons: []}
 			}else{
-				this.assignedAgentList.push({ Message: '', ActionID: 3, Value: this.botsList[index].name,ValueUuid: this.botsList[index].id, Media: '', MessageVariables: '', media_type: '',isTemplate:false,headerText: '',bodyText: '',buttons:[],language:'',name:'',buttonsVariable:[],interactive_buttons: []})
+				this.assignedAgentList.push({ Message: '', ActionID: 4, Value: this.botsList[index].name,ValueUuid: this.botsList[index].id, Media: '', MessageVariables: '', media_type: '',isTemplate:false,headerText: '',bodyText: '',buttons:[],language:'',name:'',buttonsVariable:[],interactive_buttons: []})
 			}
 		}
 			
@@ -2038,7 +2038,7 @@ console.log(sortedData)
 				ActionId = 2
 			}
 			if (this.repliesData.ActionList[i].Name == 'Add Bot') {
-				ActionId = 3
+				ActionId = 4
 			}
 			if (this.repliesData.ActionList[i].Name == 'Add Contact Tag') {
 				ActionId = 1
@@ -2125,7 +2125,7 @@ console.log(sortedData)
 			return this.assignedAgentList.some(agent => agent.ActionID === 2);
 		}
 		checkBotList(){
-			return this.assignedAgentList.some(agent => agent.ActionID === 3);
+			return this.assignedAgentList.some(agent => agent.ActionID === 4);
 		}
 
   }

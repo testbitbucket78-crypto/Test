@@ -116,6 +116,11 @@ export class BotserviceService {
     return this.http.post(Bot_API_URL + `/checkExistingKeyword`, data);
   }
 
+  
+  checkExistingBot(data: any) {
+    return this.http.post(Bot_API_URL + `/checkExistingBot`, data);
+  }
+
 
 
 

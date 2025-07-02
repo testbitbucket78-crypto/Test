@@ -1003,8 +1003,6 @@ async function messageThroughselectedchannel(spid, from, type, text, media, phon
   }
 }
 const variable = require('./common/constant');
-const { identity } = require("rxjs");
-const { data } = require("jquery");
 async function SreplyThroughselectedchannel(spid, from, type, text, media, phone_number_id, channelType, agentId, interactionId, testMessage, media_type, display_phone_number,
   isTemplate,
   laungage,
