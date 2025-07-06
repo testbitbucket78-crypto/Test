@@ -11,6 +11,7 @@ import { PhoneValidationService } from 'Frontend/dashboard/services/phone-valida
 import { environment } from 'environments/environment';
 import { InteractiveButtonPayload, InteractiveMessagePayload } from 'Frontend/dashboard/models/interactiveButtons.model';
 import { ToastService } from 'assets/toast/toast.service';
+ import { BehaviorSubject } from 'rxjs';
 declare var $: any;
 @Component({
     selector: 'sb-template-message',
@@ -1045,6 +1046,7 @@ checkTemplateName(e:any){
         this.selectedType = this.templatesMessageData?.media_type;
         this.selectedPreview = this.templatesMessageData.Links;
         this.buttonsArray = this.templatesMessageData?.buttons ? this.templatesMessageData?.buttons : [];
+        this.interactiveButtonsPayload = this.templatesMessageData?.interactive_buttons ? JSON.parse(this.templatesMessageData?.interactive_buttons) : [];
         if(this.templatesMessageData?.Links){
             this.fileName = this.extractActualFileName(this.templatesMessageData?.Links);
         }
@@ -1249,7 +1251,10 @@ triggerRichTextEditorChange() {
            this.toast.error('Buttons text should not be empty');
            return;
         }
-        this.interactiveButtonsPayload = this.generateInteractivePayload('');
+        if(this.renderedButtons && this.renderedButtons.length > 0){
+                this.interactiveButtonsPayload = this.generateInteractivePayload('');
+        }
+    
         this.allVariablesValueList =[];
         console.log(this.newTemplateForm.controls.BodyText.value);
         if(this.validateItems()){
@@ -1575,8 +1580,12 @@ return true
   }
 
   addNewTemplate(){
-    this.buttonsArray =[];    
+    this.buttonsArray =[];  
+    this.renderedButtons = [];  
+    this.interactiveButtonsPayload = [];
     this.newTemplateForm.get('Language')?.setValue('English');
+     this.updateRenderedButtons(this.renderedButtons);
+     this.cdr.detectChanges();
   }
   CheckVariable(){
     let varValue = this.allVariablesValueList.filter((item:any)=> item.val == '');
@@ -1720,6 +1729,9 @@ createButtonPatch(type: string, buttonText: string, webUrl: string, phoneNumber:
 openButtonPopUp(event: Event) {
     event.stopPropagation(); // Prevents event bubbling
     this.isPopupVisible = !this.isPopupVisible;
+  }
+  closeUtilityPopUp() {
+    this.interactiveButtonspopup = false;
   }
   openinteractiveButtonPopUp(event: Event) {
      event.stopPropagation(); 
@@ -1905,9 +1917,13 @@ openButtonPopUp(event: Event) {
           this.selectedButtons.push(button.id);
           this.renderUIForButton(button);
       }
+       this.updateRenderedButtons(this.renderedButtons);
   }
-    
-
+ 
+    buttonStream = new BehaviorSubject<any[]>([]);
+updateRenderedButtons(renderedButtons: any[]) {
+  this.buttonStream.next([...renderedButtons]);
+}
   isButtonDisabled(buttonId: string): boolean {
       if (this.selectedButtons.includes(buttonId)) return true;
 
@@ -1960,6 +1976,8 @@ openButtonPopUp(event: Event) {
         if (this.renderedButtons.length === 0)
             this.selectedButtons.splice(this.selectedButtons.indexOf(id), 1);
 
+         this.updateRenderedButtons(this.renderedButtons);
+
     }
 
     addButton(id: string): void {
@@ -1981,6 +1999,7 @@ openButtonPopUp(event: Event) {
           const deepClonedSchema = JSON.parse(JSON.stringify(buttonSchema));
           deepClonedSchema.children.button_text = '';
         this.renderedButtons.push(deepClonedSchema);
+        this.updateRenderedButtons(this.renderedButtons);
       }
 
    findButtonSchemaById(id: string): any | undefined {
@@ -2073,7 +2092,7 @@ openButtonPopUp(event: Event) {
                   if (group.id === 'list_messages') {
                     const rows = group.children.extra_field.map((item: any, index: number) => ({
                         title: item.extra_field_text?.trim() || `Option ${index + 1}`,
-                        description: item.placeholder?.trim() || '',
+                       // description: item.placeholder?.trim() || '',
                         id: item.id?.trim() || `row${index + 1}`
                     }));
 

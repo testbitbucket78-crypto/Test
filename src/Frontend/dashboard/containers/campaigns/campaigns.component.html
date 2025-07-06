@@ -228,7 +228,7 @@ It is determined by a combination of user feedback signals like blocks, reports 
 					<p class="sub_title_sm blackcolor mb-1">Category</p>
 					<p>{{selectedCampaign?.category_label}}</p>
 					<div class="template">
-						<div class="doc-preview"*ngIf="selectedCampaign?.media_type=='document'" width="100%" height="150px">
+						<div class="doc-preview" *ngIf="isDocumentLink(selectedCampaign?.message_media)" width="100%" height="150px">
 							<a [href]="selectedCampaign?.message_media"><img src="../../../../assets/img/settings/doc.svg" /></a>
 							</div>
 							<video *ngIf="getMediaType(selectedCampaign?.media_type,'video')" controls muted id="video-background" [src]="selectedCampaign?.message_media"></video>

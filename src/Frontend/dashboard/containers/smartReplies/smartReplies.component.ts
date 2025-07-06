@@ -1265,6 +1265,7 @@ showAddSmartRepliesModal() {
 		this.messageMeidaFile = '';
 		console.log(this.assignedAgentList,'ADDED MESSAGE DATA')
 		this.templateButton = [];
+		this.interactive_buttons = [];
 		this.buttonsVariable = [];
 			this.chatEditor.value = '';
 

@@ -4,6 +4,7 @@
     <p *ngIf="warningMessage" class="warning">{{warningMessage}}</p>
 </div>
 <sb-loader [isLoading]="isLoading"></sb-loader>
+<div *ngIf="interactiveButtonspopup == true" class="overlay" (click)="closeUtilityPopUp()"></div>
 <div class="row" *ngIf="selectedTab == 0">
     <div class="col p-0">
         <div class="d-flex pb-2 pt-4 main-header-container">
@@ -905,8 +906,13 @@
                     
                     
                     </div>
-                    
-                    
+                    <div *ngIf="renderedButtons.length > 0" class="mt-2">
+                    <small class="mb-1 d-inline">
+                        <b>{{renderedButtons[0]?.name}}</b>
+                        <span class="text-secondary">({{renderedButtons[0]?.maximum_buttons}} button maximum)</span>
+                    </small>
+                    </div>
+
                     <div *ngIf="renderedButtons.length > 0" class="mt-2" style="border: 2px solid black; border-radius: 15px;">
                         <form *ngFor="let btn of renderedButtons; let i = index; trackBy: trackByFn" class="m-2">
                     
@@ -914,7 +920,7 @@
                                 <div class="row">
                                     <div class="d-flex flex-column col-4">
                                         <small class="mb-1"><b>Button Type</b></small>
-                                        <h6 class="p-2 mb-1 border rounded-pill">{{btn.name}}</h6>
+                                        <h6 class="p-2 mb-1 border rounded-pill bg-white">{{btn.name}}</h6>
                                     </div>
                                     <div class="d-flex flex-column col-8">
                                         <div class="d-flex justify-content-between align-items-center">
@@ -929,7 +935,7 @@
                                             <div *ngIf="field.id.startsWith('row')" class="d-flex flex-column col-4">
                                                 <!-- For List Message -->
                                                 <p style="font-weight: 800; font-size: 12px;" class="mb-1" *ngIf="field.id.startsWith('row')"><b>Row</b></p>
-                                                <h6 *ngIf="field.id.startsWith('row')" class="p-2 mb-1 border rounded-pill">Row {{index + 1}}</h6>
+                                                <h6 *ngIf="field.id.startsWith('row')" class="p-2 mb-1 border rounded-pill bg-white">Row {{index + 1}}</h6>
                                             </div>
                                             <div *ngIf="(field.type_title && field.type)" class="d-flex flex-column col-4">
                                                 <!-- For URL Type -->
@@ -956,11 +962,11 @@
                                             <div *ngIf="btn.id === 'list_messages'" class="w-100 text-right pr-2">
                                                 <!-- Add only for the last row -->
                                                 <small *ngIf="index === btn.children.extra_field.length - 1 && btn.maximum_buttons > 1 && countMaximumBtn(btn.id) < btn.maximum_buttons"
-                                                    (click)="addRow(btn.id)"
+                                                    (click)="addRow(btn.id)" style="cursor: pointer;"
                                                     class="text-center mx-2 mb-0 text-primary">+ Add</small>
                                                 
                                                 <!-- Remove visible for each row -->
-                                                <small (click)="removeRow(btn.id, index)"
+                                                <small (click)="removeRow(btn.id, index)" style="cursor: pointer;"
                                                     class="text-center mb-0 text-danger">- Remove</small>
                                             </div>
                                         </div>
@@ -972,10 +978,10 @@
                     
                             <div class="w-100 text-right" *ngIf="btn.id !== 'list_messages'">
                             <small *ngIf="i === renderedButtons.length - 1 && btn.maximum_buttons > 1 && countMaximumBtn(btn.id) < btn.maximum_buttons"
-                                    (click)="addButton(btn.id)"
+                                    (click)="addButton(btn.id)" style="cursor: pointer;"
                                     class="text-center mx-2 mb-0 text-primary">+ Add</small>
 
-                            <small (click)="removeButton(btn.id, i)"
+                            <small (click)="removeButton(btn.id, i)" style="cursor: pointer;"
                                     class="text-center mb-0 text-danger">- Remove</small>
                             </div>
                         </form>
@@ -1031,7 +1037,8 @@
                         <img class="btn-preview-img" *ngIf="item.type =='Complete Flow'" src="../../../../assets/img/settings/form.svg"> 
                         {{item?.buttonText}}</div>
                 </div>
-                
+                <interactive-button *ngIf="interactiveButtonsPayload" [width]="'100%'" [interactiveButtons]="interactiveButtonsPayload"></interactive-button>
+                <interactive-button *ngIf="buttonStream" [width]="'100%'" [renderedButtonsStream]="buttonStream"></interactive-button>
                 <!-- <div *ngIf="newTemplateForm.controls.buttonType.value == 'Call to Action'" class="w-70">
                     <div class="text-center"><button class="template-btn">{{this.newTemplateForm?.controls?.buttonText?.value}}</button> </div>
                 </div> -->
