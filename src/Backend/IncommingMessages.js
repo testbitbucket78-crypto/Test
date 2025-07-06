@@ -1556,4 +1556,24 @@ setTimeout(() => {
   //botOperations(mainData);
 }, 1000); 
 
-module.exports = { autoReplyDefaultAction, sReplyActionOnlostMessage,identifyNode,timeOut,runBotOperation }
+const WHAPI_BASE_URL = 'https://gate.whapi.cloud';
+async function fetchBinaryFromUrl(mediaId, token) {
+  try {
+    const response = await axios.get(`${WHAPI_BASE_URL}/media/${mediaId}`, {
+      responseType: 'arraybuffer',
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    const contentType = response.headers['content-type'];
+    const fileBuffer = response.data;
+
+    return { buffer: fileBuffer, contentType };
+  } catch (error) {
+    console.error('Error fetching media:', error.response?.data || error.message);
+    throw new Error('Failed to fetch media from WhatsApp');
+  }
+}
+
+module.exports = { autoReplyDefaultAction, sReplyActionOnlostMessage,identifyNode,timeOut,runBotOperation,fetchBinaryFromUrl }

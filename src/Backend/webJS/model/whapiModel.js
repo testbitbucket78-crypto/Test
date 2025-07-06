@@ -168,6 +168,8 @@ class Message {
         this.from = data?.from;
         this.from_name = data?.from_name;
         this.image = data?.image || null;
+        this.video = data?.video || null;
+        this.document = data?.document || null;
     }
 }
 

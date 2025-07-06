@@ -42,9 +42,6 @@ async function NoCustomerReplyReminder() {
           try {
             let isReplyPause, message_text;
 
-            // --------- one SPID one time ------------//
-
-            // Check if replyPauseCache already has the result for this SP_ID
             if (!replyPauseCache.has(message.SP_ID)) {
               isReplyPause = await isReplySent(message.isAutoReply, message.defaultAction_PauseTime, message.isAutoReplyDisable, message.AgentId, message.interaction_status);
               replyPauseCache.set(message.SP_ID, isReplyPause); // Cache the result
@@ -130,7 +127,8 @@ async function NoCustomerReplyTimeout() {
       // Caches for isAutoReplyPause and getExtractedMessage results
       const replyPauseCache = new Map();
       const extractedMessageCache = new Map();
-
+      let totalSuccessCount = 0;
+      
       for (let i = 0; i < CustomerReplyTimeout.length; i += batchSize) {
         const batch = CustomerReplyTimeout.slice(i, i + batchSize);
         logger.info(`NoCustomerReplyTimeout Processing batch ${(i / batchSize) + 1} with ${batch.length} messages, ${new Date()}`);
@@ -184,6 +182,7 @@ async function NoCustomerReplyTimeout() {
               logger.info(`send NoCustomerReplyTimeout success, ${new Date()}, ${msg.SPID}, ${msg.customer_phone_number}, response?.status`);
 
               if (response?.status == 200) {
+                totalSuccessCount++;
                 let myUTCString = new Date().toUTCString();
                 const currenttime = moment.utc(myUTCString).format('YYYY-MM-DD HH:mm:ss');
 
@@ -209,7 +208,11 @@ async function NoCustomerReplyTimeout() {
         }
 
         // Add delay between processing batches
-        if (i + batchSize < CustomerReplyTimeout.length) {
+        // if (i + batchSize < CustomerReplyTimeout.length) {
+        //   await new Promise(resolve => setTimeout(resolve, delayBetweenBatches));
+        // }
+        if (totalSuccessCount > 0 && totalSuccessCount % batchSize === 0 && i + batchSize < CustomerReplyTimeout.length) {
+          logger.info(`Delaying ${delayBetweenBatches}ms after ${totalSuccessCount} successful messages...`);
           await new Promise(resolve => setTimeout(resolve, delayBetweenBatches));
         }
         logger.info(`******************************************************`)
@@ -586,9 +589,6 @@ async function botTimeOperations(){
         }
       }
     }
-  } catch (error) {
-    logger.error(`Error in botTimeOperations: ${error.message}`, { timestamp: new Date() });
-  }
 }
 
 // // Calculate the initial delay

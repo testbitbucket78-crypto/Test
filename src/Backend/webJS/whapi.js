@@ -290,6 +290,7 @@ async function Message(message, incommingMessageDependency){
         console.log("client message err")
       }
 }
+const { messageStatus, messageRecieved } = require('../common/webhookEvents.js');
 
 /**
  * Update the statuses
@@ -299,11 +300,32 @@ async function messageAck(statuses) {
   let r1 = await CreateChannelResponse.getByChannelId(statuses.channel_id);
   let spid = r1?.spid;
   let spsPhoneNo = r1?.phone;
+  
     for (const status of statuses.statuses) {
         let phoneNumber = status.recipient_id.replace(/@s\.whatsapp\.net$/, "");
-        let ack = status.code;
+       // let ack = status.code;
         let messageId = status.id;
-        
+
+    let ack;
+    if (status.status === 'sent') ack = 1;
+    else if (status.status === 'delivered') ack = 2;
+    else if (status.status === 'read') ack = 3;
+    else continue;
+
+    const message = {
+      to: status.recipient_id.replace(/@s\.whatsapp\.net$/, '') + "@c.us",
+      from: spsPhoneNo + "@c.us",
+      _data: {
+        id: {
+          id: status.id
+        }
+      },
+      timestamp: parseInt(status.timestamp)
+    };
+
+    // Calling this with correct structure
+    await messageStatus(message, ack, spid);
+
         try {
             let d = new Date(status.timestamp * 1000).toUTCString();
             const message_time = moment.utc(d).format('YYYY-MM-DD HH:mm:ss');
@@ -916,7 +938,17 @@ async function saveInMessages(message) {
           let media
           if( msg?.image?.preview){
             media = await uploadBase64ToAws(msg?.image?.preview, r1?.spid, r1?.phone, Type);
-          } else{
+          } else if (msg?.video?.preview) {
+            message_text = msg?.video?.caption || message_text;
+            media = await uploadBase64ToAws(msg?.video?.preview, r1?.spid, r1?.phone, Type);
+          } else if (Type === 'document' && msg?.document?.id) {
+            message_text = msg?.document?.caption || message_text;
+            const { buffer, contentType } = await incommingmsg.fetchBinaryFromUrl(msg.document.id, r1?.token);
+            const extension = msg.document.filename?.split('.').pop() || 'doc';
+            const key = `${r1.spid}/teambox/${r1.phone}/whatsAppWeb-${Date.now()}.${extension}`;
+            media = (await awsHelper.uploadVideoToAws(key, buffer, contentType)).value?.Location;
+
+          }else{ 
               media = msg?.image?.link
           }
           message_text = msg?.image?.caption || message_text;
@@ -949,12 +981,12 @@ async function uploadBase64ToAws(base64, spid, phoneNumberId, type) {
     let key = '';
     let contentType = '';
     let awsDetails;
-
+    const uniqueSuffix = `${Date.now()}-${Math.floor(Math.random() * 10000)}`;
     if (type === 'image') {
-      key = `${spid}/teambox/${phoneNumberId}/whatsAppWeb.jpeg`;
+      key = `${spid}/teambox/${phoneNumberId}/whatsAppWeb-${uniqueSuffix}.jpeg`;
       awsDetails = await awsHelper.uploadStreamToAws(key, base64Data); 
     } else if (type === 'video') {
-      key = `${spid}/teambox/${phoneNumberId}/whatsAppWeb.mp4`;
+      key = `${spid}/teambox/${phoneNumberId}/whatsAppWeb-${uniqueSuffix}.mp4`;
       contentType = 'video/mp4';
       awsDetails = await awsHelper.uploadVideoToAws(key, buffer, contentType);
     } else if (type === 'document') {
@@ -1202,6 +1234,7 @@ async function saveIncommingMessages(message_direction, from, firstMessage, phon
   if ((message_text.length > 0 || message_media.length > 0) && Type != 'e2e_notification') {
     let query = "CALL webhook_2(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)"
     var saveMessage = await db.excuteQuery(query, [phoneNo, message_direction, message_text, message_media, Message_template_id, Quick_reply_id, Type, ExternalMessageId, display_phone_number, contactName, media_type, ackStatus, 'WA Web', timestramp, countryCode, EcPhonewithoutcountryCode,'','',0]);
+    messageRecieved(saveMessage[0][0]['@sid'], phoneNo, message_direction, message_text, message_media, Message_template_id, Quick_reply_id, Type, ExternalMessageId, display_phone_number, contactName, media_type, ackStatus, 'WA Web', timestramp, countryCode, EcPhonewithoutcountryCode,'','',0 );
     notify.NotifyServer(display_phone_number, true);
   }
 
