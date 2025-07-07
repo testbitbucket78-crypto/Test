@@ -3618,6 +3618,7 @@ sendMessage(isTemplate:boolean=false,templateTxt:string='',type: any = ''){
 								this.bodyText = '';
 								this.templateButton = [];
 								this.buttonsVariable =[];
+								this.interactiveButtonsPayload = [];
 							}
 				
 				

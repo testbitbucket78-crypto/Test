@@ -741,13 +741,15 @@ getApiKeyData(isSave:boolean,isRegenrate:boolean=false, id?:number){
     })
     data['ip'] = arrIp;
   }
-  this.apiService.getApiKeyData(data).subscribe((response) => {
+this.apiService.getApiKeyData(data).subscribe({
+  next: (response) => {
     console.log(response + JSON.stringify(this.accoountsetting));
-    if(response){
-      if(isSave){
+    if (response) {
+      if (isSave) {
         $("#createTokenModal").modal('hide');
-        if(!this.isEdit)
+        if (!this.isEdit) {
           $("#apiConfirmationModal").modal('show');
+        }
       }
       this.isEdit = false;
       this.apiKeyData = response;
@@ -760,10 +762,17 @@ getApiKeyData(isSave:boolean,isRegenrate:boolean=false, id?:number){
         this.ipAddress = last?.ips ? JSON.parse(JSON.stringify(last.ips)) : [''];
         this.currentAPIkey = last?.apiKey;
       }
-      if(this.ipAddress?.length == 0)
-      this.ipAddress =[''];
-      //apiKey
+
+      if (this.ipAddress?.length === 0) {
+        this.ipAddress = [''];
+      }
     }
+  },
+  error: (err) => {
+    this._toastService.error(err.error?.message || "Something went wrong!");
+    console.error("Error fetching API key data:", err);
+
+  }
 });
 }
 
@@ -784,6 +793,7 @@ areArraysEqual(arr1: any[], arr2: any[]): boolean {
 }
 
 regenrateApiKey(id : number){
+  debugger;
   this.getApiKeyData(true,true,id);
 }
 

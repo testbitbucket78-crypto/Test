@@ -3443,4 +3443,9 @@ console.log(this.allTemplatesMain);
 			return value.split(' / ')[1] ? value.split(' / ')[1] : '';
 		}
 	  }
+	isDocumentLink(url: string | undefined): boolean {
+		if (!url) return false;
+		const documentExtensions = ['.pdf', '.doc', '.docx', '.xls', '.xlsx', '.ppt', '.pptx'];
+		return documentExtensions.some(ext => url.toLowerCase().includes(ext));
+    }
 }
