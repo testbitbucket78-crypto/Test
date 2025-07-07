@@ -5,6 +5,9 @@ const variables = {
         contacts: 'https://contactapi.stacknize.com', // https://contactapi.stacknize.com
         settings: 'https://settings.stacknize.com', // https://settings.stacknize.com http://localhost:3003
     },
+    WHAPI_URL:{
+        gate_api: 'https://gate.whapi.cloud'
+    },
     webhookRegisterPayload: {
         callback_url: 'https://call.stacknize.com/webhook',
         verify_token: 'raunak',
@@ -28,7 +31,7 @@ const variables = {
     },
     provider: "webJS", // webJS or whapi
     SPID : "847",
-    webhookSPIDs : ['847','91','159','55','163','1055']
+    webhookSPIDs : ['847','91','159','55','163','1055','1068']
 };
 
 
