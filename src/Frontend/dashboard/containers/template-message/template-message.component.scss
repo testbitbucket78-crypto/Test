@@ -1967,7 +1967,7 @@ input[type="radio"]:checked + label::before {
     font-weight: bold;
 }
 .small-input {
-     font-size: 13px;
+     font-size: 13px !important;
 }
 ::ng-deep input.small-input:focus {
   outline: none !important;

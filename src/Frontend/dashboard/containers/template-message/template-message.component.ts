@@ -1246,8 +1246,9 @@ triggerRichTextEditorChange() {
     }
     
 
-    previewTemplate() {
-        if(!this.validateRenderedButtons(this.renderedButtons)){
+    async previewTemplate() {
+        let valid = await this.validateRenderedButtons(this.renderedButtons)
+        if(!valid){
            this.toast.error('Buttons text should not be empty');
            return;
         }
@@ -1751,6 +1752,9 @@ openButtonPopUp(event: Event) {
     ) {
       this.isPopupVisible = false;
     }
+    if(this.interactiveButtonspopup ){
+       this.interactiveButtonspopup = false;
+    }
   }
 
 
@@ -2009,45 +2013,55 @@ updateRenderedButtons(renderedButtons: any[]) {
       }
       return undefined;
     }
-    validateRenderedButtons(renderedButtons: any[]):boolean {
-        let boolean =  true;
-        renderedButtons.forEach((detail: any) => {
-        // Skip buttons that are not selected
-        //if (!detail.enabledButton || detail.enabledButton.length === 0) return;
 
-        // 1. Check button text
-        if (!detail.children?.button_text || detail.children.button_text.trim() === '') {
-            boolean = false
-            return;
+async validateRenderedButtons(renderedButtons: any[]): Promise<boolean> {
+  let boolean = true;
+
+  for (const detail of renderedButtons) {
+    if (!detail.children?.button_text || detail.children.button_text.trim() === '') {
+      boolean = false;
+      continue;
+    }
+
+    // Check extra fields
+    if (Array.isArray(detail.children?.extra_field)) {
+      for (const field of detail.children.extra_field) {
+        if (!field.extra_field_text || field.extra_field_text.trim() === '') {
+          boolean = false;
+          continue;
         }
 
-        // 2. Check extra fields
-        if (Array.isArray(detail.children?.extra_field)) {
-            detail.children.extra_field.forEach((field: any) => {
-            if (!field.extra_field_text || field.extra_field_text.trim() === '') {
-                boolean = false
-                return
-            }
-
-            // For dropdowns
-            if (field.dropdown_field && (!field.selected_country_code || field.selected_country_code.trim() === '')) {
-            boolean = false
-            return
-            }
-            });
+        if (field.dropdown_field && (!field.selected_country_code || field.selected_country_code.trim() === '')) {
+          boolean = false;
+          continue;
         }
 
-        // 3. Special case for list_messages -> rows
-        if (detail.id === 'list_messages' && Array.isArray(detail.children?.extra_field)) {
-            detail.children.extra_field.forEach((row: any) => {
-            if (!row.extra_field_text || row.extra_field_text.trim() === '') {
-            boolean = false
-            return;
-            }
-            });
+        if (field.selected_country_code && detail.children.extra_field?.[0]?.extra_field_text) {
+          const phoneLength = this.phoneValidationService?.getPhoneNumberLength(field.selected_country_code);
+          const enteredPhone = detail.children.extra_field[0].extra_field_text;
+
+          if (enteredPhone.length !== phoneLength) {
+            this.toast.error('Phone Number Length is incorrect');
+            await new Promise(resolve => setTimeout(resolve, 3000)); // ✅ works here
+            boolean = false;
+            continue;
+          }
         }
-        });
-       return boolean;
+      }
+    }
+
+    // Check list messages
+    if (detail.id === 'list_messages' && Array.isArray(detail.children?.extra_field)) {
+      for (const row of detail.children.extra_field) {
+        if (!row.extra_field_text || row.extra_field_text.trim() === '') {
+          boolean = false;
+          continue;
+        }
+      }
+    }
+  }
+
+  return boolean;
 }
 
     generateInteractivePayload(to: string): InteractiveMessagePayload {

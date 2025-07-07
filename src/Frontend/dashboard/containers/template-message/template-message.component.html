@@ -895,7 +895,7 @@
                                     class="d-flex align-items-center mb-2 w-100 border-0 outline-none bg-white">
                                     <img style="width: 16px; height: 16px;" src={{d.icon_path}} alt={{d.id}}>
                                     <div class="pl-2">
-                                        <p class="mb-0 text-left">{{d.name}}</p>
+                                        <p class="mb-0 text-left" style="font-weight: 700;">{{d.name}}</p>
                                         <small class="text-muted">{{d.maximum_buttons}} button maximum</small>
                                     </div>
                                 </button>
@@ -920,14 +920,14 @@
                                 <div class="row">
                                     <div class="d-flex flex-column col-4">
                                         <small class="mb-1"><b>Button Type</b></small>
-                                        <h6 class="p-2 mb-1 border rounded-pill bg-white">{{btn.name}}</h6>
+                                        <h6 class="p-2 mb-1 border rounded-pill bg-white small-input" style="font-weight: normal;">{{btn.name}}</h6>
                                     </div>
                                     <div class="d-flex flex-column col-8">
                                         <div class="d-flex justify-content-between align-items-center">
                                             <small class="mb-1"><b>Button Text</b></small>
                                             <p class="mb-1"><b>{{btn.children.button_text.length}}</b> / <span class="text-muted">{{btn.children.button_text_length}} characters</span></p>
                                         </div>
-                                        <input type="text" [(ngModel)]="btn.children.button_text" maxlength="{{btn.children.button_text_length}}" (change)="a($event)" (input)="getInputCharacterCount($event.data, 'buttonText-' + i, i)" [name]="'buttonText-' + i" [id]="'buttonText-' + i" class="h-100 rounded-pill p-2 border small-input" [placeholder]="btn.children.button_text_placeholder" />
+                                        <input type="text" [(ngModel)]="btn.children.button_text" maxlength="{{btn.children.button_text_length}}" (change)="a($event)" (input)="getInputCharacterCount($event.data, 'buttonText-' + i, i)" [name]="'buttonText-' + i" [id]="'buttonText-' + i" class="h-100 rounded-pill border small-input" style="padding: 0.6rem;" [placeholder]="btn.children.button_text_placeholder" />
                                     </div>
                     
                                     <div *ngIf="btn.children.extra_field" class="col-12 mt-2">
@@ -935,20 +935,23 @@
                                             <div *ngIf="field.id.startsWith('row')" class="d-flex flex-column col-4">
                                                 <!-- For List Message -->
                                                 <p style="font-weight: 800; font-size: 12px;" class="mb-1" *ngIf="field.id.startsWith('row')"><b>Row</b></p>
-                                                <h6 *ngIf="field.id.startsWith('row')" class="p-2 mb-1 border rounded-pill bg-white">Row {{index + 1}}</h6>
+                                                <h6 *ngIf="field.id.startsWith('row')" class="p-2 mb-1 border rounded-pill bg-white small-input" style="font-weight: normal;">Row {{index + 1}}</h6>
                                             </div>
                                             <div *ngIf="(field.type_title && field.type)" class="d-flex flex-column col-4">
                                                 <!-- For URL Type -->
                                                 <p style="font-weight: 800; font-size: 12px;" class="mb-1" *ngIf="field.type_title"><b>{{field.type_title}}</b></p>
-                                                <h6 *ngIf="field.type" class="mb-1 p-2 border rounded-pill">{{field.type}}</h6>
+                                                <h6 *ngIf="field.type" class="mb-1 p-2 border rounded-pill bg-white small-input" style="font-weight: normal;">{{field.type}}</h6>
                                             </div>
                                             <div *ngIf="field.dropdown_field == true" class="d-flex flex-column col-4">
                                                 <!-- For Phone Type -->
                                                 <p style="font-weight: 800; font-size: 12px;" class="mb-1" *ngIf="field.dropdown_title"><b>{{field.dropdown_title}}</b></p>
-                                                <select id="countryCodePicker" [(ngModel)]="field.selected_country_code" class="p-2 border rounded-pill">
-                                                    <option *ngFor="let option of field.country_code_list" [value]="option">
-                                                      {{ option }}
-                                                    </option>
+                                                <select
+                                                name="countryCode-{{i}}"
+                                                [(ngModel)]="field.selected_country_code"
+                                                class="p-2 border rounded-pill">
+                                                <option *ngFor="let option of field.country_code_list" [value]="option">
+                                                    {{ option }}
+                                                </option>
                                                 </select>
                                             </div>
                                             <div class="d-flex flex-column" [ngClass]="!((field.type_title && field.type) || (field.dropdown_title) || (field.id.startsWith('row'))) ? 'col-12' : 'col-8'">
