@@ -11,6 +11,7 @@ import { PhoneValidationService } from 'Frontend/dashboard/services/phone-valida
 import { environment } from 'environments/environment';
 import { InteractiveButtonPayload, InteractiveMessagePayload } from 'Frontend/dashboard/models/interactiveButtons.model';
 import { ToastService } from 'assets/toast/toast.service';
+ import { BehaviorSubject } from 'rxjs';
 declare var $: any;
 @Component({
     selector: 'sb-template-message',
@@ -1045,6 +1046,7 @@ checkTemplateName(e:any){
         this.selectedType = this.templatesMessageData?.media_type;
         this.selectedPreview = this.templatesMessageData.Links;
         this.buttonsArray = this.templatesMessageData?.buttons ? this.templatesMessageData?.buttons : [];
+        this.interactiveButtonsPayload = this.templatesMessageData?.interactive_buttons ? JSON.parse(this.templatesMessageData?.interactive_buttons) : [];
         if(this.templatesMessageData?.Links){
             this.fileName = this.extractActualFileName(this.templatesMessageData?.Links);
         }
@@ -1244,12 +1246,16 @@ triggerRichTextEditorChange() {
     }
     
 
-    previewTemplate() {
-        if(!this.validateRenderedButtons(this.renderedButtons)){
+    async previewTemplate() {
+        let valid = await this.validateRenderedButtons(this.renderedButtons)
+        if(!valid){
            this.toast.error('Buttons text should not be empty');
            return;
         }
-        this.interactiveButtonsPayload = this.generateInteractivePayload('');
+        if(this.renderedButtons && this.renderedButtons.length > 0){
+                this.interactiveButtonsPayload = this.generateInteractivePayload('');
+        }
+    
         this.allVariablesValueList =[];
         console.log(this.newTemplateForm.controls.BodyText.value);
         if(this.validateItems()){
@@ -1575,8 +1581,12 @@ return true
   }
 
   addNewTemplate(){
-    this.buttonsArray =[];    
+    this.buttonsArray =[];  
+    this.renderedButtons = [];  
+    this.interactiveButtonsPayload = [];
     this.newTemplateForm.get('Language')?.setValue('English');
+     this.updateRenderedButtons(this.renderedButtons);
+     this.cdr.detectChanges();
   }
   CheckVariable(){
     let varValue = this.allVariablesValueList.filter((item:any)=> item.val == '');
@@ -1721,6 +1731,9 @@ openButtonPopUp(event: Event) {
     event.stopPropagation(); // Prevents event bubbling
     this.isPopupVisible = !this.isPopupVisible;
   }
+  closeUtilityPopUp() {
+    this.interactiveButtonspopup = false;
+  }
   openinteractiveButtonPopUp(event: Event) {
      event.stopPropagation(); 
      this.interactiveButtonspopup = !this.interactiveButtonspopup;
@@ -1738,6 +1751,9 @@ openButtonPopUp(event: Event) {
       !this.btnPopupContainer.nativeElement.contains(event.target)
     ) {
       this.isPopupVisible = false;
+    }
+    if(this.interactiveButtonspopup ){
+       this.interactiveButtonspopup = false;
     }
   }
 
@@ -1905,9 +1921,13 @@ openButtonPopUp(event: Event) {
           this.selectedButtons.push(button.id);
           this.renderUIForButton(button);
       }
+       this.updateRenderedButtons(this.renderedButtons);
   }
-    
-
+ 
+    buttonStream = new BehaviorSubject<any[]>([]);
+updateRenderedButtons(renderedButtons: any[]) {
+  this.buttonStream.next([...renderedButtons]);
+}
   isButtonDisabled(buttonId: string): boolean {
       if (this.selectedButtons.includes(buttonId)) return true;
 
@@ -1960,6 +1980,8 @@ openButtonPopUp(event: Event) {
         if (this.renderedButtons.length === 0)
             this.selectedButtons.splice(this.selectedButtons.indexOf(id), 1);
 
+         this.updateRenderedButtons(this.renderedButtons);
+
     }
 
     addButton(id: string): void {
@@ -1981,6 +2003,7 @@ openButtonPopUp(event: Event) {
           const deepClonedSchema = JSON.parse(JSON.stringify(buttonSchema));
           deepClonedSchema.children.button_text = '';
         this.renderedButtons.push(deepClonedSchema);
+        this.updateRenderedButtons(this.renderedButtons);
       }
 
    findButtonSchemaById(id: string): any | undefined {
@@ -1990,45 +2013,55 @@ openButtonPopUp(event: Event) {
       }
       return undefined;
     }
-    validateRenderedButtons(renderedButtons: any[]):boolean {
-        let boolean =  true;
-        renderedButtons.forEach((detail: any) => {
-        // Skip buttons that are not selected
-        //if (!detail.enabledButton || detail.enabledButton.length === 0) return;
 
-        // 1. Check button text
-        if (!detail.children?.button_text || detail.children.button_text.trim() === '') {
-            boolean = false
-            return;
+async validateRenderedButtons(renderedButtons: any[]): Promise<boolean> {
+  let boolean = true;
+
+  for (const detail of renderedButtons) {
+    if (!detail.children?.button_text || detail.children.button_text.trim() === '') {
+      boolean = false;
+      continue;
+    }
+
+    // Check extra fields
+    if (Array.isArray(detail.children?.extra_field)) {
+      for (const field of detail.children.extra_field) {
+        if (!field.extra_field_text || field.extra_field_text.trim() === '') {
+          boolean = false;
+          continue;
         }
 
-        // 2. Check extra fields
-        if (Array.isArray(detail.children?.extra_field)) {
-            detail.children.extra_field.forEach((field: any) => {
-            if (!field.extra_field_text || field.extra_field_text.trim() === '') {
-                boolean = false
-                return
-            }
-
-            // For dropdowns
-            if (field.dropdown_field && (!field.selected_country_code || field.selected_country_code.trim() === '')) {
-            boolean = false
-            return
-            }
-            });
+        if (field.dropdown_field && (!field.selected_country_code || field.selected_country_code.trim() === '')) {
+          boolean = false;
+          continue;
         }
 
-        // 3. Special case for list_messages -> rows
-        if (detail.id === 'list_messages' && Array.isArray(detail.children?.extra_field)) {
-            detail.children.extra_field.forEach((row: any) => {
-            if (!row.extra_field_text || row.extra_field_text.trim() === '') {
-            boolean = false
-            return;
-            }
-            });
+        if (field.selected_country_code && detail.children.extra_field?.[0]?.extra_field_text) {
+          const phoneLength = this.phoneValidationService?.getPhoneNumberLength(field.selected_country_code);
+          const enteredPhone = detail.children.extra_field[0].extra_field_text;
+
+          if (enteredPhone.length !== phoneLength) {
+            this.toast.error('Phone Number Length is incorrect');
+            await new Promise(resolve => setTimeout(resolve, 3000)); // ✅ works here
+            boolean = false;
+            continue;
+          }
         }
-        });
-       return boolean;
+      }
+    }
+
+    // Check list messages
+    if (detail.id === 'list_messages' && Array.isArray(detail.children?.extra_field)) {
+      for (const row of detail.children.extra_field) {
+        if (!row.extra_field_text || row.extra_field_text.trim() === '') {
+          boolean = false;
+          continue;
+        }
+      }
+    }
+  }
+
+  return boolean;
 }
 
     generateInteractivePayload(to: string): InteractiveMessagePayload {
@@ -2073,7 +2106,7 @@ openButtonPopUp(event: Event) {
                   if (group.id === 'list_messages') {
                     const rows = group.children.extra_field.map((item: any, index: number) => ({
                         title: item.extra_field_text?.trim() || `Option ${index + 1}`,
-                        description: item.placeholder?.trim() || '',
+                       // description: item.placeholder?.trim() || '',
                         id: item.id?.trim() || `row${index + 1}`
                     }));
 

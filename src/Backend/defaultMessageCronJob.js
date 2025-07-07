@@ -558,6 +558,7 @@ async function workingHoursDetails(sid) {
 }
 
 async function botTimeOperations(){
+  try {
     let getSessionsData = `SELECT *,DATE_FORMAT(bot_Timeout, '%Y-%m-%d %H:%i:%s') AS botTimeout,DATE_FORMAT(node_timeout, '%Y-%m-%d %H:%i:%s') AS nodeTimeout FROM BotSessions WHERE status = 2 AND isDeleted != 1`;
     let botSessions = await db.excuteQuery(getSessionsData, []);
 
@@ -570,18 +571,18 @@ async function botTimeOperations(){
         try {
           let bot_timeout = new Date(data.botTimeout +'Z');
           let node_timeout = new Date(data.nodeTimeout +'Z');
-          let data = {
+          let datas = {
             sid: data.spid,
             botId: data.botId,
             custid:data.customerId
           };
           if (bot_timeout <= currentDateTime ) {            
-            incommingmsg?.timeOut(data,'bot');
+            incommingmsg?.timeOut(datas,'bot');
             logger.info(`Bot operations for SPID: ${data.spid} are being processed`, { timestamp: new Date() });
           }
 
           if(node_timeout <= currentDateTime && data.nodeTimeout != null && data.isWaiting == 1) {
-            incommingmsg?.timeOut(data,'node');
+            incommingmsg?.timeOut(datas,'node');
             logger.info(`Node timeout for SPID: ${data?.spid}, botId: ${data?.botId} are being processed`, { timestamp: new Date() });
           }
         } catch (error) {

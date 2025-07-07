@@ -553,7 +553,7 @@
                                     <h5>Bot Name<span class="text-danger"> * </span></h5>
                                     <input class="form-control" type="text" name="Title" id="Title"
                                         formControlName="name" placeholder="Enter title in max 20 character"
-                                        maxlength="20" />
+                                        maxlength="20" (change)="checkBotName($event)" />
                                     <div class="text-danger dangerText" *ngIf="
                                             botBuilderForm.get('name')?.touched &&
                                             botBuilderForm.get('name')?.invalid
@@ -563,6 +563,11 @@
                                         <small *ngIf="botBuilderForm.get('name')?.errors?.['maxlength']">Max 20
                                             characters allowed.</small>
                                     </div>
+
+                                     <div *ngIf="errorMessageBot" class="text-danger small"
+                                            style="font-size: 10px; margin: 0px 51px">
+                                            {{ errorMessageBot }}
+                                        </div>
                                     <h5>Description<span class="text-danger"> * </span></h5>
                                     <div class="form-floating ff">
                                         <textarea name="Description" id="Description" class="form-control" rows="4"
@@ -965,7 +970,13 @@
                                 <div class="box" [formGroup]="botBuilderForm">
                                     <h5>Bot Name<span class="text-danger"> * </span></h5>
                                     <input class="form-control" type="text" formControlName="name" maxlength="20"
-                                        placeholder="Enter title in max 20 character" />
+                                        placeholder="Enter title in max 20 character" (change)="checkBotName($event)" />
+
+
+                                        <div *ngIf="errorMessageBot" class="text-danger small"
+                                            style="font-size: 10px; margin: 0px 51px">
+                                            {{ errorMessageBot }}
+                                        </div>
 
                                     <h5>Description<span class="text-danger"> * </span></h5>
                                     <div class="form-floating ff">
@@ -1364,6 +1375,7 @@
                                     <input class="form-control" type="text" formControlName="name" maxlength="20"
                                         readonly />
 
+
                                     <h5>Description</h5>
                                     <div class="form-floating ff">
                                         <textarea class="form-control" rows="4" formControlName="botDescription"
@@ -1562,7 +1574,12 @@
                                 <div class="box" [formGroup]="botBuilderForm">
                                     <h5>Bot Name<span class="text-danger"> * </span></h5>
                                     <input class="form-control" type="text" formControlName="name" maxlength="20"
-                                        placeholder="Enter title in max 20 character" />
+                                        placeholder="Enter title in max 20 character" (change)="checkBotName($event)" />
+
+                                        <div *ngIf="errorMessageBot" class="text-danger small"
+                                            style="font-size: 10px; margin: 0px 51px">
+                                            {{ errorMessageBot }}
+                                        </div>
 
                                     <div class="text-danger dangerText" *ngIf="
                                             botBuilderForm.get('name')?.touched &&

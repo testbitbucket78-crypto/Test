@@ -714,8 +714,8 @@ const insertMessage = async (req, res) => {
                     interactionId:interaction_id,
                     custid:customerId
                 }
-                incommingmsg.runBotOperation(data, middleWare);
-                res.send({status: 200, insertId: msg_id.insertId });
+                await incommingmsg.runBotOperation(data, middleWare);
+               return res.send({status: 200, insertId: msg_id.insertId });
             }
             //  logger.debug('Message ID:', msg_id);
             let updateInteraction = await db.excuteQuery(val.updateTempInteractionQuery, [0, interaction_id])
