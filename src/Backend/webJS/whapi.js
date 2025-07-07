@@ -943,7 +943,7 @@ async function saveInMessages(message) {
             media = await uploadBase64ToAws(msg?.video?.preview, r1?.spid, r1?.phone, Type);
           } else if (Type === 'document' && msg?.document?.id) {
             message_text = msg?.document?.caption || message_text;
-            const { buffer, contentType } = await incommingmsg.fetchBinaryFromUrl(msg.document.id, r1?.token);
+            const { buffer, contentType } = await whapiService.fetchBinaryFromUrl(msg.document.id, r1?.token);
             const extension = msg.document.filename?.split('.').pop() || 'doc';
             const key = `${r1.spid}/teambox/${r1.phone}/whatsAppWeb-${Date.now()}.${extension}`;
             media = (await awsHelper.uploadVideoToAws(key, buffer, contentType)).value?.Location;

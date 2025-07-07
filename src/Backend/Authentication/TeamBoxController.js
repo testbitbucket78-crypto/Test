@@ -714,7 +714,7 @@ const insertMessage = async (req, res) => {
                     interactionId:interaction_id,
                     custid:customerId
                 }
-                incommingmsg.runBotOperation(data);
+                incommingmsg.runBotOperation(data, middleWare);
                 res.send({status: 200, insertId: msg_id.insertId });
             }
             //  logger.debug('Message ID:', msg_id);
