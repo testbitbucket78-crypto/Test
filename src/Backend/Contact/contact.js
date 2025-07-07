@@ -479,6 +479,22 @@ app.post('/deletContact', authenticateToken, (req, res) => {
     });
   }
 })
+app.post('/deletContactWrapperAPI', (req, res) => {
+  try {
+
+    var Ids = req.body.customerId;
+    console.log(req.body)
+    deleteContacts(req.body);
+    db.runQuery(req, res, val.delet, [req.body.customerId, req.body.SP_ID])
+  } catch (err) {
+    console.error(err);
+    db.errlog(err);
+    res.status(500).send({
+      msg: err,
+      status: 500
+    });
+  }
+})
 
 app.get('/getContactById', authenticateToken, (req, res) => {
   try {

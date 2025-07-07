@@ -2,7 +2,7 @@ const variables = {
     ENV_URL: {
         auth: 'https://authapi.stacknize.com', //http://localhost:3003 https://authapi.stacknize.com
         waweb: 'https://waweb.stacknize.com',//https://waweb.stacknize.com  http://localhost:3009
-        contacts: 'https://contactapi.stacknize.com', // https://contactapi.stacknize.com
+        contacts: 'https://contactapi.stacknize.com', // https://contactapi.stacknize.com http://localhost:3002
         settings: 'https://settings.stacknize.com', // https://settings.stacknize.com http://localhost:3003
     },
     WHAPI_URL:{
