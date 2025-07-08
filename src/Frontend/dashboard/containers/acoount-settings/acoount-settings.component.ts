@@ -845,7 +845,7 @@ editToken(id: number){
 }
 
 copyToClipboard(): void {
-  const textToCopy = this.apiKeyData?.apiKey;
+  const textToCopy = this.currentAPIkey;
       navigator.clipboard.writeText(textToCopy).then(
         () => {
           this.showToaster('Text copied to clipboard','success');
