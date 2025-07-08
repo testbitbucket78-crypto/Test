@@ -379,9 +379,6 @@ export class TemplateMessageComponent implements OnInit {
         this.newTemplateForm.get('Links')?.setValue(null);
         this.newTemplateForm.get('Header')?.setValue('');
         this.selectedPreview = '';
-       if (this.selectedType !== '' && this.selectedType !== 'text') {
-            this.toast.warning('Attention: Buttons are allowed only when the header type is "Text" or "None"');
-        }
     }
  
     applyGalleryFilter() {
@@ -1253,7 +1250,8 @@ triggerRichTextEditorChange() {
            return;
         }
         if(this.renderedButtons && this.renderedButtons.length > 0){
-                this.interactiveButtonsPayload = this.generateInteractivePayload('');
+            let rawPayload = this.generateInteractivePayload('');
+            this.interactiveButtonsPayload =this.sanitizeInteractivePayload(rawPayload);
         }
     
         this.allVariablesValueList =[];
@@ -1275,7 +1273,35 @@ triggerRichTextEditorChange() {
     }
 
     }
+sanitizeInteractivePayload(payload: any): any {
+  if (!payload || typeof payload !== 'object') return {};
 
+  // Clone payload to avoid mutating original
+  const cleanPayload = { ...payload };
+
+  // Sanitize action.buttons
+  if (cleanPayload.action?.buttons) {
+    const buttons = cleanPayload.action.buttons;
+
+    // Remove empty array or empty strings in array (optional)
+    const validButtons = buttons.filter(
+      (btn: any) => btn && typeof btn === 'object' && btn.title?.trim()
+    );
+
+    if (validButtons.length) {
+      cleanPayload.action.buttons = validButtons;
+    } else {
+      delete cleanPayload.action.buttons;
+    }
+  }
+
+  // If action becomes empty after cleaning
+  if (cleanPayload.action && Object.keys(cleanPayload.action).length === 0) {
+    delete cleanPayload.action;
+  }
+
+  return cleanPayload;
+}
     
     getAttributeList() {
         this._teamboxService.getAttributeList(this.spid).subscribe((response: any) => {
@@ -1735,6 +1761,10 @@ openButtonPopUp(event: Event) {
     this.interactiveButtonspopup = false;
   }
   openinteractiveButtonPopUp(event: Event) {
+       if (this.selectedType !== '' && this.selectedType !== 'text') {
+            this.toast.warning('Attention: Buttons are allowed only when the header type is "Text" or "None"');
+            return;
+        }
      event.stopPropagation(); 
      this.interactiveButtonspopup = !this.interactiveButtonspopup;
   }
