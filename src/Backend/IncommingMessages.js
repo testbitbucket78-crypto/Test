@@ -1256,7 +1256,7 @@ async function identifyNode(data){
       
       let messageType = type == 'sendImage' ? 'image/jpg' : type == 'sendVideo' ? 'video/mp4' : type == 'sendDocument' ? 'application/pdf' : 'text';
       let message_text = await getExtraxtedMessage(json?.data?.textMessage, data.sid, data.custid)
-      result = await messageThroughselectedchannel(data.sid, data?.from, 'text', message_text, json?.data?.link, data?.phone_number_id, data?.channelType, -4, data.interactionId, messageType, message_text)
+      result = await messageThroughselectedchannel(data.sid, data?.toPhoneNumber, 'text', message_text, json?.data?.link, data?.phone_number_id, data?.channelType, -4, data.interactionId, messageType, message_text)
       data.nodeId = json?.connectedId;
       await identifyNode(data);
     }else if(type == 'assignAgentModal'){
@@ -1326,7 +1326,7 @@ async function identifyNode(data){
           }
         } else if(type == 'questionOption'){
           let message_text = await getExtraxtedMessage(json?.data?.questionTextquestionText, data.sid, data.custid)
-              result = await messageThroughselectedchannel(data.sid, data?.from, 'text', message_text, '', data?.phone_number_id, data?.channelType, -4, data.interactionId, 'text', message_text)
+              result = await messageThroughselectedchannel(data.sid, data?.toPhoneNumber, 'text', message_text, '', data?.phone_number_id, data?.channelType, -4, data.interactionId, 'text', message_text)
 
         }
         questionOperations();
