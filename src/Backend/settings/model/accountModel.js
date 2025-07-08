@@ -33,12 +33,18 @@ class APIKeyManager {
       }
 
       generateKey2(length = 32) {
-        const chars = 'abcdefghijklmnopqrstuvwxyz0123456789';
-        let key = '';
-        for (let i = 0; i < length; i++) {
-          key += chars.charAt(Math.floor(Math.random() * chars.length));
+        const letters = 'abcdefghijklmnopqrstuvwxyz0123456789';
+        const timestamp = Date.now().toString();
+
+        // remaining length for random part
+        const randomLength = Math.max(length - timestamp.length, 0);
+
+        let randomPart = '';
+        for (let i = 0; i < randomLength; i++) {
+          randomPart += letters.charAt(Math.floor(Math.random() * letters.length));
         }
-        return key;
+
+        return timestamp + randomPart;
       }
 
        mapResponse(data) {
