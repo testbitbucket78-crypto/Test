@@ -381,7 +381,7 @@ async function messageAck(statuses) {
                         WHERE customerId IN (
                             SELECT customerId FROM EndCustomer WHERE Phone_number =? AND SP_ID=? AND isDeleted !=1 AND isBlocked !=1
                         )
-                    ) AND is_deleted !=1  AND (msg_status =2 OR msg_status = 1);`, [phoneNumber, spid]);
+                    ) AND is_deleted !=1`, [phoneNumber, spid]);
 
                 logger.info(`Read ============== ${resd?.affectedRows}`);
                 let ack3InId = await db.excuteQuery(notifyInteraction, [phoneNumber, spid]);
@@ -919,6 +919,10 @@ async function saveInMessages(message) {
         let Message_template_id = msg?.id;
         console.log(r1,display_phone_number, from, message_text, Type, contactName, Message_template_id);
         // Format message text (bold, italic, strikethrough, and new lines)
+          if (Type === 'reply' && msg?.reply?.type === 'buttons_reply') {
+            Type = 'text';
+            message_text = msg.reply?.buttons_reply?.title || message_text;
+          }
         if (message_text) {
           message_text = message_text
             .replace(/\*(.*?)\*/g, '<strong>$1</strong>')
@@ -937,17 +941,23 @@ async function saveInMessages(message) {
         if (Type === 'image' || Type === 'video' || Type === 'audio' || Type === 'document') {
           let media
           if( msg?.image?.preview){
-            media = await uploadBase64ToAws(msg?.image?.preview, r1?.spid, r1?.phone, Type);
+            //media = await uploadBase64ToAws(msg?.image?.preview, r1?.spid, r1?.phone, Type);
+            const { buffer, contentType } = await whapiService.fetchBinaryFromUrl(msg.image.id, r1?.token);
+            media = await uploadBase64ToAws(buffer, r1?.spid, r1?.phone, Type);
+            const key = `${r1.spid}/forWhapi/${r1.phone}/whatsAppWeb-${Date.now()}.jpeg`;
+            media = (await awsHelper.uploadVideoToAws(key, buffer, contentType)).value?.Location;
           } else if (msg?.video?.preview) {
             message_text = msg?.video?.caption || message_text;
-            media = await uploadBase64ToAws(msg?.video?.preview, r1?.spid, r1?.phone, Type);
+            //media = await uploadBase64ToAws(msg?.video?.preview, r1?.spid, r1?.phone, Type);
+            const { buffer, contentType } = await whapiService.fetchBinaryFromUrl(msg.video.id, r1?.token);
+            const key = `${r1.spid}/forWhapi/${r1.phone}/whatsAppWeb-${Date.now()}.mp4`;
+            media = (await awsHelper.uploadVideoToAws(key, buffer, contentType)).value?.Location;
           } else if (Type === 'document' && msg?.document?.id) {
             message_text = msg?.document?.caption || message_text;
             const { buffer, contentType } = await whapiService.fetchBinaryFromUrl(msg.document.id, r1?.token);
             const extension = msg.document.filename?.split('.').pop() || 'doc';
-            const key = `${r1.spid}/teambox/${r1.phone}/whatsAppWeb-${Date.now()}.${extension}`;
+            const key = `${r1.spid}/forWhapi/${r1.phone}/whatsAppWeb-${Date.now()}.${extension}`;
             media = (await awsHelper.uploadVideoToAws(key, buffer, contentType)).value?.Location;
-
           }else{ 
               media = msg?.image?.link
           }
@@ -982,10 +992,11 @@ async function uploadBase64ToAws(base64, spid, phoneNumberId, type) {
     let contentType = '';
     let awsDetails;
     const uniqueSuffix = `${Date.now()}-${Math.floor(Math.random() * 10000)}`;
-    if (type === 'image') {
-      key = `${spid}/teambox/${phoneNumberId}/whatsAppWeb-${uniqueSuffix}.jpeg`;
-      awsDetails = await awsHelper.uploadStreamToAws(key, base64Data); 
-    } else if (type === 'video') {
+  if (type === 'image') {
+    key = `${spid}/teambox/${phoneNumberId}/whatsAppWeb-${uniqueSuffix}.jpeg`;
+    contentType = 'image/jpeg';
+    awsDetails = await awsHelper.uploadVideoToAws(key, buffer, contentType);
+  } else if (type === 'video') {
       key = `${spid}/teambox/${phoneNumberId}/whatsAppWeb-${uniqueSuffix}.mp4`;
       contentType = 'video/mp4';
       awsDetails = await awsHelper.uploadVideoToAws(key, buffer, contentType);
