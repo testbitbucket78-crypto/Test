@@ -699,18 +699,20 @@ newAPIToken(){
 
 }
 currentAPIkey: string = '';
+showConfirmationModal = false;
 isNew : boolean = false;
 SelectedIdToken : number = 0;
 getApiKeyData(isSave:boolean,isRegenrate:boolean=false, id?:number){
   //isSave = !isSave;
-  let data: { spId: number; ip: string[]; isSave: boolean; isRegenerate: boolean,tokenName:string, id : number,isNew:boolean } = {
+  let data: { spId: number; ip: string[]; isSave: boolean; isRegenerate: boolean,tokenName:string, id : number,isNew:boolean, Channel: string } = {
     spId : this.spid,
     id : id ? id : this.SelectedIdToken,
     ip:[],
     isSave :!isSave ,
     isRegenerate: this.isEdit ? false :isRegenrate,
     tokenName:this.apiName ? this.apiName : '',
-    isNew: this.isNew
+    isNew: this.isNew,
+    Channel: this.selectedChannelForToken
   }
   if(isSave){
     console.log(this.ipAddress);
@@ -748,7 +750,7 @@ this.apiService.getApiKeyData(data).subscribe({
       if (isSave) {
         $("#createTokenModal").modal('hide');
         if (!this.isEdit) {
-          $("#apiConfirmationModal").modal('show');
+         $('#apiConfirmationModal').modal('show');
         }
       }
       this.isEdit = false;
@@ -761,6 +763,7 @@ this.apiService.getApiKeyData(data).subscribe({
         this.webSocketUrl = last?.webhookURL;
         this.ipAddress = last?.ips ? JSON.parse(JSON.stringify(last.ips)) : [''];
         this.currentAPIkey = last?.apiKey;
+        this.selectedChannelForToken = last?.channel ? last?.channel : 'Select Channel';
       }
 
       if (this.ipAddress?.length === 0) {
@@ -827,6 +830,13 @@ disableApiKeyData(){
 
 editToken(id: number){
   this.SelectedIdToken = id;
+  const tokenData = this.apiKeyData.find((item: any) => item.id === id);
+  if (!tokenData) return;
+
+  this.apiName = tokenData.tokenName;
+  this.ipAddress = tokenData.ips && tokenData.ips.length > 0 ? [...tokenData.ips] : [''];
+  this.channelSelected = tokenData.channel || null;
+
   this.isEdit = true;
   $("#createTokenModal").modal('show');
   this.ipAddress = JSON.parse( JSON.stringify(this.apiKeyData?.ips));
@@ -835,7 +845,7 @@ editToken(id: number){
 }
 
 copyToClipboard(): void {
-  const textToCopy = this.apiKeyData?.apiKey;
+  const textToCopy = this.currentAPIkey;
       navigator.clipboard.writeText(textToCopy).then(
         () => {
           this.showToaster('Text copied to clipboard','success');
@@ -923,6 +933,17 @@ updateDropdown(id: string) {
       this.channelPhoneNumberWebhook = selectedChannel.connected_id;
       let saveData = `${selectedChannel.label} (${selectedChannel.connected_id})`
       this.webhookForm.controls['channel'].setValue(saveData);
+  }
+  this.ShowAssignOption = false;
+}
+selectedChannelForToken = 'Select Channel';
+updateDropdownForToken(id: string){
+  const selectedChannel = this.channelOption.find(
+      (channel: any) => channel.connected_id === id
+  );
+  if (selectedChannel) {
+      let saveData = `${selectedChannel.label} (${selectedChannel.connected_id})`
+     this.selectedChannelForToken = saveData;
   }
   this.ShowAssignOption = false;
 }
