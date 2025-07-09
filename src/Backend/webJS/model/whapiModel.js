@@ -170,6 +170,7 @@ class Message {
         this.image = data?.image || null;
         this.video = data?.video || null;
         this.document = data?.document || null;
+        this.reply = data?.reply || [];
     }
 }
 

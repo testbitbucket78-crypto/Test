@@ -229,7 +229,8 @@ router.post('/exportLogs',authenticateToken,accountController.exportLogs)
 router.post('sendMessage' ,dynamicRateLimiter,accountController.sendMessage)
 router.post('/v1/whatsapp/text' , verifyAPIKeyAndToken, accountController.textMessage)
 router.post('/v1/whatsapp/media' ,verifyAPIKeyAndToken, accountController.mediaMessage)
-router.post('/v1/whatsapp/sendInteractive' , accountController.SendInteractiveButtons) // Interactive Buttons.
+router.post('/v1/whatsapp/sendInteractive' ,verifyAPIKeyAndToken, accountController.SendInteractiveButtons) // Interactive Buttons.
+router.post('/v1/whatsapp/getMessages' , verifyAPIKeyAndToken, accountController.getMessages) 
 //Templates
 //Send.Template
 router.post('/v1/whatsapp/sendTemplates' ,verifyAPIKeyAndToken, accountController.sendTemplates)

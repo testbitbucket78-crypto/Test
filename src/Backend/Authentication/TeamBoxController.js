@@ -783,7 +783,12 @@ const insertMessage = async (req, res) => {
             let middlewareresult = "";
             if (Type != 'notes') {
                 if (channelType[0]?.isBlocked != 1) {
-                    if(req?.body?.isTemplate == true && req.body?.interactiveButtonsPayload  && channel != 'WA API'){
+                    const payload = req.body?.interactiveButtonsPayload;
+                    if(req?.body?.isTemplate == true &&  (
+                            (typeof payload === 'string' && payload.trim() !== '[]') ||
+                            (Array.isArray(payload) && payload.length > 0) ||
+                            (typeof payload === 'object' && !Array.isArray(payload) && Object.keys(payload).length > 0)
+                        )  && channel != 'WA API'){
                         middlewareresult = await middleWare.sendingTemplate(SPID, req.body.messageTo, header, content, req.body?.interactiveButtonsPayload);
                     }
                     else if (req?.body?.isTemplate == true && channel == 'WA API') {

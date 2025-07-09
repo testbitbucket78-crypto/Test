@@ -114,7 +114,7 @@ async function autoReplyDefaultAction(isAutoReply, autoReplyTime, isAutoReplyDis
       "phone_number_id": phone_number_id,
       "display_phone_number": display_phone_number,
     }
-    data['botId'] = botMatched[0]?.botId;
+    data['botId'] = botMatched[0]?.id;
     botOperations(data);
     return false;
   }
@@ -131,7 +131,7 @@ async function autoReplyDefaultAction(isAutoReply, autoReplyTime, isAutoReplyDis
       "phone_number_id": phone_number_id,
       "display_phone_number": display_phone_number,
     }
-    data['botId'] = botMatched[0]?.botId;
+    data['botId'] = botMatched[0]?.id;
     botOperations(data);
     return false;
   }
@@ -1184,7 +1184,7 @@ async function sendDropOffMessage(data) {
   if(botData.length >0){
     if(botData[0]?.timeout_message){
       let message_text = await getExtraxtedMessage(botData[0]?.timeout_message, data.sid, data.custid);
-      let result = await messageThroughselectedchannel(data.sid, data?.from, 'text', message_text, '', data.phone_number_id, data.channelType, -4, data.interactionId, 'text', message_text);
+      let result = await messageThroughselectedchannel(data.sid, data?.toPhoneNumber, 'text', message_text, '', data.phone_number_id, data.channelType, -4, data.interactionId, 'text', message_text);
       // var updateBotSessionQuery = "update BotSessions set isWaiting=1,current_nodeId=? where botId =? and status=2";
       //   let updateBotSession = await db.excuteQuery(updateBotSessionQuery, [json?.connectedId,data?.botId]);
       if(result){
@@ -1256,7 +1256,7 @@ async function identifyNode(data){
       
       let messageType = type == 'sendImage' ? 'image/jpg' : type == 'sendVideo' ? 'video/mp4' : type == 'sendDocument' ? 'application/pdf' : 'text';
       let message_text = await getExtraxtedMessage(json?.data?.textMessage, data.sid, data.custid)
-      result = await messageThroughselectedchannel(data.sid, data?.from, 'text', message_text, json?.data?.link, data?.phone_number_id, data?.channelType, -4, data.interactionId, messageType, message_text)
+      result = await messageThroughselectedchannel(data.sid, data?.toPhoneNumber, 'text', message_text, json?.data?.file, data?.phone_number_id, data?.channelType, -4, data.interactionId, messageType, message_text)
       data.nodeId = json?.connectedId;
       await identifyNode(data);
     }else if(type == 'assignAgentModal'){
@@ -1325,8 +1325,8 @@ async function identifyNode(data){
             let saveMessage = await db.excuteQuery(insertMessageQuery, [messageValu]);
           }
         } else if(type == 'questionOption'){
-          let message_text = await getExtraxtedMessage(json?.data?.questionTextquestionText, data.sid, data.custid)
-              result = await messageThroughselectedchannel(data.sid, data?.from, 'text', message_text, '', data?.phone_number_id, data?.channelType, -4, data.interactionId, 'text', message_text)
+          let message_text = await getExtraxtedMessage(json?.data?.questionTextMessage, data.sid, data.custid)
+              result = await messageThroughselectedchannel(data.sid, data?.toPhoneNumber, 'text', message_text, '', data?.phone_number_id, data?.channelType, -4, data.interactionId, 'text', message_text)
 
         }
         questionOperations();
@@ -1384,7 +1384,7 @@ async function invalidQuestionResponse(data,json){
   let sessionDetail = await getrunningSession(data.botId);
             if(json?.data?.reattemptsAllowed && (json?.data?.reattemptsCount >sessionDetail?.node_retry_count)){
               let message_text = await getExtraxtedMessage(json?.data?.errorMessage, data.sid, data.custid)
-              result = await messageThroughselectedchannel(data.sid, data?.from, 'text', message_text, json?.data?.link, data?.phone_number_id, data?.channelType, -4, data.interactionId, 'text', message_text)
+              result = await messageThroughselectedchannel(data.sid, data?.toPhoneNumber, 'text', message_text, json?.data?.file, data?.phone_number_id, data?.channelType, -4, data.interactionId, 'text', message_text)
             } else{
               if(json?.data?.invalidAction =='fallback'){
                 data.nodeId = json?.FallbackId;

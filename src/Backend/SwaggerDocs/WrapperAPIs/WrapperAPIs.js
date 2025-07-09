@@ -268,7 +268,7 @@
  * @swagger
  * /v1/whatsapp/deleteContacts:
  *   post:
- *     summary: Delete one or more contacts by customerId
+ *     summary: Delete one or more contacts by phone numbers
  *     tags:
  *       - Wrapper APIs
  *     requestBody:
@@ -277,12 +277,15 @@
  *         application/json:
  *           schema:
  *             type: object
+ *             required:
+ *               - phoneNumbers
+ *               - apiKey
+ *               - apiToken
  *             properties:
- *               customerId:
- *                 type: array
- *                 items:
- *                   type: integer
- *                 example: [97892, 95827]
+ *               phoneNumbers:
+ *                 type: string
+ *                 description: Comma-separated phone numbers to delete (including country code)
+ *                 example: "917018934893,918627019494"
  *               apiKey:
  *                 type: string
  *                 example: "key-e8dihe8e3u-1735230342734"
@@ -294,6 +297,8 @@
  *         description: Contacts successfully deleted
  *       400:
  *         description: Bad Request - Missing or invalid data
+ *       404:
+ *         description: No matching contacts found
  *       500:
  *         description: Internal Server Error
  */
@@ -305,7 +310,20 @@
  *     summary: Retrieve a list of users
  *     tags:
  *       - Wrapper APIs
- *     description: Fetch all users from the system. No input is required for this request.
+ *     description: Fetch all users from the system. Requires authentication via apiKey and apiToken.
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               apiKey:
+ *                 type: string
+ *                 example: "key-e8dihe8e3u-1735230342734"
+ *               apiToken:
+ *                 type: string
+ *                 example: "yfn1k1j1xuvxpi3f3wp9hfjbrqk3tilm"
  *     responses:
  *       200:
  *         description: Successfully retrieved list of users
@@ -324,19 +342,10 @@
  *                         example: 101
  *                       name:
  *                         type: string
- *                         example: John Doe
- *                       email:
+ *                         example: Agent A
+ *                       status:
  *                         type: string
- *                         example: john@example.com
- *                       role:
- *                         type: string
- *                         example: Admin
- *               apiKey:
- *                 type: string
- *                 example: "key-e8dihe8e3u-1735230342734"
- *               apiToken:
- *                 type: string
- *                 example: "yfn1k1j1xuvxpi3f3wp9hfjbrqk3tilm"
+ *                         example: online
  *       400:
  *         description: Bad Request
  *       500:
@@ -986,4 +995,145 @@
  *         description: Invalid payload
  *       500:
  *         description: Server error
+ */
+
+/**
+ * @swagger
+ * /v1/whatsapp/getMessages:
+ *   post:
+ *     summary: Get all messages for a customer based on phone number
+ *     tags:
+ *       - Wrapper APIs
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               phoneNo:
+ *                 type: string
+ *                 example: "917018934893"
+ *                 description: The phone number of the customer whose messages need to be fetched.
+ *               apiKey:
+ *                 type: string
+ *                 example: "key-e8dihe8e3u-1735230342734"
+ *               apiToken:
+ *                 type: string
+ *                 example: "yfn1k1j1xuvxpi3f3wp9hfjbrqk3tilm"
+ *     responses:
+ *       200:
+ *         description: Messages fetched successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: string
+ *                   example: success
+ *                 data:
+ *                   type: array
+ *                   items:
+ *                     type: object
+ *                     properties:
+ *                       id:
+ *                         type: integer
+ *                         example: 101
+ *                       interaction_id:
+ *                         type: integer
+ *                         example: 6838
+ *                       message:
+ *                         type: string
+ *                         example: "Hello! How can I help you?"
+ *                       created_at:
+ *                         type: string
+ *                         format: date-time
+ *                         example: "2024-08-01T10:23:54.000Z"
+ *       500:
+ *         description: Internal server error
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   example: "Customer not found"
+ */
+
+/**
+ * @swagger
+ * /v1/whatsapp/getTemplates:
+ *   post:
+ *     summary: Fetch WhatsApp templates for the given service provider
+ *     tags:
+ *       - Wrapper APIs
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - apiKey
+ *               - apiToken
+ *             properties:
+ *               apiKey:
+ *                 type: string
+ *                 example: "key-e8dihe8e3u-1735230342734"
+ *               apiToken:
+ *                 type: string
+ *                 example: "yfn1k1j1xuvxpi3f3wp9hfjbrqk3tilm"
+ *     responses:
+ *       200:
+ *         description: Templates fetched successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 templates:
+ *                   type: array
+ *                   items:
+ *                     type: object
+ *                     properties:
+ *                       name:
+ *                         type: string
+ *                         example: Order_Confirmation
+ *                       language:
+ *                         type: string
+ *                         example: en
+ *                       status:
+ *                         type: string
+ *                         example: APPROVED
+ *                       category:
+ *                         type: string
+ *                         example: UTILITY
+ *       404:
+ *         description: No templates found
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: integer
+ *                   example: 404
+ *                 error:
+ *                   type: string
+ *                   example: Template not found
+ *       500:
+ *         description: Internal server error
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: integer
+ *                   example: 500
+ *                 error:
+ *                   type: string
+ *                   example: Database query error
  */

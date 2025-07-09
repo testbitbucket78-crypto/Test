@@ -1,6 +1,6 @@
 const db = require("../../dbhelper");
 class APIKeyManager {
-    constructor({ spId, ip, isSave, isEnabled, webhookURL, apiKey, isRegenerate, tokenName, isNew, id}) {
+    constructor({ spId, ip, isSave, isEnabled, webhookURL, apiKey, isRegenerate, tokenName, isNew, id, Channel}) {
         this.id = id || null;
         this.spId = spId || null;
         this.ip = ip || null;
@@ -11,6 +11,7 @@ class APIKeyManager {
         this.isRegenerate = isRegenerate || false;
         this.tokenName = tokenName || null;
         this.isNew = isNew;
+        this.Channel = Channel == 'Select Channel' ? null : Channel || null;
     }
   
     validate() {
@@ -32,12 +33,18 @@ class APIKeyManager {
       }
 
       generateKey2(length = 32) {
-        const chars = 'abcdefghijklmnopqrstuvwxyz0123456789';
-        let key = '';
-        for (let i = 0; i < length; i++) {
-          key += chars.charAt(Math.floor(Math.random() * chars.length));
+        const letters = 'abcdefghijklmnopqrstuvwxyz0123456789';
+        const timestamp = Date.now().toString();
+
+        // remaining length for random part
+        const randomLength = Math.max(length - timestamp.length, 0);
+
+        let randomPart = '';
+        for (let i = 0; i < randomLength; i++) {
+          randomPart += letters.charAt(Math.floor(Math.random() * letters.length));
         }
-        return key;
+
+        return timestamp + randomPart;
       }
 
        mapResponse(data) {
@@ -52,6 +59,7 @@ class APIKeyManager {
             updatedAt: data.updated_at ? new Date(data.updated_at) : null,
             tokenName: data.tokenName || null,
             apiToken: data.api_token || null,
+            Channel: data.Channel || null,
         };
     }
   }
@@ -1034,6 +1042,71 @@ class sendTemplateBodyAPI {
     return html?.replace(/<[^>]*>/g, '').trim() || '';
   }
 }
+
+class getMessage {
+  constructor(body, spid) {
+    this.spId = spid;
+    this.phoneNo = body.phoneNo;
+  }
+
+  async getMessages(spId, phoneNumber) {
+    const finalSpId = this.spId || spId;
+    const finalPhone = this.phoneNo || phoneNumber;
+
+    try {
+      const endCustomerQuery = `
+        SELECT * FROM EndCustomer 
+        WHERE SP_ID = ? AND Phone_number = ? 
+        ORDER BY 1 DESC LIMIT 1
+      `;
+      const endCustomer = await db.excuteQuery(endCustomerQuery, [finalSpId, finalPhone]);
+
+      if (!endCustomer || endCustomer.length === 0) {
+        throw new Error('Customer not found');
+      }
+
+      const customerId = endCustomer[0]?.customerId;
+      const interactionQuery = `
+        SELECT * FROM Interaction 
+        WHERE customerId = ? 
+        ORDER BY 2 DESC LIMIT 1
+      `;
+      const interaction = await db.excuteQuery(interactionQuery, [customerId]);
+
+      if (!interaction || interaction.length === 0) {
+        throw new Error('Interaction not found');
+      }
+
+      const interactionId = interaction[0]?.InteractionId;
+      const messagesQuery = `
+        SELECT * FROM Message 
+        WHERE interaction_id = ? 
+        ORDER BY created_at ASC
+      `;
+      const messages = await db.excuteQuery(messagesQuery, [interactionId]);
+
+      const querryForSPsPhone = `select * from user where SP_ID = ? and ParentId is null`
+      const businessPhone = (await db.excuteQuery(querryForSPsPhone, [finalSpId]))[0]?.mobile_number;
+      const responseMessage = await this.mapMessagesResponse(messages, finalPhone, businessPhone);
+      return responseMessage;
+    } catch (err) {
+      console.error('Error fetching messages:', err.message);
+      throw err;
+    }
+  }
+
+  async mapMessagesResponse (messages, customerPhone = '', businessPhone = '') {
+  return messages.map(msg => ({
+    id: msg.Message_id.toString(),
+    from: msg.message_direction === 'IN' ? customerPhone : businessPhone,
+    to: msg.message_direction === 'IN' ? businessPhone : customerPhone,
+    direction: msg.message_direction,
+    timestamp: msg.created_at,
+    type: msg.Type || 'text',
+    body: msg.message_text
+  }));
+};
+}
   module.exports = {APIKeyManager, sendMessageBody, spPhoneNumber, ApiResponse, Webhooks, textMessageBody, mediaMessageBody, TemplateStatus
-    , SessionStatus, TemplateAPI, TemplateWHAPI, TemplateWEB, Template, sendTemplateBody, spCreadential, sendTemplateBodyAPI
+    , SessionStatus, TemplateAPI, TemplateWHAPI, TemplateWEB, Template, sendTemplateBody, spCreadential, sendTemplateBodyAPI, getMessage
   };
