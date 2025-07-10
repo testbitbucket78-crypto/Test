@@ -93,6 +93,7 @@ app.post('/addNewReply', async (req, res) => {
 app.post('/KeywordMatch', async (req, res) => {
   try {
     const myStringArray = req.body.Keywords.map(keyword => keyword.toLowerCase());
+    const smartReplyId = req.body.smartReplyId;
 
     console.log(req.body.Keywords)
     const params = {
@@ -105,8 +106,12 @@ app.post('/KeywordMatch', async (req, res) => {
     // Add single quotes after every comma
     const updatedString = (params.strings.value).split(',').map(value => "'" + value + "'").join(',');
     console.log("updatedString" + updatedString.length)
-    var query = "SELECT Lower(Keyword) as Keyword FROM SmartReplyKeywords WHERE SmartReplyId IN ( select ID from SmartReply where SP_ID =" + req.body.SP_ID + ` and isDeleted !=1) and Keyword IN (` + updatedString + ') and isDeleted !=1';
-
+    var query ='';
+    if (smartReplyId && smartReplyId != 0) {
+     query = "SELECT Lower(Keyword) as Keyword FROM SmartReplyKeywords WHERE SmartReplyId IN ( select ID from SmartReply where SP_ID =" + req.body.SP_ID + "and ID !=" + smartReplyId +` and isDeleted !=1) and Keyword IN (` + updatedString + ') and isDeleted !=1';
+    } else {
+     query = "SELECT Lower(Keyword) as Keyword FROM SmartReplyKeywords WHERE SmartReplyId IN ( select ID from SmartReply where SP_ID =" + req.body.SP_ID + ` and isDeleted !=1) and Keyword IN (` + updatedString + ') and isDeleted !=1';
+    }
     var findKey = await db.excuteQuery(query, [])
 
     // Check if any element from array1 is present in array2

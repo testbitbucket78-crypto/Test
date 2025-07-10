@@ -232,6 +232,8 @@ countryCodes = [
     selectedStatusItems: any[] = []; 
     dropdownSettings = {};
     dynamicDropdownSettings = {};
+    contactFrom:number = 0;
+    contactTo:number = 10;
 
     items: any;
     customerData:[]=[];
@@ -522,6 +524,8 @@ onChangePage(pageOfItems: any) {
     let data:any ={};
     data.SP_ID = SP_ID;
     data.Query = this.query;
+    data.contactFrom = this.contactFrom;
+    data.contactTo = this.contactTo;
     this.apiService.getFilteredContact(data).subscribe((data:any) => {
       this.isLoading = false;
       this.deleteBloackContactLoader = false;

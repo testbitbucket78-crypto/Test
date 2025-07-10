@@ -430,9 +430,9 @@ async function iterateSmartReplies(replymessage, phone_number_id, from, sid, cus
       if (type == 'video') {
         delay = 7000
       }
-      if(message?.isTemplate == 'true'){
-        bodyVar = extractPlainValues(msgVar);
-      }
+      // if(message?.isTemplate == 'true'){
+      //   bodyVar = extractPlainValues(msgVar);
+      // }
 
       var relyMsg = {
         "replyId": message.ID,
