@@ -12,6 +12,7 @@ const indexController=require('./index.js');
 const awsHelper = require('../awsHelper');
 const path = require("path");
 const authenticateToken = require('../Authorize');
+const authenticateTokenForAdmin = require('../authenticateTokenForAdmin');
 
 
 router.get('/users',authenticateToken,userController.getUser);
@@ -104,6 +105,54 @@ var upload = multer({ storage: storage });
 router.post('/uploadfile/:spid/:name',upload.single('dataFile'),authenticateToken, async (req, res)=> {
    try{   
 const file = req.file;
+
+if (!file) {
+res.send({message:'File no uplaoded...'})
+}
+const uuidv = uuidv4()
+const url =  path.join(__dirname, `/uploads/${file.filename}`)//`${req.protocol}://${req.get('host')}/uploads/${file.filename}`
+
+// Get file stats to obtain file size
+const stats = await fs.stat(url);
+
+const fileSizeInBytes = stats?.size;
+const fileSizeInKilobytes = fileSizeInBytes / 1024;
+const fileSizeInMegabytes = fileSizeInKilobytes / 1024;
+if(fileSizeInMegabytes <= 10){
+
+console.log(url)
+
+
+
+let awsres = await awsHelper.uploadAttachment(`${req.params.spid}/${req.params.name}/${uuidv}/${file.filename}`, url,file.mimetype)
+ 
+
+console.log("awsres" ,awsres.size)
+//console.log(awsres.value.Location)
+await fs.unlink(url);
+
+res.send({status:200,filename:awsres.value.Location,fileSize:awsres.size})
+}else{
+  
+  try {
+   await fs.unlink(url); 
+} catch (unlinkErr) {
+   console.error("Error occurred while unlinking file:", unlinkErr);
+}
+res.status(413).send({ message: 'File size limit exceeds 10MB' });
+}
+}catch(err){
+   console.log(err)
+   res.send({status:500,err:err})
+}
+});
+
+// upload.single('dataFile'),authenticateTokenForAdmin
+// handle Admin single file upload
+router.post('/AdminfileUpload/:spid/:name',upload.single('dataFile'),authenticateTokenForAdmin, async (req, res)=> {
+   try{   
+const file = req.file;
+
 
 if (!file) {
 res.send({message:'File no uplaoded...'})
