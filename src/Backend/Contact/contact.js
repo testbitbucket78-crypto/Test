@@ -70,8 +70,8 @@ app.post('/getFilteredList', authenticateToken, async (req, res) => {
   logger.info('Received request for /getFilteredList');
   try {
     let IsFilteredList = false;
-    let contactList = await db.excuteQuery(val.selectAllContact, [req.body.SP_ID]);
-    logger.info(`Query executed: ${val.selectAllContact} with SP_ID: ${req.body.SP_ID}`);
+    let contactList = await db.excuteQuery(val.selectAllContactLimit, [req.body.SP_ID,req.body.contactFrom,req.body.contactTo]);
+    logger.info(`Query executed: ${val.selectAllContactLimit} with SP_ID: ${req.body.SP_ID}`);
 
     if (req.body?.Query && req.body.Query.trim() !== '') {
       IsFilteredList = true;

@@ -1732,10 +1732,11 @@ stopPropagation(event: Event) {
 		 else {
 			var data= {
 				SP_ID: sessionStorage.getItem('SP_ID'),
-				Keywords: this.keywords
+				Keywords: this.keywords,
+				smartReplyId: this.isEdit == false ? 0 : this.repliesData?.ID ? this.repliesData?.ID : 0,
 			}
 
-			if(this.isEdit == false) {
+			//if(this.isEdit == false) {
 				this.apiService.duplicatekeywordSmartReply(data)
 				.subscribe(
 				 (response: any) => {
@@ -1754,10 +1755,10 @@ stopPropagation(event: Event) {
 					 
 					 }
 			 });
-			}
-			else {
-				this.next();
-			}
+			//}
+			// else {
+			// 	this.next();
+			// }
 
 		}
 

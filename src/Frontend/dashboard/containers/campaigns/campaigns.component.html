@@ -283,7 +283,7 @@ It is determined by a combination of user feedback signals like blocks, reports 
 				<div class="action_section">
 					<button type="button" class="btn" (click)="copyCampaign()" [disabled]="settingsService?.checkRoleExist('21')"><img src="/assets/img/teambox/copy.svg" ></button>
 					<button type="button" *ngIf="selectedCampaign?.status == 0 || selectedCampaign.status == 1" class="btn" (click)="editCampaign(addNewCampaign,1)"  [disabled]="settingsService?.checkRoleExist('21')"><img src="../../../../assets/img/teambox/Edit.svg"></button>
-					<button type="button" class="btn" (click)="deleteCampaign(openalertmessage)" [disabled]="settingsService.checkRoleExist('21')"><img src="/assets/img/teambox/delete.svg"></button>
+					<button type="button" class="btn" (click)="deleteCampaign(openalertmessage)" [disabled]="settingsService.checkRoleExist('21') || selectedCampaign.status == 2 || selectedCampaign.status == 6"><img src="/assets/img/teambox/delete.svg"></button>
 				</div>
 			</div>
 			<div *ngIf="allCampaign?.length<1 && searchKey == ''" class="campaigns_section_items no-campaign">
