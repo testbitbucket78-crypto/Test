@@ -943,7 +943,7 @@ async function saveInMessages(message) {
           if( msg?.image?.preview){
             //media = await uploadBase64ToAws(msg?.image?.preview, r1?.spid, r1?.phone, Type);
             const { buffer, contentType } = await whapiService.fetchBinaryFromUrl(msg.image.id, r1?.token);
-            media = await uploadBase64ToAws(buffer, r1?.spid, r1?.phone, Type);
+            //media = await uploadBase64ToAws(buffer, r1?.spid, r1?.phone, Type);
             const key = `${r1.spid}/forWhapi/${r1.phone}/whatsAppWeb-${Date.now()}.jpeg`;
             media = (await awsHelper.uploadVideoToAws(key, buffer, contentType)).value?.Location;
           } else if (msg?.video?.preview) {

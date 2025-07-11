@@ -32,6 +32,7 @@ WHERE M.interaction_id = ?
   AND I.interaction_status = 'Open'
   AND I.is_deleted != 1 order by M.updated_at desc limit 1`;
 
+  const { logSmartReplyUsage } = require('./Services/SmartReplyLog.js')
 checkResolve = `select * from Interaction where  InteractionId = ? and SP_ID=? and IsTemporary !=1 and is_deleted !=1 `
 var insertMessageQuery = "INSERT INTO Message (SPID,Type,ExternalMessageId, interaction_id, Agent_id, message_direction,message_text,message_media,media_type,Message_template_id,Quick_reply_id,created_at,updated_at,system_message_type_id,assignAgent,msg_status,button,interactive_buttons) VALUES ?";
 
@@ -307,6 +308,13 @@ async function getSmartReplies(message_text, phone_number_id, contactname, from,
     if (replymessage?.length > 0) {
 
       let isSReply = await iterateSmartReplies(replymessage, phone_number_id, from, sid, custid, agid, newId, channelType, display_phone_number);
+       
+      await logSmartReplyUsage({
+          spid: sid,
+          customerNumber: from,
+          keywordSent: message_text
+        });
+
       console.log("iterateSmartReplies replymessage.length", isSReply)
       return isSReply;
     } else if (defultOutOfOfficeMsg === false && replymessage?.length <= 0) {

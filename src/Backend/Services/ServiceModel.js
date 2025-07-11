@@ -83,5 +83,83 @@ class WebhookLog {
         }
       }
   }
+
+  class SmartReplyLogModel {
+  constructor({ spid, customerNumber, keywordSent }) {
+    this.spid = spid;
+    this.customerNumber = customerNumber;
+    this.keywordSent = keywordSent;
+  }
+
+  validate() {
+    if (!this.spid || !this.customerNumber || !this.keywordSent) {
+      throw new Error("spid, customerNumber, and keywordSent are required");
+    }
+  }
+
+  async save() {
+    const query = `
+      INSERT INTO SmartReplyLogs (SP_ID, CustomerNumber, KeywordSent)
+      VALUES (?, ?, ?)
+    `;
+    return await db.excuteQuery(query, [
+      this.spid,
+      this.customerNumber,
+      this.keywordSent,
+    ]);
+  }
   
-  module.exports = { WebhookLog, logData, exportLog };
+
+}
+class BrandConfigRequest {
+  constructor(params) {
+    this.domain = params.domain;
+  }
+
+  validate() {
+    if (!this.domain) {
+      throw new Error('Domain is required');
+    }
+  }
+
+async fetch() {
+  try{
+  const query = `
+    SELECT * FROM white_label_settings
+    WHERE custom_domain = ?
+    LIMIT 1
+  `;
+
+  const result = await db.excuteQuery(query, [this.domain]);
+  return result.length ? this.formatResponse(result[0]) : null;
+  } catch(error){
+     throw error(error?.message || "Something went wrong while Fetching ")
+  }
+
+}
+
+formatResponse(config) {
+  return {
+    brandName: config.brand_name || '',
+    logoUrl: config.logo_url || '',
+    faviconUrl: config.favicon_url || '',
+    heroText: config.hero_text || '',
+    heroTextColor: config.hero_text_color || '#000000',
+    footerText: config.copyright_text || '',
+    domain: config.custom_domain || this.domain,
+    emailSender: config.sender_email || '',
+    isEmailActive: config.is_email_active === 1,
+    smtp: {
+      host: config.smtp_host || '',
+      port: config.smtp_port || null,
+      secure: config.smtp_secure === 1,
+    },
+    creativeImage: config.creative_image || '',
+    isDomainVerified: config.is_domain_verified === 1,
+    updatedAt: config.updated_at,
+    partnerId: config.partner_id
+  };
+}
+}
+  
+  module.exports = { WebhookLog, logData, exportLog, SmartReplyLogModel, BrandConfigRequest };
