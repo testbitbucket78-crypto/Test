@@ -181,4 +181,8 @@ export class DashboardService {
     return this.http.put(API_URL2+'deletSmartReply', ID)
   
   }
+  exportLogsSmartReply(data: any){
+    return this.http.post(API_URL2+'exportLogsSmartReply', data)
+  }
+
 }
