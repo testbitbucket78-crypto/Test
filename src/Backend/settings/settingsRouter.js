@@ -297,6 +297,8 @@ router.get('/getautodeletion/:spid',authenticateToken,generalcontroller.getautod
 //_______************_______________//
 router.post('/manualDelation',authenticateToken,generalcontroller.manualDelation)
 router.post('/getmanualDelation',authenticateToken,generalcontroller.deletedDetails)
+router.post('/healthCheck',generalcontroller.healthCheck)
+
 
 
 module.exports = router;

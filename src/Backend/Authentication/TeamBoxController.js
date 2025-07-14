@@ -1196,12 +1196,21 @@ const searchConatct = async (req, res) => {
 };
 
 
+const healthCheck = (req, res) => {
+    try {
+            res.status(200).send({ status: 'ok', message: 'Service is running'});
+    } catch (err) {
+        res.status(500).send({ error: 'Internal server error' });
+    }
+};
+
+
 module.exports = {
     getAllFilteredInteraction, getAllAgents, getAllCustomer, insertCustomers, updatedCustomer, getCustomerById, filterCustomers, searchCustomer, blockCustomer,
     createInteraction, resetInteractionMapping, updateInteraction, updateTags, getAllInteraction, getInteractionById, getFilteredInteraction, checkInteractionPinned, getSearchInteraction,
     getAllMessageByInteractionId, insertMessage, deleteMessage, updateMessageRead,
     updateInteractionMapping, deleteInteraction, getInteractionMapping, updatePinnedStatus,
-    getsavedMessages, getquickReply, getTemplates, sendTextOnWhatsApp, sendMediaOnWhatsApp, updateNotes, addAction, getMessagesByMsgId, searchConatct, getInteraction
+    getsavedMessages, getquickReply, getTemplates, sendTextOnWhatsApp, sendMediaOnWhatsApp, updateNotes, addAction, getMessagesByMsgId, searchConatct, getInteraction,healthCheck
 };
 
 
