@@ -1925,6 +1925,15 @@ app.post('/verifyPhoneCode', (req, res) => {
 });
 
 
+app.get('/healthCheck', async (req, res) => {
+  try {
+    res.status(200).send({ status: 'ok', message: 'Service is running'});
+} catch (err) {
+res.status(500).send({ error: 'Internal server error' });
+}
+});
+
+
 
 app.listen(3002);
 

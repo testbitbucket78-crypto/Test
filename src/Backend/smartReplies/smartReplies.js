@@ -108,7 +108,7 @@ app.post('/KeywordMatch', async (req, res) => {
     console.log("updatedString" + updatedString.length)
     var query ='';
     if (smartReplyId && smartReplyId != 0) {
-     query = "SELECT Lower(Keyword) as Keyword FROM SmartReplyKeywords WHERE SmartReplyId IN ( select ID from SmartReply where SP_ID =" + req.body.SP_ID + "and ID !=" + smartReplyId +` and isDeleted !=1) and Keyword IN (` + updatedString + ') and isDeleted !=1';
+     query = "SELECT Lower(Keyword) as Keyword FROM SmartReplyKeywords WHERE SmartReplyId IN ( select ID from SmartReply where SP_ID =" + req.body.SP_ID + " and ID !=" + smartReplyId +` and isDeleted !=1) and Keyword IN (` + updatedString + ') and isDeleted !=1';
     } else {
      query = "SELECT Lower(Keyword) as Keyword FROM SmartReplyKeywords WHERE SmartReplyId IN ( select ID from SmartReply where SP_ID =" + req.body.SP_ID + ` and isDeleted !=1) and Keyword IN (` + updatedString + ') and isDeleted !=1';
     }
@@ -374,6 +374,15 @@ app.post('/button', (req, res) => {
     return;
   });
 })
+
+
+app.get('/healthCheck', async (req, res) => {
+  try {
+    res.status(200).send({ status: 'ok', message: 'Service is running'});
+} catch (err) {
+res.status(500).send({ error: 'Internal server error' });
+}
+});
 
 
 app.listen(3005, function () {

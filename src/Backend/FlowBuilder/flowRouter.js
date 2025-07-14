@@ -13,5 +13,6 @@ router.get('/getAllBots/:spid',flowBuilder.getAllBots);
 router.get('/getBotDetailById/:spid/:botId',flowBuilder.getBotDetailById);
 router.post('/submitBots',flowBuilder.submitBots);
 router.get('/deleteBotbyId/:spid/:botId',flowBuilder.deleteBotbyId);
+router.get('/healthCheck', flowBuilder.healthCheck);
 
 module.exports = router;

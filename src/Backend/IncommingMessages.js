@@ -1550,7 +1550,8 @@ async function runBotOperation(data,temboxMiddleWare =''){
   botOperations(completeData);
 }
 
-async function timeOut(data, type){
+async function timeOut(data, type,temboxMiddleWare =''){
+  if(temboxMiddleWare !='') middleWare = temboxMiddleWare;
   let completeData = await getData(data);
   if(type == 'bot'){
     await sendDropOffMessage(completeData);

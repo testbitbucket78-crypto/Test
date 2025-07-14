@@ -577,12 +577,12 @@ async function botTimeOperations(){
             custid:data.customerId
           };
           if (bot_timeout <= currentDateTime ) {            
-            incommingmsg?.timeOut(datas,'bot');
+            incommingmsg?.timeOut(datas,'bot',middleWare);
             logger.info(`Bot operations for SPID: ${data.spid} are being processed`, { timestamp: new Date() });
           }
 
           if(node_timeout <= currentDateTime && data.nodeTimeout != null && data.isWaiting == 1) {
-            incommingmsg?.timeOut(datas,'node');
+            incommingmsg?.timeOut(datas,'node',middleWare);
             logger.info(`Node timeout for SPID: ${data?.spid}, botId: ${data?.botId} are being processed`, { timestamp: new Date() });
           }
         } catch (error) {
@@ -590,6 +590,9 @@ async function botTimeOperations(){
         }
       }
     }
+} catch (error) {
+  logger.error(`Error processing bot time operations for SPID ${data.SPID}: ${error.message}`, { timestamp: new Date() });
+}
 }
 
 // // Calculate the initial delay

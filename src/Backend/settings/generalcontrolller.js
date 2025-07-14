@@ -538,12 +538,20 @@ const deletedDetails = async (req, res) => {
         db.errlog(err);
         res.send(err)
     }
-
 }
+
+
+const healthCheck = (req, res) => {
+    try {
+            res.status(200).send({ status: 'ok', message: 'Service is running'});
+    } catch (err) {
+        res.status(500).send({ error: 'Internal server error' });
+    }
+};
 
 
 module.exports = {
     defaultaction, getdefaultaction, getdefaultmessages, Abledisable, uploadimg, deletedefaultactions, savedefaultmessages, rotingsave, getroutingrules, savemanagestorage, getautodeletion, addAndUpdateDefaultMsg,
-    manualDelation, deletedDetails
+    manualDelation, deletedDetails,healthCheck
 }
 
