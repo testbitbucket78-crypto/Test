@@ -21,7 +21,7 @@ const { APIKeyManager, sendMessageBody, spPhoneNumber, ApiResponse, Webhooks,
 const { WebSocketManager } = require("../whatsApp/PushNotifications")
 const {mapCountryCode} = require('../Contact/utils')
 const variables = require('../common/constant')
-const { exportLog } = require('../Services/ServiceModel');
+const { exportLog, BrandConfigRequest } = require('../Services/ServiceModel');
 const { makeXLSXFileOfData } = require('../Contact/utils');
 const { sendEmail }= require('../Services/EmailService');
 const { MessagingName }= require('../enum');
@@ -411,6 +411,24 @@ const isValidUrl = (url) => {
         res.status(500).json({ error: 'Something went wrong' });
       }
   }
+
+  const getBrandConfig = async (req, res) => {
+    try {
+        const brandRequest = new BrandConfigRequest(req.params);
+        brandRequest.validate();
+
+        const config = await brandRequest.fetch();
+
+        if (!config) {
+          return res.status(404).json({ message: 'Brand config not found' });
+        }
+
+        return res.status(200).json(config);
+      } catch (error) {
+        return res.status(500).json({ message: error.message || 'Internal Server Error' });
+      }
+  }
+  
 
 
 const addToken = async (req, res) => {
@@ -1674,5 +1692,5 @@ async function getQualityRatings(phoneNumberId, access_token) {
 module.exports = {
     insertAndEditWhatsAppWeb, selectDetails, addToken, deleteToken, enableToken, selectToken,
     createInstance, getQRcode, generateQRcode, editToken, testWebhook,getQualityRating, addWAAPIDetails, addGetAPIKey, APIkeysState, saveWebhookUrl, sendMessage, saveOrUpdateWebhook, getWebhooks, deleteWebhook, testWebhooks, deleteAPIToken, exportLogs, textMessage, mediaMessage, getTemplate, getTemplateStatus
-    , getSessionStatus, getContacts, deleteContacts, getUsers, getCustomFields, createContact, updateContact, createTemplatesAPI, createTemplatesWEB, createTemplatesWHAPI, sendTemplates, SendInteractiveButtons, getMessages
+    , getSessionStatus, getContacts, deleteContacts, getUsers, getCustomFields, createContact, updateContact, createTemplatesAPI, createTemplatesWEB, createTemplatesWHAPI, sendTemplates, SendInteractiveButtons, getMessages, getBrandConfig
 }

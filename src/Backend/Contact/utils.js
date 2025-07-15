@@ -502,6 +502,30 @@ const makeXLSXFileOfData = (data, spid, fromDate, toDate) => {
 
   return buffer;
 };
+const makeXLSXForSmartReplies = (data, spid, fromDate, toDate) => {
+  const sheetData = [];
+
+  const title = `Smart Reply Usage Report - SPID: ${spid}, Date Range: ${fromDate} to ${toDate}`;
+  sheetData.push([title]);
+  sheetData.push([]);
+  sheetData.push(['Customer Number', 'Date and Time of Trigger', 'Keyword Sent']);
+
+data.forEach(log => {
+  sheetData.push([
+    log.CustomerNumber,    
+    log.TriggerTime,
+    log.KeywordSent
+  ]);
+});
+
+  const worksheet = XLSX.utils.aoa_to_sheet(sheetData);
+  const workbook = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(workbook, worksheet, 'Smart Reply Logs');
+
+  const buffer = XLSX.write(workbook, { type: 'buffer', bookType: 'xlsx' });
+
+  return buffer;
+};
 
 
-module.exports = {formatterDate, formatterTime, mapCountryCode, formatterDateTime,getCountryDetails, formatDateTimeAccToTimeZone, makeXLSXFileOfData};
+module.exports = {formatterDate, formatterTime, mapCountryCode, formatterDateTime,getCountryDetails, formatDateTimeAccToTimeZone, makeXLSXFileOfData, makeXLSXForSmartReplies};

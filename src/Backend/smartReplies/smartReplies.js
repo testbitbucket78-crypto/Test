@@ -10,6 +10,11 @@ const logger = require('../common/logger.log');
 app.use(bodyParser.json());
 app.use(cors());
 app.use(bodyParser.urlencoded({ extended: true }));
+const { ExportLogsModel }= require('./model/exportLogsModel');
+const { makeXLSXForSmartReplies } = require('../Contact/utils');
+const { sendEmail } = require('../Services/EmailService.js');
+const { MessagingName }= require('../enum');
+
 
 app.get('/getReplies', (req, res) => {
 
@@ -164,6 +169,49 @@ app.put('/editAction', (req, res) => {
 app.put('/removeKeyword', (req, res) => {
   db.runQuery(req, res, val.removeKeyword, [req.body.SmartReplyId, req.body.Keyword])
 })
+
+app.post('/exportLogsSmartReply', async (req, res) => {
+  try {
+    const exportRequest = new ExportLogsModel(req.body);
+    exportRequest.validate();
+
+    const logsData = await exportRequest.fetchLogs();
+
+    const XLSXFile = makeXLSXForSmartReplies(
+      logsData,
+      exportRequest.spid,
+      exportRequest.fromDate,
+      exportRequest.toDate
+    );
+
+    const EmailChannel = MessagingName[exportRequest.channel] || 'Engagekart';
+
+    await sendEmail({
+      to: exportRequest.email,
+      subject: `Smart Reply Usage Report`,
+      html: `
+        <p>Hello,</p>
+        <p>Please find attached here Smart Reply usage report for the selected period: <b>${exportRequest.fromDate}</b> to <b>${exportRequest.toDate}</b>.</p>
+        <p>This data can help you monitor and optimize your Smart Reply performance across customer conversations.</p>
+        <p>Thank you,<br>Team ${EmailChannel}</p>
+      `,
+      fromChannel: EmailChannel,
+      attachments: [
+        {
+          filename: `SmartReplyReport_${exportRequest.fromDate}_to_${exportRequest.toDate}.xlsx`,
+          content: XLSXFile,
+          contentType: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+        },
+      ],
+    });
+
+    return res.status(200).json({ success: true, message: 'Email sent successfully' });
+  } catch (error) {
+    console.error('Error in exportLogsSmartReply:', error.message);
+    return res.status(500).json({ error: error?.message ||  'Something went wrong' });
+  }
+});
+
 
 app.put('/updateSmartReply', async (req, res) => {
   // const list = req.body.Tags;

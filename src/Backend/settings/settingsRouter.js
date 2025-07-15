@@ -224,6 +224,7 @@ router.post('/Webhooks',authenticateToken,accountController.saveOrUpdateWebhook)
 router.get('/getWebhooks/:spid',authenticateToken,accountController.getWebhooks)
 router.get('/deleteWebhook/:id',authenticateToken,accountController.deleteWebhook)
 router.post('/exportLogs',authenticateToken,accountController.exportLogs)
+router.get('/getBrandConfig/:domain', accountController.getBrandConfig);
 
 //Messages (within service window)
 router.post('sendMessage' ,dynamicRateLimiter,accountController.sendMessage)
