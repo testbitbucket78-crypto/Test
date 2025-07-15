@@ -32,7 +32,7 @@ export class BrandService {
     const domain = window.location.hostname;
     // const domain = 'cipapp.stacknize.com'
     return this.http
-      .get<BrandServiceModel>(`http://localhost:3004/getBrandConfig/${domain}`)
+      .get<BrandServiceModel>(`https://settings.stacknize.com/getBrandConfig/${domain}`)
       .toPromise()
       .then((data: BrandServiceModel) => {
         this.brandConfig = data;
