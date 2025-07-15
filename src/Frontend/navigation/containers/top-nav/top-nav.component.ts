@@ -8,7 +8,7 @@ import { interval } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
 import { NotificationService } from 'Frontend/dashboard/services/notification.service';
 import { environment } from 'environments/environment';
-
+import { BrandService } from 'Frontend/navigation/services/BrandServices';
 @HostListener('window:scroll', ['$event'])
 
 
@@ -48,7 +48,7 @@ export class TopNavComponent implements OnInit {
     static notifiedMessages: Set<string> = new Set<string>(); 
 
     constructor(private navigationService: NavigationService, private authservice:AuthService, private router:Router,private apiService: 
-        ProfileService,private elementRef: ElementRef,public _settingsService:SettingsService,private notificationService:NotificationService) {}
+        ProfileService,private elementRef: ElementRef,public _settingsService:SettingsService,private notificationService:NotificationService,public brandService: BrandService) {}
 
     @HostListener('document:click', ['$event'])
     onDocumentClick(event: MouseEvent): void {

@@ -15,6 +15,7 @@ export class ButtonComponent implements OnChanges {
   @Input() leftIcon: any;
   @Input() rightIcon: any;
   @Output() onClick = new EventEmitter<void>();
+  @Input() labelColor: 'default' | 'accent' | 'muted' = 'default';
 
   safeLeftIcon: SafeHtml | string = '';
   safeRightIcon: SafeHtml | string = '';

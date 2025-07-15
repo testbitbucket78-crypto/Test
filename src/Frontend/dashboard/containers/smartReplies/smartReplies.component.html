@@ -10,15 +10,28 @@
 
 		<div class="d-flex justify-content-between pt-3 pb-4 content-header">
 			<div class="input-group gf">
-	
 				<input class="form-control" type="text" placeholder="search" name="search" [(ngModel)]="searchText" />
-	
 				<img src="assets/img/search.png">
 			</div>
-			<button class="btn btn-block add-smartrep-btn" (click)="showAddSmartRepliesModal()" [disabled]="settingsService?.checkRoleExist('27')">
+			<div class="d-flex align-items-center">
+				<div class="pr-4 d-flex align-items-center">
+
+			<sb-button (click)="exportLogs()" [type]="'secondary'" [label]="'Export'" class="m-0"
+				[leftIcon]="'<img src=\'../../../../assets/img/export.svg\'/>'" [labelColor]="'muted'">
+			</sb-button>
+			<sb-tooltip style="margin-left: -10px;"
+				[tooltipText]="'Download the report to view when Smart Replies were triggered in customer conversations.'"
+				[isVisible]="isTooltipVisible" (visibilityChange)="handleTooltipChange($event)">
+			</sb-tooltip>
+				</div>
+
+			<button class="btn btn-block add-smartrep-btn" (click)="showAddSmartRepliesModal()"
+				[disabled]="settingsService?.checkRoleExist('27')">
 				<img src="../../../../assets/img/teambox/add.svg" alt="error" />
 				Add Smart Reply
 			</button>
+			</div>
+
 		</div>
 	
 	
@@ -1281,3 +1294,101 @@
 
 
 </sb-layout-dashboard>
+
+<div class="modal fade" id="export-logs" tabindex="-1" aria-labelledby="exportLogsModal" aria-hidden="true" data-bs-backdrop="static" data-bs-keyboard="false">
+  <div class="modal-dialog">
+    <div class="modal-content p-4">
+      <div class="modal-header p-0 justify-content-between align-items-center">
+        <h5 class="modal-title mb-0" id="exportLogsModal">Export Logs</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
+          X
+        </button>
+      </div>
+
+      <form [formGroup]="exportLogsForm">
+        <div class="mt-3">
+          <div class="mb-2">
+            <label for="fromDate" class="form-label">From Date <span class="text-danger">*</span></label>
+            <input 
+              type="date"
+              id="fromDate"
+              class="form-control p-1 common-input w-100 m-0"
+              formControlName="fromDate"
+              [attr.max]="today"
+              [attr.min]="sixMonthsAgo"
+            />
+          </div>
+
+          <div class="mb-2">
+            <label for="toDate" class="form-label">To Date <span class="text-danger">*</span></label>
+            <input
+              type="date"
+              id="toDate"
+              class="form-control p-1 common-input w-100 m-0"
+              formControlName="toDate"
+              [attr.max]="today"
+              [attr.min]="sixMonthsAgo"
+            />
+          </div>
+
+          <p class="text-muted small">
+            Select a date range within last 6 months only.
+          </p>
+        </div>
+
+        <div class="modal-footer border-top-0 pt-3">
+          <sb-button
+            [label]="'Cancel'"
+            [type]="'secondary'"
+            data-bs-dismiss="modal">
+          </sb-button>
+
+          <sb-button
+            [label]="'Confirm & Export'"
+            [type]="'primary'"
+            [isActive]="true"
+            [disabled]="exportLogsForm.invalid || exportLogsForm.errors?.invalidDateRange"
+            (click)="exportLogsAndMail()">
+          </sb-button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+
+    <!-- <div class="modal fade" id="export-logs" tabindex="-1" aria-labelledby="exportLogsModal" aria-hidden="true" data-bs-backdrop="static" data-bs-keyboard="false">
+
+        <div class="modal-dialog">
+            <div class="modal-content p-4">
+                <div class="modal-header p-0">
+                    <h5 class="modal-title mb-0" id="webhookModalLabel">Export Logs</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="X">X</button>
+                </div>
+
+                <form [formGroup]="exportLogsForm">
+                    <div>
+                      <label for="fromDate" class="form-label">From Date <span class="text-danger">*</span></label>
+                      <input type="date" id="fromDate" class="form-control p-1 common-input w-100 mb-2" formControlName="fromDate" />
+                    </div>
+          
+                    <div>
+                      <label for="toDate" class="form-label">To Date <span class="text-danger">*</span></label>
+                      <input type="date" id="toDate" class="form-control p-1 common-input w-100 mb-2" formControlName="toDate" />
+                    </div>
+
+                    <div class="modal-footer border-top-0">
+                        <sb-button [label]="'Cancel'" [type]="'primary'"
+                          data-bs-dismiss="modal"
+                          (click)="null">
+                        </sb-button>
+
+                        <sb-button [label]="'Confirm and Export'" [type]="'primary'" [isActive]="true"
+                            [disabled]="exportLogsForm.invalid || exportLogsForm.errors?.invalidDateRange"
+                            (click)="exportLogsAndMail()">
+                        </sb-button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div> -->

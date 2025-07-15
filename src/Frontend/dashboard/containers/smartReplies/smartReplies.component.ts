@@ -1,5 +1,5 @@
 import { Component, OnInit,ViewChild,ElementRef, HostListener, OnDestroy  } from '@angular/core';
-import { FormGroup,FormBuilder, FormControl, Validators, NgForm } from '@angular/forms';
+import { FormGroup,FormBuilder, FormControl, Validators, NgForm ,AbstractControl, ValidationErrors, ValidatorFn} from '@angular/forms';
 import Stepper from 'bs-stepper';
 import { NgbModalConfig, NgbModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
 import { DashboardService } from './../../services';
@@ -14,7 +14,8 @@ import { RichTextEditorComponent, HtmlEditorService,EmojiPickerService } from '@
 import { hasEmptyValues } from '../common/Utils/file-utils';
 import { InteractiveButtonPayload } from 'Frontend/dashboard/models/interactiveButtons.model';
 import { BotserviceService } from 'Frontend/dashboard/services/botservice.service';
-
+import { ToastService } from 'assets/toast/toast.service';
+import { environment } from 'environments/environment';
 declare var $: any;
 
 @Component({
@@ -201,6 +202,7 @@ export class SmartRepliesComponent implements OnInit,OnDestroy {
 		templateName:string='';
 		templatelanguage:string ='';
 		templateButton:any =[];
+		public channelDomain:string = environment.chhanel;
 		// channelOption:any=[
 		// 	{value:1,label:'WhatsApp Official',checked:false},
 		// 	{value:2,label:'WhatsApp Web',checked:false}];
@@ -243,7 +245,9 @@ export class SmartRepliesComponent implements OnInit,OnDestroy {
 	isSendButtonDisabled=false
 	click: any;
 	selecetdpdf: any='';
-	constructor(config: NgbModalConfig,public botService:BotserviceService, private modalService: NgbModal, private apiService: DashboardService, private fb: FormBuilder, private router:Router, private tS :TeamboxService,public settingsService:SettingsService,private elementRef: ElementRef,private location:Location) {
+	constructor(config: NgbModalConfig,public botService:BotserviceService, private modalService: NgbModal, private apiService: DashboardService, private fb: FormBuilder, private router:Router, private tS :TeamboxService,public settingsService:SettingsService,private elementRef: ElementRef,private location:Location
+		,private _toastService : ToastService
+	) {
 		// customize default values of modals used by this component tree
 		config.backdrop = 'static';
 		config.keyboard = false;
@@ -255,6 +259,7 @@ export class SmartRepliesComponent implements OnInit,OnDestroy {
 	}
 
 	ngOnInit() {
+		this.initExportLogsForm();
         this.isLoading = true;
 		$('body').addClass('modal-smart-reply-open');
 
@@ -2128,6 +2133,80 @@ console.log(sortedData)
 		}
 		checkBotList(){
 			return this.assignedAgentList.some(agent => agent.ActionID === 4);
+		}
+
+		exportLogsForm!: FormGroup;
+		initExportLogsForm() {
+			this.exportLogsForm = new FormGroup({
+				fromDate: new FormControl('', Validators.required),
+				toDate: new FormControl('', Validators.required),
+			}, { validators: this.dateRangeValidator });
+		}
+
+		dateRangeValidator: ValidatorFn = (control: AbstractControl): ValidationErrors | null => {
+			const group = control as FormGroup;
+			const from = new Date(group.get('fromDate')?.value);
+			const to = new Date(group.get('toDate')?.value);
+
+			if (from && to && from > to) {
+				this._toastService.warning('From date should be less than To date');
+				return { invalidDateRange: true };
+			}
+
+			return null;
+		};
+
+		exportLogs() {
+			$("#export-logs").modal('show');
+		}
+        
+		exportLogsAndMail() {
+			if (this.exportLogsForm.invalid) {
+				return;
+			}
+			const { fromDate, toDate } = this.exportLogsForm.value;
+			const payload = {
+				spid: this.SPID,
+				fromDate,
+				toDate,
+				email: (JSON.parse(sessionStorage.getItem('loginDetails')!))?.email_id,
+                channel: this.channelDomain
+			};
+			this.apiService.exportLogsSmartReply(payload)
+				.subscribe(
+					(response: any) => {
+						debugger
+						if (response?.success) {
+						$("#export-logs").modal('hide');
+						this._toastService.success('Smart Reply usage report has been emailed successfully.');
+						} else {
+						this._toastService.error(response?.message || 'Failed to export Smart Reply report.');
+						}
+					},
+					(error: any) => {
+						debugger;
+						if (error) {
+                          this._toastService.error(error?.error?.error || "An unexpected error occurred while exporting the report.")
+						}
+					}
+				);
+		}
+
+		isTooltipVisible = false;
+		    handleTooltipChange(visible: boolean) {
+            this.isTooltipVisible = visible;
+        }
+		today = this.getToday();
+		sixMonthsAgo = this.getSixMonthsAgo();
+
+		getToday(): string {
+		return new Date().toISOString().split('T')[0];
+		}
+
+		getSixMonthsAgo(): string {
+		const date = new Date();
+		date.setMonth(date.getMonth() - 6);
+		return date.toISOString().split('T')[0];
 		}
 
   }

@@ -7,6 +7,7 @@ import { AuthService } from './../../services';
 import { SettingsService } from 'Frontend/dashboard/services/settings.service';
 import { Validators } from '@angular/forms';
 import { environment } from 'environments/environment';
+import { BrandService } from 'Frontend/navigation/services/BrandServices';
 @Component({
     selector: 'sb-login',
     changeDetection: ChangeDetectionStrategy.OnPush,
@@ -33,11 +34,13 @@ export class LoginComponent implements OnInit {
     public channelDomain:string = environment?.chhanel;
 
     constructor(private apiService: AuthService,
-        private renderer: Renderer2,
-         private router: Router, private formBuilder: FormBuilder, private settingsService:SettingsService,private cdr: ChangeDetectorRef) {
-
+        private renderer: Renderer2, public brandService: BrandService,
+        private router: Router, private formBuilder: FormBuilder, 
+        private settingsService:SettingsService,private cdr: ChangeDetectorRef) {
+        
+        this.brandService.fetchAndStoreBrandConfig().then(() => {});
     }
-    ngOnInit() {
+    ngOnInit() { 
 
     }
 
