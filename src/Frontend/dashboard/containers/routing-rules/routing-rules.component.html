@@ -98,6 +98,7 @@
                 <input class="form-control" name="chatAssignTimeout" type="text" 
                     [disabled]="isManageMissedChat"
                     onKeyPress="if(this.value.length==4) return false; return /^[0-9]$/.test(event.key)"
+                    required
                     [pattern]="chatAssignTimeoutPattern"
                     [(ngModel)]="timeoutperiod"
                     placeholder="Enter chat timeout (1-1440 minutes)"
@@ -120,8 +121,7 @@
                 </div>
             </div>
             <div class="select-heading py-2">Assign a Specific User</div>
-            <select [disabled]="missedChatOption!=='assignspecificuser'" class="input-form pointerCursor" [(ngModel)]="selectuser" 
-            [disabled]="isManageMissedChat"
+            <select [disabled]="missedChatOption!=='assignspecificuser' || isManageMissedChat" class="input-form pointerCursor" [(ngModel)]="selectuser" 
             [ngClass]="{'is-invalid error-outline': errorOnMissedChatOption() && checkIfValid}">
                 <option *ngFor="let name of usernames" [ngValue]="name"><span class="text-capitalize" >{{ name }}</span></option>
             </select>

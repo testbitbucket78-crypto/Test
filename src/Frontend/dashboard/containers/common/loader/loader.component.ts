@@ -10,6 +10,7 @@ export class LoaderComponent implements OnInit, OnChanges {
   @Input() message: string = 'Loading... Please wait...';
   @Input() loaderType: string = 'standard'; 
   @Input() customStyles: { [key: string]: string } = {};
+  @Input() maxDuration: number = 15000; // default to 15 seconds
 
   private timeout10Sec: any;
   private timeout14Sec: any;
@@ -26,13 +27,14 @@ export class LoaderComponent implements OnInit, OnChanges {
 
   private startTimers(): void {
     this.clearTimers(); 
+    const messageDelay = Math.max(this.maxDuration - 5000, 0);
     this.timeout10Sec = setTimeout(() => {
       this.message = 'Oops! We are facing some problem. Please try after some time.';
-    }, 15 * 1000); 
+    }, messageDelay); 
     this.timeout14Sec = setTimeout(() => {
       this.isLoading = false;
       this.clearTimers();
-    }, 20 * 1000); 
+    }, this.maxDuration); 
   }
 
   private clearTimers(): void {
