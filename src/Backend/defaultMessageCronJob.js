@@ -241,6 +241,7 @@ async function NoAgentReplyTimeOut() {
       const replyPauseCache = new Map();
       const workingHoursCache = new Map();
       const extractedMessageCache = new Map();
+      let totalSuccessCount = 0;
 
       for (let i = 0; i < noAgentReplydata.length; i += batchSize) {
         const batch = noAgentReplydata.slice(i, i + batchSize); // Process in batches
@@ -308,6 +309,7 @@ async function NoAgentReplyTimeOut() {
               logger.info(`Message sent successfully for SPID: ${msg.SPID}`, { timestamp: new Date() });
 
               if (response?.status === 200) {
+                totalSuccessCount++;
                 let myUTCString = new Date().toUTCString();
                 const currenttime = moment.utc(myUTCString).format('YYYY-MM-DD HH:mm:ss');
                 let messageValu = [
@@ -322,7 +324,7 @@ async function NoAgentReplyTimeOut() {
         
 
         // Add delay between processing batches
-        if (i + batchSize < noAgentReplydata.length) {
+        if (totalSuccessCount > 0 && totalSuccessCount % batchSize === 0 && i + batchSize < noAgentReplydata.length) {
           await new Promise(resolve => setTimeout(resolve, delayBetweenBatches));
         }
 
