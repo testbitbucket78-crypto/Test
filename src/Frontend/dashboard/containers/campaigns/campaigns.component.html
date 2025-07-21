@@ -610,7 +610,7 @@ It is determined by a combination of user feedback signals like blocks, reports 
 									<p class="form-control" *ngIf="segmentsContactList?.length>0">
 										<input *ngIf="variable.label == '{{Phone_number}}'" type="text" class="form-control inner" value={{variable.value}} (keyup)="checkNumber($event);updateAttributeValue($event,variable)" placeholder="Input value or add attribute" [ngClass]="{'input-custom-color': variable.isAttribute}">
 										<input *ngIf="variable.label != '{{Phone_number}}'" type="text" class="form-control inner" value={{variable.value}} (keyup)="updateAttributeValue($event,variable)" placeholder="Input value or add attribute" [ngClass]="{'input-custom-color': variable.isAttribute}">
-										<span class="toggle_attribute" (click)="openAttributeOption(variable,AttributeOption)"></span>4645
+										<span class="toggle_attribute" (click)="openAttributeOption(variable,AttributeOption)"></span>
 									</p>
 									<p class="form-control" *ngIf="csvContactList?.length>0">
 										<input type="text" class="form-control inner" value={{variable.value}} (keyup)="updateAttributeValue($event,variable)" placeholder="Input value or map">
