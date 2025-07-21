@@ -109,38 +109,6 @@ async function excuteQuery(query, param) {
 
 }
 
-// async function excuteQuery(query, param) {
-//     try {
-//         if (db.state === 'disconnected') {
-//             console.log("** if con" + "excuteQuery" + "**" + db.state)
-//             db.connect()
-//         }
-
-//         console.log("**" + "excuteQuery" + "**" + query, param)
-
-//         // Minimal addition: disable ONLY_FULL_GROUP_BY
-//         await new Promise((resolve, reject) => {
-//             db.query("SET SESSION sql_mode = (SELECT REPLACE(@@sql_mode,'ONLY_FULL_GROUP_BY',''))", (err) => {
-//                 if (err) return reject(err);
-//                 resolve();
-//             });
-//         });
-
-//         return new Promise((resolve, reject) => {
-//             db.query(query, param, (err, results) => {
-//                 if (err) return reject(err);
-//                 return resolve(results);
-//             });
-//         }).catch((reason) => {
-//             console.log("Error is loged by promise")
-//             console.log(reason);
-//         })
-
-//     } catch (err) {
-//         console.log("_____DB EXCUTEQUERY ERR ______")
-//         console.log(err)
-//     }
-// }
 
 
 module.exports = { runQuery, db, excuteQuery, errlog };
