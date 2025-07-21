@@ -783,7 +783,7 @@ async function messageThroughselectedchannel(spid, from, type, text, media, phon
           let saveSendedMessage = await saveMessage(from, spid, '', message_content, media, type, type, 'WA Web', "Web campaign message", 1,buttons,interactive_buttons)
           let response
           let checkingInteractive = typeof interactive_buttons === 'string' ? interactive_buttons = JSON.parse(interactive_buttons) : interactive_buttons;
-          if(checkingInteractive.length){
+          if(checkingInteractive && checkingInteractive.length){
              response = await middleWare.sendingTemplate(spid, from, headerVar, text, interactive_buttons);
           }else{
               response = await middleWare.postDataToAPI(spid, from, getMediaType, text, media, '', saveSendedMessage);

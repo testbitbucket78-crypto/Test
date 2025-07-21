@@ -92,7 +92,7 @@ const addCampaign = async (req, res) => {
             updateQuery += " headerText= '" + req.body?.headerText + "',";
             updateQuery += " bodyText= " + mysql.escape(req.body?.bodyText) + ",";
             updateQuery += " buttons= '" + req.body?.buttons + "',";
-            updateQuery += " buttonsVariable= '" + req.body?.buttonsVariable + ",";
+            updateQuery += " buttonsVariable= '" + req.body?.buttonsVariable + "',";
             updateQuery += " interactive_buttons= '" + req.body?.interactive_buttons + "'";
             updateQuery += " WHERE Id =" + req.body.Id
             let editedCampaign = await db.excuteQuery(updateQuery, [])

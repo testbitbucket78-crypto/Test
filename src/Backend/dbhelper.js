@@ -110,4 +110,5 @@ async function excuteQuery(query, param) {
 }
 
 
+
 module.exports = { runQuery, db, excuteQuery, errlog };
