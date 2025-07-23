@@ -703,10 +703,6 @@ const insertMessage = async (req, res) => {
             let uidMentioned = Array.isArray(req.body?.uidMentioned) ? req.body.uidMentioned : [];
             let buttons = JSON.stringify(req?.body?.buttons);
             const channel = channelType.length > 0 ? channelType[0].channel : spchannel[0]?.channel_id;
-
-            var values = [[SPID, Type, ExternalMessageId, interaction_id, Agent_id, message_direction, message_text, message_media, media_type, Message_template_id, Quick_reply_id, created_at, created_at, mediaSize, assignAgent, buttons, Interactive_buttons]];
-            let msg_id = await db.excuteQuery(messageQuery, [values]);
-
             if(botId) {
                 let data = {
                     botId: botId,
@@ -717,6 +713,10 @@ const insertMessage = async (req, res) => {
                 await incommingmsg.runBotOperation(data,middleWare);
                return res.send({status: 200, insertId: msg_id.insertId });
             }
+            var values = [[SPID, Type, ExternalMessageId, interaction_id, Agent_id, message_direction, message_text, message_media, media_type, Message_template_id, Quick_reply_id, created_at, created_at, mediaSize, assignAgent, buttons, Interactive_buttons]];
+            let msg_id = await db.excuteQuery(messageQuery, [values]);
+
+           
             //  logger.debug('Message ID:', msg_id);
             let updateInteraction = await db.excuteQuery(val.updateTempInteractionQuery, [0, interaction_id])
             if (agentName.length >= 0) {

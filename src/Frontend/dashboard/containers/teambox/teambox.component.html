@@ -298,7 +298,7 @@
 													style="cursor:pointer; width: 24px; height: 24px">
 
 												<img *ngIf="message.message_direction !='IN' &&  message.assignAgent == -4"
-													class="hover-image" src="/assets/img/teambox/boticon.svg"
+													class="hover-image" src="/assets/img/bot_icon.svg"
 													style="cursor:pointer; width: 24px; height: 24px">
 
 												<div class="hover-text">{{message.assignAgent ==-2 ?'Automation':
@@ -1278,9 +1278,9 @@
 								</div>
 							</div>
 
-							<div class="input_group_btn mt-3">
-								<button type="button" class="submit-btn" [disabled]="!selectedBotobj"
-									(click)="onDone()">Done</button>
+							<div class="input_group_btn mt-3">								
+							<button type="button" class="submit-btn" (click)="openadd(openBotAlertmMessage)" [disabled]="!selectedBotobj"
+									>Done</button>
 							</div>
 
 						</div>
@@ -2363,6 +2363,18 @@
 	</ng-template>
 
 
+	<ng-template #openBotAlertmMessage let-c="close" let-d="dismiss">
+
+		<div class="modal-body alertmessage">
+			<p class="label">are you sure you want to trigger this bot ?</p>
+			<div class="input_group_btn">
+				<button type="button" class="cancel-btn" aria-label="Close" (click)="d('Cross click')">Cancel</button>
+				<button type="button" class="submit-btn red-bg" aria-label="Close"
+					(click)="onDone()">Confirm</button>
+			</div>
+		</div>
+
+	</ng-template>
 
 
 

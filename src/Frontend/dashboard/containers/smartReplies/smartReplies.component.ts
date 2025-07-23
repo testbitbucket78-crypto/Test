@@ -1713,7 +1713,16 @@ stopPropagation(event: Event) {
 	  }
 	private modalRef!: NgbModalRef;
 	smartReplySuccess(smartreplysuccess: any) {
-		if(this.assignedAgentList.length) this.modalRef = this.modalService.open(smartreplysuccess);
+		if(this.assignedAgentList.length) {
+			for(let i=0; i<this.assignedAgentList.length; i++) {
+				if(this.assignedAgentList[i].ActionID == 4 && (i != this.assignedAgentList.length - 1)) {
+					this.showToaster('! Bot Trigger action should always be last','error');
+					return;
+				}
+			}
+			this.modalRef = this.modalService.open(smartreplysuccess);
+
+		}
 		else this.showToaster('! Please type your message first','error');
 		// this.removeModalBackdrop()
 		// this.modalService.dismissAll()
@@ -2044,7 +2053,7 @@ console.log(sortedData)
 			if (this.repliesData.ActionList[i].Name == 'Assign Conversation') {
 				ActionId = 2
 			}
-			if (this.repliesData.ActionList[i].Name == 'Add Bot') {
+			if (this.repliesData.ActionList[i].Name == 'Trigger Flow') {
 				ActionId = 4
 			}
 			if (this.repliesData.ActionList[i].Name == 'Add Contact Tag') {

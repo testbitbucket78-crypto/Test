@@ -18,7 +18,7 @@ LEFT JOIN
     BotSessions bs ON bs.botId = b.id
     WHERE b.spid=? and b.isDeleted !=1
     GROUP BY 
-    b.id`;
+    b.id order by b.id desc`;
 const getBotById= `SELECT * FROM Bots WHERE spid=? and id=? and isDeleted !=1 `;
 const getBotDetailById= `SELECT * FROM botNodes WHERE botId=?`;
 const getSessionsData= `SELECT COUNT(CASE WHEN botId=? THEN 1 END) AS invoked, COUNT(CASE WHEN botId=? and status=3 THEN 1 END) AS complete, COUNT(CASE WHEN botId=? and status=2 THEN 1 END) AS dropped FROM BotSessions`;
