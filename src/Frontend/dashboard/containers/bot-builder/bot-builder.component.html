@@ -1,28 +1,33 @@
-<div class="toaster" (click)="hideToaster()">
-    <p *ngIf="errorMessage" class="error">{{ errorMessage }}</p>
-    <p *ngIf="successMessage" class="success">{{ successMessage }}</p>
-    <p *ngIf="warningMessage" class="warn">{{ warningMessage }}</p>
-</div>
+
 
 <sb-layout-dashboard>
+    <div class="toaster" (click)="hideToaster()">
+        <p *ngIf="errorMessage" class="error">{{ errorMessage }}</p>
+        <p *ngIf="successMessage" class="success">{{ successMessage }}</p>
+        <p *ngIf="warningMessage" class="warn">{{ warningMessage }}</p>
+    </div>
+    <sb-loader [isLoading]="isLoading"></sb-loader>
+    <div *ngIf="ShowAssignOptions" class="overlay" (click)="closeUtility()"></div>
+    <div *ngIf="ShowChannelOption" class="overlay" (click)="closeUtility()"></div>
+
     <sb-top-nav title="Bot Builder"></sb-top-nav>
 
     <div class="bot_page">
         <div class="header bot_section">
             <div class="bot_page_left">
-                <input (keyup)="searchBotBuilder($event)" type="text" placeholder="Search" aria-label="Search"
-                    class="search-box" aria-describedby="basic-addon2" />
+                <input (keyup)="searchBotBuilder($event)" type="text"  aria-label="Search" placeholder="Search by bot name or id"
+                    class="btn-press search-box" aria-describedby="basic-addon2" />
             </div>
             <div class="bot_page_right">
                 <div class="D-whatsApp">
-                    <button class="D2-whatsApp" (click)="toggleAssignOptions()">
+                    <button class="btn-press D2-whatsApp" (click)="toggleAssignOptions()">
                         <span>
                             <img class="icon" src="/assets/img/teambox/whatsapp-icon-l.svg" />
                             {{channelSelected}} ({{channelPhoneNumber}})
                             <img src="../../../../assets/img/arrow-down.svg" />
                         </span>
                     </button>
-                    <div *ngIf="ShowAssignOption" class="popup-dialogs AssignOption p-15">
+                    <div *ngIf="ShowAssignOptions" class="popup-dialogs AssignOption p-15">
                         <p *ngFor="let channel of channelOption" class="d-flex align-items-center px-2 py-1"
                             (click)="updateDropdown(channel.connected_id)">
                             <img class="icon" src="/assets/img/teambox/whatsapp-icon-l.svg" />
@@ -31,13 +36,25 @@
                     </div>
                 </div>
 
-                <div class="drop-down-btn">
-                    <div class="toggle-box" (click)="filterBot(filterBotId)">
-                        <img src="assets/img/teambox/filter-icon.svg" />
-                        <span>Filter</span>
-                    </div>
-                </div>
-                <button class="new-message-btn" data-bs-toggle="modal" data-bs-target="#createBotModal"
+<div class="drop-down-btn">
+  <button class="btn-press toggle-box" 
+       [ngClass]="{ 'applyfilter': selectedStatusFilter.length > 0 }" 
+       (click)="filterBot(filterBotId)">
+    
+    <img [src]="selectedStatusFilter.length > 0 ? 
+                '../../../../assets/img/Filter_White.svg' : 
+                'assets/img/teambox/filter-icon.svg'" />
+
+    <span>Filter</span>
+
+    <img [src]="selectedStatusFilter.length > 0 ? 
+                '../../../../assets/img/teambox/dropdown-w.svg' : 
+                '/assets/img/teambox/dropdown.svg'" />
+                
+  </button>
+</div>
+
+                <button class="btn-press new-message-btn" data-bs-toggle="modal" data-bs-target="#createBotModal"
                     (click)="resetBotForm()" [disabled]="settingsService?.checkRoleExist('25')">
                     <img class="icon" src="/assets/img/teambox/add.svg" /> New Bot
                 </button>
@@ -49,28 +66,33 @@
             <div class="tile" *ngFor="let bot of botsList" (click)="toggleTemplatesData(bot)">
                 <div class="tile-header">
                     <span class="status" [style.background]="statusColors[bot?.status]">{{
-                        bot.status | titlecase
+                        (bot.status == 'publish'?'Published':bot.status )| titlecase
                         }}</span>
                     <span class="id">Id: {{ bot.id }}</span>
                 </div>
 
                 <h3 class="title">{{ bot.name }}</h3>
 
-                <p class="timestamp">Last Updated On:{{bot?.updated_at
+                <p class="timestamp">Last Updated On:<span class="timeStampcolour"> {{bot?.updated_at
                     ? settingsService?.getDateTimeFormate(bot?.updated_at)
-                    : 'NA' }}</p>
-                <p class="timestamp">Invoked: {{ bot.invoked || 'NA' }}</p>
-                <p class="timestamp">Completed: {{ bot.complete || 'NA' }}</p>
-                <p class="timestamp">Dropped: {{ bot.dropped || 'NA' }}</p>
+                    : 'N/A' }}</span></p>
+                <p class="timestamp">Invoked:<span class="timeStampcolour"> {{ bot.invoked || 'N/A' }}</span></p>
+                <p class="timestamp">Completed:<span class="timeStampcolour"> {{ bot.complete || 'N/A' }}</span></p>
+                <p class="timestamp">Dropped: <span class="timeStampcolour"> {{ bot.dropped || 'N/A' }}</span></p>
             </div>
         </div>
 
 
-        <div class="empty-state" *ngIf="botsList.length <=0">
-            <img src="assets/img/teambox/botImage.svg" alt="No bots available">
-
-        </div>
-
+			<div *ngIf="botsList?.length<1 && searchKey == ''" class="text-center py-5 body-empty-state">
+				<img src="assets/img/teambox/bot_icon_.svg">
+				<h5>No Bots to Show!</h5>
+				<p><span>Click "+ New Bot" to start creating Bots</span></p>
+			</div>
+			<div *ngIf="botsList?.length<1 && searchKey != ''" class="text-center py-5 body-empty-state">
+				<img src="assets/img/teambox/bot_icon_.svg">
+				<p>No Matching Bots to Show!</p>
+				<p><span>Click "+ New Bot" to start creating Bots</span></p>
+			</div>
 
 
 
@@ -87,7 +109,7 @@
             <div class="campaigns_section_item m-0" style="height: calc(100dvh - 160px); overflow: auto">
                 <div class="campaigns_section_item_header">
                     <label [style.background]="statusColors[botDetailsData?.status]">{{
-                        botDetailsData?.status
+                        (botDetailsData.status == 'publish'?'Published':botDetailsData.status )| titlecase
                         }}</label>
                     <span>Bot ID : {{ botDetailsData?.id }}</span>
                 </div>
@@ -97,22 +119,22 @@
                     <span>Last Updated On:</span>
                     {{botDetailsData?.updated_at
                     ? settingsService?.getDateTimeFormate(botDetailsData?.updated_at)
-                    : 'NA' }} <br />
+                    : 'N/A' }} <br />
                     <span>Published On: </span>{{
                     botDetailsData?.published_at
                     ? settingsService?.getDateTimeFormate(botDetailsData?.published_at)
-                    : 'NA'
+                    : 'N/A'
                     }}
                     <br />
                     <span>Deprecated On: </span>{{
                     botDetailsData?.deprecated_at
                     ? settingsService?.getDateTimeFormate(botDetailsData?.deprecated_at)
-                    : 'NA'
+                    : 'N/A'
                     }}
                 </p>
                 <div class="campaigns_section_user">
                     <div class="d-flex align-items-center user-img">
-                        <img [src]="profilePicture" />
+                        <!-- <img [src]="profilePicture" /> -->
                         <div class="img" *ngIf="botDetailsData?.created_by">
                             {{ apiService.getInitials(botDetailsData?.created_by) }}
                         </div>
@@ -122,23 +144,21 @@
                 </div>
                 <p class="title">{{ botDetailsData?.name }}</p>
                 <p>
-                    <img class="icon" src="../../../../assets/img/teambox/whatsapp-icon-l.svg" />{{
-                    botDetailsData?.channel_id
-                    }}
+                    <img class="icon" src="../../../../assets/img/teambox/whatsapp-icon-l.svg" />{{channelSelected}}&nbsp;({{botDetailsData?.channel_id}})
                 </p>
 
                 <div class="advance-options" style="padding: 17px 0px">
                     <div class="advance-header" (click)="toggleOptions('bot')">
                         <span>Bot Triggers</span>
                         <img src="../../../../assets/img/up-arrow.png" alt="Toggle" class="arrow-icon"
-                            [class.rotated]="showTriggerOption" />
+                            [class.rotated]="!showTriggerOption" />
                     </div>
 
                     <div class="advance-body" *ngIf="showTriggerOption">
                         <div class="trigger-group">
                             <p class="trigger-label">Direct keywords</p>
 
-                            <div class="trigger-buttons">
+                            <div class="trigger-buttons" >
                                 <button class="trigger-button" *ngFor="let keyword of keywords">{{keyword.length > 20?
                                     (keyword | slice: 0:20) + '...':
                                     keyword}}</button>
@@ -194,7 +214,7 @@
                     <div class="advance-header" (click)="toggleOptions()">
                         <span>Advance Options</span>
                         <img src="../../../../assets/img/up-arrow.png" alt="Toggle" class="arrow-icon"
-                            [class.rotated]="showOptions" />
+                            [class.rotated]="!showOptions" />
                     </div>
 
 
@@ -253,7 +273,7 @@
                                                 </div>
                                             </div>
 
-                                            <div *ngIf="message.actionTypeId == 1"
+                                            <div *ngIf="message.actionTypeId == 1 && message.Value?.length > 0"
                                                 class="d-flex justify-content-between align-items-center">
                                                 <div class=" ">
                                                     <div class="d-flex flex-wrap assign-container">
@@ -296,9 +316,19 @@
                 </div>
 
                 <div class="flex-row pt-4 textcenter">
+                    <div class="d-flex align-items-center gap-2">
+<sb-tooltip
+style="margin-right: 9px;"
+    class="d-inline-block"
+    [tooltipText]="'Download a report showing how users interacted with your bot — including triggers, drop-offs, and completions.'"
+    [isVisible]="isTooltipVisible"
+    (visibilityChange)="handleTooltipChange($event)"
+  ></sb-tooltip>
                     <button class="new-token-btn w-auto mr-2 d-flex align-items-center downloadBtnEnabled"
                         (click)="openModal(dateRangeModal)">
-                        <span> Export Bot Usage </span>
+                        <span> Export Bot Usage   
+                            
+ </span>
                         <!-- <div class="btn-circle-download ml-2">
 							<svg id="arrow" width="10px" height="16px" viewBox="17 14 14 20">
 								<path d="M24,15 L24,32"></path>
@@ -314,7 +344,8 @@
 							</svg>
 						</div> -->
                     </button>
-                    <!-- </div> -->
+  
+                    </div>
                 </div>
             </div>
 
@@ -323,14 +354,15 @@
                         botDetailsData?.status == 'draft' ||
                         botDetailsData?.status == 'publish' ||
                         botDetailsData?.status == 'Deprecated'
-                    " data-bs-toggle="modal" data-bs-target="#copyBot" type="titleimg" class="btn"
-                    [disabled]="settingsService?.checkRoleExist('25')">
-                    <img src="../../../../assets/img/teambox/copy.svg" (click)="copyBot('copy')" />
+                    " data-bs-toggle="modal" data-bs-target="#botModal" type="titleimg" class="btn"
+                    [disabled]="settingsService?.checkRoleExist('25')" (click)="copyBot('copy')">
+                    <img src="../../../../assets/img/teambox/copy.svg"  />
                 </button>
                 <button *ngIf="botDetailsData?.status == 'draft'" class="titleimg"
-                    [disabled]="settingsService?.checkRoleExist('25')" data-bs-toggle="modal"
-                    data-bs-target="#editFlowModal">
-                    <img src="../../../../assets/img/edit.png" (click)="copyBot('other')" />
+                    [disabled]="settingsService?.checkRoleExist('25')" (click)="copyBot('EditMode')" >
+                    <!-- data-bs-toggle="modal"
+                    data-bs-target="#editFlowModal" -->
+                    <img src="../../../../assets/img/edit.png"  />
                 </button>
                 <button class="buttonClass" *ngIf="
                         botDetailsData?.status == 'draft' ||
@@ -357,65 +389,65 @@
 </sb-layout-dashboard>
 
 <div class="form-group position-relative">
-    <div class="modal fade" id="addTagModal" role="dialog" style="z-index: 99999">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content">
-                <div class="row popup-dialog AddTag">
-                    <p class="label">{{ ShowRemoveTag ? 'Add Tag' : 'Add
-                        Tag' }}</p>
-                    <div *ngFor="let tag of addTagList; let i = index" class="d-flex addTag">
-                        <label class="container arddtag">
-                            <input [checked]="checkTagStatus(tag.TagName, 0)" type="checkbox" name="tags" class="m-0"
-                                (change)="manageTags(i, $event, 'add')" />
-                            <span class="checkmark oops"></span>
-                        </label>
-                        <div class="dots d-flex align-items-center">
-                            <div class="color-dots" [style.background]="tag.TagColour"></div>
-                            <span class="fix-dots px-2 text-capitalize flex-grow-1 font-weight-normal">{{ tag.TagName
-                                }}</span>
+        <div class="modal fade" id="addTagModal" role="dialog" style="z-index: 99999">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="row popup-dialog AddTag">
+                        <p class="label" style="pointer-events: none;">Add Tag</p>
+                        <div *ngFor="let tag of addTagList; let i = index" class="d-flex addTag" [ngClass]="{ 'disabled-option': isDisable('3', tag) }">
+                            <label class="container arddtag">
+                                <input [checked]="checkTagStatus(tag.TagName, 0)" type="checkbox" name="tags" class="m-0" [disabled]="isDisable('3', tag)"   
+                                    (change)="manageTags(i, $event, 'add')" />
+                                <span class="checkmark oops"></span>
+                            </label>
+                            <div class="dots d-flex align-items-center">
+                                <div class="color-dots" [style.background]="tag.TagColour"></div>
+                                <span class="fix-dots px-2 text-capitalize flex-grow-1 font-weight-normal">{{ tag.TagName
+                                    }}</span>
+                            </div>
                         </div>
-                    </div>
-                    <div class="p-4" *ngIf="!addTagList?.length">
-                        <p>No Data Available.</p>
+                        <div class="p-4" *ngIf="!addTagList?.length">
+                            <p>No Data Available.</p>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
 
-    <div class="modal fade" tabindex="-1" id="RemoveTagModal" role="dialog" style="z-index: 99999">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content">
-                <div class="row popup-dialog AddTag">
-                    <p *ngIf="!ShowRemoveTag && removeTagList?.length > 0" class="label">
-                        Remove Tag
-                    </p>
-                    <p *ngIf="ShowRemoveTag" class="label">Remove Tag</p>
-                    <div class="d-flex addTag" *ngFor="let AddTag of removeTagList; let i = index">
-                        <label class="container arddtag">
-                            <input [checked]="checkTagStatus(AddTag.TagName, 1)" type="checkbox" name="tags" class="m-0"
-                                (change)="RemoveTags(i, $event)" />
-                            <span class="checkmark oops"></span>
-                        </label>
-                        <div class="dots d-flex align-items-center">
-                            <div class="color-dots" [style.background]="AddTag.TagColour"></div>
-                            <span class="fix-dots px-2 text-capitalize flex-grow-1 font-weight-normal">{{ AddTag.TagName
-                                }}</span>
+        <div class="modal fade" tabindex="-1" id="RemoveTagModal" role="dialog" style="z-index: 99999">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="row popup-dialog AddTag">
+                        <p *ngIf="!ShowRemoveTag && removeTagList?.length > 0" class="label" style="pointer-events: none;">
+                            Remove Tag
+                        </p>
+                        <p *ngIf="ShowRemoveTag" class="label">Remove Tag</p>
+                        <div class="d-flex addTag" *ngFor="let AddTag of removeTagList; let i = index" [ngClass]="{ 'disabled-option': isDisable('1', AddTag) }">
+                            <label class="container arddtag">
+                                <input [checked]="checkTagStatus(AddTag.TagName, 1)" type="checkbox" name="tags" class="m-0" 
+
+                                    (change)="RemoveTags(i, $event)" />
+                                <span class="checkmark oops"></span>
+                            </label>
+                            <div class="dots d-flex align-items-center">
+                                <div class="color-dots" [style.background]="AddTag.TagColour"></div>
+                                <span class="fix-dots px-2 text-capitalize flex-grow-1 font-weight-normal">{{ AddTag.TagName
+                                    }}</span>
+                            </div>
                         </div>
-                    </div>
-                    <div class="p-4" *ngIf="!removeTagList?.length">
-                        <p>No Data Available.</p>
+                        <div class="p-4" *ngIf="!removeTagList?.length">
+                            <p>No Data Available.</p>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
 
     <div class="modal fade" tabindex="-1" id="resolveAndOpen" role="dialog" style="z-index: 99999">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <div class="row popup-dialog AddTag">
-                    <p *ngIf="!ShowRemoveTag && converstationStatus?.length > 0" class="label">
+                    <p *ngIf="!ShowRemoveTag && converstationStatus?.length > 0" class="label" style="pointer-events: none;">
                         Converstation Status
                     </p>
                     <div class="d-flex addTag" *ngFor="let AddTag of converstationStatus; let i = index">
@@ -534,120 +566,102 @@
 <div class="modal fade" tabindex="-1" id="createBotModal" data-bs-backdrop="static" role="dialog">
     <div class="addsmartreplies modal-dialog smartreplies-modal" role="document">
         <div class="modal-content smartreplies-modal" id="delete-tok">
-            <div class="modal-body alertmessage" style="max-height: 90vh; overflow-y: auto">
+            <div class="modal-body alertmessage" style="max-height: 90vh; overflow-y: auto;">
                 <div class="container" id="addsmartreplies">
                     <div class="bs-stepper row linear">
-                        <div class="head d-flex justify-content-between align-items-center" style="margin-bottom: 20px">
+                        <div class="head d-flex justify-content-between align-items-center" style="margin-bottom: 20px;">
                             <p class="m-0 heading">Create New Bot</p>
-                            <button type="button" class="btn5 btn-close" style="width: 40px" data-bs-dismiss="modal"
-                                aria-label="Close">
-                                <img style="width: 10px" src="assets/img/teambox/icon-close.svg"
-                                    (click)="closeModalById('createBotModal')" />
+                            <button type="button" class="btn5 btn-close" style="width: 40px;" data-bs-dismiss="modal" aria-label="Close">
+                                <img style="width: 10px;" src="assets/img/teambox/icon-close.svg" (click)="closeModalById('createBotModal')" />
                             </button>
                         </div>
 
                         <div class="p-0 bs-stepper-content">
-                            <div id="logins-part" class="content fade active dstepper-block" role="tabpanel"
-                                aria-labelledby="logins-part-trigger">
+                            <div id="logins-part" class="content fade active dstepper-block" role="tabpanel" aria-labelledby="logins-part-trigger">
                                 <div class="box" [formGroup]="botBuilderForm">
                                     <h5>Bot Name<span class="text-danger"> * </span></h5>
-                                    <input class="form-control" type="text" name="Title" id="Title"
-                                        formControlName="name" placeholder="Enter title in max 20 character"
-                                        maxlength="20" (change)="checkBotName($event)" />
-                                    <div class="text-danger dangerText" *ngIf="
+                                    <input class="form-control" type="text" name="Title" id="Title" formControlName="name" placeholder="Enter title in max 50 character" maxlength="50" (change)="checkBotName($event)" />
+                                    <div
+                                        class="text-danger dangerText"
+                                        *ngIf="
                                             botBuilderForm.get('name')?.touched &&
                                             botBuilderForm.get('name')?.invalid
-                                        ">
-                                        <small *ngIf="botBuilderForm.get('name')?.errors?.['required']">Bot name is
-                                            required.</small>
-                                        <small *ngIf="botBuilderForm.get('name')?.errors?.['maxlength']">Max 20
-                                            characters allowed.</small>
+                                        "
+                                    >
+                                        <small *ngIf="botBuilderForm.get('name')?.errors?.['required']">Bot name is required.</small>
+                                        <small *ngIf="botBuilderForm.get('name')?.errors?.['maxlength']">Max 50 characters allowed.</small>
                                     </div>
 
-                                     <div *ngIf="errorMessageBot" class="text-danger small"
-                                            style="font-size: 10px; margin: 0px 51px">
-                                            {{ errorMessageBot }}
-                                        </div>
-                                    <h5>Description<span class="text-danger"> * </span></h5>
+                                    <div *ngIf="errorMessageBot" class="text-danger small" style="font-size: 10px; margin: 0px 51px;">
+                                        {{ errorMessageBot }}
+                                    </div>
+                                    <h5>Description <span class="text-muted">(Optional)</span></h5>
                                     <div class="form-floating ff">
-                                        <textarea name="Description" id="Description" class="form-control" rows="4"
-                                            cols="50" placeholder="Enter description in max 80 character"
-                                            formControlName="botDescription" maxlength="80">
-                                        </textarea>
+                                        <textarea name="Description" id="Description" class="form-control" rows="4" cols="50" placeholder="Enter description in max 100 character" formControlName="botDescription" maxlength="100"> </textarea>
                                     </div>
-                                    <div class="text-danger dangerText" *ngIf="
-                                            botBuilderForm.get('botDescription')?.touched &&
-                                            botBuilderForm.get('botDescription')?.invalid
-                                        ">
-                                        <small
-                                            *ngIf="botBuilderForm.get('botDescription')?.errors?.['required']">Description
-                                            is required.</small>
-                                        <small *ngIf="botBuilderForm.get('botDescription')?.errors?.['maxlength']">Max
-                                            80 characters allowed.</small>
+                                    <div
+                                        class="text-danger dangerText"
+                                        *ngIf="botBuilderForm.get('botDescription')?.touched && botBuilderForm.get('botDescription')?.invalid">
+                                        <small *ngIf="botBuilderForm.get('botDescription')?.errors?.['required']">Description is required.</small>
+                                        <small *ngIf="botBuilderForm.get('botDescription')?.errors?.['maxlength']">Max 80 characters allowed.</small>
                                     </div>
-                                    <div class="position-relative w-100" style="max-width: 100%">
+                                    <div class="position-relative w-100" style="max-width: 100%;">
                                         <h5>Channel<span class="text-danger"> * </span></h5>
-                                        <input class="form-control bg-white select_box" type="text" name="Channel"
-                                            id="Channel" formControlName="botChannel" (click)="toggleChannelOption()"
-                                            style="cursor: pointer" readonly placeholder="Select Channel" />
-                                        <div class="text-danger dangerText" *ngIf="
-                                                botBuilderForm.get('botChannel')?.touched &&
-                                                botBuilderForm.get('botChannel')?.invalid
-                                            ">
-                                            <small
-                                                *ngIf="botBuilderForm.get('botChannel')?.errors?.['required']">Channel
-                                                is required.</small>
+                                        <input
+                                            class="form-control bg-white select_box"
+                                            type="text"
+                                            name="Channel"
+                                            id="Channels"
+                                            formControlName="botChannel"
+                                            (click)="toggleChannelOption()"
+                                            style="cursor: pointer;"
+                                            readonly
+                                            placeholder="Select Channel"
+                                        />
+                                        <div class="text-danger dangerText" *ngIf="botBuilderForm.get('botChannel')?.touched && botBuilderForm.get('botChannel')?.invalid">
+                                            <small *ngIf="botBuilderForm.get('botChannel')?.errors?.['required']">Channel is required.</small>
                                         </div>
-                                        <div *ngIf="ShowChannelOption" (click)="stopPropagation($event)"
-                                            class="popup-dialog ContactOption">
-                                            <p *ngFor="let channel of channelOption; let i = index" class="label"
-                                                (click)="selectChannel(channel)" style="cursor: pointer">
+                                        <div *ngIf="ShowChannelOption" class="popup-dialogsCreate AssignOption" [ngStyle]="{'margin-top.px': botBuilderForm.get('botChannel')?.touched && botBuilderForm.get('botChannel')?.invalid ? -21 : 2}">
+                                            <p *ngFor="let channel of channelOption; let i = index" class="d-flex align-items-center px-2 py-1 ng-star-inserted" (click)="selectChannel(channel)" style="cursor: pointer;">
+                                                <img class="icon" src="/assets/img/teambox/whatsapp-icon-l.svg" />
                                                 <span>
-                                                    <img class="icon" src="/assets/img/teambox/whatsapp-icon-l.svg" />
-                                                    {{
-                                                    channel?.label === 'WhatsApp Official'
-                                                    ? 'WA API'
-                                                    : channel?.label === 'WhatsApp Web'
-                                                    ? 'WA Web'
-                                                    : channel?.label
-                                                    }}
-                                                    ({{ channel?.connected_id }})
+                                                    {{ channel?.label === 'WhatsApp Official' ? 'WA API' : channel?.label === 'WhatsApp Web' ? 'WA Web' : channel?.label }} ({{ channel?.connected_id }})
                                                 </span>
                                             </p>
-                                            <div *ngIf="ShowChannelOption" class="overlay"
-                                                (click)="ShowChannelOption = false"></div>
+                                            <div *ngIf="ShowChannelOption" (click)="ShowChannelOption = false"></div>
                                         </div>
                                     </div>
 
                                     <!-- Add this after the Channel section in your modal -->
                                     <div class="form-group">
-                                        <h5>
-                                            Bot Trigger Keywords <span class="text-danger">*</span>
-                                        </h5>
+                                        <h5>Bot Trigger Keywords <span class="text-danger">*</span></h5>
 
                                         <!-- Keywords input and add button -->
                                         <div class="d-flex align-items-center mb-2">
-                                            <input class="form-control" type="text" placeholder="Enter Keywords here"
-                                                [(ngModel)]="newKeyword" [ngModelOptions]="{ standalone: true }"
-                                                (keyup.enter)="addKeyword()" style="padding: 0 63px 0 24px" />
+                                            <input
+                                                class="form-control"
+                                                type="text"
+                                                placeholder="Enter Keywords here"
+                                                [(ngModel)]="newKeyword"
+                                                [ngModelOptions]="{ standalone: true }"
+                                                (keyup.enter)="addKeyword()"
+                                                style="padding: 0 63px 0 24px;"
+                                            />
                                             <button class="btn4" (click)="addKeyword()">Add</button>
                                         </div>
 
-                                        <p class="d-flex align-items-center text-muted small"
-                                            style="font-size: 10px; margin: 0px 51px">
-                                            Keywords must be unique across all bots, including those
-                                            configured for Smart Reply, and will operate based on
-                                            exact match criteria
+                                        <div class="text-danger dangerText" *ngIf="botBuilderForm.get('triggerKeywords')?.touched && botBuilderForm.get('triggerKeywords')?.invalid">
+                                            <small *ngIf="botBuilderForm.get('triggerKeywords')?.errors?.['required']">Bot Trigger Keywords is required.</small>
+                                        </div>
+
+                                        <p class="d-flex align-items-center text-muted small" style="font-size: 10px; margin: 0px 51px;">
+                                            Keywords must be unique across all bots, including those configured for Smart Reply, and will operate based on exact match criteria
                                         </p>
 
                                         <!-- Keywords list -->
                                         <div class="d-flex align-items-center keywords-container mb-2">
                                             <div *ngFor="let keyword of keywords; let i = index" class="keyword-tag">
-                                                {{
-                                                keyword.length > 20
-                                                ? (keyword | slice: 0:20) + '...'
-                                                : keyword
-                                                }}
+                                                {{ keyword.length > 20 ? (keyword | slice: 0:20) + '...' : keyword }}
                                                 <span class="remove-keyword" (click)="removeKeyword(i)">×</span>
                                             </div>
                                         </div>
@@ -655,19 +669,29 @@
                                         <!-- Help text -->
 
                                         <!-- Validation message -->
-                                        <div *ngIf="keywordsError" class="text-danger small"
-                                            style="font-size: 10px; margin: 0px 51px">
+                                        <div *ngIf="keywordsError" class="text-danger small" style="font-size: 10px; margin: 0px 51px;">
                                             {{ keywordsError }}
                                         </div>
                                     </div>
-                                    <h5>Bot Timeout<span class="text-danger"> * </span></h5>
-                                    <input type="time" class="form-control bg-white" formControlName="botTimeout" />
-                                    <div class="text-danger dangerText" *ngIf="
+                          <h5 class="d-flex align-items-center gap-1">
+  Bot Timeout<span class="text-danger"> *</span>
+  <sb-tooltip
+    class="ms-2"
+    [tooltipText]="'Set how long the bot should wait for a user reply before ending the session.'"
+    [isVisible]="isTooltipVisible"
+    (visibilityChange)="handleTooltipChange($event)"
+  ></sb-tooltip>
+</h5>
+
+                                    <input type="time" class="form-control bg-white" formControlName="botTimeout" placeholder="Enter bot timeout duration" />
+                                    <div
+                                        class="text-danger dangerText"
+                                        *ngIf="
                                             botBuilderForm.get('botTimeout')?.touched &&
                                             botBuilderForm.get('botTimeout')?.invalid
-                                        ">
-                                        <small *ngIf="botBuilderForm.get('botTimeout')?.errors?.['required']">Timeout is
-                                            required.</small>
+                                        "
+                                    >
+                                        <small *ngIf="botBuilderForm.get('botTimeout')?.errors?.['required']">Timeout is required.</small>
                                     </div>
 
                                     <div classs="advance_option">
@@ -677,19 +701,32 @@
                                         </h6>
                                         <!-- <div *ngIf="showAdvanceOption">  -->
 
-                                        <h5 *ngIf="showAdvanceOption">
-                                            Drop-off Message<span class="text-muted">(Optional)</span>
+                                        <h5 *ngIf="showAdvanceOption" class="d-flex align-items-center gap-3">Drop-off Message<span class="text-muted">(Optional)</span> 
+                                                <sb-tooltip
+    class="ms-2"
+    [tooltipText]="'Message shown when a user doesn’t respond within the timeout period.'"
+    [isVisible]="isTooltipVisible2"
+    (visibilityChange)="handleTooltipChange($event,2)"
+  ></sb-tooltip>
+                                          
                                         </h5>
-                                        <!-- <div class="child-interaction-2" *ngIf="showAdvanceOption"> -->
-                                        <div class="child-interaction-2"
-                                            [style.display]="showAdvanceOption ? 'block' : 'none'">
+                                        <div class="text-end" style="font-size: 13px; color: #6b7280; margin-left: 307px;" *ngIf="showAdvanceOption">Characters</div>
+                                        <div class="child-interaction-2" [style.display]="showAdvanceOption ? 'block' : 'none'">
                                             <div class="conversation_inout_area">
                                                 <div class="input-area">
-                                                    <ejs-richtexteditor id="defaultRTE" #chatEditor
-                                                        [toolbarSettings]="tools" [width]="0"
-                                                        placeholder="Type Message..." [pasteCleanupSettings]="
+                                                    <ejs-richtexteditor
+                                                        id="defaultRTE"
+                                                        #chatEditor
+                                                        [showCharCount]="true"
+                                                        [toolbarSettings]="tools"
+                                                        [width]="0"
+                                                        [maxLength]="1024"
+                                                        placeholder="Type Message..."
+                                                        [pasteCleanupSettings]="
                                                             pasteCleanupSettings
-                                                        " formControlName="dropOfMessage">
+                                                        "
+                                                        formControlName="dropOfMessage"
+                                                    >
                                                     </ejs-richtexteditor>
                                                     <!-- <button id="add-action-dropdown" type="button"><img
 															src="assets/img/teambox/add.svg">Bot var</button> -->
@@ -703,126 +740,114 @@
                                                 <span class="text-muted">(Optional)</span>
                                             </h5>
                                             <div class="form-group position-relative">
-                                                <input class="form-control bg-white select_box" type="text"
-                                                    name="advanceAction" placeholder="Select advance Action"
-                                                    (click)="toggleAdvanceAction()" readonly style="cursor: pointer" />
+                                                <input class="form-control bg-white select_box" type="text" name="advanceAction" placeholder="Select advance Action" (click)="toggleAdvanceAction()" readonly style="cursor: pointer;" />
 
-                                                <div *ngIf="ShowAddAction" class="popup-dialog AssignAction"
-                                                    (click)="stopPropagation($event)">
-                                                    <p class="label">Add Action</p>
-                                                    <p class="d-flex justify-content-around" *ngFor="
-                                                            let assignAction of assignActionList;
-                                                            let m = index
-                                                        " (click)="toggleAssignOption(m)" [class.disabled-option]="
-                                                            isOptionDisabled(assignAction.value)
-                                                        " [class.selected-option]="
+                                                <div *ngIf="ShowAddAction" class="popup-dialog AssignAction" (click)="stopPropagation($event)">
+                                                    <p class="label" style="pointer-events: none;">Add Action</p>
+                                                    <p
+                                                        class="d-flex justify-content-around"
+                                                        *ngFor="let assignAction of assignActionList;let m = index" (click)="toggleAssignOption(m)" [class.disabled-option]="isOptionDisabled(assignAction.value)"
+                                                        [class.selected-option]="
                                                             selectedExclusiveAction ===
                                                             assignAction.value
-                                                        ">
+                                                        "
+                                                    >
                                                         <span>{{ assignAction.name }}</span>
-                                                        <img class="pr-3 arrow-sign" *ngIf="assignAction?.children"
-                                                            src="../../../../assets/img/arrow-sign.svg" />
+                                                        <img class="pr-3 arrow-sign" *ngIf="assignAction?.children" src="../../../../assets/img/arrow-sign.svg" />
                                                     </p>
                                                 </div>
-                                                <div *ngIf="ShowAddAction" class="modal-backdrop-custom"
-                                                    (click)="closeAddAction()"></div>
+                                                <div *ngIf="ShowAddAction" class="modal-backdrop-custom" (click)="closeAddAction()"></div>
 
-                                                <div *ngIf="
-                                                        ShowAssignOption && agentsList.length > 0
-                                                    " (click)="stopPropagation($event)"
-                                                    class="popup-dialog AssignOption" [class.disabled]="isAssigned">
-                                                    <p class="label">Assign To</p>
-                                                    <p class="d-flex align-items-center px-2 py-1" *ngFor="
+                                                <div
+                                                    *ngIf="ShowAssignOption && agentsList.length > 0
+                                                    "
+                                                    (click)="stopPropagation($event)"
+                                                    class="popup-dialog AssignOption"
+                                                    [class.disabled]="isAssigned"
+                                                >
+                                                    <p class="label" style="pointer-events: none;">Assign To</p>
+                                                    <p
+                                                        class="d-flex align-items-center px-2 py-1"
+                                                        *ngFor="
                                                             let agent of agentsList;
                                                             let k = index
-                                                        " (click)="
+                                                        "
+                                                        (click)="
                                                             assignConversation(k);
                                                             closeAssignOption()
-                                                        ">
-                                                        <span *ngIf="!agent.profileImg"
-                                                            class="text-capitalize initials mt-0 w-25">{{
-                                                            agent.nameInitials }}</span>
-                                                        <img *ngIf="agent.profileImg" class="rounded-circle mt-0" style="
-                                                                width: 30px;
-                                                                height: 30px;
-                                                                margin-left: 11px;
-                                                            " [src]="agent.profileImg" />
-                                                        <span key="{k}" class="agentName mt-0 w-75">{{ agent.name
-                                                            }}</span>
+                                                        "
+                                                    >
+                                                        <span *ngIf="!agent.profileImg" class="text-capitalize initials mt-0 w-25">{{ agent.nameInitials }}</span>
+                                                        <img *ngIf="agent.profileImg" class="rounded-circle mt-0" style="width: 30px; height: 30px; margin-left: 11px;" [src]="agent.profileImg" />
+                                                        <span key="{k}" class="agentName mt-0 w-75">{{ agent.name }}</span>
                                                     </p>
                                                     <div class="p-4" *ngIf="!agentsList?.length">
                                                         <p>No Data Available.</p>
                                                     </div>
                                                 </div>
 
+                                                <div *ngIf="ShowAssignOption" class="modal-backdrop-custom" (click)="closeAssignTo()"></div>
+
                                                 <div class="interactions">
                                                     <div class="child-int-1 py-2">
                                                         <div #chatSection class="child-interaction-1">
-                                                            <div
-                                                                *ngFor="let message of assignedAgentList; let i = index">
-
+                                                            <div *ngFor="let message of assignedAgentList; let i = index">
                                                                 <!-- Conversation Assigned -->
-                                                                <div *ngIf="message.actionTypeId == 2"
-                                                                    class="d-flex justify-content-between align-items-center">
+                                                                <div *ngIf="message.actionTypeId == 2" class="d-flex justify-content-between align-items-center">
                                                                     <div class="col-8 assign-conversation">
                                                                         <p class="m-0 py-1 px-2" id="msgbox-head1">
-                                                                            Action</p>
+                                                                            Action
+                                                                        </p>
                                                                         <div class="d-flex flex-wrap assign-container">
                                                                             <p class="py-1 px-2 m-0" id="msgbox-body1">
                                                                                 <b>Conversation Assigned:</b>
                                                                             </p>
-                                                                            <p class="py-1 m-0" id="msgbox-body2"
-                                                                                (input)="onActionEdit($event.target.innerHTML)">
+                                                                            <p class="py-1 m-0" id="msgbox-body2" (input)="onActionEdit($event.target.innerHTML)">
                                                                                 {{ message.Value }}
                                                                             </p>
                                                                         </div>
                                                                     </div>
                                                                     <div class="col-4 assign-buttons">
-                                                                        <button class="px-2 msg-edit-btn btn-2"
-                                                                            (click)="toggleEditable(i)">
+                                                                        <button class="px-2 msg-edit-btn btn-2" (click)="toggleEditable(i)">
                                                                             <img src="assets/img/edit.png" />
                                                                         </button>
-                                                                        <button class="px-1 msg-del-btn"
-                                                                            (click)="removeAction(i)">
+                                                                        <button class="px-1 msg-del-btn" (click)="removeAction(i)">
                                                                             <img src="assets/img/delete.png" />
                                                                         </button>
                                                                     </div>
                                                                 </div>
 
                                                                 <!-- Conversation Status -->
-                                                                <div *ngIf="message.actionTypeId == 4"
-                                                                    class="d-flex justify-content-between align-items-center">
+                                                                <div *ngIf="message.actionTypeId == 4" class="d-flex justify-content-between align-items-center">
                                                                     <div class="col-8 assign-conversation">
                                                                         <p class="m-0 py-1 px-2" id="msgbox-head1">
-                                                                            Action</p>
+                                                                            Action
+                                                                        </p>
                                                                         <div class="d-flex flex-wrap assign-container">
                                                                             <p class="py-1 px-2 m-0" id="msgbox-body1">
                                                                                 <b>Conversation Status:</b>
                                                                             </p>
-                                                                            <p class="py-1 m-0" id="msgbox-body2"
-                                                                                (input)="onActionEdit($event.target.innerHTML)">
+                                                                            <p class="py-1 m-0" id="msgbox-body2" (input)="onActionEdit($event.target.innerHTML)">
                                                                                 {{ message.Value }}
                                                                             </p>
                                                                         </div>
                                                                     </div>
                                                                     <div class="col-4 assign-buttons">
-                                                                        <button class="px-2 msg-edit-btn btn-2"
-                                                                            (click)="toggleEditableConverstion()">
+                                                                        <button class="px-2 msg-edit-btn btn-2" (click)="toggleEditableConverstion()">
                                                                             <img src="assets/img/edit.png" />
                                                                         </button>
-                                                                        <button class="px-1 msg-del-btn"
-                                                                            (click)="removeAction(i)">
+                                                                        <button class="px-1 msg-del-btn" (click)="removeAction(i)">
                                                                             <img src="assets/img/delete.png" />
                                                                         </button>
                                                                     </div>
                                                                 </div>
 
                                                                 <!-- Owner Assignment -->
-                                                                <div *ngIf="message.actionTypeId === 5"
-                                                                    class="d-flex justify-content-between align-items-center">
+                                                                <div *ngIf="message.actionTypeId === 5" class="d-flex justify-content-between align-items-center">
                                                                     <div class="col-8 assign-conversation">
                                                                         <p class="m-0 py-1 px-2" id="msgbox-head1">
-                                                                            Action</p>
+                                                                            Action
+                                                                        </p>
                                                                         <div class="d-flex flex-wrap assign-container">
                                                                             <p class="py-1 px-2 m-0" id="msgbox-body1">
                                                                                 <b>Owner Assignment:</b>
@@ -833,20 +858,18 @@
                                                                         </div>
                                                                     </div>
                                                                     <div class="col-4 assign-buttons">
-                                                                        <button class="px-1 msg-del-btn"
-                                                                            (click)="removeExclusiveAction('assign_owner')">
-                                                                            <img src="assets/img/delete.png"
-                                                                                alt="Remove" />
+                                                                        <button class="px-1 msg-del-btn" (click)="removeExclusiveAction('assign_owner')">
+                                                                            <img src="assets/img/delete.png" alt="Remove" />
                                                                         </button>
                                                                     </div>
                                                                 </div>
 
                                                                 <!-- Unassignment -->
-                                                                <div *ngIf="message.actionTypeId === 6"
-                                                                    class="d-flex justify-content-between align-items-center">
+                                                                <div *ngIf="message.actionTypeId === 6" class="d-flex justify-content-between align-items-center">
                                                                     <div class="col-8 assign-conversation">
                                                                         <p class="m-0 py-1 px-2" id="msgbox-head1">
-                                                                            Action</p>
+                                                                            Action
+                                                                        </p>
                                                                         <div class="d-flex flex-wrap assign-container">
                                                                             <p class="py-1 px-2 m-0" id="msgbox-body1">
                                                                                 <b>Unassignment:</b>
@@ -857,87 +880,64 @@
                                                                         </div>
                                                                     </div>
                                                                     <div class="col-4 assign-buttons">
-                                                                        <button class="px-1 msg-del-btn"
-                                                                            (click)="removeExclusiveAction('Unassign_conversation')">
-                                                                            <img src="assets/img/delete.png"
-                                                                                alt="Remove" />
+                                                                        <button class="px-1 msg-del-btn" (click)="removeExclusiveAction('Unassign_conversation')">
+                                                                            <img src="assets/img/delete.png" alt="Remove" />
                                                                         </button>
                                                                     </div>
                                                                 </div>
 
                                                                 <!-- Add Tags -->
-                                                                <div *ngIf="message.actionTypeId == 1"
-                                                                    class="d-flex justify-content-between align-items-center">
+                                                                <div *ngIf="message.actionTypeId == 1 && message.Value?.length > 0" class="d-flex justify-content-between align-items-center">
                                                                     <div class="col-8 add-tag">
                                                                         <p id="msgbox-head1">Action</p>
                                                                         <div class="d-flex flex-wrap assign-container">
                                                                             <p class="p-1 m-0" id="msgbox-body1">
                                                                                 <b>Add Tags:</b>
-                                                                                <span class="pl-1"
-                                                                                    *ngFor="let item of message.Value; let last = last">
-                                                                                    {{ item }}<span
-                                                                                        *ngIf="!last">,</span>
-                                                                                </span>
+                                                                                <span class="pl-1" *ngFor="let item of message.Value; let last = last"> {{ item }}<span *ngIf="!last">,</span> </span>
                                                                             </p>
                                                                         </div>
                                                                     </div>
                                                                     <div class="col-4 assign-buttons">
-                                                                        <button class="px-2 msg-edit-btn"
-                                                                            (click)="toggleRemoveTag('addTag')">
+                                                                        <button class="px-2 msg-edit-btn" (click)="toggleRemoveTag('addTag')">
                                                                             <img src="assets/img/edit.png" />
                                                                         </button>
-                                                                        <button class="px-1 msg-del-btn"
-                                                                            (click)="removeAddTag(i)">
+                                                                        <button class="px-1 msg-del-btn" (click)="removeAddTag(i)">
                                                                             <img src="assets/img/delete.png" />
                                                                         </button>
                                                                     </div>
                                                                 </div>
 
                                                                 <!-- Remove Tags -->
-                                                                <div *ngIf="message.actionTypeId == 3 && message.Value?.length > 0"
-                                                                    class="d-flex justify-content-between align-items-center">
+                                                                <div *ngIf="message.actionTypeId == 3 && message.Value?.length > 0" class="d-flex justify-content-between align-items-center">
                                                                     <div class="col-8 add-tag">
                                                                         <p id="msgbox-head1">Action</p>
                                                                         <div class="d-flex flex-wrap assign-container">
                                                                             <p class="p-1 m-0" id="msgbox-body1">
                                                                                 <b>Remove Tags:</b>
-                                                                                <span class="pl-1"
-                                                                                    *ngFor="let item of message.Value; let last = last">
-                                                                                    {{ item }}<span
-                                                                                        *ngIf="!last">,</span>
-                                                                                </span>
+                                                                                <span class="pl-1" *ngFor="let item of message.Value; let last = last"> {{ item }}<span *ngIf="!last">,</span> </span>
                                                                             </p>
                                                                         </div>
                                                                     </div>
                                                                     <div class="col-4 assign-buttons">
-                                                                        <button class="px-2 msg-edit-btn"
-                                                                            (click)="toggleRemoveTag('RemoveTag')">
+                                                                        <button class="px-2 msg-edit-btn" (click)="toggleRemoveTag('RemoveTag')">
                                                                             <img src="assets/img/edit.png" />
                                                                         </button>
-                                                                        <button class="px-1 msg-del-btn"
-                                                                            (click)="removeAddTag(i)">
+                                                                        <button class="px-1 msg-del-btn" (click)="removeAddTag(i)">
                                                                             <img src="assets/img/delete.png" />
                                                                         </button>
                                                                     </div>
                                                                 </div>
-
                                                             </div>
                                                         </div>
                                                     </div>
                                                 </div>
-
-
-
-
-
                                             </div>
                                         </div>
                                     </div>
                                 </div>
                                 <div class="title err-msg">
                                     <span id="title-err-msg"></span>
-                                    <button type="button" class="btn5 btn-block col-2"
-                                        (click)="submitBotForm('create')">
+                                    <button type="button" class="btn5 btn-block col-2" (click)="openSubmitBotModal('CreateBotModal')">
                                         Save and Next
                                     </button>
                                 </div>
@@ -950,14 +950,17 @@
     </div>
 </div>
 
-<div class="modal fade" tabindex="-1" id="editFlowModal" data-bs-backdrop="static" role="dialog">
+
+
+
+<div class="modal fade" tabindex="-1" id="botModal" data-bs-backdrop="static" role="dialog">
     <div class="addsmartreplies modal-dialog smartreplies-modal" role="document">
         <div class="modal-content smartreplies-modal" id="edit-modal-tok">
             <div class="modal-body alertmessage" style="max-height: 90vh; overflow-y: auto">
                 <div class="container" id="edit-smartreplies">
                     <div class="bs-stepper row linear">
                         <div class="head d-flex justify-content-between align-items-center" style="margin-bottom: 20px">
-                            <p class="m-0 heading">Edit Bot</p>
+                            <p class="m-0 heading">{{ isEditMode ? 'Edit Bot' : 'Create New Bot' }}</p>
                             <button type="button" class="btn5 btn-close" style="width: 40px" data-bs-dismiss="modal"
                                 aria-label="Close">
                                 <img style="width: 10px" src="assets/img/teambox/icon-close.svg" />
@@ -969,20 +972,29 @@
                                 aria-labelledby="logins-part-trigger">
                                 <div class="box" [formGroup]="botBuilderForm">
                                     <h5>Bot Name<span class="text-danger"> * </span></h5>
-                                    <input class="form-control" type="text" formControlName="name" maxlength="20"
-                                        placeholder="Enter title in max 20 character" (change)="checkBotName($event)" />
+                                    <input class="form-control" type="text" formControlName="name" maxlength="50"
+                                        placeholder="Enter title in max 50 character" (change)="checkBotName($event)" />
 
+                                    <div *ngIf="errorMessageBot" class="text-danger small"
+                                        style="font-size: 10px; margin: 0px 51px">
+                                        {{ errorMessageBot }}
+                                    </div>
 
-                                        <div *ngIf="errorMessageBot" class="text-danger small"
-                                            style="font-size: 10px; margin: 0px 51px">
-                                            {{ errorMessageBot }}
-                                        </div>
+                                    <div class="text-danger dangerText" *ngIf="
+                                            botBuilderForm.get('name')?.touched &&
+                                            botBuilderForm.get('name')?.invalid
+                                        ">
+                                        <small *ngIf="botBuilderForm.get('name')?.errors?.['required']">Bot name is
+                                            required.</small>
+                                        <small *ngIf="botBuilderForm.get('name')?.errors?.['maxlength']">Max 50
+                                            characters allowed.</small>
+                                    </div>
 
-                                    <h5>Description<span class="text-danger"> * </span></h5>
+                                    <h5>Description <span class="text-muted">(Optional)</span></h5>
                                     <div class="form-floating ff">
                                         <textarea class="form-control" rows="4" formControlName="botDescription"
-                                            maxlength="80"
-                                            placeholder="Enter description in max 80 character"></textarea>
+                                            maxlength="100"
+                                            placeholder="Enter description in max 100 character"></textarea>
                                     </div>
 
                                     <div class="position-relative w-100" style="max-width: 100%">
@@ -999,11 +1011,11 @@
                                                 is required.</small>
                                         </div>
                                         <div *ngIf="ShowChannelOption" (click)="stopPropagation($event)"
-                                            class="popup-dialog ContactOption">
-                                            <p *ngFor="let channel of channelOption; let i = index" class="label"
+                                            class="popup-dialogsCreate AssignOption" [ngStyle]="{'margin-top.px': botBuilderForm.get('botChannel')?.touched && botBuilderForm.get('botChannel')?.invalid ? -21 : 2}">
+                                            <p *ngFor="let channel of channelOption; let i = index" class="d-flex align-items-center px-2 py-1"
                                                 (click)="selectChannel(channel)" style="cursor: pointer">
+                                                <img class="icon" src="/assets/img/teambox/whatsapp-icon-l.svg" />
                                                 <span>
-                                                    <img class="icon" src="/assets/img/teambox/whatsapp-icon-l.svg" />
                                                     {{
                                                     channel?.label === 'WhatsApp Official'
                                                     ? 'WA API'
@@ -1014,25 +1026,31 @@
                                                     ({{ channel?.connected_id }})
                                                 </span>
                                             </p>
-                                            <div *ngIf="ShowChannelOption" class="overlay"
+                                            <div *ngIf="ShowChannelOption" 
                                                 (click)="ShowChannelOption = false"></div>
                                         </div>
                                     </div>
-                                    <!-- Channel Dropdown Logic Same as Add -->
 
-                                    <!-- Add this after the Channel section in your modal -->
                                     <div class="form-group">
                                         <h5>
                                             Bot Trigger Keywords <span class="text-danger">*</span>
                                         </h5>
 
-                                        <!-- Keywords input and add button -->
                                         <div class="d-flex align-items-center mb-2">
                                             <input class="form-control" type="text" placeholder="Enter Keywords here"
                                                 [(ngModel)]="newKeyword" [ngModelOptions]="{ standalone: true }"
                                                 (keyup.enter)="addKeyword()" style="padding: 0 63px 0 24px" />
                                             <button class="btn4" (click)="addKeyword()">Add</button>
                                         </div>
+
+
+
+                                            <div class="text-danger dangerText" *ngIf="botBuilderForm.get('triggerKeywords')?.touched && botBuilderForm.get('triggerKeywords')?.invalid">
+                                            <small
+                                                *ngIf="botBuilderForm.get('triggerKeywords')?.errors?.['required']">Bot Trigger Keywords
+                                                is required.</small>
+                                        </div>
+                                        
 
                                         <p class="d-flex align-items-center text-muted small"
                                             style="font-size: 10px; margin: 0px 51px">
@@ -1041,7 +1059,6 @@
                                             exact match criteria
                                         </p>
 
-                                        <!-- Keywords list -->
                                         <div class="d-flex align-items-center keywords-container mb-2">
                                             <div *ngFor="let keyword of keywords; let i = index" class="keyword-tag">
                                                 {{
@@ -1053,38 +1070,49 @@
                                             </div>
                                         </div>
 
-                                        <!-- Help text -->
-
-                                        <!-- Validation message -->
                                         <div *ngIf="keywordsError" class="text-danger small"
                                             style="font-size: 10px; margin: 0px 51px">
                                             {{ keywordsError }}
                                         </div>
                                     </div>
 
-                                    <h5>Bot Timeout<span class="text-danger"> * </span></h5>
-                                    <input type="time" class="form-control bg-white" formControlName="botTimeout" />
+                                                              <h5 class="d-flex align-items-center gap-1">
+  Bot Timeout<span class="text-danger"> *</span>
+  <sb-tooltip
+    class="ms-2"
+    [tooltipText]="'Set how long the bot should wait for a user reply before ending the session.'"
+    [isVisible]="isTooltipVisible"
+    (visibilityChange)="handleTooltipChange($event)"
+  ></sb-tooltip>
+</h5>
 
-                                    <!-- Advance Option Same as Add Modal -->
-                                    <!-- You can reuse the same HTML inside this div -->
+                                    <input type="time" class="form-control bg-white" formControlName="botTimeout" placeholder="Enter bot timeout duration" />
+
                                     <div class="advance_option">
                                         <h6 (click)="toggleAdvanceOption()">
                                             Advance Option &nbsp;
                                             <img class="icons" src="../../../../assets/img/teambox/dropdown.svg" />
                                         </h6>
 
-                                        <h5 *ngIf="showAdvanceOption">
-                                            Drop-off Message<span class="text-muted">(Optional)</span>
+                                        <h5 *ngIf="showAdvanceOption" class="d-flex align-items-center gap-3">
+                                            Drop-off Message<span class="text-muted">(Optional) </span>
+                                                <sb-tooltip
+    class="ms-2"
+    [tooltipText]="'Message shown when a user doesn’t respond within the timeout period.'"
+    [isVisible]="isTooltipVisible2"
+    (visibilityChange)="handleTooltipChange($event,2)"
+  ></sb-tooltip>
+                                          
                                         </h5>
+                                          <div class="text-end" style="font-size: 13px; color: #6b7280; margin-left: 307px" *ngIf="showAdvanceOption">Characters </div>
                                         <div class="child-interaction-2"
                                             [style.display]="showAdvanceOption ? 'block' : 'none'">
                                             <div class="conversation_inout_area">
                                                 <div class="input-area">
+                                                  
                                                     <ejs-richtexteditor id="editRTE" #chatEditor
-                                                        [toolbarSettings]="tools" [width]="0"
-                                                        placeholder="Type Message..." [pasteCleanupSettings]="
-                                                            pasteCleanupSettings
-                                                        " formControlName="dropOfMessage">
+                                                        [toolbarSettings]="tools" [width]="0"  [maxLength]="1024" [showCharCount]="true"
+                                                        placeholder="Type Message..." [pasteCleanupSettings]="pasteCleanupSettings" formControlName="dropOfMessage">
                                                     </ejs-richtexteditor>
                                                 </div>
                                             </div>
@@ -1102,7 +1130,7 @@
 
                                                 <div *ngIf="ShowAddAction" class="popup-dialog AssignAction"
                                                     (click)="stopPropagation($event)">
-                                                    <p class="label">Add Action</p>
+                                                    <p class="label" style="pointer-events: none;">Add Action</p>
                                                     <p class="d-flex justify-content-around" *ngFor="
                                                             let assignAction of assignActionList;
                                                             let m = index
@@ -1123,7 +1151,7 @@
                                                         ShowAssignOption && agentsList.length > 0
                                                     " (click)="stopPropagation($event)"
                                                     class="popup-dialog AssignOption" [class.disabled]="isAssigned">
-                                                    <p class="label">Assign To</p>
+                                                    <p class="label" style="pointer-events: none;">Assign To</p>
                                                     <p class="d-flex align-items-center px-2 py-1" *ngFor="
                                                             let agent of agentsList;
                                                             let k = index
@@ -1150,13 +1178,13 @@
                                                 <div class="interactions">
                                                     <div class="child-int-1 py-2">
                                                         <div #chatSection class="child-interaction-1">
+                                                            <!-- Action items display -->
                                                             <div *ngFor="
                                                                     let message of assignedAgentList;
                                                                     let i = index
                                                                 ">
-                                                                <div *ngIf="
-                                                                        message.actionTypeId == 2
-                                                                    "
+                                                                <!-- Conversation Assigned -->
+                                                                <div *ngIf="message.actionTypeId == 2"
                                                                     class="d-flex justify-content-between align-items-center">
                                                                     <div class="col-8 assign-conversation">
                                                                         <p class="m-0 py-1 px-2" id="msgbox-head1">
@@ -1164,38 +1192,26 @@
                                                                         </p>
                                                                         <div class="d-flex flex-wrap assign-container">
                                                                             <p class="py-1 px-2 m-0" id="msgbox-body1">
-                                                                                <b>Conversation
-                                                                                    Assigned:</b>
+                                                                                <b>Conversation Assigned:</b>
                                                                             </p>
                                                                             <p class="py-1 m-0" id="msgbox-body2"
-                                                                                (input)="
-                                                                                    onActionEdit(
-                                                                                        $event
-                                                                                            .target
-                                                                                            .innerHTML
-                                                                                    )
-                                                                                ">
+                                                                                (input)="onActionEdit($event.target.innerHTML)">
                                                                                 {{ message.Value }}
                                                                             </p>
                                                                         </div>
                                                                     </div>
                                                                     <div class="col-4 assign-buttons">
-                                                                        <button class="px-2 msg-edit-btn btn-2" (click)="
-                                                                                toggleEditable(i)
-                                                                            ">
+                                                                        <button class="px-2 msg-edit-btn btn-2" (click)="toggleEditable(i)">
                                                                             <img src="assets/img/edit.png" />
                                                                         </button>
-                                                                        <button class="px-1 msg-del-btn" (click)="
-                                                                                removeAction(i)
-                                                                            ">
+                                                                        <button class="px-1 msg-del-btn" (click)="removeAction(i)">
                                                                             <img src="assets/img/delete.png" />
                                                                         </button>
                                                                     </div>
                                                                 </div>
 
-                                                                <div *ngIf="
-                                                                        message.actionTypeId === 5
-                                                                    "
+                                                                <!-- Owner Assignment -->
+                                                                <div *ngIf="message.actionTypeId === 5"
                                                                     class="d-flex justify-content-between align-items-center">
                                                                     <div class="col-8 assign-conversation">
                                                                         <p class="m-0 py-1 px-2" id="msgbox-head1">
@@ -1203,8 +1219,7 @@
                                                                         </p>
                                                                         <div class="d-flex flex-wrap assign-container">
                                                                             <p class="py-1 px-2 m-0" id="msgbox-body1">
-                                                                                <b>Owner
-                                                                                    Assignment:</b>
+                                                                                <b>Owner Assignment:</b>
                                                                             </p>
                                                                             <p class="py-1 m-0" id="msgbox-body2">
                                                                                 {{ message.Value }}
@@ -1212,20 +1227,14 @@
                                                                         </div>
                                                                     </div>
                                                                     <div class="col-4 assign-buttons">
-                                                                        <button class="px-1 msg-del-btn" (click)="
-                                                                                removeExclusiveAction(
-                                                                                    'assign_owner'
-                                                                                )
-                                                                            ">
-                                                                            <img src="assets/img/delete.png"
-                                                                                alt="Remove" />
+                                                                        <button class="px-1 msg-del-btn" (click)="removeExclusiveAction('assign_owner')">
+                                                                            <img src="assets/img/delete.png" alt="Remove" />
                                                                         </button>
                                                                     </div>
                                                                 </div>
 
-                                                                <div *ngIf="
-                                                                        message.actionTypeId === 6
-                                                                    "
+                                                                <!-- Unassignment -->
+                                                                <div *ngIf="message.actionTypeId === 6"
                                                                     class="d-flex justify-content-between align-items-center">
                                                                     <div class="col-8 assign-conversation">
                                                                         <p class="m-0 py-1 px-2" id="msgbox-head1">
@@ -1241,91 +1250,55 @@
                                                                         </div>
                                                                     </div>
                                                                     <div class="col-4 assign-buttons">
-                                                                        <button class="px-1 msg-del-btn" (click)="
-                                                                                removeExclusiveAction(
-                                                                                    'Unassign_conversation'
-                                                                                )
-                                                                            ">
-                                                                            <img src="assets/img/delete.png"
-                                                                                alt="Remove" />
+                                                                        <button class="px-1 msg-del-btn" (click)="removeExclusiveAction('Unassign_conversation')">
+                                                                            <img src="assets/img/delete.png" alt="Remove" />
                                                                         </button>
                                                                     </div>
                                                                 </div>
 
-                                                                <div *ngIf="
-                                                                        message.actionTypeId == 1
-                                                                    "
+                                                                <!-- Add Tags -->
+                                                                <div *ngIf="message.actionTypeId == 1 && message.Value?.length > 0"
                                                                     class="d-flex justify-content-between align-items-center">
                                                                     <div class="col-8 add-tag">
-                                                                        <p id="msgbox-head1">
-                                                                            Action
-                                                                        </p>
+                                                                        <p id="msgbox-head1">Action</p>
                                                                         <div class="d-flex flex-wrap assign-container">
                                                                             <p class="p-1 m-0" id="msgbox-body1">
                                                                                 <b>Add Tags: </b>
-                                                                                <span class="pl-1" *ngFor="
-                                                                                        let item of message.Value;
-                                                                                        let last = last
-                                                                                    ">
-                                                                                    {{ item
-                                                                                    }}<span *ngIf="
-                                                                                            !last
-                                                                                        ">,</span>
+                                                                                <span class="pl-1" *ngFor="let item of message.Value; let last = last">
+                                                                                    {{ item }}<span *ngIf="!last">,</span>
                                                                                 </span>
                                                                             </p>
                                                                         </div>
                                                                     </div>
                                                                     <div class="col-4 assign-buttons">
-                                                                        <button class="px-2 msg-edit-btn" (click)="
-                                                                                toggleRemoveTag(
-                                                                                    'addTag'
-                                                                                )
-                                                                            ">
+                                                                        <button class="px-2 msg-edit-btn" (click)="toggleRemoveTag('addTag')">
                                                                             <img src="assets/img/edit.png" />
                                                                         </button>
-                                                                        <button class="px-1 msg-del-btn" (click)="
-                                                                                removeAddTag(i)
-                                                                            ">
+                                                                        <button class="px-1 msg-del-btn" (click)="removeAddTag(i)">
                                                                             <img src="assets/img/delete.png" />
                                                                         </button>
                                                                     </div>
                                                                 </div>
 
-                                                                <div *ngIf="
-                                                                        message.actionTypeId == 3 &&
-                                                                        message.Value?.length > 0
-                                                                    "
+                                                                <!-- Remove Tags -->
+                                                                <div *ngIf="message.actionTypeId == 3 && message.Value?.length > 0"
                                                                     class="d-flex justify-content-between align-items-center">
                                                                     <div class="col-8 add-tag">
-                                                                        <p id="msgbox-head1">
-                                                                            Action
-                                                                        </p>
+                                                                        <p id="msgbox-head1">Action</p>
                                                                         <div class="d-flex flex-wrap assign-container">
                                                                             <p class="p-1 m-0" id="msgbox-body1">
                                                                                 <b>Remove Tags: </b>
-                                                                                <span class="pl-1" *ngFor="
-                                                                                        let item of message.Value;
-                                                                                        let last = last
-                                                                                    ">
-                                                                                    {{ item
-                                                                                    }}<span *ngIf="
-                                                                                            !last
-                                                                                        ">,</span>
+                                                                                <span class="pl-1" *ngFor="let item of message.Value; let last = last">
+                                                                                    {{ item }}<span *ngIf="!last">,</span>
                                                                                 </span>
                                                                             </p>
                                                                         </div>
                                                                     </div>
                                                                     <div class="col-4 assign-buttons">
-                                                                        <button class="px-2 msg-edit-btn" (click)="
-                                                                                toggleRemoveTag(
-                                                                                    'RemoveTag'
-                                                                                )
-                                                                            ">
+                                                                        <button class="px-2 msg-edit-btn" (click)="toggleRemoveTag('RemoveTag')">
                                                                             <img src="assets/img/edit.png" />
                                                                         </button>
-                                                                        <button class="px-1 msg-del-btn" (click)="
-                                                                                removeAddTag(i)
-                                                                            ">
+                                                                        <button class="px-1 msg-del-btn" (click)="removeAddTag(i)">
                                                                             <img src="assets/img/delete.png" />
                                                                         </button>
                                                                     </div>
@@ -1341,9 +1314,11 @@
 
                                 <div class="title err-msg mt-3">
                                     <span id="title-err-msg"></span>
-                                    <button type="button" class="btn5 btn-block col-1" (click)="updateBotForm()">
-                                        Update
+                                    <button type="button" class="btn5 btn-block" [class.col-1]="isEditMode" [class.col-2]="!isEditMode" 
+                                       (click)="isEditMode ? openSubmitBotModal('UpdateModal') : openSubmitBotModal('copyModal')">
+                                        {{ isEditMode ? 'Update' : 'Save And Next' }}
                                     </button>
+                                     <!-- (click)="isEditMode ? updateBotForm() : submitBotForm('copy')"  -->
                                 </div>
                             </div>
                         </div>
@@ -1354,10 +1329,19 @@
     </div>
 </div>
 
+
+
+
+
+
+
+
+
+
 <div class="modal fade" tabindex="-1" id="viewFlowModal" data-bs-backdrop="static" role="dialog">
     <div class="addsmartreplies modal-dialog smartreplies-modal" role="document">
         <div class="modal-content smartreplies-modal" id="view-modal-tok">
-            <div class="modal-body alertmessage" style="max-height: 90vh; overflow-y: auto">
+            <div class="modal-body alertmessage" >
                 <div class="container" id="view-smartreplies">
                     <div class="bs-stepper row linear">
                         <div class="head d-flex justify-content-between align-items-center" style="margin-bottom: 20px">
@@ -1370,16 +1354,16 @@
 
                         <div class="p-0 bs-stepper-content">
                             <div id="logins-part" class="content fade active dstepper-block" role="tabpanel">
-                                <div class="box" [formGroup]="botBuilderForm">
+                                <div class="box" [formGroup]="botBuilderForm" style="max-height: 76vh; overflow-y: auto">
                                     <h5>Bot Name</h5>
-                                    <input class="form-control" type="text" formControlName="name" maxlength="20"
+                                    <input class="form-control" type="text" formControlName="name" maxlength="50"
                                         readonly />
 
 
                                     <h5>Description</h5>
                                     <div class="form-floating ff">
                                         <textarea class="form-control" rows="4" formControlName="botDescription"
-                                            maxlength="80" readonly></textarea>
+                                            maxlength="100" readonly></textarea>
                                     </div>
 
 
@@ -1421,7 +1405,16 @@
 
                                     </div>
 
-                                    <h5>Bot Timeout</h5>
+                                                              <h5 class="d-flex align-items-center gap-1">
+  Bot Timeout<span class="text-danger"> *</span>
+  <sb-tooltip
+    class="ms-2"
+    [tooltipText]="'Set how long the bot should wait for a user reply before ending the session.'"
+    [isVisible]="isTooltipVisible"
+    (visibilityChange)="handleTooltipChange($event)"
+  ></sb-tooltip>
+</h5>
+
                                     <input type="time" class="form-control bg-white" formControlName="botTimeout"
                                         readonly />
 
@@ -1431,8 +1424,15 @@
                                             <img class="icons" src="../../../../assets/img/teambox/dropdown.svg" />
                                         </h6>
 
-                                        <h5 *ngIf="showAdvanceOption">
-                                            Drop-off Message<span class="text-muted">(Optional)</span>
+                                        <h5 *ngIf="showAdvanceOption" class="d-flex align-items-center gap-3">
+                                            Drop-off Message<span class="text-muted">(Optional)   </span>
+                                                <sb-tooltip
+    class="ms-2"
+    [tooltipText]="'Message shown when a user doesn’t respond within the timeout period.'"
+    [isVisible]="isTooltipVisible2"
+    (visibilityChange)="handleTooltipChange($event,2)"
+  ></sb-tooltip>
+                                          
                                         </h5>
                                         <div class="child-interaction-2"
                                             [style.display]="showAdvanceOption ? 'block' : 'none'">
@@ -1545,389 +1545,10 @@
                                         </div>
                                     </div>
                                 </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-
-<div class="modal fade" tabindex="-1" id="copyBot" data-bs-backdrop="static" role="dialog">
-    <div class="addsmartreplies modal-dialog smartreplies-modal" role="document">
-        <div class="modal-content smartreplies-modal" id="edit-modal-tok">
-            <div class="modal-body alertmessage" style="max-height: 90vh; overflow-y: auto">
-                <div class="container" id="edit-smartreplies">
-                    <div class="bs-stepper row linear">
-                        <div class="head d-flex justify-content-between align-items-center" style="margin-bottom: 20px">
-                            <p class="m-0 heading">Create New Bot</p>
-                            <button type="button" class="btn5 btn-close" style="width: 40px" data-bs-dismiss="modal"
-                                aria-label="Close">
-                                <img style="width: 10px" src="assets/img/teambox/icon-close.svg" />
-                            </button>
-                        </div>
-
-                        <div class="p-0 bs-stepper-content">
-                            <div id="logins-part" class="content fade active dstepper-block" role="tabpanel"
-                                aria-labelledby="logins-part-trigger">
-                                <div class="box" [formGroup]="botBuilderForm">
-                                    <h5>Bot Name<span class="text-danger"> * </span></h5>
-                                    <input class="form-control" type="text" formControlName="name" maxlength="20"
-                                        placeholder="Enter title in max 20 character" (change)="checkBotName($event)" />
-
-                                        <div *ngIf="errorMessageBot" class="text-danger small"
-                                            style="font-size: 10px; margin: 0px 51px">
-                                            {{ errorMessageBot }}
-                                        </div>
-
-                                    <div class="text-danger dangerText" *ngIf="
-                                            botBuilderForm.get('name')?.touched &&
-                                            botBuilderForm.get('name')?.invalid
-                                        ">
-                                        <small *ngIf="botBuilderForm.get('name')?.errors?.['required']">Bot name is
-                                            required.</small>
-                                        <small *ngIf="botBuilderForm.get('name')?.errors?.['maxlength']">Max 20
-                                            characters allowed.</small>
-                                    </div>
-
-                                    <h5>Description<span class="text-danger"> * </span></h5>
-                                    <div class="form-floating ff">
-                                        <textarea class="form-control" rows="4" formControlName="botDescription"
-                                            maxlength="80"
-                                            placeholder="Enter description in max 80 character"></textarea>
-                                    </div>
-
-                                    <h5>Channel<span class="text-danger"> * </span></h5>
-                                    <input class="form-control bg-white select_box" type="text"
-                                        formControlName="botChannel" (click)="toggleChannelOption()" readonly
-                                        style="cursor: pointer" placeholder="Select Channel" />
-                                    <!-- Channel Dropdown Logic Same as Add -->
-
-
-
-                                    <div class="form-group">
-                                        <h5>
-                                            Bot Trigger Keywords <span class="text-danger">*</span>
-                                        </h5>
-
-                                        <!-- Keywords input and add button -->
-                                        <div class="d-flex align-items-center mb-2">
-                                            <input class="form-control" type="text" placeholder="Enter Keywords here"
-                                                [(ngModel)]="newKeyword" [ngModelOptions]="{ standalone: true }"
-                                                (keyup.enter)="addKeyword()" style="padding: 0 63px 0 24px" />
-                                            <button class="btn4" (click)="addKeyword()">Add</button>
-                                        </div>
-
-                                        <p class="d-flex align-items-center text-muted small"
-                                            style="font-size: 10px; margin: 0px 51px">
-                                            Keywords must be unique across all bots, including those
-                                            configured for Smart Reply, and will operate based on
-                                            exact match criteria
-                                        </p>
-
-                                        <!-- Keywords list -->
-                                        <div class="d-flex align-items-center keywords-container mb-2">
-                                            <div *ngFor="let keyword of keywords; let i = index" class="keyword-tag">
-                                                {{
-                                                keyword.length > 20
-                                                ? (keyword | slice: 0:20) + '...'
-                                                : keyword
-                                                }}
-                                                <span class="remove-keyword" (click)="removeKeyword(i)">×</span>
-                                            </div>
-                                        </div>
-
-                                        <!-- Help text -->
-
-                                        <!-- Validation message -->
-                                        <div *ngIf="keywordsError" class="text-danger small"
-                                            style="font-size: 10px; margin: 0px 51px">
-                                            {{ keywordsError }}
-                                        </div>
-                                    </div>
-
-                                    <h5>Bot Timeout<span class="text-danger"> * </span></h5>
-                                    <input type="time" class="form-control bg-white" formControlName="botTimeout" />
-
-                                    <!-- Advance Option Same as Add Modal -->
-                                    <!-- You can reuse the same HTML inside this div -->
-                                    <div class="advance_option">
-                                        <h6 (click)="toggleAdvanceOption()">
-                                            Advance Option &nbsp;
-                                            <img class="icons" src="../../../../assets/img/teambox/dropdown.svg" />
-                                        </h6>
-
-                                        <h5 *ngIf="showAdvanceOption">
-                                            Drop-off Message<span class="text-muted">(Optional)</span>
-                                        </h5>
-                                        <div class="child-interaction-2"
-                                            [style.display]="showAdvanceOption ? 'block' : 'none'">
-                                            <div class="conversation_inout_area">
-                                                <div class="input-area">
-                                                    <ejs-richtexteditor id="editRTE" #chatEditor
-                                                        [toolbarSettings]="tools" [width]="0"
-                                                        placeholder="Type Message..." [pasteCleanupSettings]="
-                                                            pasteCleanupSettings
-                                                        " formControlName="dropOfMessage">
-                                                    </ejs-richtexteditor>
-                                                </div>
-                                            </div>
-                                        </div>
-
-                                        <div *ngIf="showAdvanceOption">
-                                            <h5>
-                                                Add Action
-                                                <span class="text-muted">(Optional)</span>
-                                            </h5>
-                                            <div class="form-group position-relative">
-                                                <input class="form-control bg-white select_box" type="text"
-                                                    name="advanceAction" placeholder="Select advance Action"
-                                                    (click)="toggleAdvanceAction()" readonly style="cursor: pointer" />
-
-                                                <div *ngIf="ShowAddAction" class="popup-dialog AssignAction"
-                                                    (click)="stopPropagation($event)">
-                                                    <p class="label">Add Action</p>
-                                                    <p class="d-flex justify-content-around" *ngFor="
-                                                            let assignAction of assignActionList;
-                                                            let m = index
-                                                        " (click)="toggleAssignOption(m)" [class.disabled-option]="
-                                                            isOptionDisabled(assignAction.value)
-                                                        " [class.selected-option]="
-                                                            selectedExclusiveAction ===
-                                                            assignAction.value
-                                                        ">
-                                                        <span>{{ assignAction.name }}</span>
-                                                        <img class="pr-3 arrow-sign" *ngIf="assignAction?.children"
-                                                            src="../../../../assets/img/arrow-sign.svg" />
-                                                    </p>
-                                                </div>
-                                                <div *ngIf="ShowAddAction" class="modal-backdrop-custom"
-                                                    (click)="closeAddAction()"></div>
-                                                <div *ngIf="
-                                                        ShowAssignOption && agentsList.length > 0
-                                                    " (click)="stopPropagation($event)"
-                                                    class="popup-dialog AssignOption" [class.disabled]="isAssigned">
-                                                    <p class="label">Assign To</p>
-                                                    <p class="d-flex align-items-center px-2 py-1" *ngFor="
-                                                            let agent of agentsList;
-                                                            let k = index
-                                                        " (click)="
-                                                            assignConversation(k);
-                                                            closeAssignOption()
-                                                        ">
-                                                        <span *ngIf="!agent.profileImg"
-                                                            class="text-capitalize initials mt-0 w-25">{{
-                                                            agent.nameInitials }}</span>
-                                                        <img *ngIf="agent.profileImg" class="rounded-circle mt-0" style="
-                                                                width: 30px;
-                                                                height: 30px;
-                                                                margin-left: 11px;
-                                                            " [src]="agent.profileImg" />
-                                                        <span key="{k}" class="agentName mt-0 w-75">{{ agent.name
-                                                            }}</span>
-                                                    </p>
-                                                    <div class="p-4" *ngIf="!agentsList?.length">
-                                                        <p>No Data Available.</p>
-                                                    </div>
-                                                </div>
-
-                                                <div class="interactions">
-                                                    <div class="child-int-1 py-2">
-                                                        <div #chatSection class="child-interaction-1">
-                                                            <div *ngFor="
-                                                                    let message of assignedAgentList;
-                                                                    let i = index
-                                                                ">
-                                                                <div *ngIf="
-                                                                        message.actionTypeId == 2
-                                                                    "
-                                                                    class="d-flex justify-content-between align-items-center">
-                                                                    <div class="col-8 assign-conversation">
-                                                                        <p class="m-0 py-1 px-2" id="msgbox-head1">
-                                                                            Action
-                                                                        </p>
-                                                                        <div class="d-flex flex-wrap assign-container">
-                                                                            <p class="py-1 px-2 m-0" id="msgbox-body1">
-                                                                                <b>Conversation
-                                                                                    Assigned:</b>
-                                                                            </p>
-                                                                            <p class="py-1 m-0" id="msgbox-body2"
-                                                                                (input)="
-                                                                                    onActionEdit(
-                                                                                        $event
-                                                                                            .target
-                                                                                            .innerHTML
-                                                                                    )
-                                                                                ">
-                                                                                {{ message.Value }}
-                                                                            </p>
-                                                                        </div>
-                                                                    </div>
-                                                                    <div class="col-4 assign-buttons">
-                                                                        <button class="px-2 msg-edit-btn btn-2" (click)="
-                                                                                toggleEditable(i)
-                                                                            ">
-                                                                            <img src="assets/img/edit.png" />
-                                                                        </button>
-                                                                        <button class="px-1 msg-del-btn" (click)="
-                                                                                removeAction(i)
-                                                                            ">
-                                                                            <img src="assets/img/delete.png" />
-                                                                        </button>
-                                                                    </div>
-                                                                </div>
-
-                                                                <div *ngIf="
-                                                                        message.actionTypeId === 5
-                                                                    "
-                                                                    class="d-flex justify-content-between align-items-center">
-                                                                    <div class="col-8 assign-conversation">
-                                                                        <p class="m-0 py-1 px-2" id="msgbox-head1">
-                                                                            Action
-                                                                        </p>
-                                                                        <div class="d-flex flex-wrap assign-container">
-                                                                            <p class="py-1 px-2 m-0" id="msgbox-body1">
-                                                                                <b>Owner
-                                                                                    Assignment:</b>
-                                                                            </p>
-                                                                            <p class="py-1 m-0" id="msgbox-body2">
-                                                                                {{ message.Value }}
-                                                                            </p>
-                                                                        </div>
-                                                                    </div>
-                                                                    <div class="col-4 assign-buttons">
-                                                                        <button class="px-1 msg-del-btn" (click)="
-                                                                                removeExclusiveAction(
-                                                                                    'assign_owner'
-                                                                                )
-                                                                            ">
-                                                                            <img src="assets/img/delete.png"
-                                                                                alt="Remove" />
-                                                                        </button>
-                                                                    </div>
-                                                                </div>
-
-                                                                <div *ngIf="
-                                                                        message.actionTypeId === 6
-                                                                    "
-                                                                    class="d-flex justify-content-between align-items-center">
-                                                                    <div class="col-8 assign-conversation">
-                                                                        <p class="m-0 py-1 px-2" id="msgbox-head1">
-                                                                            Action
-                                                                        </p>
-                                                                        <div class="d-flex flex-wrap assign-container">
-                                                                            <p class="py-1 px-2 m-0" id="msgbox-body1">
-                                                                                <b>Unassignment:</b>
-                                                                            </p>
-                                                                            <p class="py-1 m-0" id="msgbox-body2">
-                                                                                {{ message.Value }}
-                                                                            </p>
-                                                                        </div>
-                                                                    </div>
-                                                                    <div class="col-4 assign-buttons">
-                                                                        <button class="px-1 msg-del-btn" (click)="
-                                                                                removeExclusiveAction(
-                                                                                    'Unassign_conversation'
-                                                                                )
-                                                                            ">
-                                                                            <img src="assets/img/delete.png"
-                                                                                alt="Remove" />
-                                                                        </button>
-                                                                    </div>
-                                                                </div>
-
-                                                                <div *ngIf="
-                                                                        message.actionTypeId == 1
-                                                                    "
-                                                                    class="d-flex justify-content-between align-items-center">
-                                                                    <div class="col-8 add-tag">
-                                                                        <p id="msgbox-head1">
-                                                                            Action
-                                                                        </p>
-                                                                        <div class="d-flex flex-wrap assign-container">
-                                                                            <p class="p-1 m-0" id="msgbox-body1">
-                                                                                <b>Add Tags: </b>
-                                                                                <span class="pl-1" *ngFor="
-                                                                                        let item of message.Value;
-                                                                                        let last = last
-                                                                                    ">
-                                                                                    {{ item
-                                                                                    }}<span *ngIf="
-                                                                                            !last
-                                                                                        ">,</span>
-                                                                                </span>
-                                                                            </p>
-                                                                        </div>
-                                                                    </div>
-                                                                    <div class="col-4 assign-buttons">
-                                                                        <button class="px-2 msg-edit-btn" (click)="
-                                                                                toggleRemoveTag(
-                                                                                    'addTag'
-                                                                                )
-                                                                            ">
-                                                                            <img src="assets/img/edit.png" />
-                                                                        </button>
-                                                                        <button class="px-1 msg-del-btn" (click)="
-                                                                                removeAddTag(i)
-                                                                            ">
-                                                                            <img src="assets/img/delete.png" />
-                                                                        </button>
-                                                                    </div>
-                                                                </div>
-
-                                                                <div *ngIf="
-                                                                        message.actionTypeId == 3 &&
-                                                                        message.Value?.length > 0
-                                                                    "
-                                                                    class="d-flex justify-content-between align-items-center">
-                                                                    <div class="col-8 add-tag">
-                                                                        <p id="msgbox-head1">
-                                                                            Action
-                                                                        </p>
-                                                                        <div class="d-flex flex-wrap assign-container">
-                                                                            <p class="p-1 m-0" id="msgbox-body1">
-                                                                                <b>Remove Tags: </b>
-                                                                                <span class="pl-1" *ngFor="
-                                                                                        let item of message.Value;
-                                                                                        let last = last
-                                                                                    ">
-                                                                                    {{ item
-                                                                                    }}<span *ngIf="
-                                                                                            !last
-                                                                                        ">,</span>
-                                                                                </span>
-                                                                            </p>
-                                                                        </div>
-                                                                    </div>
-                                                                    <div class="col-4 assign-buttons">
-                                                                        <button class="px-2 msg-edit-btn" (click)="
-                                                                                toggleRemoveTag(
-                                                                                    'RemoveTag'
-                                                                                )
-                                                                            ">
-                                                                            <img src="assets/img/edit.png" />
-                                                                        </button>
-                                                                        <button class="px-1 msg-del-btn" (click)="
-                                                                                removeAddTag(i)
-                                                                            ">
-                                                                            <img src="assets/img/delete.png" />
-                                                                        </button>
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <div class="title err-msg mt-3">
+                        <div class="title err-msg">
                                     <span id="title-err-msg"></span>
-                                    <button type="button" class="btn5 btn-block col-2" (click)="submitBotForm('copy')">
-                                        Save And Next
+                                    <button type="button" class="btn5 btn-block col-2" (click)="viewBot()">
+                                        View Bot
                                     </button>
                                 </div>
                             </div>
@@ -1939,14 +1560,12 @@
     </div>
 </div>
 
+
+
 <div class="modal fade" tabindex="-1" id="deleteBotModal" data-bs-backdrop="static" role="dialog">
     <div class="modal-dialog modal-dialog-centered" role="document">
         <div class="modal-content p-3">
             <div class="modal-header border-0">
-
-                <!-- <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
-          <img style="width: 10px;" src="assets/img/teambox/icon-close.svg" />
-        </button> -->
             </div>
             <div class="modal-body">
                 <p>This will permanently delete the Bot. Are you sure you want to Delete?</p>
@@ -1963,6 +1582,28 @@
     </div>
 </div>
 
+
+
+<div class="modal fade" tabindex="-1" id="submitBotModal" data-bs-backdrop="static" role="dialog">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content p-3">
+   
+      <div class="modal-body">
+        <p>Are you sure you want to {{currentModalType === 'UpdateModal'?'update':'submit'}} the Bot details?</p>
+      </div>
+      <div class="modal-footer border-0 d-flex justify-content-end">
+
+        <button type="button" class="btn btn-light" style="border-radius:32px;border: 1px solid;" data-bs-dismiss="modal">Cancel</button>
+        <button class="btn btn-primary" style="background-color: #6b46c1; border-radius:32px; margin-left: 11px;" (click)="currentModalType === 'CreateBotModal' ? submitBotForm('create') : 
+                currentModalType === 'UpdateModal' ? updateBotForm() :
+                submitBotForm('copy')">{{currentModalType === 'UpdateModal'?'Update':'Save'}}</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
 <div class="modal fade" tabindex="-1" id="deprecated" data-bs-backdrop="static" role="dialog">
     <div class="modal-dialog modal-dialog-centered" role="document">
         <div class="modal-content p-3">
@@ -1976,7 +1617,7 @@
                     to Deprecate?</p>
             </div>
             <div class="modal-footer border-0 d-flex justify-content-end">
-                <button type="button" class="btn btn-danger" (click)="confirmDelete()">
+                <button type="button" class="btn btn-danger" (click)="confirmDelete('0')">
                     Deprecate
                 </button>
                 <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">

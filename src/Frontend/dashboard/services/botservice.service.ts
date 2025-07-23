@@ -132,8 +132,8 @@ export class BotserviceService {
     return this.http.post<any>(`${Bot_API_URL}/updateBotDetails`, data);
   }
 
-  deleteBotDetails(spid: any, botId: any): Observable<any> {
-    return this.http.get<any>(`${Bot_API_URL}/deleteBotbyId/${spid}/${botId}`);
+  deleteBotDetails(spid: any, botId: any,type:any): Observable<any> {
+    return this.http.get<any>(`${Bot_API_URL}/deleteBotbyId/${spid}/${botId}/${type}`);
   }
 
   exportBotDetails(data: any): Observable<any> {

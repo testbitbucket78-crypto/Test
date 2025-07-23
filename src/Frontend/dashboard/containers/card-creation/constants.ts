@@ -1,7 +1,7 @@
 // constants.ts
 export const MAX_OPTIONS = 20;
 export const MAX_BUTTONS = 3;
-export const MAX_SECTIONS = 5;
+export const MAX_SECTIONS = 10;
 export const MAX_ROWS_PER_SECTION = 10;
 export const MAX_CHARACTERS = 1024;
 

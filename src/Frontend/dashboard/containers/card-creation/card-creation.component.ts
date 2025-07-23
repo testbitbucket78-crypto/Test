@@ -1,7 +1,7 @@
 import { environment } from './../../../../environments/environment';
 
-import { Component, EventEmitter, Input, Output, ViewChild } from '@angular/core';
-import { FormArray, FormBuilder, FormControl, FormGroup, Validators, AbstractControl, ValidationErrors } from '@angular/forms';
+import { ChangeDetectorRef, Component, ElementRef, EventEmitter, HostListener, Input, Output, ViewChild } from '@angular/core';
+import { FormArray, FormBuilder, FormControl, FormGroup, Validators, AbstractControl, ValidationErrors, ValidatorFn } from '@angular/forms';
 import { NgbModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
 import { ContentRender, RichTextEditorComponent } from '@syncfusion/ej2-angular-richtexteditor';
 import { DatePickerComponent } from '@syncfusion/ej2-angular-calendars';
@@ -85,13 +85,15 @@ export class CardCreationComponent {
   holidays: { date: string }[] = [];
 
 
-
-
   isAttachmentMedia: boolean = false;
   // Component state
   showLock = true;
   nodeCounter = 1;
+  isLoading:any=false
+  confirmMessage:any
+modalReference:any
   selectedNodeId: number | null = null;
+  deletNodeId:any
   cardType = '';
   filePreview: string | ArrayBuffer | null = null;
   fileError: string | null = null;
@@ -112,6 +114,7 @@ export class CardCreationComponent {
   warningMessage = '';
   attributesearch!: string;
   attributesList: any = []
+  isTooltipVisible:any
   // Form related properties
   showValidationSettings = false;
   newOptionError = '';
@@ -127,6 +130,7 @@ export class CardCreationComponent {
   searchQuery = '';
   selectedAgentDetails: Agent | null = null;
   isUploadingLoader!: boolean;
+viewMode:any=false
 
   // File handling
   uploadedFile: File | null = null;
@@ -205,12 +209,13 @@ export class CardCreationComponent {
   selectedBotId = '';
   selectedBot: Bot | null = null;
   searchTerm = '';
-  operationOptions = { addIfEmpty: false };
-  conversationActions = { status: '' };
+  operationOptions = 'addIfEmpty';
+  conversationActions = { status: 'Resolved' };
   openDropdown = { status: '' };
   filteredTags: Tag[] = [];
   showVarMenuFor: { index: number, field: 'comparator' | 'value' } | null = null;
   showAttribute: { index: number, field: 'comparator' | 'value' } | null = null;
+  showAttributeCondition:any =false;
   attributeDetails?: Attribute;
   // Tools and settings
   tools: any = DEFAULT_TOOLS;
@@ -223,13 +228,27 @@ export class CardCreationComponent {
     width: '50px',
     height: '50px'
   };
+@ViewChild('dropdownWrapper') dropdownWrapper!: ElementRef;
+  @HostListener('document:click', ['$event'])
+onDocumentClick(event: MouseEvent): void {
+  if (!this.dropdownWrapper?.nativeElement.contains(event.target)) {
+    this.openDropdown.status = ''; // Close if clicked outside
+  }
+}
 
+
+  
   constructor(
-    private fb: FormBuilder,
-    public validation: PhoneValidationService,
+    private fb: FormBuilder, private changeDetectorRef: ChangeDetectorRef,
+    public validation: PhoneValidationService,private modalService: NgbModal,
     private apiService: TeamboxService, private botService: BotserviceService, public settingService: SettingsService, public router: Router
   ) {
     this.userDetails = JSON.parse(sessionStorage.getItem('loginDetails') || '{}');
+    var viewMode:any = localStorage.getItem('viewMode') == undefined?false:localStorage.getItem('viewMode')
+    if (viewMode) {
+       this.viewMode =  JSON.parse(viewMode)
+    }
+    
     //     if (!settingService?.checkRoleExist('24')) {
     //   this.router.navigateByUrl('/login');
     // }
@@ -243,6 +262,7 @@ export class CardCreationComponent {
     this.getUserList()
     this.getTagData();
     this.getBotDetails()
+    this.getWhatsAppDetails()
     if (environment.chhanel == 'api') {
       this.getWhatsAppFormList()
     }
@@ -349,7 +369,9 @@ export class CardCreationComponent {
               connection.output_class,
               connection.input_class
             );
-            alert('The home card can only connect to one card!');
+            // alert('The home card can only connect to one card!');
+            this.showToaster('The home card can only connect to one card!','error')
+
           }, 10);
           return;
         }
@@ -404,6 +426,35 @@ export class CardCreationComponent {
       // this.loadFlow(data)
     }
 
+
+
+
+
+    const drawflowCanvas = drawflowElement.querySelector('.drawflow') as HTMLElement;
+let isRightClickDragging = false;
+// Prevent right-click default menu
+drawflowCanvas.addEventListener('contextmenu', (e) => e.preventDefault());
+
+// Right-click down
+drawflowCanvas.addEventListener('mousedown', (e) => {
+  console.log(e)
+  if (e.button === 2 || e.button == 0) { // Right click
+    isRightClickDragging = true;
+    drawflowCanvas.classList.add('dragging');
+  }
+});
+
+
+
+// Release
+document.addEventListener('mouseup', (e) => {
+  if ((e.button === 2 || e.button == 0 )&& isRightClickDragging) {
+    isRightClickDragging = false;
+    drawflowCanvas.classList.remove('dragging');
+  }
+});
+
+
   }
 
 
@@ -419,11 +470,18 @@ export class CardCreationComponent {
             this.ParentNodeType = node.data.category
             this.setOutputPositionsBasedOnType(node.id, node.data.formData)
             // this.refreshEditor()
-            this.addNodeEvent(node.id);
+            if (!this.viewMode) {
+              this.addNodeEvent(node.id);
+            }
             this.editor.updateConnectionNodes('node-' + node.id);
           }
         });
       }, 100)
+    }
+
+    if (this.viewMode) {
+      this.editor.editor_mode = 'view';  
+      
     }
   }
 
@@ -577,7 +635,7 @@ export class CardCreationComponent {
       headerText: ['', [Validators.maxLength(60)]],
       bodyText: ['', [Validators.required, Validators.maxLength(this.MAX_CHARACTERS)]],
       footerText: ['', [Validators.maxLength(60)]],
-      buttons: this.fb.array([this.fb.control('', [Validators.required, Validators.maxLength(20)])]),
+      buttons: this.fb.array([this.fb.control('', [Validators.required, Validators.maxLength(20)])],[this.atLeastOneAndUniqueButtons()]),
       fileLink: [''],
       saveAsVariable: [false],
       variableName: [''],
@@ -595,13 +653,37 @@ export class CardCreationComponent {
     this.setupFormListeners(this.buttonOptions);
   }
 
+atLeastOneAndUniqueButtons() {
+  return (formArray: AbstractControl): ValidationErrors | null => {
+    const controls = (formArray as FormArray).controls;
+
+    const filledValues = controls
+      .map(ctrl => ctrl.value?.trim())
+      .filter(val => val); // only non-empty values
+
+    const hasAtLeastOne = filledValues.length > 0;
+    const hasDuplicates = new Set(filledValues).size !== filledValues.length;
+
+    if (!hasAtLeastOne) {
+      return { atLeastOneRequired: true };
+    }
+
+    if (hasDuplicates) {
+      return { duplicateButtons: true };
+    }
+
+    return null; // valid
+  };
+}
+
+
   private initListOptionsForm(): void {
     this.listOptions = this.fb.group({
       headerText: ['', [Validators.maxLength(60)]],
       bodyText: ['', [Validators.required, Validators.maxLength(this.MAX_CHARACTERS)]],
       footerText: ['', [Validators.maxLength(60)]],
       listHeader: ['', [Validators.maxLength(20)]],
-      sections: this.fb.array([this.createSection()]),
+      sections: this.fb.array([this.createSection()],[this.uniqueRowNamesValidator(),this.sectionHeadingValidator()]),
       saveAsVariable: [false],
       variableName: [''],
       variableDataType: ['text'],
@@ -615,16 +697,99 @@ export class CardCreationComponent {
       enableValidation: [false]
     });
 
+      this.listOptions.valueChanges.subscribe(() => {
+    this.changeDetectorRef.detectChanges();
+  });
     this.setupFormListeners(this.listOptions);
   }
 
+
+uniqueRowNamesValidator(): ValidatorFn {
+  return (control: AbstractControl): ValidationErrors | null => {
+    const sectionsArray = control as FormArray;
+    const allRowNames: string[] = [];
+    let duplicateFound = false;
+
+    // Collect all row names from all sections
+    sectionsArray.controls.forEach((section: AbstractControl) => {
+      const rows = (section as FormGroup).get('rows') as FormArray;
+      rows.controls.forEach((row: AbstractControl) => {
+        const rowName = row.get('rowName')?.value?.trim();
+        if (rowName) {
+          if (allRowNames.includes(rowName)) {
+            duplicateFound = true;
+            // Mark the control as invalid
+            row.get('rowName')?.setErrors({ notUnique: true });
+          } else {
+            allRowNames.push(rowName);
+          }
+        }
+      });
+    });
+
+    // Clear errors from controls that are now unique
+    if (!duplicateFound) {
+      sectionsArray.controls.forEach((section: AbstractControl) => {
+        const rows = (section as FormGroup).get('rows') as FormArray;
+        rows.controls.forEach((row: AbstractControl) => {
+          if (row.get('rowName')?.hasError('notUnique')) {
+            const errors = { ...row.get('rowName')?.errors };
+            delete errors['notUnique'];
+            row.get('rowName')?.setErrors(Object.keys(errors).length ? errors : null);
+          }
+        });
+      });
+    }
+
+    return null; // We're setting errors on individual controls, not the whole array
+  };
+}
+
+
+ sectionHeadingValidator(): ValidatorFn {
+  return (control: AbstractControl): ValidationErrors | null => {
+    const sectionsArray = control as FormArray;
+    
+    // If there's only one section, no validation needed
+    if (sectionsArray.length <= 1) {
+      // Clear any existing errors on all sections
+      sectionsArray.controls.forEach(section => {
+        const headingControl = section.get('sectionHeading');
+        if (headingControl?.hasError('requiredForMultiple')) {
+          const errors = { ...headingControl.errors };
+          delete errors['requiredForMultiple'];
+          headingControl.setErrors(Object.keys(errors).length ? errors : null);
+        }
+      });
+      return null;
+    }
+
+    // For multiple sections, check each section heading
+    let hasErrors = false;
+    sectionsArray.controls.forEach((section: AbstractControl, index: number) => {
+      const headingControl = section.get('sectionHeading');
+      const headingValue = headingControl?.value?.trim();
+      
+      if (!headingValue) {
+        hasErrors = true;
+        headingControl?.setErrors({ requiredForMultiple: true });
+      } else if (headingControl?.hasError('requiredForMultiple')) {
+        const errors = { ...headingControl.errors };
+        delete errors['requiredForMultiple'];
+        headingControl.setErrors(Object.keys(errors).length ? errors : null);
+      }
+    });
+
+    return hasErrors ? { sectionHeadingsRequired: true } : null;
+  };
+}
 
   private initwhatsAppFlowForm(): void {
     this.whatsAppFlowForm = this.fb.group({
       headerText: ['', [Validators.maxLength(60)]],
       bodyText: ['', [Validators.required, Validators.maxLength(this.MAX_CHARACTERS)]],
       footerText: ['', [Validators.maxLength(60)]],
-      whatsAppFormName: ['', [Validators.maxLength(20)]],
+      whatsAppFormName: ['', [Validators.required,Validators.maxLength(20)]],
       selectedForm: [''],
       reattemptsAllowed: [false],
       reattemptsCount: [1],
@@ -698,7 +863,7 @@ export class CardCreationComponent {
   private initNotificationForm(): void {
     this.notificationForm = this.fb.group({
       selectedAgentIds: ['0', Validators.required],
-      selectedAgentName: [''],
+      selectedAgentName: ['',Validators.required],
       textMessage: ['', [Validators.required, Validators.maxLength(this.MAX_CHARACTERS)]],
       file: [''],
       mediaType: ['']
@@ -813,13 +978,16 @@ createCombinedVariable() {
   const combinedVariable = `${plainQuestionText}\n\n${promptMessage}\n\n${formattedOptions}`;
   
   // Now you can use this combinedVariable as needed
-  console.log(combinedVariable);
   return combinedVariable;
 }
 
   // ==================== NODE HANDLING METHODS ====================
 
   onSubmit(formType: string = ''): void {
+    
+    setTimeout(() => {
+      this.isLoading = false
+    }, 1000);
     if (['questionOption', 'openQuestion', 'buttonOptions', 'listOptions', 'whatsAppFlow'].includes(this.ParentNodeType)) {
       this.handleQuestionSubmit(formType);
     } else if ([
@@ -832,16 +1000,19 @@ createCombinedVariable() {
     } else if (formType == 'setCondition') {
       this.handleConditionSubmit(formType)
     } else {
+       this.isLoading = true
       this.handleContentSubmit();
     }
   }
 
   private handleContentSubmit(): void {
+
     if (this.sendTextForm.invalid) {
       this.sendTextForm.markAllAsTouched();
       return;
     }
 
+    
     const formData = this.sendTextForm.value;
 
     if (this.isEditMode && this.selectedNodeId !== null) {
@@ -854,7 +1025,6 @@ createCombinedVariable() {
 
 
   handleConditionSubmit(formType: any) {
-
     if (this.conditionForm.invalid) {
       this.conditionForm.markAllAsTouched();
       return;
@@ -918,7 +1088,7 @@ formData.options = ["True", "False"];
     }
 
     formData = form.value;
-    this.closeModal();
+    
 
 
 
@@ -940,9 +1110,13 @@ formData.options = ["True", "False"];
         this.botVariables.push(newVariable);
       } else {
         // Optionally show a message that variable wasn't added because it already exists
-        // return;
+        if(!(this.isEditMode && this.selectedNodeId !== null)){
+          this.showToaster("Bot variable is already exists Please add another bot variable",'error')
+          return;
+        }
       }
     }
+    this.closeModal();
 
     if (this.isEditMode && this.selectedNodeId !== null) {
       this.updateExistingNode(formData);
@@ -956,12 +1130,12 @@ formData.options = ["True", "False"];
 
   dynamiceEditor: any = ''
   private advanceOptionsSubmit(formType: string): void {
-    this.closeModal();
+  
     this.dynamiceEditor = ''
 
     const advanceOption = { type: formType, data: {} as any };
 
-    console.log(this.notesmentionForm.value)
+    console.log(this.notificationForm.value)
 
 
 
@@ -981,6 +1155,17 @@ formData.options = ["True", "False"];
         advanceOption.data = this.notificationForm.value;
         break;
       case 'TimeDelayModal':
+  const maxTime = this.delayUnit === 'hour' ? 24 : 60;
+
+  if (!this.delayTime || this.delayTime < 1) {
+    this.showToaster('Time must be greater than 0.','error');
+    return;
+  }
+
+  if (this.delayTime > maxTime) {
+    this.showToaster(`Maximum allowed time is ${maxTime} ${this.delayUnit === 'hour' ? 'hours' : 'minutes'}.`,'error');
+    return;
+  }
         advanceOption.data = { time: this.delayTime, unit: this.delayUnit };
         break;
       case "WorkingHoursModal":
@@ -992,7 +1177,12 @@ formData.options = ["True", "False"];
       case 'NotesMentionModal':
         var editorInstance = this.chatEditors
         this.dynamiceEditor = this.chatEditors
-        let data = this.getOnlyUserTypedText(editorInstance)
+             let data = this.getOnlyUserTypedText(editorInstance)
+  
+          if(!data){
+         this.showToaster('Please add  some Notes and Mention','error');
+          return
+        }
         this.notesmentionForm.patchValue({
           message: data
         })
@@ -1000,6 +1190,13 @@ formData.options = ["True", "False"];
         break;
       case 'AddTags':
       case 'RemoveTag':
+        console.log("this.selectedTags",this.selectedTags)
+        console.log("this.operationOptions",this.operationOptions)
+        if (this.selectedTags.length <= 0) {
+          this.showToaster('Please select Tag and Operation','error')
+          return
+          
+        }
         advanceOption.data = {
           tags: this.selectedTags,
           operation: this.operationOptions
@@ -1009,6 +1206,7 @@ formData.options = ["True", "False"];
 
     }
 
+      this.closeModal();
     console.log(this.dynamiceEditor, 'this.dynamiceEditor')
     if (this.isEditMode && this.selectedNodeId !== null) {
       // Update existing node logic
@@ -1045,26 +1243,22 @@ formData.options = ["True", "False"];
 
 
   getOnlyUserTypedText(editorInstance: any): string {
-    const html = editorInstance.value || ''; // Get HTML from RTE
+  const html = editorInstance.value || ''; // Get full HTML
 
-    // Create temporary DOM parser
-    const tempDiv = document.createElement('div');
-    tempDiv.innerHTML = html;
+  const tempDiv = document.createElement('div');
+  tempDiv.innerHTML = html;
 
-    // Step 1: Remove media-related blocks (custom image container)
-    const mediaBlocks = tempDiv.querySelectorAll('.custom-class-attachmentType');
-    mediaBlocks.forEach(el => el.remove());
+  // ❌ Remove only media blocks with specific class
+  const mediaBlocks = tempDiv.querySelectorAll('.custom-class-attachmentType');
+  mediaBlocks.forEach(el => el.remove());
 
-    // Step 2: Remove inline <img>, <button>, etc. (fallback cleanup)
-    const extraMedia = tempDiv.querySelectorAll('img, button, video, audio');
-    extraMedia.forEach(el => el.remove());
-
-    // Step 3: Return remaining text
-    return (tempDiv.textContent || '').trim();
-  }
+  // ✅ Return updated HTML with mentions and user content intact
+  return tempDiv.innerHTML.trim();
+}
 
 
   private createNewNodeWithData(formData: any): void {
+    this.isLoading = true
     const nodeName = this.getNodeName();
     const exportData = this.editor.export();
     var hasNodes = Object.keys(exportData.drawflow?.Home?.data).length > 0;
@@ -1135,12 +1329,14 @@ formData.options = ["True", "False"];
       setTimeout(() => {
         console.log("'home', nodeId, 'output_1', 'input_1'", nodeId - 1, nodeId, 'output_1', 'input_1')
         this.editor.addConnection(nodeId - 1, nodeId, 'output_1', 'input_1');
+        this.isLoading = false
       }, 100);
     }
 
 
     setTimeout(() => {
       this.editor.drawflow.drawflow.Home.data[nodeId].html = newHTML;
+      this.isLoading = false
     }, 100);
     this.nodeCounter++;
   }
@@ -1246,6 +1442,12 @@ formData.options = ["True", "False"];
     });
   }
 
+   getTrimmedText = (text: string | undefined) =>{
+    console.log(text)
+    const maxLength = 132;
+  return text && text.length > maxLength ? text.slice(0, maxLength) + ' ...' : text || 'Sample Text';
+  }
+
   private generateBottomOffsetsReversed(sections: any[]): number[] {
     const offsets: number[] = [];
     let bottom = 60;
@@ -1336,16 +1538,18 @@ formData.options = ["True", "False"];
   private createStandardNodeContent(nodeId: any, nodeData: any, formData: any): string {
     let content = '';
 
-    if (['sendImage', 'sendVideo', 'sendDocument'].includes(this.cardType)) {
-      content += this.createMediaContent(nodeData);
-      if (formData.textMessage) {
-        content += `<div class="textCont"><p>${formData.textMessage}</p></div>`;
-      }
-    } else if (nodeData.text === 'sendText') {
-      content += `<div class="textCont">${formData.textMessage || 'Sample Text'}</div>`;
-    } else if (nodeData.text === 'openQuestion') {
-      content += `<div class="textCont">${formData.questionText || 'Sample Text'}</div>`;
-    } else if (nodeData.text === 'questionOption') {
+
+
+   if (['sendImage', 'sendVideo', 'sendDocument'].includes(this.cardType)) {
+  content += this.createMediaContent(nodeData);
+  if (formData.textMessage) {
+    content += `<div class="textCont">${this.getTrimmedText(formData.textMessage)}</div>`;
+  }
+} else if (nodeData.text === 'sendText') {
+  content += `<div class="textCont">${this.getTrimmedText(formData.textMessage)}</div>`;
+} else if (nodeData.text === 'openQuestion') {
+  content += `<div class="textCont">${this.getTrimmedText(formData.questionText)}</div>`;
+}else if (nodeData.text === 'questionOption') {
       content += this.createQuestionOptionContent(nodeId, formData);
     } else if (nodeData.text === 'buttonOptions') {
       content += this.createButtonOptionsContent(nodeId, nodeData, formData);
@@ -1387,7 +1591,7 @@ formData.options = ["True", "False"];
   private createQuestionOptionContent(nodeId: any, formData: any): string {
     let content = '<div class="textQuestion">';
     if (formData.questionText) {
-      content += `<h6 class="body_text">${formData.questionText}</h6>`;
+      content += `<h6 class="body_text">${this.getTrimmedText(formData.questionText)}</h6>`;
     }
     content += '</div>';
 
@@ -1404,10 +1608,11 @@ formData.options = ["True", "False"];
   }
 
   private createButtonOptionsContent(nodeId: any, nodeData: any, formData: any): string {
+    console.log("nodeId: any, nodeData: any, formData: any",nodeId, nodeData, formData)
     let content = '<div class="textQuestion">';
 
     if (formData.headerText) {
-      content += `<h6 class="body_text">${formData.headerText}</h6>`;
+      content += `<h6 class="body_text">${this.getTrimmedText(formData.headerText)}</h6>`;
     }
 
     if (['image', 'video', 'document'].includes(formData?.headerType)) {
@@ -1415,11 +1620,11 @@ formData.options = ["True", "False"];
     }
 
     if (formData?.bodyText) {
-      content += `<h6 class="body_text">${formData.bodyText || 'Sample Body Text'}</h6>`;
+      content += `<h6 class="body_text">${this.getTrimmedText(formData.bodyText) || 'Sample Body Text'}</h6>`;
     }
 
     if (formData?.footerText) {
-      content += `<h6 class="body_text">${formData.footerText}</h6>`;
+      content += `<h6 class="body_text">${this.getTrimmedText(formData.footerText)}</h6>`;
     }
 
     content += '</div>';
@@ -1464,15 +1669,15 @@ formData.options = ["True", "False"];
     let content = '<div class="textQuestion">';
 
     if (formData.headerText) {
-      content += `<h6 class="body_text">${formData.headerText}</h6>`;
+      content += `<h6 class="body_text">${this.getTrimmedText(formData.headerText)}</h6>`;
     }
 
     if (formData.bodyText) {
-      content += `<h6 class="body_text">${formData.bodyText}</h6>`;
+      content += `<h6 class="body_text">${this.getTrimmedText(formData.bodyText)}</h6>`;
     }
 
     if (formData.footerText) {
-      content += `<h6 class="body_text">${formData.footerText}</h6>`;
+      content += `<h6 class="body_text">${this.getTrimmedText(formData.footerText)}</h6>`;
     }
 
     content += '</div>';
@@ -1512,19 +1717,19 @@ formData.options = ["True", "False"];
     let content = '<div class="textQuestion">';
 
     if (formData.whatsAppFormName) {
-      content += `<h6 class="section-heading font-semibold text-center mb-2">${formData.whatsAppFormName}</h6>`;
+      content += `<h6 class="section-heading font-semibold text-center mb-2">${this.getTrimmedText(formData.whatsAppFormName)}</h6>`;
     }
 
     if (formData.headerText) {
-      content += `<h6 class="body_text">${formData.headerText}</h6>`;
+      content += `<h6 class="body_text">${this.getTrimmedText(formData.headerText)}</h6>`;
     }
 
     if (formData.bodyText) {
-      content += `<h6 class="body_text">${formData.bodyText}</h6>`;
+      content += `<h6 class="body_text">${this.getTrimmedText(formData.bodyText)}</h6>`;
     }
 
     if (formData.footerText) {
-      content += `<h6 class="body_text">${formData.footerText}</h6>`;
+      content += `<h6 class="body_text">${this.getTrimmedText(formData.footerText)}</h6>`;
     }
 
     content += '</div>';
@@ -1575,7 +1780,7 @@ formData.options = ["True", "False"];
         content = `<div class="textCont"><p>Time Delay <span style="font-size: 13px;color: #0a0a0a;font-weight: bold;">${formData.data.time} ${formData.data.unit}<span></p></div>`;
         break;
       case 'BotTriggerModal':
-        content = `<div class="textCont"><p>Trigger Bot <span style="font-size: 13px;color: #0a0a0a;font-weight: bold;">${formData.data.name} ${!formData.data.published ? '(Unpublished)' : ''}<span></p></div>`;
+        content = `<div class="textCont"><p>Trigger Bot <span style="font-size: 13px;color: #0a0a0a;font-weight: bold;">${formData.data.name}<span></p></div>`;
         break;
       case 'MessageOptin':
         content = `<div class="textCont"><p>Message Opt-in <span style="font-size: 13px;color: #0a0a0a;font-weight: bold;">${formData.data.status}<span></p></div>`;
@@ -1591,7 +1796,8 @@ formData.options = ["True", "False"];
           content += this.createMediaContent(formData.data);
         }
         if (formData.data.message) {
-          content += `<div class="textCont"><p>${formData.data.message}</p></div>`;
+
+          content += `<div class="textCont">${this.getTrimmedText(formData.data.message)}</div>`;
         }
         break;
       case 'WorkingHoursModal':
@@ -1681,6 +1887,8 @@ formData.options = ["True", "False"];
 
     nodeElement.scrollTop = scrollTop;
     nodeElement.scrollLeft = scrollLeft;
+
+    this.isLoading = false
   }
 
   private addNodeEvent(nodeId: number): void {
@@ -1713,28 +1921,8 @@ formData.options = ["True", "False"];
         this.handleDeleteClick = (event: Event) => {
           event.stopPropagation();
           console.log(nodeId)
-          Swal.fire({
-            title: 'Are you sure?',
-            text: 'Do you really want to delete this node?',
-            icon: 'warning',
-            iconColor: '#F97316', // Optional: Customize icon color
-            showCancelButton: true,
-            confirmButtonText: 'Yes, delete it!',
-            cancelButtonText: 'Cancel',
-            customClass: {
-              popup: 'small-swal',
-              confirmButton: 'swal-btn-confirm',
-              cancelButton: 'swal-btn-cancel'
-            },
-            buttonsStyling: false
-          }).then((result) => {
-            if (result.isConfirmed) {
-              this.editor.removeNodeId(`node-${nodeId}`);
-              Swal.fire('Deleted!', 'The node has been deleted.', 'success');
-            }
-          });
-
-          // this.editor.removeNodeId(`node-${nodeId}`)
+          this.deletNodeId = nodeId
+          $('#deletBotCard').modal('show')
         };
         deleteNodeIconClick.addEventListener('click', this.handleDeleteClick);
       }
@@ -1743,6 +1931,7 @@ formData.options = ["True", "False"];
 
   private updateExistingNode(formData: any): void {
     if (this.selectedNodeId === null) return;
+    this.isLoading = true
 
     const node = this.editor.getNodeFromId(this.selectedNodeId);
     node.data.formData = formData;
@@ -1832,7 +2021,10 @@ formData.options = ["True", "False"];
     }
 
     if (!modalElement.classList.contains('show')) {
-      this.currentModal = new bootstrap.Modal(modalElement);
+      this.currentModal = new bootstrap.Modal(modalElement, {
+    backdrop: 'static',
+    keyboard: false
+  });
     }
 
     this.currentModal.show();
@@ -1843,10 +2035,22 @@ formData.options = ["True", "False"];
 
   closeModal(): void {
 
-    if (this.currentModal) {
-      this.currentModal.hide();
-      this.currentModal = null;
+  if (this.currentModal) {
+    this.currentModal.hide();
+
+    // Optional: Also remove the static options if you want to allow normal behavior next time
+    const modalElement = document.querySelector('.modal.show');
+    if (modalElement) {
+      // Remove the "static" backdrop setting by re-enabling default dismiss behavior if needed
+      modalElement.removeEventListener('hidden.bs.modal', () => {
+        this.currentModal = null;
+      });
     }
+
+    this.currentModal = null;
+
+    this.isLoading = false
+  }
   }
 
   // ==================== FORM ARRAY HANDLING ====================
@@ -1890,28 +2094,14 @@ formData.options = ["True", "False"];
   MAX_TOTAL_ROWS = 10;
   hideAddAction: any = false
   addSection(sections: FormArray): void {
-    const totalRows = this.getTotalRowCount(sections);
-    this.hideAddAction = false
-    if (sections.length >= this.MAX_SECTIONS || totalRows >= this.MAX_TOTAL_ROWS) {
-      this.hideAddAction = true
-      return;
-    }
-
-    const remainingRows = this.MAX_TOTAL_ROWS - totalRows;
-
-    if (remainingRows <= 0) return;
-
-    const newSection = this.createSection();
-
-    // Optional: trim rows in new section if needed
-    const rowsArray = newSection.get('rows') as FormArray;
-    if (rowsArray.length > remainingRows) {
-      while (rowsArray.length > remainingRows) {
-        rowsArray.removeAt(rowsArray.length - 1);
-      }
-    }
-
-    sections.push(newSection);
+     if (!this.canAddSection()) return;
+  
+  const newSection = this.createSection();
+  sections.push(newSection);
+  
+  // Trigger validation updates
+  sections.updateValueAndValidity({ emitEvent: true });
+  this.changeDetectorRef.detectChanges(); // Ensure UI updates
   }
 
 
@@ -1925,6 +2115,8 @@ formData.options = ["True", "False"];
 
     if (rows.length < this.MAX_ROWS_PER_SECTION && remainingRows > 0) {
       rows.push(this.createRow());
+      sections.updateValueAndValidity({ emitEvent: true });
+        this.changeDetectorRef.detectChanges(); // Ensure UI update
     } else {
       this.hideAddAction = true
     }
@@ -1934,6 +2126,9 @@ formData.options = ["True", "False"];
     if (sections.length > 1) {
       this.hideAddAction = false
       sections.removeAt(index);
+
+      sections.updateValueAndValidity({ emitEvent: true });
+       this.changeDetectorRef.detectChanges();
     }
   }
 
@@ -1944,6 +2139,8 @@ formData.options = ["True", "False"];
     if (rows.length > 1) {
       this.hideAddAction = false
       rows.removeAt(rowIndex);
+      sections.updateValueAndValidity({ emitEvent: true });
+       this.changeDetectorRef.detectChanges();
     }
   }
 
@@ -1953,6 +2150,32 @@ formData.options = ["True", "False"];
       return total + rows.length;
     }, 0);
   }
+
+
+  canAddSection(): boolean {
+    console.log("this.listOptions",this.listOptions)
+    console.log("this.listOptions",this.listOptionSections)
+    console.log("this.listOptions",this.listOptionSections.length > 1)
+  if (!this.listOptions || !this.listOptionSections) return false;
+  
+  // Check if maximum sections reached
+  if (this.listOptionSections.length >= this.MAX_SECTIONS) return false;
+  
+  // Check if maximum total rows reached
+  if (this.getTotalRowCount(this.listOptionSections) >= this.MAX_TOTAL_ROWS) return false;
+  
+  // Check if any existing sections have invalid headings (when multiple sections exist)
+  if (this.listOptionSections.length > 0) {
+    const hasInvalidHeadings = this.listOptionSections.controls.some(section => {
+
+      return !section.get('sectionHeading')?.value?.trim();
+    });
+    if (hasInvalidHeadings) return false;
+  }
+  
+  return true;
+}
+
 
 
 
@@ -2060,9 +2283,11 @@ formData.options = ["True", "False"];
   }
 
   private fillExistingData(nodeData: any): void {
+    console.log(nodeData)
     if (this.selectedNodeId === null) return;
     const nodeElement = document.getElementById(`node-${this.selectedNodeId}`);
     this.selectedImageUrl = null;
+    console.log(this.cardType,nodeData)
 
     switch (this.cardType) {
       case 'sendText':
@@ -2091,8 +2316,21 @@ formData.options = ["True", "False"];
       case 'NotesMentionModal':
         this.fillNotesMentionModalData(nodeData);
         break;
+      case 'setCondition':
+        this.fillNotesSetConditionData(nodeData);
+        break;
       case 'whatsAppFlow':
         this.fillWhatsAppFlowsData(nodeData);
+        break;
+      case 'assignAgentModal':
+        this.fillassignAgentModal(nodeData);
+        break;
+      case 'TimeDelayModal':
+        this.fillTimeDelayModal(nodeData);
+        break;
+      case 'AddTags':
+      case 'RemoveTag':
+        this.fillTheTag(nodeData);
         break;
     }
   }
@@ -2213,6 +2451,19 @@ formData.options = ["True", "False"];
     this.buttonOptions.setControl('buttons', buttonsArray);
   }
 
+  private fillNotesSetConditionData(nodeData: any): void {
+
+  const savedConditions = nodeData?.data?.formData?.conditions || [];
+
+  // Optional: clear the array first if it's not already empty
+  this.conditionsArray.clear();
+
+  // Add each condition using your reusable function
+  savedConditions.forEach((condition: any) => {
+    this.addCondition(condition);
+  });
+  }
+
   private fillListOptionsData(nodeData: any): void {
     const updateForm = nodeData?.data?.formData;
 
@@ -2273,6 +2524,27 @@ formData.options = ["True", "False"];
       enableValidation: updateForm?.enableValidation
     });
 
+  }
+
+  private fillassignAgentModal(nodeData: any): void {
+    const updateForm = nodeData?.data?.formData?.data
+    ;
+    console.log("updateForm",nodeData)
+    console.log("updateForm",updateForm)
+this.selectedAgentDetails = updateForm
+  }
+
+  private fillTimeDelayModal (nodeData: any): void {
+    const updateForm = nodeData?.data?.formData?.data
+    ;
+    this.delayTime = updateForm.time
+    this.delayUnit = updateForm.unit
+  }
+
+  private fillTheTag(nodeData: any): void {
+    const updateForm = nodeData?.data?.formData?.data
+this.selectedTags = updateForm.tags
+this.operationOptions = updateForm.operation
   }
 
 
@@ -2388,16 +2660,18 @@ formData.options = ["True", "False"];
   }
 
   addCondition(condition?: any): void {
+    console.log('addCondition',condition?.operator,condition?.comparatorType)
     const conditionGroup = this.fb.group({
       comparator: [condition?.comparator || '', Validators.required],
-      comparatorType: [condition?.comparatorType || ''],
-      operator: [condition?.operator || '', Validators.required],
+      comparatorType: [condition?.comparatorType ?? ''],
+      operator: [condition?.operator ?? '', Validators.required],
       value: [condition?.value || '', Validators.required],
       valueType: [condition?.valueType || ''],
-      nextJoinType: [condition?.nextJoinType || 'AND']
+      nextJoinType: [condition?.nextJoinType ?? 'AND']
     });
 
-    this.conditionsArray.push(conditionGroup);
+this.conditionsArray.push(conditionGroup);
+
   }
 
   removeCondition(index: number): void {
@@ -2434,12 +2708,12 @@ formData.options = ["True", "False"];
 
   filterAgents(): void {
     if (!this.searchQuery) {
-      this.filteredAgents = [...this.agents];
+      this.agentsList = [...this.agents];
       return;
     }
 
     const query = this.searchQuery.toLowerCase();
-    this.filteredAgents = this.agents.filter(agent =>
+    this.agentsList = this.agents.filter(agent =>
       agent.name.toLowerCase().includes(query)
     );
   }
@@ -2496,6 +2770,13 @@ formData.options = ["True", "False"];
     this.invalidTime = this.delayTime < 1 || this.delayTime > max;
   }
 
+preventInvalidKeys(event: KeyboardEvent): void {
+  const invalidKeys = ['-', 'e', '+', '.'];
+  if (invalidKeys.includes(event.key) || (event.key === '0' && !this.delayTime)) {
+    event.preventDefault();
+  }
+}
+
   onUnitChange(): void {
     const max = this.delayUnit === 'hour' ? 24 : 60;
     if (this.delayTime > max) {
@@ -2520,8 +2801,12 @@ formData.options = ["True", "False"];
     this.settingService.getNewCustomField(this.userDetails.SP_ID).subscribe((allAttributes: any) => {
       console.log(allAttributes)
       if (allAttributes.status == 200) {
-
-        this.currentAttributeList = allAttributes?.getfields
+this.currentAttributeList = allAttributes?.getfields?.filter((attr:any) =>
+  attr.ActuallName !== 'Phone_number' &&
+  attr.ActuallName !== 'tag' &&
+  attr.ActuallName !== 'OptInStatus'
+);
+        console.log()
         const attributes = allAttributes?.getfields?.map((attr: any) => `${attr.displayName}`);
         this.attributeList = attributes;
       }
@@ -2535,7 +2820,7 @@ formData.options = ["True", "False"];
     this.settingService.getUserList(this.userDetails.SP_ID, 1).subscribe(async (result: any) => {
       if (result) {
 
-        this.agentsList = result?.getUser.filter((item: any) => item.RoleName == 'Agent');;
+        this.agentsList = result?.getUser
 
         this.agentsList.forEach((item: { name: string; nameInitials: string; }) => {
           const nameParts = item.name.split(' ');
@@ -2545,6 +2830,7 @@ formData.options = ["True", "False"];
 
           item.nameInitials = nameInitials;
         });
+        this.agents = [...this.agentsList]
         // this.mentionAgentsList = this.agentsList.filter((item:any)=>item.uid != this.uid);
         // this.assigineeList = this.agentsList.filter((item:any)=>item.IsActive == 1);
       }
@@ -2820,6 +3106,8 @@ formData.options = ["True", "False"];
         selection?.addRange(range);
       }, 0);
 
+      console.log("editor",editor ) 
+      console.log("variableName",variableName ) 
       this.insertBotVariableCommon(editor, variableName);
     }
 
@@ -2829,6 +3117,7 @@ formData.options = ["True", "False"];
 
 
   insertBotVariableCommon(editorInstance: any, variable: string) {
+
     const rtePanel = (editorInstance?.contentModule as ContentRender).getEditPanel() as HTMLElement;
     rtePanel.focus();
 
@@ -2877,7 +3166,9 @@ formData.options = ["True", "False"];
     } else if (nodeType == 'NotificationModal') {
       this.dynamiceEditor = this.chatEditorElement
       this.toggleChatNotes('attachementTool')
-    } else {
+    } else if(nodeType == 'MessageOptin'){
+      this.conversationActions.status = 'Yes'
+    } {
       this.toggleChatNotes('')
     }
 
@@ -2925,7 +3216,14 @@ formData.options = ["True", "False"];
 
 
     this.conditionForm.reset()
+     this.conditionForm.get('operator')?.setValue('');
+     (this.conditionForm.get('conditions') as FormArray).clear();  
+     this.initConditionForm()
 
+     
+
+
+     console.log("this.conditionForm",this.conditionForm)
 
     this.openQuestion.get('answerType')?.setValue('text');
     const optionsArray = this.questionOption.get('options') as FormArray;
@@ -3082,6 +3380,8 @@ formData.options = ["True", "False"];
     this.selectedFromVariable = true;
     this.isUserTyping = false;
     this.contactAttributeForm.get('selectedValue')?.updateValueAndValidity();
+    this.showAttributeCondition = true
+
   }
 
   onTextInputChange(event: any): void {
@@ -3094,8 +3394,10 @@ formData.options = ["True", "False"];
 
 
 
-  selectAttribute(status: string): void {
+  selectAttribute(status: string,event: MouseEvent): void {
     this.openDropdown.status = status;
+   event.stopPropagation();
+
   }
 
   updateCharacterCount(): void {
@@ -3187,55 +3489,79 @@ formData.options = ["True", "False"];
 
 
 
-  onFileSelectedData(event: any,type:any='') {
+onFileSelectedData(event: any, type: any = '') {
   const file = event.target.files[0];
   const input = event.target as HTMLInputElement;
 
-  if (file) {
-    const mimeType = file.type;
-    let headerType: 'image' | 'video' | 'document' | 'unknown' = 'unknown';
+  if (!file) return;
 
-    if (mimeType.startsWith('image/')) {
-      headerType = 'image';
-    } else if (mimeType.startsWith('video/')) {
-      headerType = 'video';
-    } else if (
-      mimeType === 'application/pdf' ||
-      mimeType === 'application/msword' ||
-      mimeType.includes('spreadsheet') ||
-      mimeType.includes('document')
-    ) {
-      headerType = 'document';
-    }
+  const mimeType = file.type;
+  let detectedType: 'image' | 'video' | 'document' | 'unknown' = 'unknown';
 
-    const maxSize = headerType === 'image' ? 5 * 1024 * 1024 : 10 * 1024 * 1024;
-    if (file.size > maxSize) {
-      alert(`File size exceeds maximum allowed (${headerType === 'image' ? '5MB' : '10MB'})`);
-      return;
-    }
-
-
-    this.uploadedFile = file;
-    this.selectedFileType = headerType;
-    this.selectedFileUrl = URL.createObjectURL(file);
-     this.selectedFileType = headerType;
-  this.sendTextForm.patchValue({ file }); // 👈 Patch the form field
-
-    if (headerType === 'image') {
-      this.selectedImageUrl = this.selectedFileUrl;
-    } else if (headerType === 'document') {
-      this.selectedImageUrl = 'assets/img/document.png';
-    } else if (headerType === 'video') {
-      this.selectedImageUrl = this.selectedFileUrl;
-    }
-
-    console.log(file)
-    // Trigger the upload
-    this.saveFilesUpload(file,type);
+  if (mimeType.startsWith('image/')) {
+    detectedType = 'image';
+  } else if (mimeType.startsWith('video/')) {
+    detectedType = 'video';
+  } else if (
+    mimeType === 'application/pdf' ||
+    mimeType === 'application/msword' ||
+    mimeType.includes('spreadsheet') ||
+    mimeType.includes('document')
+  ) {
+    detectedType = 'document';
   }
 
+  console.log("selectedFileType",this.selectedFileType)
+  // Get selected header type from form
+  const selectedHeaderType = this.buttonOptions.get('headerType')?.value;
+
+  // Restrict uploads based on selected header type
+  if (
+    selectedHeaderType === 'image' && detectedType !== 'image' ||
+    selectedHeaderType === 'video' && detectedType !== 'video' ||
+    selectedHeaderType === 'document' && detectedType !== 'document'
+  ) {
+    this.showToaster(`Invalid file type. Please upload a valid file.`,'error');
+    input.value = '';
+    return;
+  }
+
+   if (
+    this.cardType === 'sendImage' && detectedType !== 'image' ||
+    this.cardType === 'sendVideo' && detectedType !== 'video' ||
+    this.cardType === 'sendDocument' && detectedType !== 'document'
+  ) {
+    this.showToaster(`Invalid file type. Please upload a valid file.`,'error');
+    input.value = '';
+    return;
+  }
+
+
+  // File size check
+  const maxSize = detectedType === 'image' ? 5 * 1024 * 1024 : 10 * 1024 * 1024;
+  if (file.size > maxSize) {
+    this.showToaster(`File size exceeds maximum allowed (${detectedType === 'image' ? '5MB' : '10MB'})`,'error');
+    input.value = '';
+    return;
+  }
+
+
+  this.uploadedFile = file;
+  this.selectedFileType = detectedType;
+  this.selectedFileUrl = URL.createObjectURL(file);
+  this.sendTextForm.patchValue({ file });
+
+  // Preview
+  if (detectedType === 'image' || detectedType === 'video') {
+    this.selectedImageUrl = this.selectedFileUrl;
+  } else if (detectedType === 'document') {
+    this.selectedImageUrl = 'assets/img/document.png';
+  }
+
+  this.saveFilesUpload(file, type);
   input.value = '';
 }
+
 
 
 
@@ -3243,14 +3569,7 @@ formData.options = ["True", "False"];
     console.log("file",file)
   if (!file) return;
 
-  const spid = this.userDetails.SPID;
-  const validTypes = ['video/mp4', 'application/pdf', 'image/jpg', 'image/jpeg', 'image/png', 'image/webp','image/svg+xml'];
-
-  if (!validTypes.includes(file.type)) {
-    this.showToaster('Please select valid file type', 'error');
-    return;
-  }
-
+  const spid = this.userDetails.SPID || this.userDetails.SP_ID;
   this.mediaType = file.type;
   const fileSizeInMB = parseFloat((file.size / (1024 * 1024)).toFixed(2));
   const imageSizeLimitMB = 5;
@@ -3319,7 +3638,7 @@ formData.options = ["True", "False"];
   saveFiles(files: FileList) {
     if (files[0]) {
       let imageFile = files[0]
-      let spid = this.userDetails.SPID
+      let spid = this.userDetails.SPID || this.userDetails.SP_ID
       if ((files[0].type == 'video/mp4' || files[0].type == 'application/pdf' || files[0].type == 'image/jpg' || files[0].type == 'image/jpeg' || files[0].type == 'image/png' || files[0].type == 'image/webp')) {
         this.mediaType = files[0].type
         let fileSize = files[0].size;
@@ -3612,7 +3931,8 @@ formData.options = ["True", "False"];
 
 
 
-  async saveChatbot(type: any): Promise<void> {
+  async saveChatbot(type: any,exitType=''): Promise<void> {
+    this.isLoading = true
     this.orignalData = {};
     const exportData: any = this.editor.export();
     const exportNodesData: any = Object.values(exportData?.drawflow?.Home?.data);
@@ -3631,12 +3951,22 @@ formData.options = ["True", "False"];
 
     } else {
       let isStructureValid = true;
+
+      console.log("exportNodesData",exportNodesData)
+
+      if (exportNodesData.length == 0 ) {
+        this.isLoading = false
+         this.showToaster('Please add some cards before publish the bot','error')
+         return
+      }
       // Check each node's inputs/outputs are connected
       exportNodesData.forEach((node: any) => {
         const isFullyConnected = this.checkAllInputsAndOutputsConnected(node);
         if (!isFullyConnected) {
           isStructureValid = false;
-          console.warn(`❌ Node ${node.id} is not fully connected`);
+          this.isLoading = false
+           this.showToaster('Node ${node.id} is not fully connected.','errors')
+           return
         }
       });
 
@@ -3644,11 +3974,14 @@ formData.options = ["True", "False"];
       const isOneToOneValid = this.checkOnlyOneToOneConnections(exportData);
       if (!isOneToOneValid) {
         isStructureValid = false;
-        console.warn('❌ Some inputs/outputs are connected more than once');
+        this.isLoading = false
+        this.showToaster(' Some inputs/outputs are connected more than once','errors')
+        return
       }
 
       if (!isStructureValid) {
-        alert('Some nodes are either not fully connected or have multiple connections per port.');
+        this.isLoading = false
+        this.showToaster('Some nodes are either not fully connected or have multiple connections per node.','error')
         return;
       }
       const flowData: any = this.getFullFlowJson();
@@ -3658,15 +3991,25 @@ formData.options = ["True", "False"];
       console.log("Flow Data:", flowData);
     }
      localStorage.setItem('node_FE_Json',data.node_FE_Json)
-
+     
     this.botService.submitBot(data).subscribe((res: any) => {
+      this.isLoading = false
       
-      this.showToaster('Changes saved successfully', 'success')
+      if (data.status == 'publish') {
+        
+        this.showToaster('Bot published successfully', 'success')
+        this.router.navigate(['/bot-builder']);
+      }else{
+        
+        this.showToaster('Changes saved successfully', 'success')
+        if (exitType == 'exit') {
+          this.router.navigate(['/bot-builder']);
+        }
+      }
+      
 
-      this.router.navigate(['/bot-builder']);
 
     })
-    // submitBots
   }
 
 
@@ -3817,5 +4160,47 @@ formData.options = ["True", "False"];
   }
 
 
+isTooltipVisible2:any
+    handleTooltipChange(visible: boolean,type:any='') {
+if (type == 2){
+        this.isTooltipVisible2 = visible
+      }else{
 
+        this.isTooltipVisible = visible;
+      }
+    }
+
+
+  ConfirmdeleteBot(){
+    this.editor.removeNodeId(`node-${this.deletNodeId}`);
+  }
+
+
+
+
+  closeUtility(){
+// this.showAttributeCondition = true
+this.openDropdown.status = ''
+
+}
+
+channelOption:any
+channelSelected:any
+  getWhatsAppDetails(): void {
+    this.settingService.getWhatsAppDetails(this.userDetails.SP_ID).subscribe((response: any) => {
+      if (response?.whatsAppDetails) {
+        this.channelOption = response.whatsAppDetails.map((item: any) => ({
+          value: item?.id,
+          label: item?.channel_id,
+          connected_id: item?.connected_id,
+          channel_status: item?.channel_status
+        }));
+
+        if (this.channelOption.length === 1) {
+          this.channelSelected = this.channelOption[0].label;
+
+        }
+      }
+    });
+  }
 }
