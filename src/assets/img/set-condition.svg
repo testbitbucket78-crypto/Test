@@ -1,0 +1,31 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="31.222" height="30.347" viewBox="0 0 31.222 30.347">
+  <defs>
+    <linearGradient id="linear-gradient" x1="0.5" x2="0.5" y2="1" gradientUnits="objectBoundingBox">
+      <stop offset="0" stop-color="#f9b035"/>
+      <stop offset="0.53" stop-color="#f98c4e"/>
+      <stop offset="1" stop-color="#f96767"/>
+    </linearGradient>
+  </defs>
+  <g id="set-condition" transform="translate(-794 -678.374)">
+    <path id="Fill_3" data-name="Fill 3" d="M14.669,0H5.8C2.332,0,0,2.435,0,6.056v8.357c0,3.611,2.332,6.046,5.8,6.046h8.869c3.468,0,5.79-2.435,5.79-6.046V6.056C20.459,2.435,18.137,0,14.669,0" transform="translate(809.611 679.081) rotate(45)" fill="none" stroke="#f98156" stroke-width="1"/>
+    <path id="Fill_3-2" data-name="Fill 3" d="M11.5,0H4.549A4.405,4.405,0,0,0,0,4.749V11.3a4.4,4.4,0,0,0,4.549,4.741H11.5A4.4,4.4,0,0,0,16.045,11.3V4.749A4.4,4.4,0,0,0,11.5,0" transform="translate(809.611 682.202) rotate(45)" fill="url(#linear-gradient)"/>
+    <g id="Group_1203" data-name="Group 1203" transform="translate(794 690.051)">
+      <g id="Ellipse_1066" data-name="Ellipse 1066" transform="translate(0)" fill="#fff" stroke="#f98156" stroke-width="1">
+        <circle cx="3.673" cy="3.673" r="3.673" stroke="none"/>
+        <circle cx="3.673" cy="3.673" r="3.173" fill="none"/>
+      </g>
+      <g id="Shield_Done" data-name="Shield Done" transform="translate(1.809 2.321)">
+        <path id="Fill_4" data-name="Fill 4" d="M1.362,2.7A.389.389,0,0,1,1.089,2.6L.114,1.659a.367.367,0,0,1,0-.529.392.392,0,0,1,.544,0l.7.675L3.07.111a.392.392,0,0,1,.544,0,.367.367,0,0,1,0,.529L1.633,2.594a.387.387,0,0,1-.271.111" transform="translate(0 0)" fill="#f98156"/>
+      </g>
+    </g>
+    <g id="Group_1204" data-name="Group 1204" transform="translate(817.876 690.051)">
+      <g id="Ellipse_1066-2" data-name="Ellipse 1066" transform="translate(0)" fill="#fff" stroke="#f98156" stroke-width="1">
+        <circle cx="3.673" cy="3.673" r="3.673" stroke="none"/>
+        <circle cx="3.673" cy="3.673" r="3.173" fill="none"/>
+      </g>
+    </g>
+    <g id="Shield_Fail" data-name="Shield Fail" transform="translate(820.324 692.5)">
+      <path id="Fill_4-2" data-name="Fill 4" d="M2.035,1.412,2.78.688a.4.4,0,0,0,0-.57.422.422,0,0,0-.585,0L1.45.842.707.118a.422.422,0,0,0-.585,0,.4.4,0,0,0,0,.57l.744.725-.744.725a.4.4,0,0,0,0,.57.421.421,0,0,0,.585,0l.744-.724.744.724a.421.421,0,0,0,.585,0,.4.4,0,0,0,0-.57Z" transform="translate(0 0)" fill="#f98156"/>
+    </g>
+  </g>
+</svg>

@@ -28,6 +28,7 @@ export interface FilterOption {
   value: number;
   label: string;
   checked: boolean;
+  name:string;
 }
 
 export interface ChannelOption {

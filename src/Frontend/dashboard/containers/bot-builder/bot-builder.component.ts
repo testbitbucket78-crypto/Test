@@ -1,7 +1,7 @@
-import { Component, ElementRef, HostListener, ViewChild, OnInit, AfterViewInit } from '@angular/core';
+import { Component, ElementRef, HostListener, ViewChild, OnInit, AfterViewInit, ChangeDetectorRef } from '@angular/core';
 import { environment } from './../../../../environments/environment';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { NgbModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
 import { SettingsService } from 'Frontend/dashboard/services/settings.service';
 import moment from 'moment';
 import { Router } from '@angular/router';
@@ -31,6 +31,7 @@ export class BotBuilderComponent implements OnInit {
   botBuilderForm!: FormGroup;
   dateRangeForm!: FormGroup;
   private bsModalInstance: any;
+  private modalRef: NgbModalRef | null = null;
 
   // Data
   botDetailsData: any = null
@@ -40,6 +41,7 @@ export class BotBuilderComponent implements OnInit {
   channelSelected: string = '';
   botsList: any = [];
 
+  isTooltipVisible:any
   originalBotsList: any
   modalReference: any;
 
@@ -49,8 +51,8 @@ export class BotBuilderComponent implements OnInit {
   ShowChannelOption: any = false;
 
   filterListChannel: FilterOption[] = [
-    { value: 1, label: 'WA API', checked: false },
-    { value: 2, label: 'WA Web', checked: false },
+    { value: 1, label: 'WA API', checked: false,name:'wa_api' },
+    { value: 2, label: 'WA Web', checked: false,name:'wa_web' },
   ];
 
   channelOption: ChannelOption[] = [
@@ -59,9 +61,9 @@ export class BotBuilderComponent implements OnInit {
   ];
 
   filterListStatus: FilterOption[] = [
-    { value: 0, label: 'draft', checked: false },
-    { value: 1, label: 'publish', checked: false },
-    { value: 2, label: 'Deprecated', checked: false },
+    { value: 0, label: 'Draft', checked: false,name: 'draft' },
+    { value: 1, label: 'Published', checked: false,name: 'publish' },
+    { value: 2, label: 'Deprecated', checked: false,name: 'deprecated' },
   ];
 
   // UI State
@@ -98,6 +100,7 @@ export class BotBuilderComponent implements OnInit {
   errorMessage: string = '';
   warningMessage: string = '';
   ShowAssignOption: any = false;
+  ShowAssignOptions: any = false;
 
   // Data arrays
   agentsList: any[] = [];
@@ -121,6 +124,8 @@ export class BotBuilderComponent implements OnInit {
   selectedStatus = '';
   selectedExclusiveAction: any = null;
   editedText = '';
+  isLoading: any = false;
+  assignActionList:any = []
 
   // Constants
   converstationStatus = [
@@ -128,7 +133,8 @@ export class BotBuilderComponent implements OnInit {
     { name: 'Open', value: 'open' }
   ];
 
-  assignActionList = [
+
+  assignAction = [
     { name: 'Assign to contact owner', value: 'assign_owner', selected: false },
     { name: 'Unassign conversation', value: 'Unassign_conversation', selected: false },
     { name: 'Assign to Agent', value: 'assign_agent', children: this.agentList, selected: false },
@@ -188,10 +194,13 @@ export class BotBuilderComponent implements OnInit {
     private modalService: NgbModal,
     private fb: FormBuilder,
     private router: Router,
-    public botService: BotserviceService,
+    public botService: BotserviceService,private cd:ChangeDetectorRef
   ) {
     this.profilePicture = JSON.parse(sessionStorage.getItem('loginDetails')!)?.profile_img;
     this.userDetails = JSON.parse(sessionStorage.getItem('loginDetails')!);
+    localStorage.setItem('viewMode', 'false')
+
+    this.assignActionList = JSON.parse(JSON.stringify(this.assignAction))
 
 
     // if (settingsService?.checkRoleExist('24')) {
@@ -213,8 +222,8 @@ export class BotBuilderComponent implements OnInit {
 
   private initForms(): void {
     this.botBuilderForm = this.fb.group({
-      name: [null, [Validators.required, Validators.maxLength(20)]],
-      botDescription: [null, [Validators.required, Validators.maxLength(80)]],
+      name: [null, [Validators.required, Validators.maxLength(50)]],
+      botDescription: [null, [ Validators.maxLength(100)]],
       botChannel: [null, Validators.required],
       triggerKeywords: [null, Validators.required],
       botChannelId: [null, Validators.required],
@@ -233,16 +242,17 @@ export class BotBuilderComponent implements OnInit {
 
 
   getBotDetails() {
+    this.isLoading = true
     localStorage.removeItem('node_FE_Json')
     localStorage.removeItem('botId')
     var SPID = this.userDetails?.SP_ID || 159
     this.botService.getBotAlldetails(SPID).subscribe((res: any) => {
       if (res.status == 200) {
-
         this.botsList = res.bots
         console.log(res.bots)
         this.originalBotsList = [...this.botsList];
       }
+      this.isLoading = false
 
 
     })
@@ -300,8 +310,15 @@ export class BotBuilderComponent implements OnInit {
   // Modal and Form Methods
   openModal(content: any): void {
     this.maxSelectableDate = moment().subtract(1, 'day').format('YYYY-MM-DD');
-    this.modalService.open(content, { centered: true, backdrop: 'static' });
+    this.modalRef = this.modalService.open(content, { centered: true, backdrop: 'static' });
   }
+  closeModal(): void {
+  if (this.modalRef) {
+    this.modalRef.close(); // or .dismiss()
+    this.modalRef = null;
+  }
+}
+
 
   closeModalById(modalId: string): void {
     this.botBuilderForm.reset()
@@ -315,6 +332,7 @@ export class BotBuilderComponent implements OnInit {
   }
 
   resetBotForm(): void {
+    this.keywords = []
     this.botBuilderForm.reset();
     // this.botBuilderForm.removeControl('copyBotName');
     this.showAdvanceAction = false;
@@ -326,6 +344,9 @@ export class BotBuilderComponent implements OnInit {
     this.multiSelect = [];
     this.showAdvanceOption = false;
     this.assignedAgentList = []
+    this.assignedRemoveTagList = []
+    this.assignedTagList = []
+    this.assignActionList = JSON.parse(JSON.stringify(this.assignAction))
 
   }
 
@@ -345,7 +366,7 @@ export class BotBuilderComponent implements OnInit {
         botChannel: item.channel_id,
         botChannelId: item.channel_id,
         botTimeout: item.timeout_value,
-        dropOfMessage: this.sanitizeHTML(item.timeout_message),
+        dropOfMessage: this.sanitizeHTML(item.timeout_message) == undefined?'':this.sanitizeHTML(item.timeout_message),
         triggerKeywords: item.keywords,
         // advanceAction: {
         //   selected: JSON.parse(item?.advanceAction) || []
@@ -363,13 +384,18 @@ export class BotBuilderComponent implements OnInit {
     }
 
 
-    this.assignedAgentList = JSON.parse(item?.advanceAction) || []
+    console.log(item)
+    if (item?.advanceAction) {
+      this.assignedAgentList = JSON.parse(item?.advanceAction)
+    }else{
+      this.assignedAgentList =  []
+    }
 
     const matchedActionValues: any = this.assignedAgentList
       .filter(item => this.actionIdToValue.hasOwnProperty(item.actionTypeId))
       .map(item => this.actionIdToValue[item.actionTypeId]);
     console.log(matchedActionValues)
-    this.selectedExclusiveAction = matchedActionValues[0]
+    this.selectedExclusiveAction = matchedActionValues?.length == 0?null:matchedActionValues[0]
 
 
     this.assignedAgentList.forEach((item: any) => {
@@ -386,7 +412,7 @@ export class BotBuilderComponent implements OnInit {
     })
 
 
-    if (this.assignedAgentList?.length > 0 || item.timeout_message != null) {
+    if (this.assignedAgentList?.length > 0 || item?.timeout_message != null) {
       this.showAdvanceOption = true
     }
 
@@ -406,7 +432,7 @@ export class BotBuilderComponent implements OnInit {
 
 
     if(this.errorMessageBot != '') {
-return
+      return
     }
 
     if (this.botBuilderForm.invalid) {
@@ -432,12 +458,21 @@ return
         advanceAction: this.assignedAgentList
       };
 
+      this.isLoading = true
       this.botService.saveBotDetails(data).subscribe((response: any) => {
         if (response.status === 200) {
           this.botBuilderForm.reset();
-          localStorage.setItem('botId', response.botId)
+          localStorage.setItem('botId', response.msg.insertId || response.botId)
+          if(Type == 'copy'){
+               this.botBuilderForm.reset();
+            if (this.botDetailsData.node_FE_Json) {
+              localStorage.setItem('node_FE_Json', this.botDetailsData.node_FE_Json)
+            }
+          }
           this.closeModalById('createBotModal');
-          this.closeModalById('copyBot');
+          this.closeModalById('botModal');
+          this.closeModalById('submitBotModal');
+          this.isLoading = false
           this.router.navigate(['/bot-Creation']);
           this.showToaster('success', response.message)
         } else {
@@ -472,14 +507,18 @@ return
           advanceAction: this.assignedAgentList
         };
 
+        this.isLoading = true
+
         this.botService.updateBotDetails(data).subscribe((response: any) => {
           if (response.status === 200) {
+            this.isLoading = false
             this.botBuilderForm.reset();
             if (this.botDetailsData.node_FE_Json) {
               localStorage.setItem('node_FE_Json', this.botDetailsData.node_FE_Json)
             }
             localStorage.setItem('botId', this.botDetailsData.id)
-            this.closeModalById('editFlowModal');
+          this.closeModalById('botModal');
+          this.closeModalById('submitBotModal');
             this.router.navigate(['/bot-Creation']);
             this.showToaster('success', response.message)
           } else {
@@ -493,9 +532,18 @@ return
   }
 
   copyBot(Type: any): void {
+     console.log("copyBot=========>",Type)
     if (Type == 'copy') {
+      this.keywords = []
       this.botBuilderForm.get('name')?.setValue(null)
-    } else {
+      this.isEditMode = false
+    } else if(Type == 'EditMode') {
+
+      this.isEditMode = true
+      this.botBuilderForm.get('name')?.setValue(this.botDetailsData.name)
+      this.OpenModal('editFlowModal')
+    }else{
+      this.isEditMode = true
       this.botBuilderForm.get('name')?.setValue(this.botDetailsData.name)
     }
 
@@ -509,6 +557,7 @@ return
 
   confirmDelete(): void {
     if (!this.botDetailsData?.id) return;
+    this.isLoading = true
 
     // this.botsList = this.botsList.filter((bot: any) => bot.id !== this.botDetailsData.id);
 
@@ -522,6 +571,7 @@ return
       } else {
         this.showToaster('error', response.message);
       }
+      this.isLoading = false
     });
 
 
@@ -578,6 +628,16 @@ return
   }
 
   // UI Helper Methods
+isTooltipVisible2:any
+      handleTooltipChange(visible: boolean,Type:any='') {
+        if(Type == 2){
+          this.isTooltipVisible2 = visible;
+
+        }else{
+
+          this.isTooltipVisible = visible;
+        }
+    }
 
 
 
@@ -593,7 +653,10 @@ return
 
   filterBot(filterBotId: any) {
     this.closeAllModal()
-    this.modalReference = this.modalService.open(filterBotId, { size: 'sm', windowClass: 'white-pink' });
+    this.modalReference = this.modalService.open(filterBotId, { size: 'sm', windowClass: 'white-pink', backdrop: 'static', });
+ this.filterListStatus.forEach(option => {
+    option.checked = this.selectedStatusFilter.includes(option.name);
+  });
   }
 
   closeAllModal() {
@@ -613,7 +676,7 @@ return
     if (selectedChannel) {
       this.channelSelected = selectedChannel.label;
     }
-    this.ShowAssignOption = false;
+    this.ShowAssignOptions = false;
   }
 
 
@@ -651,28 +714,31 @@ return
 
   clearFilters() {
     this.filterListStatus.forEach(filter => filter.checked = false);
+    this.selectedStatusFilter = []
     this.botsList = [...this.originalBotsList];
     this.closeAllModal()
 
   }
 
+
+  selectedStatusFilter:any=[]
   applyFilters() {
-    const selectedStatus = this.filterListStatus
+    this.closeAllModal()
+     this.selectedStatusFilter = this.filterListStatus
       .filter(f => f.checked)
-      .map(f => f.label);
+      .map(f => f.name);
 
-    console.log('Selected Status:', selectedStatus);
+    console.log('Selected Status:', this.selectedStatusFilter);
 
-    if (selectedStatus.length === 0) {
+    if (this.selectedStatusFilter.length === 0) {
       // No filters selected: show all
       this.botsList = [...this.originalBotsList];
       return;
     }
 
     this.botsList = this.originalBotsList.filter((bot: Bot) =>
-      selectedStatus.includes(bot.status) // assuming `bot.status` is like "Draft", "Published"
+      this.selectedStatusFilter.includes(bot.status) // assuming `bot.status` is like "Draft", "Published"
     );
-    this.closeAllModal()
   }
 
 
@@ -774,6 +840,13 @@ return
       }
 
       this.botService.exportBotDetails(data).subscribe((res: any) => {
+if(res.status == 200){
+this.closeModal()
+   this.showToaster('success', res.message)
+}else {
+  this.showToaster('error', res.message);
+}
+
 
       })
 
@@ -785,12 +858,13 @@ return
     this.showAdvanceAction = !this.showAdvanceAction;
     this.ShowAddAction = true;
     this.showSubmenuPanel = false;
+    this.ShowAssignOption = false;
   }
 
 
   toggleAssignOptions() {
     console.log(this.ShowAssignOption)
-    this.ShowAssignOption = !this.ShowAssignOption
+    this.ShowAssignOptions = !this.ShowAssignOptions
   }
 
   // Methods
@@ -826,6 +900,8 @@ return
       (id === 1 && this.assignedRemoveTagList.includes(val)) ||
       (id === 2 && this.converstatation.includes(val));
   }
+
+
 
   assignConversation(index: number) {
     const agent = this.agentsList[index];
@@ -909,6 +985,12 @@ return
   }
 
 
+  closeUtility(){
+	this.ShowAssignOption = false;
+	this.ShowAssignOptions = false;
+  this.ShowChannelOption = false
+
+}
 
 
   openAddTagModal() {
@@ -974,6 +1056,7 @@ return
   exclusiveActions = ['assign_owner', 'Unassign_conversation', 'Mark_Status', 'assign_agent'];
 
   isOptionDisabled(optionValue: string): boolean {
+
     return this.exclusiveActions.includes(optionValue) &&
       this.selectedExclusiveAction !== null &&
       this.selectedExclusiveAction !== optionValue;
@@ -982,6 +1065,9 @@ return
   checkList() { return this.assignedAgentList.some(agent => agent.actionTypeId === 2); }
   closeAddAction() {
     this.ShowAddAction = false;
+  }
+  closeAssignTo() {
+    this.ShowAssignOption = false;
   }
 
   RemoveTags(index: number, e: any) {
@@ -1008,6 +1094,16 @@ return
 
 
 
+  isDisable(type:any , value:any){
+
+if(type == 3 ){
+  return this.assignedAgentList.find(a => a.actionTypeId === 3)?.Value.includes(value.TagName)
+  
+}else{
+  return this.assignedAgentList.find((a:any)=> a.actionTypeId === 1)?.Value.includes(value.TagName)
+}
+}
+
   // Add these to your component class
   keywords: string[] = [];
   newKeyword = '';
@@ -1017,7 +1113,7 @@ return
     if (!this.newKeyword.trim()) return;
 
     var data = {
-      keyword: this.newKeyword,
+      keyword: this.newKeyword.trim(),
       spid: this.userDetails.SP_ID
 
     }
@@ -1057,4 +1153,67 @@ return
       triggerKeywords: this.keywords.join(',')
     });
   }
+
+isEditMode:any=false
+OpenModal(Type:any){
+  console.log("type=========>",Type)
+  if(Type == 'editFlowModal'){
+    this.isEditMode = true
+    this.botBuilderForm.get('name')?.setValue(this.botDetailsData.name)
+setTimeout(() => {
+  let keywordArray = this.botDetailsData?.keywords?.split(',').map((k: any) => k.trim());
+console.log(keywordArray)
+if (keywordArray == undefined) {
+this.keywords = []
+} else {
+this.keywords = keywordArray
+}
+this.cd.detectChanges();
+}, 200);
+
+}else{
+    this.isEditMode = false
+
+  }
+  $('#botModal').modal('show')
+
+}
+
+currentModalType:any
+openSubmitBotModal(type:any){
+  Object.keys(this.botBuilderForm.controls).forEach(key => {
+const control = this.botBuilderForm.get(key);
+if (control && control.invalid) {
+  console.warn(`Invalid field: ${key}`, control.errors);
+}
+});
+if(this.errorMessageBot != '') {
+return
+}
+if (this.botBuilderForm.invalid) {
+this.botBuilderForm.markAllAsTouched();
+return;
+}
+this.currentModalType = type
+   const submitModal = new bootstrap.Modal(document.getElementById('submitBotModal'), {
+    backdrop: 'static',
+    keyboard: false
+  });
+  submitModal.show();
+}
+
+viewBot(){
+
+   if (this.botDetailsData.node_FE_Json) {
+              localStorage.setItem('node_FE_Json', this.botDetailsData.node_FE_Json)
+              localStorage.setItem('viewMode', 'true')
+
+            }
+            this.closeModalById('viewFlowModal');
+            this.closeModalById('botModal');
+            localStorage.setItem('botId', this.botDetailsData.id)
+            this.router.navigate(['/bot-Creation']);
+  
+}
+  
 }

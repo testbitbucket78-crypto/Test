@@ -433,10 +433,11 @@ ejs-richtexteditor .e-rte-content .e-content {
 
 
 .drawflow .drawflow-node .drawflow-delete {
-  display: block !important;  /* force it to be visible */
+  // display: block !important;  /* force it to be visible */
   opacity: 1 !important;
   pointer-events: auto;
   visibility: visible;
+  display: none;
 }
 
 #node-1 .drawflow_content_node {
@@ -496,4 +497,11 @@ div#node-1 {
   font-weight: 600;
   font-size: 14px;
   margin-left: 8px;
+}
+
+
+
+
+.drawflow.dragging {
+  cursor: grabbing !important;
 }

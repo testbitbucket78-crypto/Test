@@ -1,5 +1,12 @@
 <sb-top-nav title="Bot Builder"></sb-top-nav>
+<sb-loader [isLoading]="isLoading"></sb-loader>
 
+
+ <div class="toaster" (click)="hideToaster()">
+        <p *ngIf="errorMessage" class="error">{{ errorMessage }}</p>
+        <p *ngIf="successMessage" class="success">{{ successMessage }}</p>
+        <p *ngIf="warningMessage" class="warn">{{ warningMessage }}</p>
+    </div>
 
 
 <div class="new_chat_boat_1 conten_set">
@@ -15,8 +22,9 @@
       <div class="sidebar" *ngIf="activeSidebar === 'main'">
 
         <div class="sidebar-item purple">
-          <div class="item-header">
-            <i class="uil uil-comment-alt-dots"></i>
+          <div class="item-header" (click)="toggle('send')">
+             <img src="assets/img/send-msg.svg">
+             
             <div>
               <div class="title">Send Message</div>
               <div class="desc">No response expected from the user</div>
@@ -24,9 +32,9 @@
             <i class="uil" [ngClass]="{
                                 'uil-angle-down': isOpen.send,
                                 'uil-angle-right': !isOpen.send
-                            }" (click)="toggle('send')"></i>
+                            }" ></i>
           </div>
-          <div class="item-body" *ngIf="isOpen.send">
+          <div class="item-body" *ngIf="isOpen.send" [class.disabled]="viewMode">
             <button (click)="openCreateModal('sendMessage', 'sendText')" id="draggable-button-1"
               class="draggable btn btn_des1" draggable="true" class="child-option">
               Text
@@ -50,9 +58,9 @@
           </div>
         </div>
 
-        <div class="sidebar-item pink" (click)="toggle('ask')">
+        <div class="sidebar-item pink" (click)="toggle('ask')" >
           <div class="item-header">
-            <i class="uil uil-question-circle"></i>
+            <img src="assets/img/ask-q.svg">
             <div>
               <div class="title">Ask Question</div>
               <div class="desc">Ask question and store user input in a variable</div>
@@ -62,7 +70,7 @@
                                 'uil-angle-right': !isOpen.ask
                             }"></i>
           </div>
-          <div class="item-body" *ngIf="isOpen.ask">
+          <div class="item-body" *ngIf="isOpen.ask" [class.disabled]="viewMode">
             <button (click)="openCreateModal('questionOption', 'questionOption')" id="draggable-button-1"
               class="draggable btn btn_des1" draggable="true" class="child-option">
               Question Options
@@ -73,12 +81,12 @@
               Open Question
               <i class="uil-angle-right"></i>
             </button>
-            <button (click)="openCreateModal('buttonOptions', 'buttonOptions')" id="draggable-button-1"
+            <button *ngIf="!(channelName == 'web' &&  channelSelected == 'WA Web')" (click)="openCreateModal('buttonOptions', 'buttonOptions')" id="draggable-button-1"
               class="draggable btn btn_des1" draggable="true" class="child-option">
               Button Options
               <i class="uil-angle-right"></i>
             </button>
-            <button (click)="openCreateModal('listOptions', 'listOptions')" id="draggable-button-1"
+            <button *ngIf="!(channelName == 'web' && channelSelected == 'WA Web')" (click)="openCreateModal('listOptions', 'listOptions')" id="draggable-button-1"
               class="draggable btn btn_des1" draggable="true" class="child-option">
               List Options
               <i class="uil-angle-right"></i>
@@ -91,32 +99,40 @@
           </div>
         </div>
 
-        <div class="sidebar-item yellow" (click)="toggle('condition')">
-          <div class="item-header">
-            <i class="uil uil-check-square"></i>
+        <div class="sidebar-item yellow" (click)="toggle('condition')" >
+          <div class="item-header" (click)="openCreateModal('setConditionsModal', 'setCondition')" [class.disabled]="viewMode">
+             <img src="assets/img/set-condition.svg" style="height: 30px;width: 28px;">
             <div>
               <div class="title">Set Condition</div>
               <div class="desc">Take action based on logical conditions</div>
             </div>
-            <i class="uil" [ngClass]="{
-                                'uil-angle-down': isOpen.condition,
-                                'uil-angle-right': !isOpen.condition
+                     <i class="uil" [ngClass]="{
+                                'uil-angle-down': isOpen.ask,
+                                'uil-angle-right': !isOpen.ask
                             }"></i>
           </div>
-          <div class="item-body" *ngIf="isOpen.condition">
-            <button (click)="openCreateModal('setConditionsModal', 'setCondition')" id="draggable-button-1"
-              class="draggable btn btn_des1" draggable="true" class="child-option">
-              Question Options
-              <i class="uil-angle-right"></i>
-            </button>
+        </div>
+
+        <div class="sidebar-item blue" (click)="openSidebar('advance')" >
+          <div class="item-header" >
+          <!-- <i class="uil uil-sliders-v"></i>  -->
+           <div>
+              <div class="title">Advance Bot Options</div>
+            </div>
+                 <i class="uil" [ngClass]="{
+                                'uil-angle-down': isOpen.ask,
+                                'uil-angle-right': !isOpen.ask
+                            }"></i>
           </div>
         </div>
 
-        <div class="sidebar-item blue" (click)="openSidebar('advance')">
-          <i class="uil uil-sliders-v"></i> Advance Bot Options
-        </div>
-
-        <div class="sidebar-item gray"><i class="uil uil-plug"></i> Integrations</div>
+        <div class="sidebar-item gray">
+          <!-- <i class="uil uil-plug"></i>  -->
+           <div class="item-header" >
+             <div>
+              <div class="title">Integrations</div>
+            </div></div>
+            </div>
       </div>
 
       <div *ngIf="activeSidebar === 'advance'" class="sidebar advance-sidebar">
@@ -128,7 +144,7 @@
         </div>
 
         <div *ngFor="let action of actions" class="action-item"
-          (click)="openCreateModal('Advance_Action', action.modal)">
+          (click)="openCreateModal('Advance_Action', action.modal)" [class.disabled]="viewMode">
           <div class="">
             <img [src]="action.icon" alt="{{ action.label }} icon" class="" />
             <!-- <i [class]="action.icon" [style.color]="action.color" class="iconstyle"></i> -->
@@ -149,10 +165,13 @@
           <!-- <button class="back-btn"><span>&larr;</span></button>
     <h3 class="canvas-title">Help & Support</h3> -->
         </div>
-        <div class="canvas-header-right">
+        <div class="canvas-header-right" *ngIf="!viewMode">
           <button class="btn save-btn" (click)="saveChatbot('submit')">Save Bot</button>
           <button class="btn publish-btn" (click)="closeBotCreateion('Publish')">Publish</button>
           <button class="close-btn" (click)="closeBotCreateion('close')">&times;</button>
+        </div>
+        <div class="canvas-header-right" *ngIf="viewMode">
+          <button class="close-btn" [routerLink]="['/bot-builder']">&times;</button>
         </div>
       </div>
 
@@ -182,7 +201,7 @@
 
 
 <div class="modal fade" id="sendMessage" tabindex="-1" aria-hidden="true">
-  <div class="modal-dialog modal-dialog-centered custom-modal" role="document">
+  <div class="modal-dialog modal-dialog-centered custom-modal" role="document" style=" top: 65px;">
     <div class="modal-content p-4" style="background-color: #fff6f4; border-radius: 20px;">
       
       <!-- Header -->
@@ -195,7 +214,13 @@
             'Send Document'
           }}
         </h6>
+                  <button type="button" class="btn5 btn-close" style="width: 40px" data-bs-dismiss="modal"
+                                aria-label="Close">
+                                <img style="width: 10px" src="assets/img/teambox/icon-close.svg"
+                                    (click)="closeModal();" />
+                            </button>
       </div>
+
 
       <!-- Form -->
       <form [formGroup]="sendTextForm" (ngSubmit)="onSubmit()">
@@ -218,7 +243,9 @@
             </ng-container>
 
             <ng-template #preview>
-              <img *ngIf="selectedFileType === 'image' || selectedFileType === 'document'" [src]="selectedImageUrl" alt="Preview" class="preview-img" style="max-height: 120px;" />
+              <img *ngIf="selectedFileType === 'image'" [src]="selectedImageUrl" alt="Preview" class="preview-img" style="max-height: 120px;" />
+              <img *ngIf="selectedFileType === 'document'" src="assets/img/document.png" alt="Preview" class="preview-img" style="max-height: 120px;" />
+              <span class="ms-2" *ngIf="selectedFileType === 'document'">{{ uploadedFile?.name }}</span>
               <video *ngIf="selectedFileType === 'video'" [src]="selectedImageUrl" controls style="max-height: 140px; width: 100%; border-radius: 8px;"></video>
             </ng-template>
 
@@ -252,15 +279,25 @@
               placeholder="Type Message..."
               (keyup)="onTextChange()"
               [pasteCleanupSettings]="pasteCleanupSettings"
-              [maxLength]="cardType === 'sendText' ? 1024 : 1024"
+              [maxLength]="1024"
               [showCharCount]="true"
               formControlName="textMessage">
             </ejs-richtexteditor>
 
             <!-- Bot Var Button -->
-            <button id="add-action-dropdown" type="button" (click)="openBotVariableModal()">
-              <img src="assets/img/teambox/add.svg" /> Bot var
-            </button>
+    <div class="d-flex align-items-center gap-2">
+  <button id="add-action-dropdown" type="button" (click)="openBotVariableModal()">
+    <img src="assets/img/teambox/add.svg" alt="Add Icon" /> Bot var
+  </button>
+
+  <sb-tooltip
+  id="add-action-dropdowns"
+    class="d-inline-block"
+    [tooltipText]="'Use this to store user responses and reuse them later in the bot flow.'"
+    [isVisible]="isTooltipVisible"
+    (visibilityChange)="handleTooltipChange($event)"
+  ></sb-tooltip>
+</div>
           </div>
 
           <div *ngIf="sendTextForm.get('textMessage')?.touched && sendTextForm.get('textMessage')?.errors?.['required']"
@@ -291,7 +328,7 @@
           <!-- Question Text -->
           <div class="form-group">
             <label style="font-size: 14px; color: #374151; font-weight: 500; margin-bottom: -25px;">Question Text</label>
-            <span style="font-size: 13px; color: #6b7280; margin-left: 316px">Characters</span>
+            <span style="font-size: 13px; color: #6b7280; margin-left: 329px">Characters</span>
 
             <div class="rte-wrapper" style="position: relative">
               <ejs-richtexteditor id="questionRTE" #questionEditor [toolbarSettings]="semiAdvanceTool" [width]="'100%'"
@@ -299,9 +336,20 @@
                 formControlName="questionText" style="" [maxLength]="1024" [showCharCount]="true">
               </ejs-richtexteditor>
 
-              <button id="add-action-dropdown-Wp" type="button" (click)="openBotVariableModal()">
-                <img src="assets/img/teambox/add.svg" /> Bot var
-              </button>
+ 
+              <div class="d-flex align-items-center gap-2">
+              <button id="add-action-dropdown" type="button"  style="bottom: 20px;right: 117px;" (click)="openBotVariableModal()">
+    <img src="assets/img/teambox/add.svg" alt="Add Icon" /> Bot var
+  </button>
+
+  <sb-tooltip
+  id="add-action-dropdowns" style="bottom: 21px;right: 85px;"
+    class="d-inline-block"
+    [tooltipText]="'Use this to store user responses and reuse them later in the bot flow.'"
+    [isVisible]="isTooltipVisible"
+    (visibilityChange)="handleTooltipChange($event)"
+  ></sb-tooltip>
+</div>
             </div>
           </div>
 
@@ -394,7 +442,17 @@
           <!-- Validation Settings Section -->
           <div class="mb-3">
             <div class="d-flex justify-content-between align-items-center mb-2">
-              <label style="font-size: 14px; color: #374151; font-weight: 500">Additional Validation Settings</label>
+              <div class="d-flex align-items-center gap-2">
+              <label style="font-size: 14px; color: #374151; font-weight: 500">Additional Validation Settings </label>
+
+
+  <sb-tooltip
+    class="d-inline-block"
+    [tooltipText]="'Set fallback actions and retry rules for when a customer gives an invalid or no response.'"
+    [isVisible]="isTooltipVisible2"
+    (visibilityChange)="handleTooltipChange($event,2)"
+  ></sb-tooltip>
+</div>
               <label class="switch">
                 <input type="checkbox" formControlName="enableValidation" (change)="onValidationToggle(questionOption)" />
                 <span class="slider round"></span>
@@ -529,7 +587,7 @@
                                     margin-bottom: -25px;
                                 ">Question Text</label>
               <!-- <span style="font-size: 12px; color: #6B7280;">{{ questionTextLength }}/1024 characters</span> -->
-              <span style="font-size: 13px; color: #6b7280; margin-left: 318px">
+              <span style="font-size: 13px; color: #6b7280; margin-left: 329px">
                 Characters
               </span>
             </div>
@@ -543,9 +601,23 @@
                 [maxLength]="1024" [showCharCount]="true">
               </ejs-richtexteditor>
 
-              <button id="add-action-dropdown-Wp" type="button" (click)="openBotVariableModal()">
+              <!-- <button id="add-action-dropdown-Wp" type="button" (click)="openBotVariableModal()">
                 <img src="assets/img/teambox/add.svg" /> Bot var
-              </button>
+              </button> -->
+              <div class="d-flex align-items-center gap-2">
+  <button id="add-action-dropdown"  style="bottom: 20px;right: 117px;" type="button" (click)="openBotVariableModal()">
+    <img src="assets/img/teambox/add.svg" alt="Add Icon" /> Bot var
+  </button>
+
+  <sb-tooltip
+  id="add-action-dropdowns"
+   style="bottom: 21px;right: 85px;"
+    class="d-inline-block"
+    [tooltipText]="'Use this to store user responses and reuse them later in the bot flow.'"
+    [isVisible]="isTooltipVisible"
+    (visibilityChange)="handleTooltipChange($event)"
+  ></sb-tooltip>
+</div>
             </div>
           </div>
 
@@ -615,7 +687,15 @@
           <!-- Validation Settings Toggle -->
           <div class="mb-3">
             <div class="d-flex justify-content-between align-items-center mb-2">
+              <div class="d-flex align-items-center gap-2">
               <label style="font-size: 14px; color: #374151; font-weight: 500">Additional Validation Settings</label>
+                <sb-tooltip
+    class="d-inline-block"
+    [tooltipText]="'Set fallback actions and retry rules for when a customer gives an invalid or no response.'"
+    [isVisible]="isTooltipVisible2"
+    (visibilityChange)="handleTooltipChange($event,2)"
+  ></sb-tooltip>
+</div>
               <label class="switch">
                 <input type="checkbox" formControlName="enableValidation" (change)="onValidationToggle(openQuestion)" />
                 <span class="slider round"></span>
@@ -991,11 +1071,11 @@
               </label>
             </div>
 
-            <label *ngIf="buttonOptions.get('headerType')?.value != 'none'" style="
+            <label *ngIf="buttonOptions.get('headerType')?.value != 'none'" [ngStyle]="{
+    'margin-bottom': buttonOptions.get('headerType')?.value === 'text' ? '-30px' : '-5px'}"  style="
                                 font-size: 14px;
                                 color: #374151;
                                 font-weight: 500;
-                                margin-bottom: -30px;
                                 display: block;
                             ">
               Header (Optional)
@@ -1017,8 +1097,7 @@
                                 " maxlength="60" placeholder="Enter header text" />
             </div>
 
-            <div *ngIf="
-                                ['image', 'video', 'document'].includes(
+            <div *ngIf="['image', 'video', 'document'].includes(
                                     buttonOptions.get('headerType')?.value
                                 )
                             " class="mt-3">
@@ -1124,9 +1203,23 @@
                 [showCharCount]="true">
               </ejs-richtexteditor>
 
-              <button id="add-action-dropdown-Wp" type="button" (click)="openBotVariableModal()">
+              <!-- <button id="add-action-dropdown-Wp" type="button" (click)="openBotVariableModal()">
                 <img src="assets/img/teambox/add.svg" /> Bot var
-              </button>
+              </button> -->
+              <div class="d-flex align-items-center gap-2">
+  <button id="add-action-dropdown"  style="bottom: 20px;right: 117px;" type="button" (click)="openBotVariableModal()">
+    <img src="assets/img/teambox/add.svg" alt="Add Icon" /> Bot var
+  </button>
+
+  <sb-tooltip
+    class="d-inline-block"
+     style="bottom: 21px;right: 85px;"
+    id="add-action-dropdowns"
+    [tooltipText]="'Use this to store user responses and reuse them later in the bot flow.'"
+    [isVisible]="isTooltipVisible"
+    (visibilityChange)="handleTooltipChange($event)"
+  ></sb-tooltip>
+</div>
             </div>
           </div>
 
@@ -1187,6 +1280,14 @@
                                             background-color: #fff;
                                         " maxlength="20" />
 
+<div *ngIf="buttonOptions.get('buttons')?.errors?.atLeastOneRequired && buttonOptions.get('buttons')?.touched"
+     class="text-danger small mt-1">
+  At least one button must be filled.
+</div>
+
+
+
+
                   <!-- Character count -->
 
                   <!-- Remove button -->
@@ -1197,12 +1298,18 @@
                 </div>
               </div>
 
+              <div *ngIf="buttonOptions.get('buttons')?.errors?.duplicateButtons && buttonOptions.get('buttons')?.touched"
+     class="text-danger small mt-1">
+  Button names must be unique.
+</div>
               <!-- Add Button -->
               <button type="button" *ngIf="buttons?.controls.length < 3" class="btn btn-link text-primary p-0"
-                style="font-size: 12px; color: #6b46c1 !important" (click)="addButton(buttons)">
+                style="font-size: 12px; color: #6b46c1 !important" (click)="addButton(buttons)"   [disabled]="buttons?.at(buttons.length - 1)?.value?.trim()?.length === 0">
                 + Add
               </button>
+
             </div>
+
           </div>
 
           <!-- Save answer as Variable -->
@@ -1271,7 +1378,15 @@
           <!-- Validation Settings Toggle -->
           <div class="mb-3">
             <div class="d-flex justify-content-between align-items-center mb-2">
+              <div class="d-flex align-items-center gap-2">
               <label style="font-size: 14px; color: #374151; font-weight: 500">Additional Validation Settings</label>
+                <sb-tooltip
+    class="d-inline-block"
+    [tooltipText]="'Set fallback actions and retry rules for when a customer gives an invalid or no response.'"
+    [isVisible]="isTooltipVisible2"
+    (visibilityChange)="handleTooltipChange($event,2)"
+  ></sb-tooltip>
+</div>
               <label class="switch">
                 <input type="checkbox" formControlName="enableValidation"
                   (change)="onValidationToggle(buttonOptions)" />
@@ -1434,7 +1549,7 @@
               <span style="font-size: 12px; color: #6b7280">{{ listOptions.get('headerText')?.value?.length || 0 }}/60
                 characters</span>
             </div>
-            <input type="text" class="form-control" formControlName="headerText"
+            <input type="text" class="form-control" formControlName="headerText"  [maxLength]="60"
               (input)="updateHeaderTextLength(listOptions)" style="
                                 border: 1px solid #e5e7eb;
                                 border-radius: 8px;
@@ -1455,7 +1570,8 @@
               Body Text
             </label>
             <div class="d-flex justify-content-end align-items-center mb-1">
-              <span style="font-size: 12px; color: #6b7280; margin-right: -5px">
+              <span style="font-size: 12px; color: #6b7280; margin-right: 4px;
+    padding-top: 2px;">
                 Characters</span>
             </div>
 
@@ -1466,9 +1582,22 @@
                 formControlName="bodyText" style="" [maxLength]="1024" [showCharCount]="true">
               </ejs-richtexteditor>
 
-              <button id="add-action-dropdown-Wp" type="button" (click)="openBotVariableModal()">
-                <img src="assets/img/teambox/add.svg" /> Bot var
-              </button>
+
+
+                         <div class="d-flex align-items-center gap-2">
+  <button id="add-action-dropdown"  style="bottom: 20px;right: 117px;" type="button" (click)="openBotVariableModal()">
+    <img src="assets/img/teambox/add.svg" alt="Add Icon" /> Bot var
+  </button>
+
+  <sb-tooltip
+    class="d-inline-block"
+     style="bottom: 21px;right: 85px;"
+    id="add-action-dropdowns"
+    [tooltipText]="'Use this to store user responses and reuse them later in the bot flow.'"
+    [isVisible]="isTooltipVisible"
+    (visibilityChange)="handleTooltipChange($event)"
+  ></sb-tooltip>
+</div>
             </div>
           </div>
 
@@ -1586,9 +1715,19 @@
                         <!-- Row Name -->
                         <div class="mb-2">
                           <input type="text" class="form-control" formControlName="rowName" maxlength="20"
-                            placeholder="Enter option name" />
+                            placeholder="Enter option name"  />
                         </div>
 
+                         <!-- Error message for uniqueness -->
+  <div *ngIf="row.get('rowName')?.hasError('notUnique')" class="invalid-feedback" style="display: block;">
+    Option name must be unique across all sections
+  </div>
+  
+  <!-- Error message for other validations if needed -->
+  <div *ngIf="row.get('rowName')?.invalid && (row.get('rowName')?.dirty || row.get('rowName')?.touched) 
+              && !row.get('rowName')?.hasError('notUnique')" class="invalid-feedback" style="display: block;">
+    Please enter a valid option name
+  </div>
                         <!-- Row Description -->
                         <div>
                           <div class="d-flex justify-content-end align-items-center mb-1">
@@ -1599,23 +1738,9 @@
                           </div>
                           <textarea class="form-control" formControlName="rowDescription" maxlength="72"
                             placeholder="Enter description"></textarea>
-                          <button type="button" class="btn btn-link p-0 text-danger removeButtonbtn" style="
-                                                            font-size: 12px;
-                                                            text-decoration: none;
-                                                        " (click)="
-                                                            removeRow(
-                                                                listOptionSections,
-                                                                sectionIndex,
-                                                                rowIndex
-                                                            )
-                                                        " [disabled]="
-                                                            getSectionRows(
-                                                                listOptionSections,
-                                                                sectionIndex
-                                                            ).controls.length <= 1
-                                                        ">
-                            Remove
-                          </button>
+                          <button type="button" class="btn btn-link p-0 text-danger removeButtonbtn" style="font-size: 12px; text-decoration: none;" (click)="removeRow(listOptionSections, sectionIndex, rowIndex)" 
+                          *ngIf="!(getSectionRows(listOptionSections, sectionIndex).controls.length <= 1)">Remove
+</button>
                         </div>
                       </div>
                     </div>
@@ -1632,11 +1757,13 @@
                 </div>
                 <button type="button" class="btn btn-link p-0 text-danger removeSectionbtn"
                   (click)="removeSection(listOptionSections, sectionIndex)"
-                  [disabled]="listOptionSections.controls.length <= 1">
+                  *ngIf="!(listOptionSections.controls.length <= 1)">
                   Remove Section
                 </button>
               </div>
             </div>
+
+            
 
             <button type="button" class="btn btn-link p-0" *ngIf="!hideAddAction"
               style="font-size: 12px; text-decoration: none; color: #6b46c1" (click)="addSection(listOptionSections)">
@@ -1710,7 +1837,15 @@
           <!-- Validation Settings Toggle -->
           <div class="mb-3">
             <div class="d-flex justify-content-between align-items-center mb-2">
+              <div class="d-flex align-items-center gap-2">
               <label style="font-size: 14px; color: #374151; font-weight: 500">Additional Validation Settings</label>
+                <sb-tooltip
+    class="d-inline-block"
+    [tooltipText]="'Set fallback actions and retry rules for when a customer gives an invalid or no response.'"
+    [isVisible]="isTooltipVisible2"
+    (visibilityChange)="handleTooltipChange($event,2)"
+  ></sb-tooltip>
+</div>
               <label class="switch">
                 <input type="checkbox" formControlName="enableValidation" (change)="onValidationToggle(listOptions)" />
                 <span class="slider round"></span>
@@ -1878,7 +2013,7 @@
                 }}/60
                 characters</span>
             </div>
-            <input type="text" class="form-control" formControlName="headerText"
+            <input type="text" class="form-control" formControlName="headerText" [maxLength]="60"
               (input)="updateHeaderTextLength(whatsAppFlowForm)" style="
                                 border: 1px solid #e5e7eb;
                                 border-radius: 8px;
@@ -1907,9 +2042,22 @@
                 placeholder="Enter body text..." [pasteCleanupSettings]="pasteCleanupSettings"
                 formControlName="bodyText" style="" [maxLength]="1024" [showCharCount]="true">
               </ejs-richtexteditor>
-              <button id="add-action-dropdown-Wp" type="button" (click)="openBotVariableModal()">
-                <img src="assets/img/teambox/add.svg" /> Bot var
-              </button>
+  
+
+                         <div class="d-flex align-items-center gap-2">
+  <button id="add-action-dropdown"  style="bottom: 20px;right: 117px;" type="button" (click)="openBotVariableModal()">
+    <img src="assets/img/teambox/add.svg" alt="Add Icon" /> Bot var
+  </button>
+
+  <sb-tooltip
+    class="d-inline-block"
+     style="bottom: 21px;right: 85px;"
+    id="add-action-dropdowns"
+    [tooltipText]="'Use this to store user responses and reuse them later in the bot flow.'"
+    [isVisible]="isTooltipVisible"
+    (visibilityChange)="handleTooltipChange($event)"
+  ></sb-tooltip>
+</div>
             </div>
           </div>
 
@@ -1971,7 +2119,7 @@
                                 margin-bottom: 8px;
                                 display: block;
                             ">
-              select WhatsApp Form
+              Select WhatsApp Form
             </label>
             <select class="form-select" formControlName="selectedForm" style="
                                 border: 1px solid #e5e7eb;
@@ -1979,7 +2127,7 @@
                                 padding: 10px 12px;
                                 font-size: 14px;
                             ">
-              <option value="" selected disabled>Select a WhatsApp flow</option>
+              <option value="" disabled>Select a WhatsApp flow</option>
               <option *ngFor="let flow of whatsAppFormList" [value]="flow?.id">
                 {{ flow?.flowname }}
               </option>
@@ -1989,7 +2137,15 @@
           <!-- Validation Settings Toggle -->
           <div class="mb-3">
             <div class="d-flex justify-content-between align-items-center mb-2">
+              <div class="d-flex align-items-center gap-2">
               <label style="font-size: 14px; color: #374151; font-weight: 500">Additional Validation Settings</label>
+                <sb-tooltip
+    class="d-inline-block"
+    [tooltipText]="'Set fallback actions and retry rules for when a customer gives an invalid or no response.'"
+    [isVisible]="isTooltipVisible2"
+    (visibilityChange)="handleTooltipChange($event,2)"
+  ></sb-tooltip>
+</div>
               <label class="switch">
                 <input type="checkbox" formControlName="enableValidation"
                   (change)="onValidationToggle(whatsAppFlowForm)" />
@@ -2136,34 +2292,43 @@
       <!-- Modal Header -->
       <div class="modal-header border-0">
         <h5 class="modal-title" style="color: #6b46c1">Set Condition</h5>
+                                    <button type="button" class="btn5 btn-close" style="width: 40px" data-bs-dismiss="modal"
+                                aria-label="Close">
+                                <img style="width: 10px" src="assets/img/teambox/icon-close.svg"
+                                    (click)="closeModal();" />
+                            </button>
       </div>
 
       <!-- Modal Body -->
-      <div class="modal-body scrolles">
+      <div class="modal-body scr">
         <form [formGroup]="conditionForm" (ngSubmit)="onSubmit('setCondition')">
           <div formArrayName="conditions">
             <div *ngFor="let condition of conditionsArray.controls; let i = index" [formGroupName]="i"
               class="condition-group">
               <!-- Comparator -->
               <label class="form-label">Select a Comparator</label>
+
               <div class="input-group mb-3">
                 <div class="custom-input-wrapper">
                   <input type="text" class="custom-input" formControlName="comparator"
-                    placeholder="Enter variable or attribute" (focus)="isFocused = true" (blur)="isFocused = false"
-                    [readonly]="selectedFields[i]?.comparator" (input)="onComparatorInput(i)"
+                    placeholder="Select variable or attribute" (focus)="isFocused = true" (blur)="isFocused = false"
+                     (input)="onComparatorInput(i)" readonly
                     (keydown)="allowOnlyBackspaces($event, i, 'comparator')" (input)="onComparatorChange(i)" />
-                  <span class="toggle_attribute" (click)="openAttributeOption(i, 'comparator')"></span>
+                    <!-- [readonly]="selectedFields[i]?.comparator" -->
+                  <span class="toggle_attribute_condition" (click)="openAttributeOption(i, 'comparator')"></span>
                   <button type="button" class="custom-button" [class.focused]="isFocused"
                     (click)="toggleVarMenu(i, 'comparator')">
                     Bot Var
                   </button>
+
+
                 </div>
 
                 <!-- Attribute Menu -->
                 <div class="bot-var-menu" [class.visible]="
                                         showAttribute?.index === i &&
                                         showAttribute?.field === 'comparator'
-                                    ">
+                                    " >
                   <div *ngFor="let variable of currentAttributeList" class="bot-var-item"
                     (click)="selectVariable(i, 'comparator', variable)">
                     {{ variable.displayName }}
@@ -2186,11 +2351,7 @@
               <label class="form-label">Operator</label>
               <select class="form-select mb-3" formControlName="operator">
                 <option value="" disabled>Select operator</option>
-                <option *ngFor="
-                                        let op of getOperators(
-                                            getConditionGroup(i).get('comparatorType')?.value
-                                        )
-                                    " [value]="op">
+                <option *ngFor="let op of getOperators(getConditionGroup(i).get('comparatorType')?.value)" [value]="op">
                   {{ op }}
                 </option>
               </select>
@@ -2199,10 +2360,11 @@
               <label class="form-label">Select a Value</label>
               <div class="input-group mb-3">
                 <div class="custom-input-wrapper">
-                  <input type="text" class="custom-input" formControlName="value" placeholder="Enter value"
-                    [readonly]="selectedFields[i]?.value" (input)="onValueInput(i)" (focus)="isFocused = true"
-                    (keydown)="allowOnlyBackspaces($event, i, 'value')" (blur)="isFocused = false" />
-                  <span class="toggle_attribute" (click)="openAttributeOption(i, 'value')"></span>
+                  <input type="text" class="custom-input" formControlName="value" placeholder="Select variable or attribute"
+                    (input)="onValueInput(i)" (focus)="isFocused = true"
+                    (keydown)="allowOnlyBackspaces($event, i, 'value')" (blur)="isFocused = false" readonly/>
+                     <!-- [readonly]="selectedFields[i]?.value" -->
+                  <span class="toggle_attribute_condition" (click)="openAttributeOption(i, 'value')"></span>
                   <div class="bot-var-menu" [class.visible]="
                                         showAttribute?.index === i &&
                                         showAttribute?.field === 'value'
@@ -2265,17 +2427,18 @@
           <!-- Save / Cancel -->
 
 
-          <div class="modal-footer border-0">
+       
+        </form>
+      </div>
+         <div class="modal-footer border-0">
             <button type="button" class="btn btn-light" data-bs-dismiss="modal">
               Cancel
             </button>
             <button type="submit" class="btn btn-primary" style="background-color: #6b46c1; border: none"
-              [disabled]="!conditionForm.valid">
+              [disabled]="!conditionForm.valid" (click)="onSubmit('setCondition')">
               Save
             </button>
           </div>
-        </form>
-      </div>
     </div>
   </div>
 </div>
@@ -2412,10 +2575,9 @@
   <div class="modal-dialog modal-dialog-centered custom-modal" style="width: 32%">
     <div class="modal-content p-4">
       <!-- Modal Header -->
-      <div class="d-flex justify-content-between align-items-center mb-3">
+      <div class="mb-3">
         <h6 class="fw-bold m-0" style="color: #6b46c1">Update Contact Attribute</h6>
-
-        <!-- <button type="button" class="btn-close" aria-label="Close"></button> -->
+ <small class="text-muted">Automatically save user input to a contact field (e.g., city, interest).</small>
       </div>
 
       <form [formGroup]="contactAttributeForm" (ngSubmit)="onSubmit('UpdateContactAttribute')">
@@ -2430,9 +2592,9 @@
                                 margin-bottom: 2px;
                             ">Select Attribute</label>
             <!-- </div> -->
-            <select class="form-select" formControlName="selectedAttribute" (change)="onAttributeChange($event)">
+            <select class="form-select" formControlName="selectedAttribute" (change)="onAttributeChange($event)" style="width: 100%; box-sizing: border-box;">
               <option value="null" disabled selected>Select attribute</option>
-              <option *ngFor="let attr of currentAttributeList" [value]="attr.ActuallName">
+              <option *ngFor="let attr of currentAttributeList" [value]="attr.ActuallName" class="dropdown">
                 {{ attr.displayName }}
               </option>
             </select>
@@ -2458,16 +2620,17 @@
 
 
               <span class="select_box" [class.disabled]="isUserTyping"
-                (click)="!isUserTyping && selectAttribute('option')"
+                (click)="!isUserTyping && selectAttribute('option',$event)"
                 *ngIf="selectedAttributeType == 'Multi Select' || selectedAttributeType == 'Select'"></span>
 
               <span class="toggle_attributes" [class.disabled]="isUserTyping"
-                (click)="!isUserTyping && selectAttribute('attr')"></span>
+                (click)="!isUserTyping && selectAttribute('attr',$event)"></span>
 
               <button type="button" class="custom-button" [class.focused]="isFocused" [disabled]="isUserTyping"
-                (click)="selectAttribute('Botvar')">
+                (click)="selectAttribute('Botvar',$event)">
                 Bot Var
               </button>
+              <!-- <div class="dropdown-wrapper" #dropdownWrapper> -->
 
               <div class="bot-var-menu" [class.visible]="openDropdown.status === 'option'">
                 <div *ngFor="let variable of selectedOptions" class="bot-var-item" (click)="selectedValues(variable)">
@@ -2479,7 +2642,7 @@
               <div class="bot-var-menu" [class.visible]="openDropdown.status === 'attr'">
                 <div *ngFor="let variable of currentAttributeList" class="bot-var-item"
                   (click)="selectedValues(variable)">
-                  {{ variable.ActuallName }}
+                  {{ variable.displayName }}
                 </div>
               </div>
               <div class="bot-var-menu" [class.visible]="openDropdown.status === 'Botvar'">
@@ -2487,7 +2650,8 @@
                   {{ variable.name }}
                 </div>
               </div>
-            </div>
+              </div>
+            <!-- </div> -->
           </div>
 
           <!-- Operation Section -->
@@ -2564,6 +2728,9 @@
                 </span>
               </label>
             </div>
+
+            <span *ngIf="addTagList.length <= 0" style="    text-align: center;margin: 27px;">No record found</span>
+
           </div>
         </div>
 
@@ -2600,7 +2767,7 @@
 </div>
 
 <div class="modal fade" id="RemoveTag" tabindex="-1" aria-hidden="true">
-  <div class="modal-dialog modal-dialog-centered custom-modal" style="width: 32%">
+  <div class="modal-dialog modal-dialog-centered custom-modal" style="width: 32%;top:39px">
     <div class="modal-content p-4">
       <!-- Modal Header -->
       <div class="modal-header border-0">
@@ -2632,24 +2799,7 @@
                 </span>
               </label>
             </div>
-          </div>
-        </div>
-        <div class="operation-options mt-4">
-          <label class="form-label fw-bold d-block mb-2">Operation</label>
-          <div class="form-check form-check-inline inlinebutton">
-            <input type="radio" class="form-check-input" id="addIfEmpty" name="operation1" value="addIfEmpty"
-              class="buttonMargin1" [(ngModel)]="operationOptions" />
-            <label class="form-check-label" for="addIfEmpty">Add If Empty</label>
-          </div>
-          <div class="form-check form-check-inline inlinebutton">
-            <input type="radio" class="form-check-input" id="replace" name="operation1" value="replace"
-              class="buttonMargin1" [(ngModel)]="operationOptions" />
-            <label class="form-check-label" for="replace">Replace</label>
-          </div>
-          <div class="form-check form-check-inline inlinebutton">
-            <input type="radio" class="form-check-input" id="append" name="operation1" value="append"
-              class="buttonMargin1" [(ngModel)]="operationOptions" />
-            <label class="form-check-label" for="append">Append</label>
+             <span *ngIf="removeTagList.length <= 0" style="    text-align: center;margin: 27px;">No record found</span>
           </div>
         </div>
 
@@ -2718,7 +2868,7 @@
             <div class="col-4">
               <label class="form-label">Time</label>
               <input type="number" class="form-control" style="width: 80px" [min]="1"
-                [max]="delayUnit === 'hour' ? 24 : 60" (change)="validateTime()" [(ngModel)]="delayTime" min="1"
+                [max]="delayUnit === 'hour' ? 24 : 60"  (change)="validateTime()" [(ngModel)]="delayTime" 
                 placeholder="10" />
             </div>
             <div class="col-4">
@@ -2759,15 +2909,19 @@
           </p>
         </div>
 
-        <div class="form-group mb-4">
-          <label class="form-label">Select Bot to Trigger</label>
-          <select class="form-select" [(ngModel)]="selectedBotId" (ngModelChange)="getSelectedBot($event)">
-            <option value="" disabled selected>Select a bot</option>
-            <option *ngFor="let bot of botsList" [value]="bot.id" [disabled]="!bot.published">
-              {{ bot.name }} {{ !bot.published_at ? '(Unpublished)' : '' }}
-            </option>
-          </select>
-        </div>
+<div class="form-group mb-4">
+  <label class="form-label">Select Bot to Trigger</label>
+  <select class="form-select" [(ngModel)]="selectedBotId" (ngModelChange)="getSelectedBot($event)">
+    <option value="" disabled>Select bot</option>
+    <ng-container *ngFor="let bot of botsList">
+      <option *ngIf="bot.status === 'publish'" [ngValue]="bot.id">
+        {{ bot.name }}
+      </option>
+    </ng-container>
+  </select>
+</div>
+
+
       </div>
 
       <div class="modal-footer border-0">
@@ -2781,11 +2935,12 @@
 </div>
 
 <div class="modal fade" id="NotificationModal" tabindex="-1" aria-hidden="true">
-  <div class="modal-dialog modal-dialog-centered custom-modal" style="width: 32%">
+  <div class="modal-dialog modal-dialog-centered custom-modal" style="width: 32%;top: 60px;">
     <div class="modal-content p-4">
       <!-- Modal Header -->
-      <div class="modal-header border-0">
+      <div class="mb-3">
         <h6 class="modal-title" style="color: #6b46c1">Notify</h6>
+         <small class="text-muted">Trigger an internal alert or message to your team when a condition is met.</small>
       </div>
 
       <div class="modal-body scrolles">
@@ -2817,7 +2972,7 @@
 
         <div class="modal-footer border-0">
           <button type="button" class="btn btn-light" (click)="onCancel()">Cancel</button>
-          <button type="button" class="btn btn-primary" (click)="onSubmit('NotificationModal')">
+          <button type="button" class="btn btn-primary" [disabled]="!notificationForm.valid" (click)="onSubmit('NotificationModal')">
             Save
           </button>
         </div>
@@ -2866,8 +3021,9 @@
   <div class="modal-dialog modal-dialog-centered custom-modal" style="width: 32%">
     <div class="modal-content p-4">
       <!-- Modal Header -->
-      <div class="modal-header border-0">
+      <div class="mb-3">
         <h6 class="modal-title" style="color: #6b46c1">Notes and Mention</h6>
+         <small class="text-muted">Add an internal note or &#64;mention a teammate. This message will appear in the Notes section inside Team Box.</small>
       </div>
 
       <div class="modal-body scrolles">
@@ -2887,9 +3043,23 @@
               </ejs-richtexteditor>
 
               <!-- Bot Var Button Positioned Absolutely Within RTE Wrapper -->
-              <button id="add-action-dropdown" type="button" (click)="openBotVariableModal()">
+              <!-- <button id="add-action-dropdown" type="button" (click)="openBotVariableModal()">
                 <img src="assets/img/teambox/add.svg" /> Bot var
-              </button>
+              </button> -->
+                         <div class="d-flex align-items-center gap-2">
+  <button id="add-action-dropdown"  style="bottom: 10px;right: 79px;" type="button" (click)="openBotVariableModal()">
+    <img src="assets/img/teambox/add.svg" alt="Add Icon" /> Bot var
+  </button>
+
+  <sb-tooltip
+    class="d-inline-block"
+     style="bottom: 11px;right: 49px;"
+    id="add-action-dropdowns"
+    [tooltipText]="'Use this to store user responses and reuse them later in the bot flow.'"
+    [isVisible]="isTooltipVisible"
+    (visibilityChange)="handleTooltipChange($event)"
+  ></sb-tooltip>
+</div>
             </div>
 
             <div *ngIf="showMention" class="popup-dialog mention" (click)="stopPropagation($event)">
@@ -3106,7 +3276,7 @@
       <div class="deletefile d-flex">
         <button type="button" class="btn9 btn-secondary" style="margin: 112px 22px 0px 44px;" data-bs-dismiss="modal"
           [routerLink]="['/bot-builder']">No, Exit</button>
-        <button type="button" class="btn99 btn-primary" data-bs-dismiss="modal" (click)="saveChatbot('submit')">Yes,
+        <button type="button" class="btn99 btn-primary" data-bs-dismiss="modal" (click)="saveChatbot('submit','exit')">Yes,
           Save</button>
       </div>
     </div>
@@ -3130,3 +3300,35 @@
     </div>
   </div>
 </div>
+
+
+<div class="modal fade modal-smart-reply-open" id="deletBotCard" tabindex="-1" aria-labelledby="exampleModalLabel"
+  data-bs-backdrop="static" aria-hidden="true">
+  <div class="modal-dialog deleteBot-dialog">
+    <div class="modal-content deleteBot-content1">
+
+      <div class="modal-body deleteBot-body" style="
+    font-weight: 600;
+    font-family: Manrope;
+    font-size: 12px;
+    max-width: 212px;
+    margin-left: 38px;
+    margin-top: 0px;
+    text-align: center;">
+        Do you really want to delete this card
+
+      </div>
+       
+      <div class="deletefile d-flex">
+        <button type="button" class="cancel-btn btn-secondary" style="margin: 47px 17px 10px 44px;"
+          data-bs-dismiss="modal">Cancel</button>
+        <button type="button" class="btn99 btn-primary" data-bs-dismiss="modal"
+          (click)="ConfirmdeleteBot()">Yes, Delete</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+	
