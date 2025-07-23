@@ -759,9 +759,7 @@ async function addTag(value, sid, custid) {
   if (value !== null && value !== undefined) {
     stringValue = value.replace(/[\[\]\s]/g, '');
   }
-
-  const getTagQuery = `SELECT tag FROM EndCustomer WHERE customerId = ? AND SP_ID = ?`;
-  const existingTagResult = await db.excuteQuery(getTagQuery, [custid, sid]);
+  
 
   if (existingTagResult.length > 0 && existingTagResult[0].tag) {
     const existingTags = existingTagResult[0].tag.split(',');

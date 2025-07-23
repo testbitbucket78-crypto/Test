@@ -846,7 +846,7 @@ export class TeamboxComponent implements OnInit {
 	}
 
 	ToggleBotOption() {
-		if (this.selectedInteraction?.assignTo?.AgentId == this.uid || this.showChatNotes != 'notes') {
+		if (this.selectedInteraction?.assignTo?.AgentId == this.uid || this.showChatNotes == 'notes') {
 			if ((this.showChatNotes == 'text' && this.selectedInteraction.channel == 'WhatsApp Official' && this.selectedInteraction?.progressbar?.progressbarValue > 0) || (this.showChatNotes == 'text' && this.selectedInteraction.channel == 'WhatsApp Web') || this.showChatNotes != 'notes') {
 				$("#insertBotmodal").modal('show');
 				this.fallbackvalue = [];
@@ -3281,12 +3281,12 @@ export class TeamboxComponent implements OnInit {
 	}
 
 
-	updateInteractionMapping(InteractionId: any, AgentId: any, MappedBy: any) {
+	updateInteractionMapping(InteractionId: any, AgentId: any, MappedBy: any,botName:any ='') {
 		this.ShowAssignOption = false;
 		let name = this.userList.filter((items: any) => items.uid == this.uid)[0]?.name;
 		let agentName = this.userList.filter((items: any) => items.uid == AgentId)[0]?.name;
 		agentName = agentName == name ? 'Self' : agentName;
-		agentName = AgentId == -3 ? 'Bot' : agentName
+		agentName = AgentId == -3 ? `Bot (${botName})` : agentName
 		var bodyData = {
 			InteractionId: InteractionId,
 			AgentId: AgentId,
@@ -4272,7 +4272,7 @@ sendMessage(isTemplate:boolean=false,templateTxt:string='',type: any = ''){
 			this.sendMessage(false, '', 'bot')
 			setTimeout(() => {
 
-				this.updateInteractionMapping(this.selectedInteraction.InteractionId, -3, this.TeamLeadId)
+				this.updateInteractionMapping(this.selectedInteraction.InteractionId, -3, this.TeamLeadId,this.selectedBotobj.name)
 			}, 1000)
 			this.closeAllModal(); // Your custom close logic
 		}
