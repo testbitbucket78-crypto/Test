@@ -3234,3 +3234,33 @@ ejs-richtexteditor .e-rte-content .e-content
     top: 0px !important ;
     width: 100%!important;
 }
+.send_message{
+  background-color: white; border-radius: 16px; height: 140px; border: 1px dashed #ccc; cursor: pointer;
+}
+
+.question_text_label{
+  font-size: 14px; color: #374151; font-weight: 500; margin-bottom: -25px;
+}
+
+.Invalid_response_action{
+  font-size: 14px; color: #374151; font-weight: 500; margin-bottom: 8px; display: block;
+}
+
+.character_class{
+  font-size: 12px; color: #6b7280; margin-right: 4px;padding-top: 2px;
+}
+
+.header_text{
+  font-size: 14px;
+color: #374151;
+font-weight: 500;
+display: block;
+}
+
+
+.sendMessage_header{
+     border: 1px solid #e5e7eb;
+ border-radius: 8px;
+padding: 10px 12px;
+font-size: 14px;
+}

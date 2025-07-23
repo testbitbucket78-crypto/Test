@@ -227,8 +227,8 @@
 
         <!-- File Upload -->
         <div *ngIf="cardType === 'sendImage' || cardType === 'sendVideo' || cardType === 'sendDocument'" class="mb-3 text-center">
-          <div class="upload-box d-flex flex-column align-items-center justify-content-center mb-3"
-               style="background-color: white; border-radius: 16px; height: 140px; border: 1px dashed #ccc; cursor: pointer;"
+          <div class="upload-box d-flex flex-column align-items-center justify-content-center mb-3 send_message"
+
                (click)="fileInput.click()">
             
             <ng-container *ngIf="!selectedImageUrl; else preview">
@@ -327,7 +327,7 @@
         <form [formGroup]="questionOption" (ngSubmit)="onSubmit('questionOption')">
           <!-- Question Text -->
           <div class="form-group">
-            <label style="font-size: 14px; color: #374151; font-weight: 500; margin-bottom: -25px;">Question Text</label>
+            <label class="question_text_label">Question Text</label>
             <span style="font-size: 13px; color: #6b7280; margin-left: 329px">Characters</span>
 
             <div class="rte-wrapper" style="position: relative">
@@ -410,7 +410,7 @@
 
             <div *ngIf="questionOption.get('saveAsVariable')?.value" class="ps-4">
               <div class="mb-2">
-                <label style="font-size: 14px; color: #374151; font-weight: 500; margin-bottom: 8px; display: block;">
+                <label class="Invalid_response_action">
                   Variable Name
                 </label>
                 <input type="text" class="form-control" formControlName="variableName"
@@ -423,7 +423,7 @@
               </div>
 
               <div class="mb-2">
-                <label style="font-size: 14px; color: #374151; font-weight: 500; margin-bottom: 8px; display: block;">
+                <label class="Invalid_response_action">
                   Data Type
                 </label>
                 <select class="form-select" formControlName="variableDataType"
@@ -479,7 +479,7 @@
 
               <!-- Validation Error Message -->
               <div class="mb-3">
-                <label style="font-size: 14px; color: #374151; font-weight: 500; margin-bottom: 8px; display: block;">
+                <label class="Invalid_response_action" >
                   Validation Error Message
                   <span *ngIf="questionOption.get('reattemptsAllowed')?.value" class="text-danger">*</span>
                 </label>
@@ -494,7 +494,7 @@
 
               <!-- Invalid Response Action -->
               <div class="mb-3">
-                <label style="font-size: 14px; color: #374151; font-weight: 500; margin-bottom: 8px; display: block;">
+                <label class="Invalid_response_action">
                   Invalid Response Action
                 </label>
                 <div class="form-check mb-2">
@@ -1072,12 +1072,7 @@
             </div>
 
             <label *ngIf="buttonOptions.get('headerType')?.value != 'none'" [ngStyle]="{
-    'margin-bottom': buttonOptions.get('headerType')?.value === 'text' ? '-30px' : '-5px'}"  style="
-                                font-size: 14px;
-                                color: #374151;
-                                font-weight: 500;
-                                display: block;
-                            ">
+    'margin-bottom': buttonOptions.get('headerType')?.value === 'text' ? '-30px' : '-5px'}"  class="header_text">
               Header (Optional)
             </label>
 
@@ -1089,12 +1084,7 @@
                   Characters</span>
               </div>
               <input type="text" class="form-control" formControlName="headerText"
-                (input)="updateHeaderTextLength(buttonOptions)" style="
-                                    border: 1px solid #e5e7eb;
-                                    border-radius: 8px;
-                                    padding: 10px 12px;
-                                    font-size: 14px;
-                                " maxlength="60" placeholder="Enter header text" />
+                (input)="updateHeaderTextLength(buttonOptions)" class="sendMessage_header" maxlength="60" placeholder="Enter header text" />
             </div>
 
             <div *ngIf="['image', 'video', 'document'].includes(
@@ -1570,8 +1560,7 @@
               Body Text
             </label>
             <div class="d-flex justify-content-end align-items-center mb-1">
-              <span style="font-size: 12px; color: #6b7280; margin-right: 4px;
-    padding-top: 2px;">
+              <span class="character_class">
                 Characters</span>
             </div>
 
