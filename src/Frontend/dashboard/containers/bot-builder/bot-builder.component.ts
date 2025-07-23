@@ -555,13 +555,11 @@ export class BotBuilderComponent implements OnInit {
   // }
 
 
-  confirmDelete(): void {
+  confirmDelete(type='1'): void {
     if (!this.botDetailsData?.id) return;
     this.isLoading = true
 
-    // this.botsList = this.botsList.filter((bot: any) => bot.id !== this.botDetailsData.id);
-
-    this.botService.deleteBotDetails(this.userDetails.SP_ID, this.botDetailsData.id).subscribe((response: any) => {
+    this.botService.deleteBotDetails(this.userDetails.SP_ID, this.botDetailsData.id,type).subscribe((response: any) => {
       if (response.status === 200) {
         this.botBuilderForm.reset();
         this.closeModalById('deleteBotModal');
@@ -582,32 +580,6 @@ export class BotBuilderComponent implements OnInit {
     this.botDetailsData = null;
   }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-  /*  GET ATTRIBUTE LIST  */
-  // getAttributeList() {
-  //    this.apiService.getAttributeList(this.SPID)
-  //    .subscribe((response:any) =>{
-  // 	if(response){
-  // 		let attributeListData = response?.result;
-  // 		this.attributesList = attributeListData.map((attrList:any) => attrList.displayName);
-  // 		console.log(this.attributesList);
-  // 	}
-  //   })
-  // }
 
   getWhatsAppDetails(): void {
     this.apiService.getWhatsAppDetails(this.userDetails.SP_ID).subscribe((response: any) => {
