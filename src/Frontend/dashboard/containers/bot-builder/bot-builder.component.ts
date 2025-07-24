@@ -1,6 +1,6 @@
 import { Component, ElementRef, HostListener, ViewChild, OnInit, AfterViewInit, ChangeDetectorRef } from '@angular/core';
 import { environment } from './../../../../environments/environment';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { AbstractControl, FormBuilder, FormGroup, ValidationErrors, Validators } from '@angular/forms';
 import { NgbModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
 import { SettingsService } from 'Frontend/dashboard/services/settings.service';
 import moment from 'moment';
@@ -227,10 +227,12 @@ export class BotBuilderComponent implements OnInit {
       botChannel: [null, Validators.required],
       triggerKeywords: [null, Validators.required],
       botChannelId: [null, Validators.required],
-      botTimeout: [null, Validators.required],
+      botTimeout: [null,  [Validators.required, this.timeNotMidnightValidator]],
       dropOfMessage: [null],
       advanceAction: [null]
     });
+
+
 
     this.dateRangeForm = this.fb.group({
       dateOption: ['7Days', Validators.required],
@@ -238,6 +240,11 @@ export class BotBuilderComponent implements OnInit {
       toDate: [null]
     });
   }
+
+    timeNotMidnightValidator(control: AbstractControl): ValidationErrors | null {
+    return control.value === '00:00' ? { midnightNotAllowed: true } : null;
+  }
+
 
 
 
@@ -421,6 +428,10 @@ export class BotBuilderComponent implements OnInit {
 
 
   submitBotForm(Type: any): void {
+if (this.botBuilderForm) {
+  
+}
+
 
     console.log("this.botBuilderForm.value", this.botBuilderForm.value)
     Object.keys(this.botBuilderForm.controls).forEach(key => {
@@ -429,6 +440,8 @@ export class BotBuilderComponent implements OnInit {
         console.warn(`Invalid field: ${key}`, control.errors);
       }
     });
+
+
 
 
     if(this.errorMessageBot != '') {

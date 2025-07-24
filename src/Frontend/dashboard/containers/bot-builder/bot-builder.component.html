@@ -683,7 +683,7 @@ style="margin-right: 9px;"
   ></sb-tooltip>
 </h5>
 
-                                    <input type="time" class="form-control bg-white" formControlName="botTimeout" placeholder="Enter bot timeout duration" />
+                                    <input type="time" class="form-control bg-white" formControlName="botTimeout" lang="en-GB" placeholder="Enter bot timeout duration" />
                                     <div
                                         class="text-danger dangerText"
                                         *ngIf="
@@ -692,6 +692,7 @@ style="margin-right: 9px;"
                                         "
                                     >
                                         <small *ngIf="botBuilderForm.get('botTimeout')?.errors?.['required']">Timeout is required.</small>
+  <small *ngIf="botBuilderForm.get('botTimeout')?.errors?.midnightNotAllowed">Timeout cannot be set to 00:00.</small>
                                     </div>
 
                                     <div classs="advance_option">
@@ -1087,6 +1088,16 @@ style="margin-right: 9px;"
 </h5>
 
                                     <input type="time" class="form-control bg-white" formControlName="botTimeout" placeholder="Enter bot timeout duration" />
+                                             <div
+                                        class="text-danger dangerText"
+                                        *ngIf="
+                                            botBuilderForm.get('botTimeout')?.touched &&
+                                            botBuilderForm.get('botTimeout')?.invalid
+                                        "
+                                    >
+                                        <small *ngIf="botBuilderForm.get('botTimeout')?.errors?.['required']">Timeout is required.</small>
+                                        <small *ngIf="botBuilderForm.get('botTimeout')?.errors?.midnightNotAllowed">Timeout cannot be set to 00:00.</small>
+                                    </div>
 
                                     <div class="advance_option">
                                         <h6 (click)="toggleAdvanceOption()">
