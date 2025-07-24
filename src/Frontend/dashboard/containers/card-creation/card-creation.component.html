@@ -328,7 +328,7 @@
           <!-- Question Text -->
           <div class="form-group">
             <label class="question_text_label">Question Text</label>
-            <span style="font-size: 13px; color: #6b7280; margin-left: 329px">Characters</span>
+            <span style="font-size: 13px; color: #6b7280; margin-left: 342px">Characters</span>
 
             <div class="rte-wrapper" style="position: relative">
               <ejs-richtexteditor id="questionRTE" #questionEditor [toolbarSettings]="semiAdvanceTool" [width]="'100%'"
@@ -374,7 +374,8 @@
                     <input type="text" formControlName="{{ i }}" class="form-control"
                       [attr.placeholder]="'Option ' + (i + 1)" maxlength="20"
                       style="border: 1px solid #e5e7eb; border-radius: 12px; padding: 10px 14px; font-size: 14px; background-color: #fff; width: 100%;" />
-                  </div>
+                   <div *ngIf="option.invalid && option.touched">Option is required</div>
+                    </div>
 
                   <!-- Remove Button -->
                   <div *ngIf="options?.controls.length > 1" class="mt-1">
@@ -385,6 +386,9 @@
                   </div>
                 </div>
               </div>
+              <div *ngIf="questionOption.get('options')?.errors?.atLeastOneOption">
+    At least one option must be filled.
+  </div>
 
               <!-- Add Option Button -->
               <button type="button" class="btn btn-link text-primary p-0"
@@ -587,7 +591,7 @@
                                     margin-bottom: -25px;
                                 ">Question Text</label>
               <!-- <span style="font-size: 12px; color: #6B7280;">{{ questionTextLength }}/1024 characters</span> -->
-              <span style="font-size: 13px; color: #6b7280; margin-left: 329px">
+              <span style="font-size: 13px; color: #6b7280; margin-left: 342px">
                 Characters
               </span>
             </div>
@@ -2023,7 +2027,7 @@
               Body Text
             </label>
             <div class="d-flex justify-content-end align-items-center mb-1">
-              <span style="font-size: 12px; color: #6b7280; margin-right: -5px">
+              <span style="font-size: 12px;color: #6b7280;margin-right: 0px;padding-top: 14px;">
                 Characters</span>
             </div>
             <div class="rte-wrapper" style="position: relative">
@@ -2110,17 +2114,14 @@
                             ">
               Select WhatsApp Form
             </label>
-            <select class="form-select" formControlName="selectedForm" style="
-                                border: 1px solid #e5e7eb;
-                                border-radius: 8px;
-                                padding: 10px 12px;
-                                font-size: 14px;
-                            ">
-              <option value="" disabled>Select a WhatsApp flow</option>
-              <option *ngFor="let flow of whatsAppFormList" [value]="flow?.id">
-                {{ flow?.flowname }}
-              </option>
-            </select>
+           <select class="form-select" formControlName="selectedForm"
+  style="border: 1px solid #e5e7eb; border-radius: 8px; padding: 10px 12px; font-size: 14px;">
+  <option value="" disabled selected>Select a WhatsApp flow</option>
+  <option *ngFor="let flow of whatsAppFormList" [value]="flow?.id">
+    {{ flow?.flowname }}
+  </option>
+</select>
+
           </div>
 
           <!-- Validation Settings Toggle -->

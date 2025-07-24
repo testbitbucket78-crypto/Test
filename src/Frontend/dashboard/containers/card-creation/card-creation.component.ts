@@ -595,7 +595,7 @@ document.addEventListener('mouseup', (e) => {
     this.questionOption = this.fb.group({
       questionText: ['', [Validators.required, Validators.maxLength(4056)]],
       questionTextMessage: [''],
-      options: this.fb.array([this.fb.control('')]),
+      options: this.fb.array([this.createOptionControl()], [this.atLeastOneOptionRequired()]),
       saveAnswerVariable: [''],
       promptMessage: [this.getPromptMessage()],
       reattemptsAllowed: [false],
@@ -622,6 +622,20 @@ document.addEventListener('mouseup', (e) => {
     }
   });
   }
+
+  createOptionControl(): FormControl {
+  return this.fb.control('', Validators.required);
+}
+
+
+atLeastOneOptionRequired(): ValidatorFn {
+  return (formArray: AbstractControl): ValidationErrors | null => {
+    const controls = (formArray as FormArray).controls;
+    const hasAtLeastOne = controls.some(control => !!control.value?.trim());
+    return hasAtLeastOne ? null : { atLeastOneOption: true };
+  };
+}
+
 
   getPromptMessage(): string {
     console.log(this.options)
@@ -682,7 +696,7 @@ atLeastOneAndUniqueButtons() {
       headerText: ['', [Validators.maxLength(60)]],
       bodyText: ['', [Validators.required, Validators.maxLength(this.MAX_CHARACTERS)]],
       footerText: ['', [Validators.maxLength(60)]],
-      listHeader: ['', [Validators.maxLength(20)]],
+      listHeader: ['', [Validators.maxLength(20),Validators.required]],
       sections: this.fb.array([this.createSection()],[this.uniqueRowNamesValidator(),this.sectionHeadingValidator()]),
       saveAsVariable: [false],
       variableName: [''],
@@ -790,7 +804,7 @@ uniqueRowNamesValidator(): ValidatorFn {
       bodyText: ['', [Validators.required, Validators.maxLength(this.MAX_CHARACTERS)]],
       footerText: ['', [Validators.maxLength(60)]],
       whatsAppFormName: ['', [Validators.required,Validators.maxLength(20)]],
-      selectedForm: [''],
+      selectedForm: [null],
       reattemptsAllowed: [false],
       reattemptsCount: [1],
       errorMessage: ['', [Validators.maxLength(this.MAX_CHARACTERS)]],
@@ -3213,6 +3227,11 @@ this.currentAttributeList = allAttributes?.getfields?.filter((attr:any) =>
     this.notesmentionForm.reset()
     this.whatsAppFlowForm.reset()
 
+
+this.listOptions.reset();
+
+// Step 2: Clear existing FormArray (sections)
+// this.listOptions.setControl('sections', this.fb.array([]));
 
 
     this.conditionForm.reset()
