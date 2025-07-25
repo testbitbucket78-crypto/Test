@@ -227,7 +227,10 @@ export class BotBuilderComponent implements OnInit {
       botChannel: [null, Validators.required],
       triggerKeywords: [null, Validators.required],
       botChannelId: [null, Validators.required],
-      botTimeout: [null,  [Validators.required, this.timeNotMidnightValidator]],
+      botTimeout: [null,  [Validators.required,
+      Validators.min(1),
+      Validators.max(1439),
+      Validators.pattern('^[0-9]+$')]],
       dropOfMessage: [null],
       advanceAction: [null]
     });
@@ -241,9 +244,6 @@ export class BotBuilderComponent implements OnInit {
     });
   }
 
-    timeNotMidnightValidator(control: AbstractControl): ValidationErrors | null {
-    return control.value === '00:00' ? { midnightNotAllowed: true } : null;
-  }
 
 
 
@@ -372,7 +372,7 @@ export class BotBuilderComponent implements OnInit {
         botDescription: item.description,
         botChannel: item.channel_id,
         botChannelId: item.channel_id,
-        botTimeout: item.timeout_value,
+        botTimeout:  this.convertHHMMToMinutes(item.timeout_value),
         dropOfMessage: this.sanitizeHTML(item.timeout_message) == undefined?'':this.sanitizeHTML(item.timeout_message),
         triggerKeywords: item.keywords,
         // advanceAction: {
@@ -427,6 +427,20 @@ export class BotBuilderComponent implements OnInit {
   }
 
 
+  convertHHMMToMinutes(time: string): number {
+  const [hoursStr, minutesStr] = time.split(':');
+
+  const hours = parseInt(hoursStr, 10);
+  const minutes = parseInt(minutesStr, 10);
+
+  if (isNaN(hours) || isNaN(minutes) || hours < 0 || minutes < 0 || minutes >= 60) {
+    throw new Error('Invalid time format. Expected HH:MM with valid values.');
+  }
+
+  return hours * 60 + minutes;
+}
+
+
   submitBotForm(Type: any): void {
 if (this.botBuilderForm) {
   
@@ -464,7 +478,7 @@ if (this.botBuilderForm) {
         description: formData.botDescription,
         channel_id: formData.botChannelId,
         status: 'draft',
-        timeout_value: formData.botTimeout,
+        timeout_value:  this.convertMinutesToHHMM(formData.botTimeout),
         timeout_message: formData.dropOfMessage,
         created_by: this.userDetails.name,
         keyword: formData.triggerKeywords,
@@ -495,6 +509,17 @@ if (this.botBuilderForm) {
     }
   }
 
+  convertMinutesToHHMM(minutes: number): string {
+  const hrs = Math.floor(minutes / 60);
+  const mins = minutes % 60;
+
+  // Pad with leading zeros if needed
+  const paddedHours = hrs.toString().padStart(2, '0');
+  const paddedMinutes = mins.toString().padStart(2, '0');
+
+  return `${paddedHours}:${paddedMinutes}`;
+}
+
   updateBotForm(): void {
     console.log("this.botBuilderForm.valid", this.botBuilderForm.valid)
     Object.keys(this.botBuilderForm.controls).forEach(controlName => {
@@ -513,7 +538,7 @@ if (this.botBuilderForm) {
           description: formData.botDescription,
           channel_id: formData.botChannelId,
           status: 'draft',
-          timeout_value: formData.botTimeout,
+          timeout_value: this.convertMinutesToHHMM(formData.botTimeout),
           timeout_message: formData.dropOfMessage,
           created_by: this.userDetails.name,
           keyword: formData.triggerKeywords,
