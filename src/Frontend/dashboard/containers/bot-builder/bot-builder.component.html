@@ -689,13 +689,13 @@ style="margin-right: 9px;"
                             placeholder="Enter bot timeout between 1-1439 minutes">
                            <div class="text-danger dangerText" *ngIf="botBuilderForm.get('botTimeout')?.touched && botBuilderForm.get('botTimeout')?.invalid">
   <small *ngIf="botBuilderForm.get('botTimeout')?.errors?.['required']">
-    Timeout is required.
+   Bot Timeout is required.
   </small>
   <small *ngIf="botBuilderForm.get('botTimeout')?.errors?.['min']">
-    Timeout must be at least 1 minute.
+   Bot Timeout must be at least 1 minute.
   </small>
   <small *ngIf="botBuilderForm.get('botTimeout')?.errors?.['max']">
-    Timeout must be less than 1440 minutes.
+   Bot Timeout must be less than 1440 minutes.
   </small>
   <small *ngIf="botBuilderForm.get('botTimeout')?.errors?.['pattern']">
     Decimal values are not allowed. Please enter a whole number.
@@ -1099,13 +1099,13 @@ style="margin-right: 9px;"
                             placeholder="Enter bot timeout between 1-1439 minutes">
                            <div class="text-danger dangerText" *ngIf="botBuilderForm.get('botTimeout')?.touched && botBuilderForm.get('botTimeout')?.invalid">
   <small *ngIf="botBuilderForm.get('botTimeout')?.errors?.['required']">
-    Timeout is required.
+  Bot Timeout is required.
   </small>
   <small *ngIf="botBuilderForm.get('botTimeout')?.errors?.['min']">
-    Timeout must be at least 1 minute.
+   Bot Timeout must be at least 1 minute.
   </small>
   <small *ngIf="botBuilderForm.get('botTimeout')?.errors?.['max']">
-    Timeout must be less than 1440 minutes.
+   Bot Timeout must be less than 1440 minutes.
   </small>
   <small *ngIf="botBuilderForm.get('botTimeout')?.errors?.['pattern']">
     Decimal values are not allowed. Please enter a whole number.
@@ -1439,8 +1439,9 @@ style="margin-right: 9px;"
   ></sb-tooltip>
 </h5>
 
-                                    <input type="time" class="form-control bg-white" formControlName="botTimeout" step="1"
-                                        readonly />
+                                          <input  class="form-control" id="autoreply" name="autoreply" 
+                            type="text" formControlName="botTimeout"
+                            placeholder="Enter bot timeout between 1-1439 minutes" readonly>
 
                                     <div class="advance_option">
                                         <h6 (click)="toggleAdvanceOption()">
