@@ -101,7 +101,9 @@ export class CreatePasswordComponent {
 
       if (data.status == 200) { 
         this.showToaster('success',data.msg)
+        setTimeout(() => {
           this.router.navigate(['login'])
+        }, 1000);
       }else if (data.status == 402){
         this.showToaster('error',data.msg)
       }

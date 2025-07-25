@@ -1686,6 +1686,10 @@ formateDate(dateTime:string){
 		this.modalReference = this.modalService.open(addNewCampaign,{size: 'xl', windowClass:'white-bg'});
 	}
 	editCampaign(addNewCampaign:any,step:any){
+		if(((JSON.parse(sessionStorage.getItem('loginDetails')!)).isPaused != 0)){
+			this.showToaster('Attention! Your account has been PAUSED. Please contact your solution provider.','error');
+			return
+		}
 		this.resetSchedule()
 		console.log(this.selectedCampaign?.csv_contacts,'this.selectedCampaign?.csv_contacts')
 		this.newCampaignDetail.Id = this.selectedCampaign.Id;
