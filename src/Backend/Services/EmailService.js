@@ -37,7 +37,7 @@ async function sendEmail({ to, subject, html, fromChannel, attachments = [] }) {
         return { success: true, messageId: info.messageId };
     } catch (error) {
         console.error("Error sending email:", error.message);
-        throw new Error("Failed to send email.");
+        throw new Error(error?.message || "Failed to send email.");
     }
 }
 

@@ -30,6 +30,22 @@ GROUP BY
 EC.customerId
 order by updated_at desc;
 `
+var selectAllContactLimit = `SELECT 
+EC.*,
+IFNULL(GROUP_CONCAT(ECTM.TagName ORDER BY FIND_IN_SET(ECTM.ID, REPLACE(EC.tag, ' ', ''))), '') AS tag_names
+FROM 
+EndCustomer AS EC
+LEFT JOIN 
+EndCustomerTagMaster AS ECTM ON FIND_IN_SET(ECTM.ID, REPLACE(EC.tag, ' ', '')) AND (ECTM.isDeleted != 1)
+WHERE 
+EC.isDeleted != 1
+AND EC.SP_ID = ?
+AND EC.IsTemporary != 1
+GROUP BY 
+EC.customerId
+order by updated_at desc
+limit ?, ?;
+`
 var insertContact = "INSERT INTO EndCustomer (Name,Phone_number,emailId,age,tag,status,facebookId,InstagramId,SP_ID,countryCode) VALUES ?";
 var neweditContact = 'UPDATE EndCustomer SET '
 delet = "UPDATE EndCustomer set isDeleted=1 WHERE customerId IN (?) and SP_ID=?"
@@ -271,5 +287,5 @@ custom_order, sort_order;`
 module.exports = {
     host, user, password, database, email, appPassword, emailHost, port, otp, selectAllContact, insertContact
     ,neweditContact, importquery,delet,selectbyid, Path, verfiyCount,  isBlockedQuery,getcolumn,
-    importUpdate,crachlogQuery,existContactWithSameSpid ,getColumnsQuery
+    importUpdate,crachlogQuery,existContactWithSameSpid ,getColumnsQuery,selectAllContactLimit
 }

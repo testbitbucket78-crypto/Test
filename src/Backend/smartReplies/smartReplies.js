@@ -10,6 +10,11 @@ const logger = require('../common/logger.log');
 app.use(bodyParser.json());
 app.use(cors());
 app.use(bodyParser.urlencoded({ extended: true }));
+const { ExportLogsModel }= require('./model/exportLogsModel');
+const { makeXLSXForSmartReplies } = require('../Contact/utils');
+const { sendEmail } = require('../Services/EmailService.js');
+const { MessagingName }= require('../enum');
+
 
 app.get('/getReplies', (req, res) => {
 
@@ -93,6 +98,7 @@ app.post('/addNewReply', async (req, res) => {
 app.post('/KeywordMatch', async (req, res) => {
   try {
     const myStringArray = req.body.Keywords.map(keyword => keyword.toLowerCase());
+    const smartReplyId = req.body.smartReplyId;
 
     console.log(req.body.Keywords)
     const params = {
@@ -105,8 +111,12 @@ app.post('/KeywordMatch', async (req, res) => {
     // Add single quotes after every comma
     const updatedString = (params.strings.value).split(',').map(value => "'" + value + "'").join(',');
     console.log("updatedString" + updatedString.length)
-    var query = "SELECT Lower(Keyword) as Keyword FROM SmartReplyKeywords WHERE SmartReplyId IN ( select ID from SmartReply where SP_ID =" + req.body.SP_ID + ` and isDeleted !=1) and Keyword IN (` + updatedString + ') and isDeleted !=1';
-
+    var query ='';
+    if (smartReplyId && smartReplyId != 0) {
+     query = "SELECT Lower(Keyword) as Keyword FROM SmartReplyKeywords WHERE SmartReplyId IN ( select ID from SmartReply where SP_ID =" + req.body.SP_ID + " and ID !=" + smartReplyId +` and isDeleted !=1) and Keyword IN (` + updatedString + ') and isDeleted !=1';
+    } else {
+     query = "SELECT Lower(Keyword) as Keyword FROM SmartReplyKeywords WHERE SmartReplyId IN ( select ID from SmartReply where SP_ID =" + req.body.SP_ID + ` and isDeleted !=1) and Keyword IN (` + updatedString + ') and isDeleted !=1';
+    }
     var findKey = await db.excuteQuery(query, [])
 
     // Check if any element from array1 is present in array2
@@ -159,6 +169,49 @@ app.put('/editAction', (req, res) => {
 app.put('/removeKeyword', (req, res) => {
   db.runQuery(req, res, val.removeKeyword, [req.body.SmartReplyId, req.body.Keyword])
 })
+
+app.post('/exportLogsSmartReply', async (req, res) => {
+  try {
+    const exportRequest = new ExportLogsModel(req.body);
+    exportRequest.validate();
+
+    const logsData = await exportRequest.fetchLogs();
+
+    const XLSXFile = makeXLSXForSmartReplies(
+      logsData,
+      exportRequest.spid,
+      exportRequest.fromDate,
+      exportRequest.toDate
+    );
+
+    const EmailChannel = MessagingName[exportRequest.channel] || 'Engagekart';
+
+    await sendEmail({
+      to: exportRequest.email,
+      subject: `Smart Reply Usage Report`,
+      html: `
+        <p>Hello,</p>
+        <p>Please find attached here Smart Reply usage report for the selected period: <b>${exportRequest.fromDate}</b> to <b>${exportRequest.toDate}</b>.</p>
+        <p>This data can help you monitor and optimize your Smart Reply performance across customer conversations.</p>
+        <p>Thank you,<br>Team ${EmailChannel}</p>
+      `,
+      fromChannel: EmailChannel,
+      attachments: [
+        {
+          filename: `SmartReplyReport_${exportRequest.fromDate}_to_${exportRequest.toDate}.xlsx`,
+          content: XLSXFile,
+          contentType: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+        },
+      ],
+    });
+
+    return res.status(200).json({ success: true, message: 'Email sent successfully' });
+  } catch (error) {
+    console.error('Error in exportLogsSmartReply:', error.message);
+    return res.status(500).json({ error: error?.message ||  'Something went wrong' });
+  }
+});
+
 
 app.put('/updateSmartReply', async (req, res) => {
   // const list = req.body.Tags;
@@ -369,6 +422,15 @@ app.post('/button', (req, res) => {
     return;
   });
 })
+
+
+app.get('/healthCheck', async (req, res) => {
+  try {
+    res.status(200).send({ status: 'ok', message: 'Service is running'});
+} catch (err) {
+res.status(500).send({ error: 'Internal server error' });
+}
+});
 
 
 app.listen(3005, function () {

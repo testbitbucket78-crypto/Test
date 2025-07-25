@@ -5,6 +5,7 @@ import { Router } from '@angular/router';
 import { Validators } from '@angular/forms';
 import { environment } from 'environments/environment';
 import { ToastService } from 'assets/toast/toast.service';
+import { BrandService } from 'Frontend/navigation/services/BrandServices';
 declare var $:any;
 
 @Component({
@@ -23,7 +24,7 @@ export class ForgotPasswordComponent implements OnInit {
     submittedValue:any;
     isLoading!:boolean;    
     public channelDomain:string = environment?.chhanel;
-    constructor(private apiService :AuthService ,private router: Router,  private formBuilder: FormBuilder, private _ToastService: ToastService) { }
+    constructor(private apiService :AuthService ,private router: Router,  private formBuilder: FormBuilder, private _ToastService: ToastService, public brandService : BrandService) { }
     ngOnInit() {
       
      }

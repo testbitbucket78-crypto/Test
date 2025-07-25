@@ -17,11 +17,11 @@ const commonFun = require('../common/resuableFunctions');
 const { APIKeyManager, sendMessageBody, spPhoneNumber, ApiResponse, Webhooks, 
     textMessageBody, mediaMessageBody, TemplateStatus, SessionStatus, 
     TemplateAPI, TemplateWHAPI, TemplateWEB, Template, sendTemplateBody, 
-    spCreadential, sendTemplateBodyAPI }= require('./model/accountModel');
+    spCreadential, sendTemplateBodyAPI, getMessage }= require('./model/accountModel');
 const { WebSocketManager } = require("../whatsApp/PushNotifications")
 const {mapCountryCode} = require('../Contact/utils')
 const variables = require('../common/constant')
-const { exportLog } = require('../Services/ServiceModel');
+const { exportLog, BrandConfigRequest } = require('../Services/ServiceModel');
 const { makeXLSXFileOfData } = require('../Contact/utils');
 const { sendEmail }= require('../Services/EmailService');
 const { MessagingName }= require('../enum');
@@ -266,7 +266,7 @@ async function SaveOrUpdate(APIKeyManagerInstance) {
            throw new Error("This name already exists");
         }
       }
-        let checking = await db.excuteQuery(val.insertUserAPIKeys, [APIKeyManagerInstance.spId, keyGenerated, ips, APIKeyManagerInstance.tokenName, api_token]);
+        let checking = await db.excuteQuery(val.insertUserAPIKeys, [APIKeyManagerInstance.spId, keyGenerated, ips, APIKeyManagerInstance.tokenName, api_token, APIKeyManagerInstance.Channel]);
         return { success: true, data: { spid: APIKeyManagerInstance.spId, ips } };
     }
   }
@@ -411,6 +411,24 @@ const isValidUrl = (url) => {
         res.status(500).json({ error: 'Something went wrong' });
       }
   }
+
+  const getBrandConfig = async (req, res) => {
+    try {
+        const brandRequest = new BrandConfigRequest(req.params);
+        brandRequest.validate();
+
+        const config = await brandRequest.fetch();
+
+        if (!config) {
+          return res.status(404).json({ message: 'Brand config not found' });
+        }
+
+        return res.status(200).json(config);
+      } catch (error) {
+        return res.status(500).json({ message: error.message || 'Internal Server Error' });
+      }
+  }
+  
 
 
 const addToken = async (req, res) => {
@@ -962,29 +980,43 @@ const mediaMessage = async (req, res) => {
     });
 }
 }
-const getTemplate = async (req, res) => { 
-    try {
-    const spId = req.spid
-    let getTemplatesQuery = `SELECT * FROM templateMessages WHERE spid=? and isDeleted !=1 and isTemplate=1`;
-    db.runQuery(req, res, getTemplatesQuery, [spId], (err, result) => {
-                if (err) {
-                    logger.error('Error in getTemplates:', err);
-                    res.status(500).send({ error: 'Database query error' });
-                } else {
-                    logger.info('getTemplates function completed successfully', result);
-                    res.send(result);
-                }
+const getTemplate = async (req, res) => {
+  try {
+    const spId = req.spid;
+
+    const getTemplatesQuery = `
+      SELECT * FROM templateMessages 
+      WHERE spid = ? AND isDeleted != 1 AND isTemplate = 1
+    `;
+
+    const result = await db.excuteQuery(getTemplatesQuery, [spId]);
+
+    if (!result || result.length === 0) {
+      return res.status(404).send({
+        status: 404,
+        error: "Template not found"
+      });
+    }
+
+    const mappedTemplates = result.map(row => ({
+      name: row.TemplateName || '',
+      language: (row.Language || '').toLowerCase(),
+      status: row.status || 'UNKNOWN',
+      category: (row.Category || '').toUpperCase()
+    }));
+
+    return res.status(200).send({
+      templates: mappedTemplates
     });
-    
-}catch (err) {
+
+  } catch (err) {
     db.errlog(err);
-    res.status(403).send({
-        msg: "Get Template failed.",
-        status: 403,
-        error: err?.message,
+    return res.status(500).send({
+      status: 500,
+      error: err?.message || 'Internal Server Error'
     });
-}
-}
+  }
+};
 
 const getTemplateStatus = async (req, res) => {
   try {
@@ -1047,34 +1079,71 @@ const getContacts = async (req, res) => {
 
 const deleteContacts = async (req, res) => {
   try {
-    const spId = req.spid
+    const spId = req.spid;
     const { customerId } = req.body;
 
+    const phoneNumbersRaw = req.body?.phoneNumbers;
+    if (!phoneNumbersRaw || typeof phoneNumbersRaw !== 'string') {
+      return res.status(400).send({ error: 'phoneNumbers field is required as a comma-separated string.' });
+    }
+    const phoneNumbers = phoneNumbersRaw
+      .split(',')
+      .map(num => num.trim())
+      .filter(num => /^\d{10,15}$/.test(num));
+
+    if (phoneNumbers.length === 0) {
+      return res.status(400).send({ error: 'No valid phone numbers provided.' });
+    }
+
+    const placeholders = phoneNumbers.map(() => '?').join(', ');
+    const sql = `
+      SELECT customerId 
+      FROM EndCustomer 
+      WHERE Phone_number IN (${placeholders}) AND SP_ID = ? 
+      ORDER BY 1 DESC
+    `;
+
+    const values = [...phoneNumbers, spId];
+    const rows = await db.excuteQuery(sql, values);
+
+    const customerIds = rows.map(row => row.customerId);
+
+    if (customerIds.length === 0) {
+      return res.status(404).send({ error: 'No matching contacts found for provided phone numbers.' });
+    }
+
+
     const sendMessageInstance = {
-      customerId,
+      customerId: customerIds,
       SP_ID: spId
     };
 
-    const apiUrl = `${variables.ENV_URL.contacts}/deletContact`;
+    const apiUrl = `${variables.ENV_URL.contacts}/deletContactWrapperAPI`;
     const response = await axios.post(apiUrl, sendMessageInstance);
     const responseData = response?.data;
-    res.status(200).send({ status: 'success', data: responseData });
+    res.status(200).send({ status: 'success', contactsDeleted: responseData?.affectedRows || "0", message: "Contact deleted successfully" });
   } catch (err) {
-    const statusCode = err?.message === "Template not found" ? 404 : 400;
+    const statusCode = err?.message === "Contact not found" ? 404 : 400;
     res.status(statusCode).send({ error: err?.message });
   }
 };
 
 const getUsers = async (req, res) => {
   try {
-    const spId = req.spid
+    const spId = req.spid 
     selectAllQuery = `SELECT   r.RoleName,  u.*
                     FROM user u
                     JOIN roles r ON u.UserType = r.roleID
                     WHERE u.SP_ID =? AND u.isDeleted != 1` ;
     
     let getUser = await db.excuteQuery(val.selectAllQuery, [spId])               
-    res.status(200).send({ status: 'success', data: getUser });
+    const users = getUser.map(user => ({
+      userId: user.uid,
+      name: user.name,
+      status: user.IsActive == 1 ? 'online' : 'offline'
+    }));
+
+    res.status(200).send({ users });
   } catch (err) {
     res.status(500).send({ error: "Error while fetching Users List" });
   }
@@ -1103,27 +1172,57 @@ const getCustomFields = async (req, res) => {
 
 const createContact = async (req, res) => {
   try {
-    const spId = req.spid
+    const spId = req.spid;
 
     const userPayload = req.body;
 
     if (!userPayload || typeof userPayload !== 'object') {
       return res.status(400).send({ error: "Invalid payload" });
     }
+    
+    const phone = req?.body?.Phone_number;
 
-    // Convert payload into the required `req.body.result` structure
+    if (!phone || typeof phone !== 'string' || !/^\d{10,15}$/.test(phone)) {
+      return res.status(400).send({ error: 'Phone_number is required and must contain digits only.' });
+    }
+
+    const parsed = mapCountryCode(phone);
+    if(parsed == 'Phone number length is incorrect') return res.status(400).send({ error: parsed });
+    if (typeof parsed === 'string') {
+      return res.status(400).send({ error: parsed });
+    }
+
+    userPayload.displayPhoneNumber = parsed.localNumber;
+    userPayload.CountryCode = `${parsed.country} ${parsed.countryCode}`;
+
+    // const result = [
+    //   { displayName: spId, ActuallName: "SP_ID" },
+    //   ...Object.entries(userPayload).map(([key, value]) => ({
+    //     displayName: value,
+    //     ActuallName: key
+    //   }))
+    // ];
     const result = [
       { displayName: spId, ActuallName: "SP_ID" },
-      ...Object.entries(userPayload).map(([key, value]) => ({
-        displayName: value,
-        ActuallName: key
-      }))
+      ...Object.entries(userPayload)
+        .filter(([key]) => key !== 'apiKey' && key !== 'apiToken') // Exclude these keys
+        .map(([key, value]) => ({
+          displayName: value,
+          ActuallName: key
+        }))
     ];
 
     const apiUrl = `${variables.ENV_URL.contacts}/addCustomContact`;
 
-    const response = await axios.post(apiUrl, { result });
+    const response = await axios.post(apiUrl, {SP_ID: spId, result });
     const responseData = response?.data;
+
+    if (responseData?.status === 409) {
+      return res.status(409).json({
+        status: 409,
+        error: "Contact already exists"
+      });
+    }
 
     if (!responseData || responseData.status !== 200) {
       return res.status(500).send({ error: 'Failed to add contact to remote service' });
@@ -1131,7 +1230,8 @@ const createContact = async (req, res) => {
 
     res.status(200).send({
       status: 'success',
-      data: responseData,
+      InsertId: responseData?.result?.insertId || null,
+      message: "Contact created successfully",
     });
   } catch (err) {
     res.status(500).send({
@@ -1152,12 +1252,14 @@ const updateContact = async (req, res) => {
     }
 
     // Convert the payload into the required `req.body.result` structure
-    const result = [
+     const result = [
       { displayName: spId, ActuallName: "SP_ID" },
-      ...Object.entries(userPayload).map(([key, value]) => ({
-        displayName: value,
-        ActuallName: key
-      }))
+      ...Object.entries(userPayload)
+        .filter(([key]) => key !== 'apiKey' && key !== 'apiToken') // Exclude these keys
+        .map(([key, value]) => ({
+          displayName: value,
+          ActuallName: key
+        }))
     ];
 
     const apiUrl = `${variables.ENV_URL.contacts}/editCustomContact?SP_ID=${spId}&customerId=${customerId}`;
@@ -1172,6 +1274,7 @@ const updateContact = async (req, res) => {
     res.status(200).send({
       status: 'success',
       data: responseData,
+      message: "Contact updated successfully",
     });
   } catch (err) {
     res.status(500).send({
@@ -1389,6 +1492,24 @@ const SendInteractiveButtons = async (req, res) => {
   }
 };
 
+const getMessages = async (req, res) => {
+  try {
+    const spId = req.spid;
+    const instanceWEB = new getMessage(req.body, spId);
+    const messages = await instanceWEB.getMessages();
+
+    res.status(200).send({
+      status: 'success',
+      data: messages,
+    });
+  } catch (err) {
+    res.status(500).send({
+      error: err?.message || "Internal server error"
+    });
+  }
+};
+
+
 
 async function insertInteractionAndRetrieveId(phoneNo, sid, channel) {
     try {
@@ -1571,5 +1692,5 @@ async function getQualityRatings(phoneNumberId, access_token) {
 module.exports = {
     insertAndEditWhatsAppWeb, selectDetails, addToken, deleteToken, enableToken, selectToken,
     createInstance, getQRcode, generateQRcode, editToken, testWebhook,getQualityRating, addWAAPIDetails, addGetAPIKey, APIkeysState, saveWebhookUrl, sendMessage, saveOrUpdateWebhook, getWebhooks, deleteWebhook, testWebhooks, deleteAPIToken, exportLogs, textMessage, mediaMessage, getTemplate, getTemplateStatus
-    , getSessionStatus, getContacts, deleteContacts, getUsers, getCustomFields, createContact, updateContact, createTemplatesAPI, createTemplatesWEB, createTemplatesWHAPI, sendTemplates, SendInteractiveButtons
+    , getSessionStatus, getContacts, deleteContacts, getUsers, getCustomFields, createContact, updateContact, createTemplatesAPI, createTemplatesWEB, createTemplatesWHAPI, sendTemplates, SendInteractiveButtons, getMessages, getBrandConfig
 }

@@ -191,6 +191,15 @@ app.post('/Reconnect', async (req, res) => {
 })
 
 
+app.get('/healthCheck', async (req, res) => {
+    try {
+      res.status(200).send({ status: 'ok', message: 'Service is running'});
+  } catch (err) {
+  res.status(500).send({ error: 'Internal server error' });
+  }
+  });
+
+
 app.listen(3007, () => {
     console.log("Server is Running on Port : : 3007")
 

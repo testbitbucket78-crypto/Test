@@ -11,7 +11,7 @@ const notify = require('./whatsApp/PushNotifications');
 const removeTags = require('./removeTagsFromRichTextEditor')
 const db = require('./dbhelper')
 const axios = require('axios');
-const middleWare = require('./middleWare')
+var middleWare = require('./middleWare')
 const moment = require('moment');
 const Routing = require('./RoutingRules');
 const { Console } = require("console");
@@ -32,6 +32,7 @@ WHERE M.interaction_id = ?
   AND I.interaction_status = 'Open'
   AND I.is_deleted != 1 order by M.updated_at desc limit 1`;
 
+  const { logSmartReplyUsage } = require('./Services/SmartReplyLog.js')
 checkResolve = `select * from Interaction where  InteractionId = ? and SP_ID=? and IsTemporary !=1 and is_deleted !=1 `
 var insertMessageQuery = "INSERT INTO Message (SPID,Type,ExternalMessageId, interaction_id, Agent_id, message_direction,message_text,message_media,media_type,Message_template_id,Quick_reply_id,created_at,updated_at,system_message_type_id,assignAgent,msg_status,button,interactive_buttons) VALUES ?";
 
@@ -78,6 +79,7 @@ async function autoReplyDefaultAction(isAutoReply, autoReplyTime, isAutoReplyDis
   console.log(isAutoReply, autoReplyTime, isAutoReplyDisable)
   let assignAgent = await db.excuteQuery('select * from InteractionMapping where InteractionId =? order by created_at desc limit 1', [newId]);
   let interactionStatus = await db.excuteQuery('select * from Interaction where InteractionId = ? and is_deleted !=1 ', [newId])
+  let botMatched = await db.excuteQuery("SELECT * FROM Bots WHERE FIND_IN_SET(?, keywords)", [message_text])
   if(assignAgent.length > 0) {
     if( assignAgent[0].AgentId == -4) {
       let data = {
@@ -99,6 +101,40 @@ async function autoReplyDefaultAction(isAutoReply, autoReplyTime, isAutoReplyDis
       identifyNode(data);
       return false;
     }
+  }
+  if(botMatched.length > 0) {
+    console.log("botMatched", botMatched)
+    let data = {
+      "interactionId": newId,
+      "sid": sid,
+      "agid": agid,
+      "custid": custid,
+      "from": from,
+      "incommingMessage": message_text,
+      "channelType": channelType,
+      "phone_number_id": phone_number_id,
+      "display_phone_number": display_phone_number,
+    }
+    data['botId'] = botMatched[0]?.id;
+    botOperations(data);
+    return false;
+  }
+  if(botMatched.length > 0) {
+    console.log("botMatched", botMatched)
+    let data = {
+      "interactionId": newId,
+      "sid": sid,
+      "agid": agid,
+      "custid": custid,
+      "from": from,
+      "incommingMessage": message_text,
+      "channelType": channelType,
+      "phone_number_id": phone_number_id,
+      "display_phone_number": display_phone_number,
+    }
+    data['botId'] = botMatched[0]?.id;
+    botOperations(data);
+    return false;
   }
   const timeoutDuration = inactiveTimeOut * 60 * 1000; // Convert minutes to milliseconds
   console.log(timeoutDuration, inactiveTimeOut)
@@ -272,6 +308,13 @@ async function getSmartReplies(message_text, phone_number_id, contactname, from,
     if (replymessage?.length > 0) {
 
       let isSReply = await iterateSmartReplies(replymessage, phone_number_id, from, sid, custid, agid, newId, channelType, display_phone_number);
+       
+      await logSmartReplyUsage({
+          spid: sid,
+          customerNumber: from,
+          keywordSent: message_text
+        });
+
       console.log("iterateSmartReplies replymessage.length", isSReply)
       return isSReply;
     } else if (defultOutOfOfficeMsg === false && replymessage?.length <= 0) {
@@ -395,9 +438,9 @@ async function iterateSmartReplies(replymessage, phone_number_id, from, sid, cus
       if (type == 'video') {
         delay = 7000
       }
-      if(message?.isTemplate == 'true'){
-        bodyVar = extractPlainValues(msgVar);
-      }
+      // if(message?.isTemplate == 'true'){
+      //   bodyVar = extractPlainValues(msgVar);
+      // }
 
       var relyMsg = {
         "replyId": message.ID,
@@ -716,9 +759,7 @@ async function addTag(value, sid, custid) {
   if (value !== null && value !== undefined) {
     stringValue = value.replace(/[\[\]\s]/g, '');
   }
-
-  const getTagQuery = `SELECT tag FROM EndCustomer WHERE customerId = ? AND SP_ID = ?`;
-  const existingTagResult = await db.excuteQuery(getTagQuery, [custid, sid]);
+  
 
   if (existingTagResult.length > 0 && existingTagResult[0].tag) {
     const existingTags = existingTagResult[0].tag.split(',');
@@ -970,17 +1011,21 @@ async function AllAgentsOffline(sid, phone_number_id, from, msg_id, newId, chann
 
 
 async function messageThroughselectedchannel(spid, from, type, text, media, phone_number_id, channelType, agentId, interactionId, media_type, Message_text) {
+  try{
   let getMediaType = determineMediaType(media_type); //media_type  
   console.log("phone_number_id,channelType,spid, from, getMediaType, text")
   console.log(phone_number_id, channelType, spid, from, getMediaType, text)
   if (channelType == 'WhatsApp Official' || channelType == 1 || channelType == 'WA API') {
     let response = false;
     let myUTCString = new Date().toUTCString();
-    const time = moment.utc(myUTCString).format('YYYY-MM-DD HH:mm:ss');
+    const time = moment.utc(myUTCString).format('YYYY-MM-DD HH:mm:ss');      
+    console.log('fasdfa');
+    console.log([[spid, 'text', "", interactionId, agentId, 'Out', Message_text, (media ? media : 'text'), media_type, 1234, "", time, time, "", -2, 1,'']])
     let result = await middleWare.sendDefultMsg(media, text, getMediaType, phone_number_id, from, spid);
     // console.log("messageThroughselectedchannel", result?.status)
+    console.log('runningggg',result);
     if (result?.status == 200) {
-      let messageValu = [[spid, 'text', "", interactionId, agentId, 'Out', Message_text, (media ? media : 'text'), media_type, result.message.messages[0].id, "", time, time, "", -2, 1,'']]
+      let messageValu = [[spid, 'text', "", interactionId, agentId, 'Out', Message_text, (media ? media : 'text'), media_type, result.message.messages[0].id, "", time, time, "", -2, 1,'','']]
       let saveMessage = await db.excuteQuery(insertMessageQuery, [messageValu]);
       response = true;
     }
@@ -995,12 +1040,15 @@ async function messageThroughselectedchannel(spid, from, type, text, media, phon
 
       let myUTCString = new Date().toUTCString();
       const time = moment.utc(myUTCString).format('YYYY-MM-DD HH:mm:ss');
-      let messageValu = [[spid, 'text', "", interactionId, agentId, 'Out', Message_text, (media ? media : 'text'), media_type, "", "", time, time, "", -2, 1,'']]
+      let messageValu = [[spid, 'text', "", interactionId, agentId, 'Out', Message_text, (media ? media : 'text'), media_type, "", "", time, time, "", -2, 1,'','']]
       let saveMessage = await db.excuteQuery(insertMessageQuery, [messageValu]);
       return true;
     }
     return false;
   }
+} catch (err) {
+  return false;
+}
 }
 const variable = require('./common/constant');
 async function SreplyThroughselectedchannel(spid, from, type, text, media, phone_number_id, channelType, agentId, interactionId, testMessage, media_type, display_phone_number,
@@ -1142,7 +1190,7 @@ async function sendDropOffMessage(data) {
   if(botData.length >0){
     if(botData[0]?.timeout_message){
       let message_text = await getExtraxtedMessage(botData[0]?.timeout_message, data.sid, data.custid);
-      let result = await messageThroughselectedchannel(data.sid, data?.from, 'text', message_text, '', data.phone_number_id, data.channelType, -4, data.interactionId, 'text', message_text);
+      let result = await messageThroughselectedchannel(data.sid, data?.toPhoneNumber, 'text', message_text, '', data.phone_number_id, data.channelType, -4, data.interactionId, 'text', message_text);
       // var updateBotSessionQuery = "update BotSessions set isWaiting=1,current_nodeId=? where botId =? and status=2";
       //   let updateBotSession = await db.excuteQuery(updateBotSessionQuery, [json?.connectedId,data?.botId]);
       if(result){
@@ -1212,13 +1260,13 @@ async function identifyNode(data){
     console.log('type---',identityNode[0] )
     if(type == 'sendText'|| type == 'sendImage' || type == 'sendVideo'|| type == 'sendDocument'){ 
       
-      let messageType = type == 'sendImage' ? 'image' : type == 'sendVideo' ? 'video' : type == 'sendDocument' ? 'document' : 'text';
+      let messageType = type == 'sendImage' ? 'image/jpg' : type == 'sendVideo' ? 'video/mp4' : type == 'sendDocument' ? 'application/pdf' : 'text';
       let message_text = await getExtraxtedMessage(json?.data?.textMessage, data.sid, data.custid)
-      result = await messageThroughselectedchannel(data.sid, data?.from, 'text', message_text, json?.data?.link, data?.phone_number_id, data?.channelType, -4, data.interactionId, 'text', message_text)
+      result = await messageThroughselectedchannel(data.sid, data?.toPhoneNumber, 'text', message_text, json?.data?.file, data?.phone_number_id, data?.channelType, -4, data.interactionId, messageType, message_text)
       data.nodeId = json?.connectedId;
       await identifyNode(data);
     }else if(type == 'assignAgentModal'){
-      await assignAction(json.data?.uid, -4, data.interactionId, data.custid, data.sid, data.display_phone_number);
+      await assignAction(json.data?.data?.uid, -4, data.interactionId, data.custid, data.sid, data.display_phone_number);
       botExit(data, 2);
     } else if(type == 'UnassignConversation'){
       await assignAction(-1, -4, data.interactionId, data.custid, data.sid, data.display_phone_number);
@@ -1228,11 +1276,11 @@ async function identifyNode(data){
       botExit(data, 2);
     }
     else if(type == 'addTag'){
-      await addTag(value,spid, data.custid);
+      await addTag(json.data?.data?.tags,data.sid, data.custid);
       data.nodeId = json?.connectedId;
       identifyNode(data);
     }else if(type == 'removeTag'){
-      await removeTag(value, data.custid);
+      await removeTag(json.data?.data?.tags, data.custid);
       data.nodeId = json?.connectedId;
       identifyNode(data);
     }
@@ -1283,8 +1331,8 @@ async function identifyNode(data){
             let saveMessage = await db.excuteQuery(insertMessageQuery, [messageValu]);
           }
         } else if(type == 'questionOption'){
-          let message_text = await getExtraxtedMessage(json?.data?.questionTextquestionText, data.sid, data.custid)
-              result = await messageThroughselectedchannel(data.sid, data?.from, 'text', message_text, '', data?.phone_number_id, data?.channelType, -4, data.interactionId, 'text', message_text)
+          let message_text = await getExtraxtedMessage(json?.data?.questionTextMessage, data.sid, data.custid)
+              result = await messageThroughselectedchannel(data.sid, data?.toPhoneNumber, 'text', message_text, '', data?.phone_number_id, data?.channelType, -4, data.interactionId, 'text', message_text)
 
         }
         questionOperations();
@@ -1296,7 +1344,7 @@ async function identifyNode(data){
         let updateBotSession = await db.excuteQuery(updateBotSessionQuery, [json?.connectedId,nodeTimeout,data?.botId]);
       }
     }else if(type == 'conversationStatus'){
-      let ResolveOpenChat = await db.excuteQuery('UPDATE Interaction SET interaction_status =? WHERE InteractionId !=? and customerId=?', [json?.data?.status, data?.interactionId, data?.custid]);
+      let ResolveOpenChat = await db.excuteQuery('UPDATE Interaction SET interaction_status =? WHERE InteractionId !=? and customerId=?', [json?.data?.data?.status, data?.interactionId, data?.custid]);
       botExit();
     }else if(type == 'Notify'){
        let notifyvalues = [[data?.sid, '@Mention in the Notes', 'You have a been mentioned in the Notes', json?.data?.AgentId, 'bot', json?.data?.AgentId, utcTimestamp]];
@@ -1305,7 +1353,7 @@ async function identifyNode(data){
       identifyNode(data);
     }else if(type == 'MessageOptin'){
       let optInQuery = 'UPDATE EndCustomer SET OptInStatus = ? where customerId = ? and SP_ID = ?';
-      await db.excuteQuery(optInQuery, [json?.data?.status, data.custid, data.sid]);
+      await db.excuteQuery(optInQuery, [json?.data?.data?.status, data.custid, data.sid]);
       data.nodeId = json?.connectedId;
       identifyNode(data);
     }else if(type == 'WorkingHoursModal'){
@@ -1342,7 +1390,7 @@ async function invalidQuestionResponse(data,json){
   let sessionDetail = await getrunningSession(data.botId);
             if(json?.data?.reattemptsAllowed && (json?.data?.reattemptsCount >sessionDetail?.node_retry_count)){
               let message_text = await getExtraxtedMessage(json?.data?.errorMessage, data.sid, data.custid)
-              result = await messageThroughselectedchannel(data.sid, data?.from, 'text', message_text, json?.data?.link, data?.phone_number_id, data?.channelType, -4, data.interactionId, 'text', message_text)
+              result = await messageThroughselectedchannel(data.sid, data?.toPhoneNumber, 'text', message_text, json?.data?.file, data?.phone_number_id, data?.channelType, -4, data.interactionId, 'text', message_text)
             } else{
               if(json?.data?.invalidAction =='fallback'){
                 data.nodeId = json?.FallbackId;
@@ -1480,27 +1528,36 @@ async function getBotId(data){
 }
 
 async function getData(data){
-let interactionIdQuery = 'select InteractionId from Interaction where customerId=? and SP_ID=? order by 2 desc limit 1';
+let interactionIdQuery = 'select * from Interaction where customerId=? and SP_ID=? order by 2 desc limit 1';
 let interaction = await db.excuteQuery(interactionIdQuery, [data?.custid, data?.sid]);
 let toPhoneNumberQuery = 'select Phone_number from EndCustomer where customerId=? and SP_ID=?';
 let toPhoneNumber = await db.excuteQuery(toPhoneNumberQuery, [data?.custid, data?.sid]);
-let userDetailQuery = 'SELECT mobile_number,Channel, FROM user WHERE SP_ID =? AND isDeleted != 1 AND ParentId IS NULL';
+let userDetailQuery = 'SELECT mobile_number,Channel FROM user WHERE SP_ID =? AND isDeleted != 1 AND ParentId IS NULL';
 let userDetail = await db.excuteQuery(userDetailQuery, [data?.sid]);
 data['interactionId'] = data?.interactionId || interaction[0]?.InteractionId ; 
 data['toPhoneNumber'] = toPhoneNumber[0]?.Phone_number || data?.toPhoneNumber;
 data['from'] = data?.from || userDetail[0]?.mobile_number;
-data['channelType'] = data?.channelType || userDetail[0]?.Channel;
+if(userDetail[0]?.Channel == 'api'){
+  data['channelType'] = 'WA API';
+  let numberIdQuery = 'select phoneNumber_id from WA_API_Details where spid =? and isDeleted =0';
+  let userDetail = await db.excuteQuery(numberIdQuery, [data?.sid]);
+  data['phone_number_id'] = userDetail[0]?.phoneNumber_id || data?.phone_number_id;
+}else{
+  data['channelType'] = 'WA Web';
+}
 data['display_phone_number'] = data?.display_phone_number || userDetail[0]?.mobile_number;
 
 return data;
 }
 
-async function runBotOperation(data){
+async function runBotOperation(data,temboxMiddleWare =''){
+  if(temboxMiddleWare !='') middleWare = temboxMiddleWare;
   let completeData = await getData(data);
   botOperations(completeData);
 }
 
-async function timeOut(data, type){
+async function timeOut(data, type,temboxMiddleWare =''){
+  if(temboxMiddleWare !='') middleWare = temboxMiddleWare;
   let completeData = await getData(data);
   if(type == 'bot'){
     await sendDropOffMessage(completeData);
@@ -1538,20 +1595,22 @@ return formatted;
 
 
 let mainData = {
-  "sid": 163,
-  "custid": 85473,
-  "interactionId": 6569,
-  "display_phone_number": 911724621927,
-  "from": 911724621927,
-  "toPhoneNumber": 917618157986,
-  "channelType": "WA API", // or 1 for WA API
-  "phone_number_id": 631644263356652,
-  "botId": 17,
+  "sid": 55,
+  "custid": 83534,
+  "interactionId": 6826,
+  // "display_phone_number": 911724621927,
+  // "from": 911724621927,
+  // "toPhoneNumber": 917618157986,
+  // "channelType": "WA API", // or 1 for WA API
+  // "phone_number_id": 631644263356652,
+  "botId": 41,
 }
-setTimeout(() => {
+//setTimeout(() => {
   // console.log("mainData", mainData);
   // console.log(typeof identifyNode);
-  //botOperations(mainData);
-}, 1000); 
+ // runBotOperation(mainData);
+//}, 1000); 
+
+
 
 module.exports = { autoReplyDefaultAction, sReplyActionOnlostMessage,identifyNode,timeOut,runBotOperation }

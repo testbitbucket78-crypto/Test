@@ -228,7 +228,7 @@ It is determined by a combination of user feedback signals like blocks, reports 
 					<p class="sub_title_sm blackcolor mb-1">Category</p>
 					<p>{{selectedCampaign?.category_label}}</p>
 					<div class="template">
-						<div class="doc-preview"*ngIf="selectedCampaign?.media_type=='document'" width="100%" height="150px">
+						<div class="doc-preview" *ngIf="isDocumentLink(selectedCampaign?.message_media)" width="100%" height="150px">
 							<a [href]="selectedCampaign?.message_media"><img src="../../../../assets/img/settings/doc.svg" /></a>
 							</div>
 							<video *ngIf="getMediaType(selectedCampaign?.media_type,'video')" controls muted id="video-background" [src]="selectedCampaign?.message_media"></video>
@@ -283,7 +283,7 @@ It is determined by a combination of user feedback signals like blocks, reports 
 				<div class="action_section">
 					<button type="button" class="btn" (click)="copyCampaign()" [disabled]="settingsService?.checkRoleExist('21')"><img src="/assets/img/teambox/copy.svg" ></button>
 					<button type="button" *ngIf="selectedCampaign?.status == 0 || selectedCampaign.status == 1" class="btn" (click)="editCampaign(addNewCampaign,1)"  [disabled]="settingsService?.checkRoleExist('21')"><img src="../../../../assets/img/teambox/Edit.svg"></button>
-					<button type="button" class="btn" (click)="deleteCampaign(openalertmessage)" [disabled]="settingsService.checkRoleExist('21')"><img src="/assets/img/teambox/delete.svg"></button>
+					<button type="button" class="btn" (click)="deleteCampaign(openalertmessage)" [disabled]="settingsService.checkRoleExist('21') || selectedCampaign.status == 2 || selectedCampaign.status == 6"><img src="/assets/img/teambox/delete.svg"></button>
 				</div>
 			</div>
 			<div *ngIf="allCampaign?.length<1 && searchKey == ''" class="campaigns_section_items no-campaign">
@@ -610,7 +610,7 @@ It is determined by a combination of user feedback signals like blocks, reports 
 									<p class="form-control" *ngIf="segmentsContactList?.length>0">
 										<input *ngIf="variable.label == '{{Phone_number}}'" type="text" class="form-control inner" value={{variable.value}} (keyup)="checkNumber($event);updateAttributeValue($event,variable)" placeholder="Input value or add attribute" [ngClass]="{'input-custom-color': variable.isAttribute}">
 										<input *ngIf="variable.label != '{{Phone_number}}'" type="text" class="form-control inner" value={{variable.value}} (keyup)="updateAttributeValue($event,variable)" placeholder="Input value or add attribute" [ngClass]="{'input-custom-color': variable.isAttribute}">
-										<span class="toggle_attribute" (click)="openAttributeOption(variable,AttributeOption)"></span>4645
+										<span class="toggle_attribute" (click)="openAttributeOption(variable,AttributeOption)"></span>
 									</p>
 									<p class="form-control" *ngIf="csvContactList?.length>0">
 										<input type="text" class="form-control inner" value={{variable.value}} (keyup)="updateAttributeValue($event,variable)" placeholder="Input value or map">

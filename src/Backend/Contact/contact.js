@@ -70,8 +70,8 @@ app.post('/getFilteredList', authenticateToken, async (req, res) => {
   logger.info('Received request for /getFilteredList');
   try {
     let IsFilteredList = false;
-    let contactList = await db.excuteQuery(val.selectAllContact, [req.body.SP_ID]);
-    logger.info(`Query executed: ${val.selectAllContact} with SP_ID: ${req.body.SP_ID}`);
+    let contactList = await db.excuteQuery(val.selectAllContactLimit, [req.body.SP_ID,req.body.contactFrom,req.body.contactTo]);
+    logger.info(`Query executed: ${val.selectAllContactLimit} with SP_ID: ${req.body.SP_ID}`);
 
     if (req.body?.Query && req.body.Query.trim() !== '') {
       IsFilteredList = true;
@@ -464,6 +464,22 @@ function convertCsvToXlsx(fileBuffer, outputFileName = 'Converted_File.xlsx') {
 }
 
 app.post('/deletContact', authenticateToken, (req, res) => {
+  try {
+
+    var Ids = req.body.customerId;
+    console.log(req.body)
+    deleteContacts(req.body);
+    db.runQuery(req, res, val.delet, [req.body.customerId, req.body.SP_ID])
+  } catch (err) {
+    console.error(err);
+    db.errlog(err);
+    res.status(500).send({
+      msg: err,
+      status: 500
+    });
+  }
+})
+app.post('/deletContactWrapperAPI', (req, res) => {
   try {
 
     var Ids = req.body.customerId;
@@ -1906,6 +1922,15 @@ app.post('/verifyPhoneCode', (req, res) => {
       status: 500
     });
   }
+});
+
+
+app.get('/healthCheck', async (req, res) => {
+  try {
+    res.status(200).send({ status: 'ok', message: 'Service is running'});
+} catch (err) {
+res.status(500).send({ error: 'Internal server error' });
+}
 });
 
 

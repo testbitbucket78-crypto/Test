@@ -236,6 +236,9 @@ export class ImportComponent implements OnInit {
 	  }
 //*********After upload read file *********/
 	onUpload(event: any) {
+		this.selectedCustomFields = [];
+		this.displayNameChecked = [];
+
 		this.file = event.target.files[0];
 		this.fileName = this.truncateFileName(this.file.name, 25);
 		const fileExtension = this.getFileExtension(this.file.name);
@@ -256,7 +259,21 @@ export class ImportComponent implements OnInit {
 				if (cell[0] === "!") return;
 				const cellValue = worksheet[cell].v;
 				if (typeof cellValue === "number") {
-				  worksheet[cell].w = cellValue.toString();
+				  const col = cell.replace(/[0-9]/g, "");
+				const headerCell = `${col}1`;
+				const headerValue = worksheet[headerCell]?.v;
+
+				if (headerValue === "Date") {
+					const baseDate = new Date(1899, 11, 30);
+					const date = new Date(baseDate.getTime() + (cellValue + 1) * 86400000);
+					worksheet[cell].w = date.toISOString().split("T")[0]; 
+				} else if (headerValue === "Time") {
+					const baseDate = new Date(1899, 11, 30);
+					const date = new Date(baseDate.getTime() + cellValue * 86400000);
+					worksheet[cell].w = date.toTimeString().split(" ")[0]; 
+				} else {
+					worksheet[cell].w = cellValue.toString(); 
+				}
 				}
 			  });
 

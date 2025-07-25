@@ -348,4 +348,12 @@ ALTER TABLE Campaign
 ADD COLUMN interactive_buttons JSON ;
 
 updatedAddnewSmartReply call
+
+CREATE TABLE SmartReplyLogs (
+  ID INT AUTO_INCREMENT PRIMARY KEY,
+  SP_ID INT NOT NULL,
+  CustomerNumber VARCHAR(20) NOT NULL,
+  KeywordSent VARCHAR(255) NOT NULL,
+  TriggerTime DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
 //Ends of 13 may onwards Changes

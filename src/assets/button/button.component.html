@@ -13,7 +13,7 @@
     <span *ngIf="isLeftIconHtml" class="w-100 text-nowrap pr-2" [innerHTML]="safeLeftIcon"></span>
   </ng-container>
 
-  <span class="w-100 text-nowrap">{{ label }}</span>
+  <span class="w-100 text-nowrap" [class.label-accent]="labelColor === 'accent'" [class.label-muted]="labelColor === 'muted'">{{ label }}</span>
 
   <ng-container *ngIf="rightIcon">
     <span *ngIf="!isRightIconHtml" class="w-100 text-nowrap pl-2">

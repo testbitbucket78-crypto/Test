@@ -703,10 +703,6 @@ const insertMessage = async (req, res) => {
             let uidMentioned = Array.isArray(req.body?.uidMentioned) ? req.body.uidMentioned : [];
             let buttons = JSON.stringify(req?.body?.buttons);
             const channel = channelType.length > 0 ? channelType[0].channel : spchannel[0]?.channel_id;
-
-            var values = [[SPID, Type, ExternalMessageId, interaction_id, Agent_id, message_direction, message_text, message_media, media_type, Message_template_id, Quick_reply_id, created_at, created_at, mediaSize, assignAgent, buttons, Interactive_buttons]];
-            let msg_id = await db.excuteQuery(messageQuery, [values]);
-
             if(botId) {
                 let data = {
                     botId: botId,
@@ -714,9 +710,13 @@ const insertMessage = async (req, res) => {
                     interactionId:interaction_id,
                     custid:customerId
                 }
-                incommingmsg.runBotOperation(data);
-                res.send({status: 200, insertId: msg_id.insertId });
+                await incommingmsg.runBotOperation(data,middleWare);
+               return res.send({status: 200, insertId: msg_id.insertId });
             }
+            var values = [[SPID, Type, ExternalMessageId, interaction_id, Agent_id, message_direction, message_text, message_media, media_type, Message_template_id, Quick_reply_id, created_at, created_at, mediaSize, assignAgent, buttons, Interactive_buttons]];
+            let msg_id = await db.excuteQuery(messageQuery, [values]);
+
+           
             //  logger.debug('Message ID:', msg_id);
             let updateInteraction = await db.excuteQuery(val.updateTempInteractionQuery, [0, interaction_id])
             if (agentName.length >= 0) {
@@ -783,7 +783,12 @@ const insertMessage = async (req, res) => {
             let middlewareresult = "";
             if (Type != 'notes') {
                 if (channelType[0]?.isBlocked != 1) {
-                    if(req?.body?.isTemplate == true && req.body?.interactiveButtonsPayload  && channel != 'WA API'){
+                    const payload = req.body?.interactiveButtonsPayload;
+                    if(req?.body?.isTemplate == true &&  (
+                            (typeof payload === 'string' && payload.trim() !== '[]') ||
+                            (Array.isArray(payload) && payload.length > 0) ||
+                            (typeof payload === 'object' && !Array.isArray(payload) && Object.keys(payload).length > 0)
+                        )  && channel != 'WA API'){
                         middlewareresult = await middleWare.sendingTemplate(SPID, req.body.messageTo, header, content, req.body?.interactiveButtonsPayload);
                     }
                     else if (req?.body?.isTemplate == true && channel == 'WA API') {
@@ -1191,12 +1196,21 @@ const searchConatct = async (req, res) => {
 };
 
 
+const healthCheck = (req, res) => {
+    try {
+            res.status(200).send({ status: 'ok', message: 'Service is running'});
+    } catch (err) {
+        res.status(500).send({ error: 'Internal server error' });
+    }
+};
+
+
 module.exports = {
     getAllFilteredInteraction, getAllAgents, getAllCustomer, insertCustomers, updatedCustomer, getCustomerById, filterCustomers, searchCustomer, blockCustomer,
     createInteraction, resetInteractionMapping, updateInteraction, updateTags, getAllInteraction, getInteractionById, getFilteredInteraction, checkInteractionPinned, getSearchInteraction,
     getAllMessageByInteractionId, insertMessage, deleteMessage, updateMessageRead,
     updateInteractionMapping, deleteInteraction, getInteractionMapping, updatePinnedStatus,
-    getsavedMessages, getquickReply, getTemplates, sendTextOnWhatsApp, sendMediaOnWhatsApp, updateNotes, addAction, getMessagesByMsgId, searchConatct, getInteraction
+    getsavedMessages, getquickReply, getTemplates, sendTextOnWhatsApp, sendMediaOnWhatsApp, updateNotes, addAction, getMessagesByMsgId, searchConatct, getInteraction,healthCheck
 };
 
 

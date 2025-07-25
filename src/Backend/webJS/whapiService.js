@@ -2,7 +2,7 @@ const axios = require('axios');
 let authToken ='eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6ImExZDI2YWYyYmY4MjVmYjI5MzVjNWI3OTY3ZDA3YmYwZTMxZWIxYjcifQ.eyJwYXJ0bmVyIjp0cnVlLCJpc3MiOiJodHRwczovL3NlY3VyZXRva2VuLmdvb2dsZS5jb20vd2hhcGktYTcyMWYiLCJhdWQiOiJ3aGFwaS1hNzIxZiIsImF1dGhfdGltZSI6MTc0MjM4MzY5MiwidXNlcl9pZCI6IkNSdXZGNkhXeVRQQWxCMnhFSEg3ZUZuMHRoYzIiLCJzdWIiOiJDUnV2RjZIV3lUUEFsQjJ4RUhIN2VGbjB0aGMyIiwiaWF0IjoxNzQyMzgzNjkyLCJleHAiOjE4MDI4NjM2OTIsImVtYWlsIjoibXBzLmcwOUBnbWFpbC5jb20iLCJlbWFpbF92ZXJpZmllZCI6dHJ1ZSwiZmlyZWJhc2UiOnsiaWRlbnRpdGllcyI6eyJlbWFpbCI6WyJtcHMuZzA5QGdtYWlsLmNvbSJdfSwic2lnbl9pbl9wcm92aWRlciI6InBhc3N3b3JkIn19.D8J-7fMMxnFoIzdG5yM0XddlWR1MGDyJ6FwGPuPxZ2yAor4ze2m1kEFdsegUwCnfqxkdU99ryEN-3M6_MJW1vLb9gLsWOOnZb6QMfMAbQrynKPlorMOlwWVpBeIG0mQFJBi2idLYEuwmhffhWlzJDMJErcgBisQKATf6mvCyZjfR62l3sOcMMKcnXG4hdVURGtIhpv-0r2EiyUzZRWFfT090lFofO4AXt1TbgBqtQElawvPGC0tLPE1dcFUXO4Bhp7i2KcPZCE87_cDe-Mg3JlP29rRHJw3EB2_m6bJIV1KbHIUaMj2mysQ3c-pe66DXiDLMqXo6XIXdtIxSF49AwA'
 const variables = require('../common/constant');
 const { channel } = require('diagnostics_channel');
-
+const logger = require('../common/logger.log');
 class whapiService {
 
     static async getProjectId() {
@@ -379,7 +379,25 @@ static async SendMessage(apiUrl, token, dataToSend){
             return false;
         }
     }
-    
+static async fetchBinaryFromUrl(mediaId, token) {
+  try {
+    const response = await axios.get(`${variables.WHAPI_URL.gate_api}/media/${mediaId}`, {
+      responseType: 'arraybuffer',
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    const contentType = response.headers['content-type'];
+    const fileBuffer = response.data;
+
+    return { buffer: fileBuffer, contentType };
+  } catch (error) {
+    logger.error('Error fetching media from WhatsApp:', error.response?.data || error.message);
+    throw new Error('Failed to fetch media from WhatsApp');
+  }
+
+} 
 }
 
 module.exports = { whapiService };

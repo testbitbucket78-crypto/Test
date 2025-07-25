@@ -846,7 +846,7 @@ export class TeamboxComponent implements OnInit {
 	}
 
 	ToggleBotOption() {
-		if (this.selectedInteraction?.assignTo?.AgentId == this.uid || this.showChatNotes != 'notes') {
+		if (this.selectedInteraction?.assignTo?.AgentId == this.uid || this.showChatNotes == 'notes') {
 			if ((this.showChatNotes == 'text' && this.selectedInteraction.channel == 'WhatsApp Official' && this.selectedInteraction?.progressbar?.progressbarValue > 0) || (this.showChatNotes == 'text' && this.selectedInteraction.channel == 'WhatsApp Web') || this.showChatNotes != 'notes') {
 				$("#insertBotmodal").modal('show');
 				this.fallbackvalue = [];
@@ -1856,6 +1856,10 @@ export class TeamboxComponent implements OnInit {
 							this.interactionList[idx].message_text = childObj.items[0].message_text;
 							this.interactionList[idx].LastMessageDate = childObj.items[0].created_at;
 							//this.interactionList[idx].message_media = 'text';
+							if(childObj?.items[0]?.msg_status ==3){
+								this.markItSeen();
+							}
+
 						}
 					} else {
 						item['messageList']?.push(childObj);
@@ -1986,6 +1990,7 @@ export class TeamboxComponent implements OnInit {
 				}
 			})
 			item['allmessages'].push(...val1);
+			item['progressbar'] = this.getProgressBar(val1[0]);
 			item.message_text = val1[0]?.message_text;
 			item.message_media = val1[0]?.message_media;
 			item.media_type = val1[0]?.media_type;
@@ -2368,6 +2373,8 @@ export class TeamboxComponent implements OnInit {
 		// }else{
 		// 	this.getAllInteraction(false);
 		// }
+		this.currentPage = 0;
+		this.pageSize = 10; 
 		this.interactionFilterBy = filterBy
 		this.getAllInteraction(false);
 		this.ShowFilerOption = false;
@@ -2708,7 +2715,7 @@ export class TeamboxComponent implements OnInit {
 
 	}
 	markItRead() {
-		if (this.selectedInteraction['UnreadCount'] > 0) {
+		//if (this.selectedInteraction['UnreadCount'] > 0) {
 			this.selectedInteraction.messageList.map((messageGroup: any) => {
 				messageGroup.items.map((message: any) => {
 					if (message.message_direction != 'Out' && message.is_read == 0) {
@@ -2726,8 +2733,18 @@ export class TeamboxComponent implements OnInit {
 				});
 			});
 			this.updateUnreadCount();
-		}
+		//}
 
+	}
+
+	markItSeen() {
+			this.selectedInteraction.messageList.map((messageGroup: any) => {
+				messageGroup.items.map((message: any) => {
+					if (message.message_direction == 'Out' && message.msg_status == 2) {						
+						message.msg_status == 3;
+					}
+				});
+			});
 	}
 
 	updateUnreadCount() {
@@ -3264,12 +3281,12 @@ export class TeamboxComponent implements OnInit {
 	}
 
 
-	updateInteractionMapping(InteractionId: any, AgentId: any, MappedBy: any) {
+	updateInteractionMapping(InteractionId: any, AgentId: any, MappedBy: any,botName:any ='') {
 		this.ShowAssignOption = false;
 		let name = this.userList.filter((items: any) => items.uid == this.uid)[0]?.name;
 		let agentName = this.userList.filter((items: any) => items.uid == AgentId)[0]?.name;
 		agentName = agentName == name ? 'Self' : agentName;
-		agentName = AgentId == -3 ? 'Bot' : agentName
+		agentName = AgentId == -3 ? `Bot (${botName})` : agentName
 		var bodyData = {
 			InteractionId: InteractionId,
 			AgentId: AgentId,
@@ -3618,6 +3635,7 @@ sendMessage(isTemplate:boolean=false,templateTxt:string='',type: any = ''){
 								this.bodyText = '';
 								this.templateButton = [];
 								this.buttonsVariable =[];
+								this.interactiveButtonsPayload = [];
 							}
 				
 				
@@ -4254,7 +4272,7 @@ sendMessage(isTemplate:boolean=false,templateTxt:string='',type: any = ''){
 			this.sendMessage(false, '', 'bot')
 			setTimeout(() => {
 
-				this.updateInteractionMapping(this.selectedInteraction.InteractionId, -3, this.TeamLeadId)
+				this.updateInteractionMapping(this.selectedInteraction.InteractionId, -3, this.TeamLeadId,this.selectedBotobj.name)
 			}, 1000)
 			this.closeAllModal(); // Your custom close logic
 		}

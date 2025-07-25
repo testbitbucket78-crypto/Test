@@ -207,6 +207,10 @@ async function resetContactFields(phoneNumber, spid) {
     column24 = NULL,
     column25 = NULL,
     ContactOwner = NULL,
+    Name =NULL,
+    tag = NULL,
+    OptInStatus = NULL,
+    emailId = NULL,
     defaultAction_PauseTime =NULL
 WHERE Phone_number = ? 
 AND SP_ID = ?;`;
@@ -359,6 +363,12 @@ async function getTemplateVariables(msgVar, testMessage, sid, custid) {
     return [];
   }
 }
+
+// setTimeout(() => {
+//   let body =`<p>Hi&nbsp;<span><span contenteditable="false" class="e-mention-chip"><a _ngcontent-yyb-c67="" title="">{{Name}}</a></span></span><span contenteditable="false">&nbsp;</span></p><p>Okay message checking again&nbsp;</p>`;
+//   let msgVar = `[{"label":"{{Name}}","value":"{{Name}}","fallback":"","isFallback":true}]`;
+//   getTemplateVariables(msgVar, body, 55, 83534)
+// }, 1000); // Delay to ensure the module is loaded before use
 
 
 let  filterListLanguage = [

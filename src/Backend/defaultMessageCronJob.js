@@ -42,9 +42,6 @@ async function NoCustomerReplyReminder() {
           try {
             let isReplyPause, message_text;
 
-            // --------- one SPID one time ------------//
-
-            // Check if replyPauseCache already has the result for this SP_ID
             if (!replyPauseCache.has(message.SP_ID)) {
               isReplyPause = await isReplySent(message.isAutoReply, message.defaultAction_PauseTime, message.isAutoReplyDisable, message.AgentId, message.interaction_status);
               replyPauseCache.set(message.SP_ID, isReplyPause); // Cache the result
@@ -130,7 +127,8 @@ async function NoCustomerReplyTimeout() {
       // Caches for isAutoReplyPause and getExtractedMessage results
       const replyPauseCache = new Map();
       const extractedMessageCache = new Map();
-
+      let totalSuccessCount = 0;
+      
       for (let i = 0; i < CustomerReplyTimeout.length; i += batchSize) {
         const batch = CustomerReplyTimeout.slice(i, i + batchSize);
         logger.info(`NoCustomerReplyTimeout Processing batch ${(i / batchSize) + 1} with ${batch.length} messages, ${new Date()}`);
@@ -184,6 +182,7 @@ async function NoCustomerReplyTimeout() {
               logger.info(`send NoCustomerReplyTimeout success, ${new Date()}, ${msg.SPID}, ${msg.customer_phone_number}, response?.status`);
 
               if (response?.status == 200) {
+                totalSuccessCount++;
                 let myUTCString = new Date().toUTCString();
                 const currenttime = moment.utc(myUTCString).format('YYYY-MM-DD HH:mm:ss');
 
@@ -209,7 +208,11 @@ async function NoCustomerReplyTimeout() {
         }
 
         // Add delay between processing batches
-        if (i + batchSize < CustomerReplyTimeout.length) {
+        // if (i + batchSize < CustomerReplyTimeout.length) {
+        //   await new Promise(resolve => setTimeout(resolve, delayBetweenBatches));
+        // }
+        if (totalSuccessCount > 0 && totalSuccessCount % batchSize === 0 && i + batchSize < CustomerReplyTimeout.length) {
+          logger.info(`Delaying ${delayBetweenBatches}ms after ${totalSuccessCount} successful messages...`);
           await new Promise(resolve => setTimeout(resolve, delayBetweenBatches));
         }
         logger.info(`******************************************************`)
@@ -238,6 +241,7 @@ async function NoAgentReplyTimeOut() {
       const replyPauseCache = new Map();
       const workingHoursCache = new Map();
       const extractedMessageCache = new Map();
+      let totalSuccessCount = 0;
 
       for (let i = 0; i < noAgentReplydata.length; i += batchSize) {
         const batch = noAgentReplydata.slice(i, i + batchSize); // Process in batches
@@ -305,6 +309,7 @@ async function NoAgentReplyTimeOut() {
               logger.info(`Message sent successfully for SPID: ${msg.SPID}`, { timestamp: new Date() });
 
               if (response?.status === 200) {
+                totalSuccessCount++;
                 let myUTCString = new Date().toUTCString();
                 const currenttime = moment.utc(myUTCString).format('YYYY-MM-DD HH:mm:ss');
                 let messageValu = [
@@ -319,7 +324,7 @@ async function NoAgentReplyTimeOut() {
         
 
         // Add delay between processing batches
-        if (i + batchSize < noAgentReplydata.length) {
+        if (totalSuccessCount > 0 && totalSuccessCount % batchSize === 0 && i + batchSize < noAgentReplydata.length) {
           await new Promise(resolve => setTimeout(resolve, delayBetweenBatches));
         }
 
@@ -555,6 +560,7 @@ async function workingHoursDetails(sid) {
 }
 
 async function botTimeOperations(){
+  try {
     let getSessionsData = `SELECT *,DATE_FORMAT(bot_Timeout, '%Y-%m-%d %H:%i:%s') AS botTimeout,DATE_FORMAT(node_timeout, '%Y-%m-%d %H:%i:%s') AS nodeTimeout FROM BotSessions WHERE status = 2 AND isDeleted != 1`;
     let botSessions = await db.excuteQuery(getSessionsData, []);
 
@@ -567,18 +573,18 @@ async function botTimeOperations(){
         try {
           let bot_timeout = new Date(data.botTimeout +'Z');
           let node_timeout = new Date(data.nodeTimeout +'Z');
-          let data = {
+          let datas = {
             sid: data.spid,
             botId: data.botId,
             custid:data.customerId
           };
           if (bot_timeout <= currentDateTime ) {            
-            incommingmsg?.timeOut(data,'bot');
+            incommingmsg?.timeOut(datas,'bot',middleWare);
             logger.info(`Bot operations for SPID: ${data.spid} are being processed`, { timestamp: new Date() });
           }
 
           if(node_timeout <= currentDateTime && data.nodeTimeout != null && data.isWaiting == 1) {
-            incommingmsg?.timeOut(data,'node');
+            incommingmsg?.timeOut(datas,'node',middleWare);
             logger.info(`Node timeout for SPID: ${data?.spid}, botId: ${data?.botId} are being processed`, { timestamp: new Date() });
           }
         } catch (error) {
@@ -586,9 +592,9 @@ async function botTimeOperations(){
         }
       }
     }
-  } catch (error) {
-    logger.error(`Error in botTimeOperations: ${error.message}`, { timestamp: new Date() });
-  }
+} catch (error) {
+  logger.error(`Error processing bot time operations for SPID ${data.SPID}: ${error.message}`, { timestamp: new Date() });
+}
 }
 
 // // Calculate the initial delay

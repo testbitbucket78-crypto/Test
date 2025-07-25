@@ -256,9 +256,7 @@ LatestInteractionMapping AS (
         InteractionId,
         created_at AS LatestMappingInfo
     FROM 
-        InteractionMapping
-    WHERE 
-        is_active = 1
+        InteractionMapping order by 1 desc limit 1
 ),
 TagSplit AS (
     SELECT 

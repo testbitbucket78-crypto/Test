@@ -224,12 +224,14 @@ router.post('/Webhooks',authenticateToken,accountController.saveOrUpdateWebhook)
 router.get('/getWebhooks/:spid',authenticateToken,accountController.getWebhooks)
 router.get('/deleteWebhook/:id',authenticateToken,accountController.deleteWebhook)
 router.post('/exportLogs',authenticateToken,accountController.exportLogs)
+router.get('/getBrandConfig/:domain', accountController.getBrandConfig);
 
 //Messages (within service window)
 router.post('sendMessage' ,dynamicRateLimiter,accountController.sendMessage)
 router.post('/v1/whatsapp/text' , verifyAPIKeyAndToken, accountController.textMessage)
 router.post('/v1/whatsapp/media' ,verifyAPIKeyAndToken, accountController.mediaMessage)
-router.post('/v1/whatsapp/sendInteractive' , accountController.SendInteractiveButtons) // Interactive Buttons.
+router.post('/v1/whatsapp/sendInteractive' ,verifyAPIKeyAndToken, accountController.SendInteractiveButtons) // Interactive Buttons.
+router.post('/v1/whatsapp/getMessages' , verifyAPIKeyAndToken, accountController.getMessages) 
 //Templates
 //Send.Template
 router.post('/v1/whatsapp/sendTemplates' ,verifyAPIKeyAndToken, accountController.sendTemplates)
@@ -296,6 +298,8 @@ router.get('/getautodeletion/:spid',authenticateToken,generalcontroller.getautod
 //_______************_______________//
 router.post('/manualDelation',authenticateToken,generalcontroller.manualDelation)
 router.post('/getmanualDelation',authenticateToken,generalcontroller.deletedDetails)
+router.post('/healthCheck',generalcontroller.healthCheck)
+
 
 
 module.exports = router;

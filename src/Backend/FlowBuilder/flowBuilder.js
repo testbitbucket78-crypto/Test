@@ -576,4 +576,12 @@ const exportFlowData = async (req, res) => {
     return format.replace(/d{1,2}|m{1,2}|y{2,4}/gi, match => formatMapping[match.toLowerCase()] || match);
   }
 
-module.exports = { getGallery , addBot,  checkExistingBot, getAllBots, getBotDetailById, deleteBotbyId, submitBots,checkExistingKeyword,updateBotDetails,exportFlowData };
+  const healthCheck = (req, res) => {
+    try {
+            res.status(200).send({ status: 'ok', message: 'Service is running'});
+    } catch (err) {
+        res.status(500).send({ error: 'Internal server error' });
+    }
+};
+
+module.exports = { getGallery , addBot,  checkExistingBot, getAllBots, getBotDetailById, deleteBotbyId, submitBots,checkExistingKeyword,updateBotDetails,exportFlowData, healthCheck };
