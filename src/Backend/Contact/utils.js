@@ -479,7 +479,7 @@ const XLSX = require('xlsx');
 const makeXLSXFileOfData = (data, spid, fromDate, toDate) => {
   const sheetData = [];
 
-  const title = `Exported Webhook Logs Data - SPID: ${spid}, Date Range: ${fromDate} to ${toDate}`;
+  const title = `Exported Webhook Logs Data -  Date Range: ${fromDate} to ${toDate}`;
   sheetData.push([title]);
   sheetData.push([]);
   sheetData.push(['Webhook Log ID', 'Event', 'Timestamp', 'Status', 'Payload']);
@@ -490,7 +490,7 @@ const makeXLSXFileOfData = (data, spid, fromDate, toDate) => {
       log.event,
       log.timestamp,
       log.status,
-      log.payload
+      typeof log.payload === 'string' ? JSON.parse(log.payload) : log.payload
     ]);
   });
 

@@ -14,14 +14,28 @@ const moment = require('moment');
 //   }
 
   class ContactsAdded {
-  constructor(payload, keys) {
+  constructor(payload, keys, customMappingArray) {
     this.eventType = WebhookEventType.ContactCreated;
     this.contact_creator = 'System';
     this.contact_id = null;
     this.data = {};
 
+    const customMapping = {};
+    if (Array.isArray(customMappingArray)) {
+      customMappingArray.forEach((entry) => {
+        customMapping[entry.actual_column_name] = entry.customized_column_name;
+      });
+    }
+
     keys.forEach((key) => {
        if (key === 'SP_ID') return;
+       if (key === 'uid') return;
+       if (key === 'CountryCode') return;
+       if( key === 'Phone_number') return;
+       
+        const customizedKey = customMapping[key] || key;
+        const rawValue = payload[key];
+
       switch (key) {
         case 'displayPhoneNumber':
           this.data.customer_number = payload[key];
@@ -42,7 +56,18 @@ const moment = require('moment');
           this.data.optin_status = payload[key];
           break;
         default:
-          this.data[key] = payload[key];
+          //this.data[key] = payload[key];
+          let cleanedValue = rawValue;
+          if (typeof rawValue === 'string' && rawValue.includes(':') && rawValue.includes('_')) {
+            const parts = rawValue.split(',').map(part => {
+              const colonIndex = part.indexOf(':');
+              return colonIndex !== -1 ? part.slice(colonIndex + 1) : part;
+            });
+            cleanedValue = parts.join(',');
+          }
+
+        this.data[customizedKey] = cleanedValue;
+        // this.data[customizedKey] = payload[key];
       }
     });
 
@@ -140,7 +165,7 @@ class deleteContactsModel {
   }
 }
 
-  // class MessageReceivedModel {// todo deprecated
+  // class MessageReceivedModel { todo deprecated
   //   constructor(
   //     spid,
   //     phoneNo,                  // sender (customer)
@@ -164,7 +189,8 @@ class deleteContactsModel {
   //     retryCount                // 0
   //   ) {
   //     this.eventType = WebhookEventType.MessageReceived;
-  //     this.SP_ID = spid;
+  //     //this.SP_ID = spid;
+  //     this.channel_number = display_phone_number;
   //     this.sender = {
   //       phoneNo,
   //       contactName,
@@ -172,7 +198,7 @@ class deleteContactsModel {
   //       EcPhonewithoutcountryCode
   //     };
   //     this.receiver = {
-  //       display_phone_number,
+  //       phoneNo: display_phone_number,
   //       source
   //     };
   //     this.message = {
@@ -185,63 +211,50 @@ class deleteContactsModel {
   //       quickReplyId: Quick_reply_id,
   //       externalMessageId: ExternalMessageId,
   //       ackStatus,
-  //       timestamp
+  //       timestamp,
+  //       quoted_id: message_media?.quoted_id || null,
+  //       mime_type: message_media?.mime_type || null,
   //     };
   //   }
   // }
-
   class MessageReceivedModel {
-    constructor(
-      spid,
-      phoneNo,                  // sender (customer)
-      message_direction,
-      message_text,
-      message_media,
-      Message_template_id,
-      Quick_reply_id,
-      Type,
-      ExternalMessageId,
-      display_phone_number,     // receiver (your business number)
-      contactName,
-      media_type,
-      ackStatus,
-      source,                   // 'WA Web'
-      timestamp,
-      countryCode,
-      EcPhonewithoutcountryCode,
-      extra1,                   // '' (not used currently)
-      extra2,                   // '' (not used currently)
-      retryCount                // 0
-    ) {
-      this.eventType = WebhookEventType.MessageReceived;
-      //this.SP_ID = spid;
-      this.channel_number = display_phone_number;
-      this.sender = {
-        phoneNo,
-        contactName,
-        countryCode,
-        EcPhonewithoutcountryCode
-      };
-      this.receiver = {
-        phoneNo: display_phone_number,
-        source
-      };
-      this.message = {
-        direction: message_direction,
-        text: message_text,
-        media: message_media,
-        media_type,
-        type: Type,
-        messageTemplateId: Message_template_id,
-        quickReplyId: Quick_reply_id,
-        externalMessageId: ExternalMessageId,
-        ackStatus,
-        timestamp,
-        quoted_id: message_media?.quoted_id || null,
-        mime_type: message_media?.mime_type || null,
-      };
-    }
+  constructor(
+    spid,
+    phoneNo,                  // customer_number (sender)
+    message_direction,
+    message_text,
+    message_media,
+    Message_template_id,
+    Quick_reply_id,
+    Type,                     // message_type (text/media/unknown)
+    ExternalMessageId,        // message_id
+    display_phone_number,     // channel_number (receiver)
+    contactName,              // customer_name
+    media_type,
+    ackStatus,
+    source,
+    timestamp,                // message_time
+    countryCode,
+    EcPhonewithoutcountryCode,
+    extra1,
+    extra2,
+    retryCount
+  ) {
+    this.channel_number = display_phone_number;
+    this.event_type = WebhookEventType.MessageReceived;
+    this.customer_number = phoneNo;
+    this.customer_name = contactName;
+    this.message_id = ExternalMessageId;
+    this.message_time = timestamp;
+    this.quoted_id = message_media?.quoted_id || null;
+    this.message_type = Type || 'unknown';
+    this.message_text = message_text || '';
+    this.media_type = message_media?.media_type || media_type || null;
+    this.mime_type = message_media || null;
+    this.media_url = message_media?.media_url || null;
+    ackStatus;
   }
+}
   class MessageStatusModel {
     constructor(message, ack, spid) { // todo 
       this.eventType = WebhookEventType.MessageStatus;
@@ -253,8 +266,8 @@ class deleteContactsModel {
       //this.spid = spid;
   
       const rawTimestamp = new Date(message.timestamp * 1000).toUTCString();
-      this.message_time = moment.utc(rawTimestamp).format('YYYY-MM-DD HH:mm:ss');
-  
+      //this.message_time = moment.utc(rawTimestamp).format('YYYY-MM-DD HH:mm:ss');
+      this.message_time = moment(rawTimestamp).format('YYYY-MM-DD HH:mm:ss');
       // const nowUTC = new Date().toUTCString();
       // this.lastModified = moment.utc(nowUTC).format('YYYY-MM-DD HH:mm:ss');
     }
@@ -267,8 +280,9 @@ class deleteContactsModel {
         this.eventType = WebhookEventType.ConversationStatusUpdate;
         this.status = conversationStatus; // 'Open', 'Resolved', 'Assigned', 'Created'
         this.customer_number = null; // todo 1
+        this.Source = 'system'; // 'user name>/system/incoming'
         // this.eventType = conversationStatus;
-        this.InteractionId = InteractionId;
+        //this.InteractionId = InteractionId;
       }
   }
   class conversationAssignedModel {
@@ -300,14 +314,15 @@ class deleteContactsModel {
   }
  
   class conversationCreatedModel {
-    constructor(spid, customerId, source, assignment){
+    constructor(spid, customerId, source, phoneNo){
         this.channel_number = null; // todo 1
         this.eventType = WebhookEventType.ConversationCreated;
         //this.SP_ID = spid || null;
         this.source =  source || 'system' ;  //user name>/system/incoming
         // this.action = "Conversation Created";
-        this.assignment = assignment || "System";  //user name>/bot/unassigned
+        this.assignment = "System";  //user name>/bot/unassigned
         this.customerId = customerId || null;
+        this.customer_number = phoneNo;
     }
   }
 

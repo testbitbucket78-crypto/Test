@@ -76,6 +76,9 @@ class WebhookLog {
         const values = [this.spid, this.fromDate, this.toDate];
         try {
           const results = await db.excuteQuery(query, values);
+          if(!(results && results.length > 0)) {
+            throw new Error("No logs were found for the given Dates.");
+          }
           return results;
         } catch (error) {
           console.error("Error fetching logs:", error);

@@ -144,12 +144,67 @@ const payloadFromKeysAndValues = (keys, values) => {
    return payload;
 };
 
-  async function addContact (spid , querry, values){
+async function customizedNames(spid) {
+  const query = `SELECT 
+    ActuallName AS actual_column_name,
+    displayName AS customized_column_name
+FROM 
+(
+    -- Static Fields
+    SELECT 'Name' AS displayName, 'Name' AS ActuallName
+    UNION ALL
+    SELECT 'Phone_number', 'Phone_number'
+    UNION ALL
+    SELECT 'emailId', 'emailId'
+    UNION ALL
+    SELECT 'OptInStatus', 'OptInStatus'
+    UNION ALL
+    SELECT 'ContactOwner', 'ContactOwner'
+    UNION ALL
+    SELECT 'tag', 'tag'
+
+    -- Dynamic DB Columns from EndCustomer
+    UNION ALL
+    SELECT 
+        column_name AS displayName,
+        column_name AS ActuallName
+    FROM information_schema.columns
+    WHERE table_name = 'EndCustomer' 
+      AND column_name NOT LIKE '%column%' 
+      AND column_name NOT IN (
+            'created_at', 'customerId', 'isDeleted', 'SP_ID', 'uid', 'updated_at',
+            'isBlockedOn', 'isBlocked', 'channel', 'displayPhoneNumber', 'countryCode',
+            'IsTemporary', 'contact_profile', 'InstagramId', 'facebookId', 'Country',
+            'state', 'city', 'pincode', 'address', 'sex', 'status', 'age',
+            'OptInStatus','tag','defaultAction_PauseTime'
+        )
+
+    -- Custom User Defined Fields
+    UNION ALL
+    SELECT 
+        ColumnName AS displayName,
+        CustomColumn AS ActuallName
+    FROM SPIDCustomContactFields  
+    WHERE SP_ID = ? AND isDeleted != 1
+) AS column_mapping
+GROUP BY ActuallName, displayName
+ORDER BY actual_column_name;`;
+ const result = await db.excuteQuery(query, spid);
+ return result
+}
+
+  async function addContact (spid , querry, values, isTemporary = false) {
     const keys = extractKeysFromQuery(querry);
     const payload = payloadFromKeysAndValues(keys, values)
-
-    var webhookPayload = new ContactsAdded(payload, keys);
+    const columnAndTheirNames = await customizedNames(spid)
+    
+    var webhookPayload = new ContactsAdded(payload, keys, columnAndTheirNames);
     webhookPayload.contact_creator = await getUserNameById(webhookPayload?.data?.uid); 
+
+    if (isTemporary) {
+      await dispatchWebhookEvent(spid, webhookPayload.eventType , webhookPayload)
+      return;
+    }
 
     try {
       let result = await db.excuteQuery(querry, values);
@@ -168,7 +223,9 @@ const payloadFromKeysAndValues = (keys, values) => {
   async function updateContacts (spid , querry, values){
     const keys = extractKeysFromQuery(querry);
     const payload = payloadFromKeysAndValues(keys, values)
-    const WebhookPayload = new ContactsAdded(payload, keys);
+    const columnAndTheirNames = await customizedNames(spid)
+
+    const WebhookPayload = new ContactsAdded(payload, keys, columnAndTheirNames);
     
     WebhookPayload.eventType = WebhookEventType.ContactUpdated;
     WebhookPayload.contact_creator = await getUserNameById(WebhookPayload?.data?.uid); 
@@ -311,12 +368,30 @@ let collectedWebhookKeys = null;
 // }
   
 
-  async function deleteContacts (data) {
-    let WebhookPayload = new deleteContactsModel(data);
-    WebhookPayload.delete_initiator = await getUserNameById(data?.userId); 
-    await dispatchWebhookEvent(data?.SP_ID, WebhookPayload.eventType, WebhookPayload);
-    
+  // async function deleteContacts (data) { // todo deprecated
+  //   let WebhookPayload = new deleteContactsModel(data);
+  //   WebhookPayload.delete_initiator = await getUserNameById(data?.userId); 
+  //   await dispatchWebhookEvent(data?.SP_ID, WebhookPayload.eventType, WebhookPayload);
+  // }
+  async function deleteContacts(data) {
+  const fullPayload = new deleteContactsModel(data);
+  fullPayload.delete_initiator = await getUserNameById(data?.userId);
+
+  const chunkSize = 1000;  // need to delete the bulk in chunks now hence deprecating the old func ().
+  const allDeleted = fullPayload.deleted;
+
+  for (let i = 0; i < allDeleted.length; i += chunkSize) {
+    const chunk = allDeleted.slice(i, i + chunkSize);
+
+    const chunkPayload = {
+      eventType: fullPayload.eventType,
+      delete_initiator: fullPayload.delete_initiator,
+      deleted: chunk
+    };
+
+    await dispatchWebhookEvent(data?.SP_ID, fullPayload.eventType, chunkPayload);
   }
+}
   
   async function messageRecieved(
     spid,
@@ -439,9 +514,11 @@ let collectedWebhookKeys = null;
     await dispatchWebhookEvent(spid, payload.eventType, payload);
   }
 
-  async function conversationCreated(spid, customerId, displayPhoneNumber) {
+  async function conversationCreated(spid, customerId, displayPhoneNumber, userId) {
     const payload = new conversationCreatedModel(spid, customerId, '', displayPhoneNumber);
     payload.channel_number = await getChannelNumberBySpId(spid);
+    const userName = await getUserNameById(userId);
+    payload.source = userName == 'Unknown User' ? 'System' : userName; // Default to 'Bot' if user not found
     await dispatchWebhookEvent(spid, payload.eventType, payload);
   }
 
