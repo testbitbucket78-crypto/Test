@@ -482,7 +482,7 @@ const makeXLSXFileOfData = (data, spid, fromDate, toDate) => {
   const title = `Exported Webhook Logs Data -  Date Range: ${fromDate} to ${toDate}`;
   sheetData.push([title]);
   sheetData.push([]);
-  sheetData.push(['Webhook Log ID', 'Event', 'Timestamp', 'Status', 'Payload']);
+  sheetData.push(['Webhook Log ID', 'Event', 'Timestamp', 'Status', 'Return Count', 'Payload']);
 
   data.forEach(log => {
     sheetData.push([
@@ -490,6 +490,7 @@ const makeXLSXFileOfData = (data, spid, fromDate, toDate) => {
       log.event,
       log.timestamp,
       log.status,
+      log.retry_count,
       typeof log.payload === 'string' ? JSON.parse(log.payload) : log.payload
     ]);
   });

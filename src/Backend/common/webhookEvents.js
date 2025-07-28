@@ -504,7 +504,7 @@ let collectedWebhookKeys = null;
     const payload = new conversationAssignedModel(body);
     payload.customer_number = await getCustomerNumberByInteractionId(body.InteractionId);
     payload.channel_number = await getChannelNumberBySpId(body?.SP_ID);
-    payload.status = await getUserNameById(body?.AgentId);
+    payload.assignment = await getUserNameById(body?.AgentId);
     await dispatchWebhookEvent(body?.SP_ID, payload.eventType, payload);
   }
 

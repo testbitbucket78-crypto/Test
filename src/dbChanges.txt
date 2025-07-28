@@ -356,4 +356,8 @@ CREATE TABLE SmartReplyLogs (
   KeywordSent VARCHAR(255) NOT NULL,
   TriggerTime DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
+
+ALTER TABLE WebhookLogs
+ADD COLUMN retry_count INT DEFAULT 0;
+
 //Ends of 13 may onwards Changes

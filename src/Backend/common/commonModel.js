@@ -292,7 +292,7 @@ class deleteContactsModel {
       //this.action = args.action || '';
       this.customer_number =  null; 
       this.source = args.action_by || 'system'; // 'user name>/system/incoming'
-      this.status = null; //todo 1
+      this.assignment = null; //todo 1
       //this.action_at = args.action_at || new Date().toISOString();
       // this.action_by = args.action_by || '';
       //this.AgentId = args.AgentId || null;
@@ -319,8 +319,6 @@ class deleteContactsModel {
         this.eventType = WebhookEventType.ConversationCreated;
         //this.SP_ID = spid || null;
         this.source =  source || 'system' ;  //user name>/system/incoming
-        // this.action = "Conversation Created";
-        this.assignment = "System";  //user name>/bot/unassigned
         this.customerId = customerId || null;
         this.customer_number = phoneNo;
     }
