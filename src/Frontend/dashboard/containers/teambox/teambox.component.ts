@@ -3152,12 +3152,14 @@ export class TeamboxComponent implements OnInit {
 	}
 
 	createCustomer() {
+		debugger;
 		this.newContact.value.SP_ID = this.SPID;
 		this.newContact.value.Channel = this.selectedChannel;
 		this.newContact.value.OptedIn = this.OptedIn;
 		var bodyData = this.newContact.value;
 		bodyData['isTemporary'] = 1;
 		bodyData['OptInStatus'] = this.OptedIn;
+		bodyData['userId'] = this.uid
 		console.log(bodyData);
 		if (this.newContact.valid) {
 			if (this.selectedChannel != '') {

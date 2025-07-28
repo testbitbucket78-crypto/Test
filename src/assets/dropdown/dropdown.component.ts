@@ -14,9 +14,9 @@ export class DropdownComponent {
   @Input() isOpen: boolean = false;
   @Input() customWidth: string = '200px';
   @Output() selectionChange = new EventEmitter<string>();
-
+  @Input() preventDropdownOpening: boolean = false;
   toggleAssignOption() {
-    this.ShowAssignOption = !this.ShowAssignOption;
+    if(!this.preventDropdownOpening) this.ShowAssignOption = !this.ShowAssignOption;
   }
 
   updateDropdown(id: string) {
