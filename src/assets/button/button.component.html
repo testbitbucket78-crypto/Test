@@ -7,7 +7,7 @@
   (click)="handleClick()"
 >
   <ng-container *ngIf="leftIcon">
-    <span *ngIf="!isLeftIconHtml" class="w-100 text-nowrap pr-2">
+    <span *ngIf="!isLeftIconHtml" class="w-100 text-nowrap pr-2" [class.label-accent]="labelColor === 'accent'" [class.label-muted]="labelColor === 'muted'">
       {{ leftIcon }}
     </span>
     <span *ngIf="isLeftIconHtml" class="w-100 text-nowrap pr-2" [innerHTML]="safeLeftIcon"></span>
@@ -16,7 +16,7 @@
   <span class="w-100 text-nowrap" [class.label-accent]="labelColor === 'accent'" [class.label-muted]="labelColor === 'muted'">{{ label }}</span>
 
   <ng-container *ngIf="rightIcon">
-    <span *ngIf="!isRightIconHtml" class="w-100 text-nowrap pl-2">
+    <span *ngIf="!isRightIconHtml" class="w-100 text-nowrap pl-2" [class.label-accent]="labelColor === 'accent'" [class.label-muted]="labelColor === 'muted'">
       {{ rightIcon }}
     </span>
     <span *ngIf="isRightIconHtml" class="w-100 text-nowrap pl-2" [innerHTML]="safeRightIcon"></span>

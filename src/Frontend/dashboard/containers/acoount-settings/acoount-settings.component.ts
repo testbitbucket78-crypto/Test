@@ -11,6 +11,7 @@ import { json } from 'stream/consumers';
 import { ToastService } from 'assets/toast/toast.service';
 import { FormControl, FormGroup, Validators,ValidatorFn, AbstractControl, ValidationErrors, } from '@angular/forms';
 import { WebhookEventGroup, WebhookPayload, WebhookEventType, ExportLogsPayload } from 'Frontend/dashboard/models/webhookEvent.model';
+import { DropdownComponent } from '../../../../assets/dropdown/dropdown.component';
 
 declare var $:any;
 declare var FB: any; 
@@ -79,6 +80,7 @@ export class AcoountSettingsComponent implements OnInit {
   phoneType!:string;
   channelOption: any = [];
   loadingQRCode: boolean = false;
+ @ViewChild('dropdownAddWebhook') dropdownAddWebhook: DropdownComponent | null = null;
 
   connection:number[] =[1,3,2,4];
   selectedTab:number = 1;
@@ -885,6 +887,8 @@ openModal() {
 submitForm(){
   if (this.webhookForm.valid) {
     const formData = this.webhookForm.value;
+    const matchedWebhook = this.webhookDetails?.find((w: any) => w.id === this.webhookIdSelected);
+
     const payload: WebhookPayload = {
       name: this.settingsService.trimText(formData.name),
       url: this.settingsService.trimText(formData.url),
@@ -892,7 +896,8 @@ submitForm(){
       channel: formData.channel,
       eventType: formData.eventType,
       spid : this.spid,
-      id : this.webhookIdSelected
+      id : this.webhookIdSelected,
+      isEnabled : matchedWebhook?.isEnabled ?? true 
     };
     this.apiService.Webhooks(payload).subscribe({
       next: (response) => {
@@ -909,9 +914,17 @@ submitForm(){
   }
 }
 
-
+secondaryDropdown! : boolean;
 toggleEventDropdown(index: number): void {
   this.eventSubscribedDropdownMap[index] = !this.eventSubscribedDropdownMap[index];
+  this.secondaryDropdown = Object.values(this.eventSubscribedDropdownMap).some(val => val);
+}
+closeSecondaryDropdown(){
+  for (const key in this.eventSubscribedDropdownMap) {
+    this.eventSubscribedDropdownMap[key] = false;
+  }
+
+  this.secondaryDropdown = false;
 }
 loadWebhooks() {
   this.apiService.getWebhooks(this.spid).subscribe((response: WebhookPayload) => {
@@ -1039,8 +1052,10 @@ deleteWebhook(){
   });
 }
 
+isEditingWebhook! : boolean;
 
 editWebhook(webhookData: WebhookPayload){
+  this.isEditingWebhook = true;
   this.webhookIdSelected = webhookData.id;
 
    this.webhookForm.patchValue({
@@ -1050,13 +1065,24 @@ editWebhook(webhookData: WebhookPayload){
     channel: webhookData.channel || '',
     eventType: webhookData.eventType || []
   });
+
+   this.webhookForm.controls['channel'].setValue(webhookData.channel || 'Select Channel');
+  const channelMatch = webhookData.channel.match(/^(.*?)\s*\((\d+)\)$/);
+  this.channelSelectedWebhook = channelMatch?.[1] || 'Select Channel';
+  this.channelPhoneNumberWebhook = channelMatch?.[2] || '';
    this.openModal();
 }
 
 resetWebhookForm(){
   this.webhookIdSelected = undefined;
+  this.isEditingWebhook = false;
   this.webhookForm.reset();
-  this.channelSelected = 'Select Channel';
+  this.eventTypeDropdown = false;
+  if (this.dropdownAddWebhook) {
+    this.dropdownAddWebhook.ShowAssignOption = false;
+    this.dropdownAddWebhook.channelSelected = 'Select Channel';
+    this.dropdownAddWebhook.channelPhoneNumber = '';
+  }
 }
 
 deleteToken(id : number){
@@ -1134,14 +1160,35 @@ exportLogsAndMail(){
     email: this.email,
     channel: this.channelDomain
   };
-  this.apiService.exportLogs(payload).subscribe((response) => {
-    if(response){
-      this._toastService.success(response?.message)
+ this.apiService.exportLogs(payload).subscribe(
+  (response) => {
+    if (response) {
+      this._toastService.success(response?.message || "Logs exported successfully.");
       $("#export-logs").modal('hide');
-    } else{
-      this._toastService.error("Something went wrong!")
+      this.exportLogsForm.reset();
+    } else {
+      this._toastService.error("Something went wrong!");
+      this.exportLogsForm.reset();
+
     }
-  });
+  },
+  (error) => {
+    this._toastService.error(error?.error?.message || "Something went wrong!");
+  }
+);
 }
+
+		today = this.getToday();
+		sixMonthsAgo = this.getSixMonthsAgo();
+
+		getToday(): string {
+		return new Date().toISOString().split('T')[0];
+		}
+
+		getSixMonthsAgo(): string {
+		const date = new Date();
+		date.setMonth(date.getMonth() - 6);
+		return date.toISOString().split('T')[0];
+		}
 
 }
