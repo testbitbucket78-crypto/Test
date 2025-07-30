@@ -14,7 +14,7 @@ const logger = require('../common/logger.log');
 const commonFun = require('../common/resuableFunctions.js')
 const incommingmsg = require('../IncommingMessages')
 app.use(bodyParser.json());
-const { conversationStatus, conversationAssigned, conversationCreated } = require('../common/webhookEvents.js');
+const { conversationStatus, conversationAssigned, conversationCreated, addContact } = require('../common/webhookEvents.js');
 const { ConversationStatusMap } = require('../enum');
 
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -125,6 +125,8 @@ const insertCustomers = async (req, res) => {
                 WHERE Phone_number = ? AND SP_ID = ?
             `;
             await db.excuteQuery(updateTempContactQuery, [Name, Channel, OptInStatus, country_code, displayPhoneNumber, Phone_number, SP_ID]);
+            await addContact(SP_ID, updateTempContactQuery, values[0], true);
+
             customerId = tempContactResult[0]?.customerId;
             interactionId = await db.excuteQuery('select * from Interaction where customerId=? and is_deleted !=1 and SP_ID=? order by created_at desc', [customerId, SP_ID]);
             res.status(200).send({
@@ -150,6 +152,7 @@ const insertCustomers = async (req, res) => {
                     VALUES ?
                 `;
                 let insertedCon = await db.excuteQuery(insertQuery, [values]);
+                await addContact(SP_ID, insertQuery, values[0], true);
                 customerId = insertedCon?.insertId;
                 interactionId = await db.excuteQuery('select * from Interaction where customerId=? and is_deleted !=1 and SP_ID=? order by created_at desc', [customerId, SP_ID]);
                 conversationCreated(SP_ID, customerId, displayPhoneNumber, req?.body?.userId);
@@ -202,6 +205,7 @@ const updatedCustomer = async (req, res) => {
 const updateTags = (req, res) => {
     var updateQueryQuery = "UPDATE EndCustomer SET tag ='" + req.body.tag + "'  WHERE customerId =" + req.body.customerId;
     //   logger.info('Received request for updateTags', { updateQueryQuery });
+    addContact(req.body.SP_ID, updateQueryQuery, req.body, true);
     db.runQuery(req, res, updateQueryQuery, [])
     updateActionTagUpdation(req)
 

@@ -309,9 +309,9 @@ const saveOrUpdateWebhook = async (req, res) => {
       const webhook = new Webhooks(req.body); 
       let webhookDetails = await webhook.getWebhookDetails();
       const urlExists = webhookDetails.some(w => w.url === webhook.url && w.id !== webhook.id);
-      
-      if (urlExists) {
-        throw new Error("URL Already Exists. Please use a different one.");
+      const nameExists = webhookDetails.some(w => w.name === webhook.name && w.id !== webhook.id);
+      if (urlExists || nameExists) {
+        throw new Error(urlExists ? "URL Already Exists. Please use a different one." : "name Already Exists. Please use a different one.");
       }
       await testWebhookUrl(webhook.url);
 
@@ -387,28 +387,53 @@ const isValidUrl = (url) => {
             exportLogsInstance.toDate
           );
            const EmailChannel = MessagingName[exportLogsInstance.channel];
+          // await sendEmail({
+          //   to: exportLogsInstance.email,
+          //   subject: `Exported Webhook Logs`,
+          //   html: `
+          //     <p>Dear User,</p>
+          //     <p>Attached is the exported webhook logs data between <b>${exportLogsInstance.fromDate}</b> and <b>${exportLogsInstance.toDate}</b>.</p>
+          //     <p>Regards,<br>${EmailChannel}</p>
+          //   `,
+          //   fromChannel: EmailChannel,
+          //   attachments: [
+          //     {
+          //       filename: `webhook-logs-${exportLogsInstance.spid}.xlsx`,
+          //       content: XLSXFile,
+          //       contentType: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+          //     },
+          //   ],
+          // });
           await sendEmail({
-            to: exportLogsInstance.email,
-            subject: `Exported Webhook Logs`,
-            html: `
-              <p>Dear User,</p>
-              <p>Attached is the exported webhook logs data between <b>${exportLogsInstance.fromDate}</b> and <b>${exportLogsInstance.toDate}</b>.</p>
-              <p>Regards,<br>${EmailChannel}</p>
-            `,
-            fromChannel: EmailChannel,
-            attachments: [
-              {
-                filename: `webhook-logs-${exportLogsInstance.spid}.xlsx`,
-                content: XLSXFile,
-                contentType: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-              },
-            ],
-          });
+          to: exportLogsInstance.email,
+          subject: `Your ${EmailChannel} Webhook Logs Report`,
+          html: `
+            <p>Dear ${exportLogsInstance.userName || 'User'},</p>
+
+            <p>Please find attached the exported logs for the configured Webhook 
+            <b>"${exportLogsInstance.webhookName || 'Webhook'}"</b>, for the period of 
+            <b>${exportLogsInstance.fromDate}</b> to <b>${exportLogsInstance.toDate}</b> 
+            from your ${EmailChannel} account.</p>
+
+            <p>If you have any questions or need further assistance, feel free to contact 
+            us. We’re here to help!</p>
+
+            <p>Thank you,<br/>Team ${EmailChannel}</p>
+          `,
+          fromChannel: EmailChannel,
+          attachments: [
+            {
+              filename: `webhook-logs-${exportLogsInstance.spid}.xlsx`,
+              content: XLSXFile,
+              contentType: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+            },
+          ],
+        });
       
-          return res.status(200).json({ success: true, message: 'Email sent successfully' });
+          return res.status(200).json({ success: true, message: 'We are sending logs on your registered email' });
       } catch (err) {
         console.log(err);
-        res.status(500).json({ error: 'Something went wrong' });
+        res.status(500).json({ error: 'Something went wrong', message: err.message || 'Internal Server Error' });
       }
   }
 
@@ -657,14 +682,18 @@ const testWebhook = async (req, res) => {
         });
     }
 };
-
+const subscribedEventsPayloads = require('../common/subscribedEventsPayloads');
 const testWebhooks = async (req, res) => {
     try {
         const webhook = new Webhooks(req.body);
+          const filteredPayloads = subscribedEventsPayloads.filter(p =>
+            webhook.eventType.includes(p.event_type)
+        );
+
         if (webhook) {
             if (webhook.url) {
                         try {
-                          const response = await axios.post(webhook.url, 'Webhook Connected', {
+                          const response = await axios.post(webhook.url, filteredPayloads, {
                             headers: {
                               'Content-Type': 'application/json',
                             },

@@ -11,12 +11,13 @@ class WebhookLog {
       this.responseBody = args.responseBody ? JSON.stringify(args.responseBody) : null;
       this.error = args.error || null;
       this.success = args.success || false;
+      this.retryCount = args.retryCount || 0; // Number of retry attempts
     }
   
     async saveToDatabase() {
       const query = `
-        INSERT INTO WebhookLogs (spid, event_type, url, payload, status_code, response_body, error, success)
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?);
+        INSERT INTO WebhookLogs (spid, event_type, url, payload, status_code, response_body, error, success, retry_count)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?);
       `;
   
       const values = [
@@ -27,7 +28,8 @@ class WebhookLog {
         this.statusCode,
         this.responseBody,
         this.error,
-        this.success
+        this.success,
+        this.retryCount 
       ];
   
       try {
@@ -47,6 +49,7 @@ class WebhookLog {
       this.responseBody = args.responseBody ? JSON.stringify(args.responseBody) : null;
       this.error = args.error || null;
       this.success = args.success || false;
+      this.retryCount = args.retryCount || 0; 
     }
   }
 
@@ -66,7 +69,8 @@ class WebhookLog {
             event_type AS event,
             created_at AS timestamp,
             CASE WHEN success = 1 THEN 'Success' ELSE 'Failed' END AS status,
-            payload
+            payload,
+            retry_count
           FROM WebhookLogs
           WHERE spid = ?
             AND DATE(created_at) BETWEEN ? AND ?
@@ -76,6 +80,9 @@ class WebhookLog {
         const values = [this.spid, this.fromDate, this.toDate];
         try {
           const results = await db.excuteQuery(query, values);
+          if(!(results && results.length > 0)) {
+            throw new Error("No logs were found for the given Dates.");
+          }
           return results;
         } catch (error) {
           console.error("Error fetching logs:", error);
