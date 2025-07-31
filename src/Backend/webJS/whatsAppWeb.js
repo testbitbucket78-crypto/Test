@@ -398,6 +398,20 @@ app.get('/healthCheck', async (req, res) => {
 });
 
 
+// Admin API to pause and disable service provider
+app.get('/pauseAndDisableSP', async (req, res) => {
+    console.log("pauseAndDisableSP called", req.query.spid);
+    try {
+        const spid  =req.query.spid;
+        console.log("spid to pause and disable: ", spid);
+         response = await web.destroyWrongScan(spid);
+            res.status(200).send({ status: 'ok', message: 'Service is paused and disabled for SPID: ' + spid });
+  } catch (err) {
+      res.status(500).send({ error: 'Internal server error' });
+  }
+});
+
+
 
 app.listen(3009, () => {
     console.log("Server is Running on Port : : 3009");
