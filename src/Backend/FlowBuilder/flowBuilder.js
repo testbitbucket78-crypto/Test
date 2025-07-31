@@ -259,6 +259,7 @@ const getBotDetailById = async (req, res) => {
 
 const deleteBotbyId = async (req, res) => {
     try {
+      
         let botRunning = await db.excuteQuery(val.isBotRunning, [req.params.spid, req.params.botId]);
         if (botRunning?.length == 0) {
             let deleteBot = await db.excuteQuery(val.deleteBot, [req.params.botId]);

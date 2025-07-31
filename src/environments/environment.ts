@@ -3,15 +3,18 @@
 // The list of file replacements can be found in `angular.json`.
 
 export const environment = {
-    production: false,
-    baseUrl: 'https://authapi.sampanatechnologies.com',
-    API_URL: 'https://settings.stacknize.com',
+    production: true,
+    baseUrl: 'https://authapi.stacknize.com',
     AdminbaseUrl: 'https://adminapi.stacknize.com',
-    // botsAPI: 'https://bots.stacknize.com',
-    botsAPI: 'http://localhost:3012',
-    // AdminbaseUrl: 'http://localhost:4000',
+    botsAPI: 'https://bots.stacknize.com',
+    settingAPI: 'https://settings.stacknize.com',
+    notify: 'wss://notify.stacknize.com/',
+    cipApi: 'https://cip-api.stacknize.com/',
+    cipApi2: 'https://cip-api.stacknize.com',
+    contactApi: 'https://contactapi.stacknize.com/',
+    smartApi: 'https://smartapi.stacknize.com',
+    waweb: 'https://waweb.stacknize.com',
     API_Keyword: 'stacknize',
-    // chhanel: 'web'
     chhanel: 'api'
 };
 

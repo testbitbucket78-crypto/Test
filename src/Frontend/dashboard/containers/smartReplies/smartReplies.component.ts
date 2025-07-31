@@ -1244,6 +1244,7 @@ showAddSmartRepliesModal() {
 
 			this.assignedAgentList[this.editableMessageIndex].Message = value;
 			this.assignedAgentList[this.editableMessageIndex].Media = this.messageMeidaFile;
+			this.assignedAgentList[this.editableMessageIndex].media_type = mediaType;
 	
 			this.editableMessageIndex = null;
 			this.isEditable = [];

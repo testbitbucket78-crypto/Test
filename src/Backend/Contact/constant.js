@@ -46,6 +46,8 @@ EC.customerId
 order by updated_at desc
 limit ?, ?;
 `
+
+var selectAllContactCount = `select count(*) as totalCount from EndCustomer WHERE isDeleted != 1 AND SP_ID = ? AND IsTemporary != 1`
 var insertContact = "INSERT INTO EndCustomer (Name,Phone_number,emailId,age,tag,status,facebookId,InstagramId,SP_ID,countryCode) VALUES ?";
 var neweditContact = 'UPDATE EndCustomer SET '
 delet = "UPDATE EndCustomer set isDeleted=1 WHERE customerId IN (?) and SP_ID=?"
@@ -287,5 +289,5 @@ custom_order, sort_order;`
 module.exports = {
     host, user, password, database, email, appPassword, emailHost, port, otp, selectAllContact, insertContact
     ,neweditContact, importquery,delet,selectbyid, Path, verfiyCount,  isBlockedQuery,getcolumn,
-    importUpdate,crachlogQuery,existContactWithSameSpid ,getColumnsQuery,selectAllContactLimit
+    importUpdate,crachlogQuery,existContactWithSameSpid ,getColumnsQuery,selectAllContactLimit,selectAllContactCount
 }

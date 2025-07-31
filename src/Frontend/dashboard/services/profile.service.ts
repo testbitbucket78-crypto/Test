@@ -2,13 +2,14 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { authChangePassword, roleName ,teamName, userActiveStatus ,savePlan, profilePicData, addFundsData, teamboxNotifications} from '../models/profile.model';
+import { environment } from 'environments/environment';
 
 @Injectable({
   providedIn: 'root'
 })
 export class ProfileService {
 
-  API_URL:string='https://settings.stacknize.com';
+  API_URL:string=environment.cipApi2;
   private profilePictureSubject: BehaviorSubject<string>;
   public profilePicture$: Observable<string>;
 

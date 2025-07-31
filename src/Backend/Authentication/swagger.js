@@ -1,4 +1,5 @@
 const swaggerJSDoc = require('swagger-jsdoc');
+const { getUrl, env } = require('../config');
 
 const swagger = swaggerJSDoc({
     definition: {
@@ -14,7 +15,7 @@ const swagger = swaggerJSDoc({
                 description: 'Development Server',
             },
             {
-                url: 'https://settings.stacknize.com',
+                url: getUrl('settings'),
                 description: 'Staging Server',
             }
         ],

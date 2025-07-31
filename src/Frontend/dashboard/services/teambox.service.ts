@@ -1,14 +1,13 @@
 import { Injectable } from '@angular/core';
 import { HttpClient} from '@angular/common/http';
-import { environment } from '../../../environments/environment.prod';
+import { environment } from '../../../environments/environment';
 const API_URL = environment.baseUrl;
 
 
 
 @Injectable()
 export class TeamboxService {
-  //Setting_API_URL:string='https://settings.stacknize.com';
-  Setting_API_URL:string='https://settings.stacknize.com';
+  Setting_API_URL:string=environment.settingAPI;
   constructor(private http: HttpClient) { }
 
   public uploadfile(FileData:any, spid:any,name:any) {
@@ -205,15 +204,15 @@ export class TeamboxService {
   }
   
   public download(spid: any) {
-    const url = `https://authapi.stacknize.com/csvSample`;
+    const url = environment.baseUrl+`/csvSample`;
     return this.http.get(url, { responseType: 'blob' });
   }
 
   public downloadErrFile() {
-    return this.http.get('https://contactapi.stacknize.com/downloadCSVerror', { responseType: 'blob' })
+    return this.http.get(environment.contactApi+'downloadCSVerror', { responseType: 'blob' })
   }
   public getAttributeList(SP_ID: any) {
-    return this.http.get(`https://contactapi.stacknize.com/columns/${SP_ID}`);
+    return this.http.get(environment.contactApi +`columns/${SP_ID}`);
   } 
 
   public isCampaignExists(title: any, spid: any, id: any) {

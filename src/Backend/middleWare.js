@@ -6,12 +6,13 @@ const token = 'EAAQTkLZBFFR8BOxmMdkw15j53ZCZBhwSL6FafG1PCR0pyp11EZCP5EO8o1HNderf
 const db = require("./dbhelper");
 const variables = require('./common/constant');
 const Whapi = require("./webJS/whapi");
+const { getUrl, env } = require('./config');
 function postDataToAPI(spid, phoneNo, type, text, link, interaction_id, msg_id, spNumber) {
 
     return new Promise(async (resolve, reject) => {
         try {
             var phoneNumber = removePlusFromPhoneNumber(phoneNo)
-            const apiUrl = 'https://waweb.stacknize.com/sendMessage'; // Replace with your API endpoint 
+            const apiUrl = getUrl('waweb') + '/sendMessage'; // Replace with your API endpoint 
             const dataToSend = {
                 spid: spid,
                 type: type,

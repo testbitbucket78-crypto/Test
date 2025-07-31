@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { environment } from 'environments/environment';
 import { Observable } from 'rxjs';
 import { io, Socket } from 'socket.io-client';
 
@@ -7,7 +8,7 @@ import { io, Socket } from 'socket.io-client';
 })
 export class WebsocketService {
   private socket: Socket | null = null;
-  private readonly url = 'https://notify.stacknize.com/'; 
+  private readonly url = environment.notify; 
 
   constructor() {}
 
