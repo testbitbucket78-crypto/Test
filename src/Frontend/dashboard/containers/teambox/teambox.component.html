@@ -398,9 +398,9 @@
 													</div>
 												</span>
 											</div>
-												<interactive-button *ngIf="message.interactive_buttons"
+												<interactive-button *ngIf="message?.interactive_buttons"
 													[width]="'100%'"
-													[interactiveButtons]="message.interactive_buttons">
+													[interactiveButtons]="message?.interactive_buttons">
 												</interactive-button>
 											<div *ngIf="message?.button | parseJson as buttons">
 												<div *ngIf="buttons?.length > 0" class="w-70 py-2">
@@ -1191,9 +1191,9 @@
 									<p [innerHTML]="template.BodyText| sanitizeHtml"></p>
 									<p *ngIf="template.FooterText" class="temp-footer" [innerHTML]="template.FooterText | sanitizeHtml"></p>
 								  </div>
-								  <interactive-button *ngIf="template.interactive_buttons"
+								  <interactive-button *ngIf="template?.interactive_buttons"
 								        [width]="'100%'"
-										[interactiveButtons]="template.interactive_buttons">
+										[interactiveButtons]="template?.interactive_buttons">
 									</interactive-button>
 								  <div *ngIf="template?.buttons && template?.buttons?.length >0" class="w-70">
 									<div *ngFor="let item of template?.buttons let i = index" >
@@ -1338,9 +1338,9 @@
 											<p [innerHTML]="selectedTemplate.BodyText | sanitizeHtml"></p>
 											<p *ngIf="selectedTemplate.FooterText" class="temp-footer" [innerHTML]="selectedTemplate.FooterText | sanitizeHtml"></p>
 										  </div>
-									<interactive-button *ngIf="selectedTemplate.interactive_buttons"
+									<interactive-button *ngIf="selectedTemplate?.interactive_buttons"
 									    [width]="'100%'"
-										[interactiveButtons]="selectedTemplate.interactive_buttons">
+										[interactiveButtons]="selectedTemplate?.interactive_buttons">
 									</interactive-button>
 									<div *ngIf="selectedTemplate?.buttons && selectedTemplate?.buttons?.length >0" class="px-2 w-100">
 										<div *ngFor="let item of selectedTemplate?.buttons let i = index" >
@@ -1676,8 +1676,8 @@
 							<p [innerHTML]="selectedTemplate.BodyText | sanitizeHtml"></p>
 							<p *ngIf="selectedTemplate.FooterText" class="temp-footer" [innerHTML]="selectedTemplate.FooterText | sanitizeHtml"></p>
 						  </div>
-						<interactive-button *ngIf="selectedTemplate.interactive_buttons" [width]="'100%'"
-							[interactiveButtons]="selectedTemplate.interactive_buttons">
+						<interactive-button *ngIf="selectedTemplate?.interactive_buttons" [width]="'100%'"
+							[interactiveButtons]="selectedTemplate?.interactive_buttons">
 						</interactive-button>
 					<div *ngIf="selectedTemplate?.buttons && selectedTemplate?.buttons?.length >0 && selectedTemplate.Channel === 'WA API'" class="w-100 px-2">
 						<div *ngFor="let item of selectedTemplate?.buttons let i = index" >
