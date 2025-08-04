@@ -375,7 +375,6 @@ static async SendMessage(apiUrl, token, dataToSend){
             console.log(`Message sent successfully to`, response.data);
             return response.data;
         } catch (error) {
-            console.error(`Failed to delete channel ${channelId}:`, error.response?.data || error.message);
             return false;
         }
     }
