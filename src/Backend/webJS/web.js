@@ -1713,4 +1713,4 @@ async function sendMail() {
 
 
 
-module.exports = { createClientInstance, sendMessages, isActiveSpidClient, sendFunnel, whatsappWebStatus, autoReconnectSessions,sendMail }
+module.exports = { createClientInstance, sendMessages, isActiveSpidClient, sendFunnel, whatsappWebStatus, autoReconnectSessions,sendMail,destroyWrongScan }

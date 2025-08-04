@@ -24,7 +24,8 @@ let metaPhoneNumberID = 211544555367892
 const { sendEmail } = require('./Services/EmailService');
 const { EmailTemplateProvider } = require('./common/template')
 const { userStatus } = require('./enum.js')
-const variable = require('./common/constant')
+const variable = require('./common/constant');
+const { whapiService } = require('./webJS/whapiService.js');
 const { getUrl, env } = require('./config');
 // Function to check if the schedule_datetime is within 1-2 minutes from the current time
 function isWithinTimeWindow(scheduleDatetime) {
