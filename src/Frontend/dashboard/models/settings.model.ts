@@ -234,6 +234,7 @@ export interface templateMessageData {
     buttons:any;
     quality:string;
     interactive_buttons?: any;
+    renderedButtons?: any;
 }
 
 export interface repliestemplateList{
@@ -351,6 +352,7 @@ export interface newTemplateFormData {
     isTemplate:number;
     isCopied:number;
     interactiveButtonsPayload?: any;
+    renderedButtons?: any;
 }
 export interface profilesettingPicData{
     spid: number;

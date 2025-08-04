@@ -9,6 +9,7 @@ import { Component, Input, OnChanges, SimpleChanges,OnInit} from '@angular/core'
 export class InteractiveButtonComponent implements OnChanges , OnInit{
   @Input() interactiveButtons: any;
   @Input() width: any = '70%'
+  @Input() style: { [klass: string]: any } = {};
   @Input() renderedButtons: any[] = [];
 @Input() renderedButtonsStream!: BehaviorSubject<any[]>;
   buttons: any;

@@ -400,6 +400,7 @@
 											</div>
 												<interactive-button *ngIf="message.interactive_buttons"
 													[width]="'100%'"
+													[style]="{ marginTop: '6px' }"
 													[interactiveButtons]="message.interactive_buttons">
 												</interactive-button>
 											<div *ngIf="message?.button | parseJson as buttons">
