@@ -927,7 +927,7 @@
                                             <small class="mb-1"><b>Button Text</b></small>
                                             <p class="mb-1"><b>{{btn.children.button_text.length}}</b> / <span class="text-muted">{{btn.children.button_text_length}} characters</span></p>
                                         </div>
-                                        <input type="text" [(ngModel)]="btn.children.button_text" maxlength="{{btn.children.button_text_length}}" (change)="a($event)" (input)="getInputCharacterCount($event.data, 'buttonText-' + i, i)" [name]="'buttonText-' + i" [id]="'buttonText-' + i" class="h-100 rounded-pill border small-input" style="padding: 0.6rem;" [placeholder]="btn.children.button_text_placeholder" />
+                                        <input type="text" [(ngModel)]="btn.children.button_text" maxlength="{{btn.children.button_text_length}}" (change)="a($event)" (input)="getInputCharacterCount($event.data, 'buttonText-' + i, i); updateRenderedButton()" [name]="'buttonText-' + i" [id]="'buttonText-' + i" class="h-100 rounded-pill border small-input" style="padding: 0.6rem;" [placeholder]="btn.children.button_text_placeholder" />
                                     </div>
                     
                                     <div *ngIf="btn.children.extra_field" class="col-12 mt-2">
@@ -959,7 +959,7 @@
                                                     <p style="font-weight: 800; font-size: 12px;" class="mb-1"><b>{{field.name}}</b></p>
                                                     <p style="font-weight: 800; font-size: 12px;" class="mb-1"><b>{{field.extra_field_text.length}}</b> / <span class="text-muted">{{field.character_length}} characters</span></p>
                                                 </div>
-                                                <input type="text" [(ngModel)]="field.extra_field_text" [name]="field.id" [id]="field.id" class="h-100 rounded-pill p-2 border small-input" [placeholder]="field.placeholder" (input)="getInputCharacterCount($event.data, 'extraField-' + i, i)"
+                                                <input type="text" [(ngModel)]="field.extra_field_text" [name]="field.id" [id]="field.id" class="h-100 rounded-pill p-2 border small-input" [placeholder]="field.placeholder" (input)="getInputCharacterCount($event.data, 'extraField-' + i, i); updateRenderedButton()"
                                                     maxlength="{{field.character_length}}" />
                                             </div>
                                             <div *ngIf="btn.id === 'list_messages'" class="w-100 text-right pr-2">
@@ -1040,7 +1040,7 @@
                         <img class="btn-preview-img" *ngIf="item.type =='Complete Flow'" src="../../../../assets/img/settings/form.svg"> 
                         {{item?.buttonText}}</div>
                 </div>
-                <interactive-button *ngIf="interactiveButtonsPayload" [width]="'100%'" [interactiveButtons]="interactiveButtonsPayload"></interactive-button>
+                <!-- <interactive-button *ngIf="interactiveButtonsPayload && (templatesMessageDataById || galleryMessageData.ID)" [width]="'100%'" [interactiveButtons]="interactiveButtonsPayload"></interactive-button> -->
                 <interactive-button *ngIf="buttonStream" [width]="'100%'" [renderedButtonsStream]="buttonStream"></interactive-button>
                 <!-- <div *ngIf="newTemplateForm.controls.buttonType.value == 'Call to Action'" class="w-70">
                     <div class="text-center"><button class="template-btn">{{this.newTemplateForm?.controls?.buttonText?.value}}</button> </div>

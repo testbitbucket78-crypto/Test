@@ -567,6 +567,14 @@ async subscribeToNotifications() {
             $("#qrWhatsappModal").modal('hide');
             this.hideModal();
           }
+          if(msgjson.message == 'Wrong Number Scanned. Destroying session.'){
+            this.channel_status = 0; 
+            //this.saveWhatsappWebDetails(id);
+            this.showToaster('Wrong Number Scanned. Destroying session.', 'error');
+            this.loadingQRCode = false;
+            $("#qrWhatsappModal").modal('hide');
+            this.hideModal();
+          }
           if(msgjson.message == 'This Phone is already used in EngageKart !'){
             this.channel_status = 0; 
             //this.saveWhatsappWebDetails(id);
