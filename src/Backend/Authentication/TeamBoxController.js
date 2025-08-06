@@ -125,7 +125,9 @@ const insertCustomers = async (req, res) => {
                 WHERE Phone_number = ? AND SP_ID = ?
             `;
             await db.excuteQuery(updateTempContactQuery, [Name, Channel, OptInStatus, country_code, displayPhoneNumber, Phone_number, SP_ID]);
+            if (Array.isArray(values) && values[0]) {
             await addContact(SP_ID, updateTempContactQuery, values[0], true);
+            }
 
             customerId = tempContactResult[0]?.customerId;
             interactionId = await db.excuteQuery('select * from Interaction where customerId=? and is_deleted !=1 and SP_ID=? order by created_at desc', [customerId, SP_ID]);

@@ -141,10 +141,20 @@ async function parseMessage(testMessage, custid, sid, msgVar) {
       //console.log("atribute result ")
       placeholders.forEach((placeholder, index) => {
         //const result = results.find(result => result.hasOwnProperty(placeholder));
-        const result = results[index];
+        //const result = results[index];
         //  console.log(placeholder,"place foreach",results)
-        const replacement = result && result[placeholder] !== undefined ? result[placeholder] : null;
-        content = content.replace(`{{${placeholder}}}`, replacement);
+       // const replacement = result && result[placeholder] !== undefined ? result[placeholder] : null;
+        //content = content.replace(`{{${placeholder}}}`, replacement);
+
+        const regex = /{{(.*?)}}/g;
+        let i = 0;
+
+        content = content.replace(regex, () => {
+          const valueObj = results[i];
+          const value = valueObj ? Object.values(valueObj)[0] : '';
+          i++;
+          return value;
+        });
       });
     } else {
 
@@ -784,7 +794,7 @@ async function messageThroughselectedchannel(spid, from, type, text, media, phon
           let saveSendedMessage = await saveMessage(from, spid, '', message_content, media, type, type, 'WA Web', "Web campaign message", 1,buttons,interactive_buttons)
           let response
           let checkingInteractive = typeof interactive_buttons === 'string' ? interactive_buttons = JSON.parse(interactive_buttons) : interactive_buttons;
-          if(checkingInteractive && checkingInteractive.length){
+          if((checkingInteractive && checkingInteractive.length) || checkingInteractive?.action?.buttons.length > 0){
              response = await middleWare.sendingTemplate(spid, from, headerVar, text, interactive_buttons);
           }else{
               response = await middleWare.postDataToAPI(spid, from, getMediaType, text, media, '', saveSendedMessage);

@@ -358,6 +358,21 @@ static async SendMessage(apiUrl, token, dataToSend){
         }
     }
 
+    static async logoutClient(Token) {
+        try {
+            const response = await axios.post('https://gate.whapi.cloud/users/logout', null, {
+                headers: {
+                    accept: 'application/json',
+                    authorization: `Bearer ${Token}`
+                }
+            });
+            return response.data;
+        } catch (error) {
+            console.error('Failed to log out user:', error.response?.data || error.message);
+            return false;
+        }
+    }
+
     static async interactiveButtons(payload, token) {
         try {
             const response = await axios.post(
@@ -375,7 +390,6 @@ static async SendMessage(apiUrl, token, dataToSend){
             console.log(`Message sent successfully to`, response.data);
             return response.data;
         } catch (error) {
-            console.error(`Failed to delete channel ${channelId}:`, error.response?.data || error.message);
             return false;
         }
     }

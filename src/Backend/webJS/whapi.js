@@ -64,11 +64,11 @@ async function createClientInstance(spid, phoneNo) {
             await channel.saveToDatabase();
 
             //todo need to uncomment this after Business Team come back to this
-            // const extendValidity = new extendChannelValidity();
-            // const extendChannel = await whapiService.extendChannel(
-            //     channel.id,
-            //     extendValidity
-            // );
+            const extendValidity = new extendChannelValidity();
+            const extendChannel = await whapiService.extendChannel(
+                channel.id,
+                extendValidity
+            );
             // const response = await whapiService.startChannel(channel.token, channel.id);
 
             await whapiService.setupWebhook(channel.token);
@@ -466,6 +466,17 @@ const handleAuthentication = async (channel_id) => {
 
         let Data = await whapiService.getQRScannedPhoneNo(channel_id);
         let channel = new CreateChannelResponse(Data, spid, phoneNo);
+        let wrongNumber = await isWrongNumberScanned(channel.spid, channel.phone);
+        if (wrongNumber) {
+         let isClientLogout = await whapiService.logoutClient(channel.token);
+
+          const message = isClientLogout
+          ? 'Wrong Number Scanned. Destroying session.'
+          : 'Wrong Number Scanned. Unable to destroy session.';
+
+          notify.NotifyServer(phoneNo, false, message);
+          return;
+        }
         if(await checkifSPAlreadyExist(channel.phone, channel.spid)){
           notify.NotifyServer(channel.phone, false, 'This number is already used as an SP number. Please use a different one.');
           whapiService.deleteChannelById(channel.id);
@@ -917,11 +928,24 @@ async function saveInMessages(message) {
         let Type = msg?.type;
         let contactName = msg?.from_name;
         let Message_template_id = msg?.id;
+        let repliedMessage_id = 0;
+        let repliedMessageText = '';
+        let repliedMessageTo = 'You';
+        
+        if(msg?.context.quoted_id){
+          repliedMessage_id = msg?.context.quoted_id;
+          repliedMessageText = msg?.context?.quoted_content?.body || '';
+        }
+
         console.log(r1,display_phone_number, from, message_text, Type, contactName, Message_template_id);
         // Format message text (bold, italic, strikethrough, and new lines)
           if (Type === 'reply' && msg?.reply?.type === 'buttons_reply') {
             Type = 'text';
             message_text = msg.reply?.buttons_reply?.title || message_text;
+          }
+          if(Type == 'reply' && msg?.reply?.type === 'list_reply'){
+            Type = 'text';
+            message_text = msg.reply?.list_reply?.title || message_text;
           }
         if (message_text) {
           message_text = message_text
@@ -966,12 +990,12 @@ async function saveInMessages(message) {
         }
   
         let message_time = moment.utc(new Date(msg.timestamp * 1000)).format('YYYY-MM-DD HH:mm:ss');
-  
         let saveMessage = await saveIncommingMessages(
           message_direction, from, message_text, phone_number_id, 
           display_phone_number, from, message_text, message_media, 
           Message_template_id, "Quick_reply_id", Type, 
-          "ExternalMessageId", contactName, 'null', message_time, countryCode
+          "ExternalMessageId", contactName, 'null', message_time, countryCode,
+          repliedMessageTo,repliedMessage_id,repliedMessageText
         );
   
         let SavedMessageDetails = await getDetatilsOfSavedMessage(
@@ -1216,7 +1240,7 @@ async function actionsOflatestLostMessage(message_text, phone_number_id, from, d
   }
 }
 
-async function saveIncommingMessages(message_direction, from, firstMessage, phone_number_id, display_phone_number, phoneNo, message_text='', message_media, Message_template_id, Quick_reply_id, Type, ExternalMessageId, contactName, ackStatus, timestramp, countryCode) {
+async function saveIncommingMessages(message_direction, from, firstMessage, phone_number_id, display_phone_number, phoneNo, message_text='', message_media, Message_template_id, Quick_reply_id, Type, ExternalMessageId, contactName, ackStatus, timestramp, countryCode, repliedMessageTo,repliedMessage_id,repliedMessageText) {
   // console.log("saveIncommingMessages")
 
   if (Type == 'image') {
@@ -1244,7 +1268,7 @@ async function saveIncommingMessages(message_direction, from, firstMessage, phon
 
   if ((message_text.length > 0 || message_media.length > 0) && Type != 'e2e_notification') {
     let query = "CALL webhook_2(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)"
-    var saveMessage = await db.excuteQuery(query, [phoneNo, message_direction, message_text, message_media, Message_template_id, Quick_reply_id, Type, ExternalMessageId, display_phone_number, contactName, media_type, ackStatus, 'WA Web', timestramp, countryCode, EcPhonewithoutcountryCode,'','',0]);
+    var saveMessage = await db.excuteQuery(query, [phoneNo, message_direction, message_text, message_media, Message_template_id, Quick_reply_id, Type, ExternalMessageId, display_phone_number, contactName, media_type, ackStatus, 'WA Web', timestramp, countryCode, EcPhonewithoutcountryCode,repliedMessageTo, repliedMessageText, repliedMessage_id]);
     messageRecieved(saveMessage[0][0]['@sid'], phoneNo, message_direction, message_text, message_media, Message_template_id, Quick_reply_id, Type, ExternalMessageId, display_phone_number, contactName, media_type, ackStatus, 'WA Web', timestramp, countryCode, EcPhonewithoutcountryCode,'','',0 );
     notify.NotifyServer(display_phone_number, true);
   }
