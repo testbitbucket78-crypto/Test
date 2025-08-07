@@ -3,6 +3,7 @@ let authToken ='eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6ImExZDI2YWYyYmY4MjVm
 const variables = require('../common/constant');
 const { channel } = require('diagnostics_channel');
 const logger = require('../common/logger.log');
+const { getUrl, env } = require('../config');
 class whapiService {
 
     static async getProjectId() {
@@ -101,7 +102,7 @@ class whapiService {
                                 { type: "labels", method: "post" }
                             ],
                             mode: "body",
-                            url: "https://call.stacknize.com/webhook" // static webhook that should be registered.
+                            url: getUrl('webhook') // static webhook that should be registered.
                         }
                     ],
                     callback_persist: true

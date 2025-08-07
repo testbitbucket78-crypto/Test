@@ -26,6 +26,7 @@ const { EmailTemplateProvider } = require('./common/template')
 const { userStatus } = require('./enum.js')
 const variable = require('./common/constant');
 const { whapiService } = require('./webJS/whapiService.js');
+const { getUrl, env } = require('./config');
 // Function to check if the schedule_datetime is within 1-2 minutes from the current time
 function isWithinTimeWindow(scheduleDatetime) {
   const currentTime = moment();
@@ -703,7 +704,7 @@ async function isClientActive(spid) {
   return new Promise(async (resolve, reject) => {
     try {
 
-      const apiUrl = 'https://waweb.stacknize.com/IsClientReady'; // Replace with your API endpoint
+      const apiUrl = getUrl('waweb') + '/IsClientReady'; // Replace with your API endpoint
       const dataToSend = {
         spid: spid
       };

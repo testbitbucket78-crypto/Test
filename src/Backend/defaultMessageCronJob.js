@@ -12,7 +12,8 @@ const moment = require('moment');
 const removeTags = require('./removeTagsFromRichTextEditor')
 const commonFun = require('./common/resuableFunctions')
 const logger = require('./common/logger.log');
-const incommingmsg = require('../IncommingMessages')
+const incommingmsg = require('./IncommingMessages')
+const { getUrl, env } = require('./config');
 const lostMessageTimeGap = 6;
 app.use(bodyParser.json());
 app.use(cors());
@@ -354,7 +355,7 @@ async function isClientActive(spid) {
   return new Promise(async (resolve, reject) => {
     try {
 
-      const apiUrl = 'https://waweb.stacknize.com/IsClientReady'; // Replace with your API endpoint
+      const apiUrl = getUrl('waweb') + '/IsClientReady'; // Replace with your API endpoint
       const dataToSend = {
         spid: spid
       };

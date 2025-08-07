@@ -259,6 +259,13 @@ const getBotDetailById = async (req, res) => {
 
 const deleteBotbyId = async (req, res) => {
     try {
+      if(req.params.type == 0){
+        let deprecateBot = await db.excuteQuery(val.deprecateBot, [req.params.botId]);
+            res.send({
+                "status": 200,
+                "message": "Bot is running, so it is deprecated",
+            })
+      } else{
         let botRunning = await db.excuteQuery(val.isBotRunning, [req.params.spid, req.params.botId]);
         if (botRunning?.length == 0) {
             let deleteBot = await db.excuteQuery(val.deleteBot, [req.params.botId]);
@@ -266,13 +273,8 @@ const deleteBotbyId = async (req, res) => {
                 "status": 200,
                 "message": "Bot is deleted successfully",
             })
-        } else {
-            let deprecateBot = await db.excuteQuery(val.deprecateBot, [req.params.botId]);
-            res.send({
-                "status": 200,
-                "message": "Bot is running, so it is deprecated",
-            })
-        }
+        } 
+      }
     }
     catch (err) {
         console.log(err)

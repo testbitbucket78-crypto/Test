@@ -3,9 +3,10 @@
   "version": "1.0.0",
   "description": "Campaign",
   "main": "index.js",
-  "scripts": {
-    "build": "node contact.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+   "scripts": {
+    "start:preprod-contact": "cross-env NODE_ENV=preprod node contact.js",
+    "start:staging-contact": "cross-env NODE_ENV=staging node contact.js",
+    "start:prod-contact": "cross-env NODE_ENV=prod node contact.js"
   },
   "author": "cip",
   "license": "ISC",

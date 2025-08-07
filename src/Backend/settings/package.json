@@ -1,4 +1,9 @@
 {
+    "scripts": {
+    "start:preprod-settingsServer": "cross-env NODE_ENV=preprod node settingsServer.js",
+    "start:staging-settingsServer": "cross-env NODE_ENV=staging node settingsServer.js",
+    "start:prod-settingsServer": "cross-env NODE_ENV=prod node settingsServer.js"
+  },
   "dependencies": {
     "bcrypt": "^5.1.1",
     "cors": "^2.8.5",

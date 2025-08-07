@@ -3,9 +3,10 @@
   "version": "1.0.0",
   "description": "Campaign",
   "main": "index.js",
-  "scripts": {
-    "build": "node dashboard.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "scripts": {
+    "start:preprod-flowBuilder": "cross-env NODE_ENV=preprod node flowBuilder.js",
+    "start:staging-flowBuilder": "cross-env NODE_ENV=staging node flowBuilder.js",
+    "start:prod-flowBuilder": "cross-env NODE_ENV=prod node flowBuilder.js"
   },
   "author": "cip",
   "license": "ISC",
