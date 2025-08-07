@@ -2174,13 +2174,15 @@ console.log(sortedData)
 			if (this.exportLogsForm.invalid) {
 				return;
 			}
+			 const offset = this.getDateTimeZoneOffset();
 			const { fromDate, toDate } = this.exportLogsForm.value;
 			const payload = {
 				spid: this.SPID,
 				fromDate,
 				toDate,
 				email: (JSON.parse(sessionStorage.getItem('loginDetails')!))?.email_id,
-                channel: this.channelDomain
+                channel: this.channelDomain,
+				timeZone: offset
 			};
 			this.apiService.exportLogsSmartReply(payload)
 				.subscribe(
@@ -2217,6 +2219,16 @@ console.log(sortedData)
 		const date = new Date();
 		date.setMonth(date.getMonth() - 6);
 		return date.toISOString().split('T')[0];
+		}
+
+		getDateTimeZoneOffset(){
+			const currentTime = new Date();
+			const offsetMinutes = currentTime.getTimezoneOffset();
+			const offsetSign = offsetMinutes > 0 ? "-" : "+";
+			const offsetHours = String(Math.floor(Math.abs(offsetMinutes) / 60)).padStart(2, '0');
+			const offsetMins = String(Math.abs(offsetMinutes) % 60).padStart(2, '0');
+			const offset = `${offsetSign}${offsetHours}:${offsetMins}`;
+			return offset;
 		}
 
   }

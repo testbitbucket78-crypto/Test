@@ -147,6 +147,7 @@ errorOnMissedChatOption(): boolean {
 
 get checkIfValid(): boolean {
   // to check if every input field is valid and do not consist "" empty
+  let isAnyRadioSelected
   if(this.isManageMissedChat) {
     const isConversationAllowedValid = !(this.conversationallowed === '' && this.defaultAssignRule === 'roundrobin');
     const isAssignUserValid = !(this.assignuser === '' && this.defaultAssignRule === 'manualassign');
@@ -159,7 +160,15 @@ get checkIfValid(): boolean {
   const isSelectUserValid = !this.errorOnMissedChatOption();
   this.isValid = isConversationAllowedValid && isAssignUserValid && isTimeoutValid && isSelectUserValid;
   
-  return !this.isValid; 
+  if (this.manageMissedChat) {
+    const isContactOwnerChecked = (document.getElementById('chat-assign-co') as HTMLInputElement)?.checked;
+    const isAdminChecked = (document.getElementById('chat-assign-admin') as HTMLInputElement)?.checked;
+    const isSpecificUserChecked = (document.getElementById('chat-assign-su') as HTMLInputElement)?.checked;
+
+    isAnyRadioSelected = isContactOwnerChecked || isAdminChecked || isSpecificUserChecked;
+  }
+
+  return !(this.isValid && isAnyRadioSelected); 
 }
 
   getUserList() {

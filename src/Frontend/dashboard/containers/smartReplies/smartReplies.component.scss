@@ -2813,3 +2813,10 @@ img.icon.sm {
   .modal-smart-reply-open .box4 p {
     margin-bottom: 0px !important;
   }
+  input[type="date"]::-webkit-calendar-picker-indicator {
+  cursor: pointer;
+  }
+  input[type="date"] {
+  cursor: text;
+    color: #212529; /* Darker text for selected date */
+}

@@ -242,7 +242,8 @@ export class TemplateMessageComponent implements OnInit {
     };
     newTemplateForm!: FormGroup;
     buttonsArray:any[] =[];
-    channel='whapi'; // todo make it dynamic
+    channel='webJS';
+
     isPopupVisible:boolean = false;
     isAllButtonPopupVisible:boolean = false;
     channelQualityTooltip:boolean = false;
@@ -307,9 +308,18 @@ intervalSub!: Subscription;
         this.getAttributeList();
         this.getFlowList();
         this.getWhatsAppDetails();
+        this.getChennelWhapiorWeb();
     }
    updateRenderedButton() {
      this.buttonStream.next([...this.renderedButtons]);
+  }
+  getChennelWhapiorWeb(){
+    this.apiService.getChennelWhapiorWeb(this.spid)
+		.subscribe((response:any) =>{
+		 if(response){
+			 this.channel = response?.provider
+		 }
+	   })
   }
 // ngOnDestroy() {
 //   this.intervalSub?.unsubscribe();

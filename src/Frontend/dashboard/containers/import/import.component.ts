@@ -429,9 +429,9 @@ export class ImportComponent implements OnInit {
 	  
 	  
 
-
+importData!: boolean ;
 	onImportContacts(modal:any) {
-
+       this.importData = true
 		const bodyData:importCSVData = {
 			field: [], 
 			identifier: this.Identifier,
@@ -448,6 +448,7 @@ export class ImportComponent implements OnInit {
 		if(this.numberOfNewContact !== 0 || this.countUpdatedData !==0) {
 			this.apiService.importContact(bodyData).subscribe(
 				(response:any) => {
+					this.importData = false;
 				if (response.status === 200) {
 					this.modalService.open(modal);
 					$("#importmodal").modal('hide'); 
@@ -455,6 +456,7 @@ export class ImportComponent implements OnInit {
 					this.displayNameChecked = [];
 					this.stepper.reset()
 					this.getContact.emit('');
+					this.closePopup();
 				}
 			},
 				(error)=> {
