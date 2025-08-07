@@ -121,23 +121,6 @@ async function autoReplyDefaultAction(isAutoReply, autoReplyTime, isAutoReplyDis
     botOperations(data);
     return false;
   }
-  if(botMatched.length > 0) {
-    console.log("botMatched", botMatched)
-    let data = {
-      "interactionId": newId,
-      "sid": sid,
-      "agid": agid,
-      "custid": custid,
-      "from": from,
-      "incommingMessage": message_text,
-      "channelType": channelType,
-      "phone_number_id": phone_number_id,
-      "display_phone_number": display_phone_number,
-    }
-    data['botId'] = botMatched[0]?.id;
-    botOperations(data);
-    return false;
-  }
   const timeoutDuration = inactiveTimeOut * 60 * 1000; // Convert minutes to milliseconds
   console.log(timeoutDuration, inactiveTimeOut)
   // Set timeout to trigger inactivity check after the specified period
