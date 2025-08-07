@@ -3,8 +3,10 @@
   "version": "1.0.0",
   "description": "",
   "main": "web.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+   "scripts": {
+    "start:preprod-whatsAppWeb": "cross-env NODE_ENV=preprod node whatsAppWeb.js",
+    "start:staging-whatsAppWeb": "cross-env NODE_ENV=staging node whatsAppWeb.js",
+    "start:prod-whatsAppWeb": "cross-env NODE_ENV=prod node whatsAppWeb.js"
   },
   "author": "",
   "license": "ISC",
