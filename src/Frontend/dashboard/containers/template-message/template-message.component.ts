@@ -11,7 +11,7 @@ import { PhoneValidationService } from 'Frontend/dashboard/services/phone-valida
 import { environment } from 'environments/environment';
 import { InteractiveButtonPayload, InteractiveMessagePayload } from 'Frontend/dashboard/models/interactiveButtons.model';
 import { ToastService } from 'assets/toast/toast.service';
- import { BehaviorSubject } from 'rxjs';
+ import { BehaviorSubject, interval, Subscription } from 'rxjs';
 declare var $: any;
 @Component({
     selector: 'sb-template-message',
@@ -290,7 +290,7 @@ export class TemplateMessageComponent implements OnInit {
     onEditorChange(value:any) {
         this.newTemplateForm.get('BodyText')?.setValue(value);
     }
-
+intervalSub!: Subscription;
     ngOnInit(): void {
         this.isLoading = true;
         this.spid = Number(sessionStorage.getItem('SP_ID'));
@@ -308,7 +308,12 @@ export class TemplateMessageComponent implements OnInit {
         this.getFlowList();
         this.getWhatsAppDetails();
     }
-   
+   updateRenderedButton() {
+     this.buttonStream.next([...this.renderedButtons]);
+  }
+// ngOnDestroy() {
+//   this.intervalSub?.unsubscribe();
+// }
     getWhatsAppDetails() {
 		this.apiService.getWhatsAppDetails(this.spid)
 		.subscribe((response:any) =>{
@@ -379,6 +384,10 @@ export class TemplateMessageComponent implements OnInit {
         this.newTemplateForm.get('Links')?.setValue(null);
         this.newTemplateForm.get('Header')?.setValue('');
         this.selectedPreview = '';
+        this.interactiveButtonsPayload = '';
+        this.buttonStream.next([]);
+        this.renderedButtons = [];
+        this.selectedButtons = [];
     }
  
     applyGalleryFilter() {
@@ -831,6 +840,7 @@ checkTemplateName(e:any){
         copyTemplateForm.isCopied = 1;
         copyTemplateForm.template_id = this.templatesMessageDataById.template_id;
         copyTemplateForm.interactiveButtonsPayload= typeof this.templatesMessageDataById?.interactive_buttons == 'string' ? this.templatesMessageDataById?.interactive_buttons : JSON.parse(this.templatesMessageDataById?.interactive_buttons);
+        copyTemplateForm.renderedButtons = typeof this.templatesMessageDataById?.renderedButtons == 'string' ? JSON.parse(this.templatesMessageDataById?.renderedButtons) : this.templatesMessageDataById?.renderedButtons;
       //  if(this.templatesMessageDataById.Category=='WA API') {
             copyTemplateForm.template_json = this.templatesMessageDataById?.template_json;
 
@@ -892,6 +902,8 @@ checkTemplateName(e:any){
         newTemplateForm.isCopied = 0;
         newTemplateForm.template_json = [];
         newTemplateForm.interactiveButtonsPayload= JSON.stringify(this.interactiveButtonsPayload);
+        newTemplateForm.renderedButtons = JSON.stringify(this.renderedButtons);
+        
         if(this.newTemplateForm.controls.Channel.value == 'WA API') {
             let buttons:any[] =[];
             let headerAtt = this.getVariables(this.newTemplateForm.controls.Header.value, "{{", "}}", true);
@@ -1044,6 +1056,8 @@ checkTemplateName(e:any){
         this.selectedPreview = this.templatesMessageData.Links;
         this.buttonsArray = this.templatesMessageData?.buttons ? this.templatesMessageData?.buttons : [];
         this.interactiveButtonsPayload = this.templatesMessageData?.interactive_buttons ? JSON.parse(this.templatesMessageData?.interactive_buttons) : [];
+        this.renderedButtons = this.templatesMessageData?.renderedButtons ? JSON.parse(this.templatesMessageData?.renderedButtons) : [];
+        this.updateRenderedButton();
         if(this.templatesMessageData?.Links){
             this.fileName = this.extractActualFileName(this.templatesMessageData?.Links);
         }
@@ -1252,7 +1266,7 @@ triggerRichTextEditorChange() {
         if(this.renderedButtons && this.renderedButtons.length > 0){
             let rawPayload = this.generateInteractivePayload('');
             this.interactiveButtonsPayload =this.sanitizeInteractivePayload(rawPayload);
-        }
+        } else this.interactiveButtonsPayload = [];
     
         this.allVariablesValueList =[];
         console.log(this.newTemplateForm.controls.BodyText.value);
@@ -2046,7 +2060,7 @@ updateRenderedButtons(renderedButtons: any[]) {
 
 async validateRenderedButtons(renderedButtons: any[]): Promise<boolean> {
   let boolean = true;
-
+  if(!renderedButtons || renderedButtons.length === 0) return boolean;
   for (const detail of renderedButtons) {
     if (!detail.children?.button_text || detail.children.button_text.trim() === '') {
       boolean = false;

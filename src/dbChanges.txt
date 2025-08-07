@@ -360,4 +360,7 @@ CREATE TABLE SmartReplyLogs (
 ALTER TABLE WebhookLogs
 ADD COLUMN retry_count INT DEFAULT 0;
 
+ALTER TABLE templateMessages
+ADD COLUMN renderedButtons JSON;
+
 //Ends of 13 may onwards Changes

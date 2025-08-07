@@ -171,6 +171,7 @@ class Message {
         this.video = data?.video || null;
         this.document = data?.document || null;
         this.reply = data?.reply || [];
+        this.context = data?.context || null;
     }
 }
 
@@ -278,7 +279,7 @@ class WhapiMessageResponse {
 }
 class WhapiInteractiveButtons {
     constructor(to, interactiveButtons, bodyText = '') {
-      this.to = to;
+      this.to = typeof to === 'string' ? to : String(to);
       this.interactiveButtons = this.parseButtons(interactiveButtons);
       this.bodyText = bodyText;
     }
