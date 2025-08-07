@@ -17,6 +17,8 @@ const Routing = require('./RoutingRules');
 const { Console } = require("console");
 const commonFun = require('./common/resuableFunctions')
 const { userStatus } = require('./enum.js')
+const { sendEmail } = require('./Services/EmailService');
+const { MessagingName, channelName }= require('./enum');
 const token = 'EAAQTkLZBFFR8BOxmMdkw15j53ZCZBhwSL6FafG1PCR0pyp11EZCP5EO8o1HNderfZCzbZBZBNXiEFWgIrwslwoSXjQ6CfvIdTgEyOxCazf0lWTLBGJsOqXnQcURJxpnz3i7fsNbao0R8tc3NlfNXyN9RdDAm8s6CxUDSZCJW9I5kSmJun0Prq21QeOWqxoZAZC0ObXSOxM3pK0KfffXZC5S';
 let defaultMessageQuery = `SELECT * FROM defaultmessages where SP_ID=? AND title=? and isDeleted !=1`
 let updateSms = `UPDATE Message set system_message_type_id=?,updated_at=? where Message_id=?`
@@ -1347,33 +1349,25 @@ async function identifyNode(data){
     }else if(type == 'conversationStatus'){
       let ResolveOpenChat = await db.excuteQuery('UPDATE Interaction SET interaction_status =? WHERE InteractionId !=? and customerId=?', [json?.data?.data?.status, data?.interactionId, data?.custid]);
       botExit();
-    }else if(type == 'Notify'){
-       let notifyvalues = [[data?.sid, '@Mention in the Notes', 'You have a been mentioned in the Notes', json?.data?.AgentId, 'bot', json?.data?.AgentId, utcTimestamp]];
-      let mentionRes = await db.excuteQuery('INSERT INTO Notification(sp_id,subject,message,sent_to,module_name,uid,created_at) values ?', [notifyvalues]);
-      
-      // let emailSender = MessagingName[user?.Channel];
-      // const subject = `Your ${emailSender} Channel might got disconnected`;
-      // const body = `
-      //   <p>Hello <strong>${user?.name}</strong>,</p>
+    }else if(type == 'NotificationModal'){       
+      let userDetailQuery = 'SELECT * FROM user WHERE uid =? AND isDeleted != 1';
+      let userDetail = await db.excuteQuery(userDetailQuery, [json?.data?.selectedAgentIds]);
+      let user = userDetail[0];
+      let emailSender = MessagingName[user?.Channel];
+      const channelname = channelName[emailwhomToSent]
+      const subject = `You have recieved a notification from ${channelname}`;
+      const body = json?.data?.textMessage;
 
-      //   <p>Your channel might got disconnected please check the channel.</p>
-        
-      //   <p>We are here to assist you with any questions or concerns you may have.</p>
-      //   <p>For a more detailed report and insights, please log in to your account.</p>
-          
-      //   <p>Best regards,<br>Team ${emailSender}</p>
-      // `;
+      const emailOptions = {
+        to: user?.email_id,
+        subject,
+        html: body,
+        fromChannel: emailSender,
+      };
 
-      // const emailOptions = {
-      //   to: user?.email_id,
-      //   subject,
-      //   html: body,
-      //   fromChannel: emailSender,
-      // };
-
-      // if (body) {
-      //   let emailSent = sendEmail(emailOptions);
-      // }
+      if (body) {
+        let emailSent = sendEmail(emailOptions);
+      }
       data.nodeId = json?.connectedId;
       identifyNode(data);
     }else if(type == 'MessageOptin'){
