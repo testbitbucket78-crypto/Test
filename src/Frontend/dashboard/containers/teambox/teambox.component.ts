@@ -17,6 +17,7 @@ import { DatePipe } from '@angular/common';
 import { PhoneValidationService } from 'Frontend/dashboard/services/phone-validation.service';
 import { hasEmptyValues } from '../common/Utils/file-utils';
 import { BotserviceService } from 'Frontend/dashboard/services/botservice.service';
+import { environment } from 'environments/environment';
 declare var $: any;
 @Component({
 	selector: 'sb-teambox',
@@ -27,7 +28,7 @@ declare var $: any;
 
 export class TeamboxComponent implements OnInit {
 
-	private socket$: WebSocketSubject<any> = new WebSocketSubject('wss://notify.stacknize.com/');
+	private socket$: WebSocketSubject<any> = new WebSocketSubject(environment.notify);
 
 	incomingMessage: string = '';
 

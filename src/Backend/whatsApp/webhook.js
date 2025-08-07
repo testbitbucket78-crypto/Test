@@ -633,6 +633,7 @@ async function getDetatilsOfSavedMessage(saveMessage, message_text, phone_number
 async function saveImageFromReceivedMessage(from, message, phone_number_id, display_phone_number, extension, mime_type) {
   console.log("saveImageFromReceivedMessage")
   logger.info(`saveImageFromReceivedMessage is triggered for SPID: ${from}, and display_phone_number: ${display_phone_number}`);
+  let sid = await db.excuteQuery('select * from WA_API_Details where phoneNo=? and isDeleted =0', [display_phone_number])
   //https://graph.facebook.com/{{Version}}/{{Media-ID}}?phone_number_id=<PHONE_NUMBER_ID>
   return new Promise((resolve, reject) => {
     try {
@@ -644,7 +645,7 @@ async function saveImageFromReceivedMessage(from, message, phone_number_id, disp
           "?phone_number_id=" + phone_number_id,
         headers: {
           "Content-Type": "application/json",
-          "Authorization": "Bearer " + token
+          "Authorization": "Bearer " + sid[0].token
         },
 
       }).then(async function (result) {
@@ -652,9 +653,8 @@ async function saveImageFromReceivedMessage(from, message, phone_number_id, disp
 
         //TODO: NEED TO get SID from DB using Display phone number.
         //let sid = query to get using display phone number.
-        let sid = await db.excuteQuery(process.env.findSpid, [display_phone_number])
 
-        let awsDetails = await aws.uploadWhatsAppImageToAws(sid[0].SP_ID, message, result.data.url, token, extension, mime_type)//spid, imageid, fileUrl, fileAccessToken
+        let awsDetails = await aws.uploadWhatsAppImageToAws(sid[0].SP_ID, message, result.data.url, sid[0].token, extension, mime_type)//spid, imageid, fileUrl, fileAccessToken
 
         //TODO: Save the AWS url to DB in messages table using SP similar to webhook_2 SP. 
 

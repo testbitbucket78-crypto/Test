@@ -1,4 +1,17 @@
 {
+  "scripts": {
+    "start:preprod-cronjob": "cross-env NODE_ENV=preprod node cronjob.js",
+    "start:staging-cronjob": "cross-env NODE_ENV=staging node cronjob.js",
+    "start:prod-cronjob": "cross-env NODE_ENV=prod node cronjob.js",
+
+    "start:preprod-defaultMessageCronJob": "cross-env NODE_ENV=preprod node defaultMessageCronJob.js",
+    "start:staging-defaultMessageCronJob": "cross-env NODE_ENV=staging node defaultMessageCronJob.js",
+    "start:prod-defaultMessageCronJob": "cross-env NODE_ENV=prod node defaultMessageCronJob.js",
+
+    "start:preprod-AutoDeletion": "cross-env NODE_ENV=preprod node AutoDeletion.js",
+    "start:staging-AutoDeletion": "cross-env NODE_ENV=staging node AutoDeletion.js",
+    "start:prod-AutoDeletion": "cross-env NODE_ENV=prod node AutoDeletion.js"
+  },
   "dependencies": {
     "aws-sdk": "^2.1396.0",
     "axios": "^1.4.0",
@@ -14,6 +27,7 @@
     "winston": "^3.13.1",
     "xlsx": "^0.18.5",
     "winston-daily-rotate-file": "^5.0.0",
+    "cross-env": "^7.0.3",
     "jsonwebtoken": "^8.5.1"
   }
 }

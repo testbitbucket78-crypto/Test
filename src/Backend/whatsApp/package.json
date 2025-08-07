@@ -3,9 +3,10 @@
   "version": "1.0.0",
   "description": "",
   "main": "webhook.js",
-  "scripts": {
-    "build": "node webhook.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+   "scripts": {
+    "start:preprod-webhook": "cross-env NODE_ENV=preprod node webhook.js",
+    "start:staging-webhook": "cross-env NODE_ENV=staging node webhook.js",
+    "start:prod-webhook": "cross-env NODE_ENV=prod node webhook.js"
   },
   "author": "Raunak",
   "license": "ISC",
@@ -23,6 +24,7 @@
     "ws": "^8.14.2",
     "socket.io": "^4.8.1",
     "socket.io-client": "^4.8.1",
+    "cross-env": "^7.0.3",
     "moment": "^2.29.4"
   }
 }

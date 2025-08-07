@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { Observable, of } from 'rxjs';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Auth, authRegister, authForgotPassword ,authSendOtp,authVerifyOtp} from '../models';
-import { environment } from 'environments/environment.prod';
+import { environment } from 'environments/environment';
 const API_URL = environment.baseUrl;
 const AdminbaseUrl = environment.AdminbaseUrl;
 

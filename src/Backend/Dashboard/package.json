@@ -4,8 +4,9 @@
   "description": "Campaign",
   "main": "index.js",
   "scripts": {
-    "build": "node dashboard.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start:preprod-dashboard": "cross-env NODE_ENV=preprod node dashboard.js",
+    "start:staging-dashboard": "cross-env NODE_ENV=staging node dashboard.js",
+    "start:prod-dashboard": "cross-env NODE_ENV=prod node dashboard.js"
   },
   "author": "cip",
   "license": "ISC",
@@ -13,6 +14,7 @@
     "cors": "^2.8.5",
     "express": "^4.18.2",
     "mysql2": "^2.3.3",
+    "cross-env": "^7.0.3",
     "nodemon": "^2.0.20"
   }
 }

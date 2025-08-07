@@ -3,7 +3,7 @@ const subscribedEventsPayloads = [
     event_type: "contact.created",
     contact_creator: "john_doe", // or 'system'
     contact_id: "c12345",
-    customer_number: "919812345678",
+    customer_number: "919800000000",
     customer_name: "Alice Sharma",
     email_id: "alice@example.com",
     contact_owner: "support_team",
@@ -19,7 +19,7 @@ const subscribedEventsPayloads = [
     event_type: "contact.updated",
     contact_updater: "system",
     contact_id: "c12345",
-    customer_number: "919812345678",
+    customer_number: "919800000000",
     customer_name: "Alice Sharma",
     email_id: "alice@example.com",
     contact_owner: "sales_team",
@@ -34,7 +34,7 @@ const subscribedEventsPayloads = [
     event_type: "contact.deleted",
     delete_initiator: "admin_user",
     contact_id: "c12345",
-    customer_number: "919812345678"
+    customer_number: "919800000000"
   },
   {
     event_type: "contact.bulkupdate",
@@ -42,7 +42,7 @@ const subscribedEventsPayloads = [
     contacts: [
       {
         contact_id: "c12345",
-        customer_number: "919812345678",
+        customer_number: "919800000000",
         customer_name: "Alice Sharma",
         email_id: "alice@example.com",
         contact_owner: "sales_team",
@@ -70,8 +70,8 @@ const subscribedEventsPayloads = [
   },
   {
     event_type: "message.received",
-    channel_number: "919812345678",
-    customer_number: "919812345678",
+    channel_number: "919800000000",
+    customer_number: "919800000000",
     customer_name: "Alice Sharma",
     message_id: "m98765",
     message_time: "2025-07-18T14:00:00Z",
@@ -84,8 +84,8 @@ const subscribedEventsPayloads = [
   },
   {
     event_type: "message.status",
-    channel_number: "919812345678",
-    customer_number: "919812345678",
+    channel_number: "919800000000",
+    customer_number: "919800000000",
     message_id: "m98765",
     message_time: "2025-07-18T14:01:00Z",
     status: "delivered",
@@ -94,8 +94,8 @@ const subscribedEventsPayloads = [
   },
   {
     event_type: "message.flow.received",
-    channel_number: "919812345678",
-    customer_number: "919812345678",
+    channel_number: "919800000000",
+    customer_number: "919800000000",
     customer_name: "Alice Sharma",
     message_id: "m11111",
     message_time: "2025-07-18T14:02:00Z",
@@ -107,29 +107,29 @@ const subscribedEventsPayloads = [
   },
   {
     event_type: "conversation.created",
-    channel_number: "919812345678",
-    customer_number: "919812345678",
+    channel_number: "919800000000",
+    customer_number: "919800000000",
     source: "system",
     status: "open",
     assignment: "bot"
   },
   {
     event_type: "conversation.status.update",
-    channel_number: "919812345678",
-    customer_number: "919812345678",
+    channel_number: "919800000000",
+    customer_number: "919800000000",
     source: "admin_user",
     status: "resolved"
   },
   {
     event_type: "conversation.assignment.update",
-    channel_number: "919812345678",
-    customer_number: "919812345678",
+    channel_number: "919800000000",
+    customer_number: "919800000000",
     source: "system",
     status: "support_agent"
   },
   {
     event_type: "template.status",
-    channel_number: "919812345678",
+    channel_number: "919800000000",
     template_id: "temp_001",
     template_name: "Welcome Template",
     status: "approved"

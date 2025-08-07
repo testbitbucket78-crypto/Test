@@ -17,6 +17,8 @@ const Routing = require('./RoutingRules');
 const { Console } = require("console");
 const commonFun = require('./common/resuableFunctions')
 const { userStatus } = require('./enum.js')
+const { sendEmail } = require('./Services/EmailService');
+const { MessagingName, channelName }= require('./enum');
 const token = 'EAAQTkLZBFFR8BOxmMdkw15j53ZCZBhwSL6FafG1PCR0pyp11EZCP5EO8o1HNderfZCzbZBZBNXiEFWgIrwslwoSXjQ6CfvIdTgEyOxCazf0lWTLBGJsOqXnQcURJxpnz3i7fsNbao0R8tc3NlfNXyN9RdDAm8s6CxUDSZCJW9I5kSmJun0Prq21QeOWqxoZAZC0ObXSOxM3pK0KfffXZC5S';
 let defaultMessageQuery = `SELECT * FROM defaultmessages where SP_ID=? AND title=? and isDeleted !=1`
 let updateSms = `UPDATE Message set system_message_type_id=?,updated_at=? where Message_id=?`
@@ -101,23 +103,6 @@ async function autoReplyDefaultAction(isAutoReply, autoReplyTime, isAutoReplyDis
       identifyNode(data);
       return false;
     }
-  }
-  if(botMatched.length > 0) {
-    console.log("botMatched", botMatched)
-    let data = {
-      "interactionId": newId,
-      "sid": sid,
-      "agid": agid,
-      "custid": custid,
-      "from": from,
-      "incommingMessage": message_text,
-      "channelType": channelType,
-      "phone_number_id": phone_number_id,
-      "display_phone_number": display_phone_number,
-    }
-    data['botId'] = botMatched[0]?.id;
-    botOperations(data);
-    return false;
   }
   if(botMatched.length > 0) {
     console.log("botMatched", botMatched)
@@ -1170,7 +1155,7 @@ async function botOperationsWithNode(data, json) {
 
 }
 
-async function isWorkingHour(){
+async function isWorkingHour(sid){
   const currentTime = new Date();
   let workingHourQuery = `select * from WorkingTimeDetails where SP_ID=? and isDeleted !=1`;
   var workingData = await db.excuteQuery(workingHourQuery, [sid]);
@@ -1269,17 +1254,18 @@ async function identifyNode(data){
       await assignAction(json.data?.data?.uid, -4, data.interactionId, data.custid, data.sid, data.display_phone_number);
       botExit(data, 2);
     } else if(type == 'UnassignConversation'){
-      await assignAction(-1, -4, data.interactionId, data.custid, data.sid, data.display_phone_number);
+      let val = [[1,data.interactionId, -1, -4]];
+      var assignCon = await db.excuteQuery(updateInteractionMapping, [val]);
       botExit(data, 2);
     } else if(type == 'assigntoContactOwner'){
       let assignOwner = await AssignToContactOwner(data.sid, data.interactionId, data.custid);      
       botExit(data, 2);
     }
-    else if(type == 'addTag'){
+    else if(type == 'AddTags'){
       await addTag(json.data?.data?.tags,data.sid, data.custid);
       data.nodeId = json?.connectedId;
       identifyNode(data);
-    }else if(type == 'removeTag'){
+    }else if(type == 'RemoveTag'){
       await removeTag(json.data?.data?.tags, data.custid);
       data.nodeId = json?.connectedId;
       identifyNode(data);
@@ -1346,9 +1332,25 @@ async function identifyNode(data){
     }else if(type == 'conversationStatus'){
       let ResolveOpenChat = await db.excuteQuery('UPDATE Interaction SET interaction_status =? WHERE InteractionId !=? and customerId=?', [json?.data?.data?.status, data?.interactionId, data?.custid]);
       botExit();
-    }else if(type == 'Notify'){
-       let notifyvalues = [[data?.sid, '@Mention in the Notes', 'You have a been mentioned in the Notes', json?.data?.AgentId, 'bot', json?.data?.AgentId, utcTimestamp]];
-      let mentionRes = await db.excuteQuery('INSERT INTO Notification(sp_id,subject,message,sent_to,module_name,uid,created_at) values ?', [notifyvalues]);
+    }else if(type == 'NotificationModal'){       
+      let userDetailQuery = 'SELECT * FROM user WHERE uid =? AND isDeleted != 1';
+      let userDetail = await db.excuteQuery(userDetailQuery, [json?.data?.selectedAgentIds]);
+      let user = userDetail[0];
+      let emailSender = MessagingName[user?.Channel];
+      const channelname = channelName[emailwhomToSent]
+      const subject = `You have recieved a notification from ${channelname}`;
+      const body = json?.data?.textMessage;
+
+      const emailOptions = {
+        to: user?.email_id,
+        subject,
+        html: body,
+        fromChannel: emailSender,
+      };
+
+      if (body) {
+        let emailSent = sendEmail(emailOptions);
+      }
       data.nodeId = json?.connectedId;
       identifyNode(data);
     }else if(type == 'MessageOptin'){
@@ -1357,7 +1359,7 @@ async function identifyNode(data){
       data.nodeId = json?.connectedId;
       identifyNode(data);
     }else if(type == 'WorkingHoursModal'){
-      if(isWorkingHour()){
+      if(isWorkingHour(data.sid)){
         let selectedOption = json.option.filter((item) => (item.name)  == 'open');
         let connectNodeId = selectedOption[0].optionConnectedId;
           data.nodeId = connectNodeId;

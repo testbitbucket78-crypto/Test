@@ -6,7 +6,7 @@ import { Observable } from 'rxjs';
 
 environment
 // 3012
-const Bot_API_URL = environment.botsAPI;;
+const Bot_API_URL = environment.botsAPI;
 
 @Injectable({
   providedIn: 'root'

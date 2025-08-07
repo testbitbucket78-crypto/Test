@@ -1,3 +1,5 @@
+
+const { getUrl, env } = require('../config');
 const variables = {
     ENV_URL: {
         auth: 'https://authapi.stacknize.com', //http://localhost:3003 https://authapi.stacknize.com
@@ -9,7 +11,7 @@ const variables = {
         gate_api: 'https://gate.whapi.cloud'
     },
     webhookRegisterPayload: {
-        callback_url: 'https://call.stacknize.com/webhook',
+        callback_url: getUrl('webhook'),
         verify_token: 'raunak',
     },
     registerWhatsAppPayload: {

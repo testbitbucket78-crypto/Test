@@ -3,8 +3,10 @@
   "version": "1.0.0",
   "description": "",
   "main": "web.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+   "scripts": {
+    "start:preprod-whatsAppWeb": "cross-env NODE_ENV=preprod node whatsAppWeb.js",
+    "start:staging-whatsAppWeb": "cross-env NODE_ENV=staging node whatsAppWeb.js",
+    "start:prod-whatsAppWeb": "cross-env NODE_ENV=prod node whatsAppWeb.js"
   },
   "author": "",
   "license": "ISC",
@@ -16,6 +18,7 @@
     "qrcode-terminal": "^0.12.0",
     "websocket": "^1.0.34",
     "moment": "^2.29.4",
+    "cross-env": "^7.0.3",
     "whatsapp-web.js": "^1.31.0"
   }
 }

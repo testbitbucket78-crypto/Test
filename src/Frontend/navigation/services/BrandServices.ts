@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { BrandServiceModel } from '../models/BrandService'; 
+import { environment } from 'environments/environment';
 
 @Injectable({
   providedIn: 'root',
@@ -30,9 +31,8 @@ export class BrandService {
     }
 
     const domain = window.location.hostname;
-    // const domain = 'cipapp.stacknize.com'
     return this.http
-      .get<BrandServiceModel>(`https://settings.stacknize.com/getBrandConfig/${domain}`)
+      .get<BrandServiceModel>(environment.settingAPI + `/getBrandConfig/${domain}`)
       .toPromise()
       .then((data: BrandServiceModel) => {
         this.brandConfig = data;

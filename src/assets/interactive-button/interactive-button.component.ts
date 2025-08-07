@@ -9,6 +9,7 @@ import { Component, Input, OnChanges, SimpleChanges,OnInit} from '@angular/core'
 export class InteractiveButtonComponent implements OnChanges , OnInit{
   @Input() interactiveButtons: any;
   @Input() width: any = '70%'
+  @Input() style: { [klass: string]: any } = {};
   @Input() renderedButtons: any[] = [];
 @Input() renderedButtonsStream!: BehaviorSubject<any[]>;
   buttons: any;
@@ -18,9 +19,9 @@ export class InteractiveButtonComponent implements OnChanges , OnInit{
     if (this.renderedButtonsStream) {
       this.renderedButtonsSub = this.renderedButtonsStream.subscribe((renderedButtons) => {
         const payload = this.generatePayloadFromRendered(renderedButtons);
-        if (payload.action?.buttons) {
-          this.buttons = payload.action.buttons;
-        } else if (payload.action?.list) {
+        if (payload?.action?.buttons) {
+          this.buttons = payload?.action.buttons;
+        } else if (payload?.action?.list) {
           this.buttons = [];
         }
       });
@@ -35,10 +36,10 @@ export class InteractiveButtonComponent implements OnChanges , OnInit{
       this.interactiveButtons = JSON.parse(this.interactiveButtons);
     }
     if (!this.interactiveButtons?.action) {
-      throw new Error("Please Enter A Valid Interactive Buttons Payload")
+      //throw new Error("Please Enter A Valid Interactive Buttons Payload")
     }
-    console.log(this.interactiveButtons.action)
-    this.buttons = this.interactiveButtons.action.buttons
+    console.log(this.interactiveButtons?.action)
+    this.buttons = this.interactiveButtons?.action?.buttons
   }
 
   generatePayloadFromRendered(rendered: any[]): any {

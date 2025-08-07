@@ -18,6 +18,7 @@ async function dispatchWebhookEvent(spid, eventType, payload) {
                         payload
                       });
 
+                let retryCount = 0;
                 try {
                     // const response = await axios.post(details.url, payload, { todo deprecated 
                     //     headers: {
@@ -25,10 +26,11 @@ async function dispatchWebhookEvent(spid, eventType, payload) {
                     //     },
                     // });
 
-                    const { response, retryCount } = await postWithRetry(details.url, payload, {
+                    const { response, retryCount: rc } = await postWithRetry(details.url, payload, {
                         'Content-Type': 'application/json'
                     });
-
+                     retryCount = rc;
+                     
                     logDataInstance.statusCode = response.status;
                     logDataInstance.responseBody = response.data;
                     logDataInstance.success = true;
