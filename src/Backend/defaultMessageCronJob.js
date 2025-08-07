@@ -12,7 +12,7 @@ const moment = require('moment');
 const removeTags = require('./removeTagsFromRichTextEditor')
 const commonFun = require('./common/resuableFunctions')
 const logger = require('./common/logger.log');
-const incommingmsg = require('../IncommingMessages')
+const incommingmsg = require('./IncommingMessages')
 const lostMessageTimeGap = 6;
 app.use(bodyParser.json());
 app.use(cors());
@@ -180,9 +180,9 @@ async function NoCustomerReplyTimeout() {
               );
 
               logger.info(`send NoCustomerReplyTimeout success, ${new Date()}, ${msg.SPID}, ${msg.customer_phone_number}, response?.status`);
-
+              totalSuccessCount++;
               if (response?.status == 200) {
-                totalSuccessCount++;
+               
                 let myUTCString = new Date().toUTCString();
                 const currenttime = moment.utc(myUTCString).format('YYYY-MM-DD HH:mm:ss');
 

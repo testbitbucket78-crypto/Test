@@ -215,6 +215,7 @@ router.post('/uploadfiletoMeta/:spid/:name',upload.single('dataFile'), async (re
 
 router.post('/addWhatsAppDetails',authenticateToken,accountController.insertAndEditWhatsAppWeb)
 router.get('/getWhatsAppDetails/:spid',authenticateToken,accountController.selectDetails)
+router.get('/getChennelWhapiorWeb/:spid',authenticateToken,accountController.getChennelWhapiorWeb)
 router.post('/addWAapiDetails',authenticateToken,accountController.addWAAPIDetails)
 router.get('/getQualityRating/:phoneNo/:phone_number_id/:WABA_ID/:spid',authenticateToken,accountController.getQualityRating)
 router.post('/addGetAPIKeys',authenticateToken,accountController.addGetAPIKey)
