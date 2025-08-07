@@ -27,6 +27,7 @@
     "winston": "^3.13.1",
     "xlsx": "^0.18.5",
     "winston-daily-rotate-file": "^5.0.0",
+    "cross-env": "^7.0.3",
     "jsonwebtoken": "^8.5.1"
   }
 }
