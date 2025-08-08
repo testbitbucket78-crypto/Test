@@ -8,21 +8,24 @@ const DEFAULTS = {
     auth: 'https://authapi.stacknize.com', 
     contacts: 'https://contactapi.stacknize.com', 
     settings: 'https://settings.stacknize.com', 
-    webhook: 'https://call.stacknize.com/webhook'
+    webhook: 'https://call.stacknize.com/webhook',
+    socket:  'ws://52.66.172.213:3010/'
   },
   preprod: {
     waweb: 'https://waweb-preprod.engagekart.com',
     auth: 'https://authapi-preprod.engagekart.com', 
     contacts: 'https://contactapi-preprod.engagekart.com', 
     settings: 'https://settings-preprod.engagekart.com', 
-    webhook: 'https://call-preprod.engagekart.com/webhook'
+    webhook: 'https://call-preprod.engagekart.com/webhook',
+    socket:  'ws://13.126.51.107:3010/'
   },
   production: {
     waweb: 'https://waweb.engagekart.com',
     auth: 'https://authapi.engagekart.com', 
     contacts: 'https://contactapi.engagekart.com', 
     settings: 'https://settings.engagekart.com', 
-    webhook: 'https://call.engagekart.com/webhook'
+    webhook: 'https://call.engagekart.com/webhook',
+    socket:  'ws://3.108.230.82:3010/'
   },
 };
 

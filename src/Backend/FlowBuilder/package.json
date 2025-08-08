@@ -4,9 +4,9 @@
   "description": "Campaign",
   "main": "index.js",
     "scripts": {
-    "start:preprod-flowBuilder": "cross-env NODE_ENV=preprod node flowBuilder.js",
-    "start:staging-flowBuilder": "cross-env NODE_ENV=staging node flowBuilder.js",
-    "start:prod-flowBuilder": "cross-env NODE_ENV=prod node flowBuilder.js"
+    "start:preprod-flowServer": "cross-env NODE_ENV=preprod node flowServer.js",
+    "start:staging-flowServer": "cross-env NODE_ENV=staging node flowServer.js",
+    "start:prod-flowServer": "cross-env NODE_ENV=prod node flowServer.js"
   },
   "author": "cip",
   "license": "ISC",
