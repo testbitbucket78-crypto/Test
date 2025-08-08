@@ -933,8 +933,11 @@ async function saveInMessages(message) {
         let repliedMessageTo = 'You';
         
         if(msg?.context.quoted_id){
+          const LastModifiedDate = moment.utc(new Date().toUTCString()).format('YYYY-MM-DD HH:mm:ss');
           repliedMessage_id = msg?.context.quoted_id;
           repliedMessageText = msg?.context?.quoted_content?.body || '';
+          db.excuteQuery('UPDATE CampaignMessages SET status=4, DeliveredTime=? WHERE  messageTemptateId=?', [LastModifiedDate, msg?.context?.quoted_id]);
+
         }
 
         console.log(r1,display_phone_number, from, message_text, Type, contactName, Message_template_id);
@@ -1538,7 +1541,9 @@ async function sendTemplateViaWhapi(spid, to, headerText, bodyText, interactiveB
   let response = await whapiService.interactiveButtons(payload, r1.token);
   if(response){
     return {
-      status : 200
+      status : 200,
+      msgId : response?.message?.id || '',
+
     }
   }else{
     return {
