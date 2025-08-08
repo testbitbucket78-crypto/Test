@@ -542,6 +542,9 @@ const headers = new HttpHeaders({
   getWhatsAppDetails(spId:any): Observable<any> {
     return this.http.get<any>(`${this.API_URL}/getWhatsAppDetails/${spId}`);
   }
+  getChennelWhapiorWeb(spId:any): Observable<any> {
+    return this.http.get<any>(`${this.API_URL}/getChennelWhapiorWeb/${spId}`);
+  }
   
   addWhatsAppDetails(tagData:any): Observable<any> {
     return this.http.post<any>(`${this.API_URL}/addWhatsAppDetails`,tagData);
