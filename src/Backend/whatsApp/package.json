@@ -8,9 +8,9 @@
     "start:staging-webhook": "cross-env NODE_ENV=staging node webhook.js",
     "start:prod-webhook": "cross-env NODE_ENV=prod node webhook.js",
 
-    "start:preprod-PushNotifications": "cross-env NODE_ENV=preprod node PushNotifications.js",
-    "start:staging-PushNotifications": "cross-env NODE_ENV=staging node PushNotifications.js",
-    "start:prod-PushNotifications": "cross-env NODE_ENV=prod node PushNotifications.js"
+    "start:preprod-PushNotificationServer": "cross-env NODE_ENV=preprod node PushNotificationServer.js",
+    "start:staging-PushNotificationServer": "cross-env NODE_ENV=staging node PushNotificationServer.js",
+    "start:prod-PushNotificationServer": "cross-env NODE_ENV=prod node PushNotificationServer.js"
   },
   "author": "Raunak",
   "license": "ISC",

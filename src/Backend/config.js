@@ -38,6 +38,7 @@ const config = {
   settings: process.env.settings || base.settings,
   auth: process.env.auth || base.auth,
   webhook: process.env.webhook || base.webhook,
+  socket: process.env.socket || base.socket
 };
 
 // Helper to fetch a URL by service name

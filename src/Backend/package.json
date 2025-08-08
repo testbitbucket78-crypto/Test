@@ -1,8 +1,8 @@
 {
   "scripts": {
-    "start:preprod-cronjob": "cross-env NODE_ENV=preprod node cronJob.js",
-    "start:staging-cronjob": "cross-env NODE_ENV=staging node cronJob.js",
-    "start:prod-cronjob": "cross-env NODE_ENV=prod node cronJob.js",
+    "start:preprod-cronJob": "cross-env NODE_ENV=preprod node cronJob.js",
+    "start:staging-cronJob": "cross-env NODE_ENV=staging node cronJob.js",
+    "start:prod-cronJob": "cross-env NODE_ENV=prod node cronJob.js",
 
     "start:preprod-defaultMessageCronJob": "cross-env NODE_ENV=preprod node defaultMessageCronJob.js",
     "start:staging-defaultMessageCronJob": "cross-env NODE_ENV=staging node defaultMessageCronJob.js",
