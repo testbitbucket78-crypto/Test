@@ -130,6 +130,30 @@ const selectDetails = async (req, res) => {
         res.send(err)
     }
 }
+const getChennelWhapiorWeb = async (req, res) => {
+  try {
+    const { spid } = req.params;
+    const currentProvider = variables.provider;
+    const currentSPID = variables.SPID;
+
+    let selectedProvider;
+
+    if (currentProvider === "whapi") {
+      selectedProvider = "whapi";
+    } else if (currentProvider === "webJS") {
+      selectedProvider = spid === currentSPID ? "whapi" : "webJS";
+    } else {
+      selectedProvider = "webJS"; 
+    }
+
+    res.status(200).send({ provider: selectedProvider });
+  } catch (err) {
+    console.error(err);
+    db.errlog(err);
+    res.status(500).send({ error: "Internal Server Error" });
+  }
+};
+
 const isInvalidParam = (value) => value === null || value === undefined || value === 0 || value === '0' || value === 'undefined';
 
 const mapResponseData = (data) => {
@@ -1721,5 +1745,5 @@ async function getQualityRatings(phoneNumberId, access_token) {
 module.exports = {
     insertAndEditWhatsAppWeb, selectDetails, addToken, deleteToken, enableToken, selectToken,
     createInstance, getQRcode, generateQRcode, editToken, testWebhook,getQualityRating, addWAAPIDetails, addGetAPIKey, APIkeysState, saveWebhookUrl, sendMessage, saveOrUpdateWebhook, getWebhooks, deleteWebhook, testWebhooks, deleteAPIToken, exportLogs, textMessage, mediaMessage, getTemplate, getTemplateStatus
-    , getSessionStatus, getContacts, deleteContacts, getUsers, getCustomFields, createContact, updateContact, createTemplatesAPI, createTemplatesWEB, createTemplatesWHAPI, sendTemplates, SendInteractiveButtons, getMessages, getBrandConfig
+    , getSessionStatus, getContacts, deleteContacts, getUsers, getCustomFields, createContact, updateContact, createTemplatesAPI, createTemplatesWEB, createTemplatesWHAPI, sendTemplates, SendInteractiveButtons, getMessages, getBrandConfig, getChennelWhapiorWeb
 }

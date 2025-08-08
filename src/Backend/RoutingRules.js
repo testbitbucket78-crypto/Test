@@ -97,7 +97,14 @@ async function assignToLastAssistedAgent(sid, newId, agid, custid) {
     let RoutingRulesQuery = `SELECT * FROM routingrules WHERE SP_ID =?`;
     let RoutingRules = await db.excuteQuery(RoutingRulesQuery, [sid]);
 
-    let LastAssistedAgent = await db.excuteQuery('select * from InteractionMapping where InteractionId =?  order by created_at desc limit 1', [newId]);
+    let LastAssistedAgent = await db.excuteQuery('select * from InteractionMapping where InteractionId =?  order by created_at desc', [newId]);
+    const validAgentIndex = LastAssistedAgent.findIndex(entry => entry.lastAssistedAgent !== -1);
+
+    if (validAgentIndex > 0) {
+      const [validAgent] = LastAssistedAgent.splice(validAgentIndex, 1);
+      LastAssistedAgent.unshift(validAgent);
+    }
+    
     console.log(RoutingRules[0]?.broadcast == '1', LastAssistedAgent.length, new Date(), RoutingRules[0]?.broadcast == 1);
     let isActiveStaus = await isAgentActive(sid, LastAssistedAgent[0]?.lastAssistedAgent);
     if (LastAssistedAgent.length > 0 && RoutingRules[0]?.assignagent == '1' && isActiveStaus == true) {

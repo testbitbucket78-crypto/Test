@@ -1483,7 +1483,7 @@ async function SelectValues(ActualName, SP_ID, colValue) {
         exists = true;
       }
     });
-
+     if(updatedColValue == '') exists = true; 
     return { exists, value: updatedColValue };
   } catch (error) {
     console.error("Error in SelectValues:", error);
@@ -1935,7 +1935,10 @@ res.status(500).send({ error: 'Internal server error' });
 }
 });
 
-
-
-app.listen(3002);
-
+const http = require('http');
+const server = http.createServer(app);
+server.setTimeout(20 * 60 * 1000);
+//app.listen(3002);
+server.listen(3002, () => {
+  console.log('Server is running on port 3002');
+});

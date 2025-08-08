@@ -506,7 +506,7 @@ const makeXLSXFileOfData = (data, spid, fromDate, toDate) => {
 const makeXLSXForSmartReplies = (data, spid, fromDate, toDate) => {
   const sheetData = [];
 
-  const title = `Smart Reply Usage Report - SPID: ${spid}, Date Range: ${fromDate} to ${toDate}`;
+  const title = `Smart Reply Usage Report, Date Range: ${fromDate} to ${toDate}`;
   sheetData.push([title]);
   sheetData.push([]);
   sheetData.push(['Customer Number', 'Date and Time of Trigger', 'Keyword Sent']);
@@ -514,7 +514,7 @@ const makeXLSXForSmartReplies = (data, spid, fromDate, toDate) => {
 data.forEach(log => {
   sheetData.push([
     log.CustomerNumber,    
-    log.TriggerTime,
+    formatDateTime(log.TriggerTime),
     log.KeywordSent
   ]);
 });
@@ -527,6 +527,18 @@ data.forEach(log => {
 
   return buffer;
 };
-
+const formatDateTime = (date) => {
+  const d = new Date(date);
+  return d.toLocaleString('en-IN', {
+    timeZone: 'Asia/Kolkata',
+    day: '2-digit',
+    month: '2-digit',
+    year: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit',
+    second: '2-digit',
+    hour12: false
+  });
+};
 
 module.exports = {formatterDate, formatterTime, mapCountryCode, formatterDateTime,getCountryDetails, formatDateTimeAccToTimeZone, makeXLSXFileOfData, makeXLSXForSmartReplies};

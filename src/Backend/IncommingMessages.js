@@ -1010,7 +1010,7 @@ async function messageThroughselectedchannel(spid, from, type, text, media, phon
     // console.log("messageThroughselectedchannel", result?.status)
     console.log('runningggg',result);
     if (result?.status == 200) {
-      let messageValu = [[spid, 'text', "", interactionId, agentId, 'Out', Message_text, (media ? media : 'text'), media_type, result.message.messages[0].id, "", time, time, "", -2, 1,'','']]
+      let messageValu = [[spid, 'text', "", interactionId, agentId, 'Out', Message_text, (media ? media : 'text'), media_type, result.message.messages[0].id, "", time, time, "", -2, 1,'','[]']]
       let saveMessage = await db.excuteQuery(insertMessageQuery, [messageValu]);
       response = true;
     }
@@ -1025,7 +1025,7 @@ async function messageThroughselectedchannel(spid, from, type, text, media, phon
 
       let myUTCString = new Date().toUTCString();
       const time = moment.utc(myUTCString).format('YYYY-MM-DD HH:mm:ss');
-      let messageValu = [[spid, 'text', "", interactionId, agentId, 'Out', Message_text, (media ? media : 'text'), media_type, "", "", time, time, "", -2, 1,'','']]
+      let messageValu = [[spid, 'text', "", interactionId, agentId, 'Out', Message_text, (media ? media : 'text'), media_type, "", "", time, time, "", -2, 1,'','[]']]
       let saveMessage = await db.excuteQuery(insertMessageQuery, [messageValu]);
       return true;
     }

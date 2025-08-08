@@ -181,9 +181,9 @@ async function NoCustomerReplyTimeout() {
               );
 
               logger.info(`send NoCustomerReplyTimeout success, ${new Date()}, ${msg.SPID}, ${msg.customer_phone_number}, response?.status`);
-
+              totalSuccessCount++;
               if (response?.status == 200) {
-                totalSuccessCount++;
+               
                 let myUTCString = new Date().toUTCString();
                 const currenttime = moment.utc(myUTCString).format('YYYY-MM-DD HH:mm:ss');
 

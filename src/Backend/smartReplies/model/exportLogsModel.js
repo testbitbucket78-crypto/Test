@@ -1,12 +1,13 @@
 const db = require("../../dbhelper");
 
 class ExportLogsModel {
-  constructor({ spid, fromDate, toDate, email, channel }) {
+  constructor({ spid, fromDate, toDate, email, channel, timeZone}) {
     this.spid = spid;
     this.fromDate = fromDate;
     this.toDate = toDate;
     this.email = email;
     this.channel = channel;
+    this.timeZone = timeZone;
   }
 
   validate() {
@@ -39,7 +40,7 @@ async fetchLogs() {
   const query = `
     SELECT 
       CustomerNumber AS CustomerNumber,
-      TriggerTime AS TriggerTime,
+       CONVERT_TZ(TriggerTime, '+00:00', '${this.timeZone}') AS "TriggerTime",
       KeywordSent AS KeywordSent
     FROM 
       SmartReplyLogs
