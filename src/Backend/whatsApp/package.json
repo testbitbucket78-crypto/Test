@@ -6,7 +6,11 @@
    "scripts": {
     "start:preprod-webhook": "cross-env NODE_ENV=preprod node webhook.js",
     "start:staging-webhook": "cross-env NODE_ENV=staging node webhook.js",
-    "start:prod-webhook": "cross-env NODE_ENV=prod node webhook.js"
+    "start:prod-webhook": "cross-env NODE_ENV=prod node webhook.js",
+
+    "start:preprod-PushNotifications": "cross-env NODE_ENV=preprod node PushNotifications.js",
+    "start:staging-PushNotifications": "cross-env NODE_ENV=staging node PushNotifications.js",
+    "start:prod-PushNotifications": "cross-env NODE_ENV=prod node PushNotifications.js"
   },
   "author": "Raunak",
   "license": "ISC",

@@ -68,8 +68,9 @@ module.exports = { NotifyServer }; */
 
 
 const { io } = require("socket.io-client");
+const { getUrl, env } = require('../config');
 
-const socket = io('ws://52.66.172.213:3010/'); 
+const socket = io(getUrl('socket')); 
 const db = require("../dbhelper");
 const dataToSend = {
   "Ping": {
