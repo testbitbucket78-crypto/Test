@@ -152,7 +152,10 @@ export class BotBuilderComponent implements OnInit {
   public pasteCleanupSettings: object = {
     prompt: false,
     plainText: true,
-    keepFormat: false,
+    keepFormat: false,    // Remove formatting
+    cleanCss: true,         // Clean inline CSS
+    deniedTags: ['style'],  // Remove <style> tags
+    deniedAttrs: ['style']  // Remove style attributes
   };
 
   advanceActions: AdvanceAction[] = [
@@ -238,7 +241,7 @@ export class BotBuilderComponent implements OnInit {
 
 
     this.dateRangeForm = this.fb.group({
-      dateOption: ['7Days', Validators.required],
+      dateOption: ['', Validators.required],
       fromDate: [null],
       toDate: [null]
     });
@@ -251,6 +254,7 @@ export class BotBuilderComponent implements OnInit {
   getBotDetails() {
     this.isLoading = true
     localStorage.removeItem('node_FE_Json')
+    localStorage.removeItem('botVarList')
     localStorage.removeItem('botId')
     var SPID = this.userDetails?.SP_ID || 159
     this.botService.getBotAlldetails(SPID).subscribe((res: any) => {
@@ -273,7 +277,7 @@ export class BotBuilderComponent implements OnInit {
     var SPID = this.userDetails?.SP_ID || 159
     console.log("SPID", SPID)
 
-    let data = {  spid: SPID ,name:(event.target as HTMLInputElement).value}
+    let data = {  spid: SPID ,name:(event.target as HTMLInputElement).value.trim()}
     this.botService.checkExistingBot(data).subscribe((res: any) => {
       if (res.status == 200) {
         this.errorMessageBot = ""
@@ -316,6 +320,8 @@ export class BotBuilderComponent implements OnInit {
 
   // Modal and Form Methods
   openModal(content: any): void {
+    this.dateRangeForm.reset();
+    this.showDatePickers = false
     this.maxSelectableDate = moment().subtract(1, 'day').format('YYYY-MM-DD');
     this.modalRef = this.modalService.open(content, { centered: true, backdrop: 'static' });
   }
@@ -353,6 +359,10 @@ export class BotBuilderComponent implements OnInit {
     this.assignedAgentList = []
     this.assignedRemoveTagList = []
     this.assignedTagList = []
+    this.newKeyword = '';
+    console.log(this.assignAction)
+    console.log(this.assignAction)
+    
     this.assignActionList = JSON.parse(JSON.stringify(this.assignAction))
 
   }
@@ -364,7 +374,9 @@ export class BotBuilderComponent implements OnInit {
   toggleTemplatesData(item: any | null): void {
     this.showCampaignDetails = !!item;
     this.botDetailsData = item;
-    console.log(item)
+
+    this.botDetailsData.smartreplyusage = JSON.parse(this.botDetailsData.smartreplyusage) || [];
+    this.botDetailsData.botusage = JSON.parse(this.botDetailsData.botusage) || [];
 
     if (item) {
       this.botBuilderForm.patchValue({
@@ -494,6 +506,10 @@ if (this.botBuilderForm) {
                this.botBuilderForm.reset();
             if (this.botDetailsData.node_FE_Json) {
               localStorage.setItem('node_FE_Json', this.botDetailsData.node_FE_Json)
+              
+            }
+            if (this.botDetailsData.botVarList) {
+              localStorage.setItem('botVarList', JSON.stringify(this.botDetailsData.botVarList))
             }
           }
           this.closeModalById('createBotModal');
@@ -554,6 +570,9 @@ if (this.botBuilderForm) {
             if (this.botDetailsData.node_FE_Json) {
               localStorage.setItem('node_FE_Json', this.botDetailsData.node_FE_Json)
             }
+               if (this.botDetailsData.botVarList) {
+              localStorage.setItem('botVarList', JSON.stringify(this.botDetailsData.botVarList))
+            }
             localStorage.setItem('botId', this.botDetailsData.id)
           this.closeModalById('botModal');
           this.closeModalById('submitBotModal');
@@ -570,15 +589,15 @@ if (this.botBuilderForm) {
   }
 
   copyBot(Type: any): void {
-     console.log("copyBot=========>",Type)
     if (Type == 'copy') {
       this.keywords = []
       this.botBuilderForm.get('name')?.setValue(null)
+      this.botBuilderForm.get('triggerKeywords')?.setValue(null)
       this.isEditMode = false
     } else if(Type == 'EditMode') {
-
       this.isEditMode = true
       this.botBuilderForm.get('name')?.setValue(this.botDetailsData.name)
+      this.botBuilderForm.get('triggerKeywords')?.setValue(this.botDetailsData.keywords)
       this.OpenModal('editFlowModal')
     }else{
       this.isEditMode = true
@@ -840,6 +859,10 @@ isTooltipVisible2:any
       const selectedOption = this.dateRangeForm.value.dateOption;
       let fromDate, toDate;
       console.log(this.dateRangeForm.value)
+      if (this.dateRangeForm.value.dateOption === 'custom' || this.dateRangeForm.value.fromDate == null || this.dateRangeForm.value.toDate == null) {
+         this.showToaster('error', 'Please select start date and end date.');
+         return;
+      }
 
       let data = {
         spId: this.userDetails.SP_ID,
@@ -904,12 +927,19 @@ this.closeModal()
       }
     });
   }
+checkTagStatus(val: string, id: number): boolean {
+  const normalize = (str: string) => str?.trim().toLowerCase();
 
-  checkTagStatus(val: any, id: any) {
-    return (id === 0 && this.assignedTagList.includes(val)) ||
-      (id === 1 && this.assignedRemoveTagList.includes(val)) ||
-      (id === 2 && this.converstatation.includes(val));
+  if (id === 0) {
+    return this.assignedTagList.some(tag => normalize(tag) === normalize(val));
+  } else if (id === 1) {
+    return this.assignedRemoveTagList.some(tag => normalize(tag) === normalize(val));
+  } else if (id === 2) {
+    return this.converstatation.some(tag => normalize(tag) === normalize(val));
   }
+  return false;
+}
+
 
 
 
@@ -920,6 +950,8 @@ this.closeModal()
       const assignment = { actionTypeId: 2, Value: agent.name, ValueUuid: agent.uuid };
       this.isEditAssigned ? this.assignedAgentList[this.AssignedIndex] = assignment : this.assignedAgentList.push(assignment);
     }
+    this.hasSelectedChild = true;
+    this.selectedExclusiveAction = 'assign_agent';
   }
 
   onActionEdit(text: string) { this.editedText = text; }
@@ -986,6 +1018,9 @@ this.closeModal()
       { actionTypeId: 4, Value: [this.selectedStatus], actionType: 'Mark_Status' };
     if (!this.assignedAgentList.some(item => item.actionTypeId === 4)) this.assignedAgentList.push(existingAction);
     else existingAction.Value = [this.selectedStatus];
+
+    this.selectedExclusiveAction = 'Mark_Status';
+this.hasSelectedChild = true;
   }
 
   showTagPopup: any = false
@@ -1037,6 +1072,8 @@ this.closeModal()
       this.selectedExclusiveAction = this.selectedExclusiveAction === action.value ? null : action.value;
       this.selectedExclusiveAction === action.value ? this.addExclusiveAction(action) : this.removeExclusiveAction(action.value);
     }
+
+    
   }
 
   actionIdToValue: any = { 2: 'assign_agent', 4: 'Mark_Status', 5: 'assign_owner', 6: 'Unassign_conversation' };
@@ -1064,20 +1101,23 @@ this.closeModal()
   }
 
   exclusiveActions = ['assign_owner', 'Unassign_conversation', 'Mark_Status', 'assign_agent'];
-
+hasSelectedChild = false; // ✅ New flag
   isOptionDisabled(optionValue: string): boolean {
 
-    return this.exclusiveActions.includes(optionValue) &&
+    return this.hasSelectedChild && this.exclusiveActions.includes(optionValue) &&
       this.selectedExclusiveAction !== null &&
       this.selectedExclusiveAction !== optionValue;
+      
   }
 
   checkList() { return this.assignedAgentList.some(agent => agent.actionTypeId === 2); }
   closeAddAction() {
     this.ShowAddAction = false;
+    this.hasSelectedChild = false;
   }
   closeAssignTo() {
     this.ShowAssignOption = false;
+    this.hasSelectedChild = false;
   }
 
   RemoveTags(index: number, e: any) {
@@ -1122,16 +1162,17 @@ if(type == 3 ){
   addKeyword() {
     if (!this.newKeyword.trim()) return;
 
-    var data = {
-      keyword: this.newKeyword.trim(),
-      spid: this.userDetails.SP_ID
+  const newKeyword = this.newKeyword.trim().toLowerCase();
 
-    }
-    if (this.keywords.includes(this.newKeyword.trim())) {
-      this.keywordsError = 'This keyword already exists';
-      return;
-    }
+if (this.keywords.map(k => k.toLowerCase()).includes(newKeyword)) {
+  this.keywordsError = 'This keyword already exists';
+  return;
+}
 
+const data = {
+  keyword: this.newKeyword.trim(),
+  spid: this.userDetails.SP_ID
+};
     this.botService.checkKeyword(data).subscribe((res: any) => {
       if (res.status == 409) {
         this.keywordsError = res.message;
@@ -1166,7 +1207,7 @@ if(type == 3 ){
 
 isEditMode:any=false
 OpenModal(Type:any){
-  console.log("type=========>",Type)
+
   if(Type == 'editFlowModal'){
     this.isEditMode = true
     this.botBuilderForm.get('name')?.setValue(this.botDetailsData.name)
@@ -1225,5 +1266,11 @@ viewBot(){
             this.router.navigate(['/bot-Creation']);
   
 }
+
+hasAdvanceAction(): boolean {
+  const actionIds = [1, 2, 3, 5, 6];
+  return this.assignedAgentList?.some(item => actionIds.includes(item.actionTypeId));
+}
+
   
 }
