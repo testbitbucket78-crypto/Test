@@ -77,7 +77,7 @@ const EmailConfigurations = {
 
   };
 
-async function whiteLableEmailConfiguration(userEmail) {
+async function whiteLableEmailConfiguration(userEmail, db) {
   try {
     const query = `
       SELECT 
@@ -105,7 +105,7 @@ async function whiteLableEmailConfiguration(userEmail) {
   }
 }
 
-async function findWhiteLableConfiguration(BrandName){
+async function findWhiteLableConfiguration(BrandName, db){
   try {
     const query = `
       SELECT 

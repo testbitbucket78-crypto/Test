@@ -179,7 +179,7 @@ const register = async function (req, res) {
             const token = jwt.sign({ email_id: registeredUser.email_id }, SECRET_KEY);
             let emailSender = MessagingName[Channel];
             
-            let whiteLableConfiguration = await whiteLableEmailConfiguration(email_id);
+            let whiteLableConfiguration = await whiteLableEmailConfiguration(email_id, db);
             emailSender = whiteLableConfiguration?.brandName || emailSender;
 
             const transporter = await getTransporter(emailSender);
@@ -267,7 +267,7 @@ const register = async function (req, res) {
 async function getTransporter(channel) {
     let senderConfig = EmailConfigurations[channel];
     if (!senderConfig) {
-        senderConfig = await findWhiteLableConfiguration(channel)
+        senderConfig = await findWhiteLableConfiguration(channel, db)
     }
 
     return nodemailer.createTransport({
@@ -304,9 +304,20 @@ const forgotPassword = async (req, res) => {
 
             var uid = results[0].uid
             let Channel = (await db.excuteQuery('select Channel from user where SP_ID = ? limit 1', [sp_id]))[0]?.Channel;
+
             let emailSender = MessagingName[Channel];
-            const transporter = getTransporter(emailSender);
-            const senderConfig = EmailConfigurations[emailSender];
+
+            let whiteLableConfiguration = await whiteLableEmailConfiguration(email_id, db);
+            emailSender = whiteLableConfiguration?.brandName || emailSender;
+
+            const transporter = await getTransporter(emailSender);
+
+            let senderConfig = EmailConfigurations[emailSender];
+
+                if (!senderConfig) {
+                    senderConfig = whiteLableConfiguration;
+                }
+
             // Encrypt
             var cipherdata = CryptoJS.AES.encrypt(JSON.stringify(uid), 'secretkey123').toString();
             // Save encrypted token against the user
