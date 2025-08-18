@@ -15,7 +15,7 @@ const logger = require('../common/logger.log');
 const moment = require('moment');
 const SECRET_KEY = 'RAUNAK'
 const mapCountryCode = require('../Contact/utils.js');
-const { EmailConfigurations } =  require('./constant');
+const { EmailConfigurations, whiteLableEmailConfiguration, findWhiteLableConfiguration } =  require('./constant');
 const { MessagingName,userStatus }= require('../enum');
 const middleWare = require('../middleWare')
 app.use(bodyParser.json());
@@ -178,8 +178,18 @@ const register = async function (req, res) {
             var registeredUser = await db.excuteQuery(val.registerQuery, values)   //need to change LoginIP in signup stored procedure
             const token = jwt.sign({ email_id: registeredUser.email_id }, SECRET_KEY);
             let emailSender = MessagingName[Channel];
-            const transporter = getTransporter(emailSender);
-            const senderConfig = EmailConfigurations[emailSender];
+            
+            let whiteLableConfiguration = await whiteLableEmailConfiguration(email_id);
+            emailSender = whiteLableConfiguration?.brandName || emailSender;
+
+            const transporter = await getTransporter(emailSender);
+
+            let senderConfig = EmailConfigurations[emailSender];
+
+                if (!senderConfig) {
+                    senderConfig = whiteLableConfiguration;
+                }
+
             let body = `
             Welcome to ${emailSender}, ${name}!
             Your account is all set and ready to go. Start exploring your new features and make the most out of our platform today!
@@ -254,10 +264,10 @@ const register = async function (req, res) {
 //     port: val.port,
 //     host: val.emailHost
 // });
-function getTransporter(channel) {
-    const senderConfig = EmailConfigurations[channel];
+async function getTransporter(channel) {
+    let senderConfig = EmailConfigurations[channel];
     if (!senderConfig) {
-        throw new Error(`Invalid channel: ${channel}`);
+        senderConfig = await findWhiteLableConfiguration(channel)
     }
 
     return nodemailer.createTransport({
