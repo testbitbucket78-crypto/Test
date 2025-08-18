@@ -9,7 +9,7 @@ import { environment } from 'environments/environment';
 })
 export class ProfileService {
 
-  API_URL:string=environment.cipApi;
+  API_URL:string=environment.settingAPI;
   private profilePictureSubject: BehaviorSubject<string>;
   public profilePicture$: Observable<string>;
 
