@@ -1854,14 +1854,14 @@ export class TeamboxComponent implements OnInit {
 				val.forEach(childObj => {
 					const parentObjIndex = item['messageList']?.findIndex((parentObj: any) => parentObj.date === childObj.date);
 					if (parentObjIndex !== -1) {
-						item['messageList'][parentObjIndex].items[item['messageList'][parentObjIndex].items.length - 1] = childObj.items[0];
+						item['messageList'][parentObjIndex].items[item['messageList'][parentObjIndex].items.length - 1] = childObj?.items[0];
 						if (idx != -1) {
-							this.interactionList[idx].message_text = childObj.items[0].message_text;
+							this.interactionList[idx].message_text = childObj?.items[0]?.message_text;
 							//this.interactionList[idx].message_media = 'text';
 							if(childObj?.items[0]?.msg_status ==3){
 								this.markItSeen();
 							}else{								
-								this.interactionList[idx].LastMessageDate = childObj.items[0].created_at;
+								this.interactionList[idx].LastMessageDate = childObj?.items[0]?.created_at;
 							}
 
 						}
