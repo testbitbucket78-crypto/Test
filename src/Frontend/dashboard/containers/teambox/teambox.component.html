@@ -96,6 +96,9 @@
 												{{getTime(item?.LastMessageDate)}}</p>
 											<!-- <span *ngIf="item.UnreadCount > 0" class="total_count green" [style.display]="item.UnreadCount === 0 ? 'none' : 'block'">{{item.UnreadCount}}</span> -->
 											<!-- <img *ngIf="item.channel=='WhatsApp'" class="icon" src="/assets/img/teambox/whatsapp-icon-l.svg" /> -->
+											 <div class="d-flex">
+											  <span *ngIf="item.UnreadCount > 0" class="total_count green mr-2"
+										[style.display]="item.UnreadCount === 0 ? 'none' : 'block'">{{item.UnreadCount}}</span>
 											<div class="image-container">
 												<img class="contact-whatsapp"
 													src="/assets/img/teambox/whatsapp-icon-l.svg">
@@ -106,6 +109,7 @@
 												<!-- <div *ngIf="item.channel=='WA API'" class="icon" class="hover-text2">
 												{{'WA API' + (item.connected_id ?'(' + item.connected_id + ')':'')}}
 											</div> -->
+											</div>
 											</div>
 										</div>
 									</div>
@@ -125,8 +129,8 @@
 											</div>
 										</div>
 									</div>
-									<span *ngIf="item.UnreadCount > 0" class="total_count green"
-										[style.display]="item.UnreadCount === 0 ? 'none' : 'block'">{{item.UnreadCount}}</span>
+									<!-- <span *ngIf="item.UnreadCount > 0" class="total_count green"
+										[style.display]="item.UnreadCount === 0 ? 'none' : 'block'">{{item.UnreadCount}}</span> -->
 								</div>
 							</div>
 						</div>

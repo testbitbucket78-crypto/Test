@@ -1574,7 +1574,9 @@ export class TeamboxComponent implements OnInit {
 				this.interactionList[idx]['LastMessageDate'] = item['allmessages'] ? item['allmessages'][item['allmessages'].length - 1]['created_at'] : [];
 				this.interactionList[idx]['UnreadCount'] = count;
 				this.updateUnreadCount();
-				this.interactionList = this.moveItemToFirstPosition(this.interactionList, idx);
+				if(item['allmessages'][item['allmessages'].length - 1]?.msg_status !=3){
+					this.interactionList = this.moveItemToFirstPosition(this.interactionList, idx);
+				}
 				this.interactionListMain = JSON.parse(JSON.stringify(this.interactionList));
 			}, 400)
 			console.log(this.interactionList[idx]);
@@ -1855,10 +1857,11 @@ export class TeamboxComponent implements OnInit {
 						item['messageList'][parentObjIndex].items[item['messageList'][parentObjIndex].items.length - 1] = childObj.items[0];
 						if (idx != -1) {
 							this.interactionList[idx].message_text = childObj.items[0].message_text;
-							this.interactionList[idx].LastMessageDate = childObj.items[0].created_at;
 							//this.interactionList[idx].message_media = 'text';
 							if(childObj?.items[0]?.msg_status ==3){
 								this.markItSeen();
+							}else{								
+								this.interactionList[idx].LastMessageDate = childObj.items[0].created_at;
 							}
 
 						}
