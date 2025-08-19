@@ -3,7 +3,7 @@ export const MAX_OPTIONS = 20;
 export const MAX_BUTTONS = 3;
 export const MAX_SECTIONS = 10;
 export const MAX_ROWS_PER_SECTION = 10;
-export const MAX_CHARACTERS = 1024;
+export const MAX_CHARACTERS = 15000;
 
 
 export const ALLOWED_OPERATORS = [
@@ -69,9 +69,12 @@ export const DEFAULT_TOOLS = {
 };
 
 export const PASTE_CLEANUP_SETTINGS = {
-    prompt: false,
-    plainText: true,
-    keepFormat: false
+prompt: false,          // Don't ask user what to do
+  plainText: true,        // Paste as plain text only
+  keepFormat: false,      // Remove formatting
+  cleanCss: true,         // Clean inline CSS
+  deniedTags: ['style'],  // Remove <style> tags
+  deniedAttrs: ['style']  // 
 };
 
 

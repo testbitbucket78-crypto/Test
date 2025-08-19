@@ -165,16 +165,34 @@
                             </div>
                         </div>
 
-                        <div class="trigger-group">
-                            <p class="trigger-label link">Smart reply trigger</p>
-                            <p class="trigger-info">Smart Reply Name 1 : <span>ID</span></p>
-                            <p class="trigger-info">Smart Reply Name 2 : <span>ID</span></p>
-                        </div>
+                      <div class="trigger-group">
+  <p class="trigger-label link">Smart reply trigger</p>
+  
+  <ng-container *ngIf="botDetailsData?.smartreplyusage?.length > 0; else noSmartReplies">
+    <p class="trigger-info" *ngFor="let reply of botDetailsData.smartreplyusage">
+      {{ reply.name }} : <span>{{ reply.Id }}</span>
+    </p>
+  </ng-container>
+  
+  <ng-template #noSmartReplies>
+    <p class="trigger-info">N/A</p>
+  </ng-template>
+</div>
 
-                        <div class="trigger-group">
-                            <p class="trigger-label link">Other bot triggers</p>
-                            <p class="trigger-info">Bot name : <span>ID</span></p>
-                        </div>
+<div class="trigger-group">
+  <p class="trigger-label link">Other bot triggers</p>
+  
+  <ng-container *ngIf="botDetailsData?.botusage?.length > 0; else noBotTriggers">
+    <p class="trigger-info" *ngFor="let bot of botDetailsData.botusage">
+      {{ bot.name }} : <span>{{ bot.Id }}</span>
+    </p>
+  </ng-container>
+  
+  <ng-template #noBotTriggers>
+    <p class="trigger-info">N/A</p>
+  </ng-template>
+</div>
+
                     </div>
                 </div>
                 <div class="d-flex w-100 pb-4 category_section">
@@ -222,90 +240,78 @@
                     <div class="advance-body" *ngIf="showOptions">
                         <div class="label timeout">Timeout Message</div>
 
-                        <div class="view-only-message" [innerHTML]="botBuilderForm.get('dropOfMessage')?.value">
+                        <div class="view-only-message" [innerHTML]="botBuilderForm.get('dropOfMessage')?.value || 'N/A'">
                         </div>
 
                         <div class="label timeout">Advance Action</div>
                         <div class="form-group position-relative">
 
-                            <div class="interactions">
-                                <div class="child-int-1 py-2">
-                                    <div #chatSection class="child-interaction-1">
-                                        <div *ngFor="let message of assignedAgentList; let i = index">
-                                            <div *ngIf="message.actionTypeId == 2"
-                                                class="d-flex justify-content-between align-items-center">
-                                                <div class="">
-                                                    <div class="d-flex flex-wrap assign-container">
-                                                        <p class="py-1 px-2 m-0" id="msgbox-body12">
-                                                            <b>Conversation Assigned:</b>
-                                                        </p>
-                                                        <p class="py-1 m-0" id="msgbox-body2">{{
-                                                            message.Value }}</p>
-                                                    </div>
-                                                </div>
-                                            </div>
+                         <div class="interactions">
+  <div class="child-int-1 py-2">
+    <div #chatSection class="child-interaction-1">
 
-                                            <div *ngIf="message.actionTypeId === 5"
-                                                class="d-flex justify-content-between align-items-center">
-                                                <div class=" ">
+      <!-- Check if any message has advance action -->
+      <ng-container *ngIf="hasAdvanceAction(); else noActionsFound">
+        <div *ngFor="let message of assignedAgentList; let i = index">
+          <!-- Conversation Assigned -->
+          <div *ngIf="message.actionTypeId == 2" class="d-flex justify-content-between align-items-center">
+            <div class="d-flex flex-wrap assign-container">
+              <p class="py-1 px-2 m-0"><b>Conversation Assigned:</b></p>
+              <p class="py-1 m-0">{{ message.Value }}</p>
+            </div>
+          </div>
 
-                                                    <div class="d-flex flex-wrap assign-container">
-                                                        <p class="py-1 px-2 m-0" id="msgbox-body12">
-                                                            <b>Owner Assignment:</b>
-                                                        </p>
-                                                        <p class="py-1 m-0" id="msgbox-body2">{{
-                                                            message.Value }}</p>
-                                                    </div>
-                                                </div>
-                                            </div>
+          <!-- Owner Assignment -->
+          <div *ngIf="message.actionTypeId === 5" class="d-flex justify-content-between align-items-center">
+            <div class="d-flex flex-wrap assign-container">
+              <p class="py-1 px-2 m-0"><b>Owner Assignment:</b></p>
+              <p class="py-1 m-0">{{ message.Value }}</p>
+            </div>
+          </div>
 
-                                            <div *ngIf="message.actionTypeId === 6"
-                                                class="d-flex justify-content-between align-items-center">
-                                                <div class=" ">
+          <!-- Unassignment -->
+          <div *ngIf="message.actionTypeId === 6" class="d-flex justify-content-between align-items-center">
+            <div class="d-flex flex-wrap assign-container">
+              <p class="py-1 px-2 m-0"><b>Unassignment:</b></p>
+              <p class="py-1 m-0">{{ message.Value }}</p>
+            </div>
+          </div>
 
-                                                    <div class="d-flex flex-wrap assign-container">
-                                                        <p class="py-1 px-2 m-0" id="msgbox-body12">
-                                                            <b>Unassignment:</b>
-                                                        </p>
-                                                        <p class="py-1 m-0" id="msgbox-body2">{{
-                                                            message.Value }}</p>
-                                                    </div>
-                                                </div>
-                                            </div>
+          <!-- Add Tags -->
+          <div *ngIf="message.actionTypeId == 1 && message.Value?.length > 0"
+            class="d-flex justify-content-between align-items-center">
+            <div class="d-flex flex-wrap assign-container">
+              <p class="p-1 m-0"><b>Add Tags:</b>
+                <span *ngFor="let item of message.Value; let last = last">
+                  {{ item }}<span *ngIf="!last">,</span>
+                </span>
+              </p>
+            </div>
+          </div>
 
-                                            <div *ngIf="message.actionTypeId == 1 && message.Value?.length > 0"
-                                                class="d-flex justify-content-between align-items-center">
-                                                <div class=" ">
-                                                    <div class="d-flex flex-wrap assign-container">
-                                                        <p class="p-1 m-0" id="msgbox-body12">
-                                                            <b>Add Tags: </b>
-                                                            <span class="pl-1"
-                                                                *ngFor="let item of message.Value; let last = last">
-                                                                {{ item }}<span *ngIf="!last">,</span>
-                                                            </span>
-                                                        </p>
-                                                    </div>
-                                                </div>
-                                            </div>
+          <!-- Remove Tags -->
+          <div *ngIf="message.actionTypeId == 3 && message.Value?.length > 0"
+            class="d-flex justify-content-between align-items-center">
+            <div class="d-flex flex-wrap assign-container">
+              <p class="p-1 m-0"><b>Remove Tags:</b>
+                <span *ngFor="let item of message.Value; let last = last">
+                  {{ item }}<span *ngIf="!last">,</span>
+                </span>
+              </p>
+            </div>
+          </div>
+        </div>
+      </ng-container>
 
-                                            <div *ngIf="message.actionTypeId == 3 && message.Value?.length > 0"
-                                                class="d-flex justify-content-between align-items-center">
-                                                <div class=" ">
-                                                    <div class="d-flex flex-wrap assign-container">
-                                                        <p class="p-1 m-0" id="msgbox-body12">
-                                                            <b>Remove Tags: </b>
-                                                            <span class="pl-1"
-                                                                *ngFor="let item of message.Value; let last = last">
-                                                                {{ item }}<span *ngIf="!last">,</span>
-                                                            </span>
-                                                        </p>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
+      <!-- Fallback: No Advance Actions -->
+      <ng-template #noActionsFound>
+        <p class="text-muted">N/A</p>
+      </ng-template>
+
+    </div>
+  </div>
+</div>
+
                         </div>
 
                     </div>
@@ -315,7 +321,7 @@
 
                 </div>
 
-                <div class="flex-row pt-4 textcenter">
+                <div class="flex-row pt-4 textcenter" *ngIf="botDetailsData?.status != 'draft'">
                     <div class="d-flex align-items-center gap-2">
 <sb-tooltip
 style="margin-right: 9px;"
@@ -546,6 +552,9 @@ style="margin-right: 9px;"
                 <label>To Date:</label>
                 <input type="date" class="form-control" formControlName="toDate" [max]="maxSelectableDate"
                     (change)="validateDate()" />
+                    <div *ngIf="dateRangeForm.get('dateOption')?.touched && dateRangeForm.get('dateOption')?.hasError('required')" class="text-danger">
+  Please select a date option.
+</div>
 
                 <div *ngIf="dateError" class="text-danger">{{ dateError }}</div>
             </div>
@@ -580,7 +589,7 @@ style="margin-right: 9px;"
                             <div id="logins-part" class="content fade active dstepper-block" role="tabpanel" aria-labelledby="logins-part-trigger">
                                 <div class="box" [formGroup]="botBuilderForm">
                                     <h5>Bot Name<span class="text-danger"> * </span></h5>
-                                    <input class="form-control" type="text" name="Title" id="Title" formControlName="name" placeholder="Enter title in max 50 character" maxlength="50" (change)="checkBotName($event)" />
+                                    <input class="form-control" type="text" name="Title" id="Title" formControlName="name" placeholder="Enter bot name in max 50 characters" maxlength="50" (change)="checkBotName($event)" />
                                     <div
                                         class="text-danger dangerText"
                                         *ngIf="
@@ -756,10 +765,7 @@ style="margin-right: 9px;"
                                                     <p
                                                         class="d-flex justify-content-around"
                                                         *ngFor="let assignAction of assignActionList;let m = index" (click)="toggleAssignOption(m)" [class.disabled-option]="isOptionDisabled(assignAction.value)"
-                                                        [class.selected-option]="
-                                                            selectedExclusiveAction ===
-                                                            assignAction.value
-                                                        "
+                                                        [class.selected-option]="selectedExclusiveAction ===assignAction.value"
                                                     >
                                                         <span>{{ assignAction.name }}</span>
                                                         <img class="pr-3 arrow-sign" *ngIf="assignAction?.children" src="../../../../assets/img/arrow-sign.svg" />
@@ -982,7 +988,7 @@ style="margin-right: 9px;"
                                 <div class="box" [formGroup]="botBuilderForm">
                                     <h5>Bot Name<span class="text-danger"> * </span></h5>
                                     <input class="form-control" type="text" formControlName="name" maxlength="50"
-                                        placeholder="Enter title in max 50 character" (change)="checkBotName($event)" />
+                                        placeholder="Enter bot name in max 50 characters" (change)="checkBotName($event)" />
 
                                     <div *ngIf="errorMessageBot" class="text-danger small"
                                         style="font-size: 10px; margin: 0px 51px">
@@ -1198,6 +1204,8 @@ style="margin-right: 9px;"
                                                         <p>No Data Available.</p>
                                                     </div>
                                                 </div>
+                                                 <div *ngIf="ShowAssignOption" class="modal-backdrop-custom" (click)="closeAssignTo()"></div>
+
 
                                                 <div class="interactions">
                                                     <div class="child-int-1 py-2">

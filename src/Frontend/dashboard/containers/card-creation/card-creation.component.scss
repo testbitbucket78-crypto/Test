@@ -754,12 +754,12 @@ button.btn-outline-primary {
 }
 
 .scroller {
-    margin-top: 84px;
+    margin-top: 23px;
     max-height: 767px !important;
     margin-left: 10px;
     overflow-y: auto !important;
     padding-right: 8px !important;
-    margin-bottom: 12px;
+    margin-bottom: -37px;
 }
 
 .editor-toolbar .toolbar-btn {
@@ -2356,11 +2356,11 @@ textarea.form-control {
 
 .select_box {
 
-    background: #fff url("/assets/img/teambox/dropdown.svg") no-repeat;
+    background: url("/assets/img/teambox/dropdown.svg") no-repeat;
     background-size: 9px;
     /* background-position: center right 145px; */
     position: absolute;
-    left: 252px;
+    left: 314px;
     top: 71%;
     transform: translateY(-50%);
     width: 20px;
@@ -2505,17 +2505,17 @@ label.form-label {
 }
 
 
-.e-richtexteditor .e-rte-character-count {
-    top: -26px !important;
-    color: #000000  !important;
-    font-size: 12px !important;
-    margin-right: 65px;
-    opacity: 0.54;
-    padding-bottom: 2px;
-    position: absolute;
-    right: 0;
-    z-index: 100;
-}
+// .e-richtexteditor .e-rte-character-count {
+//     top: -26px !important;
+//     color: #000000  !important;
+//     font-size: 12px !important;
+//     margin-right: 65px;
+//     opacity: 0.54;
+//     padding-bottom: 2px;
+//     position: absolute;
+//     right: 0;
+//     z-index: 100;
+// }
 
 
 
@@ -2875,13 +2875,23 @@ label.form-label {
 }
 
 
-.popup-dialog.mention.ng-star-inserted {
-    max-width: 220px;
-    margin-top: -217px;
-    margin-left: 238px;
-}
-  
 
+
+.mention-container {
+  position: relative;
+  display: inline-block;
+}
+
+.popup-dialog.mention {
+    position: absolute;
+    top: 39%;
+    left: 54%;
+    max-width: 220px;
+    background: #fff;
+    box-shadow: 0px 4px 20px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+    z-index: 1000;
+}
 .popup-dialog {
     background: #FFFFFF 0% 0% no-repeat padding-box;
     box-shadow: 4px 22px 54px rgba(105, 95, 151, 0.1882352941);
@@ -3009,23 +3019,7 @@ label.form-label {
 
 #add-action-dropdown {
     position: absolute;
-    bottom: 11px;
-    right: 59px;
-    background: #ffffff;
-    font-size: 11px;
-    font-family: "Manrope";
-    font-weight: 700;
-    border: 1px solid #ebebeb;
-    border-radius: 15px;
-    width: auto;
-    padding: 4px 10px;
-    height: auto;
-    color: #6149cd;
-    z-index: 99999;
-}
-#add-action-dropdown {
-    position: absolute;
-    bottom: 11px;
+    bottom: 21px;
     right: 59px;
     background: #ffffff;
     font-size: 11px;
@@ -3040,9 +3034,10 @@ label.form-label {
     z-index: 99999;
 }
 
+
 #add-action-dropdowns {
     position: absolute;
-    bottom: 11px;
+    bottom: 21px;
     right: 28px;
    
     font-size: 11px;
@@ -3169,18 +3164,12 @@ label.form-label {
 .modal-body.scr {
   overflow-y: auto;
   max-height: 60vh; /* Adjust this based on screen */
-  
-  /* Hide scrollbar visually but keep scroll */
-  scrollbar-width: none;         /* Firefox */
-  -ms-overflow-style: none;      /* IE and Edge */
+       /* Firefox */
 }
-
-.modal-body.scr::-webkit-scrollbar {
-  display: none;                 /* Chrome, Safari */
-
-
+p span {
+    font-size: 12px !important;
+    color: #000000 !important;
 }
-
 
 .alertmessage   p.label {
     text-align: center;
@@ -3239,11 +3228,11 @@ ejs-richtexteditor .e-rte-content .e-content
 }
 
 .question_text_label{
-  font-size: 14px; color: #374151; font-weight: 500; margin-bottom: -25px;
+  font-size: 14px; color: #374151; font-weight: 500; 
 }
 
 .Invalid_response_action{
-  font-size: 14px; color: #374151; font-weight: 500; margin-bottom: 8px; display: block;
+  font-size: 14px; color: #374151; font-weight: 500;  display: block;
 }
 
 .character_class{
@@ -3264,3 +3253,95 @@ display: block;
 padding: 10px 12px;
 font-size: 14px;
 }
+
+
+.e-richtexteditor   .e-rte-character-count {
+    position: absolute !important;
+    top: -36px !important;
+    right: 60px;
+    z-index: 100;
+    font-size: 12px !important;
+    color: #000000;
+    margin: 0;
+    padding-bottom: 2px;
+    /* background: #fff; */
+    padding: 2px 6px;
+    border-radius: 4px;
+}
+
+
+
+/* Target only the mention_integration RTE character counter */
+#mention_integration .e-rte-character-count {
+  position: absolute !important;
+  top: -26px !important; /* Adjust to fit above the editor */
+  right: 20px !important; /* Adjust based on padding/margin */
+  font-size: 12px !important;
+  color: #6b7280;
+  opacity: 1;
+  z-index: 10;
+  background-color: white; /* optional for better visibility */
+  padding: 2px 6px;
+  border-radius: 4px;
+}
+
+
+
+.character-label-wrapper {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.character-label-wrapper01 {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+      margin-bottom: 16px;
+}
+
+.character-count {
+  font-size: 13px;
+  color: rgba(0, 0, 0, 0.54);
+  margin-bottom: 0;
+}
+.character-count01 {
+  font-size: 13px;
+  color: rgba(0, 0, 0, 0.54);
+  margin-bottom: -3px;
+      margin-right: -5px;
+}
+
+.character-count02 {
+    font-size: 13px;
+    color: rgba(0, 0, 0, 0.54);
+    // margin-bottom: -3px;
+    margin-right: 35px;
+}
+
+
+
+
+sb-top-nav {
+  position: relative; /* or fixed if it's a fixed header */
+  z-index: 1040; /* Lower than modal */
+  width: 100%;
+}
+
+
+/* Fix for RTE toolbar in modal */
+.e-richtexteditor .e-rte-toolbar {
+  position: sticky !important;
+
+}
+
+
+.e-richtexteditor.e-rte-tb-expand .e-rte-toolbar.e-rte-tb-float {
+    border-bottom: none !important;
+    border-right: none !important;
+    border-top: none !important;
+}
+/* Modal content adjustments */
+
+/* RTE wrapper */
+
+

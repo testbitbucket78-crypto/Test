@@ -85,6 +85,7 @@ export class CardCreationComponent {
   holidays: { date: string }[] = [];
 
 
+
   isAttachmentMedia: boolean = false;
   // Component state
   showLock = true;
@@ -263,6 +264,7 @@ onDocumentClick(event: MouseEvent): void {
     this.getTagData();
     this.getBotDetails()
     this.getWhatsAppDetails()
+    this.getChannelWhatsAppOrWeb()
     if (environment.chhanel == 'api') {
       this.getWhatsAppFormList()
     }
@@ -275,9 +277,6 @@ onDocumentClick(event: MouseEvent): void {
   getStaticData() {
 
     this.filteredAgents = this.botService.FILTERED_AGENTS
-    // this.availableAgents = this.botService.AVAILABLE_AGENTS;
-    // this.attributeList = this.botService.ATTRIBUTE_LIST;
-    // this.sampleVariables = this.botService.SAMPLE_VARIABLES;
     this.botsList = this.botService.AVAILABLE_BOTS;
 
 
@@ -341,14 +340,13 @@ onDocumentClick(event: MouseEvent): void {
 
       const source = connection.output_id;
       const target = connection.input_id;
-      console.log(target)
+
 
 
 
       const homeCardId: any = Object.keys(drawflowData).find(key =>
         drawflowData[key].name === 'home'
       );
-      console.log("source", source, homeCardId)
       var count = 0
       // 2. If this is a connection FROM the home card
       if (source === homeCardId) {
@@ -420,6 +418,7 @@ onDocumentClick(event: MouseEvent): void {
     });
 
     if (localStorage.getItem('node_FE_Json')) {
+      this.botVariables = JSON.parse(localStorage.getItem('botVarList') || '[]');
 
       var data: any = localStorage.getItem('node_FE_Json')
       this.loadFlow(JSON.parse(data))
@@ -437,7 +436,7 @@ drawflowCanvas.addEventListener('contextmenu', (e) => e.preventDefault());
 
 // Right-click down
 drawflowCanvas.addEventListener('mousedown', (e) => {
-  console.log(e)
+  
   if (e.button === 2 || e.button == 0) { // Right click
     isRightClickDragging = true;
     drawflowCanvas.classList.add('dragging');
@@ -498,7 +497,7 @@ document.addEventListener('mouseup', (e) => {
 
   updateOutputStylesInHtml(nodeId: number): void {
     const nodeData = this.editor.drawflow?.drawflow.Home?.data?.[nodeId];
-    console.log(nodeData)
+
     if (!nodeData || !nodeData.html) return;
 
     // Create temp container to modify HTML
@@ -593,7 +592,7 @@ document.addEventListener('mouseup', (e) => {
 
   private initQuestionOptionForm(): void {
     this.questionOption = this.fb.group({
-      questionText: ['', [Validators.required, Validators.maxLength(4056)]],
+      questionText: ['', [Validators.required]],
       questionTextMessage: [''],
       options: this.fb.array([this.createOptionControl()], [this.atLeastOneOptionRequired()]),
       saveAnswerVariable: [''],
@@ -638,7 +637,6 @@ atLeastOneOptionRequired(): ValidatorFn {
 
 
   getPromptMessage(): string {
-    console.log(this.options)
   const count = this.options.length;
   return `Please type a number from 1 to ${count} for your reply`;
 }
@@ -664,6 +662,26 @@ atLeastOneOptionRequired(): ValidatorFn {
       enableValidation: [false]
     });
 
+
+
+        this.buttonOptions.get('buttons')?.valueChanges.subscribe(value => {
+           this.changeDetectorRef.detectChanges();
+          this.atLeastOneAndUniqueButtons();
+        });
+
+    this.buttonOptions.get('headerType')?.valueChanges.subscribe(value => {
+  const headerControl = this.buttonOptions.get('fileLink'); // or 'headerText' depending on your control name
+
+  if (['image', 'video', 'document'].includes(value)) {
+    headerControl?.setValidators([Validators.required]);
+  } else {
+    headerControl?.clearValidators();
+  }
+
+  headerControl?.updateValueAndValidity();
+});
+
+
     this.setupFormListeners(this.buttonOptions);
   }
 
@@ -671,12 +689,13 @@ atLeastOneAndUniqueButtons() {
   return (formArray: AbstractControl): ValidationErrors | null => {
     const controls = (formArray as FormArray).controls;
 
-    const filledValues = controls
-      .map(ctrl => ctrl.value?.trim())
-      .filter(val => val); // only non-empty values
+    // Normalize: trim + lowercase
+    const normalizedValues = controls
+      .map(ctrl => ctrl.value?.trim().toLowerCase())
+      .filter(val => val); // exclude empty/null
 
-    const hasAtLeastOne = filledValues.length > 0;
-    const hasDuplicates = new Set(filledValues).size !== filledValues.length;
+    const hasAtLeastOne = normalizedValues.length > 0;
+    const hasDuplicates = new Set(normalizedValues).size !== normalizedValues.length;
 
     if (!hasAtLeastOne) {
       return { atLeastOneRequired: true };
@@ -714,6 +733,12 @@ atLeastOneAndUniqueButtons() {
       this.listOptions.valueChanges.subscribe(() => {
     this.changeDetectorRef.detectChanges();
   });
+
+     this.listOptions.get('sections')?.valueChanges.subscribe(value => {
+           this.changeDetectorRef.detectChanges();
+          this.uniqueRowNamesValidator();
+          this.sectionHeadingValidator();
+        });
     this.setupFormListeners(this.listOptions);
   }
 
@@ -728,14 +753,16 @@ uniqueRowNamesValidator(): ValidatorFn {
     sectionsArray.controls.forEach((section: AbstractControl) => {
       const rows = (section as FormGroup).get('rows') as FormArray;
       rows.controls.forEach((row: AbstractControl) => {
-        const rowName = row.get('rowName')?.value?.trim();
-        if (rowName) {
-          if (allRowNames.includes(rowName)) {
+        // const rowName = row.get('rowName')?.value?.trim();
+        const rawValue = row.get('rowName')?.value;
+        const normalizedValue = rawValue?.trim().toLowerCase();
+        if (normalizedValue) {
+          if (allRowNames.includes(normalizedValue)) {
             duplicateFound = true;
             // Mark the control as invalid
             row.get('rowName')?.setErrors({ notUnique: true });
           } else {
-            allRowNames.push(rowName);
+            allRowNames.push(normalizedValue);
           }
         }
       });
@@ -804,7 +831,7 @@ uniqueRowNamesValidator(): ValidatorFn {
       bodyText: ['', [Validators.required, Validators.maxLength(this.MAX_CHARACTERS)]],
       footerText: ['', [Validators.maxLength(60)]],
       whatsAppFormName: ['', [Validators.required,Validators.maxLength(20)]],
-      selectedForm: [null],
+      selectedForm: ['', Validators.required],
       reattemptsAllowed: [false],
       reattemptsCount: [1],
       errorMessage: ['', [Validators.maxLength(this.MAX_CHARACTERS)]],
@@ -856,7 +883,7 @@ uniqueRowNamesValidator(): ValidatorFn {
 
   private noteAndMentionForm(): void {
     this.notesmentionForm = this.fb.group({
-      message: ['', [Validators.maxLength(1024)]],
+      message: [''],
       file: [''],
       mediaType: ['']
     });
@@ -1020,7 +1047,7 @@ createCombinedVariable() {
   }
 
   private handleContentSubmit(): void {
-
+    console.log("this.sendTextForm", this.sendTextForm.invalid);
     if (this.sendTextForm.invalid) {
       this.sendTextForm.markAllAsTouched();
       return;
@@ -1067,7 +1094,6 @@ formData.options = ["True", "False"];
   }
 
   private handleQuestionSubmit(formType: string): void {
-    console.log("formType", formType)
     let form: FormGroup;
     let formData: any;
 
@@ -1116,9 +1142,12 @@ formData.options = ["True", "False"];
       };
 
       // Check if variable with same name AND type already exists
-      const variableExists = this.botVariables.some(
-        v => v.name === newVariable.name && v.dataType === newVariable.dataType
-      );
+  const variableExists = this.botVariables.some(
+  v =>
+    v.name.trim().toLowerCase() === newVariable.name.trim().toLowerCase() &&
+    v.dataType === newVariable.dataType
+);
+
 
       if (!variableExists) {
         this.botVariables.push(newVariable);
@@ -1149,7 +1178,6 @@ formData.options = ["True", "False"];
 
     const advanceOption = { type: formType, data: {} as any };
 
-    console.log(this.notificationForm.value)
 
 
 
@@ -1204,8 +1232,7 @@ formData.options = ["True", "False"];
         break;
       case 'AddTags':
       case 'RemoveTag':
-        console.log("this.selectedTags",this.selectedTags)
-        console.log("this.operationOptions",this.operationOptions)
+
         if (this.selectedTags.length <= 0) {
           this.showToaster('Please select Tag and Operation','error')
           return
@@ -1215,13 +1242,11 @@ formData.options = ["True", "False"];
           tags: this.selectedTags,
           operation: this.operationOptions
         };
-        console.log("advanceOption", advanceOption)
         break;
 
     }
 
       this.closeModal();
-    console.log(this.dynamiceEditor, 'this.dynamiceEditor')
     if (this.isEditMode && this.selectedNodeId !== null) {
       // Update existing node logic
       this.updateAdvanceNode(advanceOption)
@@ -1287,19 +1312,16 @@ formData.options = ["True", "False"];
 
     hasNodes = Object.keys(exportData.drawflow?.Home?.data).length > 0;
     let outputs = this.calculateOutputCount(formData);
-    console.log("this.cardType", this.cardType)
-    console.log("this.cardType", this.ParentNodeType)
 
     if (this.cardType == 'assignAgentModal' || this.cardType == 'assigntoContactOwner' || this.cardType == 'UnassignConversation' || this.cardType == 'UpdateConversationStatus' || this.cardType == 'BotTriggerModal') {
       outputs = 0;
     }
 
     if (this.cardType == 'setCondition' || this.cardType == 'WorkingHoursModal') {
-      outputs = 3
+      outputs = 2
     }
 
 
-    console.log('Creating new node with data:', outputs);
 
 
     const postData = {
@@ -1314,7 +1336,7 @@ formData.options = ["True", "False"];
         uniqueId: this.getUniqueId(),
         formData,
         file: formData.file,
-        fileName: formData.file?.name || null,
+        fileName: formData.file?.name || this.uploadedFile?.name || null,
         fileType: formData.file?.type || null,
       },
       html: '<div class="temp-placeholder">Loading...</div>',
@@ -1341,7 +1363,6 @@ formData.options = ["True", "False"];
     }
     if (!hasNodes) {
       setTimeout(() => {
-        console.log("'home', nodeId, 'output_1', 'input_1'", nodeId - 1, nodeId, 'output_1', 'input_1')
         this.editor.addConnection(nodeId - 1, nodeId, 'output_1', 'input_1');
         this.isLoading = false
       }, 100);
@@ -1378,7 +1399,7 @@ formData.options = ["True", "False"];
   }
 
   private setOutputPositionsBasedOnType(nodeId: any, formData: any): void {
-    console.log("nodeId: any, formData: any",nodeId, formData)
+    console.log('ParentNodeType:', formData);
     if (this.ParentNodeType === 'listOptions') {
       this.setOutputPositionsForList(nodeId, formData);
     } else {
@@ -1387,7 +1408,6 @@ formData.options = ["True", "False"];
   }
 
   private setOutputPositions(nodeId: number, fallbackAction: string = ''): void {
-    console.log(nodeId, fallbackAction)
     const node = document.getElementById(`node-${nodeId}`);
     if (!node) return;
 
@@ -1395,15 +1415,23 @@ formData.options = ["True", "False"];
     if (outputs.length === 0) return;
 
     // Position first output
-    const output1 = outputs[0] as HTMLElement;
-    output1.style.position = 'absolute';
-    output1.style.top = '20px';
+     if (this.cardType == 'setCondition' || this.cardType == 'WorkingHoursModal') {
+     
+       const output1 = outputs[0] as HTMLElement;
+       output1.style.position = 'absolute';
+       output1.style.bottom = `75px`;
+       output1.style.top = 'unset';
+    }else{
+             const output1 = outputs[0] as HTMLElement;
+       output1.style.position = 'absolute';
+       output1.style.top = '20px';
+    }
+    
 
     let remainingOutputs = Array.from(outputs).slice(1);
 
     if (fallbackAction === "fallback") {
       const output2 = outputs[1] as HTMLElement;
-      console.log("output2",output2)
       if(output2 != undefined){
         output2.style.position = 'absolute';
         output2.style.top = '41px';
@@ -1457,7 +1485,7 @@ formData.options = ["True", "False"];
   }
 
    getTrimmedText = (text: string | undefined) =>{
-    console.log(text)
+    
     const maxLength = 132;
   return text && text.length > maxLength ? text.slice(0, maxLength) + ' ...' : text || 'Sample Text';
   }
@@ -1584,11 +1612,9 @@ formData.options = ["True", "False"];
   private createMediaContent(nodeData: any): string {
     let mediaContent = '<div class="textContImage">';
     var mediaSrc = nodeData.file ? this.filePreview || this.selectedImageUrl : 'assets/img/not_found.jpg';
-
-    if (mediaSrc == null) {
+    if (mediaSrc == null || mediaSrc == undefined || mediaSrc == '') {
       mediaSrc = nodeData.file
     }
-    console.log("nodeData", nodeData)
 
     if (this.cardType === 'sendImage' || nodeData.mediaType == "image/png") {
       mediaContent += `<img alt="Image Preview" src="${mediaSrc}" class="Preview" style="max-width: 100%;" class="mb-2" />`;
@@ -1622,7 +1648,7 @@ formData.options = ["True", "False"];
   }
 
   private createButtonOptionsContent(nodeId: any, nodeData: any, formData: any): string {
-    console.log("nodeId: any, nodeData: any, formData: any",nodeId, nodeData, formData)
+    
     let content = '<div class="textQuestion">';
 
     if (formData.headerText) {
@@ -1657,7 +1683,7 @@ formData.options = ["True", "False"];
 
   private createHeaderMediaContent(nodeData: any, headerType: string): string {
     let mediaContent = '<div class="textContImage">';
-    console.log(nodeData)
+    
     if(nodeData.file == null){
       nodeData.file = nodeData.formData.fileLink
     }
@@ -1757,7 +1783,7 @@ formData.options = ["True", "False"];
     content += `<div class="buttons">${buttonHTML}</div>`;
 
 
-    console.log(content)
+    
 
 
     return content;
@@ -1934,7 +1960,7 @@ formData.options = ["True", "False"];
         deleteNodeIconClick.removeEventListener('click', this.handleDeleteClick);
         this.handleDeleteClick = (event: Event) => {
           event.stopPropagation();
-          console.log(nodeId)
+          
           this.deletNodeId = nodeId
           $('#deletBotCard').modal('show')
         };
@@ -2072,7 +2098,7 @@ formData.options = ["True", "False"];
   addOption(options: FormArray): void {
     const lastOption = options.at(options.length - 1).value;
 
-    if ((!lastOption || lastOption.trim() === '') && options.length > 1) {
+    if ((!lastOption || lastOption.trim() === '') && options.length >= 1) {
       this.newOptionError = 'Please fill the previous option before adding a new one.';
       return;
     }
@@ -2167,9 +2193,9 @@ formData.options = ["True", "False"];
 
 
   canAddSection(): boolean {
-    console.log("this.listOptions",this.listOptions)
-    console.log("this.listOptions",this.listOptionSections)
-    console.log("this.listOptions",this.listOptionSections.length > 1)
+    
+    
+    
   if (!this.listOptions || !this.listOptionSections) return false;
   
   // Check if maximum sections reached
@@ -2273,13 +2299,20 @@ formData.options = ["True", "False"];
     this.selectedImageUrl = null;
     const fileInput = document.querySelector('input[type="file"]') as HTMLInputElement;
     if (fileInput) fileInput.value = '';
+
+    const fileControl = this.buttonOptions.get('fileLink');
+if (fileControl) {
+  fileControl.setValue(null);  // Clear value
+  fileControl.markAsTouched(); // Optional: force error display if required
+  fileControl.updateValueAndValidity(); // Recalculate validations
+}
   }
 
   // ==================== EDIT NODE HANDLING ====================
 
   openEditModal(nodeId: number): void {
 
-    console.log(nodeId)
+    
     this.closeModal();
     this.isEditMode = true;
     this.selectedNodeId = nodeId;
@@ -2297,11 +2330,11 @@ formData.options = ["True", "False"];
   }
 
   private fillExistingData(nodeData: any): void {
-    console.log(nodeData)
+    
     if (this.selectedNodeId === null) return;
     const nodeElement = document.getElementById(`node-${this.selectedNodeId}`);
     this.selectedImageUrl = null;
-    console.log(this.cardType,nodeData)
+    
 
     switch (this.cardType) {
       case 'sendText':
@@ -2349,6 +2382,7 @@ formData.options = ["True", "False"];
     }
   }
 
+  fileName: string = '';
   private fillSendTextData(nodeData: any): void {
     this.sendTextForm.patchValue({
       textMessage: nodeData.data.formData.textMessage === 'Sample Text'
@@ -2361,6 +2395,10 @@ formData.options = ["True", "False"];
   private fillMediaData(nodeElement: HTMLElement | null, nodeData: any): void {
     this.selectedFileType = this.cardType === 'sendDocument' ? 'image' :
       this.cardType === 'sendVideo' ? 'video' : 'image';
+
+      if (this.cardType == 'sendDocument' || this.selectedFileType == "image") {
+        this.fileName = nodeData?.data?.fileName;
+      }
 
     if (nodeElement) {
       const mediaElement = nodeElement.querySelector('.textContImage img, .textContImage video');
@@ -2543,8 +2581,8 @@ formData.options = ["True", "False"];
   private fillassignAgentModal(nodeData: any): void {
     const updateForm = nodeData?.data?.formData?.data
     ;
-    console.log("updateForm",nodeData)
-    console.log("updateForm",updateForm)
+    
+    
 this.selectedAgentDetails = updateForm
   }
 
@@ -2566,7 +2604,7 @@ this.operationOptions = updateForm.operation
 
   fillNotificationData(nodeData: any) {
     const updateForm = nodeData?.data?.formData;
-    console.log("updateForm======", updateForm)
+    
     this.dynamiceEditor = this.chatEditorElement
 
     this.notificationForm.patchValue({
@@ -2576,7 +2614,7 @@ this.operationOptions = updateForm.operation
       file: updateForm.data.file,
       mediaType: updateForm.data.mediaType
     })
-    console.log(updateForm.data.file)
+    
     if (updateForm.data.file != null) {
       setTimeout(() => {
         this.attachMedia(updateForm.data.file, updateForm.data.mediaType)
@@ -2587,7 +2625,7 @@ this.operationOptions = updateForm.operation
   fillNotesMentionModalData(nodeData: any) {
     const updateForm = nodeData?.data?.formData;
     this.dynamiceEditor = this.chatEditors
-    console.log("updateForm======", updateForm)
+    
 
     this.notesmentionForm.patchValue({
       message: updateForm.data.message,
@@ -2602,66 +2640,142 @@ this.operationOptions = updateForm.operation
   }
   // ==================== COPY NODE HANDLING ====================
 
+  // copyNode(nodeId: number): void {
+  //   const originalNode = this.editor.getNodeFromId(nodeId);
+  //   if (!originalNode) return;
+
+  //   const nodeCopy = JSON.parse(JSON.stringify(originalNode));
+  //   nodeCopy.id = this.getUniqueId();
+  //   nodeCopy.data.uniqueId = this.getUniqueId();
+  //   nodeCopy.pos_x += 100;
+  //   nodeCopy.pos_y += 50;
+
+  //   // Recreate inputs/outputs
+  //   nodeCopy.inputs = {};
+  //   nodeCopy.outputs = {};
+
+  //   Object.keys(originalNode.inputs).forEach(inputKey => {
+  //     nodeCopy.inputs[inputKey] = { connections: [] };
+  //   });
+
+  //   Object.keys(originalNode.outputs).forEach(outputKey => {
+  //     nodeCopy.outputs[outputKey] = { connections: [] };
+  //   });
+
+  //   this.cardType = nodeCopy?.data?.text;
+  //   this.ParentNodeType = nodeCopy?.data?.category;
+
+  //   const postData = {
+  //     name: nodeCopy.name,
+  //     inputs: 1,
+  //     outputs: Object.keys(nodeCopy.outputs).length,
+  //     data: {
+  //       text: nodeCopy?.data.text,
+  //       inputsCount: 1,
+  //       maxButtonLimit: 3,
+  //       category: nodeCopy?.data.category,
+  //       uniqueId: this.getUniqueId(),
+  //       formData: nodeCopy?.data?.formData,
+  //       file: nodeCopy?.data?.formData.file,
+  //       fileName: nodeCopy?.data?.formData.file?.name || null,
+  //       fileType: nodeCopy?.data?.formData.file?.type || null,
+  //     },
+  //     html: '<div class="temp-placeholder">Loading...</div>',
+  //     pos_x: Math.floor(Math.random() * 900) + 100,
+  //     pos_y: Math.floor(Math.random() * 400) + 100,
+  //   };
+
+  //   const newNodeId = this.addNode(postData);
+  //   const newHTML = this.createNodeHtml(newNodeId, nodeCopy.data);
+  //   this.updateNodeHTML(newNodeId, newHTML);
+
+
+  //    this.editor.drawflow.drawflow.Home.data[newNodeId].html = newHTML;
+
+  // // Update in DOM
+  // const nodeElement = document.querySelector(`#node-${newNodeId} .drawflow_content_node`);
+  // if (nodeElement) {
+  //   nodeElement.innerHTML = newHTML;
+  // }
+
+  //   if (nodeCopy?.data?.text === 'listOptions') {
+  //     this.setOutputPositionsForList(newNodeId, nodeCopy?.data?.formData);
+  //   } else {
+  //     this.setOutputPositions(Number(newNodeId), nodeCopy?.data?.formData?.invalidAction);
+  //   }
+
+  //   // setTimeout(() => {
+  //   //         this.editor.drawflow.drawflow.Home.data[nodeId].html = newHTML;
+
+  //   // }, 100);
+  //   this.nodeCounter++;
+  // }
+
   copyNode(nodeId: number): void {
-    const originalNode = this.editor.getNodeFromId(nodeId);
-    if (!originalNode) return;
+  const originalNode = this.editor.getNodeFromId(nodeId);
+  if (!originalNode) return;
 
-    const nodeCopy = JSON.parse(JSON.stringify(originalNode));
-    nodeCopy.id = this.getUniqueId();
-    nodeCopy.data.uniqueId = this.getUniqueId();
-    nodeCopy.pos_x += 100;
-    nodeCopy.pos_y += 50;
+  const nodeCopy = JSON.parse(JSON.stringify(originalNode));
+  nodeCopy.id = this.getUniqueId();
+  nodeCopy.data.uniqueId = this.getUniqueId();
+  nodeCopy.pos_x += 100;
+  nodeCopy.pos_y += 50;
 
-    // Recreate inputs/outputs
-    nodeCopy.inputs = {};
-    nodeCopy.outputs = {};
+  // Recreate inputs/outputs
+  nodeCopy.inputs = {};
+  nodeCopy.outputs = {};
+  Object.keys(originalNode.inputs).forEach(inputKey => {
+    nodeCopy.inputs[inputKey] = { connections: [] };
+  });
+  Object.keys(originalNode.outputs).forEach(outputKey => {
+    nodeCopy.outputs[outputKey] = { connections: [] };
+  });
 
-    Object.keys(originalNode.inputs).forEach(inputKey => {
-      nodeCopy.inputs[inputKey] = { connections: [] };
-    });
+  this.cardType = nodeCopy?.data?.text;
+  this.ParentNodeType = nodeCopy?.data?.category;
 
-    Object.keys(originalNode.outputs).forEach(outputKey => {
-      nodeCopy.outputs[outputKey] = { connections: [] };
-    });
+  const postData = {
+    name: nodeCopy.name,
+    inputs: 1,
+    outputs: Object.keys(nodeCopy.outputs).length,
+    data: {
+      text: nodeCopy?.data.text,
+      inputsCount: 1,
+      maxButtonLimit: 3,
+      category: nodeCopy?.data.category,
+      uniqueId: this.getUniqueId(),
+      formData: nodeCopy?.data?.formData,
+      file: nodeCopy?.data?.formData.file,
+      fileName: nodeCopy?.data?.formData.file?.name || null,
+      fileType: nodeCopy?.data?.formData.file?.type || null,
+    },
+    html: '<div class="temp-placeholder">Loading...</div>',
+    pos_x: Math.floor(Math.random() * 900) + 100,
+    pos_y: Math.floor(Math.random() * 400) + 100,
+  };
 
-    this.cardType = nodeCopy?.data?.text;
-    this.ParentNodeType = nodeCopy?.data?.category;
+  const newNodeId = this.addNode(postData);
 
-    const postData = {
-      name: nodeCopy.name,
-      inputs: 1,
-      outputs: Object.keys(nodeCopy.outputs).length,
-      data: {
-        text: nodeCopy?.data.text,
-        inputsCount: 1,
-        maxButtonLimit: 3,
-        category: nodeCopy?.data.category,
-        uniqueId: this.getUniqueId(),
-        formData: nodeCopy?.data?.formData,
-        file: nodeCopy?.data?.formData.file,
-        fileName: nodeCopy?.data?.formData.file?.name || null,
-        fileType: nodeCopy?.data?.formData.file?.type || null,
-      },
-      html: '<div class="temp-placeholder">Loading...</div>',
-      pos_x: Math.floor(Math.random() * 900) + 100,
-      pos_y: Math.floor(Math.random() * 400) + 100,
-    };
+  // Create the actual HTML
+  const newHTML = this.createNodeHtml(newNodeId, nodeCopy.data);
 
-    const newNodeId = this.addNode(postData);
-    const newHTML = this.createNodeHtml(newNodeId, nodeCopy.data);
-    this.updateNodeHTML(newNodeId, newHTML);
+  // Update in memory
+  this.editor.drawflow.drawflow.Home.data[newNodeId].html = newHTML;
 
-    if (nodeCopy?.data?.text === 'listOptions') {
-      this.setOutputPositionsForList(newNodeId, nodeCopy?.data?.formData);
-    } else {
-      this.setOutputPositions(Number(newNodeId), nodeCopy?.data?.formData?.invalidAction);
-    }
-
-    setTimeout(() => {
-      this.editor.drawflow.drawflow.Home.data[nodeId].html = newHTML;
-    }, 100);
-    this.nodeCounter++;
+  // Update in DOM
+  const nodeElement = document.querySelector(`#node-${newNodeId} .drawflow_content_node`);
+  if (nodeElement) {
+    nodeElement.innerHTML = newHTML;
   }
+
+  if (nodeCopy?.data?.text === 'listOptions') {
+    this.setOutputPositionsForList(newNodeId, nodeCopy?.data?.formData);
+  } else {
+    this.setOutputPositions(Number(newNodeId), nodeCopy?.data?.formData?.invalidAction);
+  }
+  this.nodeCounter++;
+}
+
 
   // ==================== CONDITION FORM HANDLING ====================
 
@@ -2674,7 +2788,7 @@ this.operationOptions = updateForm.operation
   }
 
   addCondition(condition?: any): void {
-    console.log('addCondition',condition?.operator,condition?.comparatorType)
+    
     const conditionGroup = this.fb.group({
       comparator: [condition?.comparator || '', Validators.required],
       comparatorType: [condition?.comparatorType ?? ''],
@@ -2696,7 +2810,7 @@ this.conditionsArray.push(conditionGroup);
 
   onComparatorChange(index: number): void {
     const comparatorControl = this.getConditionGroup(index).get('comparator');
-    console.log("comparatorControl", comparatorControl)
+    
     const comparatorValue = comparatorControl?.value;
 
     const detectedType = this.detectVariableType(comparatorValue);
@@ -2813,14 +2927,14 @@ preventInvalidKeys(event: KeyboardEvent): void {
     if (!this.userDetails?.SP_ID) return;
 
     this.settingService.getNewCustomField(this.userDetails.SP_ID).subscribe((allAttributes: any) => {
-      console.log(allAttributes)
+      
       if (allAttributes.status == 200) {
 this.currentAttributeList = allAttributes?.getfields?.filter((attr:any) =>
   attr.ActuallName !== 'Phone_number' &&
   attr.ActuallName !== 'tag' &&
   attr.ActuallName !== 'OptInStatus'
 );
-        console.log()
+        
         const attributes = allAttributes?.getfields?.map((attr: any) => `${attr.displayName}`);
         this.attributeList = attributes;
       }
@@ -2859,7 +2973,7 @@ this.currentAttributeList = allAttributes?.getfields?.filter((attr:any) =>
       if (res.status == 200) {
 
         this.botsList = res.bots
-        console.log(res.bots)
+        
         this.originalBotsList = [...this.botsList];
       }
 
@@ -2888,7 +3002,7 @@ this.currentAttributeList = allAttributes?.getfields?.filter((attr:any) =>
     this.settingService.getFlowData(this.userDetails.SP_ID).subscribe(async (result: any) => {
       if (result) {
 
-        console.log(result)
+        
         this.whatsAppFormList = result?.flows;
 
       }
@@ -2929,7 +3043,7 @@ this.currentAttributeList = allAttributes?.getfields?.filter((attr:any) =>
   selectedFields: any = {}; // to track per condition input field lock
   selectVariable(index: number, field: 'comparator' | 'value', variable: any): void {
 
-    console.log(index, field, variable)
+    
     const group = this.getConditionGroup(index);
     group.get(field)?.setValue(`{{${variable.displayName || variable.name}}}`);
     group.get(`${field}Type`)?.setValue(variable.type);
@@ -3016,7 +3130,8 @@ this.currentAttributeList = allAttributes?.getfields?.filter((attr:any) =>
             click: this.ToggleShowMentionOption.bind(this),
             template: '<button type="button" style="width:28px;height:28px;border-radius: 35%!important;border: 1px solid #e2e2e2!important;background:#fff;" class="e-tbar-btn e-btn" tabindex="-1" id="custom_tbar"  >'
               + '<div class="e-tbar-btn-text">@</div></button>'
-          }]
+          }],
+          enableFloating: true 
       }
     } else if (type == 'semiTool') {
       this.semiAdvanceTool = {
@@ -3026,7 +3141,7 @@ this.currentAttributeList = allAttributes?.getfields?.filter((attr:any) =>
           click: this.ToggleAttributesOption.bind(this),
           template: '<button type="button" style="width:28px;height:28px;border-radius: 35%!important;border: 1px solid #e2e2e2!important;background:#fff;" class="e-tbar-btn e-btn" tabindex="-1" id="custom_tbar"  >'
             + '<div class="e-tbar-btn-text"><img style="width:10px;" src="/assets/img/teambox/attributes.svg"></div></button>'
-        },]
+        },],enableFloating: true 
       }
 
     } else if (type == 'attachementTool') {
@@ -3038,7 +3153,7 @@ this.currentAttributeList = allAttributes?.getfields?.filter((attr:any) =>
           click: this.ToggleAttachmentBox.bind(this),
           template: '<button type="button" style="width:28px;height:28px;border-radius: 35%!important;border: 1px solid #e2e2e2!important;background:#fff;" class="e-tbar-btn e-btn" tabindex="-1" id="custom_tbar"  >'
             + '<div class="e-tbar-btn-text"><img style="width:10px;" src="/assets/img/teambox/attachment-icon.svg"></div></button>'
-        },]
+        },],enableFloating: true 
       }
 
     } else {
@@ -3120,8 +3235,8 @@ this.currentAttributeList = allAttributes?.getfields?.filter((attr:any) =>
         selection?.addRange(range);
       }, 0);
 
-      console.log("editor",editor ) 
-      console.log("variableName",variableName ) 
+       
+       
       this.insertBotVariableCommon(editor, variableName);
     }
 
@@ -3171,7 +3286,7 @@ this.currentAttributeList = allAttributes?.getfields?.filter((attr:any) =>
     this.isEditMode = false;
     this.cardType = nodeType;
     this.ParentNodeType = modalId;
-    console.log("modalId", modalId, nodeType)
+    
     if (nodeType == 'NotesMentionModal') {
       this.dynamiceEditor = this.chatEditors
       this.toggleChatNotes('advanceTool')
@@ -3182,7 +3297,7 @@ this.currentAttributeList = allAttributes?.getfields?.filter((attr:any) =>
       this.toggleChatNotes('attachementTool')
     } else if(nodeType == 'MessageOptin'){
       this.conversationActions.status = 'Yes'
-    } {
+    } else{
       this.toggleChatNotes('')
     }
 
@@ -3242,7 +3357,7 @@ this.listOptions.reset();
      
 
 
-     console.log("this.conditionForm",this.conditionForm)
+     
 
     this.openQuestion.get('answerType')?.setValue('text');
     const optionsArray = this.questionOption.get('options') as FormArray;
@@ -3262,6 +3377,8 @@ this.listOptions.reset();
     this.selectedTags = [];
     this.selectedBotId = '';
     this.selectedBot = null;
+    this.fileName = '';
+    this.uploadedFile = null;
   }
 
   // ==================== EVENT HANDLERS ====================
@@ -3277,7 +3394,7 @@ this.listOptions.reset();
 
 
   onTextChange(): void {
-    console.log('daata')
+    
     const text = this.sendTextForm.get('textMessage')?.value || ''; // Or get from chatEditor if not reactive
     const plainText = this.stripHtmlTags(text);
     this.characterCount = plainText.length;
@@ -3364,16 +3481,14 @@ this.listOptions.reset();
   selectedFromVariable: boolean = false;
   selectedOptions: any[] = [];
   onAttributeChange(value: string): void {
-    console.log(this.contactAttributeForm.get('selectedAttribute')?.value)
-    console.log(this.currentAttributeList)
+    
     const selectedAttr = this.contactAttributeForm.get('selectedAttribute')?.value;
     this.attributeDetails = this.currentAttributeList.find((attr: any) => attr.ActuallName === selectedAttr);
     this.selectedAttributeType = this.attributeDetails?.type || '';
     this.selectedFromVariable = false;
     this.isUserTyping = false;
 
-    // Handle Multi Select options
-    if (this.selectedAttributeType === 'Multi Select') {
+    if (this.selectedAttributeType === 'Multi Select' || this.selectedAttributeType == 'Select') {
       try {
         this.selectedOptions = JSON.parse(this.attributeDetails?.dataTypeValues || '[]');
       } catch {
@@ -3382,13 +3497,13 @@ this.listOptions.reset();
     }
 
     this.contactAttributeForm.get('selectedValue')?.reset();
-    console.log(this.attributeDetails)
+    
 
 
   }
 
   selectedValues(variable: any): void {
-    console.log(variable)
+    
     this.contactAttributeForm.patchValue({
       selectedValue: `{{${variable?.displayName || variable?.name || variable?.optionName}}} ` || '',
       inputValue: '',
@@ -3402,6 +3517,20 @@ this.listOptions.reset();
     this.showAttributeCondition = true
 
   }
+
+  onSelectedValueKeydown(event: KeyboardEvent) {
+  if (this.selectedFromVariable && event.key === 'Backspace') {
+    event.preventDefault(); // prevent deleting 1 character at a time
+    this.contactAttributeForm.patchValue({
+      selectedValue: '',
+      selectedVariable: '',
+      inputValue: ''
+    });
+    this.selectedFromVariable = false; // allow typing again
+    this.showAttributeCondition = false; // hide attribute condition if needed
+  }
+}
+
 
   onTextInputChange(event: any): void {
     const inputValue = event.target.value;
@@ -3530,7 +3659,7 @@ onFileSelectedData(event: any, type: any = '') {
     detectedType = 'document';
   }
 
-  console.log("selectedFileType",this.selectedFileType)
+  
   // Get selected header type from form
   const selectedHeaderType = this.buttonOptions.get('headerType')?.value;
 
@@ -3585,7 +3714,7 @@ onFileSelectedData(event: any, type: any = '') {
 
 
   saveFilesUpload(file: File,type:any) {
-    console.log("file",file)
+    
   if (!file) return;
 
   const spid = this.userDetails.SPID || this.userDetails.SP_ID;
@@ -3611,7 +3740,7 @@ onFileSelectedData(event: any, type: any = '') {
   }
 
   const uploadPath = 'BotBuilder';
-  console.log("formData, spid, uploadPath",formData, spid, uploadPath)
+  
   this.apiService.uploadfile(formData, spid, uploadPath).subscribe({
     next: (res: any) => {
       if (res.filename) {
@@ -3682,17 +3811,17 @@ onFileSelectedData(event: any, type: any = '') {
           this.apiService.uploadfile(data, spid, name).subscribe(uploadStatus => {
             let responseData: any = uploadStatus
             if (responseData.filename) {
-              console.log(responseData)
-              console.log(responseData.filename)
+              
+              
 
               this.messageMediaFile = responseData.filename;
               this.messageMeidaFile = responseData.filename;
-              console.log(this.messageMeidaFile);
+              
               // this.attachmentMedia = responseData.filename;
               // this.mediaSize=responseData.fileSize
 
               this.sendattachfile();
-              console.log(this.messageMeidaFile);
+              
               this.showAttachmenOption = false;
               this.isUploadingLoader = false;
             }
@@ -3707,7 +3836,7 @@ onFileSelectedData(event: any, type: any = '') {
   }
 
   sendattachfile() {
-    console.log(this.messageMediaFile)
+    
     if (this.isAttachmentMedia === false) {
       if (this.messageMediaFile !== '') {
         $("#sendfile").modal('show');
@@ -3748,8 +3877,8 @@ onFileSelectedData(event: any, type: any = '') {
 
 
   attachMedia(Link: string, media_type: string) {
-    console.log(Link)
-    console.log(media_type)
+    
+    
     this.closeAllModal()
     let mediaName
     const fileNameWithPrefix = Link.substring(Link.lastIndexOf('/') + 1);
@@ -3761,7 +3890,7 @@ onFileSelectedData(event: any, type: any = '') {
     } else {
       originalName = fileNameWithPrefix.substring(fileNameWithPrefix.indexOf('-') + 1);
     }
-    console.log(getMimeTypePrefix);
+    
     if (getMimeTypePrefix === 'image') {
       mediaName = '<p class="custom-class-attachmentType"><img src="/assets/img/teambox/photo-icon.svg" alt="icon"> ' + originalName + '</p>'
     }
@@ -3773,9 +3902,9 @@ onFileSelectedData(event: any, type: any = '') {
       getMimeTypePrefix = 'document';
       mediaName = '<p class="custom-class-attachmentType"><img src="/assets/img/teambox/document-icon.svg" alt="icon"/>' + originalName + '</p><br>'
     }
-    console.log("mediaName", mediaName)
+    
     const editorElement = this.dynamiceEditor?.contentModule?.getEditPanel?.();
-    console.log("editorElement", editorElement)
+    
 
     if (editorElement) {
       const existingMediaElement = editorElement.querySelector('.custom-class-attachmentType');
@@ -3784,11 +3913,11 @@ onFileSelectedData(event: any, type: any = '') {
         const newElement = document.createElement('div');
         newElement.innerHTML = mediaName + '<br>';
         editorElement.replaceChild(newElement.firstElementChild!, existingMediaElement);
-        console.log("editorValue", editorElement)
+        
       } else {
         const editorValue = this.dynamiceEditor.value ?? '<br>';
         this.dynamiceEditor.value = mediaName + editorValue;
-        console.log("editorValue", editorValue)
+        
       }
     }
     this.mediaType = media_type
@@ -3822,11 +3951,11 @@ onFileSelectedData(event: any, type: any = '') {
   addingStylingToMedia(item: any) {
     if (item?.media_type === 'image' || item?.media_type === 'video' || item?.media_type === 'document') {
       setTimeout(() => {
-        console.log(this.dynamiceEditor)
+        
         const editorContent = this.dynamiceEditor.element.querySelector('.e-content');
         const mediaElements = editorContent?.querySelectorAll('img, video');
-        console.log("editorContent", editorContent)
-        console.log("mediaElements", mediaElements)
+        
+        
 
         mediaElements?.forEach((element: any) => {
           const media = element as HTMLElement;
@@ -3962,7 +4091,8 @@ onFileSelectedData(event: any, type: any = '') {
       node_FE_Json: JSON.stringify(exportData),
       botId: localStorage.getItem('botId'),
       SPID: this.userDetails.SP_ID,
-      nodes: []
+      nodes: [],
+      botVarList:this.botVariables
     }
 
     if (type == 'submit') {
@@ -3971,7 +4101,7 @@ onFileSelectedData(event: any, type: any = '') {
     } else {
       let isStructureValid = true;
 
-      console.log("exportNodesData",exportNodesData)
+      
 
       if (exportNodesData.length == 0 ) {
         this.isLoading = false
@@ -3984,7 +4114,7 @@ onFileSelectedData(event: any, type: any = '') {
         if (!isFullyConnected) {
           isStructureValid = false;
           this.isLoading = false
-           this.showToaster('Node ${node.id} is not fully connected.','errors')
+           this.showToaster('Node ${node.id} is not fully connected.','error')
            return
         }
       });
@@ -3994,7 +4124,7 @@ onFileSelectedData(event: any, type: any = '') {
       if (!isOneToOneValid) {
         isStructureValid = false;
         this.isLoading = false
-        this.showToaster(' Some inputs/outputs are connected more than once','errors')
+        this.showToaster(' Some inputs/outputs are connected more than once','error')
         return
       }
 
@@ -4007,7 +4137,7 @@ onFileSelectedData(event: any, type: any = '') {
 
       data.status = 'publish'
       data.nodes = flowData
-      console.log("Flow Data:", flowData);
+      
     }
      localStorage.setItem('node_FE_Json',data.node_FE_Json)
      
@@ -4017,12 +4147,16 @@ onFileSelectedData(event: any, type: any = '') {
       if (data.status == 'publish') {
         
         this.showToaster('Bot published successfully', 'success')
-        this.router.navigate(['/bot-builder']);
+        setTimeout(() => {
+          this.router.navigate(['/bot-builder']);
+        }, 500);
       }else{
         
         this.showToaster('Changes saved successfully', 'success')
         if (exitType == 'exit') {
+            setTimeout(() => {
           this.router.navigate(['/bot-builder']);
+        }, 500);
         }
       }
       
@@ -4070,7 +4204,6 @@ onFileSelectedData(event: any, type: any = '') {
 
 
   checkAllInputsAndOutputsConnected(node: any): boolean {
-    console.log(node)
     if (!node || !node.inputs || !node.outputs) {
       return false; // or handle differently based on your use case
     }
@@ -4089,7 +4222,6 @@ onFileSelectedData(event: any, type: any = '') {
 
   private getFullFlowJson(): any {
     const exportData = this.editor.export();
-    console.log("exportData", exportData)
     const allNodes = exportData.drawflow.Home.data;
 
     const connections: any[] = [];
@@ -4112,14 +4244,11 @@ onFileSelectedData(event: any, type: any = '') {
     // Process each node
     Object.entries(allNodes).forEach(([id, node]: [string, any]) => {
       const formData = node.data.formData || {};
-      console.log("formData", node.data)
       const isQuestionOption = node.data.text === 'questionOption' || node.data.text === "buttonOptions" ||  node.data.text ==="WorkingHoursModal" || node.data.text === "setCondition";
 
       // Filter and sort connections by targetNode (ascending order)
       const nodeConnections = connections
         .filter(conn => conn.sourceNode === node.id)
-
-      console.log()
 
       const nodeObj: any = {
         nodeId: node.id,
@@ -4147,7 +4276,6 @@ onFileSelectedData(event: any, type: any = '') {
             skipIndexes.push(1); // Skip fallback
           }
           optionNames = optionNames.reverse();
-          console.log(optionNames)
           nodeConnections.forEach((conn, idx) => {
             if (!skipIndexes.includes(idx)) {
               const labelIndex = idx - skipIndexes.length;
@@ -4157,6 +4285,7 @@ onFileSelectedData(event: any, type: any = '') {
               });
             }
           });
+          nodeObj.option = nodeObj.option.reverse();
         }
       }
 
@@ -4222,4 +4351,27 @@ channelSelected:any
       }
     });
   }
+
+
+  ChannelWhatsAppOrWeb: any[] = [];
+ChannelWhatsAppOrWebSelection:any=''
+  getChannelWhatsAppOrWeb(): void {
+    this.settingService.getChennelWhapiorWeb(this.userDetails.SP_ID).subscribe((response: any) => {
+      if (response?.whatsAppDetails) {
+        this.ChannelWhatsAppOrWeb = response.whatsAppDetails.map((item: any) => ({
+          value: item?.id,
+          label: item?.channel_id,
+          connected_id: item?.connected_id,
+          channel_status: item?.channel_status
+        }));
+
+        if (this.ChannelWhatsAppOrWeb.length === 1) {
+          this.ChannelWhatsAppOrWebSelection = this.ChannelWhatsAppOrWeb[0].label;
+
+        }
+      }
+    });
+  }
+
+ 
 }
