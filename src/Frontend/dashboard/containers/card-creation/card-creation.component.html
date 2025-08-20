@@ -82,12 +82,12 @@
               Open Question
               <i class="uil-angle-right"></i>
             </button>
-            <button *ngIf="!(channelName == 'web' &&  ChannelWhatsAppOrWebSelection == 'WA Web')" (click)="openCreateModal('buttonOptions', 'buttonOptions')" id="draggable-button-1"
+            <button *ngIf="!(ChannelWhatsAppOrWebSelection == 'webJS' && channelName == 'web')" (click)="openCreateModal('buttonOptions', 'buttonOptions')" id="draggable-button-1"
               class="draggable btn btn_des1" draggable="true" class="child-option">
               Button Options
               <i class="uil-angle-right"></i>
             </button>
-            <button *ngIf="!(channelName == 'web' && ChannelWhatsAppOrWebSelection == 'WA Web')" (click)="openCreateModal('listOptions', 'listOptions')" id="draggable-button-1"
+            <button *ngIf="!(ChannelWhatsAppOrWebSelection == 'webJS' && channelName == 'web')" (click)="openCreateModal('listOptions', 'listOptions')" id="draggable-button-1"
               class="draggable btn btn_des1" draggable="true" class="child-option">
               List Options
               <i class="uil-angle-right"></i>
@@ -400,6 +400,10 @@
               <div *ngIf="questionOption.get('options')?.errors?.atLeastOneOption" class="text-danger small mt-1">
     At least one option must be filled.
   </div>
+  <div *ngIf="questionOption.get('options')?.errors?.duplicateOptions" class="text-danger small mt-1">
+  Options must be unique.
+</div>
+
 
               <!-- Add Option Button -->
               <button type="button" class="btn btn-link text-primary p-0"
@@ -3099,7 +3103,7 @@
 </div>
             </div>
 
-            <div *ngIf="showMention" class="popup-dialog mention" (click)="stopPropagation($event)">
+            <div *ngIf="showMention" class="popup-dialog mention upperIndex" (click)="stopPropagation($event)">
                <div class="d-flex ">
               <p class="label">&#64;mention</p>
                <button class="close-btn" style="padding: 0px;
