@@ -15,7 +15,7 @@ const logger = require('../common/logger.log');
 const moment = require('moment');
 const SECRET_KEY = 'RAUNAK'
 const mapCountryCode = require('../Contact/utils.js');
-const { EmailConfigurations, whiteLableEmailConfiguration, findWhiteLableConfiguration } =  require('./constant');
+const { EmailConfigurations, whiteLableEmailConfiguration } =  require('./constant');
 const { MessagingName,userStatus }= require('../enum');
 const middleWare = require('../middleWare')
 app.use(bodyParser.json());
@@ -182,7 +182,7 @@ const register = async function (req, res) {
             let whiteLableConfiguration = await whiteLableEmailConfiguration(email_id, db);
             emailSender = whiteLableConfiguration?.brandName || emailSender;
 
-            const transporter = await getTransporter(emailSender);
+            const transporter = await getTransporter(emailSender, whiteLableConfiguration?.email);
 
             let senderConfig = EmailConfigurations[emailSender];
 
@@ -264,10 +264,10 @@ const register = async function (req, res) {
 //     port: val.port,
 //     host: val.emailHost
 // });
-async function getTransporter(channel) {
+async function getTransporter(channel, email) {
     let senderConfig = EmailConfigurations[channel];
     if (!senderConfig) {
-        senderConfig = await findWhiteLableConfiguration(channel, db)
+        senderConfig = await whiteLableEmailConfiguration(email, db)
     }
 
     return nodemailer.createTransport({
@@ -310,7 +310,7 @@ const forgotPassword = async (req, res) => {
             let whiteLableConfiguration = await whiteLableEmailConfiguration(email_id, db);
             emailSender = whiteLableConfiguration?.brandName || emailSender;
 
-            const transporter = await getTransporter(emailSender);
+            const transporter = await getTransporter(emailSender, whiteLableConfiguration?.email);
 
             let senderConfig = EmailConfigurations[emailSender];
 

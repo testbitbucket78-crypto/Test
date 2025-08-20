@@ -105,31 +105,7 @@ async function whiteLableEmailConfiguration(userEmail, db) {
   }
 }
 
-async function findWhiteLableConfiguration(BrandName, db){
-  try {
-    const query = `
-      SELECT 
-          w.brand_name AS brandName,
-          w.sender_email AS email,
-          w.smtp_host AS emailHost,
-          w.smtp_port AS port,
-          w.smtp_password AS appPassword
-      FROM white_label_settings w
-      WHERE w.brand_name = ?
-      LIMIT 1
-    `;
 
-    const results = await db.excuteQuery(query, [BrandName]);
-
-    if (results.length === 0) {
-      return null;
-    }
-
-    return results[0];
-  } catch (error) {
-    return null;
-  }
-}
 
  var emailForSendingOtp = "testing@engagezilla.com" // for Prod "superadmin@engagezilla.com"
 
@@ -140,5 +116,5 @@ module.exports = {
     email, appPassword, emailHost, port, 
      updatePassword, uidresetEmailQuery, verifyUid, camQuery, selectQuery,insertOtp,verifyOtp,
      access_token,url,content_type,crachlogQuery,awsaccessKeyId,awssecretAccessKey,awsregion,awsbucket,EmailConfigurations,getSPIDandChannel, emailForSendingOtp
-     ,whiteLableEmailConfiguration, findWhiteLableConfiguration
+     ,whiteLableEmailConfiguration,
 }
