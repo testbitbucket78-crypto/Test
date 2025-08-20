@@ -1,3 +1,4 @@
+
 <sb-top-nav title="Bot Builder"></sb-top-nav>
 <sb-loader [isLoading]="isLoading"></sb-loader>
 
@@ -81,12 +82,12 @@
               Open Question
               <i class="uil-angle-right"></i>
             </button>
-            <button *ngIf="!(channelName == 'web' &&  channelSelected == 'WA Web')" (click)="openCreateModal('buttonOptions', 'buttonOptions')" id="draggable-button-1"
+            <button *ngIf="!(channelName == 'web' &&  ChannelWhatsAppOrWebSelection == 'WA Web')" (click)="openCreateModal('buttonOptions', 'buttonOptions')" id="draggable-button-1"
               class="draggable btn btn_des1" draggable="true" class="child-option">
               Button Options
               <i class="uil-angle-right"></i>
             </button>
-            <button *ngIf="!(channelName == 'web' && channelSelected == 'WA Web')" (click)="openCreateModal('listOptions', 'listOptions')" id="draggable-button-1"
+            <button *ngIf="!(channelName == 'web' && ChannelWhatsAppOrWebSelection == 'WA Web')" (click)="openCreateModal('listOptions', 'listOptions')" id="draggable-button-1"
               class="draggable btn btn_des1" draggable="true" class="child-option">
               List Options
               <i class="uil-angle-right"></i>
@@ -199,9 +200,8 @@
 
 
 
-
 <div class="modal fade" id="sendMessage" tabindex="-1" aria-hidden="true">
-  <div class="modal-dialog modal-dialog-centered custom-modal" role="document" style=" top: 65px;">
+  <div class="modal-dialog modal-dialog-centered custom-modal" role="document" style=" top: 27px;">
     <div class="modal-content p-4" style="background-color: #fff6f4; border-radius: 20px;">
       
       <!-- Header -->
@@ -245,7 +245,7 @@
             <ng-template #preview>
               <img *ngIf="selectedFileType === 'image'" [src]="selectedImageUrl" alt="Preview" class="preview-img" style="max-height: 120px;" />
               <img *ngIf="selectedFileType === 'document'" src="assets/img/document.png" alt="Preview" class="preview-img" style="max-height: 120px;" />
-              <span class="ms-2" *ngIf="selectedFileType === 'document'">{{ uploadedFile?.name }}</span>
+              <span class="ms-2" *ngIf="selectedFileType === 'document' || cardType == 'sendDocument'">{{ fileName || uploadedFile?.name  }}</span>
               <video *ngIf="selectedFileType === 'video'" [src]="selectedImageUrl" controls style="max-height: 140px; width: 100%; border-radius: 8px;"></video>
             </ng-template>
 
@@ -264,12 +264,15 @@
 
         <!-- Rich Text Editor -->
         <div class="form-group">
-          <label *ngIf="cardType === 'sendText'" style="margin-top: 5px; position: absolute;">Text Message</label>
-          <span *ngIf="cardType === 'sendText'" style="font-size: 13px; color: #6b7280; margin-left: 269px;">Characters</span>
+          <div class="character-label-wrapper"> 
+          <label *ngIf="cardType === 'sendText'" class="textMsg">Text Message</label>
+          <span *ngIf="cardType === 'sendText'" class="character-count">Characters</span>
+          </div>
+          <div class="character-label-wrapper">  
 
-          <label *ngIf="cardType === 'sendImage' || cardType === 'sendVideo' || cardType === 'sendDocument'" style="margin-top: 5px; position: absolute;">Text Message (Optional)</label>
-          <span *ngIf="cardType === 'sendImage' || cardType === 'sendVideo' || cardType === 'sendDocument'" style="font-size: 13px; color: #6b7280; margin-left: 269px;">Characters</span>
-
+          <label *ngIf="cardType === 'sendImage' || cardType === 'sendVideo' || cardType === 'sendDocument'" class="textMsg">Text Message (Optional)</label>
+          <span *ngIf="cardType === 'sendImage' || cardType === 'sendVideo' || cardType === 'sendDocument'" class="character-count">Characters</span>
+</div>
           <div class="rte-wrapper" style="position: relative;">
             <ejs-richtexteditor
               id="defaultRTE"
@@ -321,14 +324,22 @@
   <div class="modal-dialog modal-dialog-centered custom-modal" style="width: 32%">
     <div class="modal-content p-4 scroller" style="background-color: #fff6f4; border-radius: 20px">
       <div class="d-flex justify-content-between align-items-center mb-3">
-        <h6 class="fw-bold m-0" style="color: #6b46c1">Question Option</h6>
+        <h6 class="fw-bold m-0" style="color: #6b46c1; padding: 15px 0px 0px 0px;">Question Option</h6>
+            <button type="button" class="btn5 btn-close" style="width: 40px; margin-right: 17px;" data-bs-dismiss="modal"
+                                aria-label="Close">
+                                <img style="width: 10px" src="assets/img/teambox/icon-close.svg"
+                                    (click)="closeModal();" />
+                            </button>
+
       </div>
-      <div class="modal-body" style="padding: 16px 24px">
+      <div class="modal-body" style="padding: 0px 24px">
         <form [formGroup]="questionOption" (ngSubmit)="onSubmit('questionOption')">
           <!-- Question Text -->
           <div class="form-group">
+            <div class="character-label-wrapper">
             <label class="question_text_label">Question Text</label>
-            <span style="font-size: 13px; color: #6b7280; margin-left: 342px">Characters</span>
+            <span class="character-count01">Characters</span>
+            </div>
 
             <div class="rte-wrapper" style="position: relative">
               <ejs-richtexteditor id="questionRTE" #questionEditor [toolbarSettings]="semiAdvanceTool" [width]="'100%'"
@@ -386,7 +397,7 @@
                   </div>
                 </div>
               </div>
-              <div *ngIf="questionOption.get('options')?.errors?.atLeastOneOption">
+              <div *ngIf="questionOption.get('options')?.errors?.atLeastOneOption" class="text-danger small mt-1">
     At least one option must be filled.
   </div>
 
@@ -483,12 +494,14 @@
 
               <!-- Validation Error Message -->
               <div class="mb-3">
-                <label class="Invalid_response_action" >
-                  Validation Error Message
-                  <span *ngIf="questionOption.get('reattemptsAllowed')?.value" class="text-danger">*</span>
-                </label>
-
-                <span style="font-size: 13px; color: #6b7280; margin-left: 282px">Characters</span>
+                   <div class="character-label-wrapper">
+            <label class="Invalid_response_action" >
+              Validation Error Message
+              <span *ngIf="questionOption.get('reattemptsAllowed')?.value" class="text-danger">*</span>
+            </label>
+            
+            <span class="character-count01">Characters</span>
+          </div>
 
                 <ejs-richtexteditor id="questionRTE" #errorEditor [toolbarSettings]="tools" [width]="'100%'"
                   placeholder="Enter question..." [pasteCleanupSettings]="pasteCleanupSettings"
@@ -573,28 +586,28 @@
   <div class="modal-dialog modal-dialog-centered custom-modal" style="width: 32%">
     <div class="modal-content p-4 scroller" style="background-color: #fff6f4; border-radius: 20px">
       <!-- Header -->
-      <div class="modal-header" style="border-bottom: none; padding: 20px 24px 0">
+      <div class="modal-header" style="border-bottom: none;">
         <h5 class="modal-title fw-semibold" style="color: #6b46c1">Open Question</h5>
-        <!-- <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"
-          style="font-size: 12px;"></button> -->
+                <button type="button" class="btn5 btn-close" style="width: 40px;" data-bs-dismiss="modal"
+                                aria-label="Close">
+                                <img style="width: 10px" src="assets/img/teambox/icon-close.svg"
+                                    (click)="closeModal();" />
+                            </button>
       </div>
 
       <div class="modal-body" style="padding: 16px 24px">
         <form [formGroup]="openQuestion" (ngSubmit)="onSubmit('openQuestion')">
           <!-- Question Text -->
           <div class="form-group">
-            <div class="">
-              <label style="
-                                    font-size: 14px;
-                                    color: #374151;
-                                    font-weight: 500;
-                                    margin-bottom: -25px;
-                                ">Question Text</label>
-              <!-- <span style="font-size: 12px; color: #6B7280;">{{ questionTextLength }}/1024 characters</span> -->
-              <span style="font-size: 13px; color: #6b7280; margin-left: 342px">
-                Characters
-              </span>
+         
+              
+ 
+
+                 <div class="character-label-wrapper">
+            <label class="question_text_label">Question Text</label>
+            <span class="character-count01">Characters</span>
             </div>
+            
 
 
 
@@ -928,21 +941,12 @@
 
               <!-- Validation Error Message -->
               <div class="mb-3">
-                <label style="
-                                        font-size: 14px;
-                                        color: #374151;
-                                        font-weight: 500;
-                                        margin-bottom: 8px;
-                                        display: block;
-                                    ">
-                  Validation Error Message
-                  <span *ngIf="openQuestion.get('reattemptsAllowed')?.value" class="text-danger">*</span>
-                </label>
-                <span style="font-size: 13px; color: #6b7280; margin-left: 282px">
-                  Characters
-                </span>
+         <div class="character-label-wrapper">
+            <label class="question_text_label">Question Text</label>
+            <span class="character-count01">Characters</span>
+            </div>
                 <ejs-richtexteditor id="errorRTE" #errorEditor [toolbarSettings]="basicTools" [width]="'100%'"
-                  placeholder="Enter error message..." formControlName="errorMessage" [maxLength]="1024"
+                  placeholder="Enter error message..." formControlName="errorMessage" [maxLength]="1024" [pasteCleanupSettings]="pasteCleanupSettings"
                   [showCharCount]="true" (change)="updateErrorMessageLength(errorEditor)" style="">
                 </ejs-richtexteditor>
               </div>
@@ -1037,8 +1041,13 @@
   <div class="modal-dialog modal-dialog-centered custom-modal" style="width: 33%">
     <div class="modal-content p-4 scroller" style="background-color: #fff6f4; border-radius: 20px">
       <!-- Header -->
-      <div class="modal-header" style="border-bottom: none; padding: 20px 24px 0">
+      <div class="modal-header" style="border-bottom: none;">
         <h5 class="modal-title fw-semibold" style="color: #6b46c1">Button Options</h5>
+                <button type="button" class="btn5 btn-close" style="width: 40px;" data-bs-dismiss="modal"
+                                aria-label="Close">
+                                <img style="width: 10px" src="assets/img/teambox/icon-close.svg"
+                                    (click)="closeModal();" />
+                            </button>
       </div>
 
       <div class="modal-body" style="padding: 16px 24px">
@@ -1077,7 +1086,7 @@
 
             <label *ngIf="buttonOptions.get('headerType')?.value != 'none'" [ngStyle]="{
     'margin-bottom': buttonOptions.get('headerType')?.value === 'text' ? '-30px' : '-5px'}"  class="header_text">
-              Header (Optional)
+              Header {{ buttonOptions.get('headerType')?.value === 'text' ? '(Optional)' : '' }}
             </label>
 
             <!-- Header Content Based on Selection -->
@@ -1174,20 +1183,10 @@
 
           <!-- Body Text -->
           <div class="mb-3">
-            <label style="
-                                font-size: 14px;
-                                color: #374151;
-                                font-weight: 500;
-                                margin-bottom: -13px;
-                                display: block;
-                            ">
-              Body Text
-            </label>
-            <div class="d-flex justify-content-end align-items-center mb-1">
-              <span style="font-size: 12px; color: #6b7280; margin-right: -5px">
-                Characters</span>
+            <div class="character-label-wrapper">
+              <label class="question_text_label">Body Text</label>
+              <span class="character-count01">Characters</span>
             </div>
-
 
             <div class="rte-wrapper" style="position: relative">
 
@@ -1412,21 +1411,12 @@
 
               <!-- Validation Error Message -->
               <div class="mb-3">
-                <label style="
-                                        font-size: 14px;
-                                        color: #374151;
-                                        font-weight: 500;
-                                        margin-bottom: 8px;
-                                        display: block;
-                                    ">
-                  Validation Error Message
-                  <span *ngIf="buttonOptions.get('reattemptsAllowed')?.value" class="text-danger">*</span>
-                </label>
-                <div class="text-end" style="font-size: 13px; color: #6b7280; margin-left: 297px">
-                  Characters
+                <div class="character-label-wrapper">
+                  <label class="question_text_label">Validation Error Message</label>
+                  <span class="character-count01">Characters</span> 
                 </div>
                 <ejs-richtexteditor id="errorRTE" #errorEditor [toolbarSettings]="basicTools" [width]="'100%'"
-                  placeholder="Enter error message..." formControlName="errorMessage" [maxLength]="1024"
+                  placeholder="Enter error message..." formControlName="errorMessage" [maxLength]="1024" [pasteCleanupSettings]="pasteCleanupSettings"
                   [showCharCount]="true" (change)="updateErrorMessageLength(errorEditor)" style="">
                 </ejs-richtexteditor>
               </div>
@@ -1522,8 +1512,13 @@
   <div class="modal-dialog modal-dialog-centered custom-modal" style="width: 32%">
     <div class="modal-content p-4 scroller" style="background-color: #fff6f4; border-radius: 20px">
       <!-- Header -->
-      <div class="modal-header" style="border-bottom: none; padding: 20px 24px 0">
+      <div class="modal-header" style="border-bottom: none; ">
         <h5 class="modal-title fw-semibold" style="color: #6b46c1">List Options</h5>
+                <button type="button" class="btn5 btn-close" style="width: 40px; " data-bs-dismiss="modal"
+                                aria-label="Close">
+                                <img style="width: 10px" src="assets/img/teambox/icon-close.svg"
+                                    (click)="closeModal();" />
+                            </button>
       </div>
 
       <div class="modal-body" style="padding: 16px 24px">
@@ -1554,18 +1549,9 @@
 
           <!-- Body Text -->
           <div class="mb-3">
-            <label style="
-                                font-size: 14px;
-                                color: #374151;
-                                font-weight: 500;
-                                margin-bottom: -15px;
-                                display: block;
-                            ">
-              Body Text
-            </label>
-            <div class="d-flex justify-content-end align-items-center mb-1">
-              <span class="character_class">
-                Characters</span>
+            <div class="character-label-wrapper">
+              <label class="question_text_label">Body Text</label>
+              <span class="character-count01">Characters</span> 
             </div>
 
 
@@ -1869,21 +1855,12 @@
 
               <!-- Validation Error Message -->
               <div class="mb-3">
-                <label style="
-                                        font-size: 14px;
-                                        color: #374151;
-                                        font-weight: 500;
-                                        margin-bottom: 8px;
-                                        display: block;
-                                    ">
-                  Validation Error Message
-                  <span *ngIf="listOptions.get('reattemptsAllowed')?.value" class="text-danger">*</span>
-                </label>
-                <div class="text-end" style="font-size: 13px; color: #6b7280; margin-left: 285px">
-                  Characters
+                <div class="character-label-wrapper">
+                  <label class="question_text_label">Validation Error Message</label>
+                  <span class="character-count01">Characters</span>
                 </div>
                 <ejs-richtexteditor id="errorRTE" #errorEditor [toolbarSettings]="basicTools" [width]="'100%'"
-                  placeholder="Enter error message..." formControlName="errorMessage" [maxLength]="1024"
+                  placeholder="Enter error message..." formControlName="errorMessage" [maxLength]="1024" [pasteCleanupSettings]="pasteCleanupSettings"
                   [showCharCount]="true" style="">
                 </ejs-richtexteditor>
                 <div class="text-end" style="font-size: 12px; color: #6b7280">
@@ -1982,10 +1959,15 @@
   <div class="modal-dialog modal-dialog-centered custom-modal" style="width: 32%">
     <div class="modal-content p-4 scroller" style="background-color: #fff6f4; border-radius: 20px">
       <!-- Header -->
-      <div class="modal-header" style="border-bottom: none; padding: 20px 24px 0">
+      <div class="modal-header" style="border-bottom: none;">
         <h5 class="modal-title fw-semibold" style="color: #6b46c1">
           WhatsApp Flow Question
         </h5>
+                <button type="button" class="btn5 btn-close" style="width: 40px; " data-bs-dismiss="modal"
+                                aria-label="Close">
+                                <img style="width: 10px" src="assets/img/teambox/icon-close.svg"
+                                    (click)="closeModal();" />
+                            </button>
       </div>
 
       <div class="modal-body" style="padding: 16px 24px">
@@ -2017,18 +1999,9 @@
 
           <!-- Body Text -->
           <div class="mb-3">
-            <label style="
-                                font-size: 14px;
-                                color: #374151;
-                                font-weight: 500;
-                                margin-bottom: -15px;
-                                display: block;
-                            ">
-              Body Text
-            </label>
-            <div class="d-flex justify-content-end align-items-center mb-1">
-              <span style="font-size: 12px;color: #6b7280;margin-right: 0px;padding-top: 14px;">
-                Characters</span>
+            <div class="character-label-wrapper">
+              <label class="question_text_label">Body Text</label>
+              <span class="character-count01">Characters</span>
             </div>
             <div class="rte-wrapper" style="position: relative">
               <ejs-richtexteditor id="bodyRTE" #bodyEditor [toolbarSettings]="semiAdvanceTool" [width]="'100%'"
@@ -2167,21 +2140,12 @@
 
               <!-- Validation Error Message -->
               <div class="mb-3">
-                <label style="
-                                        font-size: 14px;
-                                        color: #374151;
-                                        font-weight: 500;
-                                        margin-bottom: 8px;
-                                        display: block;
-                                    ">
-                  Validation Error Message
-                  <span *ngIf="whatsAppFlowForm.get('reattemptsAllowed')?.value" class="text-danger">*</span>
-                </label>
-                <div class="text-end" style="font-size: 13px; color: #6b7280; margin-left: 285px">
-                  Characters
+                <div class="character-label-wrapper">
+                  <label class="question_text_label">Validation Error Message</label>
+                  <span class="character-count01">Characters</span>
                 </div>
                 <ejs-richtexteditor id="errorRTE" #errorEditor [toolbarSettings]="basicTools" [width]="'100%'"
-                  placeholder="Enter error message..." formControlName="errorMessage" [maxLength]="1024"
+                  placeholder="Enter error message..." formControlName="errorMessage" [maxLength]="1024" [pasteCleanupSettings]="pasteCleanupSettings"
                   [showCharCount]="true" style="">
                 </ejs-richtexteditor>
                 <div class="text-end" style="font-size: 12px; color: #6b7280">
@@ -2352,7 +2316,7 @@
                 <div class="custom-input-wrapper">
                   <input type="text" class="custom-input" formControlName="value" placeholder="Select variable or attribute"
                     (input)="onValueInput(i)" (focus)="isFocused = true"
-                    (keydown)="allowOnlyBackspaces($event, i, 'value')" (blur)="isFocused = false" readonly/>
+                    (keydown)="allowOnlyBackspaces($event, i, 'value')" (blur)="isFocused = false"/>
                      <!-- [readonly]="selectedFields[i]?.value" -->
                   <span class="toggle_attribute_condition" (click)="openAttributeOption(i, 'value')"></span>
                   <div class="bot-var-menu" [class.visible]="
@@ -2439,6 +2403,11 @@
       <!-- Modal Header -->
       <div class="modal-header border-0">
         <h5 class="modal-title" style="color: #6b46c1">Assign Conversation to Agent</h5>
+                 <button type="button" class="btn5 btn-close" style="width: 40px;" data-bs-dismiss="modal"
+                                aria-label="Close">
+                                <img style="width: 10px" src="assets/img/teambox/icon-close.svg"
+                                    (click)="closeModal();" />
+                            </button>
       </div>
 
       <div class="modal-body scrolles">
@@ -2482,6 +2451,11 @@
         <h6 class="modal-title" style="color: #6b46c1">
           Assign conversation to contact owner
         </h6>
+                 <button type="button" class="btn5 btn-close" style="width: 40px;" data-bs-dismiss="modal"
+                                aria-label="Close">
+                                <img style="width: 10px" src="assets/img/teambox/icon-close.svg"
+                                    (click)="closeModal();" />
+                            </button>
       </div>
 
       <div class="modal-body scrolles">
@@ -2506,6 +2480,11 @@
       <!-- Modal Header -->
       <div class="modal-header border-0">
         <h6 class="modal-title" style="color: #6b46c1">Unassign conversation</h6>
+                 <button type="button" class="btn5 btn-close" style="width: 40px;" data-bs-dismiss="modal"
+                                aria-label="Close">
+                                <img style="width: 10px" src="assets/img/teambox/icon-close.svg"
+                                    (click)="closeModal();" />
+                            </button>
       </div>
 
       <div class="modal-body scrolles">
@@ -2530,6 +2509,11 @@
       <!-- Modal Header -->
       <div class="modal-header border-0">
         <h6 class="modal-title" style="color: #6b46c1">Update Conversation Status</h6>
+                 <button type="button" class="btn5 btn-close" style="width: 40px;" data-bs-dismiss="modal"
+                                aria-label="Close">
+                                <img style="width: 10px" src="assets/img/teambox/icon-close.svg"
+                                    (click)="closeModal();" />
+                            </button>
       </div>
 
       <div class="modal-body scrolles">
@@ -2564,10 +2548,18 @@
 <div class="modal fade" id="UpdateContactAttribute" tabindex="-1" aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered custom-modal" style="width: 32%">
     <div class="modal-content p-4">
-      <!-- Modal Header -->
-      <div class="mb-3">
+      <!-- Modal Header --> 
+      <div class="mb-3 d-flex justify-content-between align-items-start">
+         <div>
         <h6 class="fw-bold m-0" style="color: #6b46c1">Update Contact Attribute</h6>
+      
  <small class="text-muted">Automatically save user input to a contact field (e.g., city, interest).</small>
+ </div>
+   <button type="button" class="btn5 btn-close" style="width: 40px;" data-bs-dismiss="modal"
+                              aria-label="Close">
+                              <img style="width: 10px" src="assets/img/teambox/icon-close.svg"
+                                  (click)="closeModal();" />
+                          </button>
       </div>
 
       <form [formGroup]="contactAttributeForm" (ngSubmit)="onSubmit('UpdateContactAttribute')">
@@ -2604,16 +2596,16 @@
               <input type="text" class="custom-input form-control" formControlName="selectedValue"
                 *ngIf="selectedAttributeType == 'Multi Select' || selectedAttributeType == 'Select'"
                 placeholder="Enter variable or attribute" (focus)="isFocused = true" (blur)="isFocused = false"
-                (input)="onTextInputChange($event)" (keydown)="allowOnlyBackspace($event)" />
+                (input)="onTextInputChange($event)"  (keydown)="selectedFromVariable ? onSelectedValueKeydown($event) : allowOnlyBackspace($event)" />
 
 
 
 
-              <span class="select_box" [class.disabled]="isUserTyping"
-                (click)="!isUserTyping && selectAttribute('option',$event)"
+              <span class="select_box" [class.disabled]="isUserTyping" 
+                (click)="!isUserTyping && selectAttribute('option',$event)"   
                 *ngIf="selectedAttributeType == 'Multi Select' || selectedAttributeType == 'Select'"></span>
 
-              <span class="toggle_attributes" [class.disabled]="isUserTyping"
+              <span class="toggle_attributes" style="left: 345px;" [class.disabled]="isUserTyping"
                 (click)="!isUserTyping && selectAttribute('attr',$event)"></span>
 
               <button type="button" class="custom-button" [class.focused]="isFocused" [disabled]="isUserTyping"
@@ -2691,6 +2683,11 @@
       <!-- Modal Header -->
       <div class="modal-header border-0">
         <h6 class="modal-title" style="color: #6b46c1">Add Tags</h6>
+                 <button type="button" class="btn5 btn-close" style="width: 40px;" data-bs-dismiss="modal"
+                                aria-label="Close">
+                                <img style="width: 10px" src="assets/img/teambox/icon-close.svg"
+                                    (click)="closeModal();" />
+                            </button>
       </div>
 
       <div class="modal-body scrolles">
@@ -2762,6 +2759,11 @@
       <!-- Modal Header -->
       <div class="modal-header border-0">
         <h6 class="modal-title" style="color: #6b46c1">Remove Tags</h6>
+                 <button type="button" class="btn5 btn-close" style="width: 40px;" data-bs-dismiss="modal"
+                                aria-label="Close">
+                                <img style="width: 10px" src="assets/img/teambox/icon-close.svg"
+                                    (click)="closeModal();" />
+                            </button>
       </div>
 
       <div class="modal-body scrolles">
@@ -2812,6 +2814,11 @@
       <!-- Modal Header -->
       <div class="modal-header border-0">
         <h6 class="modal-title" style="color: #6b46c1">Message Opt-in</h6>
+                 <button type="button" class="btn5 btn-close" style="width: 40px;" data-bs-dismiss="modal"
+                                aria-label="Close">
+                                <img style="width: 10px" src="assets/img/teambox/icon-close.svg"
+                                    (click)="closeModal();" />
+                            </button>
       </div>
 
       <div class="modal-body scrolles">
@@ -2850,6 +2857,11 @@
       <!-- Modal Header -->
       <div class="modal-header border-0">
         <h6 class="modal-title" style="color: #6b46c1">Add Time Delay</h6>
+                 <button type="button" class="btn5 btn-close" style="width: 40px;" data-bs-dismiss="modal"
+                                aria-label="Close">
+                                <img style="width: 10px" src="assets/img/teambox/icon-close.svg"
+                                    (click)="closeModal();" />
+                            </button>
       </div>
 
       <div class="modal-body">
@@ -2890,6 +2902,11 @@
       <!-- Modal Header -->
       <div class="modal-header border-0">
         <h6 class="modal-title" style="color: #6b46c1">Bot Trigger</h6>
+                 <button type="button" class="btn5 btn-close" style="width: 40px;" data-bs-dismiss="modal"
+                                aria-label="Close">
+                                <img style="width: 10px" src="assets/img/teambox/icon-close.svg"
+                                    (click)="closeModal();" />
+                            </button>
       </div>
 
       <div class="modal-body">
@@ -2928,9 +2945,16 @@
   <div class="modal-dialog modal-dialog-centered custom-modal" style="width: 32%;top: 60px;">
     <div class="modal-content p-4">
       <!-- Modal Header -->
-      <div class="mb-3">
+      <div class="mb-3 d-flex justify-content-between align-items-start">
+          <div>
         <h6 class="modal-title" style="color: #6b46c1">Notify</h6>
          <small class="text-muted">Trigger an internal alert or message to your team when a condition is met.</small>
+          </div>
+                  <button type="button" class="btn5 btn-close" style="width: 40px;" data-bs-dismiss="modal"
+                                aria-label="Close">
+                                <img style="width: 10px" src="assets/img/teambox/icon-close.svg"
+                                    (click)="closeModal();" />
+                            </button>
       </div>
 
       <div class="modal-body scrolles">
@@ -2949,10 +2973,16 @@
           </div>
           <!-- Message -->
           <div class="form-group mb-3">
-            <label class="form-label">Notification Message</label>
+            <!-- <label class="form-label">Notification Message</label>
             <div class="text-end" style="font-size: 13px; color: #6b7280; margin-left: 316px">
               Characters
+            </div> -->
+
+               <div class="character-label-wrapper">
+            <label class="question_text_label">Notification Message</label>
+            <span class="character-count02">Characters</span>
             </div>
+            
             <ejs-richtexteditor id="defaultRTE" [insertImageSettings]="insertImageSettings" #chatEditorElement
               [toolbarSettings]="attachementTool" [width]="'90%'" [maxLength]="1024" [showCharCount]="true"
               placeholder="Type Message..." [pasteCleanupSettings]="pasteCleanupSettings" formControlName="textMessage">
@@ -2977,6 +3007,11 @@
       <!-- Modal Header -->
       <div class="modal-header border-0">
         <h6 class="modal-title" style="color: #6b46c1">Working Hours</h6>
+                 <button type="button" class="btn5 btn-close" style="width: 40px;" data-bs-dismiss="modal"
+                                aria-label="Close">
+                                <img style="width: 10px" src="assets/img/teambox/icon-close.svg"
+                                    (click)="closeModal();" />
+                            </button>
       </div>
 
       <!-- Modal Body -->
@@ -3011,9 +3046,16 @@
   <div class="modal-dialog modal-dialog-centered custom-modal" style="width: 32%">
     <div class="modal-content p-4">
       <!-- Modal Header -->
-      <div class="mb-3">
+      <div class="mb-3 d-flex justify-content-between align-items-start">
+         <div>
         <h6 class="modal-title" style="color: #6b46c1">Notes and Mention</h6>
          <small class="text-muted">Add an internal note or &#64;mention a teammate. This message will appear in the Notes section inside Team Box.</small>
+         </div>         
+         <button type="button" class="btn5 btn-close" style="width: 40px;" data-bs-dismiss="modal"
+                                aria-label="Close">
+                                <img style="width: 10px" src="assets/img/teambox/icon-close.svg"
+                                    (click)="closeModal();" />
+                            </button>
       </div>
 
       <div class="modal-body scrolles">
@@ -3023,12 +3065,17 @@
           <!-- Message -->
           <div class="form-group mb-3">
 
-            <div class="text-end" style="font-size: 13px; color: #6b7280; margin-left: 316px">
+            <!-- <div class="text-end" style="font-size: 13px; color: #6b7280; margin-left: 316px">
               Characters
+            </div> -->
+
+            <div class="character-label-wrapper01">
+              <label class="question_text_label"></label>
+              <span class="character-count02">Characters</span>
             </div>
             <div class="rte-wrapper" style="position: relative">
               <ejs-richtexteditor id="mention_integration" [insertImageSettings]="insertImageSettings" id="defaultRTE"
-                #chatEditors [toolbarSettings]="tools" [width]="'90%'" [maxLength]="1024" [showCharCount]="true"
+                #chatEditors [toolbarSettings]="tools" [width]="'90%'" [maxLength]="1024" [showCharCount]="true" 
                 placeholder="Type Message..." [pasteCleanupSettings]="pasteCleanupSettings" formControlName="message">
               </ejs-richtexteditor>
 
@@ -3037,13 +3084,13 @@
                 <img src="assets/img/teambox/add.svg" /> Bot var
               </button> -->
                          <div class="d-flex align-items-center gap-2">
-  <button id="add-action-dropdown"  style="bottom: 10px;right: 79px;" type="button" (click)="openBotVariableModal()">
+  <button id="add-action-dropdown"  style="bottom: 20px;right: 79px;" type="button" (click)="openBotVariableModal()">
     <img src="assets/img/teambox/add.svg" alt="Add Icon" /> Bot var
   </button>
 
   <sb-tooltip
     class="d-inline-block"
-     style="bottom: 11px;right: 49px;"
+     style="bottom: 20px;right: 49px; "
     id="add-action-dropdowns"
     [tooltipText]="'Use this to store user responses and reuse them later in the bot flow.'"
     [isVisible]="isTooltipVisible"
@@ -3053,7 +3100,15 @@
             </div>
 
             <div *ngIf="showMention" class="popup-dialog mention" (click)="stopPropagation($event)">
+               <div class="d-flex ">
               <p class="label">&#64;mention</p>
+               <button class="close-btn" style="padding: 0px;
+    width: 39px;
+    height: 24px;border: none;" (click)="showMention = false">
+      <i class="uil uil-times"></i> <!-- Using Uicons for the cross -->
+    </button>
+    </div>
+
               <p *ngFor="let user of agentsList; let k = index" (click)="InsertMentionOption(user)">
                 <span *ngIf="user.uid != userDetails.uid" class="user-img">
                   <div class="img">

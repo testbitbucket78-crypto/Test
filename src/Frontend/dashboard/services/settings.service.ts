@@ -660,6 +660,11 @@ const headers = new HttpHeaders({
   // getWhatsAppDetails(spid:any): Observable<any> {
   //   return this.http.get<any>(`${this.API_URL}/getWhatsAppDetails/${spid}`);
   // }
+
+
+    getChennelWhapiorWeb(spId:any): Observable<any> {
+    return this.http.get<any>(`${this.API_URL}/getChennelWhapiorWeb/${spId}`);
+  }
   
 
 

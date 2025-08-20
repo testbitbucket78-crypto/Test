@@ -179,7 +179,7 @@ countryCodes = [
   'YE +967', 'YT +262', 'ZA +27', 'ZM +260', 'ZW +263'
 ];
 
-    rowData = [ ];
+    rowData:any[] = [ ];
     imageChangedEvent: any = '';
     croppedImage: any = '';
     spid!:number;
@@ -524,21 +524,44 @@ onChangePage(pageOfItems: any) {
     let data:any ={};
     data.SP_ID = SP_ID;
     data.Query = this.query;
-    data.contactFrom = this.contactFrom;
-    data.contactTo = this.contactTo;
-    this.apiService.getFilteredContact(data).subscribe((data:any) => {
+
+    data.contactFrom = this.currPage * Number(this.paginationPageSize) - Number(this.paginationPageSize);
+    data.contactTo = Number(this.paginationPageSize);
+    this.isLoading = true;
+    this.apiService.getFilteredContact(data).subscribe((datas:any) => {
       this.isLoading = false;
       this.deleteBloackContactLoader = false;
-      this.contacts = data.result;
-      this.rowData = this.contacts;
-      if(this.rowData.length == 0){
+      this.contacts = datas.result;
+      let totalCount = datas?.totalCount;
+      this.rowData = this.buildArrayWithInsert(totalCount,data.contactFrom,data.contactTo,this.contacts);
+      console.log(this.rowData);
+      if(this.contacts?.length == 0){
         this.isEmptyData();
       }
       this.productForm.get('countryCode')?.setValue('IN +91');
+      if(data.contactFrom ==0)
         this.getGridPageSize();
         
     });
+
   }
+
+  buildArrayWithInsert(totalCount: number,start: number,end: number,insertArr: any[]): any[] {
+  // Step 1: Create base array of objects
+  const baseArr: any[] = Array.from({ length: totalCount }, (_, i) => ({
+    id: i + 1,
+    value: `Item ${i + 1}`
+  }));
+
+  // Step 2: Replace items from start to end with insertArr
+  const newArr: any[] = [
+    ...baseArr.slice(0, start),
+    ...insertArr,
+    ...baseArr.slice(end)
+  ];
+
+  return newArr;
+}
 
   isEmptyData(){
 
@@ -1497,7 +1520,7 @@ timeFormatter(params: any): string {
         setTimeout(() => {
             this.GridService.onChangePageSize(this.paginationPageSize, this.gridapi, this.rowData);
             this.paging = this.GridService.paging;
-            this.onBtFirst()
+            this.onBtFirst();
         }, 50)
         
     }
@@ -1505,23 +1528,26 @@ timeFormatter(params: any): string {
       this.GridService.onBtFirst(this.gridapi, this.rowData);
         this.currPage = this.GridService.currPage;
         this.paging = this.GridService.paging;
+       // this.getContact();
     }
     onBtNext() {
         this.GridService.onBtNext(this.gridapi, this.rowData);
         this.currPage = this.GridService.currPage;
         this.paging = this.GridService.paging;
-
+      this.getContact();
     }
 
     onBtPrevious() {
         this.GridService.onBtPrevious(this.gridapi, this.rowData);
         this.currPage = this.GridService.currPage;
         this.paging = this.GridService.paging;
+        this.getContact();
 
     }
 
     gotoPage(page: any) {
         this.GridService.gotoPage(page, this.gridapi, this.rowData)
+      this.getContact();
     }
     filterIsApplied! : boolean;
     filterApplied(){
