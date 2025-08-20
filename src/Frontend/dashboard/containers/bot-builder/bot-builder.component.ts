@@ -928,12 +928,14 @@ this.closeModal()
     });
   }
 checkTagStatus(val: string, id: number): boolean {
-  const normalize = (str: string) => str?.trim().toLowerCase();
 
+  const normalize = (str: string) => str?.trim().toLowerCase();
   if (id === 0) {
-    return this.assignedTagList.some(tag => normalize(tag) === normalize(val));
+
+    // return this.assignedTagList.some(tag => normalize(tag) === normalize(val));
+    return this.assignedAgentList.find(a => a.actionTypeId === 1)?.Value.includes(val);
   } else if (id === 1) {
-    return this.assignedRemoveTagList.some(tag => normalize(tag) === normalize(val));
+    return this.assignedAgentList.find(a => a.actionTypeId === 3)?.Value.includes(val);
   } else if (id === 2) {
     return this.converstatation.some(tag => normalize(tag) === normalize(val));
   }

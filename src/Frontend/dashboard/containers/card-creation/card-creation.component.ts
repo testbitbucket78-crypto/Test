@@ -594,7 +594,7 @@ document.addEventListener('mouseup', (e) => {
     this.questionOption = this.fb.group({
       questionText: ['', [Validators.required]],
       questionTextMessage: [''],
-      options: this.fb.array([this.createOptionControl()], [this.atLeastOneOptionRequired()]),
+      options: this.fb.array([this.createOptionControl()], [this.atLeastOneOptionRequired(),this.atLeastOneAndUniqueOptions()]),
       saveAnswerVariable: [''],
       promptMessage: [this.getPromptMessage()],
       reattemptsAllowed: [false],
@@ -620,6 +620,11 @@ document.addEventListener('mouseup', (e) => {
       this.questionOption.get('promptMessage')?.setValue(defaultPrompt);
     }
   });
+
+    this.questionOption.get('options')?.valueChanges.subscribe(value => {
+            this.changeDetectorRef.detectChanges();
+            this.atLeastOneAndUniqueOptions();
+          });
   }
 
   createOptionControl(): FormControl {
@@ -635,55 +640,80 @@ atLeastOneOptionRequired(): ValidatorFn {
   };
 }
 
+atLeastOneAndUniqueOptions() {
+  return (formArray: AbstractControl): ValidationErrors | null => {
+    const controls = (formArray as FormArray).controls;
+
+    // Normalize: trim + lowercase for comparison
+    const normalizedValues = controls
+      .map(ctrl => ctrl.value?.trim().toLowerCase())
+      .filter(val => val); // remove empty or null
+
+    const hasAtLeastOne = normalizedValues.length > 0;
+    const hasDuplicates = new Set(normalizedValues).size !== normalizedValues.length;
+
+    if (!hasAtLeastOne) {
+      return { atLeastOneRequired: true };
+    }
+
+    if (hasDuplicates) {
+      return { duplicateOptions: true };
+    }
+
+    return null; // valid
+  };
+}
+
+
 
   getPromptMessage(): string {
   const count = this.options.length;
   return `Please type a number from 1 to ${count} for your reply`;
 }
 
-  private initButtonOptionsForm(): void {
-    this.buttonOptions = this.fb.group({
-      headerType: ['none'],
-      headerText: ['', [Validators.maxLength(60)]],
-      bodyText: ['', [Validators.required, Validators.maxLength(this.MAX_CHARACTERS)]],
-      footerText: ['', [Validators.maxLength(60)]],
-      buttons: this.fb.array([this.fb.control('', [Validators.required, Validators.maxLength(20)])],[this.atLeastOneAndUniqueButtons()]),
-      fileLink: [''],
-      saveAsVariable: [false],
-      variableName: [''],
-      variableDataType: ['text'],
-      reattemptsAllowed: [false],
-      reattemptsCount: [1],
-      errorMessage: ['', [Validators.maxLength(this.MAX_CHARACTERS)]],
-      invalidAction: ['skip'],
-      enableTimeElapse: [false],
-      timeElapseMinutes: [''],
-      timeElapseAction: ['skip'],
-      enableValidation: [false]
-    });
+    private initButtonOptionsForm(): void {
+      this.buttonOptions = this.fb.group({
+        headerType: ['none'],
+        headerText: ['', [Validators.maxLength(60)]],
+        bodyText: ['', [Validators.required, Validators.maxLength(this.MAX_CHARACTERS)]],
+        footerText: ['', [Validators.maxLength(60)]],
+        buttons: this.fb.array([this.fb.control('', [Validators.required, Validators.maxLength(20)])],[this.atLeastOneAndUniqueButtons()]),
+        fileLink: [''],
+        saveAsVariable: [false],
+        variableName: [''],
+        variableDataType: ['text'],
+        reattemptsAllowed: [false],
+        reattemptsCount: [1],
+        errorMessage: ['', [Validators.maxLength(this.MAX_CHARACTERS)]],
+        invalidAction: ['skip'],
+        enableTimeElapse: [false],
+        timeElapseMinutes: [''],
+        timeElapseAction: ['skip'],
+        enableValidation: [false]
+      });
 
 
 
-        this.buttonOptions.get('buttons')?.valueChanges.subscribe(value => {
-           this.changeDetectorRef.detectChanges();
-          this.atLeastOneAndUniqueButtons();
-        });
+          this.buttonOptions.get('buttons')?.valueChanges.subscribe(value => {
+            this.changeDetectorRef.detectChanges();
+            this.atLeastOneAndUniqueButtons();
+          });
 
-    this.buttonOptions.get('headerType')?.valueChanges.subscribe(value => {
-  const headerControl = this.buttonOptions.get('fileLink'); // or 'headerText' depending on your control name
+      this.buttonOptions.get('headerType')?.valueChanges.subscribe(value => {
+    const headerControl = this.buttonOptions.get('fileLink'); // or 'headerText' depending on your control name
 
-  if (['image', 'video', 'document'].includes(value)) {
-    headerControl?.setValidators([Validators.required]);
-  } else {
-    headerControl?.clearValidators();
-  }
+    if (['image', 'video', 'document'].includes(value)) {
+      headerControl?.setValidators([Validators.required]);
+    } else {
+      headerControl?.clearValidators();
+    }
 
-  headerControl?.updateValueAndValidity();
-});
+    headerControl?.updateValueAndValidity();
+  });
 
 
-    this.setupFormListeners(this.buttonOptions);
-  }
+      this.setupFormListeners(this.buttonOptions);
+    }
 
 atLeastOneAndUniqueButtons() {
   return (formArray: AbstractControl): ValidationErrors | null => {
@@ -4357,19 +4387,9 @@ channelSelected:any
 ChannelWhatsAppOrWebSelection:any=''
   getChannelWhatsAppOrWeb(): void {
     this.settingService.getChennelWhapiorWeb(this.userDetails.SP_ID).subscribe((response: any) => {
-      if (response?.whatsAppDetails) {
-        this.ChannelWhatsAppOrWeb = response.whatsAppDetails.map((item: any) => ({
-          value: item?.id,
-          label: item?.channel_id,
-          connected_id: item?.connected_id,
-          channel_status: item?.channel_status
-        }));
-
-        if (this.ChannelWhatsAppOrWeb.length === 1) {
-          this.ChannelWhatsAppOrWebSelection = this.ChannelWhatsAppOrWeb[0].label;
-
-        }
-      }
+	 if(response){
+			 this.ChannelWhatsAppOrWebSelection = response?.provider
+		 }
     });
   }
 
