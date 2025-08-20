@@ -119,11 +119,15 @@ app.post('/KeywordMatch', async (req, res) => {
     }
     var findKey = await db.excuteQuery(query, [])
 
+    let isKeywordUsed = 'SELECT LOWER(keywords) as Keyword FROM Bots WHERE spid=? and isDeleted !=1'
+      let botKeyword = await db.excuteQuery(isKeywordUsed, [req.body.SP_ID]);
+
     // Check if any element from array1 is present in array2
     const matchedElements = myStringArray.filter(element => findKey.some(obj => obj.Keyword === element));
+    const matchedBotElements = myStringArray.filter(element => botKeyword.some(obj => obj.Keyword === element));
     console.log(findKey);
     console.log(matchedElements)
-    if (matchedElements.length == 0) {
+    if (matchedElements.length == 0 && matchedBotElements.length == 0) {
       console.log("if")
       res.status(200).send({
         msg: 'keyword ready for add',

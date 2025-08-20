@@ -90,6 +90,7 @@ async function autoReplyDefaultAction(isAutoReply, autoReplyTime, isAutoReplyDis
         "agid": agid,
         "custid": custid,
         "from": from,
+        "toPhoneNumber": from,
         "incommingMessage": message_text,
         "channelType": channelType,
         "phone_number_id": phone_number_id,
@@ -112,12 +113,14 @@ async function autoReplyDefaultAction(isAutoReply, autoReplyTime, isAutoReplyDis
       "agid": agid,
       "custid": custid,
       "from": from,
+      "toPhoneNumber": from,
       "incommingMessage": message_text,
       "channelType": channelType,
       "phone_number_id": phone_number_id,
       "display_phone_number": display_phone_number,
     }
     data['botId'] = botMatched[0]?.id;
+    console.log(data,'----------- data ----------');
     botOperations(data);
     return false;
   }
@@ -414,6 +417,10 @@ async function iterateSmartReplies(replymessage, phone_number_id, from, sid, cus
           const replacement = result && result[placeholder] !== undefined ? result[placeholder] : null;
           content = content.replace(`{{${placeholder}}}`, replacement);
         });
+
+        console.log(content ,'----------content-------------------');
+        console.log(bodyVar ,'----------bodyVar-------------------');
+        console.log(headerVar ,'----------content-------------------');
 
       
       }
@@ -1006,6 +1013,7 @@ async function messageThroughselectedchannel(spid, from, type, text, media, phon
     const time = moment.utc(myUTCString).format('YYYY-MM-DD HH:mm:ss');      
     console.log('fasdfa');
     console.log([[spid, 'text', "", interactionId, agentId, 'Out', Message_text, (media ? media : 'text'), media_type, 1234, "", time, time, "", -2, 1,'']])
+    
     let result = await middleWare.sendDefultMsg(media, text, getMediaType, phone_number_id, from, spid);
     // console.log("messageThroughselectedchannel", result?.status)
     console.log('runningggg',result);
@@ -1058,6 +1066,7 @@ async function SreplyThroughselectedchannel(spid, from, type, text, media, phone
  
 
     if(isTemplate == 'true'){
+      console.log(type, from, templateName, laungage, headerVar, bodyVar, media, spid, buttonsArray, DynamicURLToBESent);
        sReply = await middleWare.createWhatsAppPayload(type, from, templateName, laungage, headerVar, bodyVar, media, spid, buttonsArray, DynamicURLToBESent);
     }else{
       sReply = await middleWare.sendDefultMsg(media, text, type, phone_number_id, from, spid);
@@ -1607,11 +1616,12 @@ let mainData = {
   // "phone_number_id": 631644263356652,
   "botId": 41,
 }
-//setTimeout(() => {
-  // console.log("mainData", mainData);
-  // console.log(typeof identifyNode);
- // runBotOperation(mainData);
-//}, 1000); 
+// setTimeout(() => {
+//   let body ='<p>Hi&nbsp;<span><span contenteditable="false" class="e-mention-chip"><a _ngcontent-yyb-c67="" title="">pawan</a></span></span><span contenteditable="false">&nbsp;</span></p><p>This is sample data for testing</p><p>both URL in one place ho rahi hain okay message</p><p>thank you!</p>';
+//   let msgVar = 
+//   let bodyVar = commonFun.getTemplateVariables(msgVar, body, 55, 83534);
+// console.log(bodyVar);
+// }, 1000); 
 
 
 

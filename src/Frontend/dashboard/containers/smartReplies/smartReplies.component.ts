@@ -1102,8 +1102,11 @@ showAddSmartRepliesModal() {
 		this.templateName =item?.TemplateName;
 		this.templatelanguage =item?.Language;
 		this.templateButton  =item?.buttons;
+		let temp = this.allTemplatesMain.filter((it: any) => it.ID == item.ID)[0];
+		let headerText = temp?.Header;
+		let bodyText = temp?.BodyText;
 		this.interactive_buttons = item?.interactive_buttons;
-		this.addMessage(true,htmlcontent,item?.Header,item?.BodyText);
+		this.addMessage(true,htmlcontent,headerText,bodyText);
 	}
 
 	searchTemplate(event:any){

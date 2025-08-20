@@ -37,7 +37,6 @@ export class DashboardService {
   }
   public dashboardCampaigns(sPid: any) {
     const params = new HttpParams().set('sPid', sPid)
-
     console.log(params)
     return this.http.get(API_URL+'Campaigns:/sPid', { params: params });
 

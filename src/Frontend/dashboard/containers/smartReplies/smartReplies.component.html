@@ -156,7 +156,7 @@
 				<div *ngIf="item.Name =='Trigger Flow' && item.Name" class="sidebar-assign-conversation">
 					<p class="m-0 py-1 px-2" id="sidebar-msgbox-head1">Action</p>
 					<div class="d-flex pl-1 assign-container">
-						<p class="p-1 m-0" id="sidebar-msgbox-body1"><b>Add Bots: </b><span style="color: #000;" id="msgbox-body1">{{parseTags(item.Value)}}</span>
+						<p class="p-1 m-0" id="sidebar-msgbox-body1"><b>Add Bots: </b><span style="color: #000;" id="msgbox-body1">{{item.Value}}</span>
 						</p>
 					</div>
 				</div>
@@ -528,7 +528,7 @@
 								  <p class="label">Add Action</p>
 								  <p class="d-flex justify-content-around" *ngFor="let assignAction of assignActionList; let m = index"
 									(click)="toggleAssignOption(m)"
-									[ngClass]="{'fade-out': assignAction == 'Assign Conversation' && assignedAgentList.length > 0 && checkList() || assignAction == 'Add Bot' && assignedAgentList.length > 0 && checkBotList()}">
+									[ngClass]="{'fade-out': assignAction == 'Assign Conversation' && assignedAgentList.length > 0 && checkList() || assignAction == 'Add Bot' && assignedAgentList.length > 0 && checkBotList() || (assignAction == 'Add Bot' && checkList()) || (assignAction == 'Assign Conversation' && checkBotList())}">
 									<span>{{assignAction}}</span><img class="pr-3 arrow-sign" src="../../../../assets/img/arrow-sign.svg" />
 								  </p>
 								  <div *ngIf="ShowAddAction" class="overlay" (click)="closeAddAction()"></div>

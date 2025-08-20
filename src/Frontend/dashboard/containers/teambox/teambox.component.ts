@@ -848,7 +848,7 @@ export class TeamboxComponent implements OnInit {
 
 	ToggleBotOption() {
 		if (this.selectedInteraction?.assignTo?.AgentId == this.uid || this.showChatNotes == 'notes') {
-			if ((this.showChatNotes == 'text' && this.selectedInteraction.channel == 'WhatsApp Official' && this.selectedInteraction?.progressbar?.progressbarValue > 0) || (this.showChatNotes == 'text' && this.selectedInteraction.channel == 'WhatsApp Web') || this.showChatNotes != 'notes') {
+			if ((this.showChatNotes == 'text' && this.selectedInteraction?.channel == 'WA API' && this.selectedInteraction?.progressbar?.progressbarValue > 0) || (this.showChatNotes == 'text' && this.selectedInteraction.channel == 'WA Web') || this.showChatNotes == 'notes') {
 				$("#insertBotmodal").modal('show');
 				this.fallbackvalue = [];
 			}
