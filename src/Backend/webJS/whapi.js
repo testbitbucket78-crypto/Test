@@ -932,7 +932,7 @@ async function saveInMessages(message) {
         let repliedMessageText = '';
         let repliedMessageTo = 'You';
         
-        if(msg?.context.quoted_id){
+        if(msg?.context?.quoted_id){
           const LastModifiedDate = moment.utc(new Date().toUTCString()).format('YYYY-MM-DD HH:mm:ss');
           repliedMessage_id = msg?.context.quoted_id;
           repliedMessageText = msg?.context?.quoted_content?.body || '';
