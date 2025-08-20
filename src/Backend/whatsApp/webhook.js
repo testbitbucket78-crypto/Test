@@ -437,6 +437,7 @@ async function saveIncommingMessages(from, firstMessage, phone_number_id, displa
     message_media = imageurl.value;
 
     // message_text = " "
+   message_text = message_text?.length >0 ? message_text : ' ';
     var media_type = "video/mp4"
   }
   if (Type == "document") {
@@ -445,6 +446,7 @@ async function saveIncommingMessages(from, firstMessage, phone_number_id, displa
     message_media = imageurl.value;
 
     // message_text = " "
+   message_text = message_text?.length >0 ? message_text : ' ';
     var media_type = "application/pdf"
   }
 

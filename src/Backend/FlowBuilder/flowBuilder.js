@@ -5,6 +5,7 @@ const val = require('./constant');
 const bodyParser = require('body-parser');
 const cors = require('cors');
 const { type } = require("os");
+const nodemailer = require('nodemailer');
 app.use(bodyParser.json());
 app.use(cors());
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -47,7 +48,8 @@ const addBot = async (request, res) => {
         req.timeout_message,
         req.created_by,
         JSON.stringify(req.advanceAction),
-        req.keyword
+        req.keyword,
+        null
       ];
       console.log("values", values);
         let bot = await db.excuteQuery(val.insertBot, [[values]])
@@ -72,7 +74,10 @@ const submitBots = async (request, res) => {
     let nodes = req.nodes; 
     let nodeJson = req.node_FE_Json;
     let published_at = req.status =='publish' ? created_at :null;
-    let bot = await db.excuteQuery(val.updateBotStatus, [req.status, nodeJson, published_at, req.botId]);
+    let bot = await db.excuteQuery(val.updateBotStatus, [req.status, nodeJson, req.botId]);
+    if(req.status =='publish'){
+      let botPublish = await db.excuteQuery(val.updateBotpublishedAt, [ req.botId]);
+    }
     // let deleteBotNode = await db.excuteQuery(val.deleteBotsNode, [req.botId]); 
       nodes.forEach((node) => {
         let node_Json = JSON.stringify(node);
@@ -212,7 +217,9 @@ const checkExistingKeyword = async (req, res) => {
 
 const getAllBots = async (req, res) => {
     try {
-        let bots = await db.excuteQuery(val.getAllBots, [req.params.spid])
+        let bots = await db.excuteQuery(val.getAllBots, [req.params.spid]);
+        let nodeList = await db.excuteQuery(val.getBotDetailById, [req.params.spid, req.params.botId]);
+        
         console.log('bots', bots);
         res.status(200).send({
             bots: bots,
@@ -356,6 +363,7 @@ async function isAgentActive(uid) {
 
 const exportFlowData = async (req, res) => {
     try {
+      console.log(req, '-----------------req ---------------');
       console.log(req.body)
       let SP_ID = req.body.spId
       let botId = req.body.botId
@@ -364,6 +372,7 @@ const exportFlowData = async (req, res) => {
       let Channel = req?.body?.Channel
       let data;
       let emailSender = MessagingName[Channel];
+      console.log(emailSender);
       const transporter = getTransporter(emailSender);
       const senderConfig = EmailConfigurations[emailSender];
       let botRunning = await db.excuteQuery(val.geBotSession, [botId, SP_ID, startDate, endDate]);
@@ -431,7 +440,7 @@ const exportFlowData = async (req, res) => {
   
       });
   
-      return res.status(200).send({ msg: "Contacts exported sucessfully!" });
+      return res.status(200).send({ msg: "exported sucessfully!" });
     } catch (err) {
         console.log(err)
       res.send(err);
