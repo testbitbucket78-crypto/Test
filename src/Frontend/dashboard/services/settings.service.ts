@@ -662,9 +662,9 @@ const headers = new HttpHeaders({
   // }
 
 
-    getChennelWhapiorWeb(spId:any): Observable<any> {
-    return this.http.get<any>(`${this.API_URL}/getChennelWhapiorWeb/${spId}`);
-  }
+  //   getChennelWhapiorWeb(spId:any): Observable<any> {
+  //   return this.http.get<any>(`${this.API_URL}/getChennelWhapiorWeb/${spId}`);
+  // }
   
 
 
