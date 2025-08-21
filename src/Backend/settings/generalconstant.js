@@ -137,6 +137,59 @@ SELECT subLatestMessage.* FROM (
 where (ic.interaction_status = 'open' OR  ic.interaction_status = 'Open Interactions') and ic.is_deleted=0 and dm.title = 'No Customer Reply Timeout'
 AND dm.Is_disable=1 and latestmsg.updated_at <= DATE_SUB(NOW(), INTERVAL dm.autoreply MINUTE)`
 
+// systemMsgQuery=`SELECT
+// ic.interaction_status,
+// ic.InteractionId,
+// ic.customerId,
+// ic.updated_at as updateTime,
+// ec.channel,
+// ec.phone_number AS customer_phone_number,
+// ec.defaultAction_PauseTime,
+// SUBSTRING_INDEX(GROUP_CONCAT(distinct imp.AgentId ORDER BY imp.created_at desc), ',', 1) as AgentId,whour.start_time,whour.end_time,whour.working_days,
+// defAc.isAutoReply,defAc.isAutoReplyDisable,defAc.pauseAutoReplyTime,
+// dm.*,
+// latestmsg.*,
+// max(latestmsg.updated_at) as nonSystemUpdatedMsgTime,
+// dm.updated_at as settingUpdatedTime
+// FROM
+// Interaction ic
+// JOIN EndCustomer ec ON ic.customerId = ec.customerId
+// JOIN defaultmessages dm ON dm.SP_ID = ic.SP_ID
+
+// JOIN (
+// SELECT 
+//     m1.*
+// FROM 
+//     Message m1
+// INNER JOIN (
+//     SELECT
+//         interaction_id,
+//         MAX(updated_at) AS latestMessageDate
+//     FROM
+//         Message
+//     WHERE 
+//         (system_message_type_id IS NULL OR system_message_type_id IN (1, 2,3,4,5))
+//     GROUP BY 
+//         interaction_id
+// ) m2 ON m1.interaction_id = m2.interaction_id AND m1.updated_at = m2.latestMessageDate
+
+
+// WHERE 
+//     m1.message_direction = 'Out'
+// ) latestmsg ON ic.InteractionId = latestmsg.interaction_id
+
+// left join InteractionMapping imp on imp.InteractionId = latestmsg.interaction_id
+// left join WorkingTimeDetails whour on  whour.SP_ID = latestmsg.SPID and whour.isDeleted !=1
+// left join defaultActions defAc on defAc.spid = latestmsg.SPID and defAc.isDeleted !=1
+// WHERE 
+// (ic.interaction_status = 'Open' OR ic.interaction_status = 'Open Interactions')
+// AND ic.is_deleted = 0
+// AND dm.title = 'No Customer Reply Timeout'
+// AND dm.Is_disable = 1 
+// and (latestmsg.msg_status != 9 AND latestmsg.msg_status != 10) and ec.isBlocked !=1
+// AND latestmsg.updated_at <= DATE_SUB(NOW(), INTERVAL dm.autoreply MINUTE)
+// group by latestmsg.interaction_id ,ic.customerId`
+
 systemMsgQuery=`SELECT
 ic.interaction_status,
 ic.InteractionId,
@@ -164,18 +217,18 @@ FROM
 INNER JOIN (
     SELECT
         interaction_id,
-        MAX(updated_at) AS latestMessageDate
+        MAX(Message_id) AS latestMessageId
     FROM
         Message
     WHERE 
         (system_message_type_id IS NULL OR system_message_type_id IN (1, 2,3,4,5))
     GROUP BY 
         interaction_id
-) m2 ON m1.interaction_id = m2.interaction_id AND m1.updated_at = m2.latestMessageDate
+) m2 ON m1.interaction_id = m2.interaction_id AND m1.Message_id = m2.latestMessageId
 
 
 WHERE 
-    m1.message_direction = 'out'
+    m1.message_direction = 'Out'
 ) latestmsg ON ic.InteractionId = latestmsg.interaction_id
 
 left join InteractionMapping imp on imp.InteractionId = latestmsg.interaction_id
