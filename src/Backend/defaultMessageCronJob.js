@@ -92,6 +92,16 @@ async function NoCustomerReplyReminder() {
                 ];
                 await db.excuteQuery(insertMessageQuery, [messageValu]);
               }
+              else {
+                // need to fail this message.
+                let myUTCString = new Date().toUTCString();
+                const currenttime = moment.utc(myUTCString).format('YYYY-MM-DD HH:mm:ss');
+                await db.excuteQuery(settingVal.systemMsgQuery, [5, currenttime, message.MaxMessageId]);
+                let messageValu = [
+                  [message.SPID, 'text', metaPhoneNumberID, message.interaction_id, message.Agent_id, 'Out', message.value, (message.link ? message.link : 'text'), message.message_type,  response?.message?.messages[0]?.id, "", currenttime, currenttime, 5, -2, 9]
+                ];
+                await db.excuteQuery(insertMessageQuery, [messageValu]);
+              }
             }
           } catch (error) {
             logger.error(`inner Error processing NoCustomerReplyReminder phone_number: ${error.message} ${message.customer_phone_number}`);
@@ -155,7 +165,7 @@ async function NoCustomerReplyTimeout() {
            
 
             // If isReplyPause is true and conditions are met, proceed
-            if (isReplyPause && msg.Is_disable != 0 && ((msg.updated_at >= msg.updateTime) || msg.updated_at == null) && currentTime >= autoReplyVal && msg.settingUpdatedTime < msg.updated_at) {
+            if (isReplyPause && msg.Is_disable != 0 && ((msg.updated_at >= msg.updateTime) || msg.updated_at == null) && currentTime >= autoReplyVal && msg.settingUpdatedTime < msg.updated_at && msg?.system_message_type_id != 4) {
               // Check if extractedMessageCache already has the result for this SP_ID
               if (!extractedMessageCache.has(msg.SP_ID)) {
                 if (msg.value != null) {
@@ -201,6 +211,16 @@ async function NoCustomerReplyTimeout() {
                 if (closeInteraction.affectedRows > 0) {
                   await db.excuteQuery(`UPDATE InteractionMapping SET AgentId='-1' WHERE InteractionId = ?`, [msg.interaction_id]);
                 }
+              }
+              else {
+                let myUTCString = new Date().toUTCString();
+                const currenttime = moment.utc(myUTCString).format('YYYY-MM-DD HH:mm:ss');
+                await db.excuteQuery(settingVal.systemMsgQuery, [6, currenttime, msg.Message_id]);
+                let messageValu = [
+                  [msg.SPID, 'text', metaPhoneNumberID, msg.interaction_id, msg.Agent_id, 'Out', msg.value, (msg.link ? msg.link : 'text'), msg.message_type,  response?.message?.messages[0]?.id, "", currenttime, currenttime, 6, -2, 9]
+                ];
+                let insertedMessage = await db.excuteQuery(insertMessageQuery, [messageValu]);
+                logger.info(`NoCustomerReplyTimeout msg, ${insertedMessage}, ${new Date()}`);
               }
             }
           } catch (error) {
@@ -315,6 +335,16 @@ async function NoAgentReplyTimeOut() {
                 const currenttime = moment.utc(myUTCString).format('YYYY-MM-DD HH:mm:ss');
                 let messageValu = [
                   [msg.SPID, 'text', metaPhoneNumberID, msg.interaction_id, msg.Agent_id, 'Out', msg.value, (msg.link ? msg.link : 'text'), msg.message_type, response?.message?.messages[0]?.id, "", currenttime, currenttime, 4, -2, 1]
+                ];
+                let insertedMessage = await db.excuteQuery(insertMessageQuery, [messageValu]);
+
+                logger.info(`Message inserted into DB for SPID: ${msg.SPID}`, { messageValu });
+              }
+              else {
+                let myUTCString = new Date().toUTCString();
+                const currenttime = moment.utc(myUTCString).format('YYYY-MM-DD HH:mm:ss');
+                let messageValu = [
+                  [msg.SPID, 'text', metaPhoneNumberID, msg.interaction_id, msg.Agent_id, 'Out', msg.value, (msg.link ? msg.link : 'text'), msg.message_type, response?.message?.messages[0]?.id, "", currenttime, currenttime, 4, -2, 9]
                 ];
                 let insertedMessage = await db.excuteQuery(insertMessageQuery, [messageValu]);
 
@@ -633,8 +663,9 @@ async function botTimeOperations(){
   cron.schedule('*/2 * * * *', async () => {
     console.log('Running scheduled task...');
     NoCustomerReplyReminder();  // system_message_type_id  = 5
-    NoCustomerReplyTimeout();     // system_message_type_id  = 6
-    NoAgentReplyTimeOut();         // system_message_type_id = 4
+    await NoAgentReplyTimeOut();  
+    await NoCustomerReplyTimeout();     // system_message_type_id  = 6
+       // system_message_type_id = 4
     botTimeOperations();
 
   });
