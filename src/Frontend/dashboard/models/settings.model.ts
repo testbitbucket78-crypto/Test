@@ -233,6 +233,7 @@ export interface templateMessageData {
     FooterText:string;
     buttons:any;
     quality:string;
+    metaUploadedId:string;
     interactive_buttons?: any;
     renderedButtons?: any;
 }
@@ -351,6 +352,7 @@ export interface newTemplateFormData {
     buttons:string;
     isTemplate:number;
     isCopied:number;
+    metaUploadedId:string;
     interactiveButtonsPayload?: any;
     renderedButtons?: any;
 }

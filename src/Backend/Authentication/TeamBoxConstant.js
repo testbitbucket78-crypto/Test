@@ -254,9 +254,10 @@ var interactions = `WITH LatestInteraction AS (
 LatestInteractionMapping AS (
     SELECT 
         InteractionId,
-        created_at AS LatestMappingInfo
+        MAX(MappingId) AS LatestMappingId        
     FROM 
-        InteractionMapping order by 1 desc limit 1
+        InteractionMapping GROUP BY 
+        InteractionId 
 ),
 TagSplit AS (
     SELECT 
@@ -338,14 +339,13 @@ LEFT JOIN
 LEFT JOIN 
     LatestInteractionMapping lim ON ic.InteractionId = lim.InteractionId
 LEFT JOIN 
-    InteractionMapping im ON ic.InteractionId = im.InteractionId AND im.created_at = lim.LatestMappingInfo
+    InteractionMapping im ON ic.InteractionId = im.InteractionId AND im.MappingId = lim.LatestMappingId
 LEFT JOIN 
-    TagNames tn ON ec.customerId = tn.customerId
+    TagNames tn ON ec.customerId = tn.customerId 
 LEFT JOIN 
     PinnedInteraction pnin ON ic.InteractionId = pnin.InteractionId
-WHERE 
-    ec.SP_ID = ?
-`
+    WHERE 
+    ec.SP_ID = ?`
 
 getallMessagesWithScripts = `(
     SELECT 

@@ -119,6 +119,7 @@ async function sendDefultMsg(link, caption, typeOfmsg, phone_number_id, from, sp
     try {
 
         let WAdetails = await getWAdetails(spid);
+        console.log(from, '-------------from -----------------8');
         if(WAdetails != 'not exist'){
         const messageData = {
             messaging_product: "whatsapp",
