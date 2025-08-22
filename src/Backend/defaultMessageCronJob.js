@@ -217,7 +217,7 @@ async function NoCustomerReplyTimeout() {
                 const currenttime = moment.utc(myUTCString).format('YYYY-MM-DD HH:mm:ss');
                 await db.excuteQuery(settingVal.systemMsgQuery, [6, currenttime, msg.Message_id]);
                 let messageValu = [
-                  [msg.SPID, 'text', metaPhoneNumberID, msg.interaction_id, msg.Agent_id, 'Out', msg.value, (msg.link ? msg.link : 'text'), msg.message_type,  response?.message?.messages[0]?.id, "", currenttime, currenttime, 6, -2, 9]
+                  [msg.SPID, 'text', metaPhoneNumberID, msg.interaction_id, msg.Agent_id, 'Out', msg.value, (msg.link ? msg.link : 'text'), msg.message_type,  response?.message?.messages[0]?.id, "", currenttime, currenttime, 4, -2, 9]
                 ];
                 let insertedMessage = await db.excuteQuery(insertMessageQuery, [messageValu]);
                 logger.info(`NoCustomerReplyTimeout msg, ${insertedMessage}, ${new Date()}`);
