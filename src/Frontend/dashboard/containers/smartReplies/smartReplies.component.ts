@@ -907,7 +907,7 @@ showAddSmartRepliesModal() {
 		}
 		if(item.Links) this.messageMeidaFile = item.Links
 
-		var htmlcontent = mediaName ? mediaName : ''+item.BodyText;
+		var htmlcontent = mediaName ? mediaName +'<br>' + item.BodyText : ''+item.BodyText;
 		this.chatEditor.value = htmlcontent;
 		this.addingStylingToMedia(item);	
 	}
@@ -2078,7 +2078,7 @@ console.log(sortedData)
 					name: sortedData[i]?.templateName,
 					language: sortedData[i]?.templatelanguage,
 					buttons: sortedData[i]?.buttons? JSON.parse(sortedData[i]?.buttons) : sortedData[i]?.templateButton,
-					buttonsVariable: sortedData[i]?.buttonsVariable,
+					buttonsVariable: sortedData[i]?.buttonsVariable ? JSON.parse(sortedData[i]?.buttonsVariable) : [],
 					interactive_buttons: this.interactive_buttons
 				});
 		}
