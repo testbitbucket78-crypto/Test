@@ -713,6 +713,7 @@ const addTemplate = async (req, res) => {
             spid = req.body.spid,
             created_By = req.body.created_By,
             category_id = req.body.category_id
+            metaUploadedId = req.body.metaUploadedId
             interactiveButtons = req.body.interactiveButtonsPayload;
             renderedButtons = typeof req?.body?.renderedButtons == 'string' ? req?.body?.renderedButtons : JSON.stringify(req?.body?.renderedButtons);
             
