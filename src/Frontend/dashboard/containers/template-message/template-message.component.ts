@@ -890,6 +890,7 @@ checkTemplateName(e:any){
       
     createNewTemplateFormData() {
         const newTemplateForm: newTemplateFormData = <newTemplateFormData>{};
+        console.log(this.metaUploadedId, '------this.metaUploadedId');
 
         newTemplateForm.spid = this.spid;
         newTemplateForm.created_By = this.currentUser;
@@ -911,6 +912,7 @@ checkTemplateName(e:any){
         newTemplateForm.template_id = 0;
         newTemplateForm.isCopied = 0;
         newTemplateForm.template_json = [];
+        newTemplateForm.metaUploadedId = this.metaUploadedId ? this.metaUploadedId :'';
         newTemplateForm.interactiveButtonsPayload= JSON.stringify(this.interactiveButtonsPayload);
         newTemplateForm.renderedButtons = JSON.stringify(this.renderedButtons);
         
@@ -1063,6 +1065,7 @@ checkTemplateName(e:any){
         }
         console.log('2')
         this.selectedType = this.templatesMessageData?.media_type;
+        this.metaUploadedId = this.templatesMessageData?.metaUploadedId;
         this.selectedPreview = this.templatesMessageData.Links;
         this.buttonsArray = this.templatesMessageData?.buttons ? this.templatesMessageData?.buttons : [];
         this.interactiveButtonsPayload = this.templatesMessageData?.interactive_buttons ? JSON.parse(this.templatesMessageData?.interactive_buttons) : [];
@@ -1719,7 +1722,7 @@ return true
   }
 
   ensureTrailingSlash(idx:number) {
-    if (this.buttonsArray[idx].webUrl && !this.buttonsArray[idx].webUrl.endsWith('/')) {
+    if (this.buttonsArray[idx].webUrl && !this.buttonsArray[idx].webUrl.endsWith('/') && this.buttonsArray[idx]?.webType != 'Static') {
         this.buttonsArray[idx].webUrl += '/';
     }
   }
