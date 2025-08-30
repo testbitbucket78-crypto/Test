@@ -82,7 +82,10 @@ const submitBots = async (request, res) => {
     let nodes = req.nodes; 
     let nodeJson = req.node_FE_Json;
     let published_at = req.status =='publish' ? created_at :null;
-    let bot = await db.excuteQuery(val.updateBotStatus, [req.status, nodeJson,req.botVarList, req.botId]);
+    console.log(req.botVarList);
+    console.log(req.botVarList ? req.botVarList: null);
+    let botVar = req.botVarList ? req.botVarList?.length > 0 ? req.botVarList :null : null;
+    let bot = await db.excuteQuery(val.updateBotStatus, [req.status, nodeJson,botVar, req.botId]);
     if(req.status =='publish'){
       let botPublish = await db.excuteQuery(val.updateBotpublishedAt, [ req.botId]);
     }
