@@ -383,11 +383,15 @@ style="margin-right: 9px;"
                     <img src="../../../../assets/img/teambox/delete.svg" />
                 </button>
                 <button *ngIf="
-                        botDetailsData?.status == 'publish' ||
-                        botDetailsData?.status == 'Deprecated'
-                    " type="button" class="titleimg" data-bs-toggle="modal" data-bs-target="#deprecated"
+                        botDetailsData?.status == 'publish'" type="button" class="titleimg" data-bs-toggle="modal" data-bs-target="#deprecated"
                     [disabled]="settingsService?.checkRoleExist('25')">
                     <img src="../../../../assets/img/Deprecate.svg" />
+                </button>
+                
+                <button *ngIf="
+                        botDetailsData?.status == 'Deprecated'" type="button" class="titleimg" data-bs-toggle="modal" data-bs-target="#deprecateds"
+                    [disabled]="settingsService?.checkRoleExist('25')">
+                    <img src="../../../../assets/img/teambox/delete.svg" />
                 </button>
             </div>
         </div>
@@ -1652,6 +1656,30 @@ style="margin-right: 9px;"
             <div class="modal-footer border-0 d-flex justify-content-end">
                 <button type="button" class="btn btn-danger" (click)="confirmDelete('0')">
                     Deprecate
+                </button>
+                <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">
+                    Cancel
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" tabindex="-1" id="deprecateds" data-bs-backdrop="static" role="dialog">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content p-3">
+            <div class="modal-header border-0">
+                <!-- <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
+          <img style="width: 10px;" src="assets/img/teambox/icon-close.svg" />
+        </button> -->
+            </div>
+            <div class="modal-body">
+                <p>Attention! This will permanently delete the Bot and remove from the dashboard if no active sessions are remaining for this Bot. Note: You will not be able to download the report for this Bot.</p>
+                <p>Are you sure you want to Delete?</p>
+            </div>
+            <div class="modal-footer border-0 d-flex justify-content-end">
+                <button type="button" class="btn btn-danger" (click)="confirmDelete('0')">
+                    Delete
                 </button>
                 <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">
                     Cancel

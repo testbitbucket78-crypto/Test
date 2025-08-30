@@ -458,17 +458,12 @@ if (this.botBuilderForm) {
   
 }
 
-
-    console.log("this.botBuilderForm.value", this.botBuilderForm.value)
     Object.keys(this.botBuilderForm.controls).forEach(key => {
       const control = this.botBuilderForm.get(key);
       if (control && control.invalid) {
         console.warn(`Invalid field: ${key}`, control.errors);
       }
     });
-
-
-
 
     if(this.errorMessageBot != '') {
       return
@@ -503,6 +498,7 @@ if (this.botBuilderForm) {
           this.botBuilderForm.reset();
           localStorage.setItem('botId', response.msg.insertId || response.botId)
           if(Type == 'copy'){
+            localStorage.setItem('botTimeOut', this.botBuilderForm.value.botTimeout)
                this.botBuilderForm.reset();
             if (this.botDetailsData.node_FE_Json) {
               localStorage.setItem('node_FE_Json', this.botDetailsData.node_FE_Json)
@@ -574,6 +570,8 @@ if (this.botBuilderForm) {
               localStorage.setItem('botVarList', JSON.stringify(this.botDetailsData.botVarList))
             }
             localStorage.setItem('botId', this.botDetailsData.id)
+            var botTimeout:any = this.convertHHMMToMinutes(this.botDetailsData.timeout_value);
+            localStorage.setItem('botTimeOut', botTimeout)
           this.closeModalById('botModal');
           this.closeModalById('submitBotModal');
             this.router.navigate(['/bot-Creation']);
@@ -621,6 +619,7 @@ if (this.botBuilderForm) {
         this.botBuilderForm.reset();
         this.closeModalById('deleteBotModal');
         this.closeModalById('deprecated');
+        this.closeModalById('deprecateds');
         this.showToaster('success', response.message)
         this.getBotDetails()
       } else {

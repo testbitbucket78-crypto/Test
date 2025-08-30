@@ -187,7 +187,8 @@ viewMode:any=false
   @Input() agents: Agent[] = this.filteredAgents;
   @Input() availableAttributes: any = attributes
   @Input() availableVariables = ['bot.name', 'contact.city', 'session.date'];
-  @Input() selectedTags: string[] = [];
+  @Input() selectedTags: { TagId: number; TagName: string }[] = [];
+  @Input() selectedTagsRemoveTag: { TagId: number; TagName: string }[] = [];
 
   @Output() conditionsChange = new EventEmitter<any[]>();
   @Output() save = new EventEmitter<any>();
@@ -224,6 +225,7 @@ viewMode:any=false
   semiAdvanceTool: any = DEFAULT_TOOLS
   attachementTool: any = DEFAULT_TOOLS
   pasteCleanupSettings = PASTE_CLEANUP_SETTINGS
+  botTimeout:any=''
 
   public insertImageSettings: object = {
     width: '50px',
@@ -244,6 +246,7 @@ onDocumentClick(event: MouseEvent): void {
     public validation: PhoneValidationService,private modalService: NgbModal,
     private apiService: TeamboxService, private botService: BotserviceService, public settingService: SettingsService, public router: Router
   ) {
+    this.botTimeout = localStorage.getItem('botTimeOut');
     this.userDetails = JSON.parse(sessionStorage.getItem('loginDetails') || '{}');
     var viewMode:any = localStorage.getItem('viewMode') == undefined?false:localStorage.getItem('viewMode')
     if (viewMode) {
@@ -465,9 +468,9 @@ document.addEventListener('mouseup', (e) => {
       setTimeout(() => {
         Object.values(this.editor.drawflow.drawflow.Home.data).forEach((node: any) => {
           if (node?.data?.formData) {
-            this.cardType = node.data.text
-            this.ParentNodeType = node.data.category
-            this.setOutputPositionsBasedOnType(node.id, node.data.formData)
+            this.cardType = node.data.text;
+            this.ParentNodeType = node.data.category;
+            this.setOutputPositionsBasedOnType(node.id, node.data.formData);
             // this.refreshEditor()
             if (!this.viewMode) {
               this.addNodeEvent(node.id);
@@ -485,14 +488,6 @@ document.addEventListener('mouseup', (e) => {
   }
 
 
-  // refreshEditor(): void {
-  //   const exportedData = this.editor.export();
-
-  //   setTimeout(() => {
-  //     this.editor.clear();
-  //     this.editor.import(exportedData);
-  //   }, 50); // small delay helps prevent race conditions
-  // }
 
 
   updateOutputStylesInHtml(nodeId: number): void {
@@ -608,7 +603,25 @@ document.addEventListener('mouseup', (e) => {
       variableName: [''],
       variableDataType: ['text'],
       enableValidation: [false]
+    }, { validators: this.timeElapseValidator(this.botTimeout) });
+
+
+      this.questionOption.get('enableTimeElapse')?.valueChanges.subscribe(enabled => {
+      const timeControl = this.questionOption.get('timeElapseMinutes');
+      if (enabled) {
+        timeControl?.setValidators([Validators.required]);
+      } else {
+        timeControl?.clearValidators();
+      }
+      timeControl?.updateValueAndValidity();
+      this.questionOption.updateValueAndValidity();
     });
+
+    // ✅ Trigger validator on timeElapseMinutes changes
+    this.questionOption.get('timeElapseMinutes')?.valueChanges.subscribe(() => {
+      this.questionOption.updateValueAndValidity();
+    });
+
 
     this.setupFormListeners(this.questionOption);
 
@@ -690,9 +703,24 @@ atLeastOneAndUniqueOptions() {
         timeElapseMinutes: [''],
         timeElapseAction: ['skip'],
         enableValidation: [false]
-      });
+      }, { validators: this.timeElapseValidator(this.botTimeout) });
 
 
+  this.buttonOptions.get('enableTimeElapse')?.valueChanges.subscribe(enabled => {
+      const timeControl = this.buttonOptions.get('timeElapseMinutes');
+      if (enabled) {
+        timeControl?.setValidators([Validators.required]);
+      } else {
+        timeControl?.clearValidators();
+      }
+      timeControl?.updateValueAndValidity();
+      this.buttonOptions.updateValueAndValidity();
+    });
+
+    // ✅ Trigger validator on timeElapseMinutes changes
+    this.buttonOptions.get('timeElapseMinutes')?.valueChanges.subscribe(() => {
+      this.buttonOptions.updateValueAndValidity();
+    });
 
           this.buttonOptions.get('buttons')?.valueChanges.subscribe(value => {
             this.changeDetectorRef.detectChanges();
@@ -714,6 +742,20 @@ atLeastOneAndUniqueOptions() {
 
       this.setupFormListeners(this.buttonOptions);
     }
+
+private timeElapseValidator(bottimeout: number): ValidatorFn {
+  return (control: AbstractControl): ValidationErrors | null => {
+    const enableTimeElapse = control.get('enableTimeElapse')?.value;
+    const timeElapseMinutes = control.get('timeElapseMinutes')?.value;
+   
+    if (enableTimeElapse && timeElapseMinutes && Number(timeElapseMinutes) >= bottimeout) {
+      return { timeElapseExceeded: true };
+    }
+    return null;
+  };
+}
+
+
 
 atLeastOneAndUniqueButtons() {
   return (formArray: AbstractControl): ValidationErrors | null => {
@@ -758,6 +800,23 @@ atLeastOneAndUniqueButtons() {
       timeElapseMinutes: [''],
       timeElapseAction: ['skip'],
       enableValidation: [false]
+    }, { validators: this.timeElapseValidator(this.botTimeout) });
+
+
+      this.listOptions.get('enableTimeElapse')?.valueChanges.subscribe(enabled => {
+      const timeControl = this.listOptions.get('timeElapseMinutes');
+      if (enabled) {
+        timeControl?.setValidators([Validators.required]);
+      } else {
+        timeControl?.clearValidators();
+      }
+      timeControl?.updateValueAndValidity();
+      this.listOptions.updateValueAndValidity();
+    });
+
+    // ✅ Trigger validator on timeElapseMinutes changes
+    this.listOptions.get('timeElapseMinutes')?.valueChanges.subscribe(() => {
+      this.listOptions.updateValueAndValidity();
     });
 
       this.listOptions.valueChanges.subscribe(() => {
@@ -870,8 +929,24 @@ uniqueRowNamesValidator(): ValidatorFn {
       timeElapseMinutes: [''],
       timeElapseAction: ['skip'],
       enableValidation: [false]
+    }, { validators: this.timeElapseValidator(this.botTimeout) });
+
+
+      this.whatsAppFlowForm.get('enableTimeElapse')?.valueChanges.subscribe(enabled => {
+      const timeControl = this.whatsAppFlowForm.get('timeElapseMinutes');
+      if (enabled) {
+        timeControl?.setValidators([Validators.required]);
+      } else {
+        timeControl?.clearValidators();
+      }
+      timeControl?.updateValueAndValidity();
+      this.whatsAppFlowForm.updateValueAndValidity();
     });
 
+    // ✅ Trigger validator on timeElapseMinutes changes
+    this.whatsAppFlowForm.get('timeElapseMinutes')?.valueChanges.subscribe(() => {
+      this.whatsAppFlowForm.updateValueAndValidity();
+    });
     this.setupFormListeners(this.whatsAppFlowForm);
   }
 
@@ -899,7 +974,24 @@ uniqueRowNamesValidator(): ValidatorFn {
       enableTimeElapse: [false],
       timeElapseMinutes: ['', [Validators.min(1)]],
       timeElapseAction: ['skip']
+    }, { validators: this.timeElapseValidator(this.botTimeout) });
+
+  this.openQuestion.get('enableTimeElapse')?.valueChanges.subscribe(enabled => {
+      const timeControl = this.openQuestion.get('timeElapseMinutes');
+      if (enabled) {
+        timeControl?.setValidators([Validators.required]);
+      } else {
+        timeControl?.clearValidators();
+      }
+      timeControl?.updateValueAndValidity();
+      this.openQuestion.updateValueAndValidity();
     });
+
+    // ✅ Trigger validator on timeElapseMinutes changes
+    this.openQuestion.get('timeElapseMinutes')?.valueChanges.subscribe(() => {
+      this.openQuestion.updateValueAndValidity();
+    });
+
 
     this.setupFormListeners(this.openQuestion);
   }
@@ -1077,7 +1169,6 @@ createCombinedVariable() {
   }
 
   private handleContentSubmit(): void {
-    console.log("this.sendTextForm", this.sendTextForm.invalid);
     if (this.sendTextForm.invalid) {
       this.sendTextForm.markAllAsTouched();
       return;
@@ -1174,9 +1265,7 @@ formData.options = ["True", "False"];
       // Check if variable with same name AND type already exists
   const variableExists = this.botVariables.some(
   v =>
-    v.name.trim().toLowerCase() === newVariable.name.trim().toLowerCase() &&
-    v.dataType === newVariable.dataType
-);
+    v.name.trim().toLowerCase() === newVariable.name.trim().toLowerCase());
 
 
       if (!variableExists) {
@@ -1208,7 +1297,7 @@ formData.options = ["True", "False"];
 
     const advanceOption = { type: formType, data: {} as any };
 
-
+console.log('Form Type:', formType);
 
 
     switch (formType) {
@@ -1261,19 +1350,30 @@ formData.options = ["True", "False"];
         advanceOption.data = this.notesmentionForm.value;
         break;
       case 'AddTags':
-      case 'RemoveTag':
-
+        console.log('Selected Tags for AddTags:', this.selectedTags,this.selectedTags.length <= 0,this.selectedTags.length);
         if (this.selectedTags.length <= 0) {
           this.showToaster('Please select Tag and Operation','error')
           return
-          
         }
         advanceOption.data = {
-          tags: this.selectedTags,
+          tags: this.selectedTags.map(tag => tag.TagName),
+          tag: this.selectedTags.map(tag => tag.TagId),
+          selectedTags: this.selectedTags,
+          operation: this.operationOptions
+        };
+    break;
+      case 'RemoveTag':
+        if (this.selectedTagsRemoveTag.length <= 0) {
+          this.showToaster('Please select Tag and Operation','error')
+          return
+        }
+        advanceOption.data = {
+          tags: this.selectedTagsRemoveTag.map(tag => tag.TagName),
+          tag: this.selectedTagsRemoveTag.map(tag => tag.TagId),
+          selectedTags: this.selectedTagsRemoveTag,
           operation: this.operationOptions
         };
         break;
-
     }
 
       this.closeModal();
@@ -2037,6 +2137,12 @@ formData.options = ["True", "False"];
     this.editor.updateNodeDataFromId(this.selectedNodeId, node.data);
     const newHTML = this.createNodeHtml(this.selectedNodeId, node.data);
     this.updateNodeHTML(this.selectedNodeId, newHTML);
+      var nodeId = this.selectedNodeId;
+
+       setTimeout(() => {
+      this.editor.drawflow.drawflow.Home.data[nodeId].html = newHTML;
+      this.isLoading = false
+    }, 100);
   }
 
 
@@ -2625,8 +2731,9 @@ this.selectedAgentDetails = updateForm
 
   private fillTheTag(nodeData: any): void {
     const updateForm = nodeData?.data?.formData?.data
-this.selectedTags = updateForm.tags
-this.operationOptions = updateForm.operation
+    console.log("Selected Tags:", updateForm);
+    this.selectedTags = updateForm.selectedTags;
+    this.operationOptions = updateForm.operation;
   }
 
 
@@ -2668,78 +2775,7 @@ this.operationOptions = updateForm.operation
       this.attachMedia(updateForm.data.file, updateForm.data.mediaType)
     }, 100);
   }
-  // ==================== COPY NODE HANDLING ====================
 
-  // copyNode(nodeId: number): void {
-  //   const originalNode = this.editor.getNodeFromId(nodeId);
-  //   if (!originalNode) return;
-
-  //   const nodeCopy = JSON.parse(JSON.stringify(originalNode));
-  //   nodeCopy.id = this.getUniqueId();
-  //   nodeCopy.data.uniqueId = this.getUniqueId();
-  //   nodeCopy.pos_x += 100;
-  //   nodeCopy.pos_y += 50;
-
-  //   // Recreate inputs/outputs
-  //   nodeCopy.inputs = {};
-  //   nodeCopy.outputs = {};
-
-  //   Object.keys(originalNode.inputs).forEach(inputKey => {
-  //     nodeCopy.inputs[inputKey] = { connections: [] };
-  //   });
-
-  //   Object.keys(originalNode.outputs).forEach(outputKey => {
-  //     nodeCopy.outputs[outputKey] = { connections: [] };
-  //   });
-
-  //   this.cardType = nodeCopy?.data?.text;
-  //   this.ParentNodeType = nodeCopy?.data?.category;
-
-  //   const postData = {
-  //     name: nodeCopy.name,
-  //     inputs: 1,
-  //     outputs: Object.keys(nodeCopy.outputs).length,
-  //     data: {
-  //       text: nodeCopy?.data.text,
-  //       inputsCount: 1,
-  //       maxButtonLimit: 3,
-  //       category: nodeCopy?.data.category,
-  //       uniqueId: this.getUniqueId(),
-  //       formData: nodeCopy?.data?.formData,
-  //       file: nodeCopy?.data?.formData.file,
-  //       fileName: nodeCopy?.data?.formData.file?.name || null,
-  //       fileType: nodeCopy?.data?.formData.file?.type || null,
-  //     },
-  //     html: '<div class="temp-placeholder">Loading...</div>',
-  //     pos_x: Math.floor(Math.random() * 900) + 100,
-  //     pos_y: Math.floor(Math.random() * 400) + 100,
-  //   };
-
-  //   const newNodeId = this.addNode(postData);
-  //   const newHTML = this.createNodeHtml(newNodeId, nodeCopy.data);
-  //   this.updateNodeHTML(newNodeId, newHTML);
-
-
-  //    this.editor.drawflow.drawflow.Home.data[newNodeId].html = newHTML;
-
-  // // Update in DOM
-  // const nodeElement = document.querySelector(`#node-${newNodeId} .drawflow_content_node`);
-  // if (nodeElement) {
-  //   nodeElement.innerHTML = newHTML;
-  // }
-
-  //   if (nodeCopy?.data?.text === 'listOptions') {
-  //     this.setOutputPositionsForList(newNodeId, nodeCopy?.data?.formData);
-  //   } else {
-  //     this.setOutputPositions(Number(newNodeId), nodeCopy?.data?.formData?.invalidAction);
-  //   }
-
-  //   // setTimeout(() => {
-  //   //         this.editor.drawflow.drawflow.Home.data[nodeId].html = newHTML;
-
-  //   // }, 100);
-  //   this.nodeCounter++;
-  // }
 
   copyNode(nodeId: number): void {
   const originalNode = this.editor.getNodeFromId(nodeId);
@@ -2775,9 +2811,9 @@ this.operationOptions = updateForm.operation
       category: nodeCopy?.data.category,
       uniqueId: this.getUniqueId(),
       formData: nodeCopy?.data?.formData,
-      file: nodeCopy?.data?.formData.file,
-      fileName: nodeCopy?.data?.formData.file?.name || null,
-      fileType: nodeCopy?.data?.formData.file?.type || null,
+      file: nodeCopy?.data?.formData.file || nodeCopy?.data?.file,
+      fileName: nodeCopy?.data?.formData.file?.name || nodeCopy?.data?.fileName ||  null,
+      fileType: nodeCopy?.data?.formData.file?.type ||  nodeCopy?.data?.fileType || null,
     },
     html: '<div class="temp-placeholder">Loading...</div>',
     pos_x: Math.floor(Math.random() * 900) + 100,
@@ -2789,6 +2825,7 @@ this.operationOptions = updateForm.operation
   // Create the actual HTML
   const newHTML = this.createNodeHtml(newNodeId, nodeCopy.data);
 
+  this.updateNodeHTML(Number(newNodeId), newHTML);
   // Update in memory
   this.editor.drawflow.drawflow.Home.data[newNodeId].html = newHTML;
 
@@ -2911,15 +2948,47 @@ this.conditionsArray.push(conditionGroup);
     }
   }
 
-  isTagSelected(tagValue: string): boolean {
-    return this.selectedTags.includes(tagValue);
-  }
+  // isTagSelected(tagValue: string): boolean {
+  //   return this.selectedTags.includes(tagValue);
+  // }
 
-  toggleTagSelection(tagValue: string): void {
-    this.selectedTags = this.isTagSelected(tagValue)
-      ? this.selectedTags.filter(t => t !== tagValue)
-      : [...this.selectedTags, tagValue];
+  // toggleTagSelection(tagValue: string): void {
+  //   this.selectedTags = this.isTagSelected(tagValue)
+  //     ? this.selectedTags.filter(t => t !== tagValue)
+  //     : [...this.selectedTags, tagValue];
+  // }
+
+  // selectedTags: { TagId: number; TagName: string }[] = [];
+
+toggleTagSelection(tag: { ID: number; TagName: string }): void {
+  console.log("Toggling tag:", tag,this.selectedTags);
+  const index = this.selectedTags?.findIndex((t:any) => t.TagId === tag.ID);
+
+  if (index > -1) {
+    this.selectedTags.splice(index, 1);
+  } else {
+    this.selectedTags.push({ TagId: tag.ID, TagName: tag.TagName });
   }
+}
+
+isTagSelected(tagId: number): boolean {
+  return this.selectedTags?.some((t:any) => t?.TagId === tagId);
+}
+
+toggleTagSelectionRemove(tag: { ID: number; TagName: string }): void {
+  const index = this.selectedTagsRemoveTag?.findIndex((t:any) => t.TagId === tag.ID);
+
+  if (index > -1) {
+    this.selectedTagsRemoveTag.splice(index, 1);
+  } else {
+    this.selectedTagsRemoveTag.push({ TagId: tag.ID, TagName: tag.TagName });
+  }
+}
+
+isTagSelectedRemove(tagId: number): boolean {
+  return this.selectedTagsRemoveTag?.some((t:any) => t?.TagId === tagId);
+}
+
 
   // ==================== TIME DELAY HANDLING ====================
 
@@ -3076,7 +3145,7 @@ this.currentAttributeList = allAttributes?.getfields?.filter((attr:any) =>
     
     const group = this.getConditionGroup(index);
     group.get(field)?.setValue(`{{${variable.displayName || variable.name}}}`);
-    group.get(`${field}Type`)?.setValue(variable.type);
+    group.get(`${field}Type`)?.setValue(variable.type || variable.dataType);
     this.showVarMenuFor = null;
     this.showAttribute = null
 
@@ -3518,14 +3587,18 @@ this.listOptions.reset();
     this.selectedFromVariable = false;
     this.isUserTyping = false;
 
-    if (this.selectedAttributeType === 'Multi Select' || this.selectedAttributeType == 'Select') {
+    if (this.selectedAttributeType === 'Multi Select' || this.selectedAttributeType == 'Select' || this.selectedAttributeType == 'Switch') {
       try {
         this.selectedOptions = JSON.parse(this.attributeDetails?.dataTypeValues || '[]');
+        if(this.selectedAttributeType == 'Switch'){
+          this.selectedOptions = [{"optionName": "yes"},{"optionName": "no"}];
+        }
       } catch {
         this.selectedOptions = [];
       }
     }
 
+    this.selectedValuesList = [];
     this.contactAttributeForm.get('selectedValue')?.reset();
     
 
@@ -3548,6 +3621,47 @@ this.listOptions.reset();
 
   }
 
+selectedValuesList: any[] = []; // Holds multiple selected options
+
+toggleSelection(variable: any) {
+  const index = this.selectedValuesList.findIndex(v => v.optionName === variable.optionName);
+
+  if (index > -1) {
+    this.selectedValuesList.splice(index, 1);
+  } else {
+    this.selectedValuesList.push(variable);
+  }
+
+  const combinedValues = this.selectedValuesList
+    .map(v => `{{${v.displayName || v.name || v.optionName}}}`)
+    .join(' ');
+
+  this.contactAttributeForm.patchValue({
+    selectedValue: combinedValues || '',
+    inputValue: '',
+    selectedVariable: '',
+    operation: 'replace'
+  });
+
+  // Remove this line so dropdown stays open:
+  // this.openDropdown.status = '';
+
+  this.selectedFromVariable = true;
+  this.isUserTyping = false;
+  this.contactAttributeForm.get('selectedValue')?.updateValueAndValidity();
+  this.showAttributeCondition = true;
+}
+
+
+isSelected(variable: any): boolean {
+  return this.selectedValuesList.some(v => v.optionName === variable.optionName);
+}
+
+
+
+
+
+
   onSelectedValueKeydown(event: KeyboardEvent) {
   if (this.selectedFromVariable && event.key === 'Backspace') {
     event.preventDefault(); // prevent deleting 1 character at a time
@@ -3558,6 +3672,7 @@ this.listOptions.reset();
     });
     this.selectedFromVariable = false; // allow typing again
     this.showAttributeCondition = false; // hide attribute condition if needed
+    this.selectedValuesList = []; // clear selected options
   }
 }
 
@@ -4040,10 +4155,38 @@ onFileSelectedData(event: any, type: any = '') {
     }
   }
 
-  openBotVariableModal() {
-    const selection = window.getSelection();
-    this.lastCursorPosition = selection?.getRangeAt(0) || null;
-    $('#botVariable').modal('show')
+
+
+openBotVariableModal(editorId:any = '') {
+  const selection = window.getSelection();
+
+  if (selection && selection.rangeCount > 0) {
+    this.lastCursorPosition = selection.getRangeAt(0);
+  } else {
+
+    const editor = this.getEditorById(editorId);
+    if (editor) {
+      this.lastCursorPosition = editor.getRange(); // Save cursor for this editor
+    }else{
+      this.lastCursorPosition = null; // or create a default Range if needed
+    }
+  }
+
+  $('#botVariable').modal('show');
+}
+
+
+  getEditorById(editorId: string): RichTextEditorComponent | null {
+    switch (editorId) {
+      case 'chatEditor': return this.chatEditor;
+      case 'chatEditors': return this.chatEditors;
+      case 'chatEditorElement': return this.chatEditorElement;
+      case 'questionEditor': return this.questionEditor;
+      case 'errorEditor': return this.errorEditor;
+      case 'errorEditor': return this.errorEditor;
+      case 'errorEditor': return this.errorEditor;
+      default: return null;
+    }
   }
 
 
@@ -4127,7 +4270,6 @@ onFileSelectedData(event: any, type: any = '') {
 
     if (type == 'submit') {
       data.status = 'draft'
-
     } else {
       let isStructureValid = true;
 
@@ -4253,6 +4395,7 @@ onFileSelectedData(event: any, type: any = '') {
   private getFullFlowJson(): any {
     const exportData = this.editor.export();
     const allNodes = exportData.drawflow.Home.data;
+    console.log(allNodes);
 
     const connections: any[] = [];
     const finalNodes: any[] = [];
@@ -4271,10 +4414,13 @@ onFileSelectedData(event: any, type: any = '') {
       });
     });
 
+
+    console.log("connections",connections)
     // Process each node
     Object.entries(allNodes).forEach(([id, node]: [string, any]) => {
+      console.log('Processing node:', node);
       const formData = node.data.formData || {};
-      const isQuestionOption = node.data.text === 'questionOption' || node.data.text === "buttonOptions" ||  node.data.text ==="WorkingHoursModal" || node.data.text === "setCondition";
+      const isQuestionOption = node.data.text === 'questionOption' || node.data.text === "buttonOptions" ||  node.data.text ==="WorkingHoursModal" || node.data.text === "setCondition" || node.data.text === "listOptions";
 
       // Filter and sort connections by targetNode (ascending order)
       const nodeConnections = connections
@@ -4288,6 +4434,7 @@ onFileSelectedData(event: any, type: any = '') {
         option: [],
         data: formData
       };
+      console.log('nodeObj', nodeObj)
 
       if (nodeConnections.length > 0) {
         nodeObj.connectedId = nodeConnections[0]?.targetNode ?? null;
@@ -4297,9 +4444,10 @@ onFileSelectedData(event: any, type: any = '') {
           nodeObj.FallbackId = nodeConnections[1]?.targetNode ?? null;
         }
 
+        console.log(isQuestionOption, formData)
 
         if (isQuestionOption) {
-          var optionNames = formData.options || formData.buttons || formData.data.options || [];
+          var optionNames = formData?.options || formData?.buttons || formData?.data?.options || formData?.data?.sections || [];
 
           const skipIndexes = [0]; // Skip connectedId
           if (formData.invalidAction === 'fallback' && nodeConnections.length > 1) {
