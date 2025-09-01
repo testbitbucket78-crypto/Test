@@ -1172,6 +1172,8 @@ async function AssignToContactOwner(sid, newId, custid) {
 
 async function botOperations(data){
   console.log("botOperations started");
+  let deleteSessionQuery = `update BotSessions set status = 99 where customerId=?`
+  let deletSession = await db.excuteQuery(deleteSessionQuery, [data?.custid]);
   let botQuery = "select timeout_value from Bots where id =? and isDeleted !=1";
   let botData = await db.excuteQuery(botQuery, [data?.botId]);
   console.log(botData);
@@ -1305,6 +1307,7 @@ async function identifyNode(data){
   let identityNode = await db.excuteQuery(identityNodeQuery, [data?.nodeId,data?.botId]);
   let getBotQuery = 'SELECT botVar FROM BotSessions WHERE customerId = ? and status =2 and botId= ? order by 1 desc limit 1'; 
   let botSessionVariables = await db.excuteQuery(getBotQuery, [data?.custid,data?.botId]);
+  console.log(identityNode,'-------------identityNode-----------')
   if(botSessionVariables.length>0){
     data['botSessionVariables'] = botSessionVariables[0]?.botVar;
   }
@@ -1358,7 +1361,9 @@ async function identifyNode(data){
         if(selectedOption.length > 0){
           let connectNodeId = selectedOption[0].optionConnectedId;
           data.nodeId = connectNodeId;
+         console.log(data,'-----------------data-----------------')
          let returnedData = await botVariablexecute(json,data);
+         console.log(returnedData,'-----------------returnedData-----------------')
           identifyNode(returnedData);
         } else{
           invalidQuestionResponse(data,json);
@@ -1386,7 +1391,7 @@ async function identifyNode(data){
           console.log(payload)
           let result = await createWhatsAppPayload(data.sid, payload);
           if (result?.status == 200) {
-            let messageValu = [[spid, 'text', "", interactionId, agentId, 'Out', json?.data?.bodyText,  'text', 'text', result.message.messages[0].id, "", time, time, "", -4, 1,'',null]]
+            let messageValu = [[data.sid, 'text', "", data?.interactionId, -4, 'Out', json?.data?.bodyText, 'text', 'text', result.message.messages[0].id, "", time, time, "", -2, 1,'','[]']]
             let saveMessage = await db.excuteQuery(insertMessageQuery, [messageValu]);
           }
         } else if(type == 'listOptions'){
@@ -1436,13 +1441,14 @@ async function identifyNode(data){
       botExit(data,3);
     }
     else if(type == 'NotificationModal'){       
+      console.log('------------Inside--------------');
       let userDetailQuery = 'SELECT * FROM user WHERE uid =? AND isDeleted != 1';
       let userDetail = await db.excuteQuery(userDetailQuery, [json?.data?.data?.selectedAgentIds]);
       let user = userDetail[0];
       let emailSender = MessagingName[user?.Channel];
       const subject = `You have recieved a notification from ${emailSender}`;
       const body = json?.data?.data?.textMessage;
-     let replacedText = await replacebotVariable(JSON.parse(data?.botSessionVariables),json?.data?.textMessage);
+     let replacedText = await replacebotVariable(JSON.parse(data?.botSessionVariables),json?.data?.data?.textMessage);
       const emailOptions = {
         to: user?.email_id,
         subject,
@@ -1792,7 +1798,7 @@ let mainData = {
   "toPhoneNumber": 917618157986,
   "channelType": "WA API", // or 1 for WA API
   "phone_number_id": 559169223950422,
-  "botId": 241,
+  "botId": 269,
 }
 //botOperations(mainData)
 //triggerSR()
@@ -1800,7 +1806,7 @@ let mainData = {
 //-----start------- 0 null 0  559169223950422 Pawan Sharma 917618157986 55 83534 380 Open 7133 80363 null WA API 0 0 0 null 919877594039 ------end-------
 
 
-autoReplyDefaultAction(0, null, 0,  'sdgdf', 559169223950422,'pawan Sharma', 917618157986, 55, 83534, 380, 'Open', 7137, 80363, null, 'WA API', 0, 0, 0, null, 919877594039)
+autoReplyDefaultAction(0, null, 0,  'Tomorrow', 559169223950422,'Vijay Kumar', 919876473632, 55, 105938, 380, 'Open', 7134, 80363, null, 'WA API', 0, 0, 0, null, 919877594039)
 
 //  let time = '00:15' ; // Default to 1 hour if not set
 //     let hour = time?.split(':')[0];
