@@ -828,7 +828,8 @@ isTooltipVisible2:any
         fromDate: this.formatDate(fromDate),
         toDate: this.formatDate(yesterday)
       });
-    } else if (option !== 'custom') {
+    } 
+     if (option != 'custom') {
       this.dateRangeForm.patchValue({ fromDate: null, toDate: null });
     }
 
@@ -858,7 +859,7 @@ isTooltipVisible2:any
       const selectedOption = this.dateRangeForm.value.dateOption;
       let fromDate, toDate;
       console.log(this.dateRangeForm.value)
-      if (this.dateRangeForm.value.dateOption === 'custom' || this.dateRangeForm.value.fromDate == null || this.dateRangeForm.value.toDate == null) {
+      if (this.dateRangeForm.value.dateOption === 'custom' && (this.dateRangeForm.value.fromDate == null || this.dateRangeForm.value.toDate == null)) {
          this.showToaster('error', 'Please select start date and end date.');
          return;
       }

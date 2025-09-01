@@ -3252,7 +3252,14 @@ this.currentAttributeList = allAttributes?.getfields?.filter((attr:any) =>
           click: this.ToggleAttachmentBox.bind(this),
           template: '<button type="button" style="width:28px;height:28px;border-radius: 35%!important;border: 1px solid #e2e2e2!important;background:#fff;" class="e-tbar-btn e-btn" tabindex="-1" id="custom_tbar"  >'
             + '<div class="e-tbar-btn-text"><img style="width:10px;" src="/assets/img/teambox/attachment-icon.svg"></div></button>'
-        },],enableFloating: true 
+        },{
+          tooltipText: 'Attributes',
+          undo: true,
+          click: this.ToggleAttributesOption.bind(this),
+          template: '<button type="button" style="width:28px;height:28px;border-radius: 35%!important;border: 1px solid #e2e2e2!important;background:#fff;" class="e-tbar-btn e-btn" tabindex="-1" id="custom_tbar"  >'
+            + '<div class="e-tbar-btn-text"><img style="width:10px;" src="/assets/img/teambox/attributes.svg"></div></button>'
+        }
+        ,],enableFloating: true 
       }
 
     } else {
@@ -3319,7 +3326,10 @@ this.currentAttributeList = allAttributes?.getfields?.filter((attr:any) =>
       editor = this.bodyEditor;
     } else if (this.cardType == 'NotesMentionModal') {
       editor = this.chatEditors;
+    }else if(this.cardType == 'NotificationModal') {
+      editor = this.chatEditorElement;
     }
+
 
     if (editor) {
       const editPanel = (editor?.contentModule as ContentRender).getEditPanel() as HTMLElement;
@@ -3394,8 +3404,10 @@ this.currentAttributeList = allAttributes?.getfields?.filter((attr:any) =>
     } else if (nodeType == 'NotificationModal') {
       this.dynamiceEditor = this.chatEditorElement
       this.toggleChatNotes('attachementTool')
-    } else if(nodeType == 'MessageOptin'){
+    } else if(nodeType == 'MessageOption'){
       this.conversationActions.status = 'Yes'
+    } else if(nodeType == 'UpdateConversationStatus'){
+      this.conversationActions.status = 'Resolved'
     } else{
       this.toggleChatNotes('')
     }
@@ -4363,9 +4375,9 @@ openBotVariableModal(editorId:any = '') {
           outputMap.set(outputId, true);
 
           // Count input usage
-          if (inputMap.has(inputId)) {
-            return false; // ❌ More than one connection to a single input
-          }
+          // if (inputMap.has(inputId)) {
+          //   return false; // ❌ More than one connection to a single input
+          // }
           inputMap.set(inputId, true);
         }
       }
@@ -4395,7 +4407,6 @@ openBotVariableModal(editorId:any = '') {
   private getFullFlowJson(): any {
     const exportData = this.editor.export();
     const allNodes = exportData.drawflow.Home.data;
-    console.log(allNodes);
 
     const connections: any[] = [];
     const finalNodes: any[] = [];
@@ -4415,13 +4426,25 @@ openBotVariableModal(editorId:any = '') {
     });
 
 
-    console.log("connections",connections)
+    // console.log("connections",connections)
     // Process each node
     Object.entries(allNodes).forEach(([id, node]: [string, any]) => {
-      console.log('Processing node:', node);
+      // console.log('Processing node:', node);
       const formData = node.data.formData || {};
       const isQuestionOption = node.data.text === 'questionOption' || node.data.text === "buttonOptions" ||  node.data.text ==="WorkingHoursModal" || node.data.text === "setCondition" || node.data.text === "listOptions";
+      if(node.data.text === "listOptions"){
+        var sectionListArray:any = []
+  node?.data?.formData?.sections.forEach((element:any) => {
+element?.rows.forEach((row:any) => {
+  sectionListArray.push(row?.rowName);
+});
 
+  });
+  node.data.sectionListArray = sectionListArray;
+}
+
+
+      
       // Filter and sort connections by targetNode (ascending order)
       const nodeConnections = connections
         .filter(conn => conn.sourceNode === node.id)
@@ -4444,10 +4467,11 @@ openBotVariableModal(editorId:any = '') {
           nodeObj.FallbackId = nodeConnections[1]?.targetNode ?? null;
         }
 
-        console.log(isQuestionOption, formData)
+        // console.log(isQuestionOption, formData)
+   
 
         if (isQuestionOption) {
-          var optionNames = formData?.options || formData?.buttons || formData?.data?.options || formData?.data?.sections || [];
+          var optionNames = formData?.options || formData?.buttons || formData?.data?.options || formData?.data?.sections || node?.data?.sectionListArray  || [];
 
           const skipIndexes = [0]; // Skip connectedId
           if (formData.invalidAction === 'fallback' && nodeConnections.length > 1) {
@@ -4459,7 +4483,7 @@ openBotVariableModal(editorId:any = '') {
               const labelIndex = idx - skipIndexes.length;
               nodeObj.option.push({
                 optionConnectedId: conn.targetNode,
-                name: optionNames[labelIndex] || `Option ${labelIndex + 1}`
+                name: optionNames[labelIndex] || optionNames[labelIndex]?.rowName || `Option ${labelIndex + 1}`
               });
             }
           });
