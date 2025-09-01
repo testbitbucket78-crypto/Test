@@ -668,6 +668,29 @@ async function getExtraxtedMessage(message_text, SPID, customerId) {
   }
 }
 
+async function getExtraxtedOnlyAttributes(message_text, SPID, customerId) {
+  try {
+    let content = message_text;
+    // Parse the message template to get placeholders
+    const placeholders = parseMessageTemplate(content);
+    if (placeholders.length > 0) {
+      // Construct a dynamic SQL query based on the placeholders
+      console.log(placeholders)
+      const results = await commonFun.getDefaultAttribue(placeholders, SPID, customerId);
+      console.log("results", results)
+
+      placeholders.forEach(placeholder => {
+        const result = results.find(result => result.hasOwnProperty(placeholder));
+        const replacement = result && result[placeholder] !== undefined ? result[placeholder] : null;
+        content = content.replace(`{{${placeholder}}}`, replacement);
+      });
+    }
+    return content;
+  } catch (err) {
+    console.log("ERR getExtractedMessage---", err)
+  }
+}
+
 async function PerformingSReplyActions(actionId, value, sid, custid, agid, newId, display_phone_number) {
   // Perform actions based on the Action ID
   switch (actionId) {
@@ -1297,7 +1320,7 @@ async function identifyNode(data){
       let replacedText = await replacebotVariable(JSON.parse(data?.botSessionVariables),json?.data?.textMessage);
       console.log(replacedText,'------------------replacedText------------------');
       let message_text = await getExtraxtedMessage(replacedText, data.sid, data.custid);
-      result = await messageThroughselectedchannel(data.sid, data?.toPhoneNumber, 'text', message_text, json?.data?.file, data?.phone_number_id, data?.channelType, -4, data.interactionId, messageType, message_text)
+      result = await messageThroughselectedchannel(data.sid, data?.toPhoneNumber, 'text', message_text, json?.data?.file, data?.phone_number_id, data?.channelType, -4, data.interactionId, messageType, replacedText)
       data.nodeId = json?.connectedId;
       await identifyNode(data);
     }else if(type == 'assignAgentModal'){
@@ -1371,7 +1394,7 @@ async function identifyNode(data){
           console.log(payload, '---------payload---------');
           let result = await createWhatsAppPayload(data.sid, payload);
           if (result?.status == 200) {
-            let messageValu = [[data.sid, 'text', "", data?.interactionId, -4, 'Out', json?.data?.bodyText, 'text', 'text', result.message.messages[0].id, "", time, time, "", -2, 1,'']]
+            let messageValu = [[data.sid, 'text', "", data?.interactionId, -4, 'Out', json?.data?.bodyText, 'text', 'text', result.message.messages[0].id, "", time, time, "", -2, 1,'','[]']]
             let saveMessage = await db.excuteQuery(insertMessageQuery, [messageValu]);
           }
         } else if(type == 'questionOption'){
@@ -1439,7 +1462,8 @@ async function identifyNode(data){
     }else if(type == 'NotesMentionModal'){
       // var addNotification = `INSERT INTO Notification(sp_id,subject,message,sent_to,module_name,uid,created_at) values ?`
       // await db.excuteQuery(optInQuery, [json?.data?.data?.status, data.custid, data.sid]);
-      let messageValu = [[data.sid, 'notes', "", data?.interactionId, -4, 'Out', json?.data?.data?.message, 'text', 'text', result.message.messages[0].id, "", time, time, "", -2, 1,'']]
+     let replacedText = await replacebotVariable(JSON.parse(data?.botSessionVariables),json?.data?.data?.message);
+      let messageValu = [[data.sid, 'notes', "", data?.interactionId, -4, 'Out', replacedText, 'text', 'text', null, "", time, time, "", -2, 1,'','[]']]
             let saveMessage = await db.excuteQuery(insertMessageQuery, [messageValu]);
       data.nodeId = json?.connectedId;
       identifyNode(data);
@@ -1776,7 +1800,7 @@ let mainData = {
 //-----start------- 0 null 0  559169223950422 Pawan Sharma 917618157986 55 83534 380 Open 7133 80363 null WA API 0 0 0 null 919877594039 ------end-------
 
 
-//autoReplyDefaultAction(0, null, 0,  'asdfasdf', 559169223950422,'pawan Sharma', 917618157986, 55, 83534, 380, 'Open', 7137, 80363, null, 'WA API', 0, 0, 0, null, 919877594039)
+autoReplyDefaultAction(0, null, 0,  'sdgdf', 559169223950422,'pawan Sharma', 917618157986, 55, 83534, 380, 'Open', 7137, 80363, null, 'WA API', 0, 0, 0, null, 919877594039)
 
 //  let time = '00:15' ; // Default to 1 hour if not set
 //     let hour = time?.split(':')[0];
