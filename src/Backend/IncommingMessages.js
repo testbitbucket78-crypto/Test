@@ -1352,14 +1352,14 @@ async function identifyNode(data){
       }
       else{    
         if(type == 'buttonOptions'){
-          let payload = WaApiButtons( data?.toPhoneNumber, json?.data);
+          let payload = WaApiButtons( data?.toPhoneNumber, json?.data,data);
           let result = await createWhatsAppPayload(data.sid, payload);
           // if (result?.status == 200) {
           //   let messageValu = [[spid, 'text', "", interactionId, agentId, 'Out', Message_text,  'text', media_type, result.message.messages[0].id, "", time, time, "", -4, 1,'',null]]
           //   let saveMessage = await db.excuteQuery(insertMessageQuery, [messageValu]);
           // }
         } else if(type == 'listOptions'){
-          let payload = WaApiListPayload( data?.toPhoneNumber, json?.data);
+          let payload = WaApiListPayload( data?.toPhoneNumber, json?.data,data);
           console.log(payload, '---------payload---------');
           let result = await createWhatsAppPayload(data.sid, payload);
           // if (result?.status == 200) {
@@ -1503,7 +1503,7 @@ async function invalidQuestionResponse(data,json){
 }
 
 
-function WaApiButtons(toPhoneNumber,data){
+async function WaApiButtons(toPhoneNumber,data,mainData){
   let buttons =[];
   let buttonList = data?.buttons;
 if (buttonList && buttonList.length > 0) {
@@ -1517,6 +1517,9 @@ if (buttonList && buttonList.length > 0) {
     });
   }
 }
+ let replacedText = await replacebotVariable(JSON.parse(mainData?.botSessionVariables),data?.bodyText);
+      console.log(replacedText,'------------------replacedText------------------');
+      let message_text = await getExtraxtedMessage(replacedText, mainData.sid, mainData.custid);
   let button = {
     "messaging_product": "whatsapp",
     "recipient_type": "individual",
@@ -1525,7 +1528,7 @@ if (buttonList && buttonList.length > 0) {
     "interactive": {
       "type": "button",
       "header": {"type":"text","text":data?.headerText || ''},
-      "body": {"text": data?.bodyText || ''},
+      "body": {"text": message_text || ''},
       "footer": {"text": data?.footerText || ''},
       "action": {"buttons": buttons}
     }
@@ -1562,7 +1565,7 @@ async function whatsflowpayload(toPhoneNumber,data,sid,custid){
   return button;
 }
 
-function WaApiListPayload(toPhoneNumber, data) {
+async function WaApiListPayload(toPhoneNumber, data,mainData) {
   console.log(data, '---------data --------------')
   let section = data?.sections;
 let sections = [];
@@ -1589,6 +1592,9 @@ if (section && section.length > 0) {
 
 console.log(sections , '---------section -----------');
 
+ let replacedText = await replacebotVariable(JSON.parse(mainData?.botSessionVariables),data?.bodyText);
+      console.log(replacedText,'------------------replacedText------------------');
+      let message_text = await getExtraxtedMessage(replacedText, mainData.sid, mainData.custid);
   let listPayload = {
     "messaging_product": "whatsapp",
     "recipient_type": "individual",
