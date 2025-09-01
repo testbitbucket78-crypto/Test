@@ -4321,7 +4321,6 @@ openBotVariableModal(editorId:any = '') {
 
       data.status = 'publish'
       data.nodes = flowData
-      
     }
      localStorage.setItem('node_FE_Json',data.node_FE_Json)
      
@@ -4491,6 +4490,13 @@ element?.rows.forEach((row:any) => {
         }
       }
 
+      
+   if (nodeObj?.nodeType === "buttonOptions") {
+  const reverseButton: any = nodeObj?.data?.buttons?.reverse() || [];
+  if (nodeObj && nodeObj.data && nodeObj.data.buttons) {
+    nodeObj.data.buttons = reverseButton; // ✅ Removed ?. here
+  }
+}
       finalNodes.push(nodeObj);
     });
 
