@@ -85,7 +85,7 @@ const submitBots = async (request, res) => {
     console.log(req.botVarList);
     console.log(req.botVarList ? req.botVarList: null);
     let botVar = req.botVarList ? req.botVarList?.length > 0 ? req.botVarList :null : null;
-    let bot = await db.excuteQuery(val.updateBotStatus, [req.status, nodeJson,null, req.botId]);
+    let bot = await db.excuteQuery(val.updateBotStatus, [req.status, nodeJson,JSON.stringify(botVar), req.botId]);
     if(req.status =='publish'){
       let botPublish = await db.excuteQuery(val.updateBotpublishedAt, [ req.botId]);
     }
