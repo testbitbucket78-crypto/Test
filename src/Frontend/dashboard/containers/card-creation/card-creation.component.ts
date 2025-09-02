@@ -825,6 +825,7 @@ atLeastOneAndUniqueButtons() {
 
      this.listOptions.get('sections')?.valueChanges.subscribe(value => {
            this.changeDetectorRef.detectChanges();
+           console.log('Sections changed:', value);
           this.uniqueRowNamesValidator();
           this.sectionHeadingValidator();
         });
@@ -1007,7 +1008,8 @@ uniqueRowNamesValidator(): ValidatorFn {
     this.notesmentionForm = this.fb.group({
       message: [''],
       file: [''],
-      mediaType: ['']
+      mediaType: [''],
+      UIIdMention: [this.syncMentionArray() || []]
     });
 
   }
@@ -1159,7 +1161,9 @@ createCombinedVariable() {
       'RemoveTag', 'TimeDelayModal', 'BotTriggerModal', 'MessageOptin',
       'NotificationModal', 'WorkingHoursModal', 'NotesMentionModal'
     ].includes(formType)) {
-      this.advanceOptionsSubmit(formType);
+        
+          this.advanceOptionsSubmit(formType);
+
     } else if (formType == 'setCondition') {
       this.handleConditionSubmit(formType)
     } else {
@@ -1344,8 +1348,11 @@ console.log('Form Type:', formType);
          this.showToaster('Please add  some Notes and Mention','error');
           return
         }
+
+
         this.notesmentionForm.patchValue({
-          message: data
+          message: data,
+          UIIdMention: this.syncMentionArray() || []
         })
         advanceOption.data = this.notesmentionForm.value;
         break;
@@ -1656,7 +1663,6 @@ console.log('Form Type:', formType);
     } else {
       newHTML += this.createAdvanceActionContent(nodeData, formData);
     }
-
     newHTML += `
       <div class="viewSection">
         <img src="assets/img/edit.png" style="cursor:pointer" class="ViewNode editNode">
@@ -1966,8 +1972,8 @@ console.log('Form Type:', formType);
           content += this.createMediaContent(formData.data);
         }
         if (formData.data.message) {
-
-          content += `<div class="textCont">${this.getTrimmedText(formData.data.message)}</div>`;
+          
+          content += `<div class="textCont">${this.getTrimmedText(formData.data.message)} </a></span></p></div>`;
         }
         break;
       case 'WorkingHoursModal':
@@ -1984,6 +1990,28 @@ console.log('Form Type:', formType);
 
     return content;
   }
+
+
+
+syncMentionArray() {
+  const htmlContent = this.chatEditors?.value;
+  console.log('editor:', htmlContent);
+  if (!htmlContent) return [];
+
+  // Parse the string as HTML
+  const parser = new DOMParser();
+  const doc = parser.parseFromString(htmlContent, 'text/html');
+
+  // Query all mention elements
+  const mentionElements = doc.querySelectorAll('.e-mention-chip');
+
+  // Extract all data-uid values
+  const ids: string[] = Array.from(mentionElements)
+    .map((el: Element) => el.getAttribute('data-uid') || '');
+
+  console.log('Mention IDs:', ids);
+  return ids || [];
+}
 
   private createsetConditionContent(nodeId: any, formData: any): string {
     let content = ''
@@ -2286,6 +2314,19 @@ console.log('Form Type:', formType);
     const section = sections.at(sectionIndex) as FormGroup;
     const rows = section.get('rows') as FormArray;
 
+      const lastRow = rows.at(rows.length - 1) as FormGroup;
+
+  // ✅ Check if last row is empty
+  if (lastRow) {
+    const { rowName, rowDescription } = lastRow.value;
+
+    if (!rowName?.trim()) {
+      console.warn('Cannot add new row: Last row is empty');
+      return; // Stop adding new row
+    }
+  }
+
+
     const totalRows = this.getTotalRowCount(sections);
     const remainingRows = this.MAX_TOTAL_ROWS - totalRows;
 
@@ -2346,7 +2387,12 @@ console.log('Form Type:', formType);
 
       return !section.get('sectionHeading')?.value?.trim();
     });
-    if (hasInvalidHeadings) return false;
+    
+
+    if (hasInvalidHeadings){
+      this.showToaster(`Please provide section heading for new sections`,'error');
+      return false;
+    }
   }
   
   return true;
@@ -2551,13 +2597,20 @@ if (fileControl) {
 
   private fillQuestionOptionData(nodeData: any): void {
     const updateForm = nodeData?.data?.formData;
-    const optionsArray = this.fb.array([]);
+    const optionsArray = this.fb.array([], [
+    this.atLeastOneOptionRequired(),
+    this.atLeastOneAndUniqueOptions()
+  ]);
 
     if (Array.isArray(updateForm?.options)) {
       updateForm.options.forEach((opt: any) => {
         optionsArray.push(this.fb.control(opt));
       });
-    }
+    }else {
+    // ✅ Ensure at least one empty control if no options provided
+    optionsArray.push(this.createOptionControl());
+  }
+
 
     this.questionOption.patchValue({
       questionText: updateForm?.questionText,
@@ -2577,7 +2630,36 @@ if (fileControl) {
       enableValidation: updateForm?.enableValidation
     });
 
+
+
     this.questionOption.setControl('options', optionsArray);
+
+  // ✅ Restore dynamic validators for timeElapseMinutes
+  const timeControl = this.questionOption.get('timeElapseMinutes');
+  if (updateForm?.enableTimeElapse) {
+    timeControl?.setValidators([Validators.required]);
+  } else {
+    timeControl?.clearValidators();
+  }
+  timeControl?.updateValueAndValidity();
+
+  // ✅ Ensure promptMessage updates dynamically if options change
+  this.options.valueChanges.subscribe((vals: string[]) => {
+    const defaultPrompt = this.getPromptMessage();
+    const currentPrompt = this.questionOption.get('promptMessage')?.value;
+    if (!currentPrompt || currentPrompt.startsWith('Please type a number from')) {
+      this.questionOption.get('promptMessage')?.setValue(defaultPrompt);
+    }
+  });
+
+  // ✅ Re-subscribe to options changes for uniqueness validation
+  this.questionOption.get('options')?.valueChanges.subscribe(() => {
+    this.changeDetectorRef.detectChanges();
+    this.atLeastOneAndUniqueOptions();
+  });
+
+  // ✅ Trigger validation after update
+  this.questionOption.updateValueAndValidity();
   }
 
   private fillOpenQuestionData(nodeData: any): void {
@@ -2609,35 +2691,83 @@ if (fileControl) {
     });
   }
 
-  private fillButtonOptionsData(nodeData: any): void {
-    const updateForm = nodeData?.data?.formData;
+private fillButtonOptionsData(nodeData: any): void {
+  const updateForm = nodeData?.data?.formData;
 
-    this.buttonOptions.patchValue({
-      headerType: updateForm?.headerType,
-      headerText: updateForm?.headerText,
-      bodyText: updateForm?.bodyText,
-      footerText: updateForm?.footerText,
-      fileLink: updateForm?.fileLink,
-      saveAsVariable: updateForm?.saveAsVariable,
-      variableName: updateForm?.variableName,
-      variableDataType: updateForm?.variableDataType,
-      reattemptsAllowed: updateForm?.reattemptsAllowed,
-      reattemptsCount: updateForm?.reattemptsCount ?? 1,
-      errorMessage: updateForm?.errorMessage,
-      invalidAction: updateForm?.invalidAction,
-      enableTimeElapse: updateForm?.enableTimeElapse,
-      timeElapseMinutes: updateForm?.timeElapseMinutes,
-      timeElapseAction: updateForm?.timeElapseAction,
-      enableValidation: updateForm?.enableValidation
-    });
+  // ✅ Build buttons FormArray with validators
+  const buttonsArray = this.fb.array([], [this.atLeastOneAndUniqueButtons()]);
 
-    const buttonsArray = this.fb.array([]);
-    (updateForm?.buttons || []).forEach((btn: string) => {
+  if (Array.isArray(updateForm?.buttons) && updateForm.buttons.length > 0) {
+    updateForm.buttons.forEach((btn: string) => {
       buttonsArray.push(this.fb.control(btn, [Validators.required, Validators.maxLength(20)]));
     });
-
-    this.buttonOptions.setControl('buttons', buttonsArray);
+  } else {
+    // ✅ Ensure at least one empty button if no buttons provided
+    buttonsArray.push(this.fb.control('', [Validators.required, Validators.maxLength(20)]));
   }
+
+  // ✅ Patch the main form values
+  this.buttonOptions.patchValue({
+    headerType: updateForm?.headerType || 'none',
+    headerText: updateForm?.headerText,
+    bodyText: updateForm?.bodyText,
+    footerText: updateForm?.footerText,
+    fileLink: updateForm?.fileLink,
+    saveAsVariable: updateForm?.saveAsVariable,
+    variableName: updateForm?.variableName,
+    variableDataType: updateForm?.variableDataType,
+    reattemptsAllowed: updateForm?.reattemptsAllowed,
+    reattemptsCount: updateForm?.reattemptsCount ?? 1,
+    errorMessage: updateForm?.errorMessage,
+    invalidAction: updateForm?.invalidAction,
+    enableTimeElapse: updateForm?.enableTimeElapse,
+    timeElapseMinutes: updateForm?.timeElapseMinutes,
+    timeElapseAction: updateForm?.timeElapseAction,
+    enableValidation: updateForm?.enableValidation
+  });
+
+  // ✅ Replace buttons control in the form
+  this.buttonOptions.setControl('buttons', buttonsArray);
+
+  // ✅ Restore dynamic validator for timeElapseMinutes
+  const timeControl = this.buttonOptions.get('timeElapseMinutes');
+  if (updateForm?.enableTimeElapse) {
+    timeControl?.setValidators([Validators.required]);
+  } else {
+    timeControl?.clearValidators();
+  }
+  timeControl?.updateValueAndValidity();
+
+  // ✅ Restore dynamic validator for headerType → fileLink requirement
+  const headerControl = this.buttonOptions.get('fileLink');
+  if (['image', 'video', 'document'].includes(updateForm?.headerType)) {
+    headerControl?.setValidators([Validators.required]);
+  } else {
+    headerControl?.clearValidators();
+  }
+  headerControl?.updateValueAndValidity();
+
+  // ✅ Subscribe to buttons changes for uniqueness validation
+  this.buttonOptions.get('buttons')?.valueChanges.subscribe(() => {
+    this.changeDetectorRef.detectChanges();
+    this.atLeastOneAndUniqueButtons();
+  });
+
+  // ✅ Subscribe to headerType changes for fileLink validator
+  this.buttonOptions.get('headerType')?.valueChanges.subscribe(value => {
+    const headerCtrl = this.buttonOptions.get('fileLink');
+    if (['image', 'video', 'document'].includes(value)) {
+      headerCtrl?.setValidators([Validators.required]);
+    } else {
+      headerCtrl?.clearValidators();
+    }
+    headerCtrl?.updateValueAndValidity();
+  });
+
+  // ✅ Trigger validation after update
+  this.buttonOptions.updateValueAndValidity();
+}
+
 
   private fillNotesSetConditionData(nodeData: any): void {
 
@@ -2673,7 +2803,10 @@ if (fileControl) {
       enableValidation: updateForm?.enableValidation
     });
 
-    const sectionsArray = this.fb.array([]);
+    const sectionsArray = this.fb.array([],[
+    this.uniqueRowNamesValidator(),
+    this.sectionHeadingValidator()
+  ]);
     (updateForm?.sections || []).forEach((section: any) => {
       const sectionGroup: any = this.fb.group({
         sectionHeading: [section.sectionHeading],
@@ -2689,8 +2822,16 @@ if (fileControl) {
       });
 
       sectionsArray.push(sectionGroup);
+       this.listOptions.get('sections')?.valueChanges.subscribe(value => {
+    this.changeDetectorRef.detectChanges();
+    console.log('Sections changed:', value);
+    this.uniqueRowNamesValidator();
+    this.sectionHeadingValidator();
+  });
     });
 
+
+  
     this.listOptions.setControl('sections', sectionsArray);
   }
 
@@ -2764,10 +2905,12 @@ this.selectedAgentDetails = updateForm
     this.dynamiceEditor = this.chatEditors
     
 
+    
     this.notesmentionForm.patchValue({
       message: updateForm.data.message,
       file: updateForm.data.file,
       mediaType: updateForm.data.mediaType,
+      UIIdMention: this.syncMentionArray() || []
 
     })
 
@@ -3521,7 +3664,7 @@ this.listOptions.reset();
 
   onReattemptsChange(event: any, form: FormGroup): void {
     if (event.target.checked) {
-      form.get('reattemptsCount')?.setValue(1);
+      form.get('reattemptsCount')?.setValue(event.target.value ? 1 : 0);
     }
   }
 
@@ -4038,7 +4181,7 @@ onFileSelectedData(event: any, type: any = '') {
     
     this.closeAllModal()
     let mediaName
-    const fileNameWithPrefix = Link.substring(Link.lastIndexOf('/') + 1);
+    const fileNameWithPrefix = Link?.substring(Link?.lastIndexOf('/') + 1);
     let originalName;
     let getMimeTypePrefix = this.getMimeTypePrefix(media_type);
     if (getMimeTypePrefix === 'video/') {
@@ -4085,9 +4228,11 @@ onFileSelectedData(event: any, type: any = '') {
 
     if (this.cardType == "NotesMentionModal") {
 
+
       this.notesmentionForm.patchValue({
         file: Link,
-        mediaType: media_type
+        mediaType: media_type,
+        UIIdMention: this.syncMentionArray() || []
       })
     }
     if (this.cardType == "NotificationModal") {
@@ -4101,7 +4246,7 @@ onFileSelectedData(event: any, type: any = '') {
 
 
   getMimeTypePrefix(mimeType: string): string {
-    return mimeType.split('/')[0];
+    return mimeType?.split('/')[0];
   }
 
 
@@ -4213,10 +4358,11 @@ openBotVariableModal(editorId:any = '') {
     event.stopPropagation();
   }
 
+  UIIdMention:any=[]
   InsertMentionOption(user: any) {
     let content: any = this.chatEditors.value || '';
     content = content.replace(/<p[^>]*>/g, '').replace(/<\/p>/g, '');
-    content = content + '<span contenteditable="false" class="e-mention-chip"><a _ngcontent-yyb-c67="" href="mailto:" title="">@' + user?.name + '</a></span>'
+    content = content + `<span contenteditable="false" class="e-mention-chip" data-uid="${user?.uid}"><a _ngcontent-yyb-c67="" href="mailto:" title="">@${user?.name}</a></span>`;
     this.chatEditors.value = content;
     // content = content+'<span> </span>'
     // this.chatEditor.value = content;
@@ -4321,6 +4467,7 @@ openBotVariableModal(editorId:any = '') {
 
       data.status = 'publish'
       data.nodes = flowData
+      console.log("data",data)
     }
      localStorage.setItem('node_FE_Json',data.node_FE_Json)
      
@@ -4456,8 +4603,6 @@ element?.rows.forEach((row:any) => {
         option: [],
         data: formData
       };
-      console.log('nodeObj', nodeObj)
-
       if (nodeConnections.length > 0) {
         nodeObj.connectedId = nodeConnections[0]?.targetNode ?? null;
 
@@ -4472,21 +4617,31 @@ element?.rows.forEach((row:any) => {
         if (isQuestionOption) {
           var optionNames = formData?.options || formData?.buttons || formData?.data?.options || formData?.data?.sections || node?.data?.sectionListArray  || [];
 
-          const skipIndexes = [0]; // Skip connectedId
-          if (formData.invalidAction === 'fallback' && nodeConnections.length > 1) {
+          var skipIndexes = [0]; // Skip connectedId
+          if (formData.invalidAction === 'fallback'  && nodeConnections.length > 1) {
             skipIndexes.push(1); // Skip fallback
           }
-          optionNames = optionNames.reverse();
-          nodeConnections.forEach((conn, idx) => {
-            if (!skipIndexes.includes(idx)) {
-              const labelIndex = idx - skipIndexes.length;
+          if (nodeObj?.nodeType === "WorkingHoursModal" || nodeObj?.nodeType === "setCondition") {
+            nodeConnections.forEach((conn, idx) => {
               nodeObj.option.push({
                 optionConnectedId: conn.targetNode,
-                name: optionNames[labelIndex] || optionNames[labelIndex]?.rowName || `Option ${labelIndex + 1}`
+                name: optionNames[idx]
               });
-            }
-          });
-          nodeObj.option = nodeObj.option.reverse();
+            });
+          }else{
+            optionNames = optionNames.reverse();
+            nodeConnections.forEach((conn, idx) => {
+              if (!skipIndexes.includes(idx)) {
+                const labelIndex = idx - skipIndexes.length;
+                nodeObj.option.push({
+                  optionConnectedId: conn.targetNode,
+                  name: optionNames[labelIndex] || optionNames[labelIndex]?.rowName || `Option ${labelIndex + 1}`
+                });
+              }
+            });
+            nodeObj.option = nodeObj.option.reverse();
+          }
+
         }
       }
 

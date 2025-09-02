@@ -829,10 +829,7 @@ isTooltipVisible2:any
         toDate: this.formatDate(yesterday)
       });
     } 
-     if (option != 'custom') {
-      this.dateRangeForm.patchValue({ fromDate: null, toDate: null });
-    }
-
+   
     this.dateError = null;
   }
 
@@ -864,11 +861,20 @@ isTooltipVisible2:any
          return;
       }
 
+          const fromDateObj = new Date(this.dateRangeForm.value.fromDate);
+    const toDateObj = new Date(this.dateRangeForm.value.toDate);
+
+        fromDateObj.setDate(fromDateObj.getDate() + 1);
+    toDateObj.setDate(toDateObj.getDate() + 1);
+
+    // Convert back to formatted string (YYYY-MM-DD)
+    const updatedFromDate = this.formatDate(fromDateObj);
+    const updatedToDate = this.formatDate(toDateObj);
       let data = {
         spId: this.userDetails.SP_ID,
         botId: this.botDetailsData.id,
-        startDate: this.dateRangeForm.value.fromDate,
-        endDate: this.dateRangeForm.value.toDate,
+        startDate: updatedFromDate,
+        endDate: updatedToDate,
         Channel: environment.chhanel
       }
 
@@ -887,6 +893,7 @@ this.closeModal()
 
     }
   }
+
   toggleAdvanceAction() {
     this.showAdvanceAction = !this.showAdvanceAction;
     this.ShowAddAction = true;
