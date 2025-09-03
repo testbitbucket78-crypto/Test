@@ -260,7 +260,6 @@ export class BotBuilderComponent implements OnInit {
     this.botService.getBotAlldetails(SPID).subscribe((res: any) => {
       if (res.status == 200) {
         this.botsList = res.bots
-        console.log(res.bots)
         this.originalBotsList = [...this.botsList];
       }
       this.isLoading = false
@@ -274,8 +273,7 @@ export class BotBuilderComponent implements OnInit {
   checkBotName(event: any) {
 
     this.errorMessageBot= ''
-    var SPID = this.userDetails?.SP_ID || 159
-    console.log("SPID", SPID)
+    var SPID = this.userDetails?.SP_ID
 
     let data = {  spid: SPID ,name:(event.target as HTMLInputElement).value.trim()}
     this.botService.checkExistingBot(data).subscribe((res: any) => {
@@ -341,7 +339,6 @@ export class BotBuilderComponent implements OnInit {
       modalInstance.hide();
     }
     this.resetBotForm();
-    console.log(this.botBuilderForm.value)
   }
 
   resetBotForm(): void {
@@ -360,8 +357,6 @@ export class BotBuilderComponent implements OnInit {
     this.assignedRemoveTagList = []
     this.assignedTagList = []
     this.newKeyword = '';
-    console.log(this.assignAction)
-    console.log(this.assignAction)
     
     this.assignActionList = JSON.parse(JSON.stringify(this.assignAction))
 
@@ -375,8 +370,12 @@ export class BotBuilderComponent implements OnInit {
     this.showCampaignDetails = !!item;
     this.botDetailsData = item;
 
-    this.botDetailsData.smartreplyusage = JSON.parse(this.botDetailsData.smartreplyusage) || [];
-    this.botDetailsData.botusage = JSON.parse(this.botDetailsData.botusage) || [];
+    if (this.botDetailsData?.smartreplyusage) {
+      this.botDetailsData.smartreplyusage = JSON.parse(this.botDetailsData.smartreplyusage) || [];
+    }
+    if (this.botDetailsData?.botusage) {
+      this.botDetailsData.botusage = JSON.parse(this.botDetailsData.botusage) || [];
+    }
 
     if (item) {
       this.botBuilderForm.patchValue({
@@ -395,15 +394,11 @@ export class BotBuilderComponent implements OnInit {
     }
 
     let keywordArray = item?.keywords?.split(',').map((k: any) => k.trim());
-    console.log(keywordArray)
     if (keywordArray == undefined) {
       this.keywords = []
     } else {
       this.keywords = keywordArray
     }
-
-
-    console.log(item)
     if (item?.advanceAction) {
       this.assignedAgentList = JSON.parse(item?.advanceAction)
     }else{
@@ -413,7 +408,6 @@ export class BotBuilderComponent implements OnInit {
     const matchedActionValues: any = this.assignedAgentList
       .filter(item => this.actionIdToValue.hasOwnProperty(item.actionTypeId))
       .map(item => this.actionIdToValue[item.actionTypeId]);
-    console.log(matchedActionValues)
     this.selectedExclusiveAction = matchedActionValues?.length == 0?null:matchedActionValues[0]
 
 
@@ -458,17 +452,12 @@ if (this.botBuilderForm) {
   
 }
 
-
-    console.log("this.botBuilderForm.value", this.botBuilderForm.value)
     Object.keys(this.botBuilderForm.controls).forEach(key => {
       const control = this.botBuilderForm.get(key);
       if (control && control.invalid) {
         console.warn(`Invalid field: ${key}`, control.errors);
       }
     });
-
-
-
 
     if(this.errorMessageBot != '') {
       return
@@ -503,6 +492,7 @@ if (this.botBuilderForm) {
           this.botBuilderForm.reset();
           localStorage.setItem('botId', response.msg.insertId || response.botId)
           if(Type == 'copy'){
+            localStorage.setItem('botTimeOut', this.botBuilderForm.value.botTimeout)
                this.botBuilderForm.reset();
             if (this.botDetailsData.node_FE_Json) {
               localStorage.setItem('node_FE_Json', this.botDetailsData.node_FE_Json)
@@ -537,10 +527,8 @@ if (this.botBuilderForm) {
 }
 
   updateBotForm(): void {
-    console.log("this.botBuilderForm.valid", this.botBuilderForm.valid)
     Object.keys(this.botBuilderForm.controls).forEach(controlName => {
       const control = this.botBuilderForm.get(controlName);
-      console.log(`${controlName} -> Valid: ${control?.valid}, Value: ${control?.value}, Errors:`, control?.errors);
     });
     if (this.botBuilderForm.valid) {
       const formData = this.botBuilderForm.value;
@@ -574,6 +562,8 @@ if (this.botBuilderForm) {
               localStorage.setItem('botVarList', JSON.stringify(this.botDetailsData.botVarList))
             }
             localStorage.setItem('botId', this.botDetailsData.id)
+            var botTimeout:any = this.convertHHMMToMinutes(this.botDetailsData.timeout_value);
+            localStorage.setItem('botTimeOut', botTimeout)
           this.closeModalById('botModal');
           this.closeModalById('submitBotModal');
             this.router.navigate(['/bot-Creation']);
@@ -621,6 +611,7 @@ if (this.botBuilderForm) {
         this.botBuilderForm.reset();
         this.closeModalById('deleteBotModal');
         this.closeModalById('deprecated');
+        this.closeModalById('deprecatedAfterDelete');
         this.showToaster('success', response.message)
         this.getBotDetails()
       } else {
@@ -757,7 +748,6 @@ isTooltipVisible2:any
       .filter(f => f.checked)
       .map(f => f.name);
 
-    console.log('Selected Status:', this.selectedStatusFilter);
 
     if (this.selectedStatusFilter.length === 0) {
       // No filters selected: show all
@@ -787,7 +777,6 @@ isTooltipVisible2:any
   }
 
   filteredSubmenuOptions() {
-    console.log(this.submenuOptions)
     return this.submenuOptions.filter(opt =>
       opt.value.toLowerCase().includes(this.searchText.toLowerCase())
     );
@@ -829,10 +818,8 @@ isTooltipVisible2:any
         fromDate: this.formatDate(fromDate),
         toDate: this.formatDate(yesterday)
       });
-    } else if (option !== 'custom') {
-      this.dateRangeForm.patchValue({ fromDate: null, toDate: null });
-    }
-
+    } 
+   
     this.dateError = null;
   }
 
@@ -858,17 +845,25 @@ isTooltipVisible2:any
     if (this.dateRangeForm.valid && !this.dateError) {
       const selectedOption = this.dateRangeForm.value.dateOption;
       let fromDate, toDate;
-      console.log(this.dateRangeForm.value)
-      if (this.dateRangeForm.value.dateOption === 'custom' || this.dateRangeForm.value.fromDate == null || this.dateRangeForm.value.toDate == null) {
+      if (this.dateRangeForm.value.dateOption === 'custom' && (this.dateRangeForm.value.fromDate == null || this.dateRangeForm.value.toDate == null)) {
          this.showToaster('error', 'Please select start date and end date.');
          return;
       }
 
+          const fromDateObj = new Date(this.dateRangeForm.value.fromDate);
+    const toDateObj = new Date(this.dateRangeForm.value.toDate);
+
+        fromDateObj.setDate(fromDateObj.getDate() - 1);
+    toDateObj.setDate(toDateObj.getDate() + 1);
+
+    // Convert back to formatted string (YYYY-MM-DD)
+    const updatedFromDate = this.formatDate(fromDateObj);
+    const updatedToDate = this.formatDate(toDateObj);
       let data = {
         spId: this.userDetails.SP_ID,
         botId: this.botDetailsData.id,
-        startDate: this.dateRangeForm.value.fromDate,
-        endDate: this.dateRangeForm.value.toDate,
+        startDate: updatedFromDate,
+        endDate: updatedToDate,
         Channel: environment.chhanel
       }
 
@@ -887,6 +882,7 @@ this.closeModal()
 
     }
   }
+
   toggleAdvanceAction() {
     this.showAdvanceAction = !this.showAdvanceAction;
     this.ShowAddAction = true;
@@ -896,7 +892,6 @@ this.closeModal()
 
 
   toggleAssignOptions() {
-    console.log(this.ShowAssignOption)
     this.ShowAssignOptions = !this.ShowAssignOptions
   }
 
@@ -1046,7 +1041,6 @@ this.hasSelectedChild = true;
 
   toggleAssignOption(index: number) {
 
-    console.log(this.assignActionList, index)
     const action = this.assignActionList[index];
     const modalMap: any = {
       'Mark_Status': 'resolveAndOpen',
@@ -1054,7 +1048,6 @@ this.hasSelectedChild = true;
       'Remove_Tag': 'RemoveTagModal'
     };
 
-    console.log("modalMap", modalMap, modalMap[action.value])
     if (modalMap[action.value]) {
 
 
@@ -1215,7 +1208,6 @@ OpenModal(Type:any){
     this.botBuilderForm.get('name')?.setValue(this.botDetailsData.name)
 setTimeout(() => {
   let keywordArray = this.botDetailsData?.keywords?.split(',').map((k: any) => k.trim());
-console.log(keywordArray)
 if (keywordArray == undefined) {
 this.keywords = []
 } else {

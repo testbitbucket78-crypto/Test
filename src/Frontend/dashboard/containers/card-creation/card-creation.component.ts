@@ -187,7 +187,8 @@ viewMode:any=false
   @Input() agents: Agent[] = this.filteredAgents;
   @Input() availableAttributes: any = attributes
   @Input() availableVariables = ['bot.name', 'contact.city', 'session.date'];
-  @Input() selectedTags: string[] = [];
+  @Input() selectedTags: { TagId: number; TagName: string }[] = [];
+  @Input() selectedTagsRemoveTag: { TagId: number; TagName: string }[] = [];
 
   @Output() conditionsChange = new EventEmitter<any[]>();
   @Output() save = new EventEmitter<any>();
@@ -224,6 +225,7 @@ viewMode:any=false
   semiAdvanceTool: any = DEFAULT_TOOLS
   attachementTool: any = DEFAULT_TOOLS
   pasteCleanupSettings = PASTE_CLEANUP_SETTINGS
+  botTimeout:any=''
 
   public insertImageSettings: object = {
     width: '50px',
@@ -244,6 +246,7 @@ onDocumentClick(event: MouseEvent): void {
     public validation: PhoneValidationService,private modalService: NgbModal,
     private apiService: TeamboxService, private botService: BotserviceService, public settingService: SettingsService, public router: Router
   ) {
+    this.botTimeout = localStorage.getItem('botTimeOut');
     this.userDetails = JSON.parse(sessionStorage.getItem('loginDetails') || '{}');
     var viewMode:any = localStorage.getItem('viewMode') == undefined?false:localStorage.getItem('viewMode')
     if (viewMode) {
@@ -465,9 +468,9 @@ document.addEventListener('mouseup', (e) => {
       setTimeout(() => {
         Object.values(this.editor.drawflow.drawflow.Home.data).forEach((node: any) => {
           if (node?.data?.formData) {
-            this.cardType = node.data.text
-            this.ParentNodeType = node.data.category
-            this.setOutputPositionsBasedOnType(node.id, node.data.formData)
+            this.cardType = node.data.text;
+            this.ParentNodeType = node.data.category;
+            this.setOutputPositionsBasedOnType(node.id, node.data.formData);
             // this.refreshEditor()
             if (!this.viewMode) {
               this.addNodeEvent(node.id);
@@ -485,14 +488,6 @@ document.addEventListener('mouseup', (e) => {
   }
 
 
-  // refreshEditor(): void {
-  //   const exportedData = this.editor.export();
-
-  //   setTimeout(() => {
-  //     this.editor.clear();
-  //     this.editor.import(exportedData);
-  //   }, 50); // small delay helps prevent race conditions
-  // }
 
 
   updateOutputStylesInHtml(nodeId: number): void {
@@ -608,7 +603,25 @@ document.addEventListener('mouseup', (e) => {
       variableName: [''],
       variableDataType: ['text'],
       enableValidation: [false]
+    }, { validators: this.timeElapseValidator(this.botTimeout) });
+
+
+      this.questionOption.get('enableTimeElapse')?.valueChanges.subscribe(enabled => {
+      const timeControl = this.questionOption.get('timeElapseMinutes');
+      if (enabled) {
+        timeControl?.setValidators([Validators.required]);
+      } else {
+        timeControl?.clearValidators();
+      }
+      timeControl?.updateValueAndValidity();
+      this.questionOption.updateValueAndValidity();
     });
+
+    // ✅ Trigger validator on timeElapseMinutes changes
+    this.questionOption.get('timeElapseMinutes')?.valueChanges.subscribe(() => {
+      this.questionOption.updateValueAndValidity();
+    });
+
 
     this.setupFormListeners(this.questionOption);
 
@@ -690,9 +703,24 @@ atLeastOneAndUniqueOptions() {
         timeElapseMinutes: [''],
         timeElapseAction: ['skip'],
         enableValidation: [false]
-      });
+      }, { validators: this.timeElapseValidator(this.botTimeout) });
 
 
+  this.buttonOptions.get('enableTimeElapse')?.valueChanges.subscribe(enabled => {
+      const timeControl = this.buttonOptions.get('timeElapseMinutes');
+      if (enabled) {
+        timeControl?.setValidators([Validators.required]);
+      } else {
+        timeControl?.clearValidators();
+      }
+      timeControl?.updateValueAndValidity();
+      this.buttonOptions.updateValueAndValidity();
+    });
+
+    // ✅ Trigger validator on timeElapseMinutes changes
+    this.buttonOptions.get('timeElapseMinutes')?.valueChanges.subscribe(() => {
+      this.buttonOptions.updateValueAndValidity();
+    });
 
           this.buttonOptions.get('buttons')?.valueChanges.subscribe(value => {
             this.changeDetectorRef.detectChanges();
@@ -714,6 +742,20 @@ atLeastOneAndUniqueOptions() {
 
       this.setupFormListeners(this.buttonOptions);
     }
+
+private timeElapseValidator(bottimeout: number): ValidatorFn {
+  return (control: AbstractControl): ValidationErrors | null => {
+    const enableTimeElapse = control.get('enableTimeElapse')?.value;
+    const timeElapseMinutes = control.get('timeElapseMinutes')?.value;
+   
+    if (enableTimeElapse && timeElapseMinutes && Number(timeElapseMinutes) >= bottimeout) {
+      return { timeElapseExceeded: true };
+    }
+    return null;
+  };
+}
+
+
 
 atLeastOneAndUniqueButtons() {
   return (formArray: AbstractControl): ValidationErrors | null => {
@@ -758,6 +800,23 @@ atLeastOneAndUniqueButtons() {
       timeElapseMinutes: [''],
       timeElapseAction: ['skip'],
       enableValidation: [false]
+    }, { validators: this.timeElapseValidator(this.botTimeout) });
+
+
+      this.listOptions.get('enableTimeElapse')?.valueChanges.subscribe(enabled => {
+      const timeControl = this.listOptions.get('timeElapseMinutes');
+      if (enabled) {
+        timeControl?.setValidators([Validators.required]);
+      } else {
+        timeControl?.clearValidators();
+      }
+      timeControl?.updateValueAndValidity();
+      this.listOptions.updateValueAndValidity();
+    });
+
+    // ✅ Trigger validator on timeElapseMinutes changes
+    this.listOptions.get('timeElapseMinutes')?.valueChanges.subscribe(() => {
+      this.listOptions.updateValueAndValidity();
     });
 
       this.listOptions.valueChanges.subscribe(() => {
@@ -870,8 +929,24 @@ uniqueRowNamesValidator(): ValidatorFn {
       timeElapseMinutes: [''],
       timeElapseAction: ['skip'],
       enableValidation: [false]
+    }, { validators: this.timeElapseValidator(this.botTimeout) });
+
+
+      this.whatsAppFlowForm.get('enableTimeElapse')?.valueChanges.subscribe(enabled => {
+      const timeControl = this.whatsAppFlowForm.get('timeElapseMinutes');
+      if (enabled) {
+        timeControl?.setValidators([Validators.required]);
+      } else {
+        timeControl?.clearValidators();
+      }
+      timeControl?.updateValueAndValidity();
+      this.whatsAppFlowForm.updateValueAndValidity();
     });
 
+    // ✅ Trigger validator on timeElapseMinutes changes
+    this.whatsAppFlowForm.get('timeElapseMinutes')?.valueChanges.subscribe(() => {
+      this.whatsAppFlowForm.updateValueAndValidity();
+    });
     this.setupFormListeners(this.whatsAppFlowForm);
   }
 
@@ -899,7 +974,24 @@ uniqueRowNamesValidator(): ValidatorFn {
       enableTimeElapse: [false],
       timeElapseMinutes: ['', [Validators.min(1)]],
       timeElapseAction: ['skip']
+    }, { validators: this.timeElapseValidator(this.botTimeout) });
+
+  this.openQuestion.get('enableTimeElapse')?.valueChanges.subscribe(enabled => {
+      const timeControl = this.openQuestion.get('timeElapseMinutes');
+      if (enabled) {
+        timeControl?.setValidators([Validators.required]);
+      } else {
+        timeControl?.clearValidators();
+      }
+      timeControl?.updateValueAndValidity();
+      this.openQuestion.updateValueAndValidity();
     });
+
+    // ✅ Trigger validator on timeElapseMinutes changes
+    this.openQuestion.get('timeElapseMinutes')?.valueChanges.subscribe(() => {
+      this.openQuestion.updateValueAndValidity();
+    });
+
 
     this.setupFormListeners(this.openQuestion);
   }
@@ -915,7 +1007,8 @@ uniqueRowNamesValidator(): ValidatorFn {
     this.notesmentionForm = this.fb.group({
       message: [''],
       file: [''],
-      mediaType: ['']
+      mediaType: [''],
+      UIIdMention: [this.syncMentionArray() || []]
     });
 
   }
@@ -1067,7 +1160,9 @@ createCombinedVariable() {
       'RemoveTag', 'TimeDelayModal', 'BotTriggerModal', 'MessageOptin',
       'NotificationModal', 'WorkingHoursModal', 'NotesMentionModal'
     ].includes(formType)) {
-      this.advanceOptionsSubmit(formType);
+        
+          this.advanceOptionsSubmit(formType);
+
     } else if (formType == 'setCondition') {
       this.handleConditionSubmit(formType)
     } else {
@@ -1077,7 +1172,6 @@ createCombinedVariable() {
   }
 
   private handleContentSubmit(): void {
-    console.log("this.sendTextForm", this.sendTextForm.invalid);
     if (this.sendTextForm.invalid) {
       this.sendTextForm.markAllAsTouched();
       return;
@@ -1174,9 +1268,7 @@ formData.options = ["True", "False"];
       // Check if variable with same name AND type already exists
   const variableExists = this.botVariables.some(
   v =>
-    v.name.trim().toLowerCase() === newVariable.name.trim().toLowerCase() &&
-    v.dataType === newVariable.dataType
-);
+    v.name.trim().toLowerCase() === newVariable.name.trim().toLowerCase());
 
 
       if (!variableExists) {
@@ -1207,10 +1299,6 @@ formData.options = ["True", "False"];
     this.dynamiceEditor = ''
 
     const advanceOption = { type: formType, data: {} as any };
-
-
-
-
     switch (formType) {
       case 'assignAgentModal':
         advanceOption.data = this.selectedAgentDetails;
@@ -1255,25 +1343,38 @@ formData.options = ["True", "False"];
          this.showToaster('Please add  some Notes and Mention','error');
           return
         }
+
+
         this.notesmentionForm.patchValue({
-          message: data
+          message: data,
+          UIIdMention: this.syncMentionArray() || []
         })
         advanceOption.data = this.notesmentionForm.value;
         break;
       case 'AddTags':
-      case 'RemoveTag':
-
-        if (this.selectedTags.length <= 0) {
+  if (this.selectedTags.length <= 0) {
           this.showToaster('Please select Tag and Operation','error')
           return
-          
         }
         advanceOption.data = {
-          tags: this.selectedTags,
+          tags: this.selectedTags.map(tag => tag.TagName),
+          tag: this.selectedTags.map(tag => tag.TagId),
+          selectedTags: this.selectedTags,
+          operation: this.operationOptions
+        };
+    break;
+      case 'RemoveTag':
+        if (this.selectedTagsRemoveTag.length <= 0) {
+          this.showToaster('Please select Tag and Operation','error')
+          return
+        }
+        advanceOption.data = {
+          tags: this.selectedTagsRemoveTag.map(tag => tag.TagName),
+          tag: this.selectedTagsRemoveTag.map(tag => tag.TagId),
+          selectedTags: this.selectedTagsRemoveTag,
           operation: this.operationOptions
         };
         break;
-
     }
 
       this.closeModal();
@@ -1421,7 +1522,7 @@ formData.options = ["True", "False"];
       outputs = 2
     }
 
-    if (formData?.invalidAction === "fallback") {
+    if (formData?.invalidAction === "fallback" || formData?.timeElapseAction === "fallback") {
       outputs += 1;
     }
 
@@ -1429,11 +1530,11 @@ formData.options = ["True", "False"];
   }
 
   private setOutputPositionsBasedOnType(nodeId: any, formData: any): void {
-    console.log('ParentNodeType:', formData);
     if (this.ParentNodeType === 'listOptions') {
       this.setOutputPositionsForList(nodeId, formData);
     } else {
-      this.setOutputPositions(Number(nodeId), formData?.invalidAction);
+      const actionValue =  (formData?.invalidAction === 'fallback' || formData?.timeElapseAction === 'fallback')? 'fallback': formData?.invalidAction
+      this.setOutputPositions(Number(nodeId), actionValue);
     }
   }
 
@@ -1493,7 +1594,7 @@ formData.options = ["True", "False"];
     output1.style.top = '20px';
 
     let remainingOutputs = Array.from(outputs).slice(1);
-    if (formData?.invalidAction === "fallback") {
+    if (formData?.invalidAction === "fallback" || formData?.timeElapseAction === "fallback") {
       const output2 = outputs[1] as HTMLElement;
       output2.style.position = 'absolute';
       output2.style.top = '41px';
@@ -1556,7 +1657,6 @@ formData.options = ["True", "False"];
     } else {
       newHTML += this.createAdvanceActionContent(nodeData, formData);
     }
-
     newHTML += `
       <div class="viewSection">
         <img src="assets/img/edit.png" style="cursor:pointer" class="ViewNode editNode">
@@ -1866,8 +1966,8 @@ formData.options = ["True", "False"];
           content += this.createMediaContent(formData.data);
         }
         if (formData.data.message) {
-
-          content += `<div class="textCont">${this.getTrimmedText(formData.data.message)}</div>`;
+          
+          content += `<div class="textCont">${this.getTrimmedText(formData.data.message)} </a></span></p></div>`;
         }
         break;
       case 'WorkingHoursModal':
@@ -1884,6 +1984,26 @@ formData.options = ["True", "False"];
 
     return content;
   }
+
+
+
+syncMentionArray() {
+  const htmlContent = this.chatEditors?.value;
+  if (!htmlContent) return [];
+
+  // Parse the string as HTML
+  const parser = new DOMParser();
+  const doc = parser.parseFromString(htmlContent, 'text/html');
+
+  // Query all mention elements
+  const mentionElements = doc.querySelectorAll('.e-mention-chip');
+
+  // Extract all data-uid values
+  const ids: string[] = Array.from(mentionElements)
+    .map((el: Element) => el.getAttribute('data-uid') || '');
+
+  return ids || [];
+}
 
   private createsetConditionContent(nodeId: any, formData: any): string {
     let content = ''
@@ -2025,7 +2145,7 @@ formData.options = ["True", "False"];
       newOutputsCount = 2;
     }
 
-    if (formData.invalidAction == "fallback") {
+    if (formData.invalidAction == "fallback" || formData.timeElapseAction == "fallback") {
       newOutputsCount = newOutputsCount + 1
     }
 
@@ -2037,6 +2157,12 @@ formData.options = ["True", "False"];
     this.editor.updateNodeDataFromId(this.selectedNodeId, node.data);
     const newHTML = this.createNodeHtml(this.selectedNodeId, node.data);
     this.updateNodeHTML(this.selectedNodeId, newHTML);
+      var nodeId = this.selectedNodeId;
+
+       setTimeout(() => {
+      this.editor.drawflow.drawflow.Home.data[nodeId].html = newHTML;
+      this.isLoading = false
+    }, 100);
   }
 
 
@@ -2073,7 +2199,8 @@ formData.options = ["True", "False"];
     if (this.ParentNodeType === 'listOptions') {
       this.setOutputPositionsForList(node.id, formData);
     } else {
-      this.setOutputPositions(node.id, formData?.invalidAction);
+       const actionValue =  (formData?.invalidAction === 'fallback' || formData?.timeElapseAction === 'fallback')? 'fallback': formData?.invalidAction
+      this.setOutputPositions(node.id, actionValue);
     }
   }
 
@@ -2180,6 +2307,19 @@ formData.options = ["True", "False"];
     const section = sections.at(sectionIndex) as FormGroup;
     const rows = section.get('rows') as FormArray;
 
+      const lastRow = rows.at(rows.length - 1) as FormGroup;
+
+  // ✅ Check if last row is empty
+  if (lastRow) {
+    const { rowName, rowDescription } = lastRow.value;
+
+    if (!rowName?.trim()) {
+      console.warn('Cannot add new row: Last row is empty');
+      return; // Stop adding new row
+    }
+  }
+
+
     const totalRows = this.getTotalRowCount(sections);
     const remainingRows = this.MAX_TOTAL_ROWS - totalRows;
 
@@ -2240,7 +2380,12 @@ formData.options = ["True", "False"];
 
       return !section.get('sectionHeading')?.value?.trim();
     });
-    if (hasInvalidHeadings) return false;
+    
+
+    if (hasInvalidHeadings){
+      this.showToaster(`Please provide section heading for new sections`,'error');
+      return false;
+    }
   }
   
   return true;
@@ -2445,13 +2590,20 @@ if (fileControl) {
 
   private fillQuestionOptionData(nodeData: any): void {
     const updateForm = nodeData?.data?.formData;
-    const optionsArray = this.fb.array([]);
+    const optionsArray = this.fb.array([], [
+    this.atLeastOneOptionRequired(),
+    this.atLeastOneAndUniqueOptions()
+  ]);
 
     if (Array.isArray(updateForm?.options)) {
       updateForm.options.forEach((opt: any) => {
         optionsArray.push(this.fb.control(opt));
       });
-    }
+    }else {
+    // ✅ Ensure at least one empty control if no options provided
+    optionsArray.push(this.createOptionControl());
+  }
+
 
     this.questionOption.patchValue({
       questionText: updateForm?.questionText,
@@ -2471,7 +2623,36 @@ if (fileControl) {
       enableValidation: updateForm?.enableValidation
     });
 
+
+
     this.questionOption.setControl('options', optionsArray);
+
+  // ✅ Restore dynamic validators for timeElapseMinutes
+  const timeControl = this.questionOption.get('timeElapseMinutes');
+  if (updateForm?.enableTimeElapse) {
+    timeControl?.setValidators([Validators.required]);
+  } else {
+    timeControl?.clearValidators();
+  }
+  timeControl?.updateValueAndValidity();
+
+  // ✅ Ensure promptMessage updates dynamically if options change
+  this.options.valueChanges.subscribe((vals: string[]) => {
+    const defaultPrompt = this.getPromptMessage();
+    const currentPrompt = this.questionOption.get('promptMessage')?.value;
+    if (!currentPrompt || currentPrompt.startsWith('Please type a number from')) {
+      this.questionOption.get('promptMessage')?.setValue(defaultPrompt);
+    }
+  });
+
+  // ✅ Re-subscribe to options changes for uniqueness validation
+  this.questionOption.get('options')?.valueChanges.subscribe(() => {
+    this.changeDetectorRef.detectChanges();
+    this.atLeastOneAndUniqueOptions();
+  });
+
+  // ✅ Trigger validation after update
+  this.questionOption.updateValueAndValidity();
   }
 
   private fillOpenQuestionData(nodeData: any): void {
@@ -2503,35 +2684,83 @@ if (fileControl) {
     });
   }
 
-  private fillButtonOptionsData(nodeData: any): void {
-    const updateForm = nodeData?.data?.formData;
+private fillButtonOptionsData(nodeData: any): void {
+  const updateForm = nodeData?.data?.formData;
 
-    this.buttonOptions.patchValue({
-      headerType: updateForm?.headerType,
-      headerText: updateForm?.headerText,
-      bodyText: updateForm?.bodyText,
-      footerText: updateForm?.footerText,
-      fileLink: updateForm?.fileLink,
-      saveAsVariable: updateForm?.saveAsVariable,
-      variableName: updateForm?.variableName,
-      variableDataType: updateForm?.variableDataType,
-      reattemptsAllowed: updateForm?.reattemptsAllowed,
-      reattemptsCount: updateForm?.reattemptsCount ?? 1,
-      errorMessage: updateForm?.errorMessage,
-      invalidAction: updateForm?.invalidAction,
-      enableTimeElapse: updateForm?.enableTimeElapse,
-      timeElapseMinutes: updateForm?.timeElapseMinutes,
-      timeElapseAction: updateForm?.timeElapseAction,
-      enableValidation: updateForm?.enableValidation
-    });
+  // ✅ Build buttons FormArray with validators
+  const buttonsArray = this.fb.array([], [this.atLeastOneAndUniqueButtons()]);
 
-    const buttonsArray = this.fb.array([]);
-    (updateForm?.buttons || []).forEach((btn: string) => {
+  if (Array.isArray(updateForm?.buttons) && updateForm.buttons.length > 0) {
+    updateForm.buttons.forEach((btn: string) => {
       buttonsArray.push(this.fb.control(btn, [Validators.required, Validators.maxLength(20)]));
     });
-
-    this.buttonOptions.setControl('buttons', buttonsArray);
+  } else {
+    // ✅ Ensure at least one empty button if no buttons provided
+    buttonsArray.push(this.fb.control('', [Validators.required, Validators.maxLength(20)]));
   }
+
+  // ✅ Patch the main form values
+  this.buttonOptions.patchValue({
+    headerType: updateForm?.headerType || 'none',
+    headerText: updateForm?.headerText,
+    bodyText: updateForm?.bodyText,
+    footerText: updateForm?.footerText,
+    fileLink: updateForm?.fileLink,
+    saveAsVariable: updateForm?.saveAsVariable,
+    variableName: updateForm?.variableName,
+    variableDataType: updateForm?.variableDataType,
+    reattemptsAllowed: updateForm?.reattemptsAllowed,
+    reattemptsCount: updateForm?.reattemptsCount ?? 1,
+    errorMessage: updateForm?.errorMessage,
+    invalidAction: updateForm?.invalidAction,
+    enableTimeElapse: updateForm?.enableTimeElapse,
+    timeElapseMinutes: updateForm?.timeElapseMinutes,
+    timeElapseAction: updateForm?.timeElapseAction,
+    enableValidation: updateForm?.enableValidation
+  });
+
+  // ✅ Replace buttons control in the form
+  this.buttonOptions.setControl('buttons', buttonsArray);
+
+  // ✅ Restore dynamic validator for timeElapseMinutes
+  const timeControl = this.buttonOptions.get('timeElapseMinutes');
+  if (updateForm?.enableTimeElapse) {
+    timeControl?.setValidators([Validators.required]);
+  } else {
+    timeControl?.clearValidators();
+  }
+  timeControl?.updateValueAndValidity();
+
+  // ✅ Restore dynamic validator for headerType → fileLink requirement
+  const headerControl = this.buttonOptions.get('fileLink');
+  if (['image', 'video', 'document'].includes(updateForm?.headerType)) {
+    headerControl?.setValidators([Validators.required]);
+  } else {
+    headerControl?.clearValidators();
+  }
+  headerControl?.updateValueAndValidity();
+
+  // ✅ Subscribe to buttons changes for uniqueness validation
+  this.buttonOptions.get('buttons')?.valueChanges.subscribe(() => {
+    this.changeDetectorRef.detectChanges();
+    this.atLeastOneAndUniqueButtons();
+  });
+
+  // ✅ Subscribe to headerType changes for fileLink validator
+  this.buttonOptions.get('headerType')?.valueChanges.subscribe(value => {
+    const headerCtrl = this.buttonOptions.get('fileLink');
+    if (['image', 'video', 'document'].includes(value)) {
+      headerCtrl?.setValidators([Validators.required]);
+    } else {
+      headerCtrl?.clearValidators();
+    }
+    headerCtrl?.updateValueAndValidity();
+  });
+
+  // ✅ Trigger validation after update
+  this.buttonOptions.updateValueAndValidity();
+}
+
 
   private fillNotesSetConditionData(nodeData: any): void {
 
@@ -2567,7 +2796,10 @@ if (fileControl) {
       enableValidation: updateForm?.enableValidation
     });
 
-    const sectionsArray = this.fb.array([]);
+    const sectionsArray = this.fb.array([],[
+    this.uniqueRowNamesValidator(),
+    this.sectionHeadingValidator()
+  ]);
     (updateForm?.sections || []).forEach((section: any) => {
       const sectionGroup: any = this.fb.group({
         sectionHeading: [section.sectionHeading],
@@ -2583,8 +2815,15 @@ if (fileControl) {
       });
 
       sectionsArray.push(sectionGroup);
+       this.listOptions.get('sections')?.valueChanges.subscribe(value => {
+    this.changeDetectorRef.detectChanges();
+    this.uniqueRowNamesValidator();
+    this.sectionHeadingValidator();
+  });
     });
 
+
+  
     this.listOptions.setControl('sections', sectionsArray);
   }
 
@@ -2625,8 +2864,8 @@ this.selectedAgentDetails = updateForm
 
   private fillTheTag(nodeData: any): void {
     const updateForm = nodeData?.data?.formData?.data
-this.selectedTags = updateForm.tags
-this.operationOptions = updateForm.operation
+    this.selectedTags = updateForm.selectedTags;
+    this.operationOptions = updateForm.operation;
   }
 
 
@@ -2657,10 +2896,12 @@ this.operationOptions = updateForm.operation
     this.dynamiceEditor = this.chatEditors
     
 
+    
     this.notesmentionForm.patchValue({
       message: updateForm.data.message,
       file: updateForm.data.file,
       mediaType: updateForm.data.mediaType,
+      UIIdMention: this.syncMentionArray() || []
 
     })
 
@@ -2668,78 +2909,7 @@ this.operationOptions = updateForm.operation
       this.attachMedia(updateForm.data.file, updateForm.data.mediaType)
     }, 100);
   }
-  // ==================== COPY NODE HANDLING ====================
 
-  // copyNode(nodeId: number): void {
-  //   const originalNode = this.editor.getNodeFromId(nodeId);
-  //   if (!originalNode) return;
-
-  //   const nodeCopy = JSON.parse(JSON.stringify(originalNode));
-  //   nodeCopy.id = this.getUniqueId();
-  //   nodeCopy.data.uniqueId = this.getUniqueId();
-  //   nodeCopy.pos_x += 100;
-  //   nodeCopy.pos_y += 50;
-
-  //   // Recreate inputs/outputs
-  //   nodeCopy.inputs = {};
-  //   nodeCopy.outputs = {};
-
-  //   Object.keys(originalNode.inputs).forEach(inputKey => {
-  //     nodeCopy.inputs[inputKey] = { connections: [] };
-  //   });
-
-  //   Object.keys(originalNode.outputs).forEach(outputKey => {
-  //     nodeCopy.outputs[outputKey] = { connections: [] };
-  //   });
-
-  //   this.cardType = nodeCopy?.data?.text;
-  //   this.ParentNodeType = nodeCopy?.data?.category;
-
-  //   const postData = {
-  //     name: nodeCopy.name,
-  //     inputs: 1,
-  //     outputs: Object.keys(nodeCopy.outputs).length,
-  //     data: {
-  //       text: nodeCopy?.data.text,
-  //       inputsCount: 1,
-  //       maxButtonLimit: 3,
-  //       category: nodeCopy?.data.category,
-  //       uniqueId: this.getUniqueId(),
-  //       formData: nodeCopy?.data?.formData,
-  //       file: nodeCopy?.data?.formData.file,
-  //       fileName: nodeCopy?.data?.formData.file?.name || null,
-  //       fileType: nodeCopy?.data?.formData.file?.type || null,
-  //     },
-  //     html: '<div class="temp-placeholder">Loading...</div>',
-  //     pos_x: Math.floor(Math.random() * 900) + 100,
-  //     pos_y: Math.floor(Math.random() * 400) + 100,
-  //   };
-
-  //   const newNodeId = this.addNode(postData);
-  //   const newHTML = this.createNodeHtml(newNodeId, nodeCopy.data);
-  //   this.updateNodeHTML(newNodeId, newHTML);
-
-
-  //    this.editor.drawflow.drawflow.Home.data[newNodeId].html = newHTML;
-
-  // // Update in DOM
-  // const nodeElement = document.querySelector(`#node-${newNodeId} .drawflow_content_node`);
-  // if (nodeElement) {
-  //   nodeElement.innerHTML = newHTML;
-  // }
-
-  //   if (nodeCopy?.data?.text === 'listOptions') {
-  //     this.setOutputPositionsForList(newNodeId, nodeCopy?.data?.formData);
-  //   } else {
-  //     this.setOutputPositions(Number(newNodeId), nodeCopy?.data?.formData?.invalidAction);
-  //   }
-
-  //   // setTimeout(() => {
-  //   //         this.editor.drawflow.drawflow.Home.data[nodeId].html = newHTML;
-
-  //   // }, 100);
-  //   this.nodeCounter++;
-  // }
 
   copyNode(nodeId: number): void {
   const originalNode = this.editor.getNodeFromId(nodeId);
@@ -2775,9 +2945,9 @@ this.operationOptions = updateForm.operation
       category: nodeCopy?.data.category,
       uniqueId: this.getUniqueId(),
       formData: nodeCopy?.data?.formData,
-      file: nodeCopy?.data?.formData.file,
-      fileName: nodeCopy?.data?.formData.file?.name || null,
-      fileType: nodeCopy?.data?.formData.file?.type || null,
+      file: nodeCopy?.data?.formData.file || nodeCopy?.data?.file,
+      fileName: nodeCopy?.data?.formData.file?.name || nodeCopy?.data?.fileName ||  null,
+      fileType: nodeCopy?.data?.formData.file?.type ||  nodeCopy?.data?.fileType || null,
     },
     html: '<div class="temp-placeholder">Loading...</div>',
     pos_x: Math.floor(Math.random() * 900) + 100,
@@ -2789,6 +2959,7 @@ this.operationOptions = updateForm.operation
   // Create the actual HTML
   const newHTML = this.createNodeHtml(newNodeId, nodeCopy.data);
 
+  this.updateNodeHTML(Number(newNodeId), newHTML);
   // Update in memory
   this.editor.drawflow.drawflow.Home.data[newNodeId].html = newHTML;
 
@@ -2801,7 +2972,8 @@ this.operationOptions = updateForm.operation
   if (nodeCopy?.data?.text === 'listOptions') {
     this.setOutputPositionsForList(newNodeId, nodeCopy?.data?.formData);
   } else {
-    this.setOutputPositions(Number(newNodeId), nodeCopy?.data?.formData?.invalidAction);
+    const actionValue = (nodeCopy?.data?.formData?.invalidAction === 'fallback' || nodeCopy?.data?.formData?.timeElapseAction === 'fallback') ? 'fallback' : nodeCopy?.data?.formData?.invalidAction;
+    this.setOutputPositions(Number(newNodeId), actionValue);
   }
   this.nodeCounter++;
 }
@@ -2911,15 +3083,46 @@ this.conditionsArray.push(conditionGroup);
     }
   }
 
-  isTagSelected(tagValue: string): boolean {
-    return this.selectedTags.includes(tagValue);
-  }
+  // isTagSelected(tagValue: string): boolean {
+  //   return this.selectedTags.includes(tagValue);
+  // }
 
-  toggleTagSelection(tagValue: string): void {
-    this.selectedTags = this.isTagSelected(tagValue)
-      ? this.selectedTags.filter(t => t !== tagValue)
-      : [...this.selectedTags, tagValue];
+  // toggleTagSelection(tagValue: string): void {
+  //   this.selectedTags = this.isTagSelected(tagValue)
+  //     ? this.selectedTags.filter(t => t !== tagValue)
+  //     : [...this.selectedTags, tagValue];
+  // }
+
+  // selectedTags: { TagId: number; TagName: string }[] = [];
+
+toggleTagSelection(tag: { ID: number; TagName: string }): void {
+  const index = this.selectedTags?.findIndex((t:any) => t.TagId === tag.ID);
+
+  if (index > -1) {
+    this.selectedTags.splice(index, 1);
+  } else {
+    this.selectedTags.push({ TagId: tag.ID, TagName: tag.TagName });
   }
+}
+
+isTagSelected(tagId: number): boolean {
+  return this.selectedTags?.some((t:any) => t?.TagId === tagId);
+}
+
+toggleTagSelectionRemove(tag: { ID: number; TagName: string }): void {
+  const index = this.selectedTagsRemoveTag?.findIndex((t:any) => t.TagId === tag.ID);
+
+  if (index > -1) {
+    this.selectedTagsRemoveTag.splice(index, 1);
+  } else {
+    this.selectedTagsRemoveTag.push({ TagId: tag.ID, TagName: tag.TagName });
+  }
+}
+
+isTagSelectedRemove(tagId: number): boolean {
+  return this.selectedTagsRemoveTag?.some((t:any) => t?.TagId === tagId);
+}
+
 
   // ==================== TIME DELAY HANDLING ====================
 
@@ -3076,7 +3279,7 @@ this.currentAttributeList = allAttributes?.getfields?.filter((attr:any) =>
     
     const group = this.getConditionGroup(index);
     group.get(field)?.setValue(`{{${variable.displayName || variable.name}}}`);
-    group.get(`${field}Type`)?.setValue(variable.type);
+    group.get(`${field}Type`)?.setValue(variable.type || variable.dataType);
     this.showVarMenuFor = null;
     this.showAttribute = null
 
@@ -3183,7 +3386,14 @@ this.currentAttributeList = allAttributes?.getfields?.filter((attr:any) =>
           click: this.ToggleAttachmentBox.bind(this),
           template: '<button type="button" style="width:28px;height:28px;border-radius: 35%!important;border: 1px solid #e2e2e2!important;background:#fff;" class="e-tbar-btn e-btn" tabindex="-1" id="custom_tbar"  >'
             + '<div class="e-tbar-btn-text"><img style="width:10px;" src="/assets/img/teambox/attachment-icon.svg"></div></button>'
-        },],enableFloating: true 
+        },{
+          tooltipText: 'Attributes',
+          undo: true,
+          click: this.ToggleAttributesOption.bind(this),
+          template: '<button type="button" style="width:28px;height:28px;border-radius: 35%!important;border: 1px solid #e2e2e2!important;background:#fff;" class="e-tbar-btn e-btn" tabindex="-1" id="custom_tbar"  >'
+            + '<div class="e-tbar-btn-text"><img style="width:10px;" src="/assets/img/teambox/attributes.svg"></div></button>'
+        }
+        ,],enableFloating: true 
       }
 
     } else {
@@ -3250,7 +3460,10 @@ this.currentAttributeList = allAttributes?.getfields?.filter((attr:any) =>
       editor = this.bodyEditor;
     } else if (this.cardType == 'NotesMentionModal') {
       editor = this.chatEditors;
+    }else if(this.cardType == 'NotificationModal') {
+      editor = this.chatEditorElement;
     }
+
 
     if (editor) {
       const editPanel = (editor?.contentModule as ContentRender).getEditPanel() as HTMLElement;
@@ -3327,6 +3540,8 @@ this.currentAttributeList = allAttributes?.getfields?.filter((attr:any) =>
       this.toggleChatNotes('attachementTool')
     } else if(nodeType == 'MessageOptin'){
       this.conversationActions.status = 'Yes'
+    } else if(nodeType == 'UpdateConversationStatus'){
+      this.conversationActions.status = 'Resolved'
     } else{
       this.toggleChatNotes('')
     }
@@ -3440,7 +3655,7 @@ this.listOptions.reset();
 
   onReattemptsChange(event: any, form: FormGroup): void {
     if (event.target.checked) {
-      form.get('reattemptsCount')?.setValue(1);
+      form.get('reattemptsCount')?.setValue(event.target.value ? event.target.value : 1);
     }
   }
 
@@ -3518,14 +3733,18 @@ this.listOptions.reset();
     this.selectedFromVariable = false;
     this.isUserTyping = false;
 
-    if (this.selectedAttributeType === 'Multi Select' || this.selectedAttributeType == 'Select') {
+    if (this.selectedAttributeType === 'Multi Select' || this.selectedAttributeType == 'Select' || this.selectedAttributeType == 'Switch') {
       try {
         this.selectedOptions = JSON.parse(this.attributeDetails?.dataTypeValues || '[]');
+        if(this.selectedAttributeType == 'Switch'){
+          this.selectedOptions = [{"optionName": "yes"},{"optionName": "no"}];
+        }
       } catch {
         this.selectedOptions = [];
       }
     }
 
+    this.selectedValuesList = [];
     this.contactAttributeForm.get('selectedValue')?.reset();
     
 
@@ -3548,6 +3767,47 @@ this.listOptions.reset();
 
   }
 
+selectedValuesList: any[] = []; // Holds multiple selected options
+
+toggleSelection(variable: any) {
+  const index = this.selectedValuesList.findIndex(v => v.optionName === variable.optionName);
+
+  if (index > -1) {
+    this.selectedValuesList.splice(index, 1);
+  } else {
+    this.selectedValuesList.push(variable);
+  }
+
+  const combinedValues = this.selectedValuesList
+    .map(v => `{{${v.displayName || v.name || v.optionName}}}`)
+    .join(' ');
+
+  this.contactAttributeForm.patchValue({
+    selectedValue: combinedValues || '',
+    inputValue: '',
+    selectedVariable: '',
+    operation: 'replace'
+  });
+
+  // Remove this line so dropdown stays open:
+  // this.openDropdown.status = '';
+
+  this.selectedFromVariable = true;
+  this.isUserTyping = false;
+  this.contactAttributeForm.get('selectedValue')?.updateValueAndValidity();
+  this.showAttributeCondition = true;
+}
+
+
+isSelected(variable: any): boolean {
+  return this.selectedValuesList.some(v => v.optionName === variable.optionName);
+}
+
+
+
+
+
+
   onSelectedValueKeydown(event: KeyboardEvent) {
   if (this.selectedFromVariable && event.key === 'Backspace') {
     event.preventDefault(); // prevent deleting 1 character at a time
@@ -3558,6 +3818,7 @@ this.listOptions.reset();
     });
     this.selectedFromVariable = false; // allow typing again
     this.showAttributeCondition = false; // hide attribute condition if needed
+    this.selectedValuesList = []; // clear selected options
   }
 }
 
@@ -3911,7 +4172,7 @@ onFileSelectedData(event: any, type: any = '') {
     
     this.closeAllModal()
     let mediaName
-    const fileNameWithPrefix = Link.substring(Link.lastIndexOf('/') + 1);
+    const fileNameWithPrefix = Link?.substring(Link?.lastIndexOf('/') + 1);
     let originalName;
     let getMimeTypePrefix = this.getMimeTypePrefix(media_type);
     if (getMimeTypePrefix === 'video/') {
@@ -3958,9 +4219,11 @@ onFileSelectedData(event: any, type: any = '') {
 
     if (this.cardType == "NotesMentionModal") {
 
+
       this.notesmentionForm.patchValue({
         file: Link,
-        mediaType: media_type
+        mediaType: media_type,
+        UIIdMention: this.syncMentionArray() || []
       })
     }
     if (this.cardType == "NotificationModal") {
@@ -3974,7 +4237,7 @@ onFileSelectedData(event: any, type: any = '') {
 
 
   getMimeTypePrefix(mimeType: string): string {
-    return mimeType.split('/')[0];
+    return mimeType?.split('/')[0];
   }
 
 
@@ -4040,10 +4303,36 @@ onFileSelectedData(event: any, type: any = '') {
     }
   }
 
-  openBotVariableModal() {
-    const selection = window.getSelection();
-    this.lastCursorPosition = selection?.getRangeAt(0) || null;
-    $('#botVariable').modal('show')
+
+
+openBotVariableModal(editorId:any = '') {
+  const selection = window.getSelection();
+
+  if (selection && selection.rangeCount > 0) {
+    this.lastCursorPosition = selection.getRangeAt(0);
+  } else {
+
+    const editor = this.getEditorById(editorId);
+    if (editor) {
+      this.lastCursorPosition = editor.getRange(); // Save cursor for this editor
+    }else{
+      this.lastCursorPosition = null; // or create a default Range if needed
+    }
+  }
+
+  $('#botVariable').modal('show');
+}
+
+
+  getEditorById(editorId: string): RichTextEditorComponent | null {
+    switch (editorId) {
+      case 'chatEditor': return this.chatEditor;
+      case 'chatEditors': return this.chatEditors;
+      case 'chatEditorElement': return this.chatEditorElement;
+      case 'questionEditor': return this.questionEditor;
+      case 'errorEditor': return this.errorEditor;
+      default: return null;
+    }
   }
 
 
@@ -4058,10 +4347,11 @@ onFileSelectedData(event: any, type: any = '') {
     event.stopPropagation();
   }
 
+  UIIdMention:any=[]
   InsertMentionOption(user: any) {
     let content: any = this.chatEditors.value || '';
     content = content.replace(/<p[^>]*>/g, '').replace(/<\/p>/g, '');
-    content = content + '<span contenteditable="false" class="e-mention-chip"><a _ngcontent-yyb-c67="" href="mailto:" title="">@' + user?.name + '</a></span>'
+    content = content + `<span contenteditable="false" class="e-mention-chip" data-uid="${user?.uid}"><a _ngcontent-yyb-c67="" href="mailto:" title="">@${user?.name}</a></span>`;
     this.chatEditors.value = content;
     // content = content+'<span> </span>'
     // this.chatEditor.value = content;
@@ -4127,7 +4417,6 @@ onFileSelectedData(event: any, type: any = '') {
 
     if (type == 'submit') {
       data.status = 'draft'
-
     } else {
       let isStructureValid = true;
 
@@ -4167,7 +4456,6 @@ onFileSelectedData(event: any, type: any = '') {
 
       data.status = 'publish'
       data.nodes = flowData
-      
     }
      localStorage.setItem('node_FE_Json',data.node_FE_Json)
      
@@ -4221,9 +4509,9 @@ onFileSelectedData(event: any, type: any = '') {
           outputMap.set(outputId, true);
 
           // Count input usage
-          if (inputMap.has(inputId)) {
-            return false; // ❌ More than one connection to a single input
-          }
+          // if (inputMap.has(inputId)) {
+          //   return false; // ❌ More than one connection to a single input
+          // }
           inputMap.set(inputId, true);
         }
       }
@@ -4271,11 +4559,26 @@ onFileSelectedData(event: any, type: any = '') {
       });
     });
 
+
+    // console.log("connections",connections)
     // Process each node
     Object.entries(allNodes).forEach(([id, node]: [string, any]) => {
+      // console.log('Processing node:', node);
       const formData = node.data.formData || {};
-      const isQuestionOption = node.data.text === 'questionOption' || node.data.text === "buttonOptions" ||  node.data.text ==="WorkingHoursModal" || node.data.text === "setCondition";
+      const isQuestionOption = node.data.text === 'questionOption' || node.data.text === "buttonOptions" ||  node.data.text ==="WorkingHoursModal" || node.data.text === "setCondition" || node.data.text === "listOptions";
+      if(node.data.text === "listOptions"){
+        var sectionListArray:any = []
+  node?.data?.formData?.sections.forEach((element:any) => {
+element?.rows.forEach((row:any) => {
+  sectionListArray.push(row?.rowName);
+});
 
+  });
+  node.data.sectionListArray = sectionListArray;
+}
+
+
+      
       // Filter and sort connections by targetNode (ascending order)
       const nodeConnections = connections
         .filter(conn => conn.sourceNode === node.id)
@@ -4288,37 +4591,55 @@ onFileSelectedData(event: any, type: any = '') {
         option: [],
         data: formData
       };
-
       if (nodeConnections.length > 0) {
         nodeObj.connectedId = nodeConnections[0]?.targetNode ?? null;
 
         // If fallback is enabled and there's a second connection
-        if (formData.invalidAction === 'fallback' && nodeConnections.length > 1) {
+        if ((formData.invalidAction === 'fallback' || formData.timeElapseAction === 'fallback') && nodeConnections.length > 1) {
           nodeObj.FallbackId = nodeConnections[1]?.targetNode ?? null;
         }
 
+        // console.log(isQuestionOption, formData)
+   
 
         if (isQuestionOption) {
-          var optionNames = formData.options || formData.buttons || formData.data.options || [];
+          var optionNames = formData?.options || formData?.buttons || formData?.data?.options || formData?.data?.sections || node?.data?.sectionListArray  || [];
 
-          const skipIndexes = [0]; // Skip connectedId
-          if (formData.invalidAction === 'fallback' && nodeConnections.length > 1) {
+          var skipIndexes = [0]; // Skip connectedId
+          if ((formData.invalidAction === 'fallback' || formData.timeElapseAction === 'fallback') && nodeConnections.length > 1) {
             skipIndexes.push(1); // Skip fallback
           }
-          optionNames = optionNames.reverse();
-          nodeConnections.forEach((conn, idx) => {
-            if (!skipIndexes.includes(idx)) {
-              const labelIndex = idx - skipIndexes.length;
+          if (nodeObj?.nodeType === "WorkingHoursModal" || nodeObj?.nodeType === "setCondition") {
+            nodeConnections.forEach((conn, idx) => {
               nodeObj.option.push({
                 optionConnectedId: conn.targetNode,
-                name: optionNames[labelIndex] || `Option ${labelIndex + 1}`
+                name: optionNames[idx]
               });
-            }
-          });
-          nodeObj.option = nodeObj.option.reverse();
+            });
+          }else{
+            optionNames = optionNames.reverse();
+            nodeConnections.forEach((conn, idx) => {
+              if (!skipIndexes.includes(idx)) {
+                const labelIndex = idx - skipIndexes.length;
+                nodeObj.option.push({
+                  optionConnectedId: conn.targetNode,
+                  name: optionNames[labelIndex] || optionNames[labelIndex]?.rowName || `Option ${labelIndex + 1}`
+                });
+              }
+            });
+            nodeObj.option = nodeObj.option.reverse();
+          }
+
         }
       }
 
+      
+   if (nodeObj?.nodeType === "buttonOptions") {
+  const reverseButton: any = nodeObj?.data?.buttons?.reverse() || [];
+  if (nodeObj && nodeObj.data && nodeObj.data.buttons) {
+    nodeObj.data.buttons = reverseButton; // ✅ Removed ?. here
+  }
+}
       finalNodes.push(nodeObj);
     });
 
