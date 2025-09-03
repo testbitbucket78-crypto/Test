@@ -1042,6 +1042,8 @@ const resetInteractionMapping = (req, res) => {
                 res.send(result);
             }
         });
+
+        
     } catch (err) {
         logger.error('Error in resetInteractionMapping:', err);
         res.status(500).send({ error: 'Internal server error' });

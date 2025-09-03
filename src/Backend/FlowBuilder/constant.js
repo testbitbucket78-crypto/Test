@@ -4,7 +4,7 @@ const  updateBots = `UPDATE Bots SET name=?, description=?, channel_id=?, timeou
 const deleteBotsNode = `UPDATE botNodes SET isDeleted=1 WHERE botId=?`;
 const insertNode = `INSERT INTO botNodes (botId, type, message, payload_json, tempNodeId, previous_Node_Id)
         VALUES ?`;
-const updateBotStatus= `UPDATE Bots SET status=? ,node_FE_Json=? WHERE id=?`;
+const updateBotStatus= `UPDATE Bots SET status=? ,node_FE_Json=?,botVarList=? WHERE id=?`;
 const updateBotpublishedAt= `UPDATE Bots SET published_at= NOW() WHERE id=?`;
 
 const isBotExist= `SELECT * FROM Bots WHERE spid=? and isDeleted !=1 and name=?`;
@@ -13,7 +13,7 @@ const isKeywordUsedSmartReply= `SELECT Lower(Keyword) as Keyword FROM SmartReply
 const isBotRunning= `SELECT * FROM BotSessions WHERE spid=? and botId=? and status =2`;
 const getAllBots= `SELECT b.id,b.spid,b.name,b.description,b.channel_id,b.status,b.timeout_value,b.timeout_message,b.created_by,b.updated_at,b.created_at,b.published_at,b.deprecated_at,b.isDeleted,b.isDeprecated,b.keywords,b.node_FE_Json,b.advanceAction,COUNT(bs.id) AS invoked,
 COUNT(CASE WHEN bs.status=3 THEN 1 END) AS complete,
-COUNT(CASE WHEN bs.status=2 THEN 1 END) AS dropped ,
+COUNT(CASE WHEN bs.status=4 THEN 1 END) AS dropped ,
 '[]' AS smartreplyusage,
 '[]' AS botusage
 from Bots b
