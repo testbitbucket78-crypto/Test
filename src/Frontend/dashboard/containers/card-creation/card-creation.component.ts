@@ -3538,7 +3538,7 @@ this.currentAttributeList = allAttributes?.getfields?.filter((attr:any) =>
     } else if (nodeType == 'NotificationModal') {
       this.dynamiceEditor = this.chatEditorElement
       this.toggleChatNotes('attachementTool')
-    } else if(nodeType == 'MessageOption'){
+    } else if(nodeType == 'MessageOptin'){
       this.conversationActions.status = 'Yes'
     } else if(nodeType == 'UpdateConversationStatus'){
       this.conversationActions.status = 'Resolved'
@@ -3655,7 +3655,7 @@ this.listOptions.reset();
 
   onReattemptsChange(event: any, form: FormGroup): void {
     if (event.target.checked) {
-      form.get('reattemptsCount')?.setValue(event.target.value ? 1 : 0);
+      form.get('reattemptsCount')?.setValue(event.target.value ? event.target.value : 1);
     }
   }
 

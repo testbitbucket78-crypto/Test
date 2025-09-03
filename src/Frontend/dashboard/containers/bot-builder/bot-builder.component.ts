@@ -853,7 +853,7 @@ isTooltipVisible2:any
           const fromDateObj = new Date(this.dateRangeForm.value.fromDate);
     const toDateObj = new Date(this.dateRangeForm.value.toDate);
 
-        fromDateObj.setDate(fromDateObj.getDate() + 1);
+        fromDateObj.setDate(fromDateObj.getDate() - 1);
     toDateObj.setDate(toDateObj.getDate() + 1);
 
     // Convert back to formatted string (YYYY-MM-DD)
