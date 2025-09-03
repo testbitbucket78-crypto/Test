@@ -2030,11 +2030,14 @@ export class TeamboxComponent implements OnInit {
 			//this.getAssicatedInteractionData(dataList,selectInteraction)
 			setTimeout(() => {
 				dataList.forEach((item: any) => {
-					if (item.InteractionMapping != -1) {
+					if (item.InteractionMapping != -1 && item.InteractionMapping != -4) {
 						item.assignAgent = this.userList.filter((items: any) => items.uid == item.InteractionMapping)[0]?.name;
 						console.log(this.userList);
 					} else {
-						item.assignAgent = 'Unassigned';
+						if(item.InteractionMapping == -4)
+							item.assignAgent = 'Bot';
+						else
+							item.assignAgent = 'Unassigned';
 					}
 
 				})

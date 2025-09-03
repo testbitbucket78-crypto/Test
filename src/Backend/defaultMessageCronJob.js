@@ -618,7 +618,9 @@ async function botTimeOperations(){
             logger.info(`Bot operations for SPID: ${data.spid} are being processed`, { timestamp: new Date() });
           }
 
+            console.log(node_timeout,currentDateTime,(node_timeout <= currentDateTime ),'-----node_timeoutkjh----------');      
           if(node_timeout <= currentDateTime && data.nodeTimeout != null && data.isWaiting == 1) {
+            console.log('-----node_timeout enter----------');   
             incommingmsg?.timeOut(datas,'node',middleWare);
             logger.info(`Node timeout for SPID: ${data?.spid}, botId: ${data?.botId} are being processed`, { timestamp: new Date() });
           }
