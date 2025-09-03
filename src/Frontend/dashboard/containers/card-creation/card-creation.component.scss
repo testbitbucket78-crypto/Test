@@ -3385,3 +3385,10 @@ input[type="checkbox"] {
 }
 
 
+.sendMessageBody{
+  max-height: 70vh; overflow-y: auto; width: 100%;
+}
+
+.submitButtonOfSendMessage{
+  background-color: #6b46c1; border: none; margin-left: 11px
+}

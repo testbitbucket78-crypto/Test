@@ -389,7 +389,7 @@ style="margin-right: 9px;"
                 </button>
                 
                 <button *ngIf="
-                        botDetailsData?.status == 'Deprecated'" type="button" class="titleimg" data-bs-toggle="modal" data-bs-target="#deprecateds"
+                        botDetailsData?.status == 'Deprecated'" type="button" class="titleimg" data-bs-toggle="modal" data-bs-target="#deprecatedAfterDelete"
                     [disabled]="settingsService?.checkRoleExist('25')">
                     <img src="../../../../assets/img/teambox/delete.svg" />
                 </button>
@@ -1665,7 +1665,7 @@ style="margin-right: 9px;"
     </div>
 </div>
 
-<div class="modal fade" tabindex="-1" id="deprecateds" data-bs-backdrop="static" role="dialog">
+<div class="modal fade" tabindex="-1" id="deprecatedAfterDelete" data-bs-backdrop="static" role="dialog">
     <div class="modal-dialog modal-dialog-centered" role="document">
         <div class="modal-content p-3">
             <div class="modal-header border-0">

@@ -4331,8 +4331,6 @@ openBotVariableModal(editorId:any = '') {
       case 'chatEditorElement': return this.chatEditorElement;
       case 'questionEditor': return this.questionEditor;
       case 'errorEditor': return this.errorEditor;
-      case 'errorEditor': return this.errorEditor;
-      case 'errorEditor': return this.errorEditor;
       default: return null;
     }
   }

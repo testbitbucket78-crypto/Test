@@ -611,7 +611,7 @@ if (this.botBuilderForm) {
         this.botBuilderForm.reset();
         this.closeModalById('deleteBotModal');
         this.closeModalById('deprecated');
-        this.closeModalById('deprecateds');
+        this.closeModalById('deprecatedAfterDelete');
         this.showToaster('success', response.message)
         this.getBotDetails()
       } else {
