@@ -1434,7 +1434,7 @@ if (buttonList && buttonList.length > 0) {
         let updateBotSession = await db.excuteQuery(updateBotSessionQuery, [data?.nodeId,json?.connectedId,nodeTimeout,data?.botId]);
       }
     }else if(type == 'whatsAppFlow'){
-      let payload = await whatsflowpayload(data?.toPhoneNumber, json?.data,data?.sid,data?.custid);
+      let payload = await whatsflowpayload(data?.toPhoneNumber, json?.data,data?.sid,data?.custid,json?.connectedId);
       console.log(payload);
       console.log(payload?.interactive?.action?.parameters);
       let result = await createWhatsAppPayload(data.sid, payload);
@@ -1622,11 +1622,11 @@ let headerType = data?.headerType =='none' ? 'text' : data?.headerType;
 }
 
 
-async function whatsflowpayload(toPhoneNumber,data,sid,custid){
+async function whatsflowpayload(toPhoneNumber,data,sid,custid,nodeId){
  let flowDetailQuery = 'select * from Flows where id = ?';
       let flowDetail = await db.excuteQuery(flowDetailQuery, [data?.selectedForm]);
-      let flow = flowDetail[0];
-
+      if(flowDetail?.length>0){
+        let flow = flowDetail[0];
        let replacedText = await replacebotVariable(JSON.parse(mainData?.botSessionVariables),data?.bodyText);
       console.log(replacedText,'------------------replacedText------------------');
       let message_text = await getExtraxtedMessage(replacedText, mainData.sid, mainData.custid);
@@ -1652,6 +1652,10 @@ async function whatsflowpayload(toPhoneNumber,data,sid,custid){
   }
 }
   return button;
+      } else{
+data.nodeId = nodeId;
+      identifyNode(data);
+      }
 }
 
 async function WaApiListPayload(toPhoneNumber, data,mainData) {
@@ -1832,7 +1836,7 @@ function addUtcTime(hours = 0, minutes = 0) {
 
 
 
-setTimeout(() => {
+/*setTimeout(() => {
   
 let mainData = {
   "sid": 55,
@@ -1851,7 +1855,7 @@ let mainData = {
 //-----start------- 0 null 0  559169223950422 Pawan Sharma 917618157986 55 83534 380 Open 7133 80363 null WA API 0 0 0 null 919877594039 ------end-------
 
 
-autoReplyDefaultAction(0, null, 0,  'btn 1', 559169223950422,'Pawan Sharma', 917618157986, 55, 83534, 380, 'Open', 7137, 80363, null, 'WA API', 0, 0, 0, null, 919877594039)
+//autoReplyDefaultAction(0, null, 0,  'btn 1', 559169223950422,'Pawan Sharma', 917618157986, 55, 83534, 380, 'Open', 7137, 80363, null, 'WA API', 0, 0, 0, null, 919877594039)
 
 //  let time = '00:15' ; // Default to 1 hour if not set
 //     let hour = time?.split(':')[0];
@@ -1866,7 +1870,7 @@ async function triggerSR(){
       var replymessage = await matchSmartReplies('addTag', 55, 'WA API')
       let isSReply = await iterateSmartReplies(replymessage, 559169223950422, 919877594039, 55, 83534, 380, 7133, 'WA API', 919877594039);
      
-}
+}*/
 
 
 
