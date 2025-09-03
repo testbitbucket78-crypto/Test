@@ -825,7 +825,6 @@ atLeastOneAndUniqueButtons() {
 
      this.listOptions.get('sections')?.valueChanges.subscribe(value => {
            this.changeDetectorRef.detectChanges();
-           console.log('Sections changed:', value);
           this.uniqueRowNamesValidator();
           this.sectionHeadingValidator();
         });
@@ -1300,10 +1299,6 @@ formData.options = ["True", "False"];
     this.dynamiceEditor = ''
 
     const advanceOption = { type: formType, data: {} as any };
-
-console.log('Form Type:', formType);
-
-
     switch (formType) {
       case 'assignAgentModal':
         advanceOption.data = this.selectedAgentDetails;
@@ -1357,8 +1352,7 @@ console.log('Form Type:', formType);
         advanceOption.data = this.notesmentionForm.value;
         break;
       case 'AddTags':
-        console.log('Selected Tags for AddTags:', this.selectedTags,this.selectedTags.length <= 0,this.selectedTags.length);
-        if (this.selectedTags.length <= 0) {
+  if (this.selectedTags.length <= 0) {
           this.showToaster('Please select Tag and Operation','error')
           return
         }
@@ -1528,7 +1522,7 @@ console.log('Form Type:', formType);
       outputs = 2
     }
 
-    if (formData?.invalidAction === "fallback") {
+    if (formData?.invalidAction === "fallback" || formData?.timeElapseAction === "fallback") {
       outputs += 1;
     }
 
@@ -1536,11 +1530,11 @@ console.log('Form Type:', formType);
   }
 
   private setOutputPositionsBasedOnType(nodeId: any, formData: any): void {
-    console.log('ParentNodeType:', formData);
     if (this.ParentNodeType === 'listOptions') {
       this.setOutputPositionsForList(nodeId, formData);
     } else {
-      this.setOutputPositions(Number(nodeId), formData?.invalidAction);
+      const actionValue =  (formData?.invalidAction === 'fallback' || formData?.timeElapseAction === 'fallback')? 'fallback': formData?.invalidAction
+      this.setOutputPositions(Number(nodeId), actionValue);
     }
   }
 
@@ -1600,7 +1594,7 @@ console.log('Form Type:', formType);
     output1.style.top = '20px';
 
     let remainingOutputs = Array.from(outputs).slice(1);
-    if (formData?.invalidAction === "fallback") {
+    if (formData?.invalidAction === "fallback" || formData?.timeElapseAction === "fallback") {
       const output2 = outputs[1] as HTMLElement;
       output2.style.position = 'absolute';
       output2.style.top = '41px';
@@ -1995,7 +1989,6 @@ console.log('Form Type:', formType);
 
 syncMentionArray() {
   const htmlContent = this.chatEditors?.value;
-  console.log('editor:', htmlContent);
   if (!htmlContent) return [];
 
   // Parse the string as HTML
@@ -2009,7 +2002,6 @@ syncMentionArray() {
   const ids: string[] = Array.from(mentionElements)
     .map((el: Element) => el.getAttribute('data-uid') || '');
 
-  console.log('Mention IDs:', ids);
   return ids || [];
 }
 
@@ -2153,7 +2145,7 @@ syncMentionArray() {
       newOutputsCount = 2;
     }
 
-    if (formData.invalidAction == "fallback") {
+    if (formData.invalidAction == "fallback" || formData.timeElapseAction == "fallback") {
       newOutputsCount = newOutputsCount + 1
     }
 
@@ -2207,7 +2199,8 @@ syncMentionArray() {
     if (this.ParentNodeType === 'listOptions') {
       this.setOutputPositionsForList(node.id, formData);
     } else {
-      this.setOutputPositions(node.id, formData?.invalidAction);
+       const actionValue =  (formData?.invalidAction === 'fallback' || formData?.timeElapseAction === 'fallback')? 'fallback': formData?.invalidAction
+      this.setOutputPositions(node.id, actionValue);
     }
   }
 
@@ -2824,7 +2817,6 @@ private fillButtonOptionsData(nodeData: any): void {
       sectionsArray.push(sectionGroup);
        this.listOptions.get('sections')?.valueChanges.subscribe(value => {
     this.changeDetectorRef.detectChanges();
-    console.log('Sections changed:', value);
     this.uniqueRowNamesValidator();
     this.sectionHeadingValidator();
   });
@@ -2872,7 +2864,6 @@ this.selectedAgentDetails = updateForm
 
   private fillTheTag(nodeData: any): void {
     const updateForm = nodeData?.data?.formData?.data
-    console.log("Selected Tags:", updateForm);
     this.selectedTags = updateForm.selectedTags;
     this.operationOptions = updateForm.operation;
   }
@@ -2981,7 +2972,8 @@ this.selectedAgentDetails = updateForm
   if (nodeCopy?.data?.text === 'listOptions') {
     this.setOutputPositionsForList(newNodeId, nodeCopy?.data?.formData);
   } else {
-    this.setOutputPositions(Number(newNodeId), nodeCopy?.data?.formData?.invalidAction);
+    const actionValue = (nodeCopy?.data?.formData?.invalidAction === 'fallback' || nodeCopy?.data?.formData?.timeElapseAction === 'fallback') ? 'fallback' : nodeCopy?.data?.formData?.invalidAction;
+    this.setOutputPositions(Number(newNodeId), actionValue);
   }
   this.nodeCounter++;
 }
@@ -3104,7 +3096,6 @@ this.conditionsArray.push(conditionGroup);
   // selectedTags: { TagId: number; TagName: string }[] = [];
 
 toggleTagSelection(tag: { ID: number; TagName: string }): void {
-  console.log("Toggling tag:", tag,this.selectedTags);
   const index = this.selectedTags?.findIndex((t:any) => t.TagId === tag.ID);
 
   if (index > -1) {
@@ -4467,7 +4458,6 @@ openBotVariableModal(editorId:any = '') {
 
       data.status = 'publish'
       data.nodes = flowData
-      console.log("data",data)
     }
      localStorage.setItem('node_FE_Json',data.node_FE_Json)
      
@@ -4607,7 +4597,7 @@ element?.rows.forEach((row:any) => {
         nodeObj.connectedId = nodeConnections[0]?.targetNode ?? null;
 
         // If fallback is enabled and there's a second connection
-        if (formData.invalidAction === 'fallback' && nodeConnections.length > 1) {
+        if ((formData.invalidAction === 'fallback' || formData.timeElapseAction === 'fallback') && nodeConnections.length > 1) {
           nodeObj.FallbackId = nodeConnections[1]?.targetNode ?? null;
         }
 
@@ -4618,7 +4608,7 @@ element?.rows.forEach((row:any) => {
           var optionNames = formData?.options || formData?.buttons || formData?.data?.options || formData?.data?.sections || node?.data?.sectionListArray  || [];
 
           var skipIndexes = [0]; // Skip connectedId
-          if (formData.invalidAction === 'fallback'  && nodeConnections.length > 1) {
+          if ((formData.invalidAction === 'fallback' || formData.timeElapseAction === 'fallback') && nodeConnections.length > 1) {
             skipIndexes.push(1); // Skip fallback
           }
           if (nodeObj?.nodeType === "WorkingHoursModal" || nodeObj?.nodeType === "setCondition") {
