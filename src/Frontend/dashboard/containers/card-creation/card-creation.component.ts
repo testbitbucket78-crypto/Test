@@ -1,6 +1,6 @@
 import { environment } from './../../../../environments/environment';
 
-import { ChangeDetectorRef, Component, ElementRef, EventEmitter, HostListener, Input, Output, ViewChild } from '@angular/core';
+import { ChangeDetectorRef, Component, ElementRef, EventEmitter, HostListener, Input, OnDestroy, Output, ViewChild } from '@angular/core';
 import { FormArray, FormBuilder, FormControl, FormGroup, Validators, AbstractControl, ValidationErrors, ValidatorFn } from '@angular/forms';
 import { NgbModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
 import { ContentRender, RichTextEditorComponent } from '@syncfusion/ej2-angular-richtexteditor';
@@ -10,7 +10,6 @@ import { RichTextEditor } from '@syncfusion/ej2-angular-richtexteditor';
 import { PhoneValidationService } from 'Frontend/dashboard/services/phone-validation.service';
 import { TeamboxService } from 'Frontend/dashboard/services';
 import { BotserviceService } from 'Frontend/dashboard/services/botservice.service';
-import Swal from 'sweetalert2';
 import {
   MAX_OPTIONS,
   MAX_BUTTONS,
@@ -62,6 +61,7 @@ interface BotVariable {
   name: string;
   dataType: 'text' | 'number' | 'boolean' | 'array' | 'object';
   value: any;
+  nodeId:any;
 }
 
 @Component({
@@ -69,7 +69,7 @@ interface BotVariable {
   templateUrl: './card-creation.component.html',
   styleUrls: ['./card-creation.component.scss']
 })
-export class CardCreationComponent {
+export class CardCreationComponent  implements OnDestroy {
   // Constants
   private readonly MAX_OPTIONS = MAX_OPTIONS;
   private readonly MAX_BUTTONS = MAX_BUTTONS;
@@ -258,6 +258,13 @@ onDocumentClick(event: MouseEvent): void {
     // }
     this.initForms();
   }
+  ngOnDestroy(): void {
+localStorage.removeItem('viewMode')
+localStorage.removeItem('botTimeOut')
+localStorage.removeItem('botId')
+localStorage.removeItem('botVarList')
+localStorage.removeItem('node_FE_Json')
+  }
 
   ngOnInit(): void {
     this.initEditor();
@@ -421,13 +428,31 @@ onDocumentClick(event: MouseEvent): void {
     });
 
     if (localStorage.getItem('node_FE_Json')) {
-      this.botVariables = JSON.parse(localStorage.getItem('botVarList') || '[]');
+     
 
       var data: any = localStorage.getItem('node_FE_Json')
       this.loadFlow(JSON.parse(data))
       // this.loadFlow(data)
     }
 
+    if (localStorage.getItem('botVarList')) {
+      const stored = localStorage.getItem('botVarList');
+if (stored && stored !== 'null' && stored !== 'undefined') {
+  try {
+    let parsed = JSON.parse(stored);
+    this.botVariables = typeof parsed === 'string' ? JSON.parse(parsed) : parsed;
+     if (!Array.isArray(this.botVariables)) {
+    this.botVariables = [];
+  }
+  } catch (e) {
+    console.error('Invalid JSON in localStorage:', e);
+    this.botVariables = [];
+  }
+} else {
+  this.botVariables = [];
+}
+
+    }
 
 
 
@@ -1262,23 +1287,35 @@ formData.options = ["True", "False"];
       const newVariable: BotVariable = {
         name: formData.variableName,
         dataType: formData.variableDataType,
-        value: this.getDefaultValueForType(formData.variableDataType)
+        value: this.getDefaultValueForType(formData.variableDataType),
+         nodeId: this.isEditMode ?this.selectedNodeId:null // ✅
       };
-
       // Check if variable with same name AND type already exists
-  const variableExists = this.botVariables.some(
+  const variableExists:any = this.botVariables.some(
   v =>
     v.name.trim().toLowerCase() === newVariable.name.trim().toLowerCase());
+  const value:any = this.botVariables.find((v:any) => v.name.trim().toLowerCase() === newVariable.name.trim().toLowerCase());
 
 
       if (!variableExists) {
         this.botVariables.push(newVariable);
       } else {
-        // Optionally show a message that variable wasn't added because it already exists
-        if(!(this.isEditMode && this.selectedNodeId !== null)){
-          this.showToaster("Bot variable is already exists Please add another bot variable",'error')
-          return;
-        }
+  if (this.isEditMode &&  (value.nodeId !== this.selectedNodeId)) {
+
+     this.showToaster(
+        "Bot variable already exists in another node. Please use a different name.",
+        "error"
+      );
+      return;
+    }
+  if (newVariable.nodeId == null) {
+
+     this.showToaster(
+        "Bot variable already exists in another node. Please use a different name.",
+        "error"
+      );
+      return;
+    }
       }
     }
     this.closeModal();
@@ -1454,7 +1491,6 @@ formData.options = ["True", "False"];
 
 
 
-
     const postData = {
       name: nodeName,
       inputs: 1,
@@ -1478,6 +1514,15 @@ formData.options = ["True", "False"];
     const nodeId = this.addNode(postData);
     const newHTML = this.createNodeHtml(nodeId, postData.data);
     this.updateNodeHTML(Number(nodeId), newHTML);
+
+
+    const index = this.botVariables.findIndex(item =>
+  item.name.trim().toLowerCase() === formData.variableName.trim().toLowerCase() &&
+  item.dataType === formData.variableDataType && item.nodeId === null
+);
+if(index != -1){
+  this.botVariables[index].nodeId =nodeId
+}
 
     this.setOutputPositionsBasedOnType(nodeId, formData);
 
@@ -1556,6 +1601,7 @@ formData.options = ["True", "False"];
              const output1 = outputs[0] as HTMLElement;
        output1.style.position = 'absolute';
        output1.style.top = '20px';
+      output1.style.borderColor = '#82de8d'
     }
     
 
@@ -1566,7 +1612,7 @@ formData.options = ["True", "False"];
       if(output2 != undefined){
         output2.style.position = 'absolute';
         output2.style.top = '41px';
-        output2.style.borderColor = 'red'; // ✅ use camelCase
+        output2.style.borderColor = 'red';
       }
       remainingOutputs = remainingOutputs.slice(1);
     }
@@ -1814,10 +1860,15 @@ formData.options = ["True", "False"];
   private createHeaderMediaContent(nodeData: any, headerType: string): string {
     let mediaContent = '<div class="textContImage">';
     
-    if(nodeData.file == null){
-      nodeData.file = nodeData.formData.fileLink
+    if (!nodeData.file && nodeData.formData?.fileLink) {
+      nodeData.file = nodeData.formData.fileLink;
     }
-    const mediaSrc = nodeData.file ? this.filePreview || this.selectedImageUrl : 'assets/img/not_found.jpg';
+    
+    if (!this.filePreview && !this.selectedImageUrl) {
+      this.filePreview = nodeData.file;
+    }
+
+const mediaSrc = this.selectedImageUrl || this.filePreview || nodeData.file || 'assets/img/not_found.jpg';
 
     switch (headerType) {
       case 'image':
@@ -2125,9 +2176,10 @@ syncMentionArray() {
 
     const node = this.editor.getNodeFromId(this.selectedNodeId);
     node.data.formData = formData;
-
-    if (['sendImage', 'sendVideo', 'sendDocument'].includes(this.cardType)) {
-      node.data.file = formData.file;
+    if (['sendImage', 'sendVideo', 'sendDocument','buttonOptions'].includes(this.cardType)) {
+      node.data.file = formData?.file || formData?.fileLink ;
+      node.data.fileName = this.uploadedFile?.name || formData?.name || null;
+      node.data.fileType = formData?.headerType || null ;
     }
 
     const currentOutputsCount = Object.keys(node.outputs).length;
@@ -2143,14 +2195,20 @@ syncMentionArray() {
       newOutputsCount = (formData?.buttons?.length + 1) || 1;
     } else if (this.ParentNodeType === 'whatsAppFlow') {
       newOutputsCount = 2;
+    }else if(this.ParentNodeType === 'openQuestion') {
+      newOutputsCount = 1;
     }
-
+    if(!formData.enableValidation){
+      formData.invalidAction = 'skip'
+      formData.errorMessage = ''
+      formData.timeElapseAction = false
+    }
     if (formData.invalidAction == "fallback" || formData.timeElapseAction == "fallback") {
       newOutputsCount = newOutputsCount + 1
     }
 
     if ((this.ParentNodeType === 'questionOption' || this.ParentNodeType === 'listOptions' ||
-      this.ParentNodeType === 'buttonOptions') && newOutputsCount !== currentOutputsCount) {
+      this.ParentNodeType === 'buttonOptions' || this.ParentNodeType === 'whatsAppFlow' || this.ParentNodeType === 'openQuestion') && newOutputsCount !== currentOutputsCount) {
       this.updateNodeOutputs(node, currentOutputsCount, newOutputsCount, formData);
     }
 
@@ -2699,6 +2757,7 @@ private fillButtonOptionsData(nodeData: any): void {
     buttonsArray.push(this.fb.control('', [Validators.required, Validators.maxLength(20)]));
   }
 
+  // console.log("updateForm===========",updateForm)
   // ✅ Patch the main form values
   this.buttonOptions.patchValue({
     headerType: updateForm?.headerType || 'none',
@@ -2734,6 +2793,8 @@ private fillButtonOptionsData(nodeData: any): void {
   // ✅ Restore dynamic validator for headerType → fileLink requirement
   const headerControl = this.buttonOptions.get('fileLink');
   if (['image', 'video', 'document'].includes(updateForm?.headerType)) {
+    this.selectedFileUrl = updateForm?.fileLink
+    this.selectedFileType =  this.buttonOptions.get('headerType')?.value 
     headerControl?.setValidators([Validators.required]);
   } else {
     headerControl?.clearValidators();
@@ -3655,7 +3716,7 @@ this.listOptions.reset();
 
   onReattemptsChange(event: any, form: FormGroup): void {
     if (event.target.checked) {
-      form.get('reattemptsCount')?.setValue(event.target.value ? event.target.value : 1);
+      form.get('reattemptsCount')?.setValue(1);
     }
   }
 
