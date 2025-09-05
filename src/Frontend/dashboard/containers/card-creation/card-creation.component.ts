@@ -268,7 +268,6 @@ localStorage.removeItem('node_FE_Json')
 
   ngOnInit(): void {
     this.initEditor();
-    this.getStaticData()
     this.getAdditionalAttributes()
     this.getUserList()
     this.getTagData();
@@ -284,14 +283,7 @@ localStorage.removeItem('node_FE_Json')
 
 
 
-  getStaticData() {
 
-    this.filteredAgents = this.botService.FILTERED_AGENTS
-    this.botsList = this.botService.AVAILABLE_BOTS;
-
-
-
-  }
   // ==================== INITIALIZATION METHODS ====================
 
 
@@ -1041,6 +1033,7 @@ uniqueRowNamesValidator(): ValidatorFn {
   private initContactAttributeForm(): void {
     this.contactAttributeForm = this.fb.group({
       selectedAttribute: [null, Validators.required],
+      selectedvalueBackend:[''],
       selectedValue: [''],
       inputValue: [''],
       selectedVariable: [''],
@@ -1154,7 +1147,7 @@ createCombinedVariable() {
   
   // Get question text (remove HTML tags if needed)
   const questionText = formValue.questionText || '';
-  const plainQuestionText = questionText.replace(/<[^>]*>/g, '').trim();
+  // const plainQuestionText = questionText.replace(/<[^>]*>/g, '').trim();
   
   // Get prompt message (if you have this field)
   const promptMessage = formValue.promptMessage || '';
@@ -1164,7 +1157,7 @@ createCombinedVariable() {
   const formattedOptions = options.map((opt:any) => `* ${opt}`).join('\n');
   
   // Combine everything
-  const combinedVariable = `${plainQuestionText}\n\n${promptMessage}\n\n${formattedOptions}`;
+  const combinedVariable = `${questionText}\n\n${promptMessage}\n\n${formattedOptions}`;
   
   // Now you can use this combinedVariable as needed
   return combinedVariable;
@@ -1566,6 +1559,9 @@ if(index != -1){
     } else if (this.ParentNodeType === 'whatsAppFlow') {
       outputs = 2
     }
+    else if (this.ParentNodeType === 'openQuestion') {
+      outputs = 2
+    }
 
     if (formData?.invalidAction === "fallback" || formData?.timeElapseAction === "fallback") {
       outputs += 1;
@@ -1766,7 +1762,7 @@ if(index != -1){
 } else if (nodeData.text === 'sendText') {
   content += `<div class="textCont">${this.getTrimmedText(formData.textMessage)}</div>`;
 } else if (nodeData.text === 'openQuestion') {
-  content += `<div class="textCont">${this.getTrimmedText(formData.questionText)}</div>`;
+   content += this.createOpenQuestionContent(nodeId, formData);
 }else if (nodeData.text === 'questionOption') {
       content += this.createQuestionOptionContent(nodeId, formData);
     } else if (nodeData.text === 'buttonOptions') {
@@ -1962,14 +1958,24 @@ const mediaSrc = this.selectedImageUrl || this.filePreview || nodeData.file || '
     const uniqueId = this.generateRandom6DigitNumber();
     buttonHTML = buttonHTML + `<button style="display:block;" class="btn btn_theme3 btn-block customButton mt-2 nodeButton-${nodeId} button_id-${uniqueId}">Submitted</button>`;
     content += `<div class="buttons">${buttonHTML}</div>`;
-
-
-    
-
-
     return content;
+  }
+
+  private createOpenQuestionContent(nodeId: any, formData: any): string {
+    let content = '<div class="textQuestion">';
+     if (formData.questionText) {
+      content += `<h6 class="body_text">${this.getTrimmedText(formData.questionText)}</h6>`;
+    }
+    content += '</div>';
 
 
+    let buttonHTML = '';
+
+    // buttonHTML = formData.options.map((buttonElement: any) => {
+    const uniqueId = this.generateRandom6DigitNumber();
+    buttonHTML = buttonHTML + `<button style="display:block;" class="btn btn_theme3 btn-block customButton mt-2 nodeButton-${nodeId} button_id-${uniqueId}">Valid answer</button>`;
+    content += `<div class="buttons">${buttonHTML}</div>`;
+    return content;
   }
 
   private createAdvanceActionContent(nodeData: any, formData: any): string {
@@ -2196,7 +2202,7 @@ syncMentionArray() {
     } else if (this.ParentNodeType === 'whatsAppFlow') {
       newOutputsCount = 2;
     }else if(this.ParentNodeType === 'openQuestion') {
-      newOutputsCount = 1;
+      newOutputsCount = 2;
     }
     if(!formData.enableValidation){
       formData.invalidAction = 'skip'
@@ -3223,13 +3229,29 @@ preventInvalidKeys(event: KeyboardEvent): void {
     this.settingService.getNewCustomField(this.userDetails.SP_ID).subscribe((allAttributes: any) => {
       
       if (allAttributes.status == 200) {
-this.currentAttributeList = allAttributes?.getfields?.filter((attr:any) =>
+var attributeListCustomize = allAttributes?.getfields?.map((attr: any, index: number) => {
+  // From 6th index onward, replace displayName with ActuallName
+  if (index <= 6) {
+    return {
+      ...attr,
+      displayName: attr.ActuallName
+    };
+  }
+  return attr;
+});
+
+
+
+
+this.currentAttributeList = attributeListCustomize.filter((attr:any) =>
   attr.ActuallName !== 'Phone_number' &&
   attr.ActuallName !== 'tag' &&
   attr.ActuallName !== 'OptInStatus'
 );
-        
-        const attributes = allAttributes?.getfields?.map((attr: any) => `${attr.displayName}`);
+   const attributes =attributeListCustomize
+  ?.map((attr: any) => attr.displayName)
+  .filter((name: string) => name !== "tag" && name !== "");
+        console.log(attributes)
         this.attributeList = attributes;
       }
 
@@ -3782,7 +3804,7 @@ this.listOptions.reset();
   }
 
 
-  selectedAttributeType: string = '';
+  selectedAttributeType: any = '';
   isUserTyping: boolean = false;
   selectedFromVariable: boolean = false;
   selectedOptions: any[] = [];
@@ -3791,14 +3813,19 @@ this.listOptions.reset();
     const selectedAttr = this.contactAttributeForm.get('selectedAttribute')?.value;
     this.attributeDetails = this.currentAttributeList.find((attr: any) => attr.ActuallName === selectedAttr);
     this.selectedAttributeType = this.attributeDetails?.type || '';
+    console.log(this.selectedAttributeType)
     this.selectedFromVariable = false;
     this.isUserTyping = false;
-
-    if (this.selectedAttributeType === 'Multi Select' || this.selectedAttributeType == 'Select' || this.selectedAttributeType == 'Switch') {
+    if (this.selectedAttributeType === 'Multi Select' || this.selectedAttributeType == 'Select' || this.selectedAttributeType == 'Switch' || this.selectedAttributeType == 'User') {
       try {
         this.selectedOptions = JSON.parse(this.attributeDetails?.dataTypeValues || '[]');
         if(this.selectedAttributeType == 'Switch'){
           this.selectedOptions = [{"optionName": "yes"},{"optionName": "no"}];
+        }
+        if(this.selectedAttributeType == 'User'){
+          this.selectedOptions = this.agents.map(item =>{
+            return {id:item.uid,optionName:item.name}
+          })
         }
       } catch {
         this.selectedOptions = [];
@@ -3813,9 +3840,16 @@ this.listOptions.reset();
   }
 
   selectedValues(variable: any): void {
+    var values
+    console.log(variable)
+    if (this.selectedAttributeType == 'Select') {
+    values = `${variable?.id}:${variable?.optionName}`
+      
+    }
     
     this.contactAttributeForm.patchValue({
       selectedValue: `{{${variable?.displayName || variable?.name || variable?.optionName}}} ` || '',
+      selectedvalueBackend:this.selectedAttributeType == 'Select'? values:variable?.displayName || variable?.name || variable?.optionName,
       inputValue: '',
       selectedVariable: '',
       operation: 'replace'
@@ -3839,19 +3873,24 @@ toggleSelection(variable: any) {
     this.selectedValuesList.push(variable);
   }
 
-  const combinedValues = this.selectedValuesList
-    .map(v => `{{${v.displayName || v.name || v.optionName}}}`)
-    .join(' ');
+const combinedValues = this.selectedValuesList
+  .map(v => v.displayName || v.name || v.optionName)
+  .join(', ');
+ 
+  const  combinedValuesIds = this.selectedValuesList
+  .map((v, index) => `${v.id}:${v.displayName || v.name || v.optionName}`)
+  .join(',');
+
+
 
   this.contactAttributeForm.patchValue({
     selectedValue: combinedValues || '',
+    selectedvalueBackend:combinedValuesIds,
     inputValue: '',
     selectedVariable: '',
     operation: 'replace'
   });
 
-  // Remove this line so dropdown stays open:
-  // this.openDropdown.status = '';
 
   this.selectedFromVariable = true;
   this.isUserTyping = false;
@@ -4626,7 +4665,7 @@ openBotVariableModal(editorId:any = '') {
     Object.entries(allNodes).forEach(([id, node]: [string, any]) => {
       // console.log('Processing node:', node);
       const formData = node.data.formData || {};
-      const isQuestionOption = node.data.text === 'questionOption' || node.data.text === "buttonOptions" ||  node.data.text ==="WorkingHoursModal" || node.data.text === "setCondition" || node.data.text === "listOptions";
+      const isQuestionOption = node.data.text === 'questionOption' || node.data.text === "buttonOptions" ||  node.data.text ==="WorkingHoursModal" || node.data.text === "setCondition" || node.data.text === "listOptions" || node.data.text === "whatsAppFlow" || node.data.text === "openQuestion" ;
       if(node.data.text === "listOptions"){
         var sectionListArray:any = []
   node?.data?.formData?.sections.forEach((element:any) => {
@@ -4637,6 +4676,19 @@ element?.rows.forEach((row:any) => {
   });
   node.data.sectionListArray = sectionListArray;
 }
+
+      if(node.data.text === "whatsAppFlow" || node.data.text === "openQuestion" ){
+        var sectionListArray:any = []
+        var value = node.data.text == "whatsAppFlow" ? 'submitted':'Valid answer'
+        sectionListArray.push(value)
+
+  node.data.sectionListArray = sectionListArray;
+}
+
+
+
+
+
 
 
       
