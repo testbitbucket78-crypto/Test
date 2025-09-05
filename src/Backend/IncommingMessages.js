@@ -19,7 +19,18 @@ const commonFun = require('./common/resuableFunctions')
 const { userStatus } = require('./enum.js')
 const { sendEmail } = require('./Services/EmailService');
 const { MessagingName, channelsForTemplates }= require('./enum');
-const { addJobs } = require('./redis-poc/worker.js');
+
+const { Queue, Worker } = require('bullmq');
+
+// Just pass the connection config object
+const connection = {
+  host: '52.66.172.213',
+  port: 6379,
+  username: 'engagekart',
+  password: 'enGaGEkart3214!'
+};
+
+const messageQueue = new Queue('messageQueue', { connection });
 const token = 'EAAQTkLZBFFR8BOxmMdkw15j53ZCZBhwSL6FafG1PCR0pyp11EZCP5EO8o1HNderfZCzbZBZBNXiEFWgIrwslwoSXjQ6CfvIdTgEyOxCazf0lWTLBGJsOqXnQcURJxpnz3i7fsNbao0R8tc3NlfNXyN9RdDAm8s6CxUDSZCJW9I5kSmJun0Prq21QeOWqxoZAZC0ObXSOxM3pK0KfffXZC5S';
 let defaultMessageQuery = `SELECT * FROM defaultmessages where SP_ID=? AND title=? and isDeleted !=1`
 let updateSms = `UPDATE Message set system_message_type_id=?,updated_at=? where Message_id=?`
@@ -1247,6 +1258,8 @@ async function botExit(data, status){
   let updateBotSession = await db.excuteQuery(updateBotSessionQuery, [status,data?.botId]);
   if(status !=3){
     botAdvanceAction(data?.botId, data.custid, data.interactionId, data.sid, data.display_phone_number);
+  } else{
+
   }
 }
 
@@ -2010,6 +2023,28 @@ function addUtcTime(hours = 0, minutes = 0) {
 
 
 
+async function addJobs(botId, data, delaySeconds) {
+  const delay = delaySeconds * 1000; // ms
+  await messageQueue.add(
+    'sendMessage',
+    { botId, data },
+    { delay }
+  );
+}
+
+const worker = new Worker(
+  'messageQueue',
+  async job => {
+    console.log('Processing job:', job.id, job.data);
+
+   identifyNode(job?.data?.data);
+    console.log('--------------ending----------');
+    console.log(rl,'--------------rl----------');
+  },
+  { connection } 
+);
+
+
 setTimeout(() => {
   
 let mainData = {
@@ -2029,7 +2064,7 @@ let mainData = {
 //-----start------- 0 null 0  559169223950422 Pawan Sharma 917618157986 55 83534 380 Open 7133 80363 null WA API 0 0 0 null 919877594039 ------end-------
 
 
-//autoReplyDefaultAction(0, null, 0,  'one', 559169223950422,'Pawan Sharma', 917618157986, 55, 83534, 380, 'Open', 7137, 80363, null, 'WA API', 0, 0, 0, null, 919877594039)
+//autoReplyDefaultAction(0, null, 0,  'gsdf', 559169223950422,'Pawan Sharma', 917618157986, 55, 83534, 380, 'Open', 7137, 80363, null, 'WA API', 0, 0, 0, null, 919877594039)
 
 //  let time = '00:15' ; // Default to 1 hour if not set
 //     let hour = time?.split(':')[0];
