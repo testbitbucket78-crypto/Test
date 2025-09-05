@@ -4281,7 +4281,7 @@ sendMessage(isTemplate:boolean=false,templateTxt:string='',type: any = ''){
 			this.sendMessage(false, '', 'bot')
 			setTimeout(() => {
 
-				this.updateInteractionMapping(this.selectedInteraction.InteractionId, -3, this.TeamLeadId,this.selectedBotobj.name)
+				this.updateInteractionMapping(this.selectedInteraction.InteractionId, -4, this.TeamLeadId,this.selectedBotobj.name)
 			}, 1000)
 			this.closeAllModal(); // Your custom close logic
 		}
