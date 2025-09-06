@@ -19,12 +19,13 @@ const commonFun = require('./common/resuableFunctions')
 const { userStatus } = require('./enum.js')
 const { sendEmail } = require('./Services/EmailService');
 const { MessagingName, channelsForTemplates }= require('./enum');
+const { getUrl, env } = require('./config');
 
 const { Queue, Worker } = require('bullmq');
 
 // Just pass the connection config object
 const connection = {
-  host: '52.66.172.213',
+  host: getUrl('redisIp'),
   port: 6379,
   username: 'engagekart',
   password: 'enGaGEkart3214!'
@@ -1242,7 +1243,7 @@ async function sendDropOffMessage(data) {
   if(botData.length >0){
     if(botData[0]?.timeout_message){
       let message_text = await getExtraxtedMessage(botData[0]?.timeout_message, data.sid, data.custid);
-      let result = await messageThroughselectedchannel(data.sid, data?.toPhoneNumber, 'text', message_text, '', data.phone_number_id, data.channelType, -4, data.interactionId, 'text', message_text);
+      let result = await messageThroughselectedchannel(data.sid, data?.toPhoneNumber, 'text', message_text, '', data.phone_number_id, data.channelType, -4, data.interactionId, 'text', botData[0]?.timeout_message);
       // var updateBotSessionQuery = "update BotSessions set isWaiting=1,current_nodeId=? where botId =? and status=2";
       //   let updateBotSession = await db.excuteQuery(updateBotSessionQuery, [json?.connectedId,data?.botId]);
       if(result){
@@ -1254,13 +1255,11 @@ async function sendDropOffMessage(data) {
 
 
 async function botExit(data, status){
-  var updateBotSessionQuery = "update BotSessions set status=? where botId =? and status=2";
-  let updateBotSession = await db.excuteQuery(updateBotSessionQuery, [status,data?.botId]);
+  var updateBotSessionQuery = "update BotSessions set status=? where customerId =? and status=2";
+  let updateBotSession = await db.excuteQuery(updateBotSessionQuery, [status,data?.custid]);
   if(status !=3){
-    botAdvanceAction(data?.botId, data.custid, data.interactionId, data.sid, data.display_phone_number);
-  } else{
-
-  }
+    botAdvanceAction(data?.botId, data?.custid, data?.interactionId, data?.sid, data?.display_phone_number);
+  } 
 }
 
 
@@ -1268,30 +1267,42 @@ async function botAdvanceAction(botId,custid,interactionId,spid,display_phone_nu
   let advanceQuery = "select * from Bots where id =? and isDeleted !=1";
   let advanceAction = await db.excuteQuery(advanceQuery, [botId]);
   console.log("advanceAction--", advanceAction)
+  let isChatAssign = false;
   //let actions= [{"actionTypeId":1,"Value":["Radio","Ola"],"ValueUuid":[274,275],"actionType":"Add_Tag"},{"actionTypeId":3,"Value":["loop one","Two"],"ValueUuid":[283,278],"actionType":"Remove_Tag"}]
-  if(advanceAction.length > 0 && advanceAction[0].isAdvanceAction == 1){
-    let action = advanceAction[0].action;
+  if(advanceAction.length > 0 && advanceAction[0].advanceAction){
+    let action = JSON.parse(advanceAction[0].advanceAction);
     if(action && action.length > 0){
       for(let i=0; i<action.length; i++){
         let actionType = action[i].actionType;
         let value = action[i].value;
         if(actionType == 'Add_Tag'){
-          await addTag(action[i]?.ValueUuid, spid, custid);
+          console.log(action[i],'----------------Add_Tag-------------');
+          await addTag(JSON.stringify(action[i]?.ValueUuid), spid, custid);
         }else if(actionType == 'Remove_Tag'){
-          await removeTag(action[i]?.ValueUuid, custid);
+          console.log(action[i],'----------------Remove_Tag-------------');
+          await removeTag(JSON.stringify(action[i]?.ValueUuid), custid);
         }else if(actionType == 'Assign_Agent'){
+          isChatAssign = true;
+          console.log(action[i],'----------------Assign_Agent-------------');
           await assignAction(action[i]?.agentId, -3, interactionId, custid, spid, display_phone_number);
         }else if(actionType == 'assign_owner'){
+          isChatAssign = true;
+          console.log(action[i],'----------------assign_owner-------------');
           let assignOwner = await AssignToContactOwner(spid,interactionId ,custid);
           if(assignOwner){
             console.log("assignOwner", assignOwner)
           }
       }else if(actionType =='conversationStatus'){
+          isChatAssign = true;
+          console.log(action[i],'----------------conversationStatus-------------');
         let ResolveOpenChat = await db.excuteQuery('UPDATE Interaction SET interaction_status =? WHERE InteractionId !=? and customerId=?', [value[0], interactionId, custid]);        
       }
     }
     
   }
+}
+if(!isChatAssign){
+
 }
 }
 
@@ -1363,24 +1374,24 @@ async function identifyNode(data){
       botExit(data, 3);
     }
     else if(type == 'AddTags'){
-      if(json.data?.data?.operation =='append')
+      if(json?.data?.data?.operation =='append')
         await addTag(JSON.stringify(json.data?.data?.tag),data.sid, data.custid);
-      else if(json.data?.data?.operation =='addIfEmpty'){
+      else if(json?.data?.data?.operation =='addIfEmpty'){
         const getTagQuery = `SELECT tag FROM EndCustomer WHERE customerId = ? AND SP_ID = ?`;
         const existingTagResult = await db.excuteQuery(getTagQuery, [custid, sid]);
         if (existingTagResult.length > 0 ) {
           if(!existingTagResult[0].tag){
-            await addTag(JSON.stringify(json.data?.data?.tag),data.sid, data.custid);
+            await addTag(JSON.stringify(json?.data?.data?.tag),data.sid, data.custid);
           }
         }
-      }else if(json.data?.data?.operation =='replace'){
+      }else if(json?.data?.data?.operation =='replace'){
         var addConRes = await db.excuteQuery(addTagQuery, ['', data.custid, data.sid]);
-        await addTag(JSON.stringify(json.data?.data?.tag),data.sid, data.custid);
+        await addTag(JSON.stringify(json?.data?.data?.tag),data.sid, data.custid);
       }
       data.nodeId = json?.connectedId;
       identifyNode(data);
     }else if(type == 'RemoveTag'){
-      await removeTag(JSON.stringify(json.data?.data?.tag), data.custid);
+      await removeTag(JSON.stringify(json?.data?.data?.tag), data.custid);
       data.nodeId = json?.connectedId;
       identifyNode(data);
     }
@@ -2064,7 +2075,7 @@ let mainData = {
 //-----start------- 0 null 0  559169223950422 Pawan Sharma 917618157986 55 83534 380 Open 7133 80363 null WA API 0 0 0 null 919877594039 ------end-------
 
 
-//autoReplyDefaultAction(0, null, 0,  'gsdf', 559169223950422,'Pawan Sharma', 917618157986, 55, 83534, 380, 'Open', 7137, 80363, null, 'WA API', 0, 0, 0, null, 919877594039)
+autoReplyDefaultAction(0, null, 0,  'Q12', 559169223950422,'Pawan Sharma', 917618157986, 55, 83534, 380, 'Open', 7137, 80363, null, 'WA API', 0, 0, 0, null, 919877594039)
 
 //  let time = '00:15' ; // Default to 1 hour if not set
 //     let hour = time?.split(':')[0];

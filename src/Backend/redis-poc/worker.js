@@ -2,12 +2,12 @@ const { Queue, Worker } = require('bullmq');
 const {identifyNode} = require('../IncommingMessages');
 
 // Just pass the connection config object
-const connection = {
-  host: '52.66.172.213',
-  port: 6379,
-  username: 'engagekart',
-  password: 'enGaGEkart3214!'
-};
+// const connection = {
+//   host: '52.66.172.213',
+//   port: 6379,
+//   username: 'engagekart',
+//   password: 'enGaGEkart3214!'
+// };
 
 const messageQueue = new Queue('messageQueue', { connection });
 
@@ -44,7 +44,7 @@ const worker = new Worker(
     console.log('--------------ending----------');
     console.log(rl,'--------------rl----------');
   },
-  { connection } // 👈 use connection config here too
+  { connection } 
 );
 
 

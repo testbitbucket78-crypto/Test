@@ -668,9 +668,9 @@ async function botTimeOperations(){
 //function startScheduler() {
   cron.schedule('*/1 * * * *', async () => {
     console.log('Running scheduled task...');
-    NoCustomerReplyReminder();  // system_message_type_id  = 5
-    await NoAgentReplyTimeOut();  
-    await NoCustomerReplyTimeout();     // system_message_type_id  = 6
+    // NoCustomerReplyReminder();  // system_message_type_id  = 5
+    // await NoAgentReplyTimeOut();  
+    // await NoCustomerReplyTimeout();     // system_message_type_id  = 6
        // system_message_type_id = 4
     botTimeOperations();
 
