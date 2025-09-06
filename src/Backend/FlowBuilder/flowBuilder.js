@@ -281,7 +281,7 @@ const deleteBotbyId = async (req, res) => {
         let deprecateBot = await db.excuteQuery(val.deprecateBot, [req.params.botId]);
             res.send({
                 "status": 200,
-                "message": "Bot is running, so it is deprecated",
+                "message": "Bot is deprecated successfully",
             })
       } else{
         let botRunning = await db.excuteQuery(val.isBotRunning, [req.params.spid, req.params.botId]);
@@ -294,7 +294,7 @@ const deleteBotbyId = async (req, res) => {
         }else{
           res.send({
                 "status": 200,
-                "message": "Bot is running please try later",
+                "message": "Sorry, we cannot delete this Bot right now as some sessions are still active for this Bot",
             })
         } 
       }

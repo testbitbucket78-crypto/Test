@@ -11,7 +11,7 @@ const isBotExist= `SELECT * FROM Bots WHERE spid=? and isDeleted !=1 and name=?`
 const isKeywordUsed= `SELECT * FROM Bots WHERE spid=? and isDeleted !=1 and FIND_IN_SET(?, LOWER(keywords))`;
 const isKeywordUsedSmartReply= `SELECT Lower(Keyword) as Keyword FROM SmartReplyKeywords WHERE SmartReplyId IN ( select ID from SmartReply where SP_ID =? and isDeleted !=1) and Keyword IN (?) and isDeleted !=1`;
 const isBotRunning= `SELECT * FROM BotSessions WHERE spid=? and botId=? and status =2`;
-const getAllBots= `SELECT b.id,b.spid,b.name,b.description,b.channel_id,b.status,b.timeout_value,b.timeout_message,b.created_by,b.updated_at,b.created_at,b.published_at,b.deprecated_at,b.isDeleted,b.isDeprecated,b.keywords,b.node_FE_Json,b.advanceAction,COUNT(bs.id) AS invoked,
+const getAllBots= `SELECT b.id,b.spid,b.name,b.description,b.channel_id,b.status,b.timeout_value,b.timeout_message,b.created_by,b.updated_at,b.created_at,b.published_at,b.deprecated_at,b.isDeleted,b.isDeprecated,b.keywords,b.node_FE_Json,b.advanceAction,b.botVarList,COUNT(bs.id) AS invoked,
 COUNT(CASE WHEN bs.status=3 THEN 1 END) AS complete,
 COUNT(CASE WHEN bs.status=4 THEN 1 END) AS dropped ,
 '[]' AS smartreplyusage,

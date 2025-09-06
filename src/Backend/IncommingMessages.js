@@ -19,6 +19,19 @@ const commonFun = require('./common/resuableFunctions')
 const { userStatus } = require('./enum.js')
 const { sendEmail } = require('./Services/EmailService');
 const { MessagingName, channelsForTemplates }= require('./enum');
+const { getUrl, env } = require('./config');
+
+const { Queue, Worker } = require('bullmq');
+
+// Just pass the connection config object
+const connection = {
+  host: getUrl('redisIp'),
+  port: 6379,
+  username: 'engagekart',
+  password: 'enGaGEkart3214!'
+};
+
+const messageQueue = new Queue('messageQueue', { connection });
 const token = 'EAAQTkLZBFFR8BOxmMdkw15j53ZCZBhwSL6FafG1PCR0pyp11EZCP5EO8o1HNderfZCzbZBZBNXiEFWgIrwslwoSXjQ6CfvIdTgEyOxCazf0lWTLBGJsOqXnQcURJxpnz3i7fsNbao0R8tc3NlfNXyN9RdDAm8s6CxUDSZCJW9I5kSmJun0Prq21QeOWqxoZAZC0ObXSOxM3pK0KfffXZC5S';
 let defaultMessageQuery = `SELECT * FROM defaultmessages where SP_ID=? AND title=? and isDeleted !=1`
 let updateSms = `UPDATE Message set system_message_type_id=?,updated_at=? where Message_id=?`
@@ -79,7 +92,7 @@ WHERE m.interaction_id = ?
 async function autoReplyDefaultAction(isAutoReply, autoReplyTime, isAutoReplyDisable, message_text, phone_number_id, contactName, from, sid, custid, agid, replystatus, newId, msg_id, newlyInteractionId, channelType, isContactPreviousDeleted, inactiveAgent, inactiveTimeOut, newiN, display_phone_number) {
   console.log("isAutoReply, autoReplyTime, isAutoReplyDisable")
   console.log('-----start-------',isAutoReply, autoReplyTime, isAutoReplyDisable, message_text, phone_number_id, contactName, from, sid, custid, agid, replystatus, newId, msg_id, newlyInteractionId, channelType, isContactPreviousDeleted, inactiveAgent, inactiveTimeOut, newiN, display_phone_number,'------end-------');
-  let assignAgent = await db.excuteQuery('select * from InteractionMapping where InteractionId =? order by created_at desc limit 1', [newId]);
+  let assignAgent = await db.excuteQuery('select * from InteractionMapping where InteractionId =? order by MappingId desc limit 1', [newId]);
   console.log(assignAgent)
   let interactionStatus = await db.excuteQuery('select * from Interaction where InteractionId = ? and is_deleted !=1 ', [newId])
   let botMatched = await db.excuteQuery("SELECT * FROM Bots WHERE spid=? and status ='publish' and FIND_IN_SET(?, keywords)", [sid,message_text])
@@ -673,11 +686,11 @@ async function getExtraxtedOnlyAttributes(message_text, SPID, customerId) {
     let content = message_text;
     // Parse the message template to get placeholders
     const placeholders = parseMessageTemplate(content);
+    console.log(placeholders,'----------------placeholders-------------------');
     if (placeholders.length > 0) {
       // Construct a dynamic SQL query based on the placeholders
-      console.log(placeholders)
       const results = await commonFun.getDefaultAttribue(placeholders, SPID, customerId);
-      console.log("results", results)
+      console.log("results------------------------------------", results);
 
       placeholders.forEach(placeholder => {
         const result = results.find(result => result.hasOwnProperty(placeholder));
@@ -778,6 +791,9 @@ async function addTag(value, sid, custid) {
     stringValue = value.replace(/[\[\]\s]/g, '');
   }
   
+  const getTagQuery = `SELECT tag FROM EndCustomer WHERE customerId = ? AND SP_ID = ?`;
+  const existingTagResult = await db.excuteQuery(getTagQuery, [custid, sid]);
+ 
 
   if (existingTagResult.length > 0 && existingTagResult[0].tag) {
     const existingTags = existingTagResult[0].tag.split(',');
@@ -793,10 +809,11 @@ async function removeTag(value, custid) {
   //  console.log(`Performing action 3 for Remove Contact Tag: ${value}`);
   var maptag = value;
   console.log(value,'----------val ---------------');
-  var maptagItems = maptag.split(',')
+  var maptagItems = maptag.replace(/[\[\]]/g, '').split(',')
   // console.log("maptag " + maptag)
   var result = await db.excuteQuery(selectTagQuery, [custid])
   //console.log(result)
+  console.log(maptagItems,'----------------maptagItems-----------------');
   var removetagQuery = ""
   if (result.length > 0) {
 
@@ -807,7 +824,7 @@ async function removeTag(value, custid) {
       const tagItems = tagValue.split(',');
 
       var itemmap = '';
-
+      console.log(tagItems,'---------tagItems------------');
       //console.log(itemmap == maptag)
       // Get the count of tag items
       const tagItemCount = tagItems.length;
@@ -1212,6 +1229,7 @@ async function isWorkingHour(sid){
   console.log(currentTime, "working", (isWorkingTime(workingData, currentTime)));
   let isWorkingHour = isWorkingTime(workingData, currentTime)
   let isTodayHoliday = await isHolidays(sid);
+  console.log(((isWorkingTime(workingData, currentTime)) && isTodayHoliday == false) ? true : false,'---------------------------kshfkhshdkhj------------------')
   return ((isWorkingTime(workingData, currentTime)) && isTodayHoliday == false) ? true : false;
 }
 
@@ -1225,7 +1243,7 @@ async function sendDropOffMessage(data) {
   if(botData.length >0){
     if(botData[0]?.timeout_message){
       let message_text = await getExtraxtedMessage(botData[0]?.timeout_message, data.sid, data.custid);
-      let result = await messageThroughselectedchannel(data.sid, data?.toPhoneNumber, 'text', message_text, '', data.phone_number_id, data.channelType, -4, data.interactionId, 'text', message_text);
+      let result = await messageThroughselectedchannel(data.sid, data?.toPhoneNumber, 'text', message_text, '', data.phone_number_id, data.channelType, -4, data.interactionId, 'text', botData[0]?.timeout_message);
       // var updateBotSessionQuery = "update BotSessions set isWaiting=1,current_nodeId=? where botId =? and status=2";
       //   let updateBotSession = await db.excuteQuery(updateBotSessionQuery, [json?.connectedId,data?.botId]);
       if(result){
@@ -1237,11 +1255,11 @@ async function sendDropOffMessage(data) {
 
 
 async function botExit(data, status){
-  var updateBotSessionQuery = "update BotSessions set status=? where botId =? and status=2";
-  let updateBotSession = await db.excuteQuery(updateBotSessionQuery, [status,data?.botId]);
+  var updateBotSessionQuery = "update BotSessions set status=? where customerId =? and status=2";
+  let updateBotSession = await db.excuteQuery(updateBotSessionQuery, [status,data?.custid]);
   if(status !=3){
-    botAdvanceAction(data?.botId, data.custid, data.interactionId, data.sid, data.display_phone_number);
-  }
+    botAdvanceAction(data?.botId, data?.custid, data?.interactionId, data?.sid, data?.display_phone_number);
+  } 
 }
 
 
@@ -1249,30 +1267,42 @@ async function botAdvanceAction(botId,custid,interactionId,spid,display_phone_nu
   let advanceQuery = "select * from Bots where id =? and isDeleted !=1";
   let advanceAction = await db.excuteQuery(advanceQuery, [botId]);
   console.log("advanceAction--", advanceAction)
+  let isChatAssign = false;
   //let actions= [{"actionTypeId":1,"Value":["Radio","Ola"],"ValueUuid":[274,275],"actionType":"Add_Tag"},{"actionTypeId":3,"Value":["loop one","Two"],"ValueUuid":[283,278],"actionType":"Remove_Tag"}]
-  if(advanceAction.length > 0 && advanceAction[0].isAdvanceAction == 1){
-    let action = advanceAction[0].action;
+  if(advanceAction.length > 0 && advanceAction[0].advanceAction){
+    let action = JSON.parse(advanceAction[0].advanceAction);
     if(action && action.length > 0){
       for(let i=0; i<action.length; i++){
         let actionType = action[i].actionType;
         let value = action[i].value;
         if(actionType == 'Add_Tag'){
-          await addTag(action[i]?.ValueUuid, spid, custid);
+          console.log(action[i],'----------------Add_Tag-------------');
+          await addTag(JSON.stringify(action[i]?.ValueUuid), spid, custid);
         }else if(actionType == 'Remove_Tag'){
-          await removeTag(action[i]?.ValueUuid, custid);
+          console.log(action[i],'----------------Remove_Tag-------------');
+          await removeTag(JSON.stringify(action[i]?.ValueUuid), custid);
         }else if(actionType == 'Assign_Agent'){
+          isChatAssign = true;
+          console.log(action[i],'----------------Assign_Agent-------------');
           await assignAction(action[i]?.agentId, -3, interactionId, custid, spid, display_phone_number);
         }else if(actionType == 'assign_owner'){
+          isChatAssign = true;
+          console.log(action[i],'----------------assign_owner-------------');
           let assignOwner = await AssignToContactOwner(spid,interactionId ,custid);
           if(assignOwner){
             console.log("assignOwner", assignOwner)
           }
       }else if(actionType =='conversationStatus'){
+          isChatAssign = true;
+          console.log(action[i],'----------------conversationStatus-------------');
         let ResolveOpenChat = await db.excuteQuery('UPDATE Interaction SET interaction_status =? WHERE InteractionId !=? and customerId=?', [value[0], interactionId, custid]);        
       }
     }
     
   }
+}
+if(!isChatAssign){
+
 }
 }
 
@@ -1298,9 +1328,13 @@ else{
   return content;
 }
 }
+function delay(ms = 100) {
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
 
 async function identifyNode(data){
   try {    
+    await delay(); 
     let myUTCString = new Date().toUTCString();
     const time = moment.utc(myUTCString).format('YYYY-MM-DD HH:mm:ss');  
   var identityNodeQuery = "select * from botNodes where tempNodeId =? and botId=?";
@@ -1340,16 +1374,35 @@ async function identifyNode(data){
       botExit(data, 3);
     }
     else if(type == 'AddTags'){
-      await addTag(json.data?.data?.tag,data.sid, data.custid);
+      if(json?.data?.data?.operation =='append')
+        await addTag(JSON.stringify(json.data?.data?.tag),data.sid, data.custid);
+      else if(json?.data?.data?.operation =='addIfEmpty'){
+        const getTagQuery = `SELECT tag FROM EndCustomer WHERE customerId = ? AND SP_ID = ?`;
+        const existingTagResult = await db.excuteQuery(getTagQuery, [custid, sid]);
+        if (existingTagResult.length > 0 ) {
+          if(!existingTagResult[0].tag){
+            await addTag(JSON.stringify(json?.data?.data?.tag),data.sid, data.custid);
+          }
+        }
+      }else if(json?.data?.data?.operation =='replace'){
+        var addConRes = await db.excuteQuery(addTagQuery, ['', data.custid, data.sid]);
+        await addTag(JSON.stringify(json?.data?.data?.tag),data.sid, data.custid);
+      }
       data.nodeId = json?.connectedId;
       identifyNode(data);
     }else if(type == 'RemoveTag'){
-      await removeTag(json.data?.data?.tag, data.custid);
+      await removeTag(JSON.stringify(json?.data?.data?.tag), data.custid);
       data.nodeId = json?.connectedId;
       identifyNode(data);
     }
-    else if(type == 'updateAttribute'){
-      await updateAttribute();
+    else if(type == 'UpdateContactAttribute'){
+      await updateAttribute(json,data);
+      data.nodeId = json?.connectedId;
+      identifyNode(data);
+    }
+    else if(type == 'setCondition'){
+      let result = await setCondition(json,data);
+      console.log(result,'--------------setCondition----------------------');
       data.nodeId = json?.connectedId;
       identifyNode(data);
     }
@@ -1370,10 +1423,9 @@ async function identifyNode(data){
           invalidQuestionResponse(data,json);
         }
       } else if(type =='questionOption'){
-        if(isValidNumber(data?.incommingMessage) && data?.incommingMessage >json?.option?.length){
-          console.log(data?.incommingMessage-1, '---------questionOption ----------------')
-          console.log(json.option, '---------questionOption ----------------')
-          let connectNodeId = json.option[data?.incommingMessage-1].optionConnectedId;
+        if(isValidNumber(data?.incommingMessage) &&( Number(data?.incommingMessage) <=json?.option?.length ) && Number(data?.incommingMessage) >0){
+          console.log(json.option, '---------questionOption ----------------');
+          let connectNodeId = json.option[Number(data?.incommingMessage)-1].optionConnectedId;
           data.nodeId = connectNodeId;
          let returnedData = await botVariablexecute(json,data);
           identifyNode(returnedData);
@@ -1386,6 +1438,14 @@ async function identifyNode(data){
          let returnedData = await botVariablexecute(json,data);
           identifyNode(returnedData);
         }
+      } else if(type =='whatsAppFlow'){
+        if(data?.incommingMessage == 'Form sent'){
+          data.nodeId = json?.option[0]?.optionConnectedId;
+         let returnedData = await botVariablexecute(json,data);
+          identifyNode(returnedData);
+        } else{
+          invalidQuestionResponse(data,json);
+        }
       }
       }
       else{    
@@ -1393,30 +1453,48 @@ async function identifyNode(data){
           let payload = await WaApiButtons( data?.toPhoneNumber, json?.data,data);
           console.log(payload);
           console.log(payload?.interactive?.header?.headerType);
-          
-            let buttonList = json?.data?.buttons;
-            let buttons =[];
-if (buttonList && buttonList.length > 0) {
-  for (let i = 0; i < buttonList.length; i++) {
-    buttons.push({ "type": "Quick Reply", "buttonText": buttonList[i] });
-  }
-}
+
+          let buttonList = json?.data?.buttons;
+          let buttons = [];
+          if (buttonList && buttonList.length > 0) {
+            for (let i = 0; i < buttonList.length; i++) {
+              buttons.push({ "type": "Quick Reply", "buttonText": buttonList[i] });
+            }
+          }
+          let messageType = json?.data?.headerType == 'image' ? 'image/jpg' : type == 'video' ? 'video/mp4' : type == 'document' ? 'application/pdf' : 'text';
+          let headerType = json?.data?.headerType == 'none' ? 'text' : data?.headerType;
+          let messageText ='';
+          if (json?.data?.headerType == 'text') {
+             messageText = json?.data?.headerText + '<br>'
+          } 
+          messageText  = messageText + json?.data?.bodyText;
+          if (json?.data?.footerText && json?.data?.footerText != '') {
+             messageText = messageText + '<br>' + json?.data?.footerText;
+          } 
           let result = await createWhatsAppPayload(data.sid, payload);
           if (result?.status == 200) {
-            let messageValu = [[data.sid, 'text', "", data?.interactionId, -4, 'Out', json?.data?.bodyText, 'text', 'text', result.message.messages[0].id, "", time, time, "", -4, 1,JSON.stringify(buttons),'[]']]
+            let messageValu = [[data.sid, 'text', "", data?.interactionId, -4, 'Out', messageText, messageType, (messageType == 'text' ? 'text' : data?.fileLink) , result.message.messages[0].id, "", time, time, "", -4, 1,JSON.stringify(buttons),'[]']]
             let saveMessage = await db.excuteQuery(insertMessageQuery, [messageValu]);
           }
         } else if(type == 'listOptions'){
           let payload = await WaApiListPayload( data?.toPhoneNumber, json?.data,data);
           console.log(payload, '---------payload---------');
           let result = await createWhatsAppPayload(data.sid, payload);
+          let messageText ='';
+          if (json?.data?.headerText && json?.data?.headerText != '') {
+             messageText = json?.data?.headerText + '<br>'
+          } 
+          messageText  = messageText + json?.data?.bodyText;
+          if (json?.data?.footerText && json?.data?.footerText != '') {
+             messageText = messageText + '<br>' + json?.data?.footerText;
+          } 
           if (result?.status == 200) {
-            let messageValu = [[data.sid, 'text', "", data?.interactionId, -4, 'Out', json?.data?.bodyText, 'text', 'text', result.message.messages[0].id, "", time, time, "", -4, 1,'','[]']]
+            let messageValu = [[data.sid, 'text', "", data?.interactionId, -4, 'Out', messageText, 'text', 'text', result.message.messages[0].id, "", time, time, "", -4, 1,'','[]']]
             let saveMessage = await db.excuteQuery(insertMessageQuery, [messageValu]);
           }
         } else if(type == 'questionOption'){
           let replacedText = await replacebotVariable(JSON.parse(data?.botSessionVariables),json?.data?.questionTextMessage);
-          let message_text = await getExtraxtedMessage(replacedText, data.sid, data.custid)
+          let message_text = await getExtraxtedMessage(replacedText, data.sid, data.custid);
               result = await messageThroughselectedchannel(data.sid, data?.toPhoneNumber, 'text', message_text, '', data?.phone_number_id, data?.channelType, -4, data.interactionId, 'text', replacedText)
 
         }else if(type == 'openQuestion'){
@@ -1424,6 +1502,16 @@ if (buttonList && buttonList.length > 0) {
           let message_text = await getExtraxtedMessage(replacedText, data.sid, data.custid)
               result = await messageThroughselectedchannel(data.sid, data?.toPhoneNumber, 'text', message_text, '', data?.phone_number_id, data?.channelType, -4, data.interactionId, 'text', replacedText)
 
+        }else if(type == 'whatsAppFlow'){
+          let payload = await whatsflowpayload(data?.toPhoneNumber, json?.data, data?.sid, data?.custid, json?.connectedId);
+          console.log(payload);
+          console.log(payload?.interactive?.action?.parameters);
+          let result = await createWhatsAppPayload(data.sid, payload);
+          let buttons = [{ "type": "FLOW", "buttonText": "flow" }];
+          if (result?.status == 200) {
+            let messageValu = [[data.sid, 'text', "", data?.interactionId, -4, 'Out', json?.data?.bodyText, 'text', 'text', result.message.messages[0].id, "", time, time, "", -4, 1, JSON.stringify(buttons), '[]']]
+            let saveMessage = await db.excuteQuery(insertMessageQuery, [messageValu]);
+          }
         }
         questionOperations();
         let nodeTimeout = null;
@@ -1433,18 +1521,6 @@ if (buttonList && buttonList.length > 0) {
         var updateBotSessionQuery = "update BotSessions set isWaiting=1,current_nodeId=?,next_nodeId=?,node_timeout=? where botId =? and status=2";
         let updateBotSession = await db.excuteQuery(updateBotSessionQuery, [data?.nodeId,json?.connectedId,nodeTimeout,data?.botId]);
       }
-    }else if(type == 'whatsAppFlow'){
-      let payload = await whatsflowpayload(data?.toPhoneNumber, json?.data,data?.sid,data?.custid,json?.connectedId);
-      console.log(payload);
-      console.log(payload?.interactive?.action?.parameters);
-      let result = await createWhatsAppPayload(data.sid, payload);
-      let buttons =[{ "type": "FLOW", "buttonText": "flow" }];
-      if (result?.status == 200) {
-            let messageValu = [[data.sid, 'text', "", data?.interactionId, -4, 'Out', json?.data?.bodyText, 'text', 'text', result.message.messages[0].id, "", time, time, "", -4, 1,JSON.stringify(buttons),'[]']]
-            let saveMessage = await db.excuteQuery(insertMessageQuery, [messageValu]);
-          }
-           data.nodeId = json?.connectedId;
-      identifyNode(data);
     } else if(type == 'UpdateConversationStatus'){
       let ResolveOpenChat = await db.excuteQuery('UPDATE Interaction SET interaction_status =? WHERE InteractionId =? and customerId=?', [json?.data?.data?.status =='Open' ? 'Open' : 'Resolved', data?.interactionId, data?.custid]);
       if(json?.data?.data?.status =='Resolved'){
@@ -1485,27 +1561,65 @@ if (buttonList && buttonList.length > 0) {
       // var addNotification = `INSERT INTO Notification(sp_id,subject,message,sent_to,module_name,uid,created_at) values ?`
       // await db.excuteQuery(optInQuery, [json?.data?.data?.status, data.custid, data.sid]);
      let replacedText = await replacebotVariable(JSON.parse(data?.botSessionVariables),json?.data?.data?.message);
+     console.log(replacedText,'------------------replacedText-----------------');
      let replacedText2 = await getExtraxtedOnlyAttributes(replacedText,data?.sid,data?.custid)
+     console.log(replacedText2,'------------------replacedText2-----------------');
       let messageValu = [[data.sid, 'notes', "", data?.interactionId, -4, 'Out', replacedText2, 'text', 'text', null, "", time, time, "", -4, 1,'','[]']]
             let saveMessage = await db.excuteQuery(insertMessageQuery, [messageValu]);
       data.nodeId = json?.connectedId;
       identifyNode(data);
+      let uidMentioned = json?.data?.data?.UIIdMention;
+      let myUTCString = new Date().toUTCString();
+      const utcTimestamp = moment.utc(myUTCString).format('YYYY-MM-DD HH:mm:ss');
+      await Promise.all(
+        uidMentioned.map(async (element) => {
+          const check = await commonFun.notifiactionsToBeSent(element, 4);
+          console.log(check,'-------------------------check----------------------');
+          if (check) {
+            let notifyvalues = [
+              [data.sid, '@Mention in the Notes', 'You have a been mentioned in the Notes', element, 'teambox', element, utcTimestamp]
+            ];
+             let addNotification = `INSERT INTO Notification(sp_id,subject,message,sent_to,module_name,uid,created_at) values ?`;
+             let mentionRes = await db.excuteQuery(addNotification, [notifyvalues]);
+          } else {
+            console.log(`Notification disabled for UID: ${element}`);
+          }
+        })
+      );
+                  
     }
-    else if(type == 'botTrigger'){
+    else if(type == 'BotTriggerModal'){
       botExit(data,3);
       data['botId'] = json?.data?.data?.id;
       let checkBotPublish = "select * from Bots where id =? and status = 'publish'";
       let botPublished = await db.excuteQuery(checkBotPublish, [json?.data?.data?.id]);
       if(botPublished.length >0)
         botOperations(data);
+    } 
+    else if(type == 'TimeDelayModal'){
+      data.nodeId = json?.connectedId;
+      let delay = 0;
+      if(json?.data?.data?.unit == "minute"){
+        delay = json?.data?.data?.time*60;
+      } else if(json?.data?.data?.unit == "hour"){
+        delay = json?.data?.data?.time*60*60;
+      }else{
+        delay = json?.data?.data?.time;
+      }
+      console.log(delay,'------------------delay-----------------------');
+      addJobs(data?.botId,data,delay);
     }
     else if(type == 'WorkingHoursModal'){
-      if(isWorkingHour(data.sid)){
+      console.log(isWorkingHour(data.sid),'------------------- isWorkingHour -------------------');
+      let workingHour = await isWorkingHour(data.sid)
+      if(workingHour){
+        console.log('--------------true entered --------------------------')
         let selectedOption = json.option.filter((item) => (item.name)  == 'open');
         let connectNodeId = selectedOption[0].optionConnectedId;
           data.nodeId = connectNodeId;
           identifyNode(data);
       }else{
+        console.log('--------------false entered --------------------------')
         let selectedOption = json.option.filter((item) => (item.name)  == 'close');
         let connectNodeId = selectedOption[0].optionConnectedId;
           data.nodeId = connectNodeId;
@@ -1523,6 +1637,90 @@ if (buttonList && buttonList.length > 0) {
   data.nodeId = json?.connectedId;
   identifyNode(data);
 }
+}
+
+async function updateAttribute(json,data) {
+  let jData = json?.data?.data;
+  let val = jData?.selectedvalueBackend;
+  let replacedText = await replacebotVariable(JSON.parse(data?.botSessionVariables),val);
+  let value = await getExtraxtedMessage(replacedText, data.sid, data.custid)
+  if (jData?.operation =="replace") {
+    let updateQuery = `UPDATE EndCustomer SET ${jData.selectedAttribute}=? WHERE SP_ID=? AND customerId=?`;
+    db.excuteQuery(updateQuery, [value, data.sid, data.custid]);
+  } else {
+    let updateQuery = `UPDATE EndCustomer SET ${jData.selectedAttribute} =? WHERE SP_ID =? AND customerId =? AND (${jData.selectedAttribute} IS NULL OR ${jData.selectedAttribute} = '')`;
+    db.excuteQuery(updateQuery, [value, data.sid, data.custid]);
+  }
+}
+
+async function setCondition(json,data){
+ let condition = json?.data?.conditions;
+ let prevJoin ='';
+ let result = false;
+await condition.forEach(async (item)=>{
+ let comp = item?.comparator;
+ let replacedComp = await replacebotVariable(JSON.parse(data?.botSessionVariables),comp);
+  let comperater = await getExtraxtedMessage(replacedComp, data.sid, data.custid)
+ let val = item?.value;
+  let replacedText = await replacebotVariable(JSON.parse(data?.botSessionVariables),val);
+  let value = await getExtraxtedMessage(replacedText, data.sid, data.custid)
+  let current = evaluateCondition(comperater,item?.comparatorType,item?.operator,value)
+console.log(value,'---------------------value------------------');
+console.log(current,'---------------------current------------------');
+   if (prevJoin === 'AND') {
+      result = result && current;
+    } else if (prevJoin === 'OR') {
+      result = result || current;
+    } else {
+      result = current; // fallback if join missing
+    }
+    prevJoin = item?.nextJoinType
+ })
+ console.log(result,'----------result-----------------')
+ return result;
+}
+
+function evaluateCondition( comparator, comparatorType, operator, value ) {
+  const left = comparator;
+  const right = value;
+  console.log(left,right,'----------------evaluateCondition-------------------')
+  switch (operator.toLowerCase()) {
+    case 'contains': {
+      return String(left).includes(String(right));
+    }
+
+    case 'does not contain': {
+      return !String(left).includes(String(right));
+    }
+
+    case 'equal to': {
+      return left == right;
+    }
+
+    case 'not equal to': {
+      return left != right;
+    }
+
+    case 'starts with': {
+      return String(left).startsWith(String(right));
+    }
+
+    case 'does not start with': {
+      return !String(left).startsWith(String(right));
+    }
+
+    case 'greater than': {
+      return Number(left) > Number(right);
+    }
+
+    case 'less than': {
+      return Number(left) < Number(right);
+    }
+
+    default: {
+      throw new Error(`Unsupported operator: ${operator}`);
+    }
+  }
 }
 
 function isValidNumber(value) {
@@ -1836,7 +2034,29 @@ function addUtcTime(hours = 0, minutes = 0) {
 
 
 
-/*setTimeout(() => {
+async function addJobs(botId, data, delaySeconds) {
+  const delay = delaySeconds * 1000; // ms
+  await messageQueue.add(
+    'sendMessage',
+    { botId, data },
+    { delay }
+  );
+}
+
+const worker = new Worker(
+  'messageQueue',
+  async job => {
+    console.log('Processing job:', job.id, job.data);
+
+   identifyNode(job?.data?.data);
+    console.log('--------------ending----------');
+    console.log(rl,'--------------rl----------');
+  },
+  { connection } 
+);
+
+
+setTimeout(() => {
   
 let mainData = {
   "sid": 55,
@@ -1855,7 +2075,7 @@ let mainData = {
 //-----start------- 0 null 0  559169223950422 Pawan Sharma 917618157986 55 83534 380 Open 7133 80363 null WA API 0 0 0 null 919877594039 ------end-------
 
 
-//autoReplyDefaultAction(0, null, 0,  'btn 1', 559169223950422,'Pawan Sharma', 917618157986, 55, 83534, 380, 'Open', 7137, 80363, null, 'WA API', 0, 0, 0, null, 919877594039)
+autoReplyDefaultAction(0, null, 0,  'Q12', 559169223950422,'Pawan Sharma', 917618157986, 55, 83534, 380, 'Open', 7137, 80363, null, 'WA API', 0, 0, 0, null, 919877594039)
 
 //  let time = '00:15' ; // Default to 1 hour if not set
 //     let hour = time?.split(':')[0];
@@ -1863,14 +2083,22 @@ let mainData = {
 //     console.log(hour,minute);
 //   let botTimeout =  addUtcTime(hour,minute);
 // console.log(botTimeout);
+// let value = [
+//   198, 199, 200,
+//   212, 213, 216,
+//   217, 218
+// ]
 
+// let stringvaleu = JSON.stringify(value).replace(/[\[\]\s]/g, '');
+
+// console.log(stringvaleu)
 }, 3000);
 
 async function triggerSR(){
       var replymessage = await matchSmartReplies('addTag', 55, 'WA API')
       let isSReply = await iterateSmartReplies(replymessage, 559169223950422, 919877594039, 55, 83534, 380, 7133, 'WA API', 919877594039);
      
-}*/
+}
 
 
 
