@@ -1144,7 +1144,7 @@ style="margin-right: 9px;"
                                             <div class="conversation_inout_area">
                                                 <div class="input-area">
                                                   
-                                                    <ejs-richtexteditor id="editRTE" #chatEditor
+                                                    <ejs-richtexteditor id="editRTE" #chatEditor *ngIf="showAdvanceOption"
                                                         [toolbarSettings]="tools" [width]="0"  [maxLength]="1024" [showCharCount]="true"
                                                         placeholder="Type Message..." [pasteCleanupSettings]="pasteCleanupSettings" formControlName="dropOfMessage">
                                                     </ejs-richtexteditor>
@@ -1678,7 +1678,7 @@ style="margin-right: 9px;"
                 <p>Are you sure you want to Delete?</p>
             </div>
             <div class="modal-footer border-0 d-flex justify-content-end">
-                <button type="button" class="btn btn-danger" (click)="confirmDelete('0')">
+                <button type="button" class="btn btn-danger" (click)="confirmDelete('1')">
                     Delete
                 </button>
                 <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">

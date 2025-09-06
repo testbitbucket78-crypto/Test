@@ -1,6 +1,6 @@
 import { environment } from './../../../../environments/environment';
 
-import { ChangeDetectorRef, Component, ElementRef, EventEmitter, HostListener, Input, Output, ViewChild } from '@angular/core';
+import { ChangeDetectorRef, Component, ElementRef, EventEmitter, HostListener, Input, OnDestroy, Output, ViewChild } from '@angular/core';
 import { FormArray, FormBuilder, FormControl, FormGroup, Validators, AbstractControl, ValidationErrors, ValidatorFn } from '@angular/forms';
 import { NgbModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
 import { ContentRender, RichTextEditorComponent } from '@syncfusion/ej2-angular-richtexteditor';
@@ -10,7 +10,6 @@ import { RichTextEditor } from '@syncfusion/ej2-angular-richtexteditor';
 import { PhoneValidationService } from 'Frontend/dashboard/services/phone-validation.service';
 import { TeamboxService } from 'Frontend/dashboard/services';
 import { BotserviceService } from 'Frontend/dashboard/services/botservice.service';
-import Swal from 'sweetalert2';
 import {
   MAX_OPTIONS,
   MAX_BUTTONS,
@@ -62,6 +61,7 @@ interface BotVariable {
   name: string;
   dataType: 'text' | 'number' | 'boolean' | 'array' | 'object';
   value: any;
+  nodeId:any;
 }
 
 @Component({
@@ -69,7 +69,7 @@ interface BotVariable {
   templateUrl: './card-creation.component.html',
   styleUrls: ['./card-creation.component.scss']
 })
-export class CardCreationComponent {
+export class CardCreationComponent  implements OnDestroy {
   // Constants
   private readonly MAX_OPTIONS = MAX_OPTIONS;
   private readonly MAX_BUTTONS = MAX_BUTTONS;
@@ -258,10 +258,16 @@ onDocumentClick(event: MouseEvent): void {
     // }
     this.initForms();
   }
+  ngOnDestroy(): void {
+localStorage.removeItem('viewMode')
+localStorage.removeItem('botTimeOut')
+localStorage.removeItem('botId')
+localStorage.removeItem('botVarList')
+localStorage.removeItem('node_FE_Json')
+  }
 
   ngOnInit(): void {
     this.initEditor();
-    this.getStaticData()
     this.getAdditionalAttributes()
     this.getUserList()
     this.getTagData();
@@ -277,14 +283,7 @@ onDocumentClick(event: MouseEvent): void {
 
 
 
-  getStaticData() {
 
-    this.filteredAgents = this.botService.FILTERED_AGENTS
-    this.botsList = this.botService.AVAILABLE_BOTS;
-
-
-
-  }
   // ==================== INITIALIZATION METHODS ====================
 
 
@@ -421,13 +420,31 @@ onDocumentClick(event: MouseEvent): void {
     });
 
     if (localStorage.getItem('node_FE_Json')) {
-      this.botVariables = JSON.parse(localStorage.getItem('botVarList') || '[]');
+     
 
       var data: any = localStorage.getItem('node_FE_Json')
       this.loadFlow(JSON.parse(data))
       // this.loadFlow(data)
     }
 
+    if (localStorage.getItem('botVarList')) {
+      const stored = localStorage.getItem('botVarList');
+if (stored && stored !== 'null' && stored !== 'undefined') {
+  try {
+    let parsed = JSON.parse(stored);
+    this.botVariables = typeof parsed === 'string' ? JSON.parse(parsed) : parsed;
+     if (!Array.isArray(this.botVariables)) {
+    this.botVariables = [];
+  }
+  } catch (e) {
+    console.error('Invalid JSON in localStorage:', e);
+    this.botVariables = [];
+  }
+} else {
+  this.botVariables = [];
+}
+
+    }
 
 
 
@@ -1016,6 +1033,7 @@ uniqueRowNamesValidator(): ValidatorFn {
   private initContactAttributeForm(): void {
     this.contactAttributeForm = this.fb.group({
       selectedAttribute: [null, Validators.required],
+      selectedvalueBackend:[''],
       selectedValue: [''],
       inputValue: [''],
       selectedVariable: [''],
@@ -1129,7 +1147,7 @@ createCombinedVariable() {
   
   // Get question text (remove HTML tags if needed)
   const questionText = formValue.questionText || '';
-  const plainQuestionText = questionText.replace(/<[^>]*>/g, '').trim();
+  // const plainQuestionText = questionText.replace(/<[^>]*>/g, '').trim();
   
   // Get prompt message (if you have this field)
   const promptMessage = formValue.promptMessage || '';
@@ -1139,7 +1157,7 @@ createCombinedVariable() {
   const formattedOptions = options.map((opt:any) => `* ${opt}`).join('\n');
   
   // Combine everything
-  const combinedVariable = `${plainQuestionText}\n\n${promptMessage}\n\n${formattedOptions}`;
+  const combinedVariable = `${questionText}\n\n${promptMessage}\n\n${formattedOptions}`;
   
   // Now you can use this combinedVariable as needed
   return combinedVariable;
@@ -1262,23 +1280,35 @@ formData.options = ["True", "False"];
       const newVariable: BotVariable = {
         name: formData.variableName,
         dataType: formData.variableDataType,
-        value: this.getDefaultValueForType(formData.variableDataType)
+        value: this.getDefaultValueForType(formData.variableDataType),
+         nodeId: this.isEditMode ?this.selectedNodeId:null // ✅
       };
-
       // Check if variable with same name AND type already exists
-  const variableExists = this.botVariables.some(
+  const variableExists:any = this.botVariables.some(
   v =>
     v.name.trim().toLowerCase() === newVariable.name.trim().toLowerCase());
+  const value:any = this.botVariables.find((v:any) => v.name.trim().toLowerCase() === newVariable.name.trim().toLowerCase());
 
 
       if (!variableExists) {
         this.botVariables.push(newVariable);
       } else {
-        // Optionally show a message that variable wasn't added because it already exists
-        if(!(this.isEditMode && this.selectedNodeId !== null)){
-          this.showToaster("Bot variable is already exists Please add another bot variable",'error')
-          return;
-        }
+  if (this.isEditMode &&  (value.nodeId !== this.selectedNodeId)) {
+
+     this.showToaster(
+        "Bot variable already exists in another node. Please use a different name.",
+        "error"
+      );
+      return;
+    }
+  if (newVariable.nodeId == null) {
+
+     this.showToaster(
+        "Bot variable already exists in another node. Please use a different name.",
+        "error"
+      );
+      return;
+    }
       }
     }
     this.closeModal();
@@ -1454,7 +1484,6 @@ formData.options = ["True", "False"];
 
 
 
-
     const postData = {
       name: nodeName,
       inputs: 1,
@@ -1478,6 +1507,15 @@ formData.options = ["True", "False"];
     const nodeId = this.addNode(postData);
     const newHTML = this.createNodeHtml(nodeId, postData.data);
     this.updateNodeHTML(Number(nodeId), newHTML);
+
+
+    const index = this.botVariables.findIndex(item =>
+  item.name.trim().toLowerCase() === formData.variableName.trim().toLowerCase() &&
+  item.dataType === formData.variableDataType && item.nodeId === null
+);
+if(index != -1){
+  this.botVariables[index].nodeId =nodeId
+}
 
     this.setOutputPositionsBasedOnType(nodeId, formData);
 
@@ -1521,6 +1559,9 @@ formData.options = ["True", "False"];
     } else if (this.ParentNodeType === 'whatsAppFlow') {
       outputs = 2
     }
+    else if (this.ParentNodeType === 'openQuestion') {
+      outputs = 2
+    }
 
     if (formData?.invalidAction === "fallback" || formData?.timeElapseAction === "fallback") {
       outputs += 1;
@@ -1556,6 +1597,7 @@ formData.options = ["True", "False"];
              const output1 = outputs[0] as HTMLElement;
        output1.style.position = 'absolute';
        output1.style.top = '20px';
+      output1.style.borderColor = '#82de8d'
     }
     
 
@@ -1566,7 +1608,7 @@ formData.options = ["True", "False"];
       if(output2 != undefined){
         output2.style.position = 'absolute';
         output2.style.top = '41px';
-        output2.style.borderColor = 'red'; // ✅ use camelCase
+        output2.style.borderColor = 'red';
       }
       remainingOutputs = remainingOutputs.slice(1);
     }
@@ -1720,7 +1762,7 @@ formData.options = ["True", "False"];
 } else if (nodeData.text === 'sendText') {
   content += `<div class="textCont">${this.getTrimmedText(formData.textMessage)}</div>`;
 } else if (nodeData.text === 'openQuestion') {
-  content += `<div class="textCont">${this.getTrimmedText(formData.questionText)}</div>`;
+   content += this.createOpenQuestionContent(nodeId, formData);
 }else if (nodeData.text === 'questionOption') {
       content += this.createQuestionOptionContent(nodeId, formData);
     } else if (nodeData.text === 'buttonOptions') {
@@ -1814,10 +1856,15 @@ formData.options = ["True", "False"];
   private createHeaderMediaContent(nodeData: any, headerType: string): string {
     let mediaContent = '<div class="textContImage">';
     
-    if(nodeData.file == null){
-      nodeData.file = nodeData.formData.fileLink
+    if (!nodeData.file && nodeData.formData?.fileLink) {
+      nodeData.file = nodeData.formData.fileLink;
     }
-    const mediaSrc = nodeData.file ? this.filePreview || this.selectedImageUrl : 'assets/img/not_found.jpg';
+    
+    if (!this.filePreview && !this.selectedImageUrl) {
+      this.filePreview = nodeData.file;
+    }
+
+const mediaSrc = this.selectedImageUrl || this.filePreview || nodeData.file || 'assets/img/not_found.jpg';
 
     switch (headerType) {
       case 'image':
@@ -1911,14 +1958,24 @@ formData.options = ["True", "False"];
     const uniqueId = this.generateRandom6DigitNumber();
     buttonHTML = buttonHTML + `<button style="display:block;" class="btn btn_theme3 btn-block customButton mt-2 nodeButton-${nodeId} button_id-${uniqueId}">Submitted</button>`;
     content += `<div class="buttons">${buttonHTML}</div>`;
-
-
-    
-
-
     return content;
+  }
+
+  private createOpenQuestionContent(nodeId: any, formData: any): string {
+    let content = '<div class="textQuestion">';
+     if (formData.questionText) {
+      content += `<h6 class="body_text">${this.getTrimmedText(formData.questionText)}</h6>`;
+    }
+    content += '</div>';
 
 
+    let buttonHTML = '';
+
+    // buttonHTML = formData.options.map((buttonElement: any) => {
+    const uniqueId = this.generateRandom6DigitNumber();
+    buttonHTML = buttonHTML + `<button style="display:block;" class="btn btn_theme3 btn-block customButton mt-2 nodeButton-${nodeId} button_id-${uniqueId}">Valid answer</button>`;
+    content += `<div class="buttons">${buttonHTML}</div>`;
+    return content;
   }
 
   private createAdvanceActionContent(nodeData: any, formData: any): string {
@@ -2125,9 +2182,10 @@ syncMentionArray() {
 
     const node = this.editor.getNodeFromId(this.selectedNodeId);
     node.data.formData = formData;
-
-    if (['sendImage', 'sendVideo', 'sendDocument'].includes(this.cardType)) {
-      node.data.file = formData.file;
+    if (['sendImage', 'sendVideo', 'sendDocument','buttonOptions'].includes(this.cardType)) {
+      node.data.file = formData?.file || formData?.fileLink ;
+      node.data.fileName = this.uploadedFile?.name || formData?.name || null;
+      node.data.fileType = formData?.headerType || null ;
     }
 
     const currentOutputsCount = Object.keys(node.outputs).length;
@@ -2143,14 +2201,20 @@ syncMentionArray() {
       newOutputsCount = (formData?.buttons?.length + 1) || 1;
     } else if (this.ParentNodeType === 'whatsAppFlow') {
       newOutputsCount = 2;
+    }else if(this.ParentNodeType === 'openQuestion') {
+      newOutputsCount = 2;
     }
-
+    if(!formData.enableValidation){
+      formData.invalidAction = 'skip'
+      formData.errorMessage = ''
+      formData.timeElapseAction = false
+    }
     if (formData.invalidAction == "fallback" || formData.timeElapseAction == "fallback") {
       newOutputsCount = newOutputsCount + 1
     }
 
     if ((this.ParentNodeType === 'questionOption' || this.ParentNodeType === 'listOptions' ||
-      this.ParentNodeType === 'buttonOptions') && newOutputsCount !== currentOutputsCount) {
+      this.ParentNodeType === 'buttonOptions' || this.ParentNodeType === 'whatsAppFlow' || this.ParentNodeType === 'openQuestion') && newOutputsCount !== currentOutputsCount) {
       this.updateNodeOutputs(node, currentOutputsCount, newOutputsCount, formData);
     }
 
@@ -2699,6 +2763,7 @@ private fillButtonOptionsData(nodeData: any): void {
     buttonsArray.push(this.fb.control('', [Validators.required, Validators.maxLength(20)]));
   }
 
+  // console.log("updateForm===========",updateForm)
   // ✅ Patch the main form values
   this.buttonOptions.patchValue({
     headerType: updateForm?.headerType || 'none',
@@ -2734,6 +2799,8 @@ private fillButtonOptionsData(nodeData: any): void {
   // ✅ Restore dynamic validator for headerType → fileLink requirement
   const headerControl = this.buttonOptions.get('fileLink');
   if (['image', 'video', 'document'].includes(updateForm?.headerType)) {
+    this.selectedFileUrl = updateForm?.fileLink
+    this.selectedFileType =  this.buttonOptions.get('headerType')?.value 
     headerControl?.setValidators([Validators.required]);
   } else {
     headerControl?.clearValidators();
@@ -3162,13 +3229,29 @@ preventInvalidKeys(event: KeyboardEvent): void {
     this.settingService.getNewCustomField(this.userDetails.SP_ID).subscribe((allAttributes: any) => {
       
       if (allAttributes.status == 200) {
-this.currentAttributeList = allAttributes?.getfields?.filter((attr:any) =>
+var attributeListCustomize = allAttributes?.getfields?.map((attr: any, index: number) => {
+  // From 6th index onward, replace displayName with ActuallName
+  if (index <= 6) {
+    return {
+      ...attr,
+      displayName: attr.ActuallName
+    };
+  }
+  return attr;
+});
+
+
+
+
+this.currentAttributeList = attributeListCustomize.filter((attr:any) =>
   attr.ActuallName !== 'Phone_number' &&
   attr.ActuallName !== 'tag' &&
   attr.ActuallName !== 'OptInStatus'
 );
-        
-        const attributes = allAttributes?.getfields?.map((attr: any) => `${attr.displayName}`);
+   const attributes =attributeListCustomize
+  ?.map((attr: any) => attr.displayName)
+  .filter((name: string) => name !== "tag" && name !== "");
+        console.log(attributes)
         this.attributeList = attributes;
       }
 
@@ -3655,7 +3738,7 @@ this.listOptions.reset();
 
   onReattemptsChange(event: any, form: FormGroup): void {
     if (event.target.checked) {
-      form.get('reattemptsCount')?.setValue(event.target.value ? event.target.value : 1);
+      form.get('reattemptsCount')?.setValue(1);
     }
   }
 
@@ -3721,7 +3804,7 @@ this.listOptions.reset();
   }
 
 
-  selectedAttributeType: string = '';
+  selectedAttributeType: any = '';
   isUserTyping: boolean = false;
   selectedFromVariable: boolean = false;
   selectedOptions: any[] = [];
@@ -3730,14 +3813,19 @@ this.listOptions.reset();
     const selectedAttr = this.contactAttributeForm.get('selectedAttribute')?.value;
     this.attributeDetails = this.currentAttributeList.find((attr: any) => attr.ActuallName === selectedAttr);
     this.selectedAttributeType = this.attributeDetails?.type || '';
+    console.log(this.selectedAttributeType)
     this.selectedFromVariable = false;
     this.isUserTyping = false;
-
-    if (this.selectedAttributeType === 'Multi Select' || this.selectedAttributeType == 'Select' || this.selectedAttributeType == 'Switch') {
+    if (this.selectedAttributeType === 'Multi Select' || this.selectedAttributeType == 'Select' || this.selectedAttributeType == 'Switch' || this.selectedAttributeType == 'User') {
       try {
         this.selectedOptions = JSON.parse(this.attributeDetails?.dataTypeValues || '[]');
         if(this.selectedAttributeType == 'Switch'){
           this.selectedOptions = [{"optionName": "yes"},{"optionName": "no"}];
+        }
+        if(this.selectedAttributeType == 'User'){
+          this.selectedOptions = this.agents.map(item =>{
+            return {id:item.uid,optionName:item.name}
+          })
         }
       } catch {
         this.selectedOptions = [];
@@ -3752,9 +3840,16 @@ this.listOptions.reset();
   }
 
   selectedValues(variable: any): void {
+    var values
+    console.log(variable)
+    if (this.selectedAttributeType == 'Select') {
+    values = `${variable?.id}:${variable?.optionName}`
+      
+    }
     
     this.contactAttributeForm.patchValue({
       selectedValue: `{{${variable?.displayName || variable?.name || variable?.optionName}}} ` || '',
+      selectedvalueBackend:this.selectedAttributeType == 'Select'? values:variable?.displayName || variable?.name || variable?.optionName,
       inputValue: '',
       selectedVariable: '',
       operation: 'replace'
@@ -3778,19 +3873,24 @@ toggleSelection(variable: any) {
     this.selectedValuesList.push(variable);
   }
 
-  const combinedValues = this.selectedValuesList
-    .map(v => `{{${v.displayName || v.name || v.optionName}}}`)
-    .join(' ');
+const combinedValues = this.selectedValuesList
+  .map(v => v.displayName || v.name || v.optionName)
+  .join(', ');
+ 
+  const  combinedValuesIds = this.selectedValuesList
+  .map((v, index) => `${v.id}:${v.displayName || v.name || v.optionName}`)
+  .join(',');
+
+
 
   this.contactAttributeForm.patchValue({
     selectedValue: combinedValues || '',
+    selectedvalueBackend:combinedValuesIds,
     inputValue: '',
     selectedVariable: '',
     operation: 'replace'
   });
 
-  // Remove this line so dropdown stays open:
-  // this.openDropdown.status = '';
 
   this.selectedFromVariable = true;
   this.isUserTyping = false;
@@ -4565,7 +4665,7 @@ openBotVariableModal(editorId:any = '') {
     Object.entries(allNodes).forEach(([id, node]: [string, any]) => {
       // console.log('Processing node:', node);
       const formData = node.data.formData || {};
-      const isQuestionOption = node.data.text === 'questionOption' || node.data.text === "buttonOptions" ||  node.data.text ==="WorkingHoursModal" || node.data.text === "setCondition" || node.data.text === "listOptions";
+      const isQuestionOption = node.data.text === 'questionOption' || node.data.text === "buttonOptions" ||  node.data.text ==="WorkingHoursModal" || node.data.text === "setCondition" || node.data.text === "listOptions" || node.data.text === "whatsAppFlow" || node.data.text === "openQuestion" ;
       if(node.data.text === "listOptions"){
         var sectionListArray:any = []
   node?.data?.formData?.sections.forEach((element:any) => {
@@ -4576,6 +4676,19 @@ element?.rows.forEach((row:any) => {
   });
   node.data.sectionListArray = sectionListArray;
 }
+
+      if(node.data.text === "whatsAppFlow" || node.data.text === "openQuestion" ){
+        var sectionListArray:any = []
+        var value = node.data.text == "whatsAppFlow" ? 'submitted':'Valid answer'
+        sectionListArray.push(value)
+
+  node.data.sectionListArray = sectionListArray;
+}
+
+
+
+
+
 
 
       

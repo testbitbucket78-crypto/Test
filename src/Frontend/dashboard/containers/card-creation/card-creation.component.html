@@ -951,7 +951,7 @@
               <!-- Validation Error Message -->
               <div class="mb-3">
          <div class="character-label-wrapper">
-            <label class="question_text_label">Question Text</label>
+            <label class="question_text_label">Validation Error Message</label>
             <span class="character-count01">Characters</span>
             </div>
                 <ejs-richtexteditor id="errorRTE" #errorEditor [toolbarSettings]="basicTools" [width]="'100%'"
@@ -2614,13 +2614,13 @@
             <!-- </div> -->
             <div class="custom-input-wrapper">
               <input type="text" class="custom-input" formControlName="selectedValue"
-                *ngIf="selectedAttributeType != 'Multi Select' && selectedAttributeType != 'Select' && selectedAttributeType != 'Switch'"
+                *ngIf="selectedAttributeType != 'Multi Select' && selectedAttributeType != 'Select' && selectedAttributeType != 'Switch' && selectedAttributeType != 'User'"
                 placeholder="Enter variable or attribute" (focus)="isFocused = true" (blur)="isFocused = false"
                 (input)="onTextInputChange($event)" [readonly]="selectedFromVariable" />
 
 
               <input type="text" class="custom-input form-control" formControlName="selectedValue"
-                *ngIf="selectedAttributeType == 'Multi Select' || selectedAttributeType == 'Select' || selectedAttributeType == 'Switch'"
+                *ngIf="selectedAttributeType == 'Multi Select' || selectedAttributeType == 'Select' || selectedAttributeType == 'Switch' || selectedAttributeType == 'User'"
                 placeholder="Enter variable or attribute" (focus)="isFocused = true" (blur)="isFocused = false"
                 (input)="onTextInputChange($event)"  (keydown)="selectedFromVariable ? onSelectedValueKeydown($event) : allowOnlyBackspace($event)" style="padding-right: 151px;"/>
 
@@ -2629,7 +2629,7 @@
 
               <span class="select_box" [class.disabled]="isUserTyping" 
                 (click)="!isUserTyping && selectAttribute('option',$event)"   
-                *ngIf="selectedAttributeType == 'Multi Select' || selectedAttributeType == 'Select' || selectedAttributeType == 'Switch'"></span>
+                *ngIf="selectedAttributeType == 'Multi Select' || selectedAttributeType == 'Select' || selectedAttributeType == 'Switch' || selectedAttributeType == 'User'"></span>
 
               <span class="toggle_attributes_contactattribute" style="left: 345px;" [class.disabled]="isUserTyping"
                 (click)="!isUserTyping && selectAttribute('attr',$event)"></span>

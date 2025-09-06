@@ -371,10 +371,10 @@ export class BotBuilderComponent implements OnInit {
     this.botDetailsData = item;
 
     if (this.botDetailsData?.smartreplyusage) {
-      this.botDetailsData.smartreplyusage = JSON.parse(this.botDetailsData.smartreplyusage) || [];
+        this.botDetailsData.smartreplyusage = this.safeParse(this.botDetailsData.smartreplyusage, []);
     }
     if (this.botDetailsData?.botusage) {
-      this.botDetailsData.botusage = JSON.parse(this.botDetailsData.botusage) || [];
+      this.botDetailsData.botusage = this.safeParse(this.botDetailsData.botusage,[])
     }
 
     if (item) {
@@ -431,6 +431,17 @@ export class BotBuilderComponent implements OnInit {
 
 
   }
+
+  safeParse(jsonString: any, fallback: any = []) {
+  try {
+    if (jsonString && jsonString != 'null' && jsonString != 'undefined') {
+      return JSON.parse(jsonString);
+    }
+  } catch (e) {
+
+  }
+  return fallback;
+}
 
 
   convertHHMMToMinutes(time: string): number {
@@ -491,8 +502,8 @@ if (this.botBuilderForm) {
         if (response.status === 200) {
           this.botBuilderForm.reset();
           localStorage.setItem('botId', response.msg.insertId || response.botId)
+          localStorage.setItem('botTimeOut', this.botBuilderForm.value.botTimeout)
           if(Type == 'copy'){
-            localStorage.setItem('botTimeOut', this.botBuilderForm.value.botTimeout)
                this.botBuilderForm.reset();
             if (this.botDetailsData.node_FE_Json) {
               localStorage.setItem('node_FE_Json', this.botDetailsData.node_FE_Json)
@@ -558,7 +569,7 @@ if (this.botBuilderForm) {
             if (this.botDetailsData.node_FE_Json) {
               localStorage.setItem('node_FE_Json', this.botDetailsData.node_FE_Json)
             }
-               if (this.botDetailsData.botVarList) {
+          if (this.botDetailsData.botVarList) {
               localStorage.setItem('botVarList', JSON.stringify(this.botDetailsData.botVarList))
             }
             localStorage.setItem('botId', this.botDetailsData.id)
@@ -581,6 +592,7 @@ if (this.botBuilderForm) {
   copyBot(Type: any): void {
     if (Type == 'copy') {
       this.keywords = []
+      this.newKeyword = ''
       this.botBuilderForm.get('name')?.setValue(null)
       this.botBuilderForm.get('triggerKeywords')?.setValue(null)
       this.isEditMode = false
