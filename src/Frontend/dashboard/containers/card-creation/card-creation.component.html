@@ -2912,7 +2912,7 @@
             <div class="col-4">
               <label class="form-label">Time</label>
               <input type="number" class="form-control" style="width: 80px" [min]="1"
-                [max]="delayUnit === 'hour' ? 24 : 60"  (change)="validateTime()" [(ngModel)]="delayTime" 
+                [max]="delayUnit === 'hour' ? 24 : delayUnit === 'minute' ? 1440 : 86400"  (change)="validateTime()" [(ngModel)]="delayTime" 
                 placeholder="10" />
             </div>
             <div class="col-4">
