@@ -3295,7 +3295,7 @@ export class TeamboxComponent implements OnInit {
 		let name = this.userList.filter((items: any) => items.uid == this.uid)[0]?.name;
 		let agentName = this.userList.filter((items: any) => items.uid == AgentId)[0]?.name;
 		agentName = agentName == name ? 'Self' : agentName;
-		agentName = AgentId == -3 ? `Bot (${botName})` : agentName
+		agentName = AgentId == -4 ? `Bot (${botName})` : agentName
 		var bodyData = {
 			InteractionId: InteractionId,
 			AgentId: AgentId,

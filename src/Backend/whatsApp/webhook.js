@@ -230,6 +230,7 @@ async function extractDataFromMessage(body) {
         if (Type == 'interactive') {
           if(firstMessage?.interactive && firstMessage?.interactive?.type == 'nfm_reply'){
             message_text = 'Form sent';
+            try{
             let flow_reply_Json = JSON.stringify(firstMessage?.interactive?.nfm_reply?.response_json);
             let flow_reply = JSON.parse(firstMessage?.interactive?.nfm_reply?.response_json);
             let flow_token = JSON.parse(flow_reply?.flow_token)?.custom_info;
@@ -243,6 +244,9 @@ async function extractDataFromMessage(body) {
             if(mapping?.length > 0 && mapping[0]?.col_Mapping && mapping[0]?.col_Mapping?.length > 0 ){
             let body= { mapping: mapping[0].col_Mapping, spId: SPID[0]?.SP_ID, customerId: contactDetail?.customerId, flowresponse: flow_reply_Json }
             updatePreviousValue(body);
+            }
+            }catch{
+              console.log('------- whatsflowFailed ---------------');
             }
           } else if(firstMessage?.interactive && firstMessage?.interactive?.type == 'list_reply'){
         console.log('-------------------inside----------');
