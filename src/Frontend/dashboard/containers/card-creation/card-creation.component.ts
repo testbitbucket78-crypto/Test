@@ -1284,9 +1284,11 @@ formData.options = ["True", "False"];
          nodeId: this.isEditMode ?this.selectedNodeId:null // ✅
       };
       // Check if variable with same name AND type already exists
-  const variableExists:any = this.botVariables.some(
-  v =>
-    v.name.trim().toLowerCase() === newVariable.name.trim().toLowerCase());
+      if(!this.botVariables){
+        this.botVariables = []
+      }
+if(this.botVariables ){
+    const variableExists:any = this.botVariables.some(v =>v.name.trim().toLowerCase() === newVariable.name.trim().toLowerCase());
   const value:any = this.botVariables.find((v:any) => v.name.trim().toLowerCase() === newVariable.name.trim().toLowerCase());
 
 
@@ -1310,6 +1312,7 @@ formData.options = ["True", "False"];
       return;
     }
       }
+}
     }
     this.closeModal();
 
@@ -1345,7 +1348,7 @@ formData.options = ["True", "False"];
         advanceOption.data = this.notificationForm.value;
         break;
       case 'TimeDelayModal':
-  const maxTime = this.delayUnit === 'hour' ? 24 : 60;
+  const maxTime = this.delayUnit === 'hour' ? 24 :this.delayUnit === 'minute' ? 1440 : 86400;
 
   if (!this.delayTime || this.delayTime < 1) {
     this.showToaster('Time must be greater than 0.','error');
@@ -1508,13 +1511,17 @@ formData.options = ["True", "False"];
     const newHTML = this.createNodeHtml(nodeId, postData.data);
     this.updateNodeHTML(Number(nodeId), newHTML);
 
-
+if (this.botVariables == null){
+  this.botVariables = [];
+}
+if(formData?.saveAsVariable && formData?.variableName){
     const index = this.botVariables.findIndex(item =>
-  item.name.trim().toLowerCase() === formData.variableName.trim().toLowerCase() &&
-  item.dataType === formData.variableDataType && item.nodeId === null
+  item.name.trim().toLowerCase() === formData?.variableName?.trim().toLowerCase() &&
+  item.dataType === formData?.variableDataType && item?.nodeId === null
 );
 if(index != -1){
   this.botVariables[index].nodeId =nodeId
+}
 }
 
     this.setOutputPositionsBasedOnType(nodeId, formData);
@@ -1657,10 +1664,32 @@ if(index != -1){
     });
   }
 
-   getTrimmedText = (text: string | undefined) =>{
-    
-    const maxLength = 132;
-  return text && text.length > maxLength ? text.slice(0, maxLength) + ' ...' : text || 'Sample Text';
+   getTrimmedText = (html: string | undefined, maxLength = 132) =>{
+     if (!html) return 'Sample Text';
+
+  // Replace chip span with placeholder [CHIP]
+  const chipRegex = /<span[^>]*class="e-mention-chip"[^>]*>.*?<\/span>/g;
+  let chipCount = 0;
+  const placeholders: string[] = [];
+
+  const tempHtml = html.replace(chipRegex, (match) => {
+    placeholders.push(match); // store original chip
+    chipCount++;
+    return `[CHIP_${chipCount}]`; // placeholder
+  });
+
+  // Now trim plain text + placeholders
+  let trimmed = tempHtml;
+  if (tempHtml.length > maxLength) {
+    trimmed = tempHtml.slice(0, maxLength) + ' ...';
+  }
+
+  // Restore chips from placeholders
+  placeholders.forEach((chip, i) => {
+    trimmed = trimmed.replace(`[CHIP_${i + 1}]`, chip);
+  });
+
+  return trimmed;
   }
 
   private generateBottomOffsetsReversed(sections: any[]): number[] {
@@ -2024,7 +2053,7 @@ const mediaSrc = this.selectedImageUrl || this.filePreview || nodeData.file || '
         }
         if (formData.data.message) {
           
-          content += `<div class="textCont">${this.getTrimmedText(formData.data.message)} </a></span></p></div>`;
+          content += `<div class="textCont">${this.getTrimmedText(formData.data.message)} </div>`;
         }
         break;
       case 'WorkingHoursModal':
@@ -3194,7 +3223,7 @@ isTagSelectedRemove(tagId: number): boolean {
   // ==================== TIME DELAY HANDLING ====================
 
   validateTime(): void {
-    const max = this.delayUnit === 'hour' ? 24 : 60;
+    const max = this.delayUnit === 'hour' ? 24 : this.delayUnit === 'minute' ? 1440 : 86400;
     this.invalidTime = this.delayTime < 1 || this.delayTime > max;
   }
 
@@ -3206,7 +3235,8 @@ preventInvalidKeys(event: KeyboardEvent): void {
 }
 
   onUnitChange(): void {
-    const max = this.delayUnit === 'hour' ? 24 : 60;
+
+    const max = this.delayUnit === 'hour' ? 24 : 1440;
     if (this.delayTime > max) {
       this.delayTime = max;
     }

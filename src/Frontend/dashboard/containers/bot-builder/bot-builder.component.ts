@@ -421,6 +421,7 @@ export class BotBuilderComponent implements OnInit {
       } else if (item.actionTypeId == 4) {
 
         this.converstatation = item.Value
+        this.hasSelectedChild = true;
       }
     })
 
@@ -900,6 +901,11 @@ this.closeModal()
     this.ShowAddAction = true;
     this.showSubmenuPanel = false;
     this.ShowAssignOption = false;
+    this.assignedAgentList.forEach((action: any) => {
+if ((action?.actionType === 'assign_agent'  || action?.actionType === 'Mark_Status')) {
+this.hasSelectedChild = true
+}
+    });
   }
 
 
@@ -1074,10 +1080,9 @@ this.hasSelectedChild = true;
     this.ShowAddAction = false;
 
     if (this.isOptionDisabled(action.value)) return;
-
     if (this.exclusiveActions.includes(action.value)) {
-      this.selectedExclusiveAction = this.selectedExclusiveAction === action.value ? null : action.value;
-      this.selectedExclusiveAction === action.value ? this.addExclusiveAction(action) : this.removeExclusiveAction(action.value);
+
+      this.selectedExclusiveAction == action.value ? this.addExclusiveAction(action) : this.removeExclusiveAction(action.value);
     }
 
     
