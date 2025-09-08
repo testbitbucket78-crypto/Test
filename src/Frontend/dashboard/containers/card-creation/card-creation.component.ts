@@ -246,9 +246,9 @@ onDocumentClick(event: MouseEvent): void {
     public validation: PhoneValidationService,private modalService: NgbModal,
     private apiService: TeamboxService, private botService: BotserviceService, public settingService: SettingsService, public router: Router
   ) {
-    this.botTimeout = localStorage.getItem('botTimeOut');
+    this.botTimeout = sessionStorage.getItem('botTimeOut');
     this.userDetails = JSON.parse(sessionStorage.getItem('loginDetails') || '{}');
-    var viewMode:any = localStorage.getItem('viewMode') == undefined?false:localStorage.getItem('viewMode')
+    var viewMode:any = sessionStorage.getItem('viewMode') == undefined?false:sessionStorage.getItem('viewMode')
     if (viewMode) {
        this.viewMode =  JSON.parse(viewMode)
     }
@@ -259,11 +259,11 @@ onDocumentClick(event: MouseEvent): void {
     this.initForms();
   }
   ngOnDestroy(): void {
-localStorage.removeItem('viewMode')
-localStorage.removeItem('botTimeOut')
-localStorage.removeItem('botId')
-localStorage.removeItem('botVarList')
-localStorage.removeItem('node_FE_Json')
+sessionStorage.removeItem('viewMode')
+sessionStorage.removeItem('botTimeOut')
+sessionStorage.removeItem('botId')
+sessionStorage.removeItem('botVarList')
+sessionStorage.removeItem('node_FE_Json')
   }
 
   ngOnInit(): void {
@@ -419,16 +419,16 @@ localStorage.removeItem('node_FE_Json')
       }
     });
 
-    if (localStorage.getItem('node_FE_Json')) {
+    if (sessionStorage.getItem('node_FE_Json')) {
      
 
-      var data: any = localStorage.getItem('node_FE_Json')
+      var data: any = sessionStorage.getItem('node_FE_Json')
       this.loadFlow(JSON.parse(data))
       // this.loadFlow(data)
     }
 
-    if (localStorage.getItem('botVarList')) {
-      const stored = localStorage.getItem('botVarList');
+    if (sessionStorage.getItem('botVarList')) {
+      const stored = sessionStorage.getItem('botVarList');
 if (stored && stored !== 'null' && stored !== 'undefined') {
   try {
     let parsed = JSON.parse(stored);
@@ -437,7 +437,7 @@ if (stored && stored !== 'null' && stored !== 'undefined') {
     this.botVariables = [];
   }
   } catch (e) {
-    console.error('Invalid JSON in localStorage:', e);
+    console.error('Invalid JSON in sessionStorage:', e);
     this.botVariables = [];
   }
 } else {
@@ -4539,7 +4539,7 @@ openBotVariableModal(editorId:any = '') {
     var data = {
       status: '',
       node_FE_Json: JSON.stringify(exportData),
-      botId: localStorage.getItem('botId'),
+      botId: sessionStorage.getItem('botId'),
       SPID: this.userDetails.SP_ID,
       nodes: [],
       botVarList:this.botVariables
@@ -4587,7 +4587,7 @@ openBotVariableModal(editorId:any = '') {
       data.status = 'publish'
       data.nodes = flowData
     }
-     localStorage.setItem('node_FE_Json',data.node_FE_Json)
+     sessionStorage.setItem('node_FE_Json',data.node_FE_Json)
      
     this.botService.submitBot(data).subscribe((res: any) => {
       this.isLoading = false

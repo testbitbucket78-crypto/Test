@@ -201,7 +201,7 @@ export class BotBuilderComponent implements OnInit {
   ) {
     this.profilePicture = JSON.parse(sessionStorage.getItem('loginDetails')!)?.profile_img;
     this.userDetails = JSON.parse(sessionStorage.getItem('loginDetails')!);
-    localStorage.setItem('viewMode', 'false')
+    sessionStorage.setItem('viewMode', 'false')
 
     this.assignActionList = JSON.parse(JSON.stringify(this.assignAction))
 
@@ -253,9 +253,9 @@ export class BotBuilderComponent implements OnInit {
 
   getBotDetails() {
     this.isLoading = true
-    localStorage.removeItem('node_FE_Json')
-    localStorage.removeItem('botVarList')
-    localStorage.removeItem('botId')
+    sessionStorage.removeItem('node_FE_Json')
+    sessionStorage.removeItem('botVarList')
+    sessionStorage.removeItem('botId')
     var SPID = this.userDetails?.SP_ID || 159
     this.botService.getBotAlldetails(SPID).subscribe((res: any) => {
       if (res.status == 200) {
@@ -502,16 +502,16 @@ if (this.botBuilderForm) {
       this.botService.saveBotDetails(data).subscribe((response: any) => {
         if (response.status === 200) {
           this.botBuilderForm.reset();
-          localStorage.setItem('botId', response.msg.insertId || response.botId)
-          localStorage.setItem('botTimeOut', this.botBuilderForm.value.botTimeout)
+          sessionStorage.setItem('botId', response.msg.insertId || response.botId)
+          sessionStorage.setItem('botTimeOut', this.botBuilderForm.value.botTimeout)
           if(Type == 'copy'){
                this.botBuilderForm.reset();
             if (this.botDetailsData.node_FE_Json) {
-              localStorage.setItem('node_FE_Json', this.botDetailsData.node_FE_Json)
+              sessionStorage.setItem('node_FE_Json', this.botDetailsData.node_FE_Json)
               
             }
             if (this.botDetailsData.botVarList) {
-              localStorage.setItem('botVarList', JSON.stringify(this.botDetailsData.botVarList))
+              sessionStorage.setItem('botVarList', JSON.stringify(this.botDetailsData.botVarList))
             }
           }
           this.closeModalById('createBotModal');
@@ -568,14 +568,14 @@ if (this.botBuilderForm) {
             this.isLoading = false
             this.botBuilderForm.reset();
             if (this.botDetailsData.node_FE_Json) {
-              localStorage.setItem('node_FE_Json', this.botDetailsData.node_FE_Json)
+              sessionStorage.setItem('node_FE_Json', this.botDetailsData.node_FE_Json)
             }
           if (this.botDetailsData.botVarList) {
-              localStorage.setItem('botVarList', JSON.stringify(this.botDetailsData.botVarList))
+              sessionStorage.setItem('botVarList', JSON.stringify(this.botDetailsData.botVarList))
             }
-            localStorage.setItem('botId', this.botDetailsData.id)
+            sessionStorage.setItem('botId', this.botDetailsData.id)
             var botTimeout:any = this.convertHHMMToMinutes(this.botDetailsData.timeout_value);
-            localStorage.setItem('botTimeOut', botTimeout)
+            sessionStorage.setItem('botTimeOut', botTimeout)
           this.closeModalById('botModal');
           this.closeModalById('submitBotModal');
             this.router.navigate(['/bot-Creation']);
@@ -1267,13 +1267,13 @@ this.currentModalType = type
 viewBot(){
 
    if (this.botDetailsData.node_FE_Json) {
-              localStorage.setItem('node_FE_Json', this.botDetailsData.node_FE_Json)
-              localStorage.setItem('viewMode', 'true')
+              sessionStorage.setItem('node_FE_Json', this.botDetailsData.node_FE_Json)
+              sessionStorage.setItem('viewMode', 'true')
 
             }
             this.closeModalById('viewFlowModal');
             this.closeModalById('botModal');
-            localStorage.setItem('botId', this.botDetailsData.id)
+            sessionStorage.setItem('botId', this.botDetailsData.id)
             this.router.navigate(['/bot-Creation']);
   
 }
