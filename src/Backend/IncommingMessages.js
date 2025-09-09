@@ -1244,7 +1244,7 @@ async function sendDropOffMessage(data) {
     if(botData[0]?.timeout_message){
       let message_text = await getExtraxtedMessage(botData[0]?.timeout_message, data.sid, data.custid);
       let result = await messageThroughselectedchannel(data.sid, data?.toPhoneNumber, 'text', message_text, '', data.phone_number_id, data.channelType, -4, data.interactionId, 'text', botData[0]?.timeout_message);
-      setTimeout(()=>{notify.NotifyServer(data?.display_phone_number, false, data?.interactionId, 0, 'Out', 'Smartreply')},100);
+      setTimeout(()=>{notify.NotifyServer(data?.display_phone_number, false, data?.interactionId, 0, 'Out', 'Smartreply')},200);
       // var updateBotSessionQuery = "update BotSessions set isWaiting=1,current_nodeId=? where botId =? and status=2";
       //   let updateBotSession = await db.excuteQuery(updateBotSessionQuery, [json?.connectedId,data?.botId]);
       if(result){
@@ -1303,7 +1303,10 @@ async function botAdvanceAction(botId,custid,interactionId,spid,display_phone_nu
   }
 }
 if(!isChatAssign){
-
+  const updateQuery = "UPDATE InteractionMapping SET is_active =0 WHERE InteractionId =?";
+      await db.excuteQuery(updateQuery, [interactionId]);
+      let val = [[1,interactionId, -1, -4]];
+      var assignCon = await db.excuteQuery(updateInteractionMapping, [val]);
 }
 }
 
@@ -1335,7 +1338,7 @@ function delay(ms = 100) {
 
 async function identifyNode(data){
   try {    
-    await delay(); 
+    await delay(300); 
     let myUTCString = new Date().toUTCString();
     const time = moment.utc(myUTCString).format('YYYY-MM-DD HH:mm:ss');  
   var identityNodeQuery = "select * from botNodes where tempNodeId =? and botId=?";
@@ -1359,7 +1362,7 @@ async function identifyNode(data){
       console.log(replacedText,'------------------replacedText------------------');
       let message_text = await getExtraxtedMessage(replacedText, data.sid, data.custid);
       result = await messageThroughselectedchannel(data.sid, data?.toPhoneNumber, 'text', message_text, json?.data?.file, data?.phone_number_id, data?.channelType, -4, data.interactionId, messageType, replacedText);      
-      setTimeout(()=>{notify.NotifyServer(data?.display_phone_number, false, data.interactionId, 0, 'Out', 'Smartreply')},100);
+      setTimeout(()=>{notify.NotifyServer(data?.display_phone_number, false, data.interactionId, 0, 'Out', 'Smartreply')},200);
       data.nodeId = json?.connectedId;
       await identifyNode(data);
     }else if(type == 'assignAgentModal'){
@@ -1440,7 +1443,9 @@ data.nodeId = json?.option[1]?.optionConnectedId;
           invalidQuestionResponse(data,json);
         }
       } else if(type =='openQuestion'){
-        if((json?.data?.answerType == 'email' && isValidEmail(data?.incommingMessage)) || (json?.data?.answerType == 'text' && isValidText(json,data?.incommingMessage)) || (json?.data?.answerType == 'number' && isValidNumber(json,data?.incommingMessage)) || (json?.data?.answerType == 'custom' && isCustomText(json,data?.incommingMessage))){
+        console.log(json?.data?.answerType,'------------------------answerType--------------');
+        console.log(json?.data?.answerType.trim() == 'number','------------------------answerType--------------');
+        if((json?.data?.answerType == 'email' && isValidEmail(data?.incommingMessage)) || (json?.data?.answerType == 'text' && isValidText(json,data?.incommingMessage)) || (json?.data?.answerType.trim() == 'number' && isValidNumberQuestion(json,data?.incommingMessage)) || (json?.data?.answerType == 'custom' && isCustomText(json,data?.incommingMessage))  || (json?.data?.answerType == 'date' && isValidDate(json,data?.incommingMessage))){
           data.nodeId = json.option[0]?.optionConnectedId;
          let returnedData = await botVariablexecute(json,data);
           identifyNode(returnedData);
@@ -1461,7 +1466,7 @@ data.nodeId = json?.option[1]?.optionConnectedId;
         if(type == 'buttonOptions'){
           let payload = await WaApiButtons( data?.toPhoneNumber, json?.data,data);
           console.log(payload);
-          console.log(payload?.interactive?.header?.headerType);
+          console.log(payload?.interactive?.header?.image);
 
           let buttonList = json?.data?.buttons;
           let buttons = [];
@@ -1482,9 +1487,9 @@ data.nodeId = json?.option[1]?.optionConnectedId;
           } 
           let result = await createWhatsAppPayload(data.sid, payload);
           if (result?.status == 200) {
-            let messageValu = [[data.sid, 'text', "", data?.interactionId, -4, 'Out', messageText, messageType, (messageType == 'text' ? 'text' : data?.fileLink) , result.message.messages[0].id, "", time, time, "", -4, 1,JSON.stringify(buttons),'[]']]
+            let messageValu = [[data.sid, 'text', "", data?.interactionId, -4, 'Out', messageText,(messageType == 'text' ? 'text' : json?.data?.fileLink) , messageType, result.message.messages[0].id, "", time, time, "", -4, 1,JSON.stringify(buttons),'[]']]
             let saveMessage = await db.excuteQuery(insertMessageQuery, [messageValu]);
-      setTimeout(()=>{notify.NotifyServer(data?.display_phone_number, false, data.interactionId, 0, 'Out', 'Smartreply')},100);
+      setTimeout(()=>{notify.NotifyServer(data?.display_phone_number, false, data.interactionId, 0, 'Out', 'Smartreply')},200);
           }
         } else if(type == 'listOptions'){
           let payload = await WaApiListPayload( data?.toPhoneNumber, json?.data,data);
@@ -1502,19 +1507,19 @@ data.nodeId = json?.option[1]?.optionConnectedId;
           if (result?.status == 200) {
             let messageValu = [[data.sid, 'text', "", data?.interactionId, -4, 'Out', messageText, 'text', 'text', result.message.messages[0].id, "", time, time, "", -4, 1,JSON.stringify(buttons),'[]']]
             let saveMessage = await db.excuteQuery(insertMessageQuery, [messageValu]);
-      setTimeout(()=>{notify.NotifyServer(data?.display_phone_number, false, data?.interactionId, 0, 'Out', 'Smartreply')},100);
+      setTimeout(()=>{notify.NotifyServer(data?.display_phone_number, false, data?.interactionId, 0, 'Out', 'Smartreply')},200);
           }
         } else if(type == 'questionOption'){
           let replacedText = await replacebotVariable(JSON.parse(data?.botSessionVariables),json?.data?.questionTextMessage);
           let message_text = await getExtraxtedMessage(replacedText, data.sid, data.custid);
               result = await messageThroughselectedchannel(data.sid, data?.toPhoneNumber, 'text', message_text, '', data?.phone_number_id, data?.channelType, -4, data.interactionId, 'text', replacedText)
-      setTimeout(()=>{notify.NotifyServer(data?.display_phone_number, false, data?.interactionId, 0, 'Out', 'Smartreply')},100);
+      setTimeout(()=>{notify.NotifyServer(data?.display_phone_number, false, data?.interactionId, 0, 'Out', 'Smartreply')},200);
 
         }else if(type == 'openQuestion'){
           let replacedText = await replacebotVariable(JSON.parse(data?.botSessionVariables),json?.data?.questionText);
           let message_text = await getExtraxtedMessage(replacedText, data.sid, data.custid)
               result = await messageThroughselectedchannel(data.sid, data?.toPhoneNumber, 'text', message_text, '', data?.phone_number_id, data?.channelType, -4, data.interactionId, 'text', replacedText)
-      setTimeout(()=>{notify.NotifyServer(data?.display_phone_number, false, data?.interactionId, 0, 'Out', 'Smartreply')},100);
+      setTimeout(()=>{notify.NotifyServer(data?.display_phone_number, false, data?.interactionId, 0, 'Out', 'Smartreply')},200);
 
         }else if(type == 'whatsAppFlow'){
           console.log('---------------------------whatsAppFlow 123 ----------------------------');
@@ -1533,7 +1538,7 @@ data.nodeId = json?.option[1]?.optionConnectedId;
           if (result?.status == 200) {
             let messageValu = [[data.sid, 'text', "", data?.interactionId, -4, 'Out', messageText, 'text', 'text', result.message.messages[0].id, "", time, time, "", -4, 1, JSON.stringify(buttons), '[]']]
             let saveMessage = await db.excuteQuery(insertMessageQuery, [messageValu]);
-      setTimeout(()=>{notify.NotifyServer(data?.display_phone_number, false, data?.interactionId, 0, 'Out', 'Smartreply')},100);
+      setTimeout(()=>{notify.NotifyServer(data?.display_phone_number, false, data?.interactionId, 0, 'Out', 'Smartreply')},200);
           }
         }
         questionOperations();
@@ -1682,7 +1687,7 @@ function isCustomText(json,messageText) {
   if(json?.data?.customRegex){
   let pattern = new RegExp(json?.data?.customRegex);
   return pattern.test(messageText);
-}
+} return true;
   } catch{
     return false;
   }
@@ -1705,6 +1710,7 @@ if(json?.data?.textRegex){
   let pattern = new RegExp(json?.data?.textRegex);
   return pattern.test(messageText);
 }
+return true;
   } catch{
     return false;
   }
@@ -1713,8 +1719,9 @@ if(json?.data?.textRegex){
 
 
 
-function isValidNumber(json,messageText) {
+function isValidNumberQuestion(json,messageText) {
   try{
+  console.log(json?.data,messageText,'---------messageText ----------------------')
   if(json?.data?.maxNumber){
   if((Number(messageText) >json?.data?.maxNumber)){
     return false;
@@ -1726,13 +1733,37 @@ function isValidNumber(json,messageText) {
   }
 }
 if(json?.data?.numberRegex){
+  console.log('---------inNmuberREgex ----------------------')
   let pattern = new RegExp(json?.data?.numberRegex);
   return pattern.test(messageText);
-}  
+}
+return true;  
   } catch{
     return false;
   }
 } 
+
+function isValidDate(json,dateStr) {
+  const date = new Date(dateStr);
+  const minDate = new Date(json?.data?.minDate);
+  const maxDate = new Date(json?.data?.maxDate);
+console.log(date,'-------------------------date---------------------');
+console.log(minDate,'-------------------------minDate---------------------');
+console.log(maxDate,'-------------------------maxDate---------------------');
+  if (isNaN(date.getTime())) {
+    return false; 
+  }
+
+  if (isNaN(minDate.getTime()) || isNaN(maxDate.getTime())) {
+    return false; 
+  }
+
+  if (date < minDate || date > maxDate) {
+    return false;
+  }
+
+  return true;
+}
 
 
 async function updateAttribute(json,data) {
@@ -1853,7 +1884,7 @@ async function invalidQuestionResponse(data,json){
             if(json?.data?.reattemptsAllowed && (json?.data?.reattemptsCount >sessionDetail?.node_retry_count)){
               let message_text = await getExtraxtedMessage(json?.data?.errorMessage, data.sid, data.custid)
               result = await messageThroughselectedchannel(data.sid, data?.toPhoneNumber, 'text', message_text, json?.data?.file, data?.phone_number_id, data?.channelType, -4, data.interactionId, 'text', message_text)
-      setTimeout(()=>{notify.NotifyServer(data?.display_phone_number, false, data?.interactionId, 0, 'Out', 'Smartreply')},100);
+      setTimeout(()=>{notify.NotifyServer(data?.display_phone_number, false, data?.interactionId, 0, 'Out', 'Smartreply')},200);
               var updateBotSessionQuery = "update BotSessions set isWaiting=1,node_retry_count=? where botId =? and status=2";
         let updateBotSession = await db.excuteQuery(updateBotSessionQuery, [sessionDetail?.node_retry_count+1,data?.botId]);
             } else{
@@ -2172,7 +2203,7 @@ let mainData = {
 //-----start------- 0 null 0  559169223950422 Pawan Sharma 917618157986 55 83534 380 Open 7133 80363 null WA API 0 0 0 null 919877594039 ------end-------
 
 
-//autoReplyDefaultAction(0, null, 0, 'Right Answer', 559169223950422,'Pawan Sharma', 917618157986, 55, 83534, 380, 'Open', 7137, 80363, null, 'WA API', 0, 0, 0, null, 919877594039)
+//autoReplyDefaultAction(0, null, 0, '02 Date', 559169223950422,'Pawan Sharma', 917618157986, 55, 83534, 380, 'Open', 7137, 80363, null, 'WA API', 0, 0, 0, null, 919877594039)
 
 //  let time = '00:15' ; // Default to 1 hour if not set
 //     let hour = time?.split(':')[0];

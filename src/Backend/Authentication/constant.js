@@ -1,5 +1,5 @@
 const db = require("../dbhelper");
-const { getUrl, env } = require('./config');
+const { getUrl, env } = require('../config');
 
 const host= getUrl('host');
 
