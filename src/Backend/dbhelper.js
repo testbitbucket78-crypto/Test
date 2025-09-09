@@ -1,6 +1,7 @@
 const mysql = require('mysql');
 //const mysql = require('mysql2')
 const val = require('./Authentication/constant');
+const logger = require('./common/logger.log');
 
 
 var db = mysql.createConnection({
@@ -13,15 +14,16 @@ var db = mysql.createConnection({
 });
 
 db.connect((err) => {
-  
     if(err){
         console.log("db connect err");
         console.log(err)
+        logger.info(`Error while connecting to the DB: ${err}`)
     }
     if (!err) {
 
         console.log("Connected ");
         console.log('Connection state ***** : ', db.state);
+
         // ping the database every 5 min
         const pingInterval = setInterval(() => {
             db.ping((error) => {
@@ -38,6 +40,8 @@ db.connect((err) => {
 
     } else {
         console.log("Connection failed" + JSON.stringify(err, undefined, 2));
+        logger.info(`Connection failed: ${err}`)
+
     }
 });
 
@@ -69,6 +73,7 @@ async function runQuery(req, res, query, param) {
         });
     } catch (err) {
         console.log(err)
+        logger.info(`Connection failed in the Method runQuery: ${err}`)
     }
 
 }
@@ -99,11 +104,15 @@ async function excuteQuery(query, param) {
         }).catch((reason) => {
             console.log("Error is loged by promise")
            console.log(reason);
+          logger.info(`Connection failed in the Method excuteQuery: ${reason}`)
+
           })
 
     } catch (err) {
         console.log("_____DB EXCUTEQUERY ERR ______")
         console.log(err)
+        logger.info(`Connection failed in the Method excuteQuery: ${err}`)
+
     }
 
 
