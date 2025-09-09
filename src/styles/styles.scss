@@ -505,3 +505,9 @@ div#node-1 {
 .drawflow.dragging {
   cursor: grabbing !important;
 }
+
+
+
+body.modal-open {
+  overflow: hidden !important;
+}

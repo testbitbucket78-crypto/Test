@@ -1,3 +1,10 @@
+html, body {
+  height: 100% !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  overflow: hidden; /* Prevent global scroll */
+}
+
 .new_chat_content .parent-drawflow {
     width: 100%;
     height: 100%;
@@ -28,7 +35,8 @@
 
 
 .new_chat_left {
-    height: calc(100svh - 69px);
+    // height: calc(100vh - 69px);
+    // height: 100vh;
     border-right: 1px solid var(--br);
     max-width: 270px;
     padding: 15px;
@@ -128,7 +136,7 @@
 
 .new_chat_content {
     width: 100%;
-    height: calc(100svh - 69px);
+    // height: calc(100vh - 69px);
     background-color: #F5F5F5;
     background-size: 25px 25px;
     background-image: linear-gradient(to right, #ececec 1px, transparent 1px), linear-gradient(to bottom, #ececec 1px, transparent 1px);
@@ -136,7 +144,7 @@
   
   .new_chat_content .parent-drawflow {
     width: 100%;
-    height: calc(100svh - 121px);
+    height: calc(100vh - 121px);
   }
   
   .new_chat_content .drawflow .drawflow-node {
@@ -404,7 +412,7 @@
 }
 .new_chat_content {
     width: 100%;
-    height: calc(100svh - 69px);
+    // height: calc(100vh - 69px);
     background-color: #f5f5f5;
     background-size: 25px 25px;
     background-image: linear-gradient(to right, #ececec 1px, transparent 1px), linear-gradient(to bottom, #ececec 1px, transparent 1px);
@@ -525,10 +533,10 @@
 }
 
 .sidebar {
-  width: 255x;
+  width: 255px;
   padding: 20px;
   background: #f9f9f9;
-  height: 84vh;
+  height: calc(100vh - 132px);
   overflow-y: auto;
   margin-top: 44px;
 
@@ -2309,7 +2317,7 @@ textarea.form-control {
 .toggle_attribute_condition {
 
     position: absolute;
-    left: 281px;
+    left: 273px;
     top: 54%;
     transform: translateY(-50%);
     /* width: 20px !important; */
@@ -2332,6 +2340,19 @@ textarea.form-control {
 
 }
 
+
+.toggle_attributes_contactattribute{
+  position: absolute;
+    left: 296px !important;
+    top: 54%;
+    transform: translateY(-50%);
+    width: 20px;
+    height: 20px;
+    background-image: url(/assets/img/campaign/attribute.svg);
+    background-size: contain;
+    background-repeat: no-repeat;
+    cursor: pointer;
+}
 
 .e-richtexteditor  .e-rte-toolbar  .e-toolbar-item  .e-icons{
     color: #7A86A1 !important;
@@ -2360,7 +2381,7 @@ textarea.form-control {
     background-size: 9px;
     /* background-position: center right 145px; */
     position: absolute;
-    left: 314px;
+    left: 273px !important;
     top: 71%;
     transform: translateY(-50%);
     width: 20px;
@@ -3258,7 +3279,7 @@ font-size: 14px;
 .e-richtexteditor   .e-rte-character-count {
     position: absolute !important;
     top: -36px !important;
-    right: 60px;
+    right: 64px;
     z-index: 100;
     font-size: 12px !important;
     color: #000000;
@@ -3349,4 +3370,25 @@ sb-top-nav {
 .upperIndex{
       z-index: 99999 !important;
   top: 21% !important;
+}
+
+
+
+label.label_contact {
+    position: relative;
+    margin-left: 8px;
+    margin-top: 4px;
+}
+
+input[type="checkbox"] {
+    cursor: pointer;
+}
+
+
+.sendMessageBody{
+  max-height: 70vh; overflow-y: auto; width: 100%;
+}
+
+.submitButtonOfSendMessage{
+  background-color: #6b46c1; border: none; margin-left: 11px
 }

@@ -5,6 +5,10 @@ const val = require('./constant');
 const bodyParser = require('body-parser');
 const cors = require('cors');
 const { type } = require("os");
+const fs = require("fs");
+const logger = require('../common/logger.log');
+const { Parser } = require('json2csv');
+const path = require('path');
 const nodemailer = require('nodemailer');
 app.use(bodyParser.json());
 app.use(cors());
@@ -16,7 +20,11 @@ const { EmailConfigurations } =  require('../Authentication/constant');
 const { MessagingName }= require('../enum');
 const commonFun = require('../common/resuableFunctions.js')
 
-
+// const status = {
+// "running":2,
+// completed:3,
+// droped:4
+// }
 const getGallery = async (req, res) => {
     try {
       
@@ -74,7 +82,10 @@ const submitBots = async (request, res) => {
     let nodes = req.nodes; 
     let nodeJson = req.node_FE_Json;
     let published_at = req.status =='publish' ? created_at :null;
-    let bot = await db.excuteQuery(val.updateBotStatus, [req.status, nodeJson, req.botId]);
+    console.log(req.botVarList);
+    console.log(req.botVarList ? req.botVarList: null);
+    let botVar = req.botVarList ? req.botVarList?.length > 0 ? req.botVarList :null : null;
+    let bot = await db.excuteQuery(val.updateBotStatus, [req.status, nodeJson,JSON.stringify(botVar), req.botId]);
     if(req.status =='publish'){
       let botPublish = await db.excuteQuery(val.updateBotpublishedAt, [ req.botId]);
     }
@@ -270,7 +281,7 @@ const deleteBotbyId = async (req, res) => {
         let deprecateBot = await db.excuteQuery(val.deprecateBot, [req.params.botId]);
             res.send({
                 "status": 200,
-                "message": "Bot is running, so it is deprecated",
+                "message": "Bot is deprecated successfully",
             })
       } else{
         let botRunning = await db.excuteQuery(val.isBotRunning, [req.params.spid, req.params.botId]);
@@ -279,6 +290,11 @@ const deleteBotbyId = async (req, res) => {
             res.send({
                 "status": 200,
                 "message": "Bot is deleted successfully",
+            })
+        }else{
+          res.send({
+                "status": 200,
+                "message": "Sorry, we cannot delete this Bot right now as some sessions are still active for this Bot",
             })
         } 
       }
@@ -408,9 +424,12 @@ const exportFlowData = async (req, res) => {
       res.attachment("data.csv")
       const timestamp = Date.now();
       const randomNumber = Math.floor(Math.random() * 10000);
+      let userDetailQuery = 'SELECT * FROM user WHERE SP_ID =? AND isDeleted != 1 AND ParentId IS NULL';
+      let userDetail = await db.excuteQuery(userDetailQuery, [SP_ID]);
+       let user = userDetail[0];
       var mailOptions = {
         from: senderConfig.email,
-        to: req.body.loginData,
+        to: user?.email_id,
         subject: `${emailSender} - Bot Usages export report`,
         html: `
           <p>Dear ${req.body?.Name},</p>
@@ -428,6 +447,7 @@ const exportFlowData = async (req, res) => {
   
       transporter.sendMail(mailOptions, (error, info) => {
         if (error) {
+          console.log(error);
           logger.error(`export contact email send error ${error}`)
           fs.rmSync(uniqueDir, { recursive: true, force: true });
           // res.send(error);

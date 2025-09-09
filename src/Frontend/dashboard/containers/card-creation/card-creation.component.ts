@@ -1,6 +1,6 @@
 import { environment } from './../../../../environments/environment';
 
-import { ChangeDetectorRef, Component, ElementRef, EventEmitter, HostListener, Input, Output, ViewChild } from '@angular/core';
+import { ChangeDetectorRef, Component, ElementRef, EventEmitter, HostListener, Input, OnDestroy, Output, ViewChild } from '@angular/core';
 import { FormArray, FormBuilder, FormControl, FormGroup, Validators, AbstractControl, ValidationErrors, ValidatorFn } from '@angular/forms';
 import { NgbModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
 import { ContentRender, RichTextEditorComponent } from '@syncfusion/ej2-angular-richtexteditor';
@@ -10,7 +10,6 @@ import { RichTextEditor } from '@syncfusion/ej2-angular-richtexteditor';
 import { PhoneValidationService } from 'Frontend/dashboard/services/phone-validation.service';
 import { TeamboxService } from 'Frontend/dashboard/services';
 import { BotserviceService } from 'Frontend/dashboard/services/botservice.service';
-import Swal from 'sweetalert2';
 import {
   MAX_OPTIONS,
   MAX_BUTTONS,
@@ -62,6 +61,7 @@ interface BotVariable {
   name: string;
   dataType: 'text' | 'number' | 'boolean' | 'array' | 'object';
   value: any;
+  nodeId:any;
 }
 
 @Component({
@@ -69,7 +69,7 @@ interface BotVariable {
   templateUrl: './card-creation.component.html',
   styleUrls: ['./card-creation.component.scss']
 })
-export class CardCreationComponent {
+export class CardCreationComponent  implements OnDestroy {
   // Constants
   private readonly MAX_OPTIONS = MAX_OPTIONS;
   private readonly MAX_BUTTONS = MAX_BUTTONS;
@@ -187,7 +187,8 @@ viewMode:any=false
   @Input() agents: Agent[] = this.filteredAgents;
   @Input() availableAttributes: any = attributes
   @Input() availableVariables = ['bot.name', 'contact.city', 'session.date'];
-  @Input() selectedTags: string[] = [];
+  @Input() selectedTags: { TagId: number; TagName: string }[] = [];
+  @Input() selectedTagsRemoveTag: { TagId: number; TagName: string }[] = [];
 
   @Output() conditionsChange = new EventEmitter<any[]>();
   @Output() save = new EventEmitter<any>();
@@ -224,6 +225,7 @@ viewMode:any=false
   semiAdvanceTool: any = DEFAULT_TOOLS
   attachementTool: any = DEFAULT_TOOLS
   pasteCleanupSettings = PASTE_CLEANUP_SETTINGS
+  botTimeout:any=''
 
   public insertImageSettings: object = {
     width: '50px',
@@ -244,8 +246,9 @@ onDocumentClick(event: MouseEvent): void {
     public validation: PhoneValidationService,private modalService: NgbModal,
     private apiService: TeamboxService, private botService: BotserviceService, public settingService: SettingsService, public router: Router
   ) {
+    this.botTimeout = sessionStorage.getItem('botTimeOut');
     this.userDetails = JSON.parse(sessionStorage.getItem('loginDetails') || '{}');
-    var viewMode:any = localStorage.getItem('viewMode') == undefined?false:localStorage.getItem('viewMode')
+    var viewMode:any = sessionStorage.getItem('viewMode') == undefined?false:sessionStorage.getItem('viewMode')
     if (viewMode) {
        this.viewMode =  JSON.parse(viewMode)
     }
@@ -255,10 +258,16 @@ onDocumentClick(event: MouseEvent): void {
     // }
     this.initForms();
   }
+  ngOnDestroy(): void {
+sessionStorage.removeItem('viewMode')
+sessionStorage.removeItem('botTimeOut')
+sessionStorage.removeItem('botId')
+sessionStorage.removeItem('botVarList')
+sessionStorage.removeItem('node_FE_Json')
+  }
 
   ngOnInit(): void {
     this.initEditor();
-    this.getStaticData()
     this.getAdditionalAttributes()
     this.getUserList()
     this.getTagData();
@@ -274,14 +283,7 @@ onDocumentClick(event: MouseEvent): void {
 
 
 
-  getStaticData() {
 
-    this.filteredAgents = this.botService.FILTERED_AGENTS
-    this.botsList = this.botService.AVAILABLE_BOTS;
-
-
-
-  }
   // ==================== INITIALIZATION METHODS ====================
 
 
@@ -417,14 +419,32 @@ onDocumentClick(event: MouseEvent): void {
       }
     });
 
-    if (localStorage.getItem('node_FE_Json')) {
-      this.botVariables = JSON.parse(localStorage.getItem('botVarList') || '[]');
+    if (sessionStorage.getItem('node_FE_Json')) {
+     
 
-      var data: any = localStorage.getItem('node_FE_Json')
+      var data: any = sessionStorage.getItem('node_FE_Json')
       this.loadFlow(JSON.parse(data))
       // this.loadFlow(data)
     }
 
+    if (sessionStorage.getItem('botVarList')) {
+      const stored = sessionStorage.getItem('botVarList');
+if (stored && stored !== 'null' && stored !== 'undefined') {
+  try {
+    let parsed = JSON.parse(stored);
+    this.botVariables = typeof parsed === 'string' ? JSON.parse(parsed) : parsed;
+     if (!Array.isArray(this.botVariables)) {
+    this.botVariables = [];
+  }
+  } catch (e) {
+    console.error('Invalid JSON in sessionStorage:', e);
+    this.botVariables = [];
+  }
+} else {
+  this.botVariables = [];
+}
+
+    }
 
 
 
@@ -465,9 +485,9 @@ document.addEventListener('mouseup', (e) => {
       setTimeout(() => {
         Object.values(this.editor.drawflow.drawflow.Home.data).forEach((node: any) => {
           if (node?.data?.formData) {
-            this.cardType = node.data.text
-            this.ParentNodeType = node.data.category
-            this.setOutputPositionsBasedOnType(node.id, node.data.formData)
+            this.cardType = node.data.text;
+            this.ParentNodeType = node.data.category;
+            this.setOutputPositionsBasedOnType(node.id, node.data.formData);
             // this.refreshEditor()
             if (!this.viewMode) {
               this.addNodeEvent(node.id);
@@ -485,14 +505,6 @@ document.addEventListener('mouseup', (e) => {
   }
 
 
-  // refreshEditor(): void {
-  //   const exportedData = this.editor.export();
-
-  //   setTimeout(() => {
-  //     this.editor.clear();
-  //     this.editor.import(exportedData);
-  //   }, 50); // small delay helps prevent race conditions
-  // }
 
 
   updateOutputStylesInHtml(nodeId: number): void {
@@ -608,7 +620,25 @@ document.addEventListener('mouseup', (e) => {
       variableName: [''],
       variableDataType: ['text'],
       enableValidation: [false]
+    }, { validators: this.timeElapseValidator(this.botTimeout) });
+
+
+      this.questionOption.get('enableTimeElapse')?.valueChanges.subscribe(enabled => {
+      const timeControl = this.questionOption.get('timeElapseMinutes');
+      if (enabled) {
+        timeControl?.setValidators([Validators.required]);
+      } else {
+        timeControl?.clearValidators();
+      }
+      timeControl?.updateValueAndValidity();
+      this.questionOption.updateValueAndValidity();
     });
+
+    // ✅ Trigger validator on timeElapseMinutes changes
+    this.questionOption.get('timeElapseMinutes')?.valueChanges.subscribe(() => {
+      this.questionOption.updateValueAndValidity();
+    });
+
 
     this.setupFormListeners(this.questionOption);
 
@@ -690,9 +720,24 @@ atLeastOneAndUniqueOptions() {
         timeElapseMinutes: [''],
         timeElapseAction: ['skip'],
         enableValidation: [false]
-      });
+      }, { validators: this.timeElapseValidator(this.botTimeout) });
 
 
+  this.buttonOptions.get('enableTimeElapse')?.valueChanges.subscribe(enabled => {
+      const timeControl = this.buttonOptions.get('timeElapseMinutes');
+      if (enabled) {
+        timeControl?.setValidators([Validators.required]);
+      } else {
+        timeControl?.clearValidators();
+      }
+      timeControl?.updateValueAndValidity();
+      this.buttonOptions.updateValueAndValidity();
+    });
+
+    // ✅ Trigger validator on timeElapseMinutes changes
+    this.buttonOptions.get('timeElapseMinutes')?.valueChanges.subscribe(() => {
+      this.buttonOptions.updateValueAndValidity();
+    });
 
           this.buttonOptions.get('buttons')?.valueChanges.subscribe(value => {
             this.changeDetectorRef.detectChanges();
@@ -714,6 +759,20 @@ atLeastOneAndUniqueOptions() {
 
       this.setupFormListeners(this.buttonOptions);
     }
+
+private timeElapseValidator(bottimeout: number): ValidatorFn {
+  return (control: AbstractControl): ValidationErrors | null => {
+    const enableTimeElapse = control.get('enableTimeElapse')?.value;
+    const timeElapseMinutes = control.get('timeElapseMinutes')?.value;
+   
+    if (enableTimeElapse && timeElapseMinutes && Number(timeElapseMinutes) >= bottimeout) {
+      return { timeElapseExceeded: true };
+    }
+    return null;
+  };
+}
+
+
 
 atLeastOneAndUniqueButtons() {
   return (formArray: AbstractControl): ValidationErrors | null => {
@@ -758,6 +817,23 @@ atLeastOneAndUniqueButtons() {
       timeElapseMinutes: [''],
       timeElapseAction: ['skip'],
       enableValidation: [false]
+    }, { validators: this.timeElapseValidator(this.botTimeout) });
+
+
+      this.listOptions.get('enableTimeElapse')?.valueChanges.subscribe(enabled => {
+      const timeControl = this.listOptions.get('timeElapseMinutes');
+      if (enabled) {
+        timeControl?.setValidators([Validators.required]);
+      } else {
+        timeControl?.clearValidators();
+      }
+      timeControl?.updateValueAndValidity();
+      this.listOptions.updateValueAndValidity();
+    });
+
+    // ✅ Trigger validator on timeElapseMinutes changes
+    this.listOptions.get('timeElapseMinutes')?.valueChanges.subscribe(() => {
+      this.listOptions.updateValueAndValidity();
     });
 
       this.listOptions.valueChanges.subscribe(() => {
@@ -870,8 +946,24 @@ uniqueRowNamesValidator(): ValidatorFn {
       timeElapseMinutes: [''],
       timeElapseAction: ['skip'],
       enableValidation: [false]
+    }, { validators: this.timeElapseValidator(this.botTimeout) });
+
+
+      this.whatsAppFlowForm.get('enableTimeElapse')?.valueChanges.subscribe(enabled => {
+      const timeControl = this.whatsAppFlowForm.get('timeElapseMinutes');
+      if (enabled) {
+        timeControl?.setValidators([Validators.required]);
+      } else {
+        timeControl?.clearValidators();
+      }
+      timeControl?.updateValueAndValidity();
+      this.whatsAppFlowForm.updateValueAndValidity();
     });
 
+    // ✅ Trigger validator on timeElapseMinutes changes
+    this.whatsAppFlowForm.get('timeElapseMinutes')?.valueChanges.subscribe(() => {
+      this.whatsAppFlowForm.updateValueAndValidity();
+    });
     this.setupFormListeners(this.whatsAppFlowForm);
   }
 
@@ -899,7 +991,24 @@ uniqueRowNamesValidator(): ValidatorFn {
       enableTimeElapse: [false],
       timeElapseMinutes: ['', [Validators.min(1)]],
       timeElapseAction: ['skip']
+    }, { validators: this.timeElapseValidator(this.botTimeout) });
+
+  this.openQuestion.get('enableTimeElapse')?.valueChanges.subscribe(enabled => {
+      const timeControl = this.openQuestion.get('timeElapseMinutes');
+      if (enabled) {
+        timeControl?.setValidators([Validators.required]);
+      } else {
+        timeControl?.clearValidators();
+      }
+      timeControl?.updateValueAndValidity();
+      this.openQuestion.updateValueAndValidity();
     });
+
+    // ✅ Trigger validator on timeElapseMinutes changes
+    this.openQuestion.get('timeElapseMinutes')?.valueChanges.subscribe(() => {
+      this.openQuestion.updateValueAndValidity();
+    });
+
 
     this.setupFormListeners(this.openQuestion);
   }
@@ -915,7 +1024,8 @@ uniqueRowNamesValidator(): ValidatorFn {
     this.notesmentionForm = this.fb.group({
       message: [''],
       file: [''],
-      mediaType: ['']
+      mediaType: [''],
+      UIIdMention: [this.syncMentionArray() || []]
     });
 
   }
@@ -923,6 +1033,7 @@ uniqueRowNamesValidator(): ValidatorFn {
   private initContactAttributeForm(): void {
     this.contactAttributeForm = this.fb.group({
       selectedAttribute: [null, Validators.required],
+      selectedvalueBackend:[''],
       selectedValue: [''],
       inputValue: [''],
       selectedVariable: [''],
@@ -1036,7 +1147,7 @@ createCombinedVariable() {
   
   // Get question text (remove HTML tags if needed)
   const questionText = formValue.questionText || '';
-  const plainQuestionText = questionText.replace(/<[^>]*>/g, '').trim();
+  // const plainQuestionText = questionText.replace(/<[^>]*>/g, '').trim();
   
   // Get prompt message (if you have this field)
   const promptMessage = formValue.promptMessage || '';
@@ -1046,7 +1157,7 @@ createCombinedVariable() {
   const formattedOptions = options.map((opt:any) => `* ${opt}`).join('\n');
   
   // Combine everything
-  const combinedVariable = `${plainQuestionText}\n\n${promptMessage}\n\n${formattedOptions}`;
+  const combinedVariable = `${questionText}\n\n${promptMessage}\n\n${formattedOptions}`;
   
   // Now you can use this combinedVariable as needed
   return combinedVariable;
@@ -1067,7 +1178,9 @@ createCombinedVariable() {
       'RemoveTag', 'TimeDelayModal', 'BotTriggerModal', 'MessageOptin',
       'NotificationModal', 'WorkingHoursModal', 'NotesMentionModal'
     ].includes(formType)) {
-      this.advanceOptionsSubmit(formType);
+        
+          this.advanceOptionsSubmit(formType);
+
     } else if (formType == 'setCondition') {
       this.handleConditionSubmit(formType)
     } else {
@@ -1077,7 +1190,6 @@ createCombinedVariable() {
   }
 
   private handleContentSubmit(): void {
-    console.log("this.sendTextForm", this.sendTextForm.invalid);
     if (this.sendTextForm.invalid) {
       this.sendTextForm.markAllAsTouched();
       return;
@@ -1168,26 +1280,39 @@ formData.options = ["True", "False"];
       const newVariable: BotVariable = {
         name: formData.variableName,
         dataType: formData.variableDataType,
-        value: this.getDefaultValueForType(formData.variableDataType)
+        value: this.getDefaultValueForType(formData.variableDataType),
+         nodeId: this.isEditMode ?this.selectedNodeId:null // ✅
       };
-
       // Check if variable with same name AND type already exists
-  const variableExists = this.botVariables.some(
-  v =>
-    v.name.trim().toLowerCase() === newVariable.name.trim().toLowerCase() &&
-    v.dataType === newVariable.dataType
-);
+      if(!this.botVariables){
+        this.botVariables = []
+      }
+if(this.botVariables ){
+    const variableExists:any = this.botVariables.some(v =>v.name.trim().toLowerCase() === newVariable.name.trim().toLowerCase());
+  const value:any = this.botVariables.find((v:any) => v.name.trim().toLowerCase() === newVariable.name.trim().toLowerCase());
 
 
       if (!variableExists) {
         this.botVariables.push(newVariable);
       } else {
-        // Optionally show a message that variable wasn't added because it already exists
-        if(!(this.isEditMode && this.selectedNodeId !== null)){
-          this.showToaster("Bot variable is already exists Please add another bot variable",'error')
-          return;
-        }
+  if (this.isEditMode &&  (value.nodeId !== this.selectedNodeId)) {
+
+     this.showToaster(
+        "Bot variable already exists in another node. Please use a different name.",
+        "error"
+      );
+      return;
+    }
+  if (newVariable.nodeId == null) {
+
+     this.showToaster(
+        "Bot variable already exists in another node. Please use a different name.",
+        "error"
+      );
+      return;
+    }
       }
+}
     }
     this.closeModal();
 
@@ -1207,10 +1332,6 @@ formData.options = ["True", "False"];
     this.dynamiceEditor = ''
 
     const advanceOption = { type: formType, data: {} as any };
-
-
-
-
     switch (formType) {
       case 'assignAgentModal':
         advanceOption.data = this.selectedAgentDetails;
@@ -1227,7 +1348,7 @@ formData.options = ["True", "False"];
         advanceOption.data = this.notificationForm.value;
         break;
       case 'TimeDelayModal':
-  const maxTime = this.delayUnit === 'hour' ? 24 : 60;
+  const maxTime = this.delayUnit === 'hour' ? 24 :this.delayUnit === 'minute' ? 1440 : 86400;
 
   if (!this.delayTime || this.delayTime < 1) {
     this.showToaster('Time must be greater than 0.','error');
@@ -1255,25 +1376,38 @@ formData.options = ["True", "False"];
          this.showToaster('Please add  some Notes and Mention','error');
           return
         }
+
+
         this.notesmentionForm.patchValue({
-          message: data
+          message: data,
+          UIIdMention: this.syncMentionArray() || []
         })
         advanceOption.data = this.notesmentionForm.value;
         break;
       case 'AddTags':
-      case 'RemoveTag':
-
-        if (this.selectedTags.length <= 0) {
+  if (this.selectedTags.length <= 0) {
           this.showToaster('Please select Tag and Operation','error')
           return
-          
         }
         advanceOption.data = {
-          tags: this.selectedTags,
+          tags: this.selectedTags.map(tag => tag.TagName),
+          tag: this.selectedTags.map(tag => tag.TagId),
+          selectedTags: this.selectedTags,
+          operation: this.operationOptions
+        };
+    break;
+      case 'RemoveTag':
+        if (this.selectedTagsRemoveTag.length <= 0) {
+          this.showToaster('Please select Tag and Operation','error')
+          return
+        }
+        advanceOption.data = {
+          tags: this.selectedTagsRemoveTag.map(tag => tag.TagName),
+          tag: this.selectedTagsRemoveTag.map(tag => tag.TagId),
+          selectedTags: this.selectedTagsRemoveTag,
           operation: this.operationOptions
         };
         break;
-
     }
 
       this.closeModal();
@@ -1353,7 +1487,6 @@ formData.options = ["True", "False"];
 
 
 
-
     const postData = {
       name: nodeName,
       inputs: 1,
@@ -1377,6 +1510,19 @@ formData.options = ["True", "False"];
     const nodeId = this.addNode(postData);
     const newHTML = this.createNodeHtml(nodeId, postData.data);
     this.updateNodeHTML(Number(nodeId), newHTML);
+
+if (this.botVariables == null){
+  this.botVariables = [];
+}
+if(formData?.saveAsVariable && formData?.variableName){
+    const index = this.botVariables.findIndex(item =>
+  item.name.trim().toLowerCase() === formData?.variableName?.trim().toLowerCase() &&
+  item.dataType === formData?.variableDataType && item?.nodeId === null
+);
+if(index != -1){
+  this.botVariables[index].nodeId =nodeId
+}
+}
 
     this.setOutputPositionsBasedOnType(nodeId, formData);
 
@@ -1420,8 +1566,11 @@ formData.options = ["True", "False"];
     } else if (this.ParentNodeType === 'whatsAppFlow') {
       outputs = 2
     }
+    else if (this.ParentNodeType === 'openQuestion') {
+      outputs = 2
+    }
 
-    if (formData?.invalidAction === "fallback") {
+    if (formData?.invalidAction === "fallback" || formData?.timeElapseAction === "fallback") {
       outputs += 1;
     }
 
@@ -1429,11 +1578,11 @@ formData.options = ["True", "False"];
   }
 
   private setOutputPositionsBasedOnType(nodeId: any, formData: any): void {
-    console.log('ParentNodeType:', formData);
     if (this.ParentNodeType === 'listOptions') {
       this.setOutputPositionsForList(nodeId, formData);
     } else {
-      this.setOutputPositions(Number(nodeId), formData?.invalidAction);
+      const actionValue =  (formData?.invalidAction === 'fallback' || formData?.timeElapseAction === 'fallback')? 'fallback': formData?.invalidAction
+      this.setOutputPositions(Number(nodeId), actionValue);
     }
   }
 
@@ -1455,6 +1604,7 @@ formData.options = ["True", "False"];
              const output1 = outputs[0] as HTMLElement;
        output1.style.position = 'absolute';
        output1.style.top = '20px';
+      output1.style.borderColor = '#82de8d'
     }
     
 
@@ -1465,7 +1615,7 @@ formData.options = ["True", "False"];
       if(output2 != undefined){
         output2.style.position = 'absolute';
         output2.style.top = '41px';
-        output2.style.borderColor = 'red'; // ✅ use camelCase
+        output2.style.borderColor = 'red';
       }
       remainingOutputs = remainingOutputs.slice(1);
     }
@@ -1493,7 +1643,7 @@ formData.options = ["True", "False"];
     output1.style.top = '20px';
 
     let remainingOutputs = Array.from(outputs).slice(1);
-    if (formData?.invalidAction === "fallback") {
+    if (formData?.invalidAction === "fallback" || formData?.timeElapseAction === "fallback") {
       const output2 = outputs[1] as HTMLElement;
       output2.style.position = 'absolute';
       output2.style.top = '41px';
@@ -1514,10 +1664,32 @@ formData.options = ["True", "False"];
     });
   }
 
-   getTrimmedText = (text: string | undefined) =>{
-    
-    const maxLength = 132;
-  return text && text.length > maxLength ? text.slice(0, maxLength) + ' ...' : text || 'Sample Text';
+   getTrimmedText = (html: string | undefined, maxLength = 132) =>{
+     if (!html) return 'Sample Text';
+
+  // Replace chip span with placeholder [CHIP]
+  const chipRegex = /<span[^>]*class="e-mention-chip"[^>]*>.*?<\/span>/g;
+  let chipCount = 0;
+  const placeholders: string[] = [];
+
+  const tempHtml = html.replace(chipRegex, (match) => {
+    placeholders.push(match); // store original chip
+    chipCount++;
+    return `[CHIP_${chipCount}]`; // placeholder
+  });
+
+  // Now trim plain text + placeholders
+  let trimmed = tempHtml;
+  if (tempHtml.length > maxLength) {
+    trimmed = tempHtml.slice(0, maxLength) + ' ...';
+  }
+
+  // Restore chips from placeholders
+  placeholders.forEach((chip, i) => {
+    trimmed = trimmed.replace(`[CHIP_${i + 1}]`, chip);
+  });
+
+  return trimmed;
   }
 
   private generateBottomOffsetsReversed(sections: any[]): number[] {
@@ -1556,7 +1728,6 @@ formData.options = ["True", "False"];
     } else {
       newHTML += this.createAdvanceActionContent(nodeData, formData);
     }
-
     newHTML += `
       <div class="viewSection">
         <img src="assets/img/edit.png" style="cursor:pointer" class="ViewNode editNode">
@@ -1620,7 +1791,7 @@ formData.options = ["True", "False"];
 } else if (nodeData.text === 'sendText') {
   content += `<div class="textCont">${this.getTrimmedText(formData.textMessage)}</div>`;
 } else if (nodeData.text === 'openQuestion') {
-  content += `<div class="textCont">${this.getTrimmedText(formData.questionText)}</div>`;
+   content += this.createOpenQuestionContent(nodeId, formData);
 }else if (nodeData.text === 'questionOption') {
       content += this.createQuestionOptionContent(nodeId, formData);
     } else if (nodeData.text === 'buttonOptions') {
@@ -1714,10 +1885,15 @@ formData.options = ["True", "False"];
   private createHeaderMediaContent(nodeData: any, headerType: string): string {
     let mediaContent = '<div class="textContImage">';
     
-    if(nodeData.file == null){
-      nodeData.file = nodeData.formData.fileLink
+    if (!nodeData.file && nodeData.formData?.fileLink) {
+      nodeData.file = nodeData.formData.fileLink;
     }
-    const mediaSrc = nodeData.file ? this.filePreview || this.selectedImageUrl : 'assets/img/not_found.jpg';
+    
+    if (!this.filePreview && !this.selectedImageUrl) {
+      this.filePreview = nodeData.file;
+    }
+
+const mediaSrc = this.selectedImageUrl || this.filePreview || nodeData.file || 'assets/img/not_found.jpg';
 
     switch (headerType) {
       case 'image':
@@ -1811,14 +1987,24 @@ formData.options = ["True", "False"];
     const uniqueId = this.generateRandom6DigitNumber();
     buttonHTML = buttonHTML + `<button style="display:block;" class="btn btn_theme3 btn-block customButton mt-2 nodeButton-${nodeId} button_id-${uniqueId}">Submitted</button>`;
     content += `<div class="buttons">${buttonHTML}</div>`;
-
-
-    
-
-
     return content;
+  }
+
+  private createOpenQuestionContent(nodeId: any, formData: any): string {
+    let content = '<div class="textQuestion">';
+     if (formData.questionText) {
+      content += `<h6 class="body_text">${this.getTrimmedText(formData.questionText)}</h6>`;
+    }
+    content += '</div>';
 
 
+    let buttonHTML = '';
+
+    // buttonHTML = formData.options.map((buttonElement: any) => {
+    const uniqueId = this.generateRandom6DigitNumber();
+    buttonHTML = buttonHTML + `<button style="display:block;" class="btn btn_theme3 btn-block customButton mt-2 nodeButton-${nodeId} button_id-${uniqueId}">Valid answer</button>`;
+    content += `<div class="buttons">${buttonHTML}</div>`;
+    return content;
   }
 
   private createAdvanceActionContent(nodeData: any, formData: any): string {
@@ -1866,8 +2052,8 @@ formData.options = ["True", "False"];
           content += this.createMediaContent(formData.data);
         }
         if (formData.data.message) {
-
-          content += `<div class="textCont">${this.getTrimmedText(formData.data.message)}</div>`;
+          
+          content += `<div class="textCont">${this.getTrimmedText(formData.data.message)} </div>`;
         }
         break;
       case 'WorkingHoursModal':
@@ -1884,6 +2070,26 @@ formData.options = ["True", "False"];
 
     return content;
   }
+
+
+
+syncMentionArray() {
+  const htmlContent = this.chatEditors?.value;
+  if (!htmlContent) return [];
+
+  // Parse the string as HTML
+  const parser = new DOMParser();
+  const doc = parser.parseFromString(htmlContent, 'text/html');
+
+  // Query all mention elements
+  const mentionElements = doc.querySelectorAll('.e-mention-chip');
+
+  // Extract all data-uid values
+  const ids: string[] = Array.from(mentionElements)
+    .map((el: Element) => el.getAttribute('data-uid') || '');
+
+  return ids || [];
+}
 
   private createsetConditionContent(nodeId: any, formData: any): string {
     let content = ''
@@ -2005,9 +2211,10 @@ formData.options = ["True", "False"];
 
     const node = this.editor.getNodeFromId(this.selectedNodeId);
     node.data.formData = formData;
-
-    if (['sendImage', 'sendVideo', 'sendDocument'].includes(this.cardType)) {
-      node.data.file = formData.file;
+    if (['sendImage', 'sendVideo', 'sendDocument','buttonOptions'].includes(this.cardType)) {
+      node.data.file = formData?.file || formData?.fileLink ;
+      node.data.fileName = this.uploadedFile?.name || formData?.name || null;
+      node.data.fileType = formData?.headerType || null ;
     }
 
     const currentOutputsCount = Object.keys(node.outputs).length;
@@ -2023,20 +2230,32 @@ formData.options = ["True", "False"];
       newOutputsCount = (formData?.buttons?.length + 1) || 1;
     } else if (this.ParentNodeType === 'whatsAppFlow') {
       newOutputsCount = 2;
+    }else if(this.ParentNodeType === 'openQuestion') {
+      newOutputsCount = 2;
     }
-
-    if (formData.invalidAction == "fallback") {
+    if(!formData.enableValidation){
+      formData.invalidAction = 'skip'
+      formData.errorMessage = ''
+      formData.timeElapseAction = false
+    }
+    if (formData.invalidAction == "fallback" || formData.timeElapseAction == "fallback") {
       newOutputsCount = newOutputsCount + 1
     }
 
     if ((this.ParentNodeType === 'questionOption' || this.ParentNodeType === 'listOptions' ||
-      this.ParentNodeType === 'buttonOptions') && newOutputsCount !== currentOutputsCount) {
+      this.ParentNodeType === 'buttonOptions' || this.ParentNodeType === 'whatsAppFlow' || this.ParentNodeType === 'openQuestion') && newOutputsCount !== currentOutputsCount) {
       this.updateNodeOutputs(node, currentOutputsCount, newOutputsCount, formData);
     }
 
     this.editor.updateNodeDataFromId(this.selectedNodeId, node.data);
     const newHTML = this.createNodeHtml(this.selectedNodeId, node.data);
     this.updateNodeHTML(this.selectedNodeId, newHTML);
+      var nodeId = this.selectedNodeId;
+
+       setTimeout(() => {
+      this.editor.drawflow.drawflow.Home.data[nodeId].html = newHTML;
+      this.isLoading = false
+    }, 100);
   }
 
 
@@ -2073,7 +2292,8 @@ formData.options = ["True", "False"];
     if (this.ParentNodeType === 'listOptions') {
       this.setOutputPositionsForList(node.id, formData);
     } else {
-      this.setOutputPositions(node.id, formData?.invalidAction);
+       const actionValue =  (formData?.invalidAction === 'fallback' || formData?.timeElapseAction === 'fallback')? 'fallback': formData?.invalidAction
+      this.setOutputPositions(node.id, actionValue);
     }
   }
 
@@ -2180,6 +2400,19 @@ formData.options = ["True", "False"];
     const section = sections.at(sectionIndex) as FormGroup;
     const rows = section.get('rows') as FormArray;
 
+      const lastRow = rows.at(rows.length - 1) as FormGroup;
+
+  // ✅ Check if last row is empty
+  if (lastRow) {
+    const { rowName, rowDescription } = lastRow.value;
+
+    if (!rowName?.trim()) {
+      console.warn('Cannot add new row: Last row is empty');
+      return; // Stop adding new row
+    }
+  }
+
+
     const totalRows = this.getTotalRowCount(sections);
     const remainingRows = this.MAX_TOTAL_ROWS - totalRows;
 
@@ -2240,7 +2473,12 @@ formData.options = ["True", "False"];
 
       return !section.get('sectionHeading')?.value?.trim();
     });
-    if (hasInvalidHeadings) return false;
+    
+
+    if (hasInvalidHeadings){
+      this.showToaster(`Please provide section heading for new sections`,'error');
+      return false;
+    }
   }
   
   return true;
@@ -2445,13 +2683,20 @@ if (fileControl) {
 
   private fillQuestionOptionData(nodeData: any): void {
     const updateForm = nodeData?.data?.formData;
-    const optionsArray = this.fb.array([]);
+    const optionsArray = this.fb.array([], [
+    this.atLeastOneOptionRequired(),
+    this.atLeastOneAndUniqueOptions()
+  ]);
 
     if (Array.isArray(updateForm?.options)) {
       updateForm.options.forEach((opt: any) => {
         optionsArray.push(this.fb.control(opt));
       });
-    }
+    }else {
+    // ✅ Ensure at least one empty control if no options provided
+    optionsArray.push(this.createOptionControl());
+  }
+
 
     this.questionOption.patchValue({
       questionText: updateForm?.questionText,
@@ -2471,7 +2716,36 @@ if (fileControl) {
       enableValidation: updateForm?.enableValidation
     });
 
+
+
     this.questionOption.setControl('options', optionsArray);
+
+  // ✅ Restore dynamic validators for timeElapseMinutes
+  const timeControl = this.questionOption.get('timeElapseMinutes');
+  if (updateForm?.enableTimeElapse) {
+    timeControl?.setValidators([Validators.required]);
+  } else {
+    timeControl?.clearValidators();
+  }
+  timeControl?.updateValueAndValidity();
+
+  // ✅ Ensure promptMessage updates dynamically if options change
+  this.options.valueChanges.subscribe((vals: string[]) => {
+    const defaultPrompt = this.getPromptMessage();
+    const currentPrompt = this.questionOption.get('promptMessage')?.value;
+    if (!currentPrompt || currentPrompt.startsWith('Please type a number from')) {
+      this.questionOption.get('promptMessage')?.setValue(defaultPrompt);
+    }
+  });
+
+  // ✅ Re-subscribe to options changes for uniqueness validation
+  this.questionOption.get('options')?.valueChanges.subscribe(() => {
+    this.changeDetectorRef.detectChanges();
+    this.atLeastOneAndUniqueOptions();
+  });
+
+  // ✅ Trigger validation after update
+  this.questionOption.updateValueAndValidity();
   }
 
   private fillOpenQuestionData(nodeData: any): void {
@@ -2503,35 +2777,86 @@ if (fileControl) {
     });
   }
 
-  private fillButtonOptionsData(nodeData: any): void {
-    const updateForm = nodeData?.data?.formData;
+private fillButtonOptionsData(nodeData: any): void {
+  const updateForm = nodeData?.data?.formData;
 
-    this.buttonOptions.patchValue({
-      headerType: updateForm?.headerType,
-      headerText: updateForm?.headerText,
-      bodyText: updateForm?.bodyText,
-      footerText: updateForm?.footerText,
-      fileLink: updateForm?.fileLink,
-      saveAsVariable: updateForm?.saveAsVariable,
-      variableName: updateForm?.variableName,
-      variableDataType: updateForm?.variableDataType,
-      reattemptsAllowed: updateForm?.reattemptsAllowed,
-      reattemptsCount: updateForm?.reattemptsCount ?? 1,
-      errorMessage: updateForm?.errorMessage,
-      invalidAction: updateForm?.invalidAction,
-      enableTimeElapse: updateForm?.enableTimeElapse,
-      timeElapseMinutes: updateForm?.timeElapseMinutes,
-      timeElapseAction: updateForm?.timeElapseAction,
-      enableValidation: updateForm?.enableValidation
-    });
+  // ✅ Build buttons FormArray with validators
+  const buttonsArray = this.fb.array([], [this.atLeastOneAndUniqueButtons()]);
 
-    const buttonsArray = this.fb.array([]);
-    (updateForm?.buttons || []).forEach((btn: string) => {
+  if (Array.isArray(updateForm?.buttons) && updateForm.buttons.length > 0) {
+    updateForm.buttons.forEach((btn: string) => {
       buttonsArray.push(this.fb.control(btn, [Validators.required, Validators.maxLength(20)]));
     });
-
-    this.buttonOptions.setControl('buttons', buttonsArray);
+  } else {
+    // ✅ Ensure at least one empty button if no buttons provided
+    buttonsArray.push(this.fb.control('', [Validators.required, Validators.maxLength(20)]));
   }
+
+  // console.log("updateForm===========",updateForm)
+  // ✅ Patch the main form values
+  this.buttonOptions.patchValue({
+    headerType: updateForm?.headerType || 'none',
+    headerText: updateForm?.headerText,
+    bodyText: updateForm?.bodyText,
+    footerText: updateForm?.footerText,
+    fileLink: updateForm?.fileLink,
+    saveAsVariable: updateForm?.saveAsVariable,
+    variableName: updateForm?.variableName,
+    variableDataType: updateForm?.variableDataType,
+    reattemptsAllowed: updateForm?.reattemptsAllowed,
+    reattemptsCount: updateForm?.reattemptsCount ?? 1,
+    errorMessage: updateForm?.errorMessage,
+    invalidAction: updateForm?.invalidAction,
+    enableTimeElapse: updateForm?.enableTimeElapse,
+    timeElapseMinutes: updateForm?.timeElapseMinutes,
+    timeElapseAction: updateForm?.timeElapseAction,
+    enableValidation: updateForm?.enableValidation
+  });
+
+  // ✅ Replace buttons control in the form
+  this.buttonOptions.setControl('buttons', buttonsArray);
+
+  // ✅ Restore dynamic validator for timeElapseMinutes
+  const timeControl = this.buttonOptions.get('timeElapseMinutes');
+  if (updateForm?.enableTimeElapse) {
+    timeControl?.setValidators([Validators.required]);
+  } else {
+    timeControl?.clearValidators();
+  }
+  timeControl?.updateValueAndValidity();
+
+  // ✅ Restore dynamic validator for headerType → fileLink requirement
+  const headerControl = this.buttonOptions.get('fileLink');
+  if (['image', 'video', 'document'].includes(updateForm?.headerType)) {
+    this.selectedFileUrl = updateForm?.fileLink
+    this.selectedFileType =  this.buttonOptions.get('headerType')?.value 
+    headerControl?.setValidators([Validators.required]);
+  } else {
+    headerControl?.clearValidators();
+  }
+  headerControl?.updateValueAndValidity();
+
+  // ✅ Subscribe to buttons changes for uniqueness validation
+  this.buttonOptions.get('buttons')?.valueChanges.subscribe(() => {
+    this.changeDetectorRef.detectChanges();
+    this.atLeastOneAndUniqueButtons();
+  });
+
+  // ✅ Subscribe to headerType changes for fileLink validator
+  this.buttonOptions.get('headerType')?.valueChanges.subscribe(value => {
+    const headerCtrl = this.buttonOptions.get('fileLink');
+    if (['image', 'video', 'document'].includes(value)) {
+      headerCtrl?.setValidators([Validators.required]);
+    } else {
+      headerCtrl?.clearValidators();
+    }
+    headerCtrl?.updateValueAndValidity();
+  });
+
+  // ✅ Trigger validation after update
+  this.buttonOptions.updateValueAndValidity();
+}
+
 
   private fillNotesSetConditionData(nodeData: any): void {
 
@@ -2567,7 +2892,10 @@ if (fileControl) {
       enableValidation: updateForm?.enableValidation
     });
 
-    const sectionsArray = this.fb.array([]);
+    const sectionsArray = this.fb.array([],[
+    this.uniqueRowNamesValidator(),
+    this.sectionHeadingValidator()
+  ]);
     (updateForm?.sections || []).forEach((section: any) => {
       const sectionGroup: any = this.fb.group({
         sectionHeading: [section.sectionHeading],
@@ -2583,8 +2911,15 @@ if (fileControl) {
       });
 
       sectionsArray.push(sectionGroup);
+       this.listOptions.get('sections')?.valueChanges.subscribe(value => {
+    this.changeDetectorRef.detectChanges();
+    this.uniqueRowNamesValidator();
+    this.sectionHeadingValidator();
+  });
     });
 
+
+  
     this.listOptions.setControl('sections', sectionsArray);
   }
 
@@ -2625,8 +2960,8 @@ this.selectedAgentDetails = updateForm
 
   private fillTheTag(nodeData: any): void {
     const updateForm = nodeData?.data?.formData?.data
-this.selectedTags = updateForm.tags
-this.operationOptions = updateForm.operation
+    this.selectedTags = updateForm.selectedTags;
+    this.operationOptions = updateForm.operation;
   }
 
 
@@ -2657,10 +2992,12 @@ this.operationOptions = updateForm.operation
     this.dynamiceEditor = this.chatEditors
     
 
+    
     this.notesmentionForm.patchValue({
       message: updateForm.data.message,
       file: updateForm.data.file,
       mediaType: updateForm.data.mediaType,
+      UIIdMention: this.syncMentionArray() || []
 
     })
 
@@ -2668,78 +3005,7 @@ this.operationOptions = updateForm.operation
       this.attachMedia(updateForm.data.file, updateForm.data.mediaType)
     }, 100);
   }
-  // ==================== COPY NODE HANDLING ====================
 
-  // copyNode(nodeId: number): void {
-  //   const originalNode = this.editor.getNodeFromId(nodeId);
-  //   if (!originalNode) return;
-
-  //   const nodeCopy = JSON.parse(JSON.stringify(originalNode));
-  //   nodeCopy.id = this.getUniqueId();
-  //   nodeCopy.data.uniqueId = this.getUniqueId();
-  //   nodeCopy.pos_x += 100;
-  //   nodeCopy.pos_y += 50;
-
-  //   // Recreate inputs/outputs
-  //   nodeCopy.inputs = {};
-  //   nodeCopy.outputs = {};
-
-  //   Object.keys(originalNode.inputs).forEach(inputKey => {
-  //     nodeCopy.inputs[inputKey] = { connections: [] };
-  //   });
-
-  //   Object.keys(originalNode.outputs).forEach(outputKey => {
-  //     nodeCopy.outputs[outputKey] = { connections: [] };
-  //   });
-
-  //   this.cardType = nodeCopy?.data?.text;
-  //   this.ParentNodeType = nodeCopy?.data?.category;
-
-  //   const postData = {
-  //     name: nodeCopy.name,
-  //     inputs: 1,
-  //     outputs: Object.keys(nodeCopy.outputs).length,
-  //     data: {
-  //       text: nodeCopy?.data.text,
-  //       inputsCount: 1,
-  //       maxButtonLimit: 3,
-  //       category: nodeCopy?.data.category,
-  //       uniqueId: this.getUniqueId(),
-  //       formData: nodeCopy?.data?.formData,
-  //       file: nodeCopy?.data?.formData.file,
-  //       fileName: nodeCopy?.data?.formData.file?.name || null,
-  //       fileType: nodeCopy?.data?.formData.file?.type || null,
-  //     },
-  //     html: '<div class="temp-placeholder">Loading...</div>',
-  //     pos_x: Math.floor(Math.random() * 900) + 100,
-  //     pos_y: Math.floor(Math.random() * 400) + 100,
-  //   };
-
-  //   const newNodeId = this.addNode(postData);
-  //   const newHTML = this.createNodeHtml(newNodeId, nodeCopy.data);
-  //   this.updateNodeHTML(newNodeId, newHTML);
-
-
-  //    this.editor.drawflow.drawflow.Home.data[newNodeId].html = newHTML;
-
-  // // Update in DOM
-  // const nodeElement = document.querySelector(`#node-${newNodeId} .drawflow_content_node`);
-  // if (nodeElement) {
-  //   nodeElement.innerHTML = newHTML;
-  // }
-
-  //   if (nodeCopy?.data?.text === 'listOptions') {
-  //     this.setOutputPositionsForList(newNodeId, nodeCopy?.data?.formData);
-  //   } else {
-  //     this.setOutputPositions(Number(newNodeId), nodeCopy?.data?.formData?.invalidAction);
-  //   }
-
-  //   // setTimeout(() => {
-  //   //         this.editor.drawflow.drawflow.Home.data[nodeId].html = newHTML;
-
-  //   // }, 100);
-  //   this.nodeCounter++;
-  // }
 
   copyNode(nodeId: number): void {
   const originalNode = this.editor.getNodeFromId(nodeId);
@@ -2775,9 +3041,9 @@ this.operationOptions = updateForm.operation
       category: nodeCopy?.data.category,
       uniqueId: this.getUniqueId(),
       formData: nodeCopy?.data?.formData,
-      file: nodeCopy?.data?.formData.file,
-      fileName: nodeCopy?.data?.formData.file?.name || null,
-      fileType: nodeCopy?.data?.formData.file?.type || null,
+      file: nodeCopy?.data?.formData.file || nodeCopy?.data?.file,
+      fileName: nodeCopy?.data?.formData.file?.name || nodeCopy?.data?.fileName ||  null,
+      fileType: nodeCopy?.data?.formData.file?.type ||  nodeCopy?.data?.fileType || null,
     },
     html: '<div class="temp-placeholder">Loading...</div>',
     pos_x: Math.floor(Math.random() * 900) + 100,
@@ -2789,6 +3055,7 @@ this.operationOptions = updateForm.operation
   // Create the actual HTML
   const newHTML = this.createNodeHtml(newNodeId, nodeCopy.data);
 
+  this.updateNodeHTML(Number(newNodeId), newHTML);
   // Update in memory
   this.editor.drawflow.drawflow.Home.data[newNodeId].html = newHTML;
 
@@ -2801,7 +3068,8 @@ this.operationOptions = updateForm.operation
   if (nodeCopy?.data?.text === 'listOptions') {
     this.setOutputPositionsForList(newNodeId, nodeCopy?.data?.formData);
   } else {
-    this.setOutputPositions(Number(newNodeId), nodeCopy?.data?.formData?.invalidAction);
+    const actionValue = (nodeCopy?.data?.formData?.invalidAction === 'fallback' || nodeCopy?.data?.formData?.timeElapseAction === 'fallback') ? 'fallback' : nodeCopy?.data?.formData?.invalidAction;
+    this.setOutputPositions(Number(newNodeId), actionValue);
   }
   this.nodeCounter++;
 }
@@ -2911,20 +3179,51 @@ this.conditionsArray.push(conditionGroup);
     }
   }
 
-  isTagSelected(tagValue: string): boolean {
-    return this.selectedTags.includes(tagValue);
-  }
+  // isTagSelected(tagValue: string): boolean {
+  //   return this.selectedTags.includes(tagValue);
+  // }
 
-  toggleTagSelection(tagValue: string): void {
-    this.selectedTags = this.isTagSelected(tagValue)
-      ? this.selectedTags.filter(t => t !== tagValue)
-      : [...this.selectedTags, tagValue];
+  // toggleTagSelection(tagValue: string): void {
+  //   this.selectedTags = this.isTagSelected(tagValue)
+  //     ? this.selectedTags.filter(t => t !== tagValue)
+  //     : [...this.selectedTags, tagValue];
+  // }
+
+  // selectedTags: { TagId: number; TagName: string }[] = [];
+
+toggleTagSelection(tag: { ID: number; TagName: string }): void {
+  const index = this.selectedTags?.findIndex((t:any) => t.TagId === tag.ID);
+
+  if (index > -1) {
+    this.selectedTags.splice(index, 1);
+  } else {
+    this.selectedTags.push({ TagId: tag.ID, TagName: tag.TagName });
   }
+}
+
+isTagSelected(tagId: number): boolean {
+  return this.selectedTags?.some((t:any) => t?.TagId === tagId);
+}
+
+toggleTagSelectionRemove(tag: { ID: number; TagName: string }): void {
+  const index = this.selectedTagsRemoveTag?.findIndex((t:any) => t.TagId === tag.ID);
+
+  if (index > -1) {
+    this.selectedTagsRemoveTag.splice(index, 1);
+  } else {
+    this.selectedTagsRemoveTag.push({ TagId: tag.ID, TagName: tag.TagName });
+  }
+}
+
+isTagSelectedRemove(tagId: number): boolean {
+  return this.selectedTagsRemoveTag?.some((t:any) => t?.TagId === tagId);
+}
+
 
   // ==================== TIME DELAY HANDLING ====================
 
   validateTime(): void {
-    const max = this.delayUnit === 'hour' ? 24 : 60;
+    const max = this.delayUnit === 'hour' ? 24 : this.delayUnit === 'minute' ? 1440 : 86400;
     this.invalidTime = this.delayTime < 1 || this.delayTime > max;
   }
 
@@ -2936,7 +3235,8 @@ preventInvalidKeys(event: KeyboardEvent): void {
 }
 
   onUnitChange(): void {
-    const max = this.delayUnit === 'hour' ? 24 : 60;
+
+    const max = this.delayUnit === 'hour' ? 24 : 1440;
     if (this.delayTime > max) {
       this.delayTime = max;
     }
@@ -2959,13 +3259,29 @@ preventInvalidKeys(event: KeyboardEvent): void {
     this.settingService.getNewCustomField(this.userDetails.SP_ID).subscribe((allAttributes: any) => {
       
       if (allAttributes.status == 200) {
-this.currentAttributeList = allAttributes?.getfields?.filter((attr:any) =>
+var attributeListCustomize = allAttributes?.getfields?.map((attr: any, index: number) => {
+  // From 6th index onward, replace displayName with ActuallName
+  if (index <= 6) {
+    return {
+      ...attr,
+      displayName: attr.ActuallName
+    };
+  }
+  return attr;
+});
+
+
+
+
+this.currentAttributeList = attributeListCustomize.filter((attr:any) =>
   attr.ActuallName !== 'Phone_number' &&
   attr.ActuallName !== 'tag' &&
   attr.ActuallName !== 'OptInStatus'
 );
-        
-        const attributes = allAttributes?.getfields?.map((attr: any) => `${attr.displayName}`);
+   const attributes =attributeListCustomize
+  ?.map((attr: any) => attr.displayName)
+  .filter((name: string) => name !== "tag" && name !== "");
+        console.log(attributes)
         this.attributeList = attributes;
       }
 
@@ -3076,7 +3392,7 @@ this.currentAttributeList = allAttributes?.getfields?.filter((attr:any) =>
     
     const group = this.getConditionGroup(index);
     group.get(field)?.setValue(`{{${variable.displayName || variable.name}}}`);
-    group.get(`${field}Type`)?.setValue(variable.type);
+    group.get(`${field}Type`)?.setValue(variable.type || variable.dataType);
     this.showVarMenuFor = null;
     this.showAttribute = null
 
@@ -3183,7 +3499,14 @@ this.currentAttributeList = allAttributes?.getfields?.filter((attr:any) =>
           click: this.ToggleAttachmentBox.bind(this),
           template: '<button type="button" style="width:28px;height:28px;border-radius: 35%!important;border: 1px solid #e2e2e2!important;background:#fff;" class="e-tbar-btn e-btn" tabindex="-1" id="custom_tbar"  >'
             + '<div class="e-tbar-btn-text"><img style="width:10px;" src="/assets/img/teambox/attachment-icon.svg"></div></button>'
-        },],enableFloating: true 
+        },{
+          tooltipText: 'Attributes',
+          undo: true,
+          click: this.ToggleAttributesOption.bind(this),
+          template: '<button type="button" style="width:28px;height:28px;border-radius: 35%!important;border: 1px solid #e2e2e2!important;background:#fff;" class="e-tbar-btn e-btn" tabindex="-1" id="custom_tbar"  >'
+            + '<div class="e-tbar-btn-text"><img style="width:10px;" src="/assets/img/teambox/attributes.svg"></div></button>'
+        }
+        ,],enableFloating: true 
       }
 
     } else {
@@ -3250,7 +3573,10 @@ this.currentAttributeList = allAttributes?.getfields?.filter((attr:any) =>
       editor = this.bodyEditor;
     } else if (this.cardType == 'NotesMentionModal') {
       editor = this.chatEditors;
+    }else if(this.cardType == 'NotificationModal') {
+      editor = this.chatEditorElement;
     }
+
 
     if (editor) {
       const editPanel = (editor?.contentModule as ContentRender).getEditPanel() as HTMLElement;
@@ -3327,6 +3653,8 @@ this.currentAttributeList = allAttributes?.getfields?.filter((attr:any) =>
       this.toggleChatNotes('attachementTool')
     } else if(nodeType == 'MessageOptin'){
       this.conversationActions.status = 'Yes'
+    } else if(nodeType == 'UpdateConversationStatus'){
+      this.conversationActions.status = 'Resolved'
     } else{
       this.toggleChatNotes('')
     }
@@ -3506,7 +3834,7 @@ this.listOptions.reset();
   }
 
 
-  selectedAttributeType: string = '';
+  selectedAttributeType: any = '';
   isUserTyping: boolean = false;
   selectedFromVariable: boolean = false;
   selectedOptions: any[] = [];
@@ -3515,17 +3843,26 @@ this.listOptions.reset();
     const selectedAttr = this.contactAttributeForm.get('selectedAttribute')?.value;
     this.attributeDetails = this.currentAttributeList.find((attr: any) => attr.ActuallName === selectedAttr);
     this.selectedAttributeType = this.attributeDetails?.type || '';
+    console.log(this.selectedAttributeType)
     this.selectedFromVariable = false;
     this.isUserTyping = false;
-
-    if (this.selectedAttributeType === 'Multi Select' || this.selectedAttributeType == 'Select') {
+    if (this.selectedAttributeType === 'Multi Select' || this.selectedAttributeType == 'Select' || this.selectedAttributeType == 'Switch' || this.selectedAttributeType == 'User') {
       try {
         this.selectedOptions = JSON.parse(this.attributeDetails?.dataTypeValues || '[]');
+        if(this.selectedAttributeType == 'Switch'){
+          this.selectedOptions = [{"optionName": "yes"},{"optionName": "no"}];
+        }
+        if(this.selectedAttributeType == 'User'){
+          this.selectedOptions = this.agents.map(item =>{
+            return {id:item.uid,optionName:item.name}
+          })
+        }
       } catch {
         this.selectedOptions = [];
       }
     }
 
+    this.selectedValuesList = [];
     this.contactAttributeForm.get('selectedValue')?.reset();
     
 
@@ -3533,9 +3870,16 @@ this.listOptions.reset();
   }
 
   selectedValues(variable: any): void {
+    var values
+    console.log(variable)
+    if (this.selectedAttributeType == 'Select') {
+    values = `${variable?.id}:${variable?.optionName}`
+      
+    }
     
     this.contactAttributeForm.patchValue({
       selectedValue: `{{${variable?.displayName || variable?.name || variable?.optionName}}} ` || '',
+      selectedvalueBackend:this.selectedAttributeType == 'Select'? values:variable?.displayName || variable?.name || variable?.optionName,
       inputValue: '',
       selectedVariable: '',
       operation: 'replace'
@@ -3548,6 +3892,52 @@ this.listOptions.reset();
 
   }
 
+selectedValuesList: any[] = []; // Holds multiple selected options
+
+toggleSelection(variable: any) {
+  const index = this.selectedValuesList.findIndex(v => v.optionName === variable.optionName);
+
+  if (index > -1) {
+    this.selectedValuesList.splice(index, 1);
+  } else {
+    this.selectedValuesList.push(variable);
+  }
+
+const combinedValues = this.selectedValuesList
+  .map(v => v.displayName || v.name || v.optionName)
+  .join(', ');
+ 
+  const  combinedValuesIds = this.selectedValuesList
+  .map((v, index) => `${v.id}:${v.displayName || v.name || v.optionName}`)
+  .join(',');
+
+
+
+  this.contactAttributeForm.patchValue({
+    selectedValue: combinedValues || '',
+    selectedvalueBackend:combinedValuesIds,
+    inputValue: '',
+    selectedVariable: '',
+    operation: 'replace'
+  });
+
+
+  this.selectedFromVariable = true;
+  this.isUserTyping = false;
+  this.contactAttributeForm.get('selectedValue')?.updateValueAndValidity();
+  this.showAttributeCondition = true;
+}
+
+
+isSelected(variable: any): boolean {
+  return this.selectedValuesList.some(v => v.optionName === variable.optionName);
+}
+
+
+
+
+
+
   onSelectedValueKeydown(event: KeyboardEvent) {
   if (this.selectedFromVariable && event.key === 'Backspace') {
     event.preventDefault(); // prevent deleting 1 character at a time
@@ -3558,6 +3948,7 @@ this.listOptions.reset();
     });
     this.selectedFromVariable = false; // allow typing again
     this.showAttributeCondition = false; // hide attribute condition if needed
+    this.selectedValuesList = []; // clear selected options
   }
 }
 
@@ -3911,7 +4302,7 @@ onFileSelectedData(event: any, type: any = '') {
     
     this.closeAllModal()
     let mediaName
-    const fileNameWithPrefix = Link.substring(Link.lastIndexOf('/') + 1);
+    const fileNameWithPrefix = Link?.substring(Link?.lastIndexOf('/') + 1);
     let originalName;
     let getMimeTypePrefix = this.getMimeTypePrefix(media_type);
     if (getMimeTypePrefix === 'video/') {
@@ -3958,9 +4349,11 @@ onFileSelectedData(event: any, type: any = '') {
 
     if (this.cardType == "NotesMentionModal") {
 
+
       this.notesmentionForm.patchValue({
         file: Link,
-        mediaType: media_type
+        mediaType: media_type,
+        UIIdMention: this.syncMentionArray() || []
       })
     }
     if (this.cardType == "NotificationModal") {
@@ -3974,7 +4367,7 @@ onFileSelectedData(event: any, type: any = '') {
 
 
   getMimeTypePrefix(mimeType: string): string {
-    return mimeType.split('/')[0];
+    return mimeType?.split('/')[0];
   }
 
 
@@ -4040,10 +4433,36 @@ onFileSelectedData(event: any, type: any = '') {
     }
   }
 
-  openBotVariableModal() {
-    const selection = window.getSelection();
-    this.lastCursorPosition = selection?.getRangeAt(0) || null;
-    $('#botVariable').modal('show')
+
+
+openBotVariableModal(editorId:any = '') {
+  const selection = window.getSelection();
+
+  if (selection && selection.rangeCount > 0) {
+    this.lastCursorPosition = selection.getRangeAt(0);
+  } else {
+
+    const editor = this.getEditorById(editorId);
+    if (editor) {
+      this.lastCursorPosition = editor.getRange(); // Save cursor for this editor
+    }else{
+      this.lastCursorPosition = null; // or create a default Range if needed
+    }
+  }
+
+  $('#botVariable').modal('show');
+}
+
+
+  getEditorById(editorId: string): RichTextEditorComponent | null {
+    switch (editorId) {
+      case 'chatEditor': return this.chatEditor;
+      case 'chatEditors': return this.chatEditors;
+      case 'chatEditorElement': return this.chatEditorElement;
+      case 'questionEditor': return this.questionEditor;
+      case 'errorEditor': return this.errorEditor;
+      default: return null;
+    }
   }
 
 
@@ -4058,10 +4477,11 @@ onFileSelectedData(event: any, type: any = '') {
     event.stopPropagation();
   }
 
+  UIIdMention:any=[]
   InsertMentionOption(user: any) {
     let content: any = this.chatEditors.value || '';
     content = content.replace(/<p[^>]*>/g, '').replace(/<\/p>/g, '');
-    content = content + '<span contenteditable="false" class="e-mention-chip"><a _ngcontent-yyb-c67="" href="mailto:" title="">@' + user?.name + '</a></span>'
+    content = content + `<span contenteditable="false" class="e-mention-chip" data-uid="${user?.uid}"><a _ngcontent-yyb-c67="" href="mailto:" title="">@${user?.name}</a></span>`;
     this.chatEditors.value = content;
     // content = content+'<span> </span>'
     // this.chatEditor.value = content;
@@ -4119,7 +4539,7 @@ onFileSelectedData(event: any, type: any = '') {
     var data = {
       status: '',
       node_FE_Json: JSON.stringify(exportData),
-      botId: localStorage.getItem('botId'),
+      botId: sessionStorage.getItem('botId'),
       SPID: this.userDetails.SP_ID,
       nodes: [],
       botVarList:this.botVariables
@@ -4127,7 +4547,6 @@ onFileSelectedData(event: any, type: any = '') {
 
     if (type == 'submit') {
       data.status = 'draft'
-
     } else {
       let isStructureValid = true;
 
@@ -4167,9 +4586,8 @@ onFileSelectedData(event: any, type: any = '') {
 
       data.status = 'publish'
       data.nodes = flowData
-      
     }
-     localStorage.setItem('node_FE_Json',data.node_FE_Json)
+     sessionStorage.setItem('node_FE_Json',data.node_FE_Json)
      
     this.botService.submitBot(data).subscribe((res: any) => {
       this.isLoading = false
@@ -4221,9 +4639,9 @@ onFileSelectedData(event: any, type: any = '') {
           outputMap.set(outputId, true);
 
           // Count input usage
-          if (inputMap.has(inputId)) {
-            return false; // ❌ More than one connection to a single input
-          }
+          // if (inputMap.has(inputId)) {
+          //   return false; // ❌ More than one connection to a single input
+          // }
           inputMap.set(inputId, true);
         }
       }
@@ -4271,11 +4689,39 @@ onFileSelectedData(event: any, type: any = '') {
       });
     });
 
+
+    // console.log("connections",connections)
     // Process each node
     Object.entries(allNodes).forEach(([id, node]: [string, any]) => {
+      // console.log('Processing node:', node);
       const formData = node.data.formData || {};
-      const isQuestionOption = node.data.text === 'questionOption' || node.data.text === "buttonOptions" ||  node.data.text ==="WorkingHoursModal" || node.data.text === "setCondition";
+      const isQuestionOption = node.data.text === 'questionOption' || node.data.text === "buttonOptions" ||  node.data.text ==="WorkingHoursModal" || node.data.text === "setCondition" || node.data.text === "listOptions" || node.data.text === "whatsAppFlow" || node.data.text === "openQuestion" ;
+      if(node.data.text === "listOptions"){
+        var sectionListArray:any = []
+  node?.data?.formData?.sections.forEach((element:any) => {
+element?.rows.forEach((row:any) => {
+  sectionListArray.push(row?.rowName);
+});
 
+  });
+  node.data.sectionListArray = sectionListArray;
+}
+
+      if(node.data.text === "whatsAppFlow" || node.data.text === "openQuestion" ){
+        var sectionListArray:any = []
+        var value = node.data.text == "whatsAppFlow" ? 'submitted':'Valid answer'
+        sectionListArray.push(value)
+
+  node.data.sectionListArray = sectionListArray;
+}
+
+
+
+
+
+
+
+      
       // Filter and sort connections by targetNode (ascending order)
       const nodeConnections = connections
         .filter(conn => conn.sourceNode === node.id)
@@ -4288,37 +4734,55 @@ onFileSelectedData(event: any, type: any = '') {
         option: [],
         data: formData
       };
-
       if (nodeConnections.length > 0) {
         nodeObj.connectedId = nodeConnections[0]?.targetNode ?? null;
 
         // If fallback is enabled and there's a second connection
-        if (formData.invalidAction === 'fallback' && nodeConnections.length > 1) {
+        if ((formData.invalidAction === 'fallback' || formData.timeElapseAction === 'fallback') && nodeConnections.length > 1) {
           nodeObj.FallbackId = nodeConnections[1]?.targetNode ?? null;
         }
 
+        // console.log(isQuestionOption, formData)
+   
 
         if (isQuestionOption) {
-          var optionNames = formData.options || formData.buttons || formData.data.options || [];
+          var optionNames = formData?.options || formData?.buttons || formData?.data?.options || formData?.data?.sections || node?.data?.sectionListArray  || [];
 
-          const skipIndexes = [0]; // Skip connectedId
-          if (formData.invalidAction === 'fallback' && nodeConnections.length > 1) {
+          var skipIndexes = [0]; // Skip connectedId
+          if ((formData.invalidAction === 'fallback' || formData.timeElapseAction === 'fallback') && nodeConnections.length > 1) {
             skipIndexes.push(1); // Skip fallback
           }
-          optionNames = optionNames.reverse();
-          nodeConnections.forEach((conn, idx) => {
-            if (!skipIndexes.includes(idx)) {
-              const labelIndex = idx - skipIndexes.length;
+          if (nodeObj?.nodeType === "WorkingHoursModal" || nodeObj?.nodeType === "setCondition") {
+            nodeConnections.forEach((conn, idx) => {
               nodeObj.option.push({
                 optionConnectedId: conn.targetNode,
-                name: optionNames[labelIndex] || `Option ${labelIndex + 1}`
+                name: optionNames[idx]
               });
-            }
-          });
-          nodeObj.option = nodeObj.option.reverse();
+            });
+          }else{
+            optionNames = optionNames.reverse();
+            nodeConnections.forEach((conn, idx) => {
+              if (!skipIndexes.includes(idx)) {
+                const labelIndex = idx - skipIndexes.length;
+                nodeObj.option.push({
+                  optionConnectedId: conn.targetNode,
+                  name: optionNames[labelIndex] || optionNames[labelIndex]?.rowName || `Option ${labelIndex + 1}`
+                });
+              }
+            });
+            nodeObj.option = nodeObj.option.reverse();
+          }
+
         }
       }
 
+      
+   if (nodeObj?.nodeType === "buttonOptions") {
+  const reverseButton: any = nodeObj?.data?.buttons?.reverse() || [];
+  if (nodeObj && nodeObj.data && nodeObj.data.buttons) {
+    nodeObj.data.buttons = reverseButton; // ✅ Removed ?. here
+  }
+}
       finalNodes.push(nodeObj);
     });
 

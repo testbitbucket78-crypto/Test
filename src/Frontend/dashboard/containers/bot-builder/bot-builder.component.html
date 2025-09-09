@@ -277,6 +277,14 @@
             </div>
           </div>
 
+               <div *ngIf="message.actionTypeId == 4" class="d-flex justify-content-between align-items-center">
+            <div class="d-flex flex-wrap assign-container">
+              <p class="py-1 px-2 m-0"><b>Mark Conversation Status:</b></p>
+              <p class="py-1 m-0">{{ message.Value }}</p>
+            </div>
+          </div>
+
+
           <!-- Add Tags -->
           <div *ngIf="message.actionTypeId == 1 && message.Value?.length > 0"
             class="d-flex justify-content-between align-items-center">
@@ -383,11 +391,15 @@ style="margin-right: 9px;"
                     <img src="../../../../assets/img/teambox/delete.svg" />
                 </button>
                 <button *ngIf="
-                        botDetailsData?.status == 'publish' ||
-                        botDetailsData?.status == 'Deprecated'
-                    " type="button" class="titleimg" data-bs-toggle="modal" data-bs-target="#deprecated"
+                        botDetailsData?.status == 'publish'" type="button" class="titleimg" data-bs-toggle="modal" data-bs-target="#deprecated"
                     [disabled]="settingsService?.checkRoleExist('25')">
                     <img src="../../../../assets/img/Deprecate.svg" />
+                </button>
+                
+                <button *ngIf="
+                        botDetailsData?.status == 'Deprecated'" type="button" class="titleimg" data-bs-toggle="modal" data-bs-target="#deprecatedAfterDelete"
+                    [disabled]="settingsService?.checkRoleExist('25')">
+                    <img src="../../../../assets/img/teambox/delete.svg" />
                 </button>
             </div>
         </div>
@@ -1140,7 +1152,7 @@ style="margin-right: 9px;"
                                             <div class="conversation_inout_area">
                                                 <div class="input-area">
                                                   
-                                                    <ejs-richtexteditor id="editRTE" #chatEditor
+                                                    <ejs-richtexteditor id="editRTE" #chatEditor *ngIf="showAdvanceOption"
                                                         [toolbarSettings]="tools" [width]="0"  [maxLength]="1024" [showCharCount]="true"
                                                         placeholder="Type Message..." [pasteCleanupSettings]="pasteCleanupSettings" formControlName="dropOfMessage">
                                                     </ejs-richtexteditor>
@@ -1165,10 +1177,9 @@ style="margin-right: 9px;"
                                                             let assignAction of assignActionList;
                                                             let m = index
                                                         " (click)="toggleAssignOption(m)" [class.disabled-option]="
-                                                            isOptionDisabled(assignAction.value)
+                                                            isOptionDisabled(assignAction?.value || assignAction?.Value)
                                                         " [class.selected-option]="
-                                                            selectedExclusiveAction ===
-                                                            assignAction.value
+                                                            selectedExclusiveAction === (assignAction.value || assignAction?.Value)
                                                         ">
                                                         <span>{{ assignAction.name }}</span>
                                                         <img class="pr-3 arrow-sign" *ngIf="assignAction?.children"
@@ -1284,6 +1295,30 @@ style="margin-right: 9px;"
                                                                     <div class="col-4 assign-buttons">
                                                                         <button class="px-1 msg-del-btn" (click)="removeExclusiveAction('Unassign_conversation')">
                                                                             <img src="assets/img/delete.png" alt="Remove" />
+                                                                        </button>
+                                                                    </div>
+                                                                </div>
+
+                                                                 <div *ngIf="message.actionTypeId == 4" class="d-flex justify-content-between align-items-center">
+                                                                    <div class="col-8 assign-conversation">
+                                                                        <p class="m-0 py-1 px-2" id="msgbox-head1">
+                                                                            Action
+                                                                        </p>
+                                                                        <div class="d-flex flex-wrap assign-container">
+                                                                            <p class="py-1 px-2 m-0" id="msgbox-body1">
+                                                                                <b>Conversation Status:</b>
+                                                                            </p>
+                                                                            <p class="py-1 m-0" id="msgbox-body2" (input)="onActionEdit($event.target.innerHTML)">
+                                                                                {{ message.Value }}
+                                                                            </p>
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="col-4 assign-buttons">
+                                                                        <button class="px-2 msg-edit-btn btn-2" (click)="toggleEditableConverstion()">
+                                                                            <img src="assets/img/edit.png" />
+                                                                        </button>
+                                                                        <button class="px-1 msg-del-btn" (click)="removeAction(i)">
+                                                                            <img src="assets/img/delete.png" />
                                                                         </button>
                                                                     </div>
                                                                 </div>
@@ -1554,6 +1589,24 @@ style="margin-right: 9px;"
                                                                     </div>
                                                                 </div>
 
+                                                                                                                                 <div *ngIf="message.actionTypeId == 4" class="d-flex justify-content-between align-items-center">
+                                                                    <div class="col-8 assign-conversation">
+                                                                        <p class="m-0 py-1 px-2" id="msgbox-head1">
+                                                                            Action
+                                                                        </p>
+                                                                        <div class="d-flex flex-wrap assign-container">
+                                                                            <p class="py-1 px-2 m-0" id="msgbox-body1">
+                                                                                <b>Conversation Status:</b>
+                                                                            </p>
+                                                                            <p class="py-1 m-0" id="msgbox-body2">
+                                                                                {{ message.Value }}
+                                                                            </p>
+                                                                        </div>
+                                                                    </div>
+                                                
+                                                                </div>
+
+                                                                
                                                                 <div *ngIf="message.actionTypeId == 3 && message.Value?.length > 0"
                                                                     class="d-flex justify-content-between align-items-center">
                                                                     <div class="col-12 add-tag">
@@ -1652,6 +1705,30 @@ style="margin-right: 9px;"
             <div class="modal-footer border-0 d-flex justify-content-end">
                 <button type="button" class="btn btn-danger" (click)="confirmDelete('0')">
                     Deprecate
+                </button>
+                <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">
+                    Cancel
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" tabindex="-1" id="deprecatedAfterDelete" data-bs-backdrop="static" role="dialog">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content p-3">
+            <div class="modal-header border-0">
+                <!-- <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
+          <img style="width: 10px;" src="assets/img/teambox/icon-close.svg" />
+        </button> -->
+            </div>
+            <div class="modal-body">
+                <p>Attention! This will permanently delete the Bot and remove from the dashboard if no active sessions are remaining for this Bot. Note: You will not be able to download the report for this Bot.</p>
+                <p>Are you sure you want to Delete?</p>
+            </div>
+            <div class="modal-footer border-0 d-flex justify-content-end">
+                <button type="button" class="btn btn-danger" (click)="confirmDelete('1')">
+                    Delete
                 </button>
                 <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">
                     Cancel

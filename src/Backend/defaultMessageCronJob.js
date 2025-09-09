@@ -217,7 +217,7 @@ async function NoCustomerReplyTimeout() {
                 const currenttime = moment.utc(myUTCString).format('YYYY-MM-DD HH:mm:ss');
                 await db.excuteQuery(settingVal.systemMsgQuery, [6, currenttime, msg.Message_id]);
                 let messageValu = [
-                  [msg.SPID, 'text', metaPhoneNumberID, msg.interaction_id, msg.Agent_id, 'Out', msg.value, (msg.link ? msg.link : 'text'), msg.message_type,  response?.message?.messages[0]?.id, "", currenttime, currenttime, 6, -2, 9]
+                  [msg.SPID, 'text', metaPhoneNumberID, msg.interaction_id, msg.Agent_id, 'Out', msg.value, (msg.link ? msg.link : 'text'), msg.message_type,  response?.message?.messages[0]?.id, "", currenttime, currenttime, 4, -2, 9]
                 ];
                 let insertedMessage = await db.excuteQuery(insertMessageQuery, [messageValu]);
                 logger.info(`NoCustomerReplyTimeout msg, ${insertedMessage}, ${new Date()}`);
@@ -592,15 +592,17 @@ async function workingHoursDetails(sid) {
 
 async function botTimeOperations(){
   try {
-    let getSessionsData = `SELECT *,DATE_FORMAT(bot_Timeout, '%Y-%m-%d %H:%i:%s') AS botTimeout,DATE_FORMAT(node_timeout, '%Y-%m-%d %H:%i:%s') AS nodeTimeout FROM BotSessions WHERE status = 2 AND isDeleted != 1`;
+    
+    console.log('---------botStarted-------------');
+    let getSessionsData = `SELECT *,DATE_FORMAT(bot_Timeout, '%Y-%m-%d %H:%i:%s') AS botTimeout,DATE_FORMAT(node_timeout, '%Y-%m-%d %H:%i:%s') AS nodeTimeout FROM BotSessions WHERE status = 2 `;
     let botSessions = await db.excuteQuery(getSessionsData, []);
 
     let botTimeData = await db.excuteQuery(settingVal.getBotTimeOperation, []);
     logger.info(`botTimeOperations, ${botTimeData?.length}, ${new Date()}`);
-    
-    if (botTimeData?.length > 0) {
+    console.log(botSessions,'---------botSessions-------------');
+    if (botSessions?.length > 0) {
       let currentDateTime = new Date();
-      for (const data of botTimeData) {
+      for (const data of botSessions) {
         try {
           let bot_timeout = new Date(data.botTimeout +'Z');
           let node_timeout = new Date(data.nodeTimeout +'Z');
@@ -609,12 +611,16 @@ async function botTimeOperations(){
             botId: data.botId,
             custid:data.customerId
           };
-          if (bot_timeout <= currentDateTime ) {            
+            console.log(bot_timeout,currentDateTime,(bot_timeout <= currentDateTime ),'-----bot_Timeoutkjh----------');      
+          if (bot_timeout <= currentDateTime ) {  
+            console.log('-----bot_Timeout enter----------');          
             incommingmsg?.timeOut(datas,'bot',middleWare);
             logger.info(`Bot operations for SPID: ${data.spid} are being processed`, { timestamp: new Date() });
           }
 
+            console.log(node_timeout,currentDateTime,(node_timeout <= currentDateTime ),'-----node_timeoutkjh----------');      
           if(node_timeout <= currentDateTime && data.nodeTimeout != null && data.isWaiting == 1) {
+            console.log('-----node_timeout enter----------');   
             incommingmsg?.timeOut(datas,'node',middleWare);
             logger.info(`Node timeout for SPID: ${data?.spid}, botId: ${data?.botId} are being processed`, { timestamp: new Date() });
           }
@@ -660,11 +666,11 @@ async function botTimeOperations(){
 
 
 //function startScheduler() {
-  cron.schedule('*/2 * * * *', async () => {
+  cron.schedule('*/1 * * * *', async () => {
     console.log('Running scheduled task...');
-    NoCustomerReplyReminder();  // system_message_type_id  = 5
-    await NoAgentReplyTimeOut();  
-    await NoCustomerReplyTimeout();     // system_message_type_id  = 6
+    // NoCustomerReplyReminder();  // system_message_type_id  = 5
+    // await NoAgentReplyTimeOut();  
+    // await NoCustomerReplyTimeout();     // system_message_type_id  = 6
        // system_message_type_id = 4
     botTimeOperations();
 

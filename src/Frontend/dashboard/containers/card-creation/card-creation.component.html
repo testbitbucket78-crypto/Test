@@ -201,7 +201,7 @@
 
 
 <div class="modal fade" id="sendMessage" tabindex="-1" aria-hidden="true">
-  <div class="modal-dialog modal-dialog-centered custom-modal" role="document" style=" top: 27px;">
+  <div class="modal-dialog modal-dialog-centered custom-modal" role="document" style=" top: 27px; width: 32%;">
     <div class="modal-content p-4" style="background-color: #fff6f4; border-radius: 20px;">
       
       <!-- Header -->
@@ -221,7 +221,7 @@
                             </button>
       </div>
 
-
+      <div class="modal-body sendMessageBody" >
       <!-- Form -->
       <form [formGroup]="sendTextForm" (ngSubmit)="onSubmit()">
 
@@ -289,7 +289,7 @@
 
             <!-- Bot Var Button -->
     <div class="d-flex align-items-center gap-2">
-  <button id="add-action-dropdown" type="button" (click)="openBotVariableModal()">
+  <button id="add-action-dropdown" type="button" (click)="openBotVariableModal('chatEditor')">
     <img src="assets/img/teambox/add.svg" alt="Add Icon" /> Bot var
   </button>
 
@@ -310,12 +310,13 @@
         </div>
 
         <!-- Footer Buttons -->
-        <div class="d-flex justify-content-end gap-2">
-          <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cancel</button>
-          <button class="btn btn-primary" style="background-color: #6b46c1; border: none; margin-left: 11px;">Save</button>
-        </div>
-
       </form>
+    </div>
+    <div class="d-flex justify-content-end gap-2 mt-2">
+      <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cancel</button>
+      <button type="submit" class="btn btn-primary submitButtonOfSendMessage"  (click)="onSubmit()">Save</button>
+    </div>
+    
     </div>
   </div>
 </div>
@@ -553,6 +554,10 @@
                   <input type="number" min="1" class="form-control mb-2" formControlName="timeElapseMinutes"
                     style="border: 1px solid #e5e7eb; border-radius: 8px; padding: 10px 12px; font-size: 14px;"
                     placeholder="Set reply wait time in minutes" />
+
+                    <div *ngIf="questionOption.errors?.['timeElapseExceeded']" style="color: red; font-size: 12px;">
+                      Time Elapse Minutes must be less than {{ botTimeout }}.
+                    </div>
 
                   <div class="form-check mb-2">
                     <input class="form-check-input" type="radio" id="skipOnTimeElapse" value="skip"
@@ -946,7 +951,7 @@
               <!-- Validation Error Message -->
               <div class="mb-3">
          <div class="character-label-wrapper">
-            <label class="question_text_label">Question Text</label>
+            <label class="question_text_label">Validation Error Message</label>
             <span class="character-count01">Characters</span>
             </div>
                 <ejs-richtexteditor id="errorRTE" #errorEditor [toolbarSettings]="basicTools" [width]="'100%'"
@@ -1005,7 +1010,9 @@
                                             padding: 10px 12px;
                                             font-size: 14px;
                                         " placeholder="Set reply wait time in minutes" />
-
+                  <div *ngIf="openQuestion.errors?.['timeElapseExceeded']" style="color: red; font-size: 12px;">
+                    Time Elapse Minutes must be less than {{ botTimeout }}.
+                  </div>
                   <div class="form-check mb-2">
                     <input class="form-check-input" type="radio" id="skipOnTimeElapse" value="skip"
                       formControlName="timeElapseAction" />
@@ -1088,7 +1095,7 @@
               </label>
             </div>
 
-            <label *ngIf="buttonOptions.get('headerType')?.value != 'none'" [ngStyle]="{
+            <label *ngIf="buttonOptions.get('headerType')?.value == 'text'" [ngStyle]="{
     'margin-bottom': buttonOptions.get('headerType')?.value === 'text' ? '-30px' : '-5px'}"  class="header_text">
               Header {{ buttonOptions.get('headerType')?.value === 'text' ? '(Optional)' : '' }}
             </label>
@@ -1475,6 +1482,11 @@
                                             padding: 10px 12px;
                                             font-size: 14px;
                                         " placeholder="Set reply wait time in minutes" />
+
+                          <div *ngIf="buttonOptions.errors?.['timeElapseExceeded']" style="color: red; font-size: 12px;">
+  Time Elapse Minutes must be less than {{ botTimeout }}.
+</div>
+
 
                   <div class="form-check mb-2">
                     <input class="form-check-input" type="radio" id="skipOnTimeElapse" value="skip"
@@ -1922,6 +1934,10 @@
                                             padding: 10px 12px;
                                             font-size: 14px;
                                         " placeholder="Set reply wait time in minutes" />
+            <div *ngIf="listOptions.errors?.['timeElapseExceeded']" style="color: red; font-size: 12px;">
+  Time Elapse Minutes must be less than {{ botTimeout }}.
+</div>
+
 
                   <div class="form-check mb-2">
                     <input class="form-check-input" type="radio" id="skipOnTimeElapse" value="skip"
@@ -2207,6 +2223,9 @@
                                             padding: 10px 12px;
                                             font-size: 14px;
                                         " placeholder="Set reply wait time in minutes" />
+                                                    <div *ngIf="whatsAppFlowForm.errors?.['timeElapseExceeded']" style="color: red; font-size: 12px;">
+  Time Elapse Minutes must be less than {{ botTimeout }}.
+</div>
 
                   <div class="form-check mb-2">
                     <input class="form-check-input" type="radio" id="skipOnTimeElapse" value="skip"
@@ -2320,7 +2339,7 @@
                 <div class="custom-input-wrapper">
                   <input type="text" class="custom-input" formControlName="value" placeholder="Select variable or attribute"
                     (input)="onValueInput(i)" (focus)="isFocused = true"
-                    (keydown)="allowOnlyBackspaces($event, i, 'value')" (blur)="isFocused = false"/>
+                    (keydown)="allowOnlyBackspaces($event, i, 'value')" (blur)="isFocused = false" style="padding-right: 142px;"/>
                      <!-- [readonly]="selectedFields[i]?.value" -->
                   <span class="toggle_attribute_condition" (click)="openAttributeOption(i, 'value')"></span>
                   <div class="bot-var-menu" [class.visible]="
@@ -2549,6 +2568,9 @@
   </div>
 </div>
 
+
+
+
 <div class="modal fade" id="UpdateContactAttribute" tabindex="-1" aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered custom-modal" style="width: 32%">
     <div class="modal-content p-4">
@@ -2592,24 +2614,24 @@
             <!-- </div> -->
             <div class="custom-input-wrapper">
               <input type="text" class="custom-input" formControlName="selectedValue"
-                *ngIf="selectedAttributeType != 'Multi Select' && selectedAttributeType != 'Select'"
+                *ngIf="selectedAttributeType != 'Multi Select' && selectedAttributeType != 'Select' && selectedAttributeType != 'Switch' && selectedAttributeType != 'User'"
                 placeholder="Enter variable or attribute" (focus)="isFocused = true" (blur)="isFocused = false"
                 (input)="onTextInputChange($event)" [readonly]="selectedFromVariable" />
 
 
               <input type="text" class="custom-input form-control" formControlName="selectedValue"
-                *ngIf="selectedAttributeType == 'Multi Select' || selectedAttributeType == 'Select'"
+                *ngIf="selectedAttributeType == 'Multi Select' || selectedAttributeType == 'Select' || selectedAttributeType == 'Switch' || selectedAttributeType == 'User'"
                 placeholder="Enter variable or attribute" (focus)="isFocused = true" (blur)="isFocused = false"
-                (input)="onTextInputChange($event)"  (keydown)="selectedFromVariable ? onSelectedValueKeydown($event) : allowOnlyBackspace($event)" />
+                (input)="onTextInputChange($event)"  (keydown)="selectedFromVariable ? onSelectedValueKeydown($event) : allowOnlyBackspace($event)" style="padding-right: 151px;"/>
 
 
 
 
               <span class="select_box" [class.disabled]="isUserTyping" 
                 (click)="!isUserTyping && selectAttribute('option',$event)"   
-                *ngIf="selectedAttributeType == 'Multi Select' || selectedAttributeType == 'Select'"></span>
+                *ngIf="selectedAttributeType == 'Multi Select' || selectedAttributeType == 'Select' || selectedAttributeType == 'Switch' || selectedAttributeType == 'User'"></span>
 
-              <span class="toggle_attributes" style="left: 345px;" [class.disabled]="isUserTyping"
+              <span class="toggle_attributes_contactattribute" style="left: 345px;" [class.disabled]="isUserTyping"
                 (click)="!isUserTyping && selectAttribute('attr',$event)"></span>
 
               <button type="button" class="custom-button" [class.focused]="isFocused" [disabled]="isUserTyping"
@@ -2618,11 +2640,25 @@
               </button>
               <!-- <div class="dropdown-wrapper" #dropdownWrapper> -->
 
-              <div class="bot-var-menu" [class.visible]="openDropdown.status === 'option'">
+              <div class="bot-var-menu" [class.visible]="openDropdown.status === 'option' && selectedAttributeType != 'Multi Select'">
                 <div *ngFor="let variable of selectedOptions" class="bot-var-item" (click)="selectedValues(variable)">
                   {{ variable.optionName }}
                 </div>
               </div>
+
+      <div class="bot-var-menu" 
+     [class.visible]="openDropdown.status === 'option' && selectedAttributeType == 'Multi Select'" 
+     (click)="$event.stopPropagation()"> <!-- Prevent closing on click -->
+  <div *ngFor="let variable of selectedOptions" class="bot-var-item">
+    <input 
+      type="checkbox"
+      [checked]="isSelected(variable)"
+      (change)="toggleSelection(variable)"
+    />
+    <label class="label_contact">{{ variable.optionName }}</label>
+  </div>
+</div>
+
 
               <!-- Attribute Menu -->
               <div class="bot-var-menu" [class.visible]="openDropdown.status === 'attr'">
@@ -2657,7 +2693,7 @@
               <label class="form-check-label" for="addIfEmpty">Add If Empty</label>
             </div>
             <div class="form-check form-check-inline inlinebutton"
-              *ngIf="selectedAttributeType == 'Multi Select' || selectedAttributeType == 'Select'">
+              *ngIf="selectedAttributeType == 'Multi Select'">
               <input class="form-check-input" type="radio" id="append" formControlName="operation" value="append"
                 class="buttonMargin" />
               <label class="form-check-label" for="append">Append</label>
@@ -2707,8 +2743,9 @@
           <!-- Tag list with checkboxes and colored labels -->
           <div class="tag-list insideScroller">
             <div class="form-check mt-2" *ngFor="let tag of addTagList">
-              <input type="checkbox" class="form-check-input" [id]="'tag-' + tag.TagName"
-                [checked]="isTagSelected(tag.TagName)" (change)="toggleTagSelection(tag.TagName)"
+              <input type="checkbox" class="form-check-input" [id]="'tag-' + tag.ID"
+                [checked]="isTagSelected(tag.ID)"
+                (change)="toggleTagSelection(tag)"
                 style="margin-top: 16px" />
               <label class="form-check-label" [for]="'tag-' + tag.TagName">
                 <span class="tag-dot" [style.background]="tag.TagColour"></span>
@@ -2783,10 +2820,11 @@
           <!-- Tag list with checkboxes and colored labels -->
           <div class="tag-list insideScroller">
             <div class="form-check mt-2" *ngFor="let tag of removeTagList">
-              <input type="checkbox" class="form-check-input" [id]="'tag-' + tag.TagName"
-                [checked]="isTagSelected(tag.TagName)" (change)="toggleTagSelection(tag.TagName)"
+              <input type="checkbox" class="form-check-input" [id]="'tag-' + tag.ID"
+               [checked]="isTagSelectedRemove(tag.ID)"
+                (change)="toggleTagSelectionRemove(tag)"
                 style="margin-top: 16px" />
-              <label class="form-check-label" [for]="'tag-' + tag.TagName">
+              <label class="form-check-label" [for]="'tag-' + tag.ID">
                 <span class="tag-dot" [style.background]="tag.TagColour"></span>
                 <span class="tag-text" [class.font-weight-bold]="
                                         tag.TagName === 'Paid' || tag.TagName === 'Return'
@@ -2874,7 +2912,7 @@
             <div class="col-4">
               <label class="form-label">Time</label>
               <input type="number" class="form-control" style="width: 80px" [min]="1"
-                [max]="delayUnit === 'hour' ? 24 : 60"  (change)="validateTime()" [(ngModel)]="delayTime" 
+                [max]="delayUnit === 'hour' ? 24 : delayUnit === 'minute' ? 1440 : 86400"  (change)="validateTime()" [(ngModel)]="delayTime" 
                 placeholder="10" />
             </div>
             <div class="col-4">
@@ -2991,6 +3029,22 @@
               [toolbarSettings]="attachementTool" [width]="'90%'" [maxLength]="1024" [showCharCount]="true"
               placeholder="Type Message..." [pasteCleanupSettings]="pasteCleanupSettings" formControlName="textMessage">
             </ejs-richtexteditor>
+                                     <div class="d-flex align-items-center gap-2">
+  <button id="add-action-dropdown"  style="right: 116px;
+    top: 406px;
+    bottom: auto !important;" type="button" (click)="openBotVariableModal()">
+    <img src="assets/img/teambox/add.svg" alt="Add Icon" /> Bot var
+  </button>
+
+  <!-- <sb-tooltip
+    class="d-inline-block"
+     style="bottom: 20px;right: 49px; "
+    id="add-action-dropdowns"
+    [tooltipText]="'Use this to store user responses and reuse them later in the bot flow.'"
+    [isVisible]="isTooltipVisible"
+    (visibilityChange)="handleTooltipChange($event)"
+  ></sb-tooltip> -->
+</div>
           </div>
         </form>
 

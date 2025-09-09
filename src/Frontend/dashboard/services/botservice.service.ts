@@ -78,6 +78,7 @@ export class BotserviceService {
     pending: '#EBEDF1',
     rejected: '#E4DFF5',
     publish: '#E2F4EC',
+    Deprecated:'#d2d2d2'
   };
 
   getStatusColor(status: string): string {
