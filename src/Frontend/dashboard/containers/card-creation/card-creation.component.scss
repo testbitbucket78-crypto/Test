@@ -3392,3 +3392,17 @@ input[type="checkbox"] {
 .submitButtonOfSendMessage{
   background-color: #6b46c1; border: none; margin-left: 11px
 }
+
+
+.select_box_condition {
+    background: url("/assets/img/teambox/dropdown.svg") no-repeat;
+    background-size: 11px;
+    position: absolute;
+    left: 244px !important;
+    top: 86%;
+    transform: translateY(-50%);
+    width: 21px;
+    height: 9px;
+    background-repeat: no-repeat;
+    cursor: pointer;
+}

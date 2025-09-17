@@ -1,4 +1,5 @@
 const db = require("../dbhelper");
+const { getUrl, env } = require('../config');
 
 const host= "sdpl-staging.cccfuev8blzt.ap-south-1.rds.amazonaws.com"
 
@@ -43,10 +44,10 @@ var access_token = 'Bearer EAAQTkLZBFFR8BOxmMdkw15j53ZCZBhwSL6FafG1PCR0pyp11EZCP
 var url='https://graph.facebook.com/v19.0/211544555367892/messages'
 
 //Sms varification variables
-const email =   "notification@engagekart.com"; 
-const appPassword = "Notification@123"  
-const emailHost = "mail.engagekart.com" 
-const port = "465"
+const email = getUrl('EngagekartEmail') ||  "notification@engagekart.com"; 
+const appPassword = getUrl('EngagekartEmailPassword') || "Notification@123"  
+const emailHost = getUrl('EngagekartEmailHost') || "mail.engagekart.com" 
+const port = getUrl('EngagekartPort') || "465"
 
 //Sms varification variables
 // const email =    'info@sampana.in'
@@ -63,16 +64,16 @@ var selectQuery = "Select * from AutomatedCampaign"
 
 const EmailConfigurations = {
     Engagekart: {
-      email: "notification@engagekart.com",
-      appPassword: "Notification@123",
-      emailHost: "mail.engagekart.com",
-      port: 465,
+      email: getUrl('EngagekartEmail') ||  "notification@engagekart.com",
+      appPassword: getUrl('EngagekartEmailPassword') || "Notification@123",
+      emailHost: getUrl('EngagekartEmailHost') || "mail.engagekart.com",
+      port: getUrl('EngagekartPort') || 465,
     },
     Engagezilla: {
-      email: "notification@engagezilla.com",
-      appPassword: "Notification@123",
-      emailHost: "mail.engagezilla.com",
-      port: 465,
+      email: getUrl('EngagezillaEmail') || "notification@engagezilla.com",
+      appPassword: getUrl('EngagezillaEmailPassword') || "Notification@123",
+      emailHost: getUrl('EngagezillaEmailHost') || "mail.engagezilla.com",
+      port: getUrl('EngagezillaPort') || 465,
     },
 
   };
