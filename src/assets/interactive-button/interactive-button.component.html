@@ -1,31 +1,31 @@
 <div class="bg-white" [style.width]="width" [ngStyle]="style">
   <div *ngFor="let btn of buttons; let i = index;">
     <div *ngIf="btn.id == 'quick_reply'" class="d-flex align-items-center text-center justify-content-center p-2 border border-top-0">
-      <span class="pr-2"><img src="../../../../assets/img/settings/reply-arrow.svg" style="width: 14px; height: 14px;"/></span>
+      <span class="pr-2"><img src="../../../../assets/img/settings/reply-arrow.svg" class="wh-btn-14"/></span>
       <span>
         <p class="mb-0" style="color: #0080ba;">{{btn.title}}</p>
       </span>
     </div>
     <div *ngIf="btn.id == 'url'" class="d-flex align-items-center text-center justify-content-center p-2 border border-top-0">
-        <span class="pr-2"><img src="../../../../assets/img/settings/open-in-new.svg" style="width: 14px; height: 14px;"/></span>
+        <span class="pr-2"><img src="../../../../assets/img/settings/open-in-new.svg" class="wh-btn-14"/></span>
         <span>
           <p class="mb-0" style="color: #0080ba;">{{btn.title}}</p>
         </span>
     </div>
     <div *ngIf="btn.id == 'phone'" class="d-flex align-items-center text-center justify-content-center p-2 border border-top-0">
-      <span class="pr-2"><img src="../../../../assets/img/settings/phone-call.svg" style="width: 14px; height: 14px;"/></span>
+      <span class="pr-2"><img src="../../../../assets/img/settings/phone-call.svg" class="wh-btn-14"/></span>
       <span>
         <p class="mb-0" style="color: #0080ba;">{{btn.title}}</p>
       </span>
     </div>
     <div *ngIf="btn.id == 'copy_button'" class="d-flex align-items-center text-center justify-content-center p-2 border border-top-0">
-      <span class="pr-2"><img src="../../../../assets/img/settings/copy.svg" style="width: 14px; height: 14px;"/></span>
+      <span class="pr-2"><img src="../../../../assets/img/settings/copy.svg" class="wh-btn-14"/></span>
       <span>
         <p class="mb-0" style="color: #0080ba;">{{btn.title}}</p>
       </span>
     </div>
     <div *ngIf="btn.id == 'list_messages'" class="d-flex align-items-center text-center justify-content-center p-2 border border-top-0">
-      <span class="pr-2"><img src="../../../../assets/img/options-lines.svg" style="width: 14px; height: 14px;"/></span>
+      <span class="pr-2"><img src="../../../../assets/img/options-lines.svg" class="wh-btn-14"/></span>
       <span>
         <p class="mb-0" style="color: #0080ba;">{{btn.title}}</p>
       </span>
@@ -34,7 +34,7 @@
     <!-- To display the List Button for the Live Preview  -->
         <div *ngIf="btn?.label"
           class="d-flex align-items-center text-center justify-content-center p-2 border border-top-0">
-          <span class="pr-2"><img src="../../../../assets/img/options-lines.svg" style="width: 14px; height: 14px;" /></span>
+          <span class="pr-2"><img src="../../../../assets/img/options-lines.svg" class="wh-btn-14 color-blue" /></span>
           <span>
             <p class="mb-0 color-blue">{{btn?.label}}</p>
           </span>
