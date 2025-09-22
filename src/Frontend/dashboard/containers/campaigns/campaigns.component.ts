@@ -1866,7 +1866,7 @@ formateDate(dateTime:string){
 			optInStatus:this.optInStatus,
 			title:this.newCampaignDetail.value.title,
 			channel_id:this.channelId(this.selectedChannel),
-			message_heading:this.selectedTemplate?.Header,
+			message_heading:this.selectedTemplate?.Header ?? '',
 			message_content: this.constructMessageContent(this.selectedTemplate?.BodyText),
 			message_footer: this.selectedTemplate?.FooterText,
 			message_media:this.selectedTemplate?.Links ? this.selectedTemplate?.Links :'text',
