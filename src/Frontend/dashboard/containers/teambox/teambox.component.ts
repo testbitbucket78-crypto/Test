@@ -2030,11 +2030,14 @@ export class TeamboxComponent implements OnInit {
 			//this.getAssicatedInteractionData(dataList,selectInteraction)
 			setTimeout(() => {
 				dataList.forEach((item: any) => {
-					if (item.InteractionMapping != -1) {
+					if (item.InteractionMapping != -1 && item.InteractionMapping != -4) {
 						item.assignAgent = this.userList.filter((items: any) => items.uid == item.InteractionMapping)[0]?.name;
 						console.log(this.userList);
 					} else {
-						item.assignAgent = 'Unassigned';
+						if(item.InteractionMapping == -4)
+							item.assignAgent = 'Bot';
+						else
+							item.assignAgent = 'Unassigned';
 					}
 
 				})
@@ -3292,7 +3295,7 @@ export class TeamboxComponent implements OnInit {
 		let name = this.userList.filter((items: any) => items.uid == this.uid)[0]?.name;
 		let agentName = this.userList.filter((items: any) => items.uid == AgentId)[0]?.name;
 		agentName = agentName == name ? 'Self' : agentName;
-		agentName = AgentId == -3 ? `Bot (${botName})` : agentName
+		agentName = AgentId == -4 ? `Bot (${botName})` : agentName
 		var bodyData = {
 			InteractionId: InteractionId,
 			AgentId: AgentId,
@@ -4278,7 +4281,7 @@ sendMessage(isTemplate:boolean=false,templateTxt:string='',type: any = ''){
 			this.sendMessage(false, '', 'bot')
 			setTimeout(() => {
 
-				this.updateInteractionMapping(this.selectedInteraction.InteractionId, -3, this.TeamLeadId,this.selectedBotobj.name)
+				this.updateInteractionMapping(this.selectedInteraction.InteractionId, -4, this.TeamLeadId,this.selectedBotobj.name)
 			}, 1000)
 			this.closeAllModal(); // Your custom close logic
 		}

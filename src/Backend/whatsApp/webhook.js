@@ -226,9 +226,11 @@ async function extractDataFromMessage(body) {
         if(button && button?.length > 2)
             repliedMessageText = 'Template';
 
+        console.log(Type,'-------------------Type----------');
         if (Type == 'interactive') {
           if(firstMessage?.interactive && firstMessage?.interactive?.type == 'nfm_reply'){
             message_text = 'Form sent';
+            try{
             let flow_reply_Json = JSON.stringify(firstMessage?.interactive?.nfm_reply?.response_json);
             let flow_reply = JSON.parse(firstMessage?.interactive?.nfm_reply?.response_json);
             let flow_token = JSON.parse(flow_reply?.flow_token)?.custom_info;
@@ -243,9 +245,39 @@ async function extractDataFromMessage(body) {
             let body= { mapping: mapping[0].col_Mapping, spId: SPID[0]?.SP_ID, customerId: contactDetail?.customerId, flowresponse: flow_reply_Json }
             updatePreviousValue(body);
             }
+            }catch{
+              console.log('------- whatsflowFailed ---------------');
+            }
+          } else if(firstMessage?.interactive && firstMessage?.interactive?.type == 'list_reply'){
+        console.log('-------------------inside----------');
+            message_text = firstMessage?.interactive?.list_reply?.title;
+          } else if(firstMessage?.interactive && firstMessage?.interactive?.type == 'button_reply'){
+            message_text = firstMessage?.interactive?.button_reply?.title;
           }
+          console.log(firstMessage?.interactive, '--------firstMessage?.interactive----')
+          console.log(firstMessage?.interactive?.type, '--------firstMessage?.interactive?.type----')
+          console.log(firstMessage?.interactive?.list_reply, '--------firstMessage?.interactive?.list_reply----')
+          console.log(message_text, '--------message_text----')
+          console.log(firstMessage?.interactive?.list_reply?.title, '--------firstMessage?.interactive?.list_reply?.title----')
+
         }
       }
+
+       if (Type == 'interactive') {
+          if(firstMessage?.interactive && firstMessage?.interactive?.type == 'list_reply'){
+        console.log('-------------------inside----------');
+            message_text = firstMessage?.interactive?.list_reply?.title;
+          } else if(firstMessage?.interactive && firstMessage?.interactive?.type == 'button_reply'){
+            message_text = firstMessage?.interactive?.button_reply?.title;
+          }
+          console.log(firstMessage?.interactive, '--------firstMessage?.interactive----')
+          console.log(firstMessage?.interactive?.type, '--------firstMessage?.interactive?.type----')
+          console.log(firstMessage?.interactive?.list_reply, '--------firstMessage?.interactive?.list_reply----')
+          console.log(message_text, '--------message_text----')
+          console.log(firstMessage?.interactive?.list_reply?.title, '--------firstMessage?.interactive?.list_reply?.title----')
+
+        }
+
     
          //console.log( spid, "campaignReplied*******", campaignReplied?.affectedRows)
       }
