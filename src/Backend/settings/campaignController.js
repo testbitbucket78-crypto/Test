@@ -767,7 +767,7 @@ const addTemplate = async (req, res) => {
                     console.log("edittemplateStatus", updatedTemplate);
                     status = updatedTemplate.status
                     if(updatedTemplate.status){
-                    let updatedTemplateValues = [TemplateName, Channel, Category, Language, media_type, Header, BodyText, image, FooterText, JSON.stringify(template_json), status, spid, created_By, created_at, isTemplate, industry, category_id,updatedTemplate.id,buttons,categoryChange,metaUploadedId, ID]
+                    let updatedTemplateValues = [TemplateName, Channel, Category, Language, media_type, Header, BodyText, image, FooterText, JSON.stringify(template_json), status, spid, created_By, created_at, isTemplate, industry, category_id,updatedTemplate.id,buttons,categoryChange,interactiveButtons,renderedButtons,metaUploadedId, ID]
                     updatedTemplate = await db.excuteQuery(val.updateTemplate, updatedTemplateValues)
                     console.log(Channel, status, "updatedTemplate", updatedTemplate)
                     }else{
@@ -775,12 +775,12 @@ const addTemplate = async (req, res) => {
                     }
                 }else {
                    
-                    let updatedTemplateValues = [TemplateName, Channel, Category, Language, media_type, Header, BodyText, image, FooterText, JSON.stringify(template_json), status, spid, created_By, created_at, isTemplate, industry, category_id,'',buttons,categoryChange,metaUploadedId, ID]
+                    let updatedTemplateValues = [TemplateName, Channel, Category, Language, media_type, Header, BodyText, image, FooterText, JSON.stringify(template_json), status, spid, created_By, created_at, isTemplate, industry, category_id,'',buttons,categoryChange,interactiveButtons,renderedButtons,metaUploadedId, ID]
                     updatedTemplate = await db.excuteQuery(val.updateTemplate, updatedTemplateValues)
                     console.log(Channel, status, "updatedTemplate", updatedTemplate)
                 }
             } else if (Channel == 'WhatsApp Web' || Channel == 'WA Web') {
-                let updatedTemplateValues = [TemplateName, Channel, Category, Language, media_type, Header, BodyText, image, FooterText, JSON.stringify(template_json), req.body.status, spid, created_By, created_at, isTemplate, industry, category_id,'',buttons,categoryChange,metaUploadedId,ID]
+                let updatedTemplateValues = [TemplateName, Channel, Category, Language, media_type, Header, BodyText, image, FooterText, JSON.stringify(template_json), req.body.status, spid, created_By, created_at, isTemplate, industry, category_id,'',buttons,categoryChange,interactiveButtons,renderedButtons,metaUploadedId,ID]
                 updatedTemplate = await db.excuteQuery(val.updateTemplate, updatedTemplateValues)
                 console.log(Channel, "updatedTemplate", updatedTemplate)
             }
@@ -1185,6 +1185,8 @@ const getFlows = async (req,res) =>{
         // Filter the flows locally to return only those with status 'PUBLISHED'
         // const publishedFlows = response.data.data.filter(flow => flow.status === 'PUBLISHED');
          const publishedFlows = response.data.data;
+        // const allFlows = response.data.data;
+
          const existingFlowIds = new Set(Flows.map(row => row.flowid));
 
         const newData = publishedFlows.filter(item => !existingFlowIds.has(item?.id));
@@ -1195,7 +1197,43 @@ const getFlows = async (req,res) =>{
         await db.excuteQuery(query, [insertValues]);
 
     }
+        // need to update 
+        const updateData = publishedFlows.filter(item => existingFlowIds.has(item?.id));
+
+        if (updateData.length > 0) {
+            let updateQuery = `
+                UPDATE Flows 
+                SET 
+                    flowname = CASE flowid
+                        ${updateData.map(() => 'WHEN ? THEN ?').join(' ')}
+                        ELSE flowname
+                    END,
+                    status = CASE flowid
+                        ${updateData.map(() => 'WHEN ? THEN ?').join(' ')}
+                        ELSE status
+                    END,
+                    updated_at = NOW()
+                WHERE spid = ?;
+            `;
+
+            const updateValues = [];
+
+            updateData.forEach(item => {
+                updateValues.push(item.id, item.name);
+            });
+
+            updateData.forEach(item => {
+                updateValues.push(item.id, item.status);
+            });
+
+            updateValues.push(req.params.spid);
+
+            await db.excuteQuery(updateQuery, updateValues);
+        }
+    
     let FlowsData = await db.excuteQuery(val.getflows, [req.params.spid]);
+     FlowsData = FlowsData.filter(flow => flow?.status === "PUBLISHED"); // (Drafts Deprecated) are not valid (400) structure errors will be there  
+    
         res.send({
             status: 200,
             flows: FlowsData
