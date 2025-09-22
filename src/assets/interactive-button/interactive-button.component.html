@@ -30,5 +30,14 @@
         <p class="mb-0" style="color: #0080ba;">{{btn.title}}</p>
       </span>
     </div>
+
+    <!-- To display the List Button for the Live Preview  -->
+        <div *ngIf="btn?.label"
+          class="d-flex align-items-center text-center justify-content-center p-2 border border-top-0">
+          <span class="pr-2"><img src="../../../../assets/img/options-lines.svg" style="width: 14px; height: 14px;" /></span>
+          <span>
+            <p class="mb-0" style="color: #0080ba;">{{btn?.label}}</p>
+          </span>
+        </div>
   </div>
 </div>
