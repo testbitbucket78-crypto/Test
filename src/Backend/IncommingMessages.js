@@ -369,6 +369,7 @@ function extractPlainValues(message_variable) {
 async function iterateSmartReplies(replymessage, phone_number_id, from, sid, custid, agid, newId, channelType, display_phone_number) {
   try {
     var messageToSend = [];
+    let actionsToPerform = []; 
     var isActionAddded = -1;
     for (let message of replymessage) {
       var media = message.Media;
@@ -393,7 +394,7 @@ async function iterateSmartReplies(replymessage, phone_number_id, from, sid, cus
       if(!commonFun.isInvalidParam(buttonsVar) && buttonsVar.length > 0) {
         buttonsVariable = await removeTags.getDynamicURLToBESent(buttonsVar, sid, custid);
       }
-      let PerformingActions = await PerformingSReplyActions(actionId, value, sid, custid, agid, newId, display_phone_number);
+      //let PerformingActions = await PerformingSReplyActions(actionId, value, sid, custid, agid, newId, display_phone_number); Add Action postponed
       let content = await removeTags.removeTagsFromMessages(testMessage);
       if (actionId == 2) {
         isActionAddded = isActionAddded + 1;
@@ -470,8 +471,18 @@ async function iterateSmartReplies(replymessage, phone_number_id, from, sid, cus
         "buttonsVariable" : buttonsVariable,
         "interactive_buttons" : interactive_buttons
       };
+
       console.log(message.replyId, "replysms", relyMsg);
       messageToSend.push(relyMsg);
+      actionsToPerform.push({
+        actionId,
+        value,
+        sid,
+        custid,
+        agentId: agid,
+        interactionId: newId,
+        display_phone_number,
+      });
     }
 
     console.log("Before sort");
@@ -511,6 +522,22 @@ async function iterateSmartReplies(replymessage, phone_number_id, from, sid, cus
         // console.log(type,"SreplyThroughselectedchannel response:", respose);
       }
       await new Promise(resolve => setTimeout(resolve, delay)); // Wait 500ms before sending the next message
+    }
+
+    for (let action of actionsToPerform) {
+      try {
+        await PerformingSReplyActions(
+          action.actionId,
+          action.value,
+          action.sid,
+          action.custid,
+          action.agentId,
+          action.interactionId,
+          action.display_phone_number
+        );
+      } catch (e) {
+        console.error("PerformingSReplyActions failed:", e);
+      }
     }
 
     console.log("iterateSmartReplies completed");
@@ -1129,7 +1156,7 @@ async function SreplyThroughselectedchannel(spid, from, type, text, media, phone
     return response;
   } if (channelType == 'WhatsApp Web' || channelType == 2 || channelType == 'WA Web'|| variable.SPID == spid || variable.provider == 'whapi') {
        let result
-    if(isTemplate == 'true' && interactive_buttons){
+    if(isTemplate == 'true' && Array.isArray(interactive_buttons) && interactive_buttons.length > 0){
         result = await middleWare.sendingTemplate(spid, from, headerVar, text, interactive_buttons);
       }
       else{
