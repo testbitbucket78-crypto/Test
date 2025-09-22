@@ -542,7 +542,7 @@ async function iterateSmartReplies(replymessage, phone_number_id, from, sid, cus
 
     console.log("iterateSmartReplies completed");
     return isActionAddded;
-
+F
   } catch (err) {
     console.log(err);
     return false;
@@ -1313,17 +1313,21 @@ async function botAdvanceAction(botId,custid,interactionId,spid,display_phone_nu
           isChatAssign = true;
           console.log(action[i],'----------------Assign_Agent-------------');
           await assignAction(action[i]?.agentId, -3, interactionId, custid, spid, display_phone_number);
+      let ResolveOpenChat = await db.excuteQuery('UPDATE Interaction SET interaction_status ="Open" WHERE InteractionId =? and customerId=?', [ interactionId, custid]);
+    setTimeout(() => {notify.NotifyServer(display_phone_number, false, interactionId, 0, 'IN', 'Assign Agent');}, 200); 
         }else if(actionType == 'assign_owner'){
           isChatAssign = true;
           console.log(action[i],'----------------assign_owner-------------');
           let assignOwner = await AssignToContactOwner(spid,interactionId ,custid);
+      let ResolveOpenChat = await db.excuteQuery('UPDATE Interaction SET interaction_status ="Open" WHERE InteractionId =? and customerId=?', [ interactionId, custid]);
+    setTimeout(() => {notify.NotifyServer(display_phone_number, false, interactionId, 0, 'IN', 'Assign Agent');}, 200); 
           if(assignOwner){
             console.log("assignOwner", assignOwner)
           }
       }else if(actionType =='Mark_Status'){
           isChatAssign = true;
           console.log(action[i],'----------------conversationStatus-------------');
-        let ResolveOpenChat = await db.excuteQuery('UPDATE Interaction SET interaction_status =? WHERE InteractionId !=? and customerId=?', [value[0], interactionId, custid]);        
+        let ResolveOpenChat = await db.excuteQuery('UPDATE Interaction SET interaction_status =? WHERE InteractionId !=? and customerId=?', [action[i]?.Value[0], interactionId, custid]);        
       }
     }
     
@@ -1394,6 +1398,7 @@ async function identifyNode(data){
       await identifyNode(data);
     }else if(type == 'assignAgentModal'){
       await assignAction(json.data?.data?.uid, -4, data.interactionId, data.custid, data.sid, data.display_phone_number);
+    setTimeout(() => {notify.NotifyServer(data?.display_phone_number, false, data?.interactionId, 0, 'IN', 'Assign Agent');}, 200); 
       let ResolveOpenChat = await db.excuteQuery('UPDATE Interaction SET interaction_status ="Open" WHERE InteractionId =? and customerId=?', [ data?.interactionId, data?.custid]);
       botExit(data, 3);
     } else if(type == 'UnassignConversation'){
@@ -1401,9 +1406,11 @@ async function identifyNode(data){
       await db.excuteQuery(updateQuery, [data.interactionId]);
       let val = [[1,data.interactionId, -1, -4]];
       var assignCon = await db.excuteQuery(updateInteractionMapping, [val]);
+    setTimeout(() => {notify.NotifyServer(data?.display_phone_number, false, data?.interactionId, 0, 'IN', 'Assign Agent');}, 200); 
       botExit(data, 3);
     } else if(type == 'assigntoContactOwner'){
-      let assignOwner = await AssignToContactOwner(data.sid, data.interactionId, data.custid);      
+      let assignOwner = await AssignToContactOwner(data.sid, data.interactionId, data.custid);  
+    setTimeout(() => {notify.NotifyServer(data?.display_phone_number, false, data?.interactionId, 0, 'IN', 'Assign Agent');}, 200);     
       botExit(data, 3);
     }
     else if(type == 'AddTags'){
@@ -1812,10 +1819,10 @@ async function setCondition(json,data){
  let prevJoin ='';
  let result = false;
 for (const item of condition) {
- let comp = item?.comparator;
+ let comp = item?.comparatorBackend;
  let replacedComp = await replacebotVariable(JSON.parse(data?.botSessionVariables),comp);
   let comperater = await getExtraxtedMessage(replacedComp, data.sid, data.custid)
- let val = item?.value;
+ let val = item?.valueBackend;
   let replacedText = await replacebotVariable(JSON.parse(data?.botSessionVariables),val);
   let value = await getExtraxtedMessage(replacedText, data.sid, data.custid)
   let current = evaluateCondition(comperater,item?.comparatorType,item?.operator,value)
@@ -2230,7 +2237,7 @@ let mainData = {
 //-----start------- 0 null 0  559169223950422 Pawan Sharma 917618157986 55 83534 380 Open 7133 80363 null WA API 0 0 0 null 919877594039 ------end-------
 
 
-//autoReplyDefaultAction(0, null, 0, '02 Date', 559169223950422,'Pawan Sharma', 917618157986, 55, 83534, 380, 'Open', 7137, 80363, null, 'WA API', 0, 0, 0, null, 919877594039)
+autoReplyDefaultAction(0, null, 0, 'Button one', 559169223950422,'Pawan Sharma', 917618157986, 55, 83534, 380, 'Open', 7137, 80363, null, 'WA API', 0, 0, 0, null, 919877594039)
 
 //  let time = '00:15' ; // Default to 1 hour if not set
 //     let hour = time?.split(':')[0];

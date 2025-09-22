@@ -1528,7 +1528,7 @@ timeFormatter(params: any): string {
       this.GridService.onBtFirst(this.gridapi, this.rowData);
         this.currPage = this.GridService.currPage;
         this.paging = this.GridService.paging;
-       // this.getContact();
+        this.getContact();
     }
     onBtNext() {
         this.GridService.onBtNext(this.gridapi, this.rowData);
