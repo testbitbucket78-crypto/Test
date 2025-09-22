@@ -431,6 +431,7 @@ const WHATSAPPOptions = {
 async function createWhatsAppPayload(type, to, templateName, languageCode, headerVariables = [], bodyVariables, mediaLink, spid, button = [], DynamicURLToBESent = []) {
     try{
     let WAdetails = await getWAdetails(spid);
+if(WAdetails != 'not exist' && WAdetails.length > 0 && WAdetails[0]?.token != null){
     let Ln_code = commonFun.getCodeByLabel(languageCode);
     let payload = {
         messaging_product: "whatsapp",
@@ -555,7 +556,6 @@ async function createWhatsAppPayload(type, to, templateName, languageCode, heade
             
         }
     }
-console.log("payload", payload.template.components);
 
     const response = await axios({
         method: "POST",
@@ -568,6 +568,12 @@ console.log("payload", payload.template.components);
         status: 200,
         message: response.data
     };
+}else {
+     return {
+        status: 500,
+        message: 'channel is disconnected'
+    };
+}
    // return payload;
 }catch(err){
     console.log("error", err.response ? err.response.data : err.message);

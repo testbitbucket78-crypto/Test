@@ -217,6 +217,7 @@ viewMode:any=false
   filteredTags: Tag[] = [];
   showVarMenuFor: { index: number, field: 'comparator' | 'value' } | null = null;
   showAttribute: { index: number, field: 'comparator' | 'value' } | null = null;
+  showSelection: { index: number, field: 'value' } | null = null;
   showAttributeCondition:any =false;
   attributeDetails?: Attribute;
   // Tools and settings
@@ -232,6 +233,7 @@ viewMode:any=false
     height: '50px'
   };
 @ViewChild('dropdownWrapper') dropdownWrapper!: ElementRef;
+botSelectControl: any;
   @HostListener('document:click', ['$event'])
 onDocumentClick(event: MouseEvent): void {
   if (!this.dropdownWrapper?.nativeElement.contains(event.target)) {
@@ -449,14 +451,12 @@ if (stored && stored !== 'null' && stored !== 'undefined') {
 
 
 
-    const drawflowCanvas = drawflowElement.querySelector('.drawflow') as HTMLElement;
+const drawflowCanvas = drawflowElement.querySelector('.drawflow') as HTMLElement;
 let isRightClickDragging = false;
 // Prevent right-click default menu
 drawflowCanvas.addEventListener('contextmenu', (e) => e.preventDefault());
-
 // Right-click down
 drawflowCanvas.addEventListener('mousedown', (e) => {
-  
   if (e.button === 2 || e.button == 0) { // Right click
     isRightClickDragging = true;
     drawflowCanvas.classList.add('dragging');
@@ -489,19 +489,19 @@ document.addEventListener('mouseup', (e) => {
             this.ParentNodeType = node.data.category;
             this.setOutputPositionsBasedOnType(node.id, node.data.formData);
             // this.refreshEditor()
-            if (!this.viewMode) {
+          
               this.addNodeEvent(node.id);
-            }
+           
             this.editor.updateConnectionNodes('node-' + node.id);
           }
         });
       }, 100)
     }
 
-    if (this.viewMode) {
-      this.editor.editor_mode = 'view';  
+    // if (this.viewMode) {
+    //   this.editor.editor_mode = 'view';  
       
-    }
+    // }
   }
 
 
@@ -2181,7 +2181,7 @@ syncMentionArray() {
         };
         editNodeIconClick.addEventListener('click', this.handleEditClick);
       }
-
+  if (!this.viewMode) {
       const copyNodeIconClick = nodeElement.querySelector('.copyNode');
       if (copyNodeIconClick) {
         copyNodeIconClick.removeEventListener('click', this.handleCopyClick);
@@ -2202,6 +2202,7 @@ syncMentionArray() {
         };
         deleteNodeIconClick.addEventListener('click', this.handleDeleteClick);
       }
+    }
     }, 0);
   }
 
@@ -3089,9 +3090,11 @@ this.selectedAgentDetails = updateForm
     
     const conditionGroup = this.fb.group({
       comparator: [condition?.comparator || '', Validators.required],
+      comparatorBackend: [condition?.comparator || ''],
       comparatorType: [condition?.comparatorType ?? ''],
       operator: [condition?.operator ?? '', Validators.required],
       value: [condition?.value || '', Validators.required],
+      valueBackend: [condition?.value || '', ],
       valueType: [condition?.valueType || ''],
       nextJoinType: [condition?.nextJoinType ?? 'AND']
     });
@@ -3253,6 +3256,7 @@ preventInvalidKeys(event: KeyboardEvent): void {
 
 
   currentAttributeList: any = []
+  conditionCardAttributeList: any = []
   getAdditionalAttributes(): void {
     if (!this.userDetails?.SP_ID) return;
 
@@ -3271,7 +3275,7 @@ var attributeListCustomize = allAttributes?.getfields?.map((attr: any, index: nu
 });
 
 
-
+this.conditionCardAttributeList = attributeListCustomize
 
 this.currentAttributeList = attributeListCustomize.filter((attr:any) =>
   attr.ActuallName !== 'Phone_number' &&
@@ -3357,6 +3361,14 @@ this.currentAttributeList = attributeListCustomize.filter((attr:any) =>
 
 
 
+  openSelection(index: number, field:'value'): void {
+    if (this.showSelection?.index === index && this.showSelection?.field === field) {
+      this.showSelection = null;
+    } else {
+      this.showSelection = { index, field };
+    }
+  }
+
   openAttributeOption(index: number, field: 'comparator' | 'value'): void {
     if (this.showAttribute?.index === index && this.showAttribute?.field === field) {
       this.showAttribute = null;
@@ -3389,12 +3401,60 @@ this.currentAttributeList = attributeListCustomize.filter((attr:any) =>
   selectedFields: any = {}; // to track per condition input field lock
   selectVariable(index: number, field: 'comparator' | 'value', variable: any): void {
 
+
     
-    const group = this.getConditionGroup(index);
-    group.get(field)?.setValue(`{{${variable.displayName || variable.name}}}`);
-    group.get(`${field}Type`)?.setValue(variable.type || variable.dataType);
+    var group = this.getConditionGroup(index);
     this.showVarMenuFor = null;
     this.showAttribute = null
+    this.showSelection = null;
+    if (field === 'comparator') {
+      group.get('operator')?.setValue('');
+      group.get('value')?.setValue('');
+      group.get('valueType')?.setValue('');
+      group.get(field)?.setValue(`{{${variable.displayName || variable.name || variable.optionName}}}`);
+      group.get(`${field}Backend`)?.setValue(`${variable.displayName || variable.name || variable.optionName}`);
+      group.get(`${field}Type`)?.setValue(variable.type || variable.dataType);
+    }else if(field === 'value') {
+      // Handle value selection
+      var comparatorType = this.conditionForm?.value?.conditions[index].comparatorType;
+      
+       var  values
+      if(comparatorType == 'Multi Select' || comparatorType == 'Select' || comparatorType == 'Switch'  || comparatorType == 'tag'){
+         values = `${variable?.id}:${variable?.optionName}`;
+      }else if(comparatorType == 'User' || comparatorType == 'Multi Select' && variable.displayName  == 'tag'){
+         values = `${variable?.id}`;
+      }
+
+      group.get(field)?.setValue(`{{${variable.displayName || variable.name || variable.optionName}}}`);
+      group.get(`${field}Backend`)?.setValue(`${values || variable.displayName || variable.name || variable.optionName}`);
+      group.get(`${field}Type`)?.setValue(variable.type || variable.dataType);
+    }
+    console.log("variable",variable )
+
+
+
+    if (field == 'comparator' && (variable.type === 'Multi Select' ||  variable.type == 'Select' ||  variable.type == 'Switch' ||  variable.type == 'User')) {
+      try {
+        console.log("this.attributeDetails?.dataTypeValues",this.attributeDetails)
+        this.selectedOptions = JSON.parse(variable?.dataTypeValues || '[]');
+        console.log("this.selectedOptions",this.selectedOptions)
+        if( variable.type == 'Switch'){
+          this.selectedOptions = [{"optionName": "yes"},{"optionName": "no"}];
+        }
+        if( variable.type == 'User'){
+          this.selectedOptions = this.agents.map(item =>{
+            return {id:item.uid,optionName:item.name}
+          })
+        }
+        if( variable.type == 'Multi Select' && variable.displayName  == 'tag'){
+          this.selectedOptions = this.allTags.map((item:any) =>{
+            return {id:item.ID,optionName:item.TagName}
+          })
+        }
+      } catch {
+        this.selectedOptions = [];
+      }
+    }
 
 
 
@@ -3453,6 +3513,7 @@ this.currentAttributeList = attributeListCustomize.filter((attr:any) =>
 
 
   toggleChatNotes(type: any) {
+    this.changeDetectorRef.detectChanges()
     if (type == 'advanceTool') {
       this.tools = {
         items: ['Bold', 'Italic', 'StrikeThrough', 'EmojiPicker',
@@ -4011,6 +4072,15 @@ isSelected(variable: any): boolean {
 
   }
 
+
+  getValueInputType(i: number): string {
+  const type = this.getConditionGroup(i).get('comparatorType')?.value || this.selectedAttributeType;
+
+  if (['Multi Select', 'Select', 'Switch', 'User'].includes(type)) {
+    return 'select';
+  }
+  return 'text';
+}
 
 
 
@@ -4856,6 +4926,15 @@ ChannelWhatsAppOrWebSelection:any=''
 		 }
     });
   }
+
+
+
+selectedBotName: string = '';
+
+selectBot(bot: any) {
+  this.selectedBotName = bot.name;
+  this.getSelectedBot(bot.id); // calling your existing function
+}
 
  
 }

@@ -3392,3 +3392,35 @@ input[type="checkbox"] {
 .submitButtonOfSendMessage{
   background-color: #6b46c1; border: none; margin-left: 11px
 }
+
+
+.select_box_condition {
+    background: url("/assets/img/teambox/dropdown.svg") no-repeat;
+    background-size: 11px;
+    position: absolute;
+    left: 244px !important;
+    top: 86%;
+    transform: translateY(-50%);
+    width: 21px;
+    height: 9px;
+    background-repeat: no-repeat;
+    cursor: pointer;
+}
+
+
+select.form-select {
+  max-height: 200px;   /* dropdown ki height fix ho jayegi */
+  overflow-y: auto;    /* scroll aayega agar options jyada ho */
+}
+select.form-select option {
+  padding: 8px 12px;   /* options ke andar padding */
+}
+
+
+.selection-box {
+  position: absolute;
+  border: 1px dashed #0078d4;
+  background-color: rgba(0, 120, 212, 0.1);
+  display: none; /* Hide it by default */
+  pointer-events: none; /* Crucial to allow clicks to pass through to the canvas */
+}
