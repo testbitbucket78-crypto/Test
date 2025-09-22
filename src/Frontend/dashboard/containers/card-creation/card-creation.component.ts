@@ -233,6 +233,7 @@ viewMode:any=false
     height: '50px'
   };
 @ViewChild('dropdownWrapper') dropdownWrapper!: ElementRef;
+botSelectControl: any;
   @HostListener('document:click', ['$event'])
 onDocumentClick(event: MouseEvent): void {
   if (!this.dropdownWrapper?.nativeElement.contains(event.target)) {
@@ -450,14 +451,12 @@ if (stored && stored !== 'null' && stored !== 'undefined') {
 
 
 
-    const drawflowCanvas = drawflowElement.querySelector('.drawflow') as HTMLElement;
+const drawflowCanvas = drawflowElement.querySelector('.drawflow') as HTMLElement;
 let isRightClickDragging = false;
 // Prevent right-click default menu
 drawflowCanvas.addEventListener('contextmenu', (e) => e.preventDefault());
-
 // Right-click down
 drawflowCanvas.addEventListener('mousedown', (e) => {
-  
   if (e.button === 2 || e.button == 0) { // Right click
     isRightClickDragging = true;
     drawflowCanvas.classList.add('dragging');
@@ -490,19 +489,19 @@ document.addEventListener('mouseup', (e) => {
             this.ParentNodeType = node.data.category;
             this.setOutputPositionsBasedOnType(node.id, node.data.formData);
             // this.refreshEditor()
-            if (!this.viewMode) {
+          
               this.addNodeEvent(node.id);
-            }
+           
             this.editor.updateConnectionNodes('node-' + node.id);
           }
         });
       }, 100)
     }
 
-    if (this.viewMode) {
-      this.editor.editor_mode = 'view';  
+    // if (this.viewMode) {
+    //   this.editor.editor_mode = 'view';  
       
-    }
+    // }
   }
 
 
@@ -2182,7 +2181,7 @@ syncMentionArray() {
         };
         editNodeIconClick.addEventListener('click', this.handleEditClick);
       }
-
+  if (!this.viewMode) {
       const copyNodeIconClick = nodeElement.querySelector('.copyNode');
       if (copyNodeIconClick) {
         copyNodeIconClick.removeEventListener('click', this.handleCopyClick);
@@ -2203,6 +2202,7 @@ syncMentionArray() {
         };
         deleteNodeIconClick.addEventListener('click', this.handleDeleteClick);
       }
+    }
     }, 0);
   }
 
@@ -3513,6 +3513,7 @@ this.currentAttributeList = attributeListCustomize.filter((attr:any) =>
 
 
   toggleChatNotes(type: any) {
+    this.changeDetectorRef.detectChanges()
     if (type == 'advanceTool') {
       this.tools = {
         items: ['Bold', 'Italic', 'StrikeThrough', 'EmojiPicker',
@@ -4925,6 +4926,15 @@ ChannelWhatsAppOrWebSelection:any=''
 		 }
     });
   }
+
+
+
+selectedBotName: string = '';
+
+selectBot(bot: any) {
+  this.selectedBotName = bot.name;
+  this.getSelectedBot(bot.id); // calling your existing function
+}
 
  
 }

@@ -159,9 +159,10 @@
                             <p class="trigger-label">Direct keywords</p>
 
                             <div class="trigger-buttons" >
-                                <button class="trigger-button" *ngFor="let keyword of keywords">{{keyword.length > 20?
+                                <!-- <button class="trigger-button" *ngFor="let keyword of keywords">{{keyword.length > 20?
                                     (keyword | slice: 0:20) + '...':
-                                    keyword}}</button>
+                                    keyword}}</button> -->
+                                <button class="trigger-button" *ngFor="let keyword of keywords">{{keyword}}</button>
                             </div>
                         </div>
 
@@ -663,6 +664,7 @@ style="margin-right: 9px;"
                                                 class="form-control"
                                                 type="text"
                                                 placeholder="Enter Keywords here"
+                                                maxlength="50"
                                                 [(ngModel)]="newKeyword"
                                                 [ngModelOptions]="{ standalone: true }"
                                                 (keyup.enter)="addKeyword()"
@@ -1065,7 +1067,7 @@ style="margin-right: 9px;"
 
                                         <div class="d-flex align-items-center mb-2">
                                             <input class="form-control" type="text" placeholder="Enter Keywords here"
-                                                [(ngModel)]="newKeyword" [ngModelOptions]="{ standalone: true }"
+                                                [(ngModel)]="newKeyword" [ngModelOptions]="{ standalone: true }" maxlength="50"
                                                 (keyup.enter)="addKeyword()" style="padding: 0 63px 0 24px" />
                                             <button class="btn4" (click)="addKeyword()">Add</button>
                                         </div>
@@ -1152,7 +1154,7 @@ style="margin-right: 9px;"
                                             <div class="conversation_inout_area">
                                                 <div class="input-area">
                                                   
-                                                    <ejs-richtexteditor id="editRTE" #chatEditor *ngIf="showAdvanceOption"
+                                                    <ejs-richtexteditor id="editRTE" #chatEditor 
                                                         [toolbarSettings]="tools" [width]="0"  [maxLength]="1024" [showCharCount]="true"
                                                         placeholder="Type Message..." [pasteCleanupSettings]="pasteCleanupSettings" formControlName="dropOfMessage">
                                                     </ejs-richtexteditor>
@@ -1445,7 +1447,7 @@ style="margin-right: 9px;"
 
                                         <!-- Keywords input and add button -->
                                         <div class="d-flex align-items-center mb-2">
-                                            <input class="form-control" type="text" placeholder="Enter Keywords here"
+                                            <input class="form-control" type="text" placeholder="Enter Keywords here" maxlength="50"
                                                 [(ngModel)]="newKeyword" [ngModelOptions]="{ standalone: true }"
                                                 (keyup.enter)="addKeyword()" style="padding: 0 63px 0 24px" readonly />
                                         </div>
