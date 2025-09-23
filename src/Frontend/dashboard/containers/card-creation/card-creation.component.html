@@ -2306,7 +2306,7 @@
                                         showAttribute?.index === i &&
                                         showAttribute?.field === 'comparator'
                                     " >
-                  <div *ngFor="let variable of currentAttributeList" class="bot-var-item"
+                  <div *ngFor="let variable of conditionCardAttributeList" class="bot-var-item"
                     (click)="selectVariable(i, 'comparator', variable)">
                     {{ variable.displayName }}
                   </div>
@@ -2338,22 +2338,25 @@
               <div class="input-group mb-3">
                 <div class="custom-input-wrapper">
                   <input type="text" class="custom-input" formControlName="value" placeholder="Select variable or attribute"
-                    (input)="onValueInput(i)" (focus)="isFocused = true"
+                    (input)="onValueInput(i)" (focus)="isFocused = true"  
                     (keydown)="allowOnlyBackspaces($event, i, 'value')" (blur)="isFocused = false" style="padding-right: 142px;"/>
-                     <!-- [readonly]="selectedFields[i]?.value" -->
+
+                <span class="select_box_condition" [class.disabled]="showSelection?.index === i && showSelection?.field === 'value'" 
+                (click)="openSelection(i, 'value')"   
+                *ngIf="getValueInputType(i) === 'select'"></span>
+
                   <span class="toggle_attribute_condition" (click)="openAttributeOption(i, 'value')"></span>
-                  <div class="bot-var-menu" [class.visible]="
-                                        showAttribute?.index === i &&
-                                        showAttribute?.field === 'value'
-                                    ">
-                    <div *ngFor="let variable of currentAttributeList" class="bot-var-item"
-                      (click)="selectVariable(i, 'value', variable)">
-                      {{ variable.displayName }}
+
+
+                  <div class="bot-var-menu" style="margin-top: 22px;" [class.visible]="showSelection?.index === i && showSelection?.field === 'value'">
+                    <div *ngFor="let variable of selectedOptions" class="bot-var-item" (click)="selectVariable(i, 'value', variable)">  {{ variable.optionName }}
                     </div>
                   </div>
-
-
-
+     
+                  <div class="bot-var-menu" style="margin-top: 22px;" [class.visible]="showAttribute?.index === i && showAttribute?.field === 'value'">
+                    <div *ngFor="let variable of conditionCardAttributeList" class="bot-var-item" (click)="selectVariable(i, 'value', variable)"> {{ variable.displayName }}
+                    </div>
+                  </div>
 
                   <button type="button" class="custom-button" [class.focused]="isFocused"
                     (click)="toggleVarMenu(i, 'value')">
@@ -2362,16 +2365,16 @@
                 </div>
 
                 <!-- Value Var Menu -->
-                <div class="bot-var-menu" [class.visible]="
-                                        showVarMenuFor?.index === i &&
-                                        showVarMenuFor?.field === 'value'
-                                    ">
+                <div class="bot-var-menu" [class.visible]="showVarMenuFor?.index === i && showVarMenuFor?.field === 'value'">
                   <div *ngFor="let variable of botVariables" class="bot-var-item"
                     (click)="selectVariable(i, 'value', variable)">
                     {{ variable.name }}
                   </div>
                 </div>
               </div>
+
+
+
 
               <!-- Actions -->
               <div class="action-links mt-3">

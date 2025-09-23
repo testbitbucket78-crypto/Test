@@ -413,6 +413,30 @@ static async fetchBinaryFromUrl(mediaId, token) {
   }
 
 } 
+
+static async restartChannel(channelId) {
+  try {
+    const response = await axios.post(
+      `https://manager.whapi.cloud/channels/${channelId}/restart`,
+      {}, // no request body
+      {
+        headers: {
+          accept: 'application/json',
+          Authorization: `Bearer ${authToken}`,
+        },
+      }
+    );
+
+    return response.data; // API returns JSON (not arraybuffer in this case)
+  } catch (error) {
+    logger.error(
+      'Error restarting WhatsApp channel:',
+      error.response?.data || error.message
+    );
+    throw new Error('Failed to restart WhatsApp channel');
+  }
+}
+
 }
 
 module.exports = { whapiService };

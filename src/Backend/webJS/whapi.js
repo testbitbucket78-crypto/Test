@@ -69,6 +69,10 @@ async function createClientInstance(spid, phoneNo) {
                 channel.id,
                 extendValidity
             );
+
+            const restartChannelsData = await whapiService.restartChannel(
+                channel.id
+            );
             // const response = await whapiService.startChannel(channel.token, channel.id);
 
             await whapiService.setupWebhook(channel.token);
@@ -484,7 +488,7 @@ const handleAuthentication = async (channel_id) => {
           return;
         }
         await channel.saveToDatabase();
-        updateConnectedChannelNo(channel.phone, channel.spid);
+        await updateConnectedChannelNo(channel.phone, channel.spid);
         await CreateChannelResponse.setChannelAlreadyAuthenticated(spid);
         notify.NotifyServer(channel.phone, false, 'Client is ready!');
 

@@ -1,4 +1,5 @@
 const db = require("../dbhelper");
+const { getUrl, env } = require('../config');
 
 const host = "sdpl-staging.cdjbek5fprnn.ap-south-1.rds.amazonaws.com"
 const user = "scroot"
@@ -6,10 +7,10 @@ const password = "amsdb1234"
 const database = "cip_project"
 
 
-const email =   "notification@engagekart.com"; 
-const appPassword = "Notification@123"  
-const emailHost = "mail.engagekart.com" 
-const port = "465"
+const email = getUrl('EngagekartEmail') || "notification@engagekart.com";
+const appPassword = getUrl('EngagekartEmailPassword') || "Notification@123";
+const emailHost = getUrl('EngagekartEmailHost') || "mail.engagekart.com";
+const port = getUrl('EngagekartPort') || "465";
 var otp = Math.random();
 otp = otp * 1000000;
 otp = parseInt(otp);

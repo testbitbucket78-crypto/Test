@@ -1,4 +1,5 @@
 const db = require("../dbhelper");
+const { getUrl, env } = require('../config');
 
 const host = "sdpl-staging.cdjbek5fprnn.ap-south-1.rds.amazonaws.com"
 const user = "CIP"
@@ -94,10 +95,10 @@ r.roleID`
 
 
 //Sms varification variables
-const email =   "notification@engagekart.com"; 
-const appPassword = "Notification@123"  
-const emailHost = "mail.engagekart.com" 
-const port = "465"
+const email = getUrl('EngagekartEmail') || "notification@engagekart.com";
+const appPassword = getUrl('EngagekartEmailPassword') || "Notification@123";
+const emailHost = getUrl('EngagekartEmailHost') || "mail.engagekart.com";
+const port = getUrl('EngagekartPort') || "465";
 
 
 addteamQuery = `INSERT INTO teams(SP_ID,team_name,created_at,updated_at,userIDs) VALUES ?`
@@ -414,7 +415,7 @@ var selectTemplate = `SELECT * FROM templateMessages WHERE spid=? and isDeleted 
 var selectTemplateForGallery = `SELECT * FROM templateMessages WHERE spid=? and isDeleted !=1 and isTemplate=? and Channel=?`
 
 var selectApprovedTemplate = `SELECT * FROM templateMessages WHERE spid=? and isDeleted !=1  and (status='saved' OR status='APPROVED') and isTemplate=?`
-var updateTemplate = `UPDATE templateMessages SET TemplateName=?,Channel=?,Category=?,Language=?,media_type=?,Header=?,BodyText=?,Links=?,FooterText=?,template_json=?,status=?,spid=?,created_By=?,updated_at=?,isTemplate=?,industry=?,category_id=?,templateID=?,buttons=?,categoryChange=?,metaUploadedId=? where ID=?`
+var updateTemplate = `UPDATE templateMessages SET TemplateName=?,Channel=?,Category=?,Language=?,media_type=?,Header=?,BodyText=?,Links=?,FooterText=?,template_json=?,status=?,spid=?,created_By=?,updated_at=?,isTemplate=?,industry=?,category_id=?,templateID=?,buttons=?,categoryChange=?,interactive_buttons=?,renderedButtons=?,metaUploadedId=? where ID=?`
 var deleteTemplate = `UPDATE templateMessages set isDeleted=1 ,updated_at=? where ID=?`
 var addGallery = `INSERT INTO templateMessages (TemplateName,Channel,Category,Language,media_type,Header,BodyText,Links,FooterText,template_json,status,spid,created_By,created_at,isTemplate,industry,category_id,updated_at,topic) VALUES ?`
 var updateGallery = `UPDATE templateMessages SET TemplateName=?,Channel=?,Category=?,Language=?,media_type=?,Header=?,BodyText=?,Links=?,FooterText=?,template_json=?,status=?,spid=?,created_By=?,updated_at=?,isTemplate=?,industry=?,category_id=?,topic=? where ID=?`
