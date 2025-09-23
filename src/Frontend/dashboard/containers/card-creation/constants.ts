@@ -17,33 +17,31 @@ export const ALLOWED_OPERATORS = [
 ];
 
 
-export const STRING_OPERATORS = ALLOWED_OPERATORS.filter(op =>
-    ['contains', 'does not contain', 'not equal to', 'starts with', 'does not start with'].includes(op)
-);
+export const STRING_OPERATORS = ['Is empty', 'Is not empty', 'Is equal to', 'Is not equal to', 'Contains', 'Does not contain', 'Starts with', 'Ends with']
 
-export const NUMBER_OPERATORS = ALLOWED_OPERATORS.filter(op =>
-    ['greater than', 'less than', 'not equal to'].includes(op)
-);
+export const NUMBER_OPERATORS = 
+    ['Is empty', 'Is not empty', 'Is equal to', 'Is not equal to', 'Contains', 'Does not contain', 'Starts with', 'Ends with', 'Greater than', 'Less than']
 
-export const BOOLEAN_OPERATORS = ALLOWED_OPERATORS.filter(op =>
-    ['not equal to'].includes(op) // You could also remove this line entirely if boolean is unsupported
-);
 
-export const SELECT_OPERATORS = ALLOWED_OPERATORS.filter(op =>
-    ['not equal to'].includes(op)
-);
+export const BOOLEAN_OPERATORS = 
+    ['Is empty', 'Is not empty', 'TRUE', 'FALSE']
 
-export const MULTI_SELECT_OPERATORS = ALLOWED_OPERATORS.filter(op =>
-    ['contains', 'does not contain'].includes(op)
-);
 
-export const DATE_OPERATORS = ALLOWED_OPERATORS.filter(op =>
-    ['greater than', 'less than', 'not equal to'].includes(op)
-);
+export const SELECT_OPERATORS = 
+    ['Is empty', 'Is not empty', 'Is equal to', 'Is not equal to']
 
-export const TIME_OPERATORS = ALLOWED_OPERATORS.filter(op =>
-    ['greater than', 'less than', 'not equal to'].includes(op)
-);
+
+export const MULTI_SELECT_OPERATORS = 
+    ['Is empty', 'Is not empty', 'Is equal to', 'Is not equal to']
+
+
+export const DATE_OPERATORS = 
+    ['Is empty', 'Is not empty', 'Is equal to', 'Is not equal to', 'after', 'before']
+
+
+export const TIME_OPERATORS = 
+    ['Is empty', 'Is not empty', 'Is equal to', 'Is not equal to', 'after', 'before']
+
 
 
 

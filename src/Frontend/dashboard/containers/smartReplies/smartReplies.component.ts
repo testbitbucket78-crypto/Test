@@ -2079,7 +2079,7 @@ console.log(sortedData)
 					language: sortedData[i]?.templatelanguage,
 					buttons: sortedData[i]?.buttons? JSON.parse(sortedData[i]?.buttons) : sortedData[i]?.templateButton,
 					buttonsVariable: sortedData[i]?.buttonsVariable ? JSON.parse(sortedData[i]?.buttonsVariable) : [],
-					interactive_buttons: this.interactive_buttons
+					interactive_buttons: sortedData[i]?.interactive_buttons
 				});
 		}
 		console.log(this.assignedAgentList,'MESSAGE DATA')

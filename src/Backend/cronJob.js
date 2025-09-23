@@ -769,9 +769,12 @@ async function messageThroughselectedchannel(spid, from, type, text, media, phon
           let saveSendedMessage = await saveMessage(from, spid, response?.message?.messages[0]?.id, message_content, media, type, type, 'WA API', "Official campaign message", 1,buttons,interactive_buttons);
           let saveInCampaignMessage = await sendMessages(from, text, campaignId, message, response.status, text, response.message?.messages[0]?.id, 'WA API', '', '')
         } else {
-          console.log("else of OFFICIAL")
+          const errorCode = response.message?.error?.code || '190';
+          const errorDetails = response.message?.error?.error_data?.details || 'Channel is disconnected';
+          const messageId = response.message?.messages?.[0]?.id || '';
+
           let saveSendedMessage = await saveMessage(from, spid, '', message_content, media, type, type, 'WA API', "Official campaign message", 9,buttons);
-          let saveInCampaignMessage = await sendMessages(from, text, campaignId, message, response.status, text, response.message?.messages[0]?.id, 'WA API', response.message?.error.code, response.message?.error.error_data.details)
+          let saveInCampaignMessage = await sendMessages(from, text, campaignId, message, response.status, text, messageId, 'WA API', errorCode, errorDetails)
         }
 
         return response;

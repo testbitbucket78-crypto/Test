@@ -4,7 +4,7 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { contactsImageData, importCSVData } from '../models';
 import { environment } from 'environments/environment';
 const API_URL =environment.cipApi + '/';
-const API_URL1 = environment.contactApi + '/';
+const API_URL1 = environment.contactApi;
 const API_URL2 = environment.smartApi + '/';
 
 

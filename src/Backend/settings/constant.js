@@ -1,4 +1,5 @@
 const db = require("../dbhelper");
+const { getUrl, env } = require('../config');
 
 const host = "sdpl-staging.cdjbek5fprnn.ap-south-1.rds.amazonaws.com"
 const user = "CIP"
@@ -94,10 +95,10 @@ r.roleID`
 
 
 //Sms varification variables
-const email =   "notification@engagekart.com"; 
-const appPassword = "Notification@123"  
-const emailHost = "mail.engagekart.com" 
-const port = "465"
+const email = getUrl('EngagekartEmail') || "notification@engagekart.com";
+const appPassword = getUrl('EngagekartEmailPassword') || "Notification@123";
+const emailHost = getUrl('EngagekartEmailHost') || "mail.engagekart.com";
+const port = getUrl('EngagekartPort') || "465";
 
 
 addteamQuery = `INSERT INTO teams(SP_ID,team_name,created_at,updated_at,userIDs) VALUES ?`
