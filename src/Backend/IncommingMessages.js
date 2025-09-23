@@ -542,7 +542,6 @@ async function iterateSmartReplies(replymessage, phone_number_id, from, sid, cus
 
     console.log("iterateSmartReplies completed");
     return isActionAddded;
-F
   } catch (err) {
     console.log(err);
     return false;
