@@ -2225,7 +2225,7 @@ const worker = new Worker(
 );
 
 
-setTimeout(() => {
+/*setTimeout(() => {
   
 let mainData = {
   "sid": 55,
@@ -2259,11 +2259,8 @@ let mainData = {
 // ]
 
 // let stringvaleu = JSON.stringify(value).replace(/[\[\]\s]/g, '');
-let JSON = {"nodeId":3,"nodeType":"setCondition","connectedId":"6","FallbackId":null,"option":[{"optionConnectedId":"6","name":"True"},{"optionConnectedId":"7","name":"False"}],"data":{"conditions":[{"comparator":"{{Name}}","comparatorType":"Text","operator":"contains","value":"pa","valueType":"","nextJoinType":"AND"},{"comparator":"{{Name}}","comparatorType":"Text","operator":"contains","value":"wa","valueType":"","nextJoinType":"OR"},{"comparator":"{{Name}}","comparatorType":"Text","operator":"contains","value":"pawan","valueType":"","nextJoinType":"AND"}],"options":["True","False"],"invalidAction":"skip","errorMessage":"","timeElapseAction":false}}
-// console.log(stringvaleu)
-let data = {"sid":55,"custid":83534,botSessionVariables:"[]"}
-setCondition(JSON,data)
-}, 3000);
+
+}, 3000);*/
 
 async function triggerSR(){
       var replymessage = await matchSmartReplies('addTag', 55, 'WA API')
