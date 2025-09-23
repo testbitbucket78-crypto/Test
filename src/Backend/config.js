@@ -21,6 +21,7 @@ const config = {
   webhook: process.env.webhook,
   socket: process.env.socket,
   redisIp: process.env.redisIp,
+  evoirnment: process.env.evoirnment,
   host: process.env.host,
   user: process.env.user,
   password: process.env.password,

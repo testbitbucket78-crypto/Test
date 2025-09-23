@@ -1818,10 +1818,10 @@ async function setCondition(json,data){
  let prevJoin ='';
  let result = false;
 for (const item of condition) {
- let comp = item?.comparatorBackend;
+ let comp = item?.comparator;
  let replacedComp = await replacebotVariable(JSON.parse(data?.botSessionVariables),comp);
   let comperater = await getExtraxtedMessage(replacedComp, data.sid, data.custid)
- let val = item?.valueBackend;
+ let val = item?.value;
   let replacedText = await replacebotVariable(JSON.parse(data?.botSessionVariables),val);
   let value = await getExtraxtedMessage(replacedText, data.sid, data.custid)
   let current = evaluateCondition(comperater,item?.comparatorType,item?.operator,value)
@@ -1841,8 +1841,16 @@ console.log(current,'---------------------current------------------');
 }
 
 function evaluateCondition( comparator, comparatorType, operator, value ) {
-  const left = comparator;
-  const right = value;
+  let left = comparator;
+let right = value;
+
+if (typeof left === "string") {
+  left = left.toLowerCase();
+}
+
+if (typeof right === "string") {
+  right = right.toLowerCase();
+}
   console.log(left,right,'----------------evaluateCondition-------------------')
   switch (operator.toLowerCase()) {
     case 'contains': {
@@ -2236,7 +2244,7 @@ let mainData = {
 //-----start------- 0 null 0  559169223950422 Pawan Sharma 917618157986 55 83534 380 Open 7133 80363 null WA API 0 0 0 null 919877594039 ------end-------
 
 
-autoReplyDefaultAction(0, null, 0, 'Button one', 559169223950422,'Pawan Sharma', 917618157986, 55, 83534, 380, 'Open', 7137, 80363, null, 'WA API', 0, 0, 0, null, 919877594039)
+//autoReplyDefaultAction(0, null, 0, 'Button one', 559169223950422,'Pawan Sharma', 917618157986, 55, 83534, 380, 'Open', 7137, 80363, null, 'WA API', 0, 0, 0, null, 919877594039)
 
 //  let time = '00:15' ; // Default to 1 hour if not set
 //     let hour = time?.split(':')[0];
@@ -2251,8 +2259,10 @@ autoReplyDefaultAction(0, null, 0, 'Button one', 559169223950422,'Pawan Sharma',
 // ]
 
 // let stringvaleu = JSON.stringify(value).replace(/[\[\]\s]/g, '');
-
+let JSON = {"nodeId":3,"nodeType":"setCondition","connectedId":"6","FallbackId":null,"option":[{"optionConnectedId":"6","name":"True"},{"optionConnectedId":"7","name":"False"}],"data":{"conditions":[{"comparator":"{{Name}}","comparatorType":"Text","operator":"contains","value":"pa","valueType":"","nextJoinType":"AND"},{"comparator":"{{Name}}","comparatorType":"Text","operator":"contains","value":"wa","valueType":"","nextJoinType":"OR"},{"comparator":"{{Name}}","comparatorType":"Text","operator":"contains","value":"pawan","valueType":"","nextJoinType":"AND"}],"options":["True","False"],"invalidAction":"skip","errorMessage":"","timeElapseAction":false}}
 // console.log(stringvaleu)
+let data = {"sid":55,"custid":83534,botSessionVariables:"[]"}
+setCondition(JSON,data)
 }, 3000);
 
 async function triggerSR(){
