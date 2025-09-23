@@ -23,7 +23,8 @@ export class ForgotPasswordComponent implements OnInit {
     submitted = false;
     submittedValue:any;
     isLoading!:boolean;    
-    public channelDomain:string = environment?.chhanel;
+    public channelDomain:string = environment?.chhanel;    
+    public keyword:string = environment?.API_Keyword;
     constructor(private apiService :AuthService ,private router: Router,  private formBuilder: FormBuilder, private _ToastService: ToastService, public brandService : BrandService) { }
     ngOnInit() {
       
