@@ -1232,7 +1232,10 @@ const getFlows = async (req,res) =>{
         }
     
     let FlowsData = await db.excuteQuery(val.getflows, [req.params.spid]);
-     FlowsData = FlowsData.filter(flow => flow?.status === "PUBLISHED"); // (Drafts Deprecated) are not valid (400) structure errors will be there  
+
+    if(req?.params?.isPublished == 1){
+      FlowsData = FlowsData.filter(flow => flow?.status === "PUBLISHED"); // (Drafts Deprecated) are not valid (400) structure errors will be there  
+    }
     
         res.send({
             status: 200,
