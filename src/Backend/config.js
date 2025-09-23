@@ -1,7 +1,9 @@
 // config/serviceUrls.js
 
-const envFile = `.env.${process.env.NODE_ENV || 'staging'}`;
-require('dotenv').config({ path: envFile });
+const envFile = `${process.env.NODE_ENV || 'staging'}.env`;
+const var2 = require('dotenv').config({ path: envFile });
+
+console.log(var2,'---------------------------------------var2------------------');
 
 const env = process.env.NODE_ENV;
 
