@@ -1342,7 +1342,7 @@ sanitizeInteractivePayload(payload: any): any {
     }
 
     getFlowList() {
-        this.settingsService.getFlowData(this.spid).subscribe((response: any) => {
+        this.settingsService.getFlowData(this.spid, 1).subscribe((response: any) => {
             if (response) {
                 console.log(response);
                 this.templateFlows =  response?.flows;
