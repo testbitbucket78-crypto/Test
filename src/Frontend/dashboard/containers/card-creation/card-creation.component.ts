@@ -269,6 +269,7 @@ sessionStorage.removeItem('node_FE_Json')
   }
 
   ngOnInit(): void {
+  document.querySelectorAll('.modal-backdrop').forEach(el => el.remove());
     this.initEditor();
     this.getAdditionalAttributes()
     this.getUserList()
@@ -1166,7 +1167,7 @@ createCombinedVariable() {
   // ==================== NODE HANDLING METHODS ====================
 
   onSubmit(formType: string = ''): void {
-    
+    this.changeDetectorRef.detectChanges();
     setTimeout(() => {
       this.isLoading = false
     }, 1000);
@@ -3412,7 +3413,7 @@ this.currentAttributeList = attributeListCustomize.filter((attr:any) =>
       group.get('value')?.setValue('');
       group.get('valueType')?.setValue('');
       group.get(field)?.setValue(`{{${variable.displayName || variable.name || variable.optionName}}}`);
-      group.get(`${field}Backend`)?.setValue(`${variable.displayName || variable.name || variable.optionName}`);
+      group.get(`${field}Backend`)?.setValue(`{{${variable.displayName || variable.name || variable.optionName}}}`);
       group.get(`${field}Type`)?.setValue(variable.type || variable.dataType);
     }else if(field === 'value') {
       // Handle value selection
@@ -3426,7 +3427,7 @@ this.currentAttributeList = attributeListCustomize.filter((attr:any) =>
       }
 
       group.get(field)?.setValue(`{{${variable.displayName || variable.name || variable.optionName}}}`);
-      group.get(`${field}Backend`)?.setValue(`${values || variable.displayName || variable.name || variable.optionName}`);
+      group.get(`${field}Backend`)?.setValue(`${values || `{{${variable.displayName || variable.name || variable.optionName}}}`}`);
       group.get(`${field}Type`)?.setValue(variable.type || variable.dataType);
     }
     console.log("variable",variable )
@@ -3940,7 +3941,7 @@ this.listOptions.reset();
     
     this.contactAttributeForm.patchValue({
       selectedValue: `{{${variable?.displayName || variable?.name || variable?.optionName}}} ` || '',
-      selectedvalueBackend:this.selectedAttributeType == 'Select'? values:variable?.displayName || variable?.name || variable?.optionName,
+      selectedvalueBackend:this.selectedAttributeType == 'Select'? values:`{{${variable?.displayName || variable?.name || variable?.optionName}}}` || '',
       inputValue: '',
       selectedVariable: '',
       operation: 'replace'
@@ -4933,8 +4934,35 @@ selectedBotName: string = '';
 
 selectBot(bot: any) {
   this.selectedBotName = bot.name;
+  this.botDropDownStatus = false
+  this.selectedBotId = bot.id;
   this.getSelectedBot(bot.id); // calling your existing function
 }
 
+
+selectedAttribute: string | null = null;
+selectedAttributeDisplay: string | null = null;
+
+onAttributeChangeAfterSelection(attr: any) {
+  this.selectedAttr = attr.displayName;
+  console.log('Selected attribute:', attr,this.selectedAttr);
+this.isOpens = false;
+  this.contactAttributeForm.get('selectedAttribute')?.setValue(attr.ActuallName);
+  this.onAttributeChange(attr)
+}
+
+
+isOpens = false;
+selectedAttr: any = null;
+toggleDropdown(event: Event) {
+  console.log('Dropdown toggled. Current state:', this.isOpens);
+  event.stopPropagation();  // prevent modal or body clicks
+  this.isOpens= !this.isOpens;
+}
+
+botDropDownStatus:any = false
+toggleDropdownbot(event: any){
+this.botDropDownStatus = !this.botDropDownStatus
+}
  
 }
