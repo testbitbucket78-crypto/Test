@@ -1,7 +1,8 @@
-// config/serviceUrls.js
+const path = require('path');
 
-const envFile = `.env.${process.env.NODE_ENV || 'staging'}`;
-require('dotenv').config({ path: envFile });
+const envFile = path.resolve(__dirname, `.env.${process.env.NODE_ENV || 'staging'}`);
+const var2 = require('dotenv').config({ path: envFile });
+
 
 const env = process.env.NODE_ENV;
 
@@ -20,6 +21,7 @@ const config = {
   webhook: process.env.webhook,
   socket: process.env.socket,
   redisIp: process.env.redisIp,
+  evoirnment: process.env.evoirnment,
   host: process.env.host,
   user: process.env.user,
   password: process.env.password,

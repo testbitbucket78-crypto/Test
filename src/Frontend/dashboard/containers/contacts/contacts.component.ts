@@ -1514,6 +1514,7 @@ timeFormatter(params: any): string {
     }
     setPaging() {
         this.getGridPageSize();
+        setTimeout(()=>{this.getContact()},100)
     }
 
     getGridPageSize() {

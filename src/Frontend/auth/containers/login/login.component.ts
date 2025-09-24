@@ -32,6 +32,7 @@ export class LoginComponent implements OnInit {
     visible: boolean = true;
     changetype: boolean = true;
     public channelDomain:string = environment?.chhanel;
+    public keyword:string = environment?.API_Keyword;
 
     constructor(private apiService: AuthService,
         private renderer: Renderer2, public brandService: BrandService,

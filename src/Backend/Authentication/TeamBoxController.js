@@ -730,8 +730,10 @@ const insertMessage = async (req, res) => {
                 let messageTextParameter = `%${message_text}%`; // assuming message_text is the text you want to search
                 let agentNameParameter = `@${agentName[0].name}`; // assuming agentName is an array and you want to search for the first agent's name
 
-                var mentionedNotification = await db.excuteQuery(mentionQuery, [messageTextParameter, agentNameParameter]);
+               // var mentionedNotification = await db.excuteQuery(mentionQuery, [messageTextParameter, agentNameParameter]);
             }
+
+            console.log('--------------we are here --------------------------');
 
             if (Type == 'notes') {
                 let myUTCString = new Date().toUTCString();
@@ -785,7 +787,7 @@ const insertMessage = async (req, res) => {
                 //     content = content.replace(`{{${placeholder}}}`, replacement);
                 // });
             }
-
+            console.log('-------------here 2-------------------',channel);
             let middlewareresult = "";
             if (Type != 'notes') {
                 if (channelType[0]?.isBlocked != 1) {
@@ -797,7 +799,9 @@ const insertMessage = async (req, res) => {
                         )  && channel != 'WA API'){
                         middlewareresult = await middleWare.sendingTemplate(SPID, req.body.messageTo, header, content, req.body?.interactiveButtonsPayload);
                     }
+                    
                     else if (req?.body?.isTemplate == true && channel == 'WA API') {
+                        console.log('-------------------here 3 ---------------')
                         const mediaType = determineMediaType(media_type);
                         //get header and body variable 
                         console.log('line 770');
@@ -1211,6 +1215,8 @@ const healthCheck = (req, res) => {
         res.status(500).send({ error: 'Internal server error' });
     }
 };
+
+
 
 
 module.exports = {

@@ -22,6 +22,8 @@ export class InteractiveButtonComponent implements OnChanges , OnInit{
         if (payload?.action?.buttons) {
           this.buttons = payload?.action.buttons;
         } else if (payload?.action?.list) {
+          this.buttons = [payload.action.list];
+        } else {
           this.buttons = [];
         }
       });

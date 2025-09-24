@@ -16,6 +16,7 @@ const { exec } = require('child_process');
 const logger = require('../common/logger.log');
 var processSet = new Set();
 const variables = require('../common/constant')
+const { getUrl, env } = require('../config');
 
 
 // const { MessageMedia, Location, Contact } = require('whatsapp-web.js');
@@ -452,7 +453,9 @@ app.listen(3009, () => {
                 }
             });
         }
-        web.sendMail();
+        if(getUrl('evoirnment') != 'staging'){
+          web.sendMail();
+        }
       //   web.autoReconnectSessions();
       
     }
