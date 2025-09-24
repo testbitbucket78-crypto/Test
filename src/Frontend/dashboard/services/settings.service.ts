@@ -333,8 +333,8 @@ const headers = new HttpHeaders({
     return this.http.get(`${this.API_URL}/getQualityRating/${phoneNo}/${phone_number_id}/${WABA_ID}/${spid}`);
 }
   
-  getFlowData(spId: number): Observable<any> {
-    return this.http.get<any>(`${this.API_URL}/getFlows/${spId}`);
+  getFlowData(spId: number, isPublished: number = 0 ): Observable<any> {
+    return this.http.get<any>(`${this.API_URL}/getFlows/${spId}/${isPublished}`);
   }
   
   getFlowDetail(spId: number,flowId:number): Observable<any> {
