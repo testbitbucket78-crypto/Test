@@ -471,6 +471,7 @@ const handleAuthentication = async (channel_id) => {
         let Data = await whapiService.getQRScannedPhoneNo(channel_id);
         let channel = new CreateChannelResponse(Data, spid, phoneNo);
         let wrongNumber = await isWrongNumberScanned(channel.spid, channel.phone);
+        if(!channel.phone) return
         if (wrongNumber) {
          let isClientLogout = await whapiService.logoutClient(channel.token);
 
@@ -499,12 +500,15 @@ const handleAuthentication = async (channel_id) => {
 
 async function updateConnectedChannelNo(phoneNo, spid){
   await db.excuteQuery('UPDATE WhatsAppWeb SET connected_id = ? WHERE spid = ?', [phoneNo, spid]);
-  await db.excuteQuery('UPDATE user SET mobile_number = ? WHERE spid = ?', [phoneNo, spid]);
+  await db.excuteQuery('UPDATE user SET mobile_number = ? WHERE SP_ID = ?', [phoneNo, spid]);
   await db.excuteQuery('UPDATE whapi_channels SET phone = ? WHERE  spid = ?', [phoneNo, spid]);
 }
 async function checkifSPAlreadyExist(phoneNo, spid) {
   try {
-    let isExist = await db.excuteQuery('select * from user where mobile_number=? and ParentId is null and  isDeleted !=1 and IsActive !=2', [phoneNo, 1]);
+    let isScannedAtLeasetOnce = (await db.excuteQuery('select * from whapi_channels where phone is null and spid = ?', [spid]))?.length > 0 ? true : false;
+     if (isScannedAtLeasetOnce) return false;
+
+    let isExist = await db.excuteQuery('select * from user where mobile_number=? and ParentId is null and  isDeleted !=1 and IsActive !=2', [phoneNo]);
     if (isExist?.length > 0 && isExist[0].SP_ID != spid) {
       return true;
     }

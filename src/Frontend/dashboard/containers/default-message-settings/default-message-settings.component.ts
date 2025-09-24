@@ -413,14 +413,16 @@ removeMedia() {
   editDefaultMessages() { 
     $("#welcomGreeting").modal('show');
     this.selectedType = this.getMimeTypePrefix(this.selectedMessageData.message_type);
-     if (this.selectedMessageData?.link) {
-      this.defaultMessageForm.get('link')?.setValue(this.selectedMessageData.link);
-     }
+
     if(this.selectedType) this.showMessageType(this.selectedType);
     this.selectedTitle = this.selectedMessageData.title;
     this.selectedDescription = this.selectedMessageData.description;
     this.selectedPreview = this.selectedMessageData.link;
     this.defaultMessageForm.clearAsyncValidators();
+    
+    if (this.selectedMessageData?.link) {
+      this.defaultMessageForm.get('link')?.setValue(this.selectedMessageData.link);
+    }
   }
   getMimeTypePrefix(mimeType: string): string {
     if(!mimeType) return '';
