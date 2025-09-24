@@ -132,7 +132,7 @@ router.get('/getGallery/:spid/:isTemplate',authenticateToken,campaignController.
 router.get('/exitTemplate/:spid/:isTemplate/:name',authenticateToken,campaignController.isExistTemplate);  // istemplate=1
 
 // -------------- WhatsApp Flows Start -------------------//
-router.get('/getFlows/:spid',authenticateToken,campaignController.getFlows);
+router.get('/getFlows/:spid/:isPublished',authenticateToken,campaignController.getFlows);
 router.get('/getFlowDetail/:spid/:flowId',authenticateToken,campaignController.getFlowDetail);
 router.post('/saveFlowMapping',authenticateToken,campaignController.saveFlowMapping)  
 router.post('/exportFlowData',authenticateToken,campaignController.exportFlowData)  
