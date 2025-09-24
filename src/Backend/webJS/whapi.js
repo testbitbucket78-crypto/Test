@@ -508,7 +508,7 @@ async function checkifSPAlreadyExist(phoneNo, spid) {
     let isScannedAtLeasetOnce = (await db.excuteQuery('select * from whapi_channels where phone is null and spid = ?', [spid]))?.length > 0 ? true : false;
      if (isScannedAtLeasetOnce) return false;
 
-    let isExist = await db.excuteQuery('select * from user where mobile_number=? and ParentId is null and  isDeleted !=1 and IsActive !=2', [phoneNo, 1]);
+    let isExist = await db.excuteQuery('select * from user where mobile_number=? and ParentId is null and  isDeleted !=1 and IsActive !=2', [phoneNo]);
     if (isExist?.length > 0 && isExist[0].SP_ID != spid) {
       return true;
     }
