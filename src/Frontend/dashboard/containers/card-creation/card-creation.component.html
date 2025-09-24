@@ -2603,12 +2603,28 @@
                                 margin-bottom: 2px;
                             ">Select Attribute</label>
             <!-- </div> -->
-            <select class="form-select" formControlName="selectedAttribute" (change)="onAttributeChange($event)" style="width: 100%; box-sizing: border-box;">
+            <!-- <select class="form-select" formControlName="selectedAttribute" (change)="onAttributeChange($event)" style="width: 100%; box-sizing: border-box;">
               <option value="null" disabled selected>Select attribute</option>
               <option *ngFor="let attr of currentAttributeList" [value]="attr.ActuallName" class="dropdown">
                 {{ attr.displayName }}
               </option>
-            </select>
+            </select> -->
+                        <div class="custom-input-wrapper">
+    <input class="form-control bg-white "
+                                            type="text"
+                                            name="Attribute"
+                                            id="Attribute"
+                                            formControlName="selectedAttribute"
+                                            style="cursor: pointer;"
+                                            readonly
+                                            placeholder="Select Attribute"  (click)="toggleDropdown($event)" readonly />
+                                              <ul class="dropdown-list" *ngIf="isOpens">
+      <li *ngFor="let attr of currentAttributeList" 
+          (click)="onAttributeChangeAfterSelection(attr)">
+        {{ attr.displayName }}
+      </li>
+    </ul>
+            </div>
           </div>
 
           <!-- Value Input Section -->
@@ -2963,14 +2979,39 @@
 
 <div class="form-group mb-4">
   <label class="form-label">Select Bot to Trigger</label>
-  <select class="form-select" [(ngModel)]="selectedBotId" (ngModelChange)="getSelectedBot($event)">
+  <!-- <select class="form-select" [(ngModel)]="selectedBotId" (ngModelChange)="getSelectedBot($event)">
     <option value="" disabled>Select bot</option>
     <ng-container *ngFor="let bot of botsList">
       <option *ngIf="bot.status === 'publish'" [ngValue]="bot.id">
         {{ bot.name }}
       </option>
     </ng-container>
-  </select>
+  </select> -->
+
+                  <div class="custom-input-wrapper">
+    <input class="form-control bg-white "
+                                            type="text"
+                                            name="bot"
+                                            id="bot"
+                                            [(ngModel)]="selectedBotName" 
+                                            style="cursor: pointer;"
+                                            readonly
+                                            placeholder="Select bot"  (click)="toggleDropdownbot($event)" readonly />
+                                              <!-- <ul class="dropdown-list" *ngIf="isOpens">
+      <li *ngFor="let bot of botsList"  *ngIf="bot.status === 'publish'"
+          (click)="onAttributeChangeAfterSelection(bot)">
+        {{ bot.name }}
+      </li>
+    </ul> -->
+    <ul class="dropdown-list" *ngIf="botDropDownStatus">
+  <ng-container *ngFor="let bot of botsList">
+    <li *ngIf="bot.status === 'publish'" (click)="selectBot(bot)">
+      {{ bot.name }}
+    </li>
+  </ng-container>
+</ul>
+
+            </div>
 </div>
 
 

@@ -1311,7 +1311,7 @@ async function botAdvanceAction(botId,custid,interactionId,spid,display_phone_nu
         }else if(actionType == 'Assign_Agent'){
           isChatAssign = true;
           console.log(action[i],'----------------Assign_Agent-------------');
-          await assignAction(action[i]?.agentId, -3, interactionId, custid, spid, display_phone_number);
+          await assignAction(action[i]?.ValueUuid, -3, interactionId, custid, spid, display_phone_number);
       let ResolveOpenChat = await db.excuteQuery('UPDATE Interaction SET interaction_status ="Open" WHERE InteractionId =? and customerId=?', [ interactionId, custid]);
     setTimeout(() => {notify.NotifyServer(display_phone_number, false, interactionId, 0, 'IN', 'Assign Agent');}, 200); 
         }else if(actionType == 'assign_owner'){
@@ -1818,10 +1818,10 @@ async function setCondition(json,data){
  let prevJoin ='';
  let result = false;
 for (const item of condition) {
- let comp = item?.comparator;
+ let comp = item?.comparatorBackend;
  let replacedComp = await replacebotVariable(JSON.parse(data?.botSessionVariables),comp);
   let comperater = await getExtraxtedMessage(replacedComp, data.sid, data.custid)
- let val = item?.value;
+ let val = item?.valueBackend;
   let replacedText = await replacebotVariable(JSON.parse(data?.botSessionVariables),val);
   let value = await getExtraxtedMessage(replacedText, data.sid, data.custid)
   let current = evaluateCondition(comperater,item?.comparatorType,item?.operator,value)

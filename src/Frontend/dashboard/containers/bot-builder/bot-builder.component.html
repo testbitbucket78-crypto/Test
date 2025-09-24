@@ -1133,12 +1133,12 @@ style="margin-right: 9px;"
 </div>
 
                                     <div class="advance_option">
-                                        <h6 (click)="toggleAdvanceOption()">
+                                        <h6 (click)="toggleAdvanceOption('update')">
                                             Advance Option &nbsp;
                                             <img class="icons" src="../../../../assets/img/teambox/dropdown.svg" />
                                         </h6>
 
-                                        <h5 *ngIf="showAdvanceOption" class="d-flex align-items-center gap-3">
+                                        <h5 *ngIf="showAdvanceOptionUpdate" class="d-flex align-items-center gap-3">
                                             Drop-off Message<span class="text-muted">(Optional) </span>
                                                 <sb-tooltip
     class="ms-2"
@@ -1148,9 +1148,9 @@ style="margin-right: 9px;"
   ></sb-tooltip>
                                           
                                         </h5>
-                                          <div class="text-end" style="font-size: 13px; color: #6b7280; margin-left: 307px" *ngIf="showAdvanceOption">Characters </div>
+                                          <div class="text-end" style="font-size: 13px; color: #6b7280; margin-left: 307px" *ngIf="showAdvanceOptionUpdate">Characters </div>
                                         <div class="child-interaction-2"
-                                            [style.display]="showAdvanceOption ? 'block' : 'none'">
+                                            [style.display]="showAdvanceOptionUpdate ? 'block' : 'none'">
                                             <div class="conversation_inout_area">
                                                 <div class="input-area">
                                                   
@@ -1162,7 +1162,7 @@ style="margin-right: 9px;"
                                             </div>
                                         </div>
 
-                                        <div *ngIf="showAdvanceOption">
+                                        <div *ngIf="showAdvanceOptionUpdate">
                                             <h5>
                                                 Add Action
                                                 <span class="text-muted">(Optional)</span>
@@ -1178,10 +1178,9 @@ style="margin-right: 9px;"
                                                     <p class="d-flex justify-content-around" *ngFor="
                                                             let assignAction of assignActionList;
                                                             let m = index
-                                                        " (click)="toggleAssignOption(m)" [class.disabled-option]="
-                                                            isOptionDisabled(assignAction?.value || assignAction?.Value)
+                                                        " (click)="toggleAssignOption(m)" [class.disabled-option]="isOptionDisabledUpdate(assignAction?.Value ||assignAction?.value)
                                                         " [class.selected-option]="
-                                                            selectedExclusiveAction === (assignAction.value || assignAction?.Value)
+                                                            selectedExclusiveAction === (assignAction?.value || assignAction?.Value)
                                                         ">
                                                         <span>{{ assignAction.name }}</span>
                                                         <img class="pr-3 arrow-sign" *ngIf="assignAction?.children"

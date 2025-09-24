@@ -3424,3 +3424,51 @@ select.form-select option {
   display: none; /* Hide it by default */
   pointer-events: none; /* Crucial to allow clicks to pass through to the canvas */
 }
+
+.form-select {
+  max-height: 200px;   /* dropdown height */
+  overflow-y: auto;    /* adds scroll when items exceed height */
+}
+
+.form-select {
+  height: 40px;      /* changes the select box height */
+  font-size: 14px;   /* changes text size */
+}
+
+
+.custom-dropdown {
+  position: relative;
+  display: inline-block;
+  width: 200px;
+}
+
+.custom-dropdown button {
+  width: 100%;
+}
+
+.dropdown-list {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  max-height: 200px;      /* control list height */
+  overflow-y: auto;       /* scroll if too many items */
+  border: 1px solid #ccc;
+  background: #fff;
+  z-index: 1000;
+  padding: 0;
+  margin: 0;
+  list-style: none;
+}
+
+.dropdown-list li {
+  height: 40px;           /* row height */
+  line-height: 40px;      /* vertical text align */
+  padding: 0 12px;        /* spacing inside option */
+  cursor: pointer;
+}
+
+.dropdown-list li:hover {
+  background-color: #f0f0f0;
+}
+

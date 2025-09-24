@@ -36,6 +36,7 @@ export class BotBuilderComponent implements OnInit {
   // Data
   botDetailsData: any = null
   showAdvanceOption: boolean = false;
+  showAdvanceOptionUpdate: boolean = false;
   searchKey = '';
   channelPhoneNumber: string = '';
   channelSelected: string = '';
@@ -335,7 +336,7 @@ export class BotBuilderComponent implements OnInit {
     this.botBuilderForm.reset()
     const modalElement = document.getElementById(modalId);
     if (modalElement) {
-      const modalInstance = bootstrap.Modal.getInstance(modalElement) || new bootstrap.Modal(modalElement);
+      const modalInstance = bootstrap.Modal.getInstance(modalElement) || new bootstrap.Modal(modalElement ,{ backdrop: false });
       modalInstance.hide();
     }
     this.resetBotForm();
@@ -353,6 +354,7 @@ export class BotBuilderComponent implements OnInit {
     this.tempSelections = null;
     this.multiSelect = [];
     this.showAdvanceOption = false;
+    this.showAdvanceOptionUpdate = false;
     this.assignedAgentList = []
     this.assignedRemoveTagList = []
     this.assignedTagList = []
@@ -427,7 +429,7 @@ export class BotBuilderComponent implements OnInit {
 
 
     if (this.assignedAgentList?.length > 0 || item?.timeout_message != null) {
-      this.showAdvanceOption = true
+      this.showAdvanceOptionUpdate = true;
     }
 
 
@@ -714,8 +716,13 @@ isTooltipVisible2:any
 
 
 
-  toggleAdvanceOption() {
-    this.showAdvanceOption = !this.showAdvanceOption;
+  toggleAdvanceOption(type='') {
+    if(type == 'update'){
+      this.showAdvanceOptionUpdate =!this.showAdvanceOptionUpdate
+    }else{
+      this.showAdvanceOption = !this.showAdvanceOption;
+    }
+
   }
 
   showTriggerOption: any = false
@@ -901,8 +908,9 @@ this.closeModal()
     this.ShowAddAction = true;
     this.showSubmenuPanel = false;
     this.ShowAssignOption = false;
+    console.log(this.assignedAgentList)
     this.assignedAgentList.forEach((action: any) => {
-if ((action?.actionType === 'assign_agent'  || action?.actionType === 'Mark_Status')) {
+if ((action?.actionType === 'assign_agent'  || action?.actionType === 'Mark_Status' || action?.actionType === 'assign_owner' || action?.actionType === 'Unassign_conversation')) {
 this.hasSelectedChild = true
 }
     });
@@ -1059,16 +1067,20 @@ this.hasSelectedChild = true;
 
   toggleAssignOption(index: number) {
 
+    console.log(this.assignActionList[index], 'selected action', index,this.exclusiveActions,this.selectedExclusiveAction,this.assignedAgentList);
     const action = this.assignActionList[index];
     const modalMap: any = {
       'Mark_Status': 'resolveAndOpen',
       'Add_Tag': 'addTagModal',
       'Remove_Tag': 'RemoveTagModal'
     };
+console.log('action selected', this.assignActionList[index]);
+    if(this.assignActionList[index].value == 'assign_owner' || this.assignActionList[index].value == 'Unassign_conversation'){
+      this.selectedExclusiveAction = this.assignActionList[index].value;
+      this.hasSelectedChild = true;
+    }
 
     if (modalMap[action.value]) {
-
-
       $(`#${modalMap[action.value]}`).modal('show');
       this.ShowAddAction = false;
     } else if (action.value === "assign_agent") {
@@ -1078,10 +1090,9 @@ this.hasSelectedChild = true;
 
     action.selected = !action.selected;
     this.ShowAddAction = false;
-
     if (this.isOptionDisabled(action.value)) return;
     if (this.exclusiveActions.includes(action.value)) {
-
+console.log('exclusive action selected', action.value,this.selectedExclusiveAction);
       this.selectedExclusiveAction == action.value ? this.addExclusiveAction(action) : this.removeExclusiveAction(action.value);
     }
 
@@ -1100,6 +1111,7 @@ this.hasSelectedChild = true;
       this.assignedAgentList = this.assignedAgentList.filter(item => !this.exclusiveActions.includes(this.actionIdToValue[item.actionTypeId]));
       this.assignedAgentList.push(actionMap[action.value]);
     }
+    console.log(this.assignedAgentList, 'assigned list');
   }
 
   removeExclusiveAction(actionValue: string) {
@@ -1115,11 +1127,16 @@ this.hasSelectedChild = true;
   exclusiveActions = ['assign_owner', 'Unassign_conversation', 'Mark_Status', 'assign_agent'];
 hasSelectedChild = false; // ✅ New flag
   isOptionDisabled(optionValue: string): boolean {
-
     return this.hasSelectedChild && this.exclusiveActions.includes(optionValue) &&
       this.selectedExclusiveAction !== null &&
       this.selectedExclusiveAction !== optionValue;
-      
+  }
+
+  isOptionDisabledUpdate(optionValue: string): boolean {
+    console.log('check disable called', optionValue, this.hasSelectedChild,this.exclusiveActions.includes(optionValue), this.selectedExclusiveAction);
+    return this.hasSelectedChild && this.exclusiveActions.includes(optionValue) &&
+      this.selectedExclusiveAction !== null &&
+      this.selectedExclusiveAction !== optionValue;
   }
 
   checkList() { return this.assignedAgentList.some(agent => agent.actionTypeId === 2); }
@@ -1190,7 +1207,9 @@ const data = {
         this.keywordsError = res.message;
         return
       } else {
-        this.keywords.push(this.newKeyword.trim());
+        if (this.newKeyword.length > 0) {
+          this.keywords.push(this.newKeyword.trim());
+        }
         this.newKeyword = '';
         this.keywordsError = '';
 
