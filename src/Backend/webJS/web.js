@@ -1235,6 +1235,16 @@ async function actionsOflatestLostMessage(message_text, phone_number_id, from, d
         if (ifgot == 'If not exist') {
 
           let updateInteraction = await db.excuteQuery('UPDATE Interaction SET interaction_status=?,updated_at=? WHERE InteractionId=?', ['Resolved', updated_at, newId]);
+
+           logger.info( // todo Mantaining the Logs for `Resolved` status
+            `Line No 1240 : Resolved status by: InteractionId ${newId}, 
+            spid: ${sid}, custid: ${custid}, agid: ${agid}, messageId: ${msg_id}, 
+            phone_number_id: ${phone_number_id}, from: ${from}, 
+            display_phone_number: ${display_phone_number}, smartReplyActions: ${smartReplyActions}, 
+            replystatus: ${replystatus},message_text: ${message_text},
+            HERE IF BLOCK IS (ifgot == 'If not exist') and Value is ifgot: ${ifgot}`
+          );
+
           conversationStatus(sid, ConversationStatusMap.Resolved, newId);
           if (updateInteraction?.affectedRows > 0) {
             console.log(newId, "ist time and triggere smart reply")
@@ -1250,6 +1260,16 @@ async function actionsOflatestLostMessage(message_text, phone_number_id, from, d
           if (smartReplyActions >= 0) {
             let isEmptyInteraction = await commonFun.isStatusEmpty(newId, sid, custid)
             let ResolveOpenChat = await db.excuteQuery('UPDATE Interaction SET interaction_status =? WHERE InteractionId !=? and customerId=?', ['Resolved', newId, custid]);
+            logger.info( // todo Mantaining the Logs for `Resolved` status
+              `Line No 1263: Resolved status by: InteractionId ${newId}, 
+              spid: ${sid}, custid: ${custid}, agid: ${agid}, messageId: ${msg_id}, 
+              phone_number_id: ${phone_number_id}, from: ${from}, 
+              display_phone_number: ${display_phone_number}, 
+              smartReplyActions: ${smartReplyActions}, replystatus: ${replystatus}, 
+              ifgot: ${ifgot},message_text: ${message_text},  
+              HERE IF BLOCK IS (smartReplyActions >= 0) and Value is ${smartReplyActions}`
+            );
+
             conversationStatus(sid, ConversationStatusMap.Resolved, newId);
             console.log("ResolveOpenChat -----", ResolveOpenChat)
             let updateInteraction = await db.excuteQuery('UPDATE Interaction SET interaction_status=? WHERE InteractionId=?', ['Open', newId])
@@ -1272,6 +1292,16 @@ async function actionsOflatestLostMessage(message_text, phone_number_id, from, d
 
         let isEmptyInteraction = await commonFun.isStatusEmpty(newId, sid, custid)
         let ResolveOpenChat = await db.excuteQuery('UPDATE Interaction SET interaction_status =? WHERE InteractionId !=? and customerId=?', ['Resolved', newId, custid]);
+         
+        logger.info( // todo Mantaining the Logs for `Resolved` status
+              `Line No 1296: Resolved status by: InteractionId ${newId}, 
+              spid: ${sid}, custid: ${custid}, agid: ${agid}, messageId: ${msg_id}, 
+              phone_number_id: ${phone_number_id}, from: ${from}, 
+              display_phone_number: ${display_phone_number}, 
+              replystatus: ${replystatus}, ifgot: ${ifgot},message_text: ${message_text},  
+              HERE IF BLOCK IS (replystatus != "Open") and Value is ${replystatus}`
+        );
+
         conversationStatus(sid, ConversationStatusMap.Resolved, newId);
         console.log("ResolveOpenChat -----", ResolveOpenChat)
         let updateInteraction = await db.excuteQuery('UPDATE Interaction SET interaction_status=? WHERE InteractionId=?', ['Open', newId])
@@ -1512,6 +1542,16 @@ async function getDetatilsOfSavedMessage(saveMessage, message_text, phone_number
         if (ifgot == 'If not exist') {
 
           let updateInteraction = await db.excuteQuery('UPDATE Interaction SET interaction_status=?,updated_at=? WHERE InteractionId=?', ['Resolved', updated_at, newId]);
+
+        logger.info( // todo Mantaining the Logs for `Resolved` status
+              `Line No 1296: Resolved status by: InteractionId ${newId}, 
+              spid: ${sid}, custid: ${custid}, agid: ${agid}, messageId: ${msg_id}, 
+              phone_number_id: ${phone_number_id}, from: ${from}, 
+              display_phone_number: ${display_phone_number}, replystatus: ${replystatus}, 
+              ifgot: ${ifgot},message_text: ${message_text},  
+              HERE IF BLOCK IS (defaultReplyAction >= -1) and Value is ${defaultReplyAction}`
+        );
+
           conversationStatus(sid, ConversationStatusMap.Resolved, newId);
           if (updateInteraction?.affectedRows > 0) {
             notify.NotifyServer(display_phone_number, false, newId, 0, 'IN', 'Status changed')
@@ -1526,6 +1566,16 @@ async function getDetatilsOfSavedMessage(saveMessage, message_text, phone_number
           if (defaultReplyAction >= 0) {
             let isEmptyInteraction = await commonFun.isStatusEmpty(newId, sid, custid)
             let ResolveOpenChat = await db.excuteQuery('UPDATE Interaction SET interaction_status =? WHERE InteractionId !=? and customerId=?', ['Resolved', newId, custid]);
+
+            logger.info( // todo Mantaining the Logs for `Resolved` status
+                  `Line No 1296: Resolved status by: InteractionId ${newId}, 
+                  spid: ${sid}, custid: ${custid}, agid: ${agid}, messageId: ${msg_id}, 
+                  phone_number_id: ${phone_number_id}, from: ${from}, 
+                  display_phone_number: ${display_phone_number}, replystatus: ${replystatus}, 
+                  ifgot: ${ifgot},message_text: ${message_text},  
+                  HERE IF BLOCK IS (defaultReplyAction >= 0) and Value is ${defaultReplyAction}`
+            );         
+
             console.log("ResolveOpenChat (((((((((((", ResolveOpenChat)
             let updateInteraction = await db.excuteQuery('UPDATE Interaction SET interaction_status=? WHERE InteractionId=?', ['Open', newId])
             conversationStatus(sid, ConversationStatusMap.Open, newId);
@@ -1553,6 +1603,16 @@ async function getDetatilsOfSavedMessage(saveMessage, message_text, phone_number
         const updated_at = moment.utc(myUTCString).format('YYYY-MM-DD HH:mm:ss');
         let isEmptyInteraction = await commonFun.isStatusEmpty(newId, sid, custid)
         let ResolveOpenChat = await db.excuteQuery('UPDATE Interaction SET interaction_status =? WHERE InteractionId !=? and customerId=?', ['Resolved', newId, custid]);
+
+           logger.info( // todo Mantaining the Logs for `Resolved` status
+                  `Line No 1296: Resolved status by: InteractionId ${newId}, 
+                  spid: ${sid}, custid: ${custid}, agid: ${agid}, messageId: ${msg_id}, 
+                  phone_number_id: ${phone_number_id}, from: ${from}, 
+                  display_phone_number: ${display_phone_number}, replystatus: ${replystatus}, 
+                  ifgot: ${ifgot},message_text: ${message_text},  
+                  HERE IF BLOCK IS (defaultReplyAction == 'false' && replystatus != "Open") and Value is ${defaultReplyAction}, {replystatus: ${replystatus}}`
+            ); 
+
         console.log("ResolveOpenChat *********************", ResolveOpenChat)
         let updateInteraction = await db.excuteQuery('UPDATE Interaction SET interaction_status=? WHERE InteractionId=?', ['Open', newId])
         conversationStatus(sid, ConversationStatusMap.Open, newId);
