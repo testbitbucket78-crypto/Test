@@ -939,6 +939,7 @@ uniqueRowNamesValidator(): ValidatorFn {
       footerText: ['', [Validators.maxLength(60)]],
       whatsAppFormName: ['', [Validators.required,Validators.maxLength(20)]],
       selectedForm: ['', Validators.required],
+      selectedFormName: ['', Validators.required],
       reattemptsAllowed: [false],
       reattemptsCount: [1],
       errorMessage: ['', [Validators.maxLength(this.MAX_CHARACTERS)]],
@@ -1034,6 +1035,7 @@ uniqueRowNamesValidator(): ValidatorFn {
   private initContactAttributeForm(): void {
     this.contactAttributeForm = this.fb.group({
       selectedAttribute: [null, Validators.required],
+      selectedAttributeName: [null, Validators.required],
       selectedvalueBackend:[''],
       selectedValue: [''],
       inputValue: [''],
@@ -2645,6 +2647,15 @@ if (fileControl) {
       case 'TimeDelayModal':
         this.fillTimeDelayModal(nodeData);
         break;
+      case 'BotTriggerModal':
+        this.selectedBotName = nodeData?.data?.formData?.data?.keywords
+        break;
+      case 'MessageOptin':
+        this.conversationActions.status = nodeData?.data?.formData?.data?.status
+        break;
+      case 'UpdateContactAttribute':
+         this.UpdateContactAttributeModal(nodeData);
+        break;
       case 'AddTags':
       case 'RemoveTag':
         this.fillTheTag(nodeData);
@@ -2661,6 +2672,7 @@ if (fileControl) {
       file: null
     });
   }
+
 
   private fillMediaData(nodeElement: HTMLElement | null, nodeData: any): void {
     this.selectedFileType = this.cardType === 'sendDocument' ? 'image' :
@@ -2933,6 +2945,7 @@ private fillButtonOptionsData(nodeData: any): void {
       footerText: updateForm?.footerText,
       whatsAppFormName: updateForm?.whatsAppFormName,
       selectedForm: updateForm?.selectedForm,
+      selectedFormName: updateForm?.selectedFormName,
       reattemptsAllowed: updateForm?.reattemptsAllowed,
       reattemptsCount: updateForm?.reattemptsCount,
       errorMessage: updateForm?.errorMessage,
@@ -2958,6 +2971,21 @@ this.selectedAgentDetails = updateForm
     ;
     this.delayTime = updateForm.time
     this.delayUnit = updateForm.unit
+  }
+
+  private UpdateContactAttributeModal (nodeData: any): void {
+    const updateForm = nodeData?.data?.formData?.data
+        this.contactAttributeForm.patchValue({
+      selectedValue: updateForm?.selectedValue,
+      selectedvalueBackend:updateForm?.selectedvalueBackend,
+      inputValue: updateForm?.inputValue,
+      selectedVariable:updateForm?.selectedVariable,
+      operation: updateForm?.operation,
+      selectedAttribute: updateForm?.selectedAttribute,
+      selectedAttributeName: updateForm?.selectedAttributeName
+    });
+    this.onAttributeChange(updateForm?.selectedAttribute,true)
+
   }
 
   private fillTheTag(nodeData: any): void {
@@ -3266,7 +3294,7 @@ preventInvalidKeys(event: KeyboardEvent): void {
       if (allAttributes.status == 200) {
 var attributeListCustomize = allAttributes?.getfields?.map((attr: any, index: number) => {
   // From 6th index onward, replace displayName with ActuallName
-  if (index <= 6) {
+  if (index < 6) {
     return {
       ...attr,
       displayName: attr.ActuallName
@@ -3354,7 +3382,7 @@ this.currentAttributeList = attributeListCustomize.filter((attr:any) =>
       if (result) {
 
         
-        this.whatsAppFormList = result?.flows;
+        this.whatsAppFormList = result?.flows?.filter((item:any)=>item.status == "PUBLISHED") || []
 
       }
     });
@@ -3900,7 +3928,7 @@ this.listOptions.reset();
   isUserTyping: boolean = false;
   selectedFromVariable: boolean = false;
   selectedOptions: any[] = [];
-  onAttributeChange(value: string): void {
+  onAttributeChange(value: string,onUpdate:any=false): void {
     
     const selectedAttr = this.contactAttributeForm.get('selectedAttribute')?.value;
     this.attributeDetails = this.currentAttributeList.find((attr: any) => attr.ActuallName === selectedAttr);
@@ -3924,8 +3952,10 @@ this.listOptions.reset();
       }
     }
 
+    if(!onUpdate){
+      this.contactAttributeForm.get('selectedValue')?.reset();
+    }
     this.selectedValuesList = [];
-    this.contactAttributeForm.get('selectedValue')?.reset();
     
 
 
@@ -4019,6 +4049,9 @@ isSelected(variable: any): boolean {
     const inputValue = event.target.value;
     this.isUserTyping = !!inputValue;
     if (this.isUserTyping) {
+     this.contactAttributeForm.patchValue({
+      selectedvalueBackend:inputValue
+     })
       this.selectedFromVariable = false;
     }
   }
@@ -4948,6 +4981,7 @@ onAttributeChangeAfterSelection(attr: any) {
   console.log('Selected attribute:', attr,this.selectedAttr);
 this.isOpens = false;
   this.contactAttributeForm.get('selectedAttribute')?.setValue(attr.ActuallName);
+  this.contactAttributeForm.get('selectedAttributeName')?.setValue(attr.displayName);
   this.onAttributeChange(attr)
 }
 
@@ -4964,5 +4998,34 @@ botDropDownStatus:any = false
 toggleDropdownbot(event: any){
 this.botDropDownStatus = !this.botDropDownStatus
 }
+
+isOpensForm = false;
+toggleDropdownOfForm(event: Event) {
+  console.log('Dropdown toggled. Current state:', this.isOpens);
+  event.stopPropagation();  // prevent modal or body clicks
+  this.isOpensForm= !this.isOpensForm;
+}
+
+
+onWhatsAppFormSelection(flow:any){
+  this.isOpensForm= false
+this.whatsAppFlowForm.get('selectedForm')?.setValue(flow?.id)
+this.whatsAppFlowForm.get('selectedFormName')?.setValue(flow?.flowname)
+}
+
  
+isValueDisabled(operator: string): boolean {
+  return operator === 'Is empty' || operator === 'Is not empty';
+}
+
+
+onOperatorChange(i: number): void {
+  const group = this.getConditionGroup(i);
+  const operator = group.get('operator')?.value;
+  if (operator === 'Is empty' || operator === 'Is not empty') {
+    group.get('value')?.setValue('');  // clear the value  // disable field
+  } 
+}
+
+
 }

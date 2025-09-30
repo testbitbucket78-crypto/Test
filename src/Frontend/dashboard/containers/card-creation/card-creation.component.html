@@ -2107,13 +2107,37 @@
                             ">
               Select WhatsApp Form
             </label>
-           <select class="form-select" formControlName="selectedForm"
+           <!-- <select class="form-select" formControlName="selectedForm"
   style="border: 1px solid #e5e7eb; border-radius: 8px; padding: 10px 12px; font-size: 14px;">
   <option value="" disabled selected>Select a WhatsApp flow</option>
   <option *ngFor="let flow of whatsAppFormList" [value]="flow?.id">
     {{ flow?.flowname }}
   </option>
-</select>
+</select> -->
+
+
+                <div class="custom-input-wrapper">
+    <input class="form-control bg-white"
+                                            type="text"
+                                            name="Form"
+                                            id="Form"
+                                            formControlName="selectedFormName"
+                                            style="cursor: pointer;"
+                                            placeholder="Select a WhatsApp flow"  (click)="toggleDropdownOfForm($event)" readonly />
+                                              <ul class="dropdown-list" *ngIf="isOpensForm"
+                                               >
+      <li *ngFor="let flow of whatsAppFormList" 
+          (click)="onWhatsAppFormSelection(flow)"   style="padding: 8px 12px; 
+           cursor: pointer; 
+           white-space: normal; 
+           word-break: break-word; 
+           line-height: 1.4; 
+           display: block; 
+           height: auto;">
+        {{ flow?.flowname}}
+      </li>
+    </ul>
+            </div>
 
           </div>
 
@@ -2326,7 +2350,7 @@
 
               <!-- Operator -->
               <label class="form-label">Operator</label>
-              <select class="form-select mb-3" formControlName="operator">
+              <select class="form-select mb-3" formControlName="operator" (change)="onOperatorChange(i)">
                 <option value="" disabled>Select operator</option>
                 <option *ngFor="let op of getOperators(getConditionGroup(i).get('comparatorType')?.value)" [value]="op">
                   {{ op }}
@@ -2335,17 +2359,17 @@
 
               <!-- Value -->
               <label class="form-label">Select a Value</label>
-              <div class="input-group mb-3">
+              <div class="input-group mb-3" >
                 <div class="custom-input-wrapper">
                   <input type="text" class="custom-input" formControlName="value" placeholder="Select variable or attribute"
                     (input)="onValueInput(i)" (focus)="isFocused = true"  
-                    (keydown)="allowOnlyBackspaces($event, i, 'value')" (blur)="isFocused = false" style="padding-right: 142px;"/>
+                    (keydown)="allowOnlyBackspaces($event, i, 'value')" (blur)="isFocused = false" style="padding-right: 142px;"   [class.disabled]="isValueDisabled(getConditionGroup(i).get('operator')?.value)" />
 
-                <span class="select_box_condition" [class.disabled]="showSelection?.index === i && showSelection?.field === 'value'" 
+                <span class="select_box_condition" [class.disabled]="showSelection?.index === i && showSelection?.field === 'value'"  [class.disabled]="isValueDisabled(getConditionGroup(i).get('operator')?.value)"
                 (click)="openSelection(i, 'value')"   
                 *ngIf="getValueInputType(i) === 'select'"></span>
 
-                  <span class="toggle_attribute_condition" (click)="openAttributeOption(i, 'value')"></span>
+                  <span class="toggle_attribute_condition" (click)="openAttributeOption(i, 'value')" [class.disabled]="isValueDisabled(getConditionGroup(i).get('operator')?.value)"></span>
 
 
                   <div class="bot-var-menu" style="margin-top: 22px;" [class.visible]="showSelection?.index === i && showSelection?.field === 'value'">
@@ -2359,7 +2383,7 @@
                   </div>
 
                   <button type="button" class="custom-button" [class.focused]="isFocused"
-                    (click)="toggleVarMenu(i, 'value')">
+                    (click)="toggleVarMenu(i, 'value')" [class.disabled]="isValueDisabled(getConditionGroup(i).get('operator')?.value)">
                     Bot Var
                   </button>
                 </div>
@@ -2614,7 +2638,7 @@
                                             type="text"
                                             name="Attribute"
                                             id="Attribute"
-                                            formControlName="selectedAttribute"
+                                            formControlName="selectedAttributeName"
                                             style="cursor: pointer;"
                                             readonly
                                             placeholder="Select Attribute"  (click)="toggleDropdown($event)" readonly />

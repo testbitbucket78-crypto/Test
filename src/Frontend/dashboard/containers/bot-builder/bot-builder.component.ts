@@ -130,7 +130,7 @@ export class BotBuilderComponent implements OnInit {
 
   // Constants
   converstationStatus = [
-    { name: 'Resolve', value: 'resolve' },
+    { name: 'Resolved', value: 'Resolved' },
     { name: 'Open', value: 'open' }
   ];
 
@@ -176,7 +176,7 @@ export class BotBuilderComponent implements OnInit {
     {
       name: 'Mark Conversation Status',
       value: 'Mark_Status',
-      children: [{ name: 'Resolve', value: 'resolve' }, { name: 'Open', value: 'open' }]
+      children: [{ name: 'Resolved', value: 'Resolved' }, { name: 'Open', value: 'open' }]
     },
     {
       name: 'Add Tag',
@@ -413,6 +413,7 @@ export class BotBuilderComponent implements OnInit {
     this.selectedExclusiveAction = matchedActionValues?.length == 0?null:matchedActionValues[0]
 
 
+
     this.assignedAgentList.forEach((item: any) => {
       if (item.actionTypeId == 1) {
 
@@ -423,6 +424,8 @@ export class BotBuilderComponent implements OnInit {
       } else if (item.actionTypeId == 4) {
 
         this.converstatation = item.Value
+        this.hasSelectedChild = true;
+      }else if (item.actionTypeId == 2 ) {
         this.hasSelectedChild = true;
       }
     })
@@ -970,7 +973,7 @@ checkTagStatus(val: string, id: number): boolean {
     const agent = this.agentsList[index];
     if (!this.assignedAgentList.some(item => item.actionTypeId === 2 && item.Value === agent.name)) {
       this.isAssigned = true;
-      const assignment = { actionTypeId: 2, Value: agent.name, ValueUuid: agent.uuid };
+      const assignment = { actionTypeId: 2, Value: agent.name, ValueUuid: agent.uuid,actionType:'Assign_Agent' };
       this.isEditAssigned ? this.assignedAgentList[this.AssignedIndex] = assignment : this.assignedAgentList.push(assignment);
     }
     this.hasSelectedChild = true;
@@ -1035,7 +1038,7 @@ checkTagStatus(val: string, id: number): boolean {
   }
 
   openConverstaion(index: number) {
-    this.selectedStatus = this.converstationStatus[index].name;
+    this.selectedStatus = this.converstationStatus[index].value;
     this.converstatation = [this.selectedStatus];
     const existingAction = this.assignedAgentList.find(item => item.actionTypeId === 4) ||
       { actionTypeId: 4, Value: [this.selectedStatus], actionType: 'Mark_Status' };
