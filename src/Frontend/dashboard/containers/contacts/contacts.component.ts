@@ -533,7 +533,7 @@ onChangePage(pageOfItems: any) {
       this.deleteBloackContactLoader = false;
       this.contacts = datas.result;
       let totalCount = datas?.totalCount;
-      this.rowData = this.buildArrayWithInsert(totalCount,data.contactFrom,data.contactTo,this.contacts);
+      this.rowData = this.buildArrayWithInsert(totalCount,data.contactFrom,data.contactFrom+data.contactTo,this.contacts);
       console.log(this.rowData);
       if(this.contacts?.length == 0){
         this.isEmptyData();
@@ -552,7 +552,7 @@ onChangePage(pageOfItems: any) {
     id: i + 1,
     value: `Item ${i + 1}`
   }));
-
+console.log(baseArr,'----------------------------------baseArr-----------------------------');
   // Step 2: Replace items from start to end with insertArr
   const newArr: any[] = [
     ...baseArr.slice(0, start),
@@ -1548,6 +1548,8 @@ timeFormatter(params: any): string {
 
     gotoPage(page: any) {
         this.GridService.gotoPage(page, this.gridapi, this.rowData)
+        this.currPage = this.GridService.currPage;
+        this.paging = this.GridService.paging;
       this.getContact();
     }
     filterIsApplied! : boolean;

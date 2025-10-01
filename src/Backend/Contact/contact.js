@@ -84,7 +84,7 @@ app.post('/getFilteredList', authenticateToken, async (req, res) => {
       status: 200,
       result: contactList,
       IsFilteredList: IsFilteredList,
-      totalCount: contactCount.length > 0 ? contactCount[0].totalCount : 0
+      totalCount: IsFilteredList ? contactList?.length : contactCount.length > 0 ? contactCount[0].totalCount : 0
     });
     logger.info(`Response sent with status 200 : ${contactList}`);
   } catch (err) {
