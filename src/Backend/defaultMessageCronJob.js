@@ -668,13 +668,35 @@ async function botTimeOperations(){
 //function startScheduler() {
  let canProceedWithNewTask = true; // Flag to control task execution
   cron.schedule('*/2 * * * *', async () => {
-    if (canProceedWithNewTask){  ;
+    // if (canProceedWithNewTask){  
+    // canProceedWithNewTask = false;
+    // console.log('Running scheduled task...');
+    // NoCustomerReplyReminder();  // system_message_type_id  = 5
+    // await NoAgentReplyTimeOut();  
+    // await NoCustomerReplyTimeout();     // system_message_type_id  = 6
+    // }
+
+    if (!canProceedWithNewTask) {
+    console.log('Previous task still running, skipping this cycle...');
+  } else {
     canProceedWithNewTask = false;
-    console.log('Running scheduled task...');
-    NoCustomerReplyReminder();  // system_message_type_id  = 5
-    await NoAgentReplyTimeOut();  
-    await NoCustomerReplyTimeout();     // system_message_type_id  = 6
+
+    try {
+      console.log('Running scheduled task...');
+      NoCustomerReplyReminder();
+      await NoAgentReplyTimeOut();
+      await NoCustomerReplyTimeout();
+    } catch (err) {
+      logger.error(`Error in scheduled tasks: ${err.message}`);
+
+    } finally {
+      logger.error(`Error in scheduled tasks and we got this in the finally block: ${err?.message}`);
+
+      //todo If everything runs like try catch then we can proceed with the next task currently applying logger if this happen we will uncomment the code 
+      //canProceedWithNewTask = true;
     }
+  }
+
        // system_message_type_id = 4
     botTimeOperations();
 
