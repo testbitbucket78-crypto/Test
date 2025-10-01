@@ -131,7 +131,7 @@ async function NoCustomerReplyReminder() {
 async function NoCustomerReplyTimeout() {
   try {
     let CustomerReplyTimeout = await db.excuteQuery(settingVal.systemMsgQuery);
-   
+    canProceedWithNewTask = true; // Reset the flag to allow new tasks
     logger.info(`NoCustomerReplyTimeout, ${CustomerReplyTimeout?.length}, ${new Date()}`);
     
     if (CustomerReplyTimeout?.length > 0) {
@@ -666,11 +666,15 @@ async function botTimeOperations(){
 
 
 //function startScheduler() {
-  cron.schedule('*/1 * * * *', async () => {
+ let canProceedWithNewTask = true; // Flag to control task execution
+  cron.schedule('*/2 * * * *', async () => {
+    if (canProceedWithNewTask){  ;
+    canProceedWithNewTask = false;
     console.log('Running scheduled task...');
     NoCustomerReplyReminder();  // system_message_type_id  = 5
     await NoAgentReplyTimeOut();  
     await NoCustomerReplyTimeout();     // system_message_type_id  = 6
+    }
        // system_message_type_id = 4
     botTimeOperations();
 
