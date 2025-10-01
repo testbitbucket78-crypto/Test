@@ -1145,11 +1145,15 @@ hasSelectedChild = false; // ✅ New flag
   checkList() { return this.assignedAgentList.some(agent => agent.actionTypeId === 2); }
   closeAddAction() {
     this.ShowAddAction = false;
-    this.hasSelectedChild = false;
+    if(!this.checkList){
+      this.hasSelectedChild = false;
+    }
   }
   closeAssignTo() {
     this.ShowAssignOption = false;
-    this.hasSelectedChild = false;
+    if(!this.checkList){
+      this.hasSelectedChild = false;
+    }
   }
 
   RemoveTags(index: number, e: any) {
