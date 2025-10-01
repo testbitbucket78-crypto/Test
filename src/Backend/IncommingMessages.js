@@ -1889,6 +1889,12 @@ if (typeof right === "string") {
     case 'less than': {
       return Number(left) < Number(right);
     }
+    case 'Yes':{
+      return left == 'Yes' || left == 1;
+    }
+    case 'No':{
+      return left == 'No' || left == 0;
+    }
 
     default: {
       throw new Error(`Unsupported operator: ${operator}`);
