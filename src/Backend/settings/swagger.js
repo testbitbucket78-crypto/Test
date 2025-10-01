@@ -13,46 +13,95 @@ const swagger = swaggerJSDoc({
             description: 'API documentation for EngageKart project.',
         },
         servers: [
-            {
-                url: 'http://localhost:3003',
-                description: 'Development Server - Authentication',
-            },
-            {
-                url: 'https://authapi.stacknize.com',
-                description: 'Preprod Server - Authentication',
-            },
-            {
-                url: 'http://localhost:3004',
-                description: 'Development Server - Settings',
-            },
-            {
-                url: 'https://settings.stacknize.com',
-                description: 'Staging Server - Settings',
-            },
-            {
-                url: 'http://localhost:3001',
-                description: 'Development Server - Dashboard',
-            },
-            {
-                url: 'https://cip-api.stacknize.com',
-                description: 'Staging Server - Dashboard',
-            },
-            {
-                url: 'http://localhost:3002',
-                description: 'Development Server - Contacts',
-            },
-            {
-                url: 'https://contactapi.stacknize.com',
-                description: 'Staging Server - Contacts',
-            },
-            {
-                url: 'http://localhost:3005',
-                description: 'Development Server - Smart Replies',
-            },
-            {
-                url: 'https://smartapi.stacknize.com',
-                description: 'Staging Server - Smart Replies',
-            },
+        // Authentication
+        {
+            url: 'http://localhost:3003',
+            description: 'Development Server - Authentication',
+        },
+        {
+            url: 'https://authapi.stacknize.com',
+            description: 'Staging Server - Authentication',
+        },
+        {
+            url: 'https://authapi-preprod.engagekart.com',
+            description: 'Pre-Prod Server - Authentication',
+        },
+        {
+            url: 'https://authapi.engagekart.com',
+            description: 'Prod Server - Authentication',
+        },
+
+        // Settings
+        {
+            url: 'http://localhost:3004',
+            description: 'Development Server - Settings',
+        },
+        {
+            url: 'https://settings.stacknize.com',
+            description: 'Staging Server - Settings',
+        },
+        {
+            url: 'https://settings-preprod.engagekart.com',
+            description: 'Pre-Prod Server - Settings',
+        },
+        {
+            url: 'https://settings.engagekart.com',
+            description: 'Prod Server - Settings',
+        },
+
+        // Dashboard
+        {
+            url: 'http://localhost:3001',
+            description: 'Development Server - Dashboard',
+        },
+        {
+            url: 'https://cip-api.stacknize.com',
+            description: 'Staging Server - Dashboard',
+        },
+        {
+            url: 'https://cip-api-preprod.engagekart.com',
+            description: 'Pre-Prod Server - Dashboard',
+        },
+        {
+            url: 'https://cip-api.engagekart.com',
+            description: 'Prod Server - Dashboard',
+        },
+
+        // Contacts
+        {
+            url: 'http://localhost:3002',
+            description: 'Development Server - Contacts',
+        },
+        {
+            url: 'https://contactapi.stacknize.com',
+            description: 'Staging Server - Contacts',
+        },
+        {
+            url: 'https://contactapi-preprod.engagekart.com',
+            description: 'Pre-Prod Server - Contacts',
+        },
+        {
+            url: 'https://contactapi.engagekart.com',
+            description: 'Prod Server - Contacts',
+        },
+
+        // Smart Replies
+        {
+            url: 'http://localhost:3005',
+            description: 'Development Server - Smart Replies',
+        },
+        {
+            url: 'https://smartapi.stacknize.com',
+            description: 'Staging Server - Smart Replies',
+        },
+        {
+            url: 'https://smartapi-preprod.engagekart.com',
+            description: 'Pre-Prod Server - Smart Replies',
+        },
+        {
+            url: 'https://smartapi.engagekart.com',
+            description: 'Prod Server - Smart Replies',
+        },
         ],
         tags: [
             {

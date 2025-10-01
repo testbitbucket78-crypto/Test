@@ -131,7 +131,6 @@ async function NoCustomerReplyReminder() {
 async function NoCustomerReplyTimeout() {
   try {
     let CustomerReplyTimeout = await db.excuteQuery(settingVal.systemMsgQuery);
-   
     logger.info(`NoCustomerReplyTimeout, ${CustomerReplyTimeout?.length}, ${new Date()}`);
     
     if (CustomerReplyTimeout?.length > 0) {
@@ -245,6 +244,8 @@ async function NoCustomerReplyTimeout() {
     }
   } catch (error) {
     logger.error(`Outer try Error processing NoCustomerReplyTimeout: ${error.message}, ${new Date()}`);
+  } finally {
+      canProceedWithNewTask = true;
   }
 }
 
@@ -666,11 +667,35 @@ async function botTimeOperations(){
 
 
 //function startScheduler() {
-  cron.schedule('*/1 * * * *', async () => {
-    console.log('Running scheduled task...');
-    NoCustomerReplyReminder();  // system_message_type_id  = 5
-    await NoAgentReplyTimeOut();  
-    await NoCustomerReplyTimeout();     // system_message_type_id  = 6
+ let canProceedWithNewTask = true; // Flag to control task execution
+  cron.schedule('*/2 * * * *', async () => {
+    // if (canProceedWithNewTask){  
+    // canProceedWithNewTask = false;
+    // console.log('Running scheduled task...');
+    // NoCustomerReplyReminder();  // system_message_type_id  = 5
+    // await NoAgentReplyTimeOut();  
+    // await NoCustomerReplyTimeout();     // system_message_type_id  = 6
+    // }
+
+    if (!canProceedWithNewTask) {
+    console.log('Previous task still running, skipping this cycle...');
+  } else {
+    canProceedWithNewTask = false;
+
+    try {
+      console.log('Running scheduled task...');
+      NoCustomerReplyReminder();
+      await NoAgentReplyTimeOut();
+      await NoCustomerReplyTimeout();
+    } catch (err) {
+      logger.error(`Error in scheduled tasks: ${err.message}`);
+
+    } finally {
+      logger.info(`Info in scheduled tasks and we got this in the finally block: ${err?.message}`);
+      //canProceedWithNewTask = true;
+    }
+  }
+
        // system_message_type_id = 4
     botTimeOperations();
 

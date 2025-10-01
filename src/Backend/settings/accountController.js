@@ -1422,6 +1422,21 @@ const uploadImageToMetaWrapper = async (spId, imageUrl) => {
   }
 };
 
+ const uploadImageToMetaWrapperController = async (req, res) => {
+  try {
+    const { spId, imageUrl } = req.body;
+    if (!spId || !imageUrl) {
+      return res.status(400).json({ error: 'spId and imageUrl are required' });
+    }
+
+    const metaResponse = await uploadImageToMetaWrapper(spId, imageUrl);
+    res.status(200).json(metaResponse);
+  } catch (err) {
+    console.error('Error uploading image:', err);
+    res.status(500).json({ error: err.message });
+  }
+};
+
 const createTemplatesWHAPI = async (req, res) => {
   try {
     const spId = req.spid
@@ -1745,5 +1760,5 @@ async function getQualityRatings(phoneNumberId, access_token) {
 module.exports = {
     insertAndEditWhatsAppWeb, selectDetails, addToken, deleteToken, enableToken, selectToken,
     createInstance, getQRcode, generateQRcode, editToken, testWebhook,getQualityRating, addWAAPIDetails, addGetAPIKey, APIkeysState, saveWebhookUrl, sendMessage, saveOrUpdateWebhook, getWebhooks, deleteWebhook, testWebhooks, deleteAPIToken, exportLogs, textMessage, mediaMessage, getTemplate, getTemplateStatus
-    , getSessionStatus, getContacts, deleteContacts, getUsers, getCustomFields, createContact, updateContact, createTemplatesAPI, createTemplatesWEB, createTemplatesWHAPI, sendTemplates, SendInteractiveButtons, getMessages, getBrandConfig, getChennelWhapiorWeb
+    , getSessionStatus, getContacts, deleteContacts, getUsers, getCustomFields, createContact, updateContact, createTemplatesAPI, createTemplatesWEB, createTemplatesWHAPI, sendTemplates, SendInteractiveButtons, getMessages, getBrandConfig, getChennelWhapiorWeb, uploadImageToMetaWrapperController
 }

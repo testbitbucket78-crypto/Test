@@ -472,6 +472,7 @@ const handleAuthentication = async (channel_id) => {
         let channel = new CreateChannelResponse(Data, spid, phoneNo);
         let wrongNumber = await isWrongNumberScanned(channel.spid, channel.phone);
         if(!channel.phone) return
+        if(!channel.phone) return
         if (wrongNumber) {
          let isClientLogout = await whapiService.logoutClient(channel.token);
 
@@ -480,13 +481,17 @@ const handleAuthentication = async (channel_id) => {
           : 'Wrong Number Scanned. Unable to destroy session.';
 
           notify.NotifyServer(phoneNo, false, message);
+          notify.NotifyServer(channel.phone, false, message);
+
           return;
         }
         if(await checkifSPAlreadyExist(channel.phone, channel.spid)){
           notify.NotifyServer(channel.phone, false, 'This number is already used as an SP number. Please use a different one.');
-          whapiService.deleteChannelById(channel.id);
-          channel.deleteFromDatabase();
-          return;
+          notify.NotifyServer(channel.phoneNo, false, 'This number is already used as an SP number. Please use a different one.');
+          // whapiService.deleteChannelById(channel.id);
+         let isClientLogout = await whapiService.logoutClient(channel.token);
+         channel.deleteFromDatabase();
+         return;
         }
         await channel.saveToDatabase();
         await updateConnectedChannelNo(channel.phone, channel.spid);
