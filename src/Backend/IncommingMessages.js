@@ -2230,7 +2230,7 @@ const worker = new Worker(
 );
 
 
-setTimeout(() => {
+/*setTimeout(() => {
   
 let mainData = {
   "sid": 55,
@@ -2265,7 +2265,7 @@ autoReplyDefaultAction(0, null, 0, 'Vijay', 559169223950422,'Pawan Sharma', 9176
 
 // let stringvaleu = JSON.stringify(value).replace(/[\[\]\s]/g, '');
 
-}, 3000);
+}, 3000);*/
 
 async function triggerSR(){
       var replymessage = await matchSmartReplies('addTag', 55, 'WA API')
