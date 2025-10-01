@@ -24,7 +24,7 @@ export const NUMBER_OPERATORS =
 
 
 export const BOOLEAN_OPERATORS = 
-    ['Is empty', 'Is not empty', 'TRUE', 'FALSE']
+    ['Is empty', 'Is not empty', 'Yes', 'No']
 
 
 export const SELECT_OPERATORS = 

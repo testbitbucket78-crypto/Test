@@ -33,7 +33,7 @@
               "src/styles/styles.scss",
               "node_modules/drawflow/dist/drawflow.min.css"
             ],
-            "scripts": [
+             "scripts": [
               "node_modules/drawflow/dist/drawflow.min.js"
             ],
             "stylePreprocessorOptions": {
@@ -48,7 +48,147 @@
               "fileReplacements": [
                 {
                   "replace": "src/environments/environment.ts",
-                  "with": "src/environments/environment.api.ts"
+                  "with": "src/environments/environment.stagingEK.ts"
+                }
+              ],
+              "optimization": {
+                "scripts": true,
+                "styles": {
+                  "minify": true,
+                  "inlineCritical": false
+                },
+                "fonts": true
+              },
+              "outputHashing": "all",
+              "sourceMap": false,
+              "namedChunks": false,
+              "aot": true,
+              "extractLicenses": true,
+              "vendorChunk": false,
+              "buildOptimizer": true,
+              "budgets": [
+                {
+                  "type": "initial",
+                  "maximumWarning": "20mb",
+                  "maximumError": "15mb"
+                },
+                {
+                  "type": "anyComponentStyle",
+                  "maximumWarning": "600kb",
+                  "maximumError": "100kb"
+                }
+              ]
+            },
+            "preprodek": {
+              "fileReplacements": [
+                {
+                  "replace": "src/environments/environment.ts",
+                  "with": "src/environments/environment.preprodEK.ts"
+                }
+              ],
+              "optimization": {
+                "scripts": true,
+                "styles": {
+                  "minify": true,
+                  "inlineCritical": false
+                },
+                "fonts": true
+              },
+              "outputHashing": "all",
+              "sourceMap": false,
+              "namedChunks": false,
+              "aot": true,
+              "extractLicenses": true,
+              "vendorChunk": false,
+              "buildOptimizer": true,
+              "budgets": [
+                {
+                  "type": "initial",
+                  "maximumWarning": "20mb",
+                  "maximumError": "15mb"
+                },
+                {
+                  "type": "anyComponentStyle",
+                  "maximumWarning": "600kb",
+                  "maximumError": "100kb"
+                }
+              ]
+            },
+            "preprodez": {
+              "fileReplacements": [
+                {
+                  "replace": "src/environments/environment.ts",
+                  "with": "src/environments/environment.preprodEZ.ts"
+                }
+              ],
+              "optimization": {
+                "scripts": true,
+                "styles": {
+                  "minify": true,
+                  "inlineCritical": false
+                },
+                "fonts": true
+              },
+              "outputHashing": "all",
+              "sourceMap": false,
+              "namedChunks": false,
+              "aot": true,
+              "extractLicenses": true,
+              "vendorChunk": false,
+              "buildOptimizer": true,
+              "budgets": [
+                {
+                  "type": "initial",
+                  "maximumWarning": "20mb",
+                  "maximumError": "15mb"
+                },
+                {
+                  "type": "anyComponentStyle",
+                  "maximumWarning": "600kb",
+                  "maximumError": "100kb"
+                }
+              ]
+            },
+            "prodek": {
+              "fileReplacements": [
+                {
+                  "replace": "src/environments/environment.ts",
+                  "with": "src/environments/environment.prodEK.ts"
+                }
+              ],
+              "optimization": {
+                "scripts": true,
+                "styles": {
+                  "minify": true,
+                  "inlineCritical": false
+                },
+                "fonts": true
+              },
+              "outputHashing": "all",
+              "sourceMap": false,
+              "namedChunks": false,
+              "aot": true,
+              "extractLicenses": true,
+              "vendorChunk": false,
+              "buildOptimizer": true,
+              "budgets": [
+                {
+                  "type": "initial",
+                  "maximumWarning": "20mb",
+                  "maximumError": "15mb"
+                },
+                {
+                  "type": "anyComponentStyle",
+                  "maximumWarning": "600kb",
+                  "maximumError": "100kb"
+                }
+              ]
+            },
+            "prodez": {
+              "fileReplacements": [
+                {
+                  "replace": "src/environments/environment.ts",
+                  "with": "src/environments/environment.prodEZ.ts"
                 }
               ],
               "optimization": {
@@ -83,7 +223,7 @@
               "fileReplacements": [
                 {
                   "replace": "src/environments/environment.ts",
-                  "with": "src/environments/environment.prod.ts"
+                  "with": "src/environments/environment.stagingEZ.ts"
                 }
               ],
               "optimization": {
@@ -104,40 +244,33 @@
               "budgets": [
                 {
                   "type": "initial",
-                  "maximumWarning": "10mb",
+                  "maximumWarning": "20mb",
                   "maximumError": "15mb"
                 },
                 {
                   "type": "anyComponentStyle",
-                  "maximumWarning": "60kb",
-                  "maximumError": "60kb"
+                  "maximumWarning": "600kb",
+                  "maximumError": "100kb"
                 }
               ]
-            },
-            "development": {
-                "aot": false,
-  "buildOptimizer": false,
-  "optimization": false,
-  "outputHashing": "none",
-  "vendorChunk": true,
-  "extractLicenses": false,
-  "sourceMap": true,
-  "namedChunks": true
             }
-          },
-          "defaultConfiguration": "production"
+          }
+
         },
         "serve": {
           "builder": "@angular-devkit/build-angular:dev-server",
+          "options": {
+            "browserTarget": "sb-admin-angular:build"
+          },
           "configurations": {
             "production": {
               "browserTarget": "sb-admin-angular:build:production"
-            },
-            "development": {
-              "browserTarget": "sb-admin-angular:build:development"
+
+
+
             }
-          },
-          "defaultConfiguration": "development"
+          }
+
         },
         "extract-i18n": {
           "builder": "@angular-devkit/build-angular:extract-i18n",
@@ -177,7 +310,7 @@
               "e2e/tsconfig.json"
             ],
             "exclude": [
-              "/node_modules/"
+              "**/node_modules/**"
             ]
           }
         },
@@ -196,7 +329,9 @@
       }
     }
   },
+  "defaultProject": "sb-admin-angular",
   "cli": {
     "analytics": "85b36ccb-eed5-4d70-8666-ca4bd5f177da"
   }
+  
 }

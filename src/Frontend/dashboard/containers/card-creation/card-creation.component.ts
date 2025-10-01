@@ -3378,12 +3378,9 @@ this.currentAttributeList = attributeListCustomize.filter((attr:any) =>
 
   whatsAppFormList: any = []
   getWhatsAppFormList() {
-    this.settingService.getFlowData(this.userDetails.SP_ID).subscribe(async (result: any) => {
+    this.settingService.getFlowData(this.userDetails.SP_ID,1).subscribe(async (result: any) => {
       if (result) {
-
-        
-        this.whatsAppFormList = result?.flows?.filter((item:any)=>item.status == "PUBLISHED") || []
-
+        this.whatsAppFormList = result?.flows
       }
     });
   }
