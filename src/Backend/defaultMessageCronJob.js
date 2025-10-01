@@ -131,7 +131,6 @@ async function NoCustomerReplyReminder() {
 async function NoCustomerReplyTimeout() {
   try {
     let CustomerReplyTimeout = await db.excuteQuery(settingVal.systemMsgQuery);
-    canProceedWithNewTask = true; // Reset the flag to allow new tasks
     logger.info(`NoCustomerReplyTimeout, ${CustomerReplyTimeout?.length}, ${new Date()}`);
     
     if (CustomerReplyTimeout?.length > 0) {
@@ -245,6 +244,8 @@ async function NoCustomerReplyTimeout() {
     }
   } catch (error) {
     logger.error(`Outer try Error processing NoCustomerReplyTimeout: ${error.message}, ${new Date()}`);
+  } finally {
+      canProceedWithNewTask = true;
   }
 }
 
@@ -690,9 +691,7 @@ async function botTimeOperations(){
       logger.error(`Error in scheduled tasks: ${err.message}`);
 
     } finally {
-      logger.error(`Error in scheduled tasks and we got this in the finally block: ${err?.message}`);
-
-      //todo If everything runs like try catch then we can proceed with the next task currently applying logger if this happen we will uncomment the code 
+      logger.info(`Info in scheduled tasks and we got this in the finally block: ${err?.message}`);
       //canProceedWithNewTask = true;
     }
   }
