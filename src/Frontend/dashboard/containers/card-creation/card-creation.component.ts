@@ -3961,17 +3961,21 @@ this.listOptions.reset();
 
   }
 
-  selectedValues(variable: any): void {
+  selectedValues(variable: any,type:any=''): void {
     var values
-    console.log(variable)
+    var optionValue
     if (this.selectedAttributeType == 'Select') {
     values = `${variable?.id}:${variable?.optionName}`
-      
     }
-    
+    if(type == 'option'){
+      optionValue = `${variable?.displayName || variable?.name || variable?.optionName}`
+    }else{
+      optionValue = `{{${variable?.displayName || variable?.name || variable?.optionName}}}`
+
+    }
     this.contactAttributeForm.patchValue({
       selectedValue: `{{${variable?.displayName || variable?.name || variable?.optionName}}} ` || '',
-      selectedvalueBackend:this.selectedAttributeType == 'Select'? values:`{{${variable?.displayName || variable?.name || variable?.optionName}}}` || '',
+      selectedvalueBackend:this.selectedAttributeType == 'Select'? values:optionValue || '',
       inputValue: '',
       selectedVariable: '',
       operation: 'replace'

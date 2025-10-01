@@ -2684,7 +2684,7 @@
               <!-- <div class="dropdown-wrapper" #dropdownWrapper> -->
 
               <div class="bot-var-menu" [class.visible]="openDropdown.status === 'option' && selectedAttributeType != 'Multi Select'">
-                <div *ngFor="let variable of selectedOptions" class="bot-var-item" (click)="selectedValues(variable)">
+                <div *ngFor="let variable of selectedOptions" class="bot-var-item" (click)="selectedValues(variable,'option')">
                   {{ variable.optionName }}
                 </div>
               </div>
