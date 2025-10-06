@@ -17,6 +17,14 @@ export class TeamboxService {
     return this.http.post(`${this.Setting_API_URL}/uploadfiletoMeta/${spid}/${name}`,FileData);
 }
 
+// Have created this API to avoid fetching the blob from the FE Side using Image URL. works in COPY Termplate Case.
+public uploadImageToMetaWrapper(spid: any, imageUrl: string) {
+  return this.http.post(`${this.Setting_API_URL}/uploadImageToMetaWrapper`, {
+    spId: spid,
+    imageUrl: imageUrl
+  });
+}
+
   public getAgents(SPID:any) {
     return this.http.get(API_URL+'/agents/'+SPID);
   }

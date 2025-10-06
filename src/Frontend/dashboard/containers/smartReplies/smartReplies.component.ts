@@ -11,7 +11,7 @@ import { agentMessageList } from 'Frontend/dashboard/models/smartReplies.model';
 import { SettingsService } from 'Frontend/dashboard/services/settings.service';
 import { ToolbarService, NodeSelection, LinkService, ImageService } from '@syncfusion/ej2-angular-richtexteditor';
 import { RichTextEditorComponent, HtmlEditorService,EmojiPickerService } from '@syncfusion/ej2-angular-richtexteditor';
-import { hasEmptyValues } from '../common/Utils/file-utils';
+import { hasEmptyValues, hasEmptyValueInArray } from '../common/Utils/file-utils';
 import { InteractiveButtonPayload } from 'Frontend/dashboard/models/interactiveButtons.model';
 import { BotserviceService } from 'Frontend/dashboard/services/botservice.service';
 import { ToastService } from 'assets/toast/toast.service';
@@ -424,7 +424,7 @@ showAddSmartRepliesModal() {
 	 }
 	showTemplatePreview() {
 		console.log(this.variableValues,'VARIBALE VALUES');
-		if (hasEmptyValues(this.buttonsVariable)) {
+		if (hasEmptyValueInArray(this.variableValues)) {
             this.showToaster('Variable value should not be empty', 'error');
             return;
         }
