@@ -10,7 +10,7 @@ const swagger = swaggerJSDoc({
     definition: {
         openapi: '3.0.0',
         info: {
-            title: 'EngageKart API',
+            title: 'EngageZilla API',
             version: '1.0.0',
             description: 'API documentation for Engagezilla project.',
         },

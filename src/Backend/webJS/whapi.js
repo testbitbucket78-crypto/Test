@@ -482,30 +482,56 @@ const handleAuthentication = async (channel_id) => {
 
           notify.NotifyServer(phoneNo, false, message);
           notify.NotifyServer(channel.phone, false, message);
-
           return;
         }
         if(await checkifSPAlreadyExist(channel.phone, channel.spid)){
           notify.NotifyServer(channel.phone, false, 'This number is already used as an SP number. Please use a different one.');
           notify.NotifyServer(channel.phoneNo, false, 'This number is already used as an SP number. Please use a different one.');
           // whapiService.deleteChannelById(channel.id);
+          //channel.deleteFromDatabase();
+
          let isClientLogout = await whapiService.logoutClient(channel.token);
-         channel.deleteFromDatabase();
          return;
         }
         await channel.saveToDatabase();
+        await addWhatsAppChannel(channel.spid, channel.phone);
         await updateConnectedChannelNo(channel.phone, channel.spid);
         await CreateChannelResponse.setChannelAlreadyAuthenticated(spid);
         notify.NotifyServer(channel.phone, false, 'Client is ready!');
+        notify.NotifyServer(channel.phoneNo, false, 'Client is ready!');
 
     } catch (error) {
         console.error(`Error handling authentication for channel_id: ${channel_id}`, error);
     }
 };
 
+async function addWhatsAppChannel(spid, phone) {
+  try {
+    let existingChannel = await db.excuteQuery('SELECT * FROM WhatsAppWeb WHERE spid = ? AND is_deleted != 1', [spid]);
+    if (existingChannel?.length > 0) {
+      console.log(`WhatsApp Web channel already exists for SPID: ${spid}`);
+      return;
+    }
+
+    const query = `
+      INSERT INTO WhatsAppWeb (channel_id,connected_id,channel_status,is_deleted,spid,phone_type,import_conversation,QueueMessageCount,
+        connection_date,WAVersion,InMessageStatus,OutMessageStatus,QueueLimit,delay_Time,INGrMessage,OutGrMessage,
+        online_status,serviceMonetringTool,syncContact,DisconnAlertEmail,roboot,restart,reset,updated_at,WABA_ID,phone_number_id
+      )
+      VALUES ('WA Web',?,0,0,?,NULL,0,0,NULL,'2.23.24.82',0,0,0,0,0,0,0,0,0,NULL,0,0,0,NOW(),NULL,NULL
+      );
+    `;
+    
+    await db.excuteQuery(query, [phone, spid]);
+  } catch (err) {
+    console.error("❌ Error adding WhatsApp Web channel:", err);
+  }
+}
+
+
 async function updateConnectedChannelNo(phoneNo, spid){
   await db.excuteQuery('UPDATE WhatsAppWeb SET connected_id = ? WHERE spid = ?', [phoneNo, spid]);
-  await db.excuteQuery('UPDATE user SET mobile_number = ? WHERE SP_ID = ?', [phoneNo, spid]);
+  await db.excuteQuery('UPDATE user SET mobile_number = ?, isAutoScanOnce = 1 WHERE SP_ID = ?', [phoneNo, spid]);
   await db.excuteQuery('UPDATE whapi_channels SET phone = ? WHERE  spid = ?', [phoneNo, spid]);
 }
 async function checkifSPAlreadyExist(phoneNo, spid) {
@@ -688,6 +714,8 @@ async function isActiveSpidClient(spid) {
       else{
         return { "isActiveSpidClient": true, "WAweb": WAwebdetails };
       }
+    } else {
+        return { "isActiveSpidClient": false, "WAweb": WAwebdetails };
     }
     
   } 
