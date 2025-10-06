@@ -115,7 +115,9 @@ async function autoReplyDefaultAction(isAutoReply, autoReplyTime, isAutoReplyDis
       data['nodeId'] = sessionData?.current_nodeId;
       data['isWaiting']= sessionData?.isWaiting;
       console.log("sessionData", sessionData)
-      identifyNode(data);
+      if(sessionData?.isWaiting == 1){
+        identifyNode(data);
+      }
       return 0;
     }
   }
@@ -1176,9 +1178,9 @@ async function SreplyThroughselectedchannel(spid, from, type, text, media, phone
 }
 
  
-async function AssignToContactOwner(sid, newId, custid) {
+async function AssignToContactOwner(sid, newId, custid,display_phone_number) {
   try {
-    let agid = -3;
+    let agid = -4;
     console.log("AssignToContactOwner", sid, newId, agid, custid);
 
     let contactOwner = await db.excuteQuery('SELECT * FROM EndCustomer WHERE customerId =? and SP_ID=?  and isDeleted !=1', [custid, sid]);
@@ -1204,7 +1206,9 @@ async function AssignToContactOwner(sid, newId, custid) {
         } else {
           return { message: "Insertion into InteractionMapping failed" };
         }
-      } 
+      } else{
+        defaultRoutingRules(sid, newId, agid, custid, display_phone_number)
+      }
   } catch (err) {
     console.log("ERR _ _ _ AssignToContactOwner", err);
     return { error: err.message }; // Return the error message
@@ -1242,6 +1246,7 @@ async function assignment(data,assign){
       await db.excuteQuery(updateQuery, [data.interactionId]);
       let val = [[1,data.interactionId, assign, -4]];
       var assignCon = await db.excuteQuery(updateInteractionMapping, [val]);
+      let ResolveOpenChat = await db.excuteQuery('UPDATE Interaction SET interaction_status ="Open" WHERE InteractionId =? and customerId=?', [ data.interactionId, data.custid]);
 }
 
 async function botOperationsWithNode(data, json) {
@@ -1317,14 +1322,14 @@ async function botAdvanceAction(botId,custid,interactionId,spid,display_phone_nu
         }else if(actionType == 'assign_owner'){
           isChatAssign = true;
           console.log(action[i],'----------------assign_owner-------------');
-          let assignOwner = await AssignToContactOwner(spid,interactionId ,custid);
+          let assignOwner = await AssignToContactOwner(spid,interactionId ,custid,display_phone_number);
       let ResolveOpenChat = await db.excuteQuery('UPDATE Interaction SET interaction_status ="Open" WHERE InteractionId =? and customerId=?', [ interactionId, custid]);
     setTimeout(() => {notify.NotifyServer(display_phone_number, false, interactionId, 0, 'IN', 'Assign Agent');}, 200); 
           if(assignOwner){
             console.log("assignOwner", assignOwner)
           }
       }else if(actionType =='Mark_Status'){
-          isChatAssign = true;
+          isChatAssign = false;
           console.log(action[i],'----------------conversationStatus-------------');
         let ResolveOpenChat = await db.excuteQuery('UPDATE Interaction SET interaction_status =? WHERE InteractionId !=? and customerId=?', [action[i]?.Value[0], interactionId, custid]);        
       }
@@ -1340,9 +1345,9 @@ if(!isChatAssign){
 }
 }
 
-async function getrunningSession(botId){
-  var currentNodeQuery = "select * from BotSessions where botId =? and status=2";
-  let currentNode = await db.excuteQuery(currentNodeQuery, [botId]);
+async function getrunningSession(botId,custid){
+  var currentNodeQuery = "select * from BotSessions where botId =? and customerId =? and status=2";
+  let currentNode = await db.excuteQuery(currentNodeQuery, [botId,custid]);
   if(currentNode.length > 0){
     return currentNode[0];
   }
@@ -1354,7 +1359,7 @@ function replacebotVariable(botVariable,message){
 botVariable.forEach(item => {
         // const result = results.find(result => result.hasOwnProperty(item['name']));
         // const replacement = result && result[item['name']] !== undefined ? result[item['name']] : null;
-        content = content.replaceAll(`{{${item['name']}}}`, item['value']);
+        content = content?.replaceAll(`{{${item['name']}}}`, item['value']);
       });
       return content;
 }
@@ -1373,7 +1378,7 @@ async function identifyNode(data){
     const time = moment.utc(myUTCString).format('YYYY-MM-DD HH:mm:ss');  
   var identityNodeQuery = "select * from botNodes where tempNodeId =? and botId=?";
   let identityNode = await db.excuteQuery(identityNodeQuery, [data?.nodeId,data?.botId]);
-  let getBotQuery = 'SELECT botVar FROM BotSessions WHERE customerId = ? and status =2 and botId= ? order by 1 desc limit 1'; 
+  let getBotQuery = 'SELECT botVar FROM BotSessions WHERE customerId =? and status =2 and botId= ? order by 1 desc limit 1'; 
   let botSessionVariables = await db.excuteQuery(getBotQuery, [data?.custid,data?.botId]);
   console.log(identityNode,'-------------identityNode-----------')
   if(botSessionVariables.length>0){
@@ -1408,7 +1413,7 @@ async function identifyNode(data){
     setTimeout(() => {notify.NotifyServer(data?.display_phone_number, false, data?.interactionId, 0, 'IN', 'Assign Agent');}, 200); 
       botExit(data, 3);
     } else if(type == 'assigntoContactOwner'){
-      let assignOwner = await AssignToContactOwner(data.sid, data.interactionId, data.custid);  
+      let assignOwner = await AssignToContactOwner(data.sid, data.interactionId, data.custid,data?.display_phone_number);  
     setTimeout(() => {notify.NotifyServer(data?.display_phone_number, false, data?.interactionId, 0, 'IN', 'Assign Agent');}, 200);     
       botExit(data, 3);
     }
@@ -1579,8 +1584,8 @@ data.nodeId = json?.option[1]?.optionConnectedId;
         if(json?.data?.enableTimeElapse && json?.data?.timeElapseMinutes && json?.data?.timeElapseMinutes > 0){
           nodeTimeout =  addUtcTime(0,json?.data?.timeElapseMinutes);
         }
-        var updateBotSessionQuery = "update BotSessions set isWaiting=1,current_nodeId=?,next_nodeId=?,node_timeout=? where botId =? and status=2";
-        let updateBotSession = await db.excuteQuery(updateBotSessionQuery, [data?.nodeId,json?.connectedId,nodeTimeout,data?.botId]);
+        var updateBotSessionQuery = "update BotSessions set isWaiting=1,current_nodeId=?,next_nodeId=?,node_timeout=? where botId =? and customerId =? and status=2";
+        let updateBotSession = await db.excuteQuery(updateBotSessionQuery, [data?.nodeId,json?.connectedId,nodeTimeout,data?.botId,data?.custid]);
       }
     } else if(type == 'UpdateConversationStatus'){
       let ResolveOpenChat = await db.excuteQuery('UPDATE Interaction SET interaction_status =? WHERE InteractionId =? and customerId=?', [json?.data?.data?.status =='Open' ? 'Open' : 'Resolved', data?.interactionId, data?.custid]);
@@ -1884,6 +1889,12 @@ if (typeof right === "string") {
     case 'less than': {
       return Number(left) < Number(right);
     }
+    case 'Yes':{
+      return left == 'Yes' || left == 1;
+    }
+    case 'No':{
+      return left == 'No' || left == 0;
+    }
 
     default: {
       throw new Error(`Unsupported operator: ${operator}`);
@@ -1909,25 +1920,25 @@ async function botVariablexecute(json,data){
               variables.push(variable);
             }
             console.log(variables);
-            var updateBotSessionQuery = "update BotSessions set isWaiting=0,current_nodeId=?,next_nodeId=?,node_timeout=?,botVar=? where botId =? and status=2";
-        let updateBotSession = await db.excuteQuery(updateBotSessionQuery, [data?.nodeId,json?.connectedId,null,JSON.stringify(variables),data?.botId]);
+            var updateBotSessionQuery = "update BotSessions set isWaiting=0,current_nodeId=?,next_nodeId=?,node_timeout=?,botVar=? where botId =? and customerId =? and status=2";
+        let updateBotSession = await db.excuteQuery(updateBotSessionQuery, [data?.nodeId,json?.connectedId,null,JSON.stringify(variables),data?.botId,data?.custid]);
         data['isWaiting'] =0;
           } else{
-            var updateBotSessionQuery = "update BotSessions set isWaiting=0,current_nodeId=?,next_nodeId=?,node_timeout=?where botId =? and status=2";
-        let updateBotSession = await db.excuteQuery(updateBotSessionQuery, [data?.nodeId,json?.connectedId,null,data?.botId]);
+            var updateBotSessionQuery = "update BotSessions set isWaiting=0,current_nodeId=?,next_nodeId=?,node_timeout=?where botId =? and customerId =? and status=2";
+        let updateBotSession = await db.excuteQuery(updateBotSessionQuery, [data?.nodeId,json?.connectedId,null,data?.botId,data?.custid]);
         data['isWaiting'] =0;
           }
       return data;
 }
 
 async function invalidQuestionResponse(data,json){
-  let sessionDetail = await getrunningSession(data.botId);
+  let sessionDetail = await getrunningSession(data.botId,data.custid);
             if(json?.data?.reattemptsAllowed && (json?.data?.reattemptsCount >sessionDetail?.node_retry_count)){
               let message_text = await getExtraxtedMessage(json?.data?.errorMessage, data.sid, data.custid)
               result = await messageThroughselectedchannel(data.sid, data?.toPhoneNumber, 'text', message_text, json?.data?.file, data?.phone_number_id, data?.channelType, -4, data.interactionId, 'text', message_text)
       setTimeout(()=>{notify.NotifyServer(data?.display_phone_number, false, data?.interactionId, 0, 'Out', 'Smartreply')},200);
-              var updateBotSessionQuery = "update BotSessions set isWaiting=1,node_retry_count=? where botId =? and status=2";
-        let updateBotSession = await db.excuteQuery(updateBotSessionQuery, [sessionDetail?.node_retry_count+1,data?.botId]);
+              var updateBotSessionQuery = "update BotSessions set isWaiting=1,node_retry_count=? where botId =? and customerId =? and status=2";
+        let updateBotSession = await db.excuteQuery(updateBotSessionQuery, [sessionDetail?.node_retry_count+1,data?.botId,data?.custid]);
             } else{
               if(json?.data?.invalidAction){
               if(json?.data?.invalidAction =='fallback'){
@@ -2170,7 +2181,7 @@ async function timeOut(data, type,temboxMiddleWare =''){
 }
 
 async function nodeTimeOut(data){
-  let session = await getrunningSession(data?.botId);
+  let session = await getrunningSession(data?.botId,data.custid);
   var identityNodeQuery = "select * from botNodes where tempNodeId =? and botId=?";
   
   let identityNode = await db.excuteQuery(identityNodeQuery, [session?.current_nodeId,data?.botId]);
@@ -2244,7 +2255,7 @@ let mainData = {
 //-----start------- 0 null 0  559169223950422 Pawan Sharma 917618157986 55 83534 380 Open 7133 80363 null WA API 0 0 0 null 919877594039 ------end-------
 
 
-//autoReplyDefaultAction(0, null, 0, 'Button one', 559169223950422,'Pawan Sharma', 917618157986, 55, 83534, 380, 'Open', 7137, 80363, null, 'WA API', 0, 0, 0, null, 919877594039)
+autoReplyDefaultAction(0, null, 0, 'Vijay', 559169223950422,'Pawan Sharma', 917618157986, 55, 392584, 380, 'Open', 7169, 80363, null, 'WA API', 0, 0, 0, null, 919877594039)
 
 //  let time = '00:15' ; // Default to 1 hour if not set
 //     let hour = time?.split(':')[0];

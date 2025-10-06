@@ -259,6 +259,8 @@ router.post('/v1/whatsapp/getUsers' ,verifyAPIKeyAndToken, accountController.get
 router.post('/v1/whatsapp/getCustomFields' ,verifyAPIKeyAndToken, accountController.getCustomFields) //Get.CustomFields
 // Update.Conversation.Status (Mark open/resolve and Assign user)
 
+//making a new upload logic to upload image to meta directly from backend using existing url uploaded in blob
+router.post('/uploadImageToMetaWrapper' , accountController.uploadImageToMetaWrapperController) 
 
 
 
