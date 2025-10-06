@@ -504,8 +504,31 @@ intervalSub!: Subscription;
         return this.characterCounts[idx] || 0;
     }
     
-    saveVideoAndDocument(files: FileList) {
-        if (files[0]) {
+    async saveVideoAndDocument(files: FileList | string) {
+        if (typeof files === 'string') {
+        const fileName = this.extractActualFileName(files);
+        this.loadingVideo = true;
+
+        this._teamboxService.uploadImageToMetaWrapper(this.spid, files).subscribe(
+            (response: any) => {
+            if (response) {
+                this.selectedPreview = files;
+                this.metaUploadedId = response;
+                this.fileName = this.truncateFileName(fileName, 25);
+                this.newTemplateForm.get('Links')?.setValue(this.selectedPreview);
+            }
+            this.loadingVideo = false;
+            },
+            (err) => {
+            console.error("Error uploading from URL:", err);
+            this.showToaster("Failed to upload file from URL.", 'error');
+            this.loadingVideo = false;
+            }
+        );
+        return;
+        }
+
+        if (files && files[0]) {
             let File = files[0];
             this.fileName = this.truncateFileName(File.name, 25);
             let spid = this.spid
@@ -1067,6 +1090,7 @@ checkTemplateName(e:any){
         this.selectedType = this.templatesMessageData?.media_type;
         this.metaUploadedId = this.templatesMessageData?.metaUploadedId;
         this.selectedPreview = this.templatesMessageData.Links;
+        this.saveVideoAndDocument(this.selectedPreview);
         this.buttonsArray = this.templatesMessageData?.buttons ? this.templatesMessageData?.buttons : [];
         this.interactiveButtonsPayload = this.templatesMessageData?.interactive_buttons ? JSON.parse(this.templatesMessageData?.interactive_buttons) : [];
         this.renderedButtons = this.templatesMessageData?.renderedButtons ? JSON.parse(this.templatesMessageData?.renderedButtons) : [];

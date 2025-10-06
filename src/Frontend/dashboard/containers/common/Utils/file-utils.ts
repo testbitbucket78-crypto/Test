@@ -43,5 +43,10 @@ export function convertCsvToXlsx(blob: Blob, fileName: string = 'Converted_File.
   }
 
   export function hasEmptyValues(array: any[]): boolean {
-    return array.some((button: any) => button.value === "");
+    //return array.some((button: any) => button.value === "");
+    return array.some((item: any) => item?.value === "" || item?.value === null || item?.value === undefined);
+  }
+
+  export function hasEmptyValueInArray(array: any[]): boolean {
+    return array.some((item: any) => item === "" || item === null || item === undefined);
   }
