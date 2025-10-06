@@ -452,12 +452,12 @@ if (stored && stored !== 'null' && stored !== 'undefined') {
 
 
 
-const drawflowCanvas = drawflowElement.querySelector('.drawflow') as HTMLElement;
+const drawflowCanvas :any = document.getElementById('drawflow');
 let isRightClickDragging = false;
 // Prevent right-click default menu
-drawflowCanvas.addEventListener('contextmenu', (e) => e.preventDefault());
+drawflowCanvas.addEventListener('contextmenu', (e:any) => e.preventDefault());
 // Right-click down
-drawflowCanvas.addEventListener('mousedown', (e) => {
+drawflowCanvas.addEventListener('mousedown', (e:any) => {
   if (e.button === 2 || e.button == 0) { // Right click
     isRightClickDragging = true;
     drawflowCanvas.classList.add('dragging');
@@ -1037,7 +1037,7 @@ uniqueRowNamesValidator(): ValidatorFn {
       selectedAttribute: [null, Validators.required],
       selectedAttributeName: [null, Validators.required],
       selectedvalueBackend:[''],
-      selectedValue: [''],
+      selectedValue: ['', Validators.required],
       inputValue: [''],
       selectedVariable: [''],
       operation: ['replace', Validators.required],
@@ -2167,6 +2167,11 @@ syncMentionArray() {
     nodeElement.scrollTop = scrollTop;
     nodeElement.scrollLeft = scrollLeft;
 
+  setTimeout(() => {
+      this.editor.drawflow.drawflow.Home.data[nodeId].html = newHTML;
+      this.isLoading = false
+    }, 100);
+
     this.isLoading = false
   }
 
@@ -2648,7 +2653,14 @@ if (fileControl) {
         this.fillTimeDelayModal(nodeData);
         break;
       case 'BotTriggerModal':
-        this.selectedBotName = nodeData?.data?.formData?.data?.keywords
+        this.selectedBotName = nodeData?.data?.formData?.data?.name
+        break;
+      case 'UpdateConversationStatus':
+        var status = nodeData?.data?.formData?.data?.status
+        if(nodeData?.data?.formData?.data?.status == 'No'){
+          status= 'Open'
+        }
+        this.conversationActions.status = status
         break;
       case 'MessageOptin':
         this.conversationActions.status = nodeData?.data?.formData?.data?.status
@@ -2992,6 +3004,7 @@ this.selectedAgentDetails = updateForm
     const updateForm = nodeData?.data?.formData?.data
     this.selectedTags = updateForm.selectedTags;
     this.operationOptions = updateForm.operation;
+    this.selectedTagsRemoveTag = updateForm.selectedTags;
   }
 
 
@@ -3500,11 +3513,13 @@ this.currentAttributeList = attributeListCustomize.filter((attr:any) =>
   }
 
   onValueInput(i: number) {
+   
+    this.getConditionGroup(i).get('valueBackend')?.setValue(this.conditionForm?.value?.conditions[i].value);
     if (this.selectedFields[i]?.value) {
       delete this.selectedFields[i].value;
     }
   }
-
+  
 
   // ==================== SAVE & EXPORT HANDLING ====================
 
@@ -4639,6 +4654,7 @@ openBotVariableModal(editorId:any = '') {
     this.orignalData = {};
     const exportData: any = this.editor.export();
     const exportNodesData: any = Object.values(exportData?.drawflow?.Home?.data);
+    console.log("exportNodesData",exportNodesData)
 
 
     var data = {
@@ -5016,16 +5032,26 @@ this.whatsAppFlowForm.get('selectedFormName')?.setValue(flow?.flowname)
 
  
 isValueDisabled(operator: string): boolean {
-  return operator === 'Is empty' || operator === 'Is not empty';
+
+  return operator === 'Is empty' || operator === 'Is not empty' || operator === 'Yes' || operator === 'No';
 }
 
 
 onOperatorChange(i: number): void {
   const group = this.getConditionGroup(i);
   const operator = group.get('operator')?.value;
-  if (operator === 'Is empty' || operator === 'Is not empty') {
-    group.get('value')?.setValue('');  // clear the value  // disable field
-  } 
+  const valueControl = group.get('value');
+
+  if (operator === 'Is empty' || operator === 'Is not empty' || operator === 'Yes' || operator === 'No') {
+    valueControl?.setValue('');                 // Clear the value
+    valueControl?.disable();                    // Disable the field
+    valueControl?.clearValidators();            // Remove all validators (including required)
+  } else {
+    valueControl?.enable();                     // Re-enable the field
+    valueControl?.setValidators([Validators.required]); // Add back required validator
+  }
+
+  valueControl?.updateValueAndValidity();        
 }
 
 

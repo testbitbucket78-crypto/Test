@@ -971,13 +971,17 @@ checkTagStatus(val: string, id: number): boolean {
 
   assignConversation(index: number) {
     const agent = this.agentsList[index];
-    if (!this.assignedAgentList.some(item => item.actionTypeId === 2 && item.Value === agent.name)) {
-      this.isAssigned = true;
-      const assignment = { actionTypeId: 2, Value: agent.name, ValueUuid: agent.uuid,actionType:'Assign_Agent' };
-      this.isEditAssigned ? this.assignedAgentList[this.AssignedIndex] = assignment : this.assignedAgentList.push(assignment);
-    }
-    this.hasSelectedChild = true;
-    this.selectedExclusiveAction = 'assign_agent';
+    const existingIndex = this.assignedAgentList.findIndex(item => item.actionTypeId === 2);
+
+  const assignment = { actionTypeId: 2,Value: agent.name,ValueUuid: agent.uuid,actionType: 'Assign_Agent'};
+  if (existingIndex !== -1) {
+    this.assignedAgentList[existingIndex] = assignment;
+  } else {
+    this.assignedAgentList.push(assignment);
+  }
+  this.isAssigned = true;
+  this.hasSelectedChild = true;
+  this.selectedExclusiveAction = 'assign_agent';
   }
 
   onActionEdit(text: string) { this.editedText = text; }
