@@ -513,16 +513,22 @@ async function addWhatsAppChannel(spid, phone) {
       return;
     }
 
-    const query = `
-      INSERT INTO WhatsAppWeb (channel_id,connected_id,channel_status,is_deleted,spid,phone_type,import_conversation,QueueMessageCount,
-        connection_date,WAVersion,InMessageStatus,OutMessageStatus,QueueLimit,delay_Time,INGrMessage,OutGrMessage,
-        online_status,serviceMonetringTool,syncContact,DisconnAlertEmail,roboot,restart,reset,updated_at,WABA_ID,phone_number_id
-      )
-      VALUES ('WA Web',?,0,0,?,NULL,0,0,NULL,'2.23.24.82',0,0,0,0,0,0,0,0,0,NULL,0,0,0,NOW(),NULL,NULL
-      );
-    `;
-    
-    await db.excuteQuery(query, [phone, spid]);
+const query = `
+  INSERT INTO WhatsAppWeb (
+    channel_id, connected_id, channel_status, is_deleted, spid, phone_type, import_conversation, 
+    QueueMessageCount, connection_date, WAVersion, InMessageStatus, OutMessageStatus, QueueLimit, 
+    delay_Time, INGrMessage, OutGrMessage, online_status, serviceMonetringTool, syncContact, 
+    DisconnAlertEmail, roboot, restart, reset, updated_at, WABA_ID, phone_number_id
+  ) 
+  VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW(), ?, ?);
+`;
+
+const params = [
+  'WA Web', phone, 0, 0, spid, null, 0, 0, null, '2.23.24.82', 0, 0, 0, 0, 0, 0, 
+  0, 0, 0, null, 0, 0, 0, null, null
+];
+
+await db.excuteQuery(query, params);
   } catch (err) {
     console.error("❌ Error adding WhatsApp Web channel:", err);
   }
