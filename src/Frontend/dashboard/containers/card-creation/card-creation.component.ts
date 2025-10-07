@@ -21,7 +21,7 @@ import {
   BOOLEAN_OPERATORS,
   DEFAULT_ACTIONS,
   DEFAULT_TOOLS,
-  PASTE_CLEANUP_SETTINGS, attributes, SELECT_OPERATORS, MULTI_SELECT_OPERATORS, DATE_OPERATORS, TIME_OPERATORS
+  PASTE_CLEANUP_SETTINGS, attributes, SELECT_OPERATORS, MULTI_SELECT_OPERATORS, DATE_OPERATORS, TIME_OPERATORS,rowTrim
 } from './constants';
 import { SettingsService } from 'Frontend/dashboard/services/settings.service';
 import { Router } from '@angular/router';
@@ -321,6 +321,8 @@ sessionStorage.removeItem('node_FE_Json')
     if (!drawflowElement) return;
 
     this.editor = new Drawflow(drawflowElement);
+    this.editor.zoom_min = 0.2;   // allow more zoom out
+    this.editor.zoom_value = 0.1; // zoom speed
     this.editor.start();
 
     // Zoom out initially
@@ -1250,15 +1252,18 @@ formData.options = ["True", "False"];
   questionTextMessage: this.createCombinedVariable(),
 });
         form = this.questionOption;
+        form.value.options = form?.value.options?.map((opt: string) => opt?.trim()) || [];
         break;
       case 'openQuestion':
         form = this.openQuestion;
         break;
       case 'buttonOptions':
         form = this.buttonOptions;
+        form.value.buttons = form?.value.buttons?.map((btn: string) => btn?.trim()) || [];
         break;
-      case 'listOptions':
-        form = this.listOptions;
+        case 'listOptions':
+          form = this.listOptions;
+          form.value.sections = rowTrim(form.value);
         break;
       case 'whatsAppFlow':
         form = this.whatsAppFlowForm;

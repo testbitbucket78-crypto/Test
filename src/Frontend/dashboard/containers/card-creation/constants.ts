@@ -126,3 +126,26 @@ export const attributes = [
         "ActuallName": "column8"
     }
 ]
+
+
+
+
+export const rowTrim = (formValue: { sections: any; }) => {
+    const cleanedSections = (formValue.sections || []).map((section: any) => {
+  return {
+    ...section,
+    sectionHeading: section.sectionHeading?.trim() || '',
+    rows: (section.rows || []).map((row: any) => ({
+      ...row,
+      rowName: row.rowName?.trim() || '',
+      rowDescription: row.rowDescription?.trim?.() || ''
+    }))
+  };
+});
+
+return cleanedSections;
+
+}
+
+
+
