@@ -98,7 +98,7 @@ async function assignToLastAssistedAgent(sid, newId, agid, custid) {
     let RoutingRules = await db.excuteQuery(RoutingRulesQuery, [sid]);
 
     let LastAssistedAgent = await db.excuteQuery('select * from InteractionMapping where InteractionId =?  order by created_at desc', [newId]);
-    const validAgentIndex = LastAssistedAgent.findIndex(entry => entry.lastAssistedAgent !== -1);
+    const validAgentIndex = LastAssistedAgent.findIndex(entry => entry.lastAssistedAgent !== -1 && entry.lastAssistedAgent !== -4);
 
     if (validAgentIndex > 0) {
       const [validAgent] = LastAssistedAgent.splice(validAgentIndex, 1);
@@ -324,7 +324,7 @@ async function ManagemissedChat(sid, newId, agid, custid, RoutingRules) {
       let checkAssignInteraction = await db.excuteQuery(settingVal.checkAssignInteraction, [newId]);
       console.log("checkAssignInteraction.length", checkAssignInteraction.length);
 
-      if ((checkAssignInteraction.length <= 0) || (checkAssignInteraction.length > 0 && checkAssignInteraction[0]?.AgentId == -1) && checkAssignInteraction[0]?.isAgentInactiveTimeOut != 1) {
+      if ((checkAssignInteraction.length <= 0) || (checkAssignInteraction.length > 0 && checkAssignInteraction[0]?.AgentId == -1) || (checkAssignInteraction.length > 0 && checkAssignInteraction[0]?.AgentId == -4) && checkAssignInteraction[0]?.isAgentInactiveTimeOut != 1) {
         console.log("missed -------------------");
 
         let time = parseInt((RoutingRules[0].timeoutperiod).replace(/\s*(Min|hour)/g, '')); // Get timeout period as a number
