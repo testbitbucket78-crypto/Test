@@ -366,7 +366,9 @@ async function batchofScheduledCampaign(users, sp_id, type, message_content, mes
     const batch = users.slice(i, i + batchSize);
     await sendScheduledCampaign(batch, sp_id, type, message_content, message_media, phone_number_id, channel_id, message, list,header,body,templateId);
     const randomdelay = Math.floor(Math.random() * (7000 - 5000 + 1)) + 5000;
-    await wait(randomdelay)
+    if (channel_id == 'WhatsApp Web' || channel_id == 2 || channel_id == 'WA Web') {
+      await wait(randomdelay);
+    }
   }
   setTimeout(() => {
     campaignCompletedAlert(message)
@@ -473,7 +475,9 @@ async function sendScheduledCampaign(batch, sp_id, type, message_content, messag
     // }, 10)    middlewareresult = await middleWare.sendingTemplate(spid, from, headerVar, testMessage, interactive_buttons);
     response = await messageThroughselectedchannel(sp_id, Phone_number, type, textMessage, message_media, phone_number_id, channel_id, message.Id, message, message_text,headerVar,bodyVar,templateId,message.buttons,DynamicURLToBESent, message?.interactive_buttons);
     const randomdelay = Math.floor(Math.random() * (9000 - 7000 + 1)) + 7000;
-    await wait(randomdelay)
+    if (channel_id == 'WhatsApp Web' || channel_id == 2 || channel_id == 'WA Web') {
+      await wait(randomdelay);
+    }
   }
 }
 
