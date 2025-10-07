@@ -21,7 +21,7 @@ import {
   BOOLEAN_OPERATORS,
   DEFAULT_ACTIONS,
   DEFAULT_TOOLS,
-  PASTE_CLEANUP_SETTINGS, attributes, SELECT_OPERATORS, MULTI_SELECT_OPERATORS, DATE_OPERATORS, TIME_OPERATORS
+  PASTE_CLEANUP_SETTINGS, attributes, SELECT_OPERATORS, MULTI_SELECT_OPERATORS, DATE_OPERATORS, TIME_OPERATORS,rowTrim
 } from './constants';
 import { SettingsService } from 'Frontend/dashboard/services/settings.service';
 import { Router } from '@angular/router';
@@ -321,6 +321,8 @@ sessionStorage.removeItem('node_FE_Json')
     if (!drawflowElement) return;
 
     this.editor = new Drawflow(drawflowElement);
+    this.editor.zoom_min = 0.2;   // allow more zoom out
+    this.editor.zoom_value = 0.1; // zoom speed
     this.editor.start();
 
     // Zoom out initially
@@ -452,12 +454,12 @@ if (stored && stored !== 'null' && stored !== 'undefined') {
 
 
 
-const drawflowCanvas = drawflowElement.querySelector('.drawflow') as HTMLElement;
+const drawflowCanvas :any = document.getElementById('drawflow');
 let isRightClickDragging = false;
 // Prevent right-click default menu
-drawflowCanvas.addEventListener('contextmenu', (e) => e.preventDefault());
+drawflowCanvas.addEventListener('contextmenu', (e:any) => e.preventDefault());
 // Right-click down
-drawflowCanvas.addEventListener('mousedown', (e) => {
+drawflowCanvas.addEventListener('mousedown', (e:any) => {
   if (e.button === 2 || e.button == 0) { // Right click
     isRightClickDragging = true;
     drawflowCanvas.classList.add('dragging');
@@ -1037,7 +1039,7 @@ uniqueRowNamesValidator(): ValidatorFn {
       selectedAttribute: [null, Validators.required],
       selectedAttributeName: [null, Validators.required],
       selectedvalueBackend:[''],
-      selectedValue: [''],
+      selectedValue: ['', Validators.required],
       inputValue: [''],
       selectedVariable: [''],
       operation: ['replace', Validators.required],
@@ -1250,15 +1252,18 @@ formData.options = ["True", "False"];
   questionTextMessage: this.createCombinedVariable(),
 });
         form = this.questionOption;
+        form.value.options = form?.value.options?.map((opt: string) => opt?.trim()) || [];
         break;
       case 'openQuestion':
         form = this.openQuestion;
         break;
       case 'buttonOptions':
         form = this.buttonOptions;
+        form.value.buttons = form?.value.buttons?.map((btn: string) => btn?.trim()) || [];
         break;
-      case 'listOptions':
-        form = this.listOptions;
+        case 'listOptions':
+          form = this.listOptions;
+          form.value.sections = rowTrim(form.value);
         break;
       case 'whatsAppFlow':
         form = this.whatsAppFlowForm;
@@ -2167,6 +2172,11 @@ syncMentionArray() {
     nodeElement.scrollTop = scrollTop;
     nodeElement.scrollLeft = scrollLeft;
 
+  setTimeout(() => {
+      this.editor.drawflow.drawflow.Home.data[nodeId].html = newHTML;
+      this.isLoading = false
+    }, 100);
+
     this.isLoading = false
   }
 
@@ -2648,7 +2658,14 @@ if (fileControl) {
         this.fillTimeDelayModal(nodeData);
         break;
       case 'BotTriggerModal':
-        this.selectedBotName = nodeData?.data?.formData?.data?.keywords
+        this.selectedBotName = nodeData?.data?.formData?.data?.name
+        break;
+      case 'UpdateConversationStatus':
+        var status = nodeData?.data?.formData?.data?.status
+        if(nodeData?.data?.formData?.data?.status == 'No'){
+          status= 'Open'
+        }
+        this.conversationActions.status = status
         break;
       case 'MessageOptin':
         this.conversationActions.status = nodeData?.data?.formData?.data?.status
@@ -2992,6 +3009,7 @@ this.selectedAgentDetails = updateForm
     const updateForm = nodeData?.data?.formData?.data
     this.selectedTags = updateForm.selectedTags;
     this.operationOptions = updateForm.operation;
+    this.selectedTagsRemoveTag = updateForm.selectedTags;
   }
 
 
@@ -3500,11 +3518,13 @@ this.currentAttributeList = attributeListCustomize.filter((attr:any) =>
   }
 
   onValueInput(i: number) {
+   
+    this.getConditionGroup(i).get('valueBackend')?.setValue(this.conditionForm?.value?.conditions[i].value);
     if (this.selectedFields[i]?.value) {
       delete this.selectedFields[i].value;
     }
   }
-
+  
 
   // ==================== SAVE & EXPORT HANDLING ====================
 
@@ -4639,6 +4659,7 @@ openBotVariableModal(editorId:any = '') {
     this.orignalData = {};
     const exportData: any = this.editor.export();
     const exportNodesData: any = Object.values(exportData?.drawflow?.Home?.data);
+    console.log("exportNodesData",exportNodesData)
 
 
     var data = {
@@ -5016,16 +5037,26 @@ this.whatsAppFlowForm.get('selectedFormName')?.setValue(flow?.flowname)
 
  
 isValueDisabled(operator: string): boolean {
-  return operator === 'Is empty' || operator === 'Is not empty';
+
+  return operator === 'Is empty' || operator === 'Is not empty' || operator === 'Yes' || operator === 'No';
 }
 
 
 onOperatorChange(i: number): void {
   const group = this.getConditionGroup(i);
   const operator = group.get('operator')?.value;
-  if (operator === 'Is empty' || operator === 'Is not empty') {
-    group.get('value')?.setValue('');  // clear the value  // disable field
-  } 
+  const valueControl = group.get('value');
+
+  if (operator === 'Is empty' || operator === 'Is not empty' || operator === 'Yes' || operator === 'No') {
+    valueControl?.setValue('');                 // Clear the value
+    valueControl?.disable();                    // Disable the field
+    valueControl?.clearValidators();            // Remove all validators (including required)
+  } else {
+    valueControl?.enable();                     // Re-enable the field
+    valueControl?.setValidators([Validators.required]); // Add back required validator
+  }
+
+  valueControl?.updateValueAndValidity();        
 }
 
 
