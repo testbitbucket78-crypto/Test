@@ -76,7 +76,9 @@ app.post('/getFilteredList', authenticateToken, async (req, res) => {
 
     if (req.body?.Query && req.body.Query.trim() !== '') {
       IsFilteredList = true;
-      contactList = await db.excuteQuery(req.body.Query +' limit ?, ?', [req.body.contactFrom,req.body.contactTo]);
+      let filterQuery = (req.body.Query).replace('SELECT','SELECT SQL_CALC_FOUND_ROWS ');
+      contactList = await db.excuteQuery(filterQuery +' limit ?, ?', [req.body.contactFrom,req.body.contactTo]);
+      contactCount = await db.excuteQuery('SELECT FOUND_ROWS() AS total_count;', []);
       logger.info(`Filtered query executed: ${req.body.Query}`);
     }
 
@@ -84,7 +86,7 @@ app.post('/getFilteredList', authenticateToken, async (req, res) => {
       status: 200,
       result: contactList,
       IsFilteredList: IsFilteredList,
-      totalCount: IsFilteredList ? contactList?.length : contactCount.length > 0 ? contactCount[0].totalCount : 0
+      totalCount: contactCount.length > 0 ? contactCount[0].totalCount : 0
     });
     logger.info(`Response sent with status 200 : ${contactList}`);
   } catch (err) {

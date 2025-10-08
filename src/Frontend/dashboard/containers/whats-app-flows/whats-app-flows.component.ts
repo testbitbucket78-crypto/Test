@@ -76,6 +76,7 @@ export class WhatsAppFlowsComponent implements OnInit {
     channelPhoneNumber: string = '';
     channelOption:any;
     ShowAssignOption:boolean = false;
+    isLoading:boolean = false;
    
   constructor( public GridService: GridService,public settingsService: SettingsService){
     this.spId = Number(sessionStorage.getItem('SP_ID'));
@@ -138,9 +139,13 @@ actionsCellRenderer(params: any) {
     const searchInput = document.getElementById('Search-Ag') as HTMLInputElement;
     const searchTerm = searchInput.value.trim().toLowerCase();
     this.gridapi.setQuickFilter(searchTerm);
-    // this.contacts = this.rowData.filter((contact: any) => contact.Name.toLowerCase().includes(searchTerm));
-    // this.setPaging()
+    //this.flowList = this.rowData.filter((contact: any) => contact.Name.toLowerCase().includes(searchTerm));
+    this.setPaging();
   }
+
+  	toggleAssignOption(){
+		this.ShowAssignOption =!this.ShowAssignOption
+	}
 
   onFocus() {
     const searchInput = document.querySelector('.search-container')
@@ -184,8 +189,10 @@ gotoPage(page: any) {
 }
 
 getFlowList() {
+  this.isLoading = true;
   this.settingsService.getFlowData(this.spId).subscribe((response: any) => {
-      if (response) {
+      if (response) {        
+  this.isLoading = false;
           console.log(response);
           this.initflowList =  response?.flows;
           this.flowList =  response?.flows;

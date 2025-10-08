@@ -1227,7 +1227,6 @@ const getFlows = async (req,res) =>{
             });
 
             updateValues.push(req.params.spid);
-
             await db.excuteQuery(updateQuery, updateValues);
         }
     
@@ -1236,7 +1235,6 @@ const getFlows = async (req,res) =>{
     if(req?.params?.isPublished == 1){
       FlowsData = FlowsData.filter(flow => flow?.status === "PUBLISHED"); // (Drafts Deprecated) are not valid (400) structure errors will be there  
     }
-    
         res.send({
             status: 200,
             flows: FlowsData
@@ -1321,6 +1319,7 @@ const exportFlowData = async (req, res) => {
       var data = req.body.data
       let SP_ID = req.body.spId
       let Channel = req?.body?.Channel
+      let flowName = req?.body?.flowName
       let emailSender = MessagingName[Channel];
       const transporter = getTransporter(emailSender);
       const senderConfig = EmailConfigurations[emailSender];
@@ -1354,13 +1353,14 @@ const exportFlowData = async (req, res) => {
       var mailOptions = {
         from: senderConfig.email,
         to: req.body.loginData,
-        subject: `${emailSender} - Contacts export report`,
+        subject: `${emailSender} - WhatsApp Flow Responses`,
         html: `
-          <p>Dear ${req.body?.Name},</p>
-          <p>Please find attached here the file containing your exported contacts from your ${emailSender} account.</p>
+          <p>Hello,</p>
+          <p>Please find attached the responses received for the WhatsApp Flow “${flowName}”</p>
           <p>Thank you,</p>
           <p>Team ${emailSender}</p>
         `,
+
         attachments: [
           {
             filename: `${timestamp}-${randomNumber}.xlsx`,

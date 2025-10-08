@@ -1555,6 +1555,9 @@ timeFormatter(params: any): string {
     filterIsApplied! : boolean;
     filterApplied(){
       this.filterIsApplied = true;
+    this.gridapi!.setFilterModel(null);
+    this.currPage = this.GridService.currPage;
+        this.paging = this.GridService.paging;
     }
     checkContactOwner(contacOwner:any){
       let contactUid = this.userList.filter((item:any)=> item.name == contacOwner)[0]?.uid;

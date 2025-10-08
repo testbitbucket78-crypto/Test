@@ -79,7 +79,7 @@
 				</div>
 				<div class="modal-body px-5 pt-0 modal-body-scroll">
 					<div class="d-flex justify-content-between">
-						<div>Edit Contact Names</div>
+						<div>Edit Column Names</div>
 						<div>Column Data Type</div>
 					</div>
 				<div *ngFor="let item of ColumnMapping;let idx=index" class="my-2">						
@@ -90,7 +90,7 @@
 						</diV>
 						<div class="billing-form-row d-flex flex-column  ">
 							<input type="text" class="input-form" type="text" [(ngModel)]="item.displayName" [disabled]="item?.isInputSelected == false"
-								 placeholder="Select start time">
+								 placeholder="Select start time" maxlength="30">
 						</div>
 					</div>
 						<div class="billing-form-row d-flex flex-column pl-3 ">

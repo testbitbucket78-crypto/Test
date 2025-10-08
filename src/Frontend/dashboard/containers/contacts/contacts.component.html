@@ -598,6 +598,6 @@ style="background: rgb(240 252 255 / 40%); z-index: 9999;display: block;">
 </div>
 </div>
 <div *ngIf="isShowFilter">
-<sb-contact-filter #child *ngIf="isShowFilter == true" [openPopup]="changingValue" (query)="query=$event; getContact();filterApplied()" (closeFilterPopup)="closeFilter();" (clearFilters)="clearFilters()"></sb-contact-filter>
+<sb-contact-filter #child *ngIf="isShowFilter == true" [openPopup]="changingValue" (query)="query=$event; filterApplied(); getContact()" (closeFilterPopup)="closeFilter();" (clearFilters)="clearFilters()"></sb-contact-filter>
 </div>
 </sb-layout-dashboard>
