@@ -210,7 +210,7 @@ getFlowDetail() {
 getRefresh(){
   this.getFlowDetail();
   //this.getAttributeList();
-  this.ColumnMapping = this.initColumnMapping;
+  this.ColumnMapping = JSON.parse(JSON.stringify(this.initColumnMapping));
   this.columnDefs = [
     {
       field: 'name',
@@ -274,7 +274,7 @@ onSelectMapping(){
 }
 
 SaveEditColumn(){
-this.initColumnMapping = this.ColumnMapping;
+this.initColumnMapping = JSON.parse(JSON.stringify(this.ColumnMapping));
 this.saveFlowMapping();
 }
 
@@ -290,7 +290,7 @@ extractUniqueKeys(arr: any[]){
 
 createMapping(){
   if(this.ColumnMapping.length > 0){
-    this.initColumnMapping = this.ColumnMapping;
+this.initColumnMapping = JSON.parse(JSON.stringify(this.ColumnMapping));
   }else{
   let mappingList:any[] =[];
   this.filteredCustomFields.forEach((item:any)=>{
@@ -305,7 +305,7 @@ createMapping(){
     mappingList.push(mapping);
   })
   this.ColumnMapping = mappingList;
-  this.initColumnMapping = mappingList;
+  this.initColumnMapping = JSON.parse(JSON.stringify(mappingList));
 }
   this.getfilteredCustomFields();
 }
@@ -349,7 +349,7 @@ createMapping(){
   }
 
 closeModal(){
-  this.ColumnMapping = this.initColumnMapping;
+  this.ColumnMapping = JSON.parse(JSON.stringify(this.initColumnMapping));
 }
   onSelectEditing(idx:number){
     if(this.ColumnMapping[idx]?.isInputSelected)
@@ -388,17 +388,21 @@ console.log(fieldToHeaderMap, '----fieldToHeaderMap----');
       });
       return newObj;
     });
-
+if(exportContact.length ==0){
+  this.showToaster('No data to export', 'error');
+  return 0;
+}
     var exContact = {
       data: exportContact,
       loginData: (JSON.parse(sessionStorage.loginDetails)).email_id,
       Name: (JSON.parse(sessionStorage.loginDetails)).name,
+      flowName:this.flowName,
       Channel: this.channelDomain,
       spId: this.spId,
     }
     this.settingsService.exportFlowData(exContact).subscribe(response => {
 
-  
+    this.showToaster('Flow data exported successfully', 'success');
     });
   }
 
