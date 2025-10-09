@@ -63,7 +63,6 @@ async function createClientInstance(spid, phoneNo) {
             channel = new CreateChannelResponse(channelResponse, spid, phoneNo);
             await channel.saveToDatabase();
 
-            //todo need to uncomment this after Business Team come back to this
             const extendValidity = new extendChannelValidity();
             const extendChannel = await whapiService.extendChannel(
                 channel.id,
@@ -75,7 +74,7 @@ async function createClientInstance(spid, phoneNo) {
             );
             // const response = await whapiService.startChannel(channel.token, channel.id);
 
-            await whapiService.setupWebhook(channel.token);
+            await whapiService.setupWebhook(channel.token); // retrying this as after restarting channel it is failing sometimes
         }
 
         return await whapiService.getLoginQRCode(channel.token);
@@ -462,7 +461,9 @@ const handleAuthentication = async (channel_id) => {
             console.error(`No data found for channel_id: ${channel_id}`);
             return;
         }
-
+        
+        const oldWhapiScannedNo = channelData.phone;
+        
         const phoneNo = channelData.phoneNo;
         const spid = channelData.spid;
 
@@ -482,11 +483,17 @@ const handleAuthentication = async (channel_id) => {
 
           notify.NotifyServer(phoneNo, false, message);
           notify.NotifyServer(channel.phone, false, message);
+
+          if( oldWhapiScannedNo ) { notify.NotifyServer(oldWhapiScannedNo, false, message); }
+
           return;
         }
         if(await checkifSPAlreadyExist(channel.phone, channel.spid)){
           notify.NotifyServer(channel.phone, false, 'This number is already used as an SP number. Please use a different one.');
           notify.NotifyServer(channel.phoneNo, false, 'This number is already used as an SP number. Please use a different one.');
+
+          if( oldWhapiScannedNo ) { notify.NotifyServer(oldWhapiScannedNo, false, 'This number is already used as an SP number. Please use a different one.'); }
+
           // whapiService.deleteChannelById(channel.id);
           //channel.deleteFromDatabase();
 
