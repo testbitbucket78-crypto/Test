@@ -80,51 +80,105 @@ class whapiService {
         }
       }
 
-    static async setupWebhook(token) {
-        try {
+    // static async setupWebhook(token) {
+    //     try {
 
+    //         const response = await fetch("https://gate.whapi.cloud/settings", {
+    //             method: "PATCH",
+    //             headers: {
+    //                 "accept": "application/json",
+    //                 "authorization": `Bearer ${token}`,
+    //                 "content-type": "application/json"
+    //             },
+    //             body: JSON.stringify({
+    //                 webhooks: [
+    //                     {
+    //                         events: [
+    //                             { type: "messages", method: "post" },
+    //                             { type: "statuses", method: "post" },
+    //                             { type: "chats", method: "post" },
+    //                             { type: "contacts", method: "post" },
+    //                             { type: "channel", method: "post" },
+    //                             { type: "labels", method: "post" }
+    //                         ],
+    //                         mode: "body",
+    //                         url: 'https://e77fd807b92e.ngrok-free.app/webhook' //getUrl('webhook') // static webhook that should be registered.
+    //                     }
+    //                 ],
+    //                 callback_persist: true
+    //             })
+    //         });
+    
+    //         const responseText = await response.text();
+    //         console.log("Response Status:", response.status);
+    //         console.log("Response Body:", responseText);
+    
+    //         if (!response.ok) {
+    //             console.error("Webhook setup failed.");
+    //             return false;
+    //         }
+    
+    //         console.log("Webhook setup successful.");
+    //         return true;
+    //     } catch (error) {
+    //         console.error("Error setting up webhook:", error.message);
+    //         return false;
+    //     }
+    // }
+
+        static async setupWebhook(token, retries = 8, delay = 5000) {
+        for (let attempt = 1; attempt <= retries; attempt++) {
+            try {
             const response = await fetch("https://gate.whapi.cloud/settings", {
                 method: "PATCH",
                 headers: {
-                    "accept": "application/json",
-                    "authorization": `Bearer ${token}`,
-                    "content-type": "application/json"
+                "accept": "application/json",
+                "authorization": `Bearer ${token}`,
+                "content-type": "application/json"
                 },
                 body: JSON.stringify({
-                    webhooks: [
-                        {
-                            events: [
-                                { type: "messages", method: "post" },
-                                { type: "statuses", method: "post" },
-                                { type: "chats", method: "post" },
-                                { type: "contacts", method: "post" },
-                                { type: "channel", method: "post" },
-                                { type: "labels", method: "post" }
-                            ],
-                            mode: "body",
-                            url: getUrl('webhook') // static webhook that should be registered.
-                        }
+                webhooks: [
+                    {
+                    events: [
+                        { type: "messages", method: "post" },
+                        { type: "statuses", method: "post" },
+                        { type: "chats", method: "post" },
+                        { type: "contacts", method: "post" },
+                        { type: "channel", method: "post" },
+                        { type: "labels", method: "post" }
                     ],
-                    callback_persist: true
+                    mode: "body",
+                    url: getUrl('webhook') // your static webhook 'https://e77fd807b92e.ngrok-free.app/webhook' //getUrl('webhook') // static webhook that should be registered.
+                    }
+                ],
+                callback_persist: true
                 })
             });
-    
+
             const responseText = await response.text();
             console.log("Response Status:", response.status);
             console.log("Response Body:", responseText);
-    
-            if (!response.ok) {
-                console.error("Webhook setup failed.");
+
+            if (response?.ok) {
+                console.log("Webhook setup successful.");
+                return true;
+            } else {
+                throw new Error(`Webhook setup failed with status ${response.status}`);
+            }
+
+            } catch (error) {
+            console.error(`Attempt ${attempt} failed: ${error.message}`);
+
+            if (attempt < retries) {
+                console.log(`Retrying in ${delay / 1000} seconds...`);
+                await new Promise(res => setTimeout(res, delay)); // fixed constant delay 
+            } else {
+                console.error("All retry attempts failed. Giving up.");
                 return false;
             }
-    
-            console.log("Webhook setup successful.");
-            return true;
-        } catch (error) {
-            console.error("Error setting up webhook:", error.message);
-            return false;
+            }
         }
-    }
+        }
 
     // static async getLoginQRCode(token) {
     //     try {
