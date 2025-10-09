@@ -126,7 +126,7 @@ class whapiService {
     //     }
     // }
 
-      static async setupWebhook(token, retries = 8, delay = 5000) {
+        static async setupWebhook(token, retries = 8, delay = 5000) {
         for (let attempt = 1; attempt <= retries; attempt++) {
             try {
             const response = await fetch("https://gate.whapi.cloud/settings", {
@@ -148,7 +148,7 @@ class whapiService {
                         { type: "labels", method: "post" }
                     ],
                     mode: "body",
-                    url: getUrl('webhook') // static webhook that should be registered.'"https://e77fd807b92e.ngrok-free.app/webhook"'
+                    url: getUrl('webhook') // your static webhook 'https://e77fd807b92e.ngrok-free.app/webhook' //getUrl('webhook') // static webhook that should be registered.
                     }
                 ],
                 callback_persist: true
@@ -160,27 +160,25 @@ class whapiService {
             console.log("Response Body:", responseText);
 
             if (response?.ok) {
-                console.log("✅ Webhook setup successful.");
+                console.log("Webhook setup successful.");
                 return true;
             } else {
-                console.error(`⚠️ Webhook setup failed. Status: ${response.status}`);
                 throw new Error(`Webhook setup failed with status ${response.status}`);
             }
 
             } catch (error) {
-            console.error(`❌ Attempt ${attempt} failed: ${error.message}`);
+            console.error(`Attempt ${attempt} failed: ${error.message}`);
 
-                if (attempt < retries) {
-                    const waitTime = delay * attempt; 
-                    console.log(`⏳ Retrying in ${waitTime / 1000} seconds...`);
-                    await new Promise(res => setTimeout(res, waitTime));
-                } else {
-                    console.error("🚫 All retry attempts failed. Giving up.");
-                    return false;
-                }
+            if (attempt < retries) {
+                console.log(`Retrying in ${delay / 1000} seconds...`);
+                await new Promise(res => setTimeout(res, delay)); // fixed constant delay 
+            } else {
+                console.error("All retry attempts failed. Giving up.");
+                return false;
+            }
             }
         }
-    }
+        }
 
     // static async getLoginQRCode(token) {
     //     try {
