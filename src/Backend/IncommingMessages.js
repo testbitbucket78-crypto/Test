@@ -1869,9 +1869,21 @@ if (typeof right === "string") {
     case 'is equal to': {
       return left == right;
     }
-
-    case 'is not equal to': {
+    
+     case 'is not equal to': {
       return left != right;
+     }
+
+    case 'is empty': {
+      return left ?( left == null || left == 'null' || left =='') : true;
+    }
+
+    case 'is not empty': {
+      return !(left ?( left == null || left == 'null' || left =='') : true);
+    }
+
+    case 'ends with': {
+      return String(left).endsWith(String(right));
     }
 
     case 'starts with': {
@@ -1889,11 +1901,11 @@ if (typeof right === "string") {
     case 'less than': {
       return Number(left) < Number(right);
     }
-    case 'Yes':{
-      return left == 'Yes' || left == 1;
+    case 'yes':{
+      return left == 'Yes' || left == 'yes' || left == 1;
     }
-    case 'No':{
-      return left == 'No' || left == 0;
+    case 'no':{
+      return left == 'No' || left == 'no' || left == 0;
     }
 
     default: {
@@ -2255,7 +2267,7 @@ let mainData = {
 //-----start------- 0 null 0  559169223950422 Pawan Sharma 917618157986 55 83534 380 Open 7133 80363 null WA API 0 0 0 null 919877594039 ------end-------
 
 
-autoReplyDefaultAction(0, null, 0, 'Owner update ', 559169223950422,'Pawan Sharma', 917618157986, 55, 392584, 380, 'Open', 7186, 80363, null, 'WA API', 0, 0, 0, null, 919877594039)
+//autoReplyDefaultAction(0, null, 0, 'Opt - Yes', 559169223950422,'Pawan Sharma', 917618157986, 55, 392584, 380, 'Open', 7204, 80363, null, 'WA API', 0, 0, 0, null, 919877594039)
 
 //  let time = '00:15' ; // Default to 1 hour if not set
 //     let hour = time?.split(':')[0];
