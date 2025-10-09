@@ -234,7 +234,7 @@ export const routes: Routes = [
     {
         path: 'flow',
         data: {
-            title: 'Whatsapp Flows',
+            title: 'WhatsApp Flows',
             breadcrumbs: [
                 {
                     text: 'flow',

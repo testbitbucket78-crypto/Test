@@ -5,10 +5,10 @@
   </div> -->
 
 <sb-layout-dashboard>
-
-		<sb-top-nav title="Whatsapp Flows"></sb-top-nav>
+<sb-loader [isLoading]="isLoading"></sb-loader>
+		<sb-top-nav title="WhatsApp Flows"></sb-top-nav>
         <div *ngIf="!isShowDetails">
-	<div class="flow-header">
+	<!-- <div class="flow-header">
 		<div class="d-flex">
             <div class="border d-flex flex-row-reverse align-items-center px-3 h-100 search-container">
                 <input class="form-control border-0" type="search" placeholder="Search" name="Search"
@@ -47,7 +47,50 @@
             </div>				
 				<button class="flow-btn" id="add-contact"  ><span><img src="../../../../assets/img/teambox/add.svg" /></span>Create Flow</button>			
 		</div>
-	</div>
+	</div> -->
+
+    
+		<div class="header campaigns_section">
+	
+			<div class="campaigns_page_left">
+					<input (input)="onFilterTextBoxChange()" (focus)="onFocus()" (blur)="onBlur()" type="text" placeholder="Search" aria-label="Search" class="search-box" aria-describedby="basic-addon2" />
+			</div>
+			<div class="campaigns_page_right">
+				<div class="D-whatsApp">
+					<button class="D2-whatsApp" (click)="toggleAssignOption()" >
+						<span>
+							<img class="icon" src="/assets/img/teambox/whatsapp-icon-l.svg" />
+							{{channelSelected}} ({{channelPhoneNumber}})
+							<img src="../../../../assets/img/arrow-down.svg"/>
+						</span>
+					</button>
+					<div *ngIf="ShowAssignOption" class="popup-dialog AssignOption p-15">
+						<p *ngFor="let channel of channelOption" class="d-flex align-items-center px-2 py-1" 
+						(click)="updateDropdown(channel.connected_id)">
+						<img class="icon" src="/assets/img/teambox/whatsapp-icon-l.svg" />
+							<span class="text-capitalize initials">{{channel.label}} ({{channel.connected_id}})</span>
+						</p>
+					</div>
+				</div>
+
+
+				<div class="drop-down-btn">
+					<select class="input-form select-flow" id="select" (change)="onFilterChange($event)">
+                    <option value="">Select</option>
+                    <option value="All">All</option>
+                    <option value="PUBLISHED">PUBLISHED</option>
+                    <option value="DRAFT">DRAFT</option>
+                    <option value="DEPRECATED">DEPRECATED</option>
+                    <option value="BLOCKED">BLOCKED</option>
+                    <option value="THROTTLED">THROTTLED</option>
+                </select>
+				</div>
+				<button class="new-message-btn" src="https://business.facebook.com/wa/manage/flows/create" alt="blank"><img class="icon" src="/assets/img/teambox/add.svg" /> Create Flow</button>		
+					
+			</div>
+			
+			
+		</div>
 
     <div class="p-3">
         <ag-grid-angular style="height: calc(64vh - 50px);" class="ag-theme-alpine" [rowData]="flowList" [columnDefs]="columnDefs" [animateRows]="true"

@@ -461,7 +461,7 @@ var getRateLimit = `select count(*) AS Count from Message WHERE (created_at >= N
 // ------------------------- WhatsApp Flow ----------------------------------//
 var getflowDetail = `select * from FlowsData where spid =? and flowid =?`
 //var getflowDetail = `select * from FlowsData where spid = ? and flowid = ?`
-var getflows = `select * from Flows where spid =? `
+var getflows = `select * from Flows where spid =? order by 1 desc`
 var saveflowMapping = `update Flows SET col_Mapping =? where spid =? and flowid =?`
 //var saveflowMapping = `update Flows SET col_Mapping =? where spid = ? and flowid = ?`
 

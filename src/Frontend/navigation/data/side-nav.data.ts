@@ -42,11 +42,11 @@ export const sideNavItems: SideNavItems = {
         link: '/campaigns',
     },
 
-    // flow: {
-    //     icon: 'assets/img/side-nav/campaign.svg',
-    //     text: 'Whatsapp Flow',
-    //     link: '/flow',
-    // },
+    flow: {
+        icon: 'assets/img/Humburger.svg',
+        text: 'WhatsApp Flow',
+        link: '/flow',
+    },
     BotBuilder: {
         icon: 'assets/img/teambox/bot-sideBar.svg',
         text: 'Bot Builder',
