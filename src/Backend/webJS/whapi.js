@@ -73,7 +73,7 @@ async function createClientInstance(spid, phoneNo) {
                 channel.id
             );
             // const response = await whapiService.startChannel(channel.token, channel.id);
-
+            await new Promise(resolve => setTimeout(resolve, 10000));
             await whapiService.setupWebhook(channel.token); // retrying this as after restarting channel it is failing sometimes
         }
 
