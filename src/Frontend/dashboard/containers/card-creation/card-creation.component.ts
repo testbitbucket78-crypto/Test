@@ -1159,12 +1159,13 @@ createCombinedVariable() {
   
   // Get all options
   const options = formValue.options || [];
-  const formattedOptions = options.map((opt:any) => `* ${opt}`).join('\n');
-  
+  const formattedOptions = options
+  .map((opt: any, index: number) => `${index + 1}. ${opt}`)
+  .join('\n');
+
   // Combine everything
   const combinedVariable = `${questionText}\n\n${promptMessage}\n\n${formattedOptions}`;
   
-  // Now you can use this combinedVariable as needed
   return combinedVariable;
 }
 
