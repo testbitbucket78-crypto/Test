@@ -3138,13 +3138,13 @@ this.selectedAgentDetails = updateForm
     
     const conditionGroup = this.fb.group({
       comparator: [condition?.comparator || '', Validators.required],
-      comparatorBackend: [condition?.comparator || ''],
+      comparatorBackend: [condition?.comparatorBackend || ''],
       comparatorType: [condition?.comparatorType ?? ''],
       operator: [condition?.operator ?? '', Validators.required],
       value: [condition?.value || '', Validators.required],
-      valueBackend: [condition?.value || '', ],
+      valueBackend: [condition?.valueBackend || '', ],
       valueType: [condition?.valueType || ''],
-      nextJoinType: [condition?.nextJoinType ?? 'AND']
+      nextJoinType: [condition?.nextJoinType ?? 'AND']  
     });
 
 this.conditionsArray.push(conditionGroup);
