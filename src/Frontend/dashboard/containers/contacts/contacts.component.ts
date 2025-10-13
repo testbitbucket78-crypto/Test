@@ -1437,8 +1437,8 @@ timeFormatter(params: any): string {
   }
 
   ngAfterViewInit(){
+    this.isLoading = true;
     setTimeout(()=>{
-      this.isLoadingOnInit = false;
     let options = JSON.parse(localStorage.getItem('gridOption')!);
     if(options){
     let column = options.filter((objB:any) => this.columnDefs.some(objA => objA.field === objB.field));
@@ -1468,7 +1468,9 @@ timeFormatter(params: any): string {
 
   this.columnDefs = column;
   this.gridapi.setColumnDefs(column);
-}    
+}  
+      this.isLoadingOnInit = false;
+      this.isLoading = false;  
   },2000); 
 
   if(document.getElementById('delete-btn'))

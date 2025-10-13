@@ -192,7 +192,7 @@ async function autoReplyDefaultAction(isAutoReply, autoReplyTime, isAutoReplyDis
 async function inActiveAgentTimeOut(inactiveAgent, inactiveTimeOut, sid, newId, agid) {
   try {
     if (inactiveAgent == 1) {
-      let isChatAssign = await db.excuteQuery('select * from InteractionMapping where InteractionId =? and (AgentId != -1 OR AgentId !=?)  order by created_at desc limit 1', [newId, agid]);
+      let isChatAssign = await db.excuteQuery('select * from InteractionMapping where InteractionId =? and (AgentId != -1 OR AgentId != -4 OR AgentId !=?)  order by created_at desc limit 1', [newId, agid]);
       console.log("isChatAssign", isChatAssign.length)
       if (isChatAssign?.length > 0) {
         let isReplySended = await db.excuteQuery(`SELECT * FROM Message WHERE interaction_id = ? and SPID=?  AND message_direction = 'Out'  AND created_at >= NOW() - INTERVAL ? MINUTE; `, [newId, sid, inactiveTimeOut]);
@@ -778,6 +778,12 @@ async function assignAction(value, agid, newId, custid, sid, display_phone_numbe
     console.log("iffffffffff", "activeUser")
     var assignCon = await db.excuteQuery(updateInteractionMapping, [values])
   } else {
+    
+      const updateQuery = "UPDATE InteractionMapping SET is_active =0 WHERE InteractionId =?";
+      await db.excuteQuery(updateQuery, [newId]);
+      let val = [[1,newId, -1, -4]];
+      var assignCon = await db.excuteQuery(updateInteractionMapping, [val]);
+    setTimeout(() => {notify.NotifyServer(display_phone_number, false, newId, 0, 'IN', 'Assign Agent');}, 200); 
     defaultRoutingRules(sid, newId, agid, custid, display_phone_number)
   }
 
@@ -1207,6 +1213,12 @@ async function AssignToContactOwner(sid, newId, custid,display_phone_number) {
           return { message: "Insertion into InteractionMapping failed" };
         }
       } else{
+        
+      const updateQuery = "UPDATE InteractionMapping SET is_active =0 WHERE InteractionId =?";
+      await db.excuteQuery(updateQuery, [newId]);
+      let val = [[1,newId, -1, -4]];
+      var assignCon = await db.excuteQuery(updateInteractionMapping, [val]);
+    setTimeout(() => {notify.NotifyServer(display_phone_number, false, newId, 0, 'IN', 'Assign Agent');}, 200); 
         defaultRoutingRules(sid, newId, agid, custid, display_phone_number)
       }
   } catch (err) {
@@ -1331,7 +1343,7 @@ async function botAdvanceAction(botId,custid,interactionId,spid,display_phone_nu
       }else if(actionType =='Mark_Status'){
           isChatAssign = false;
           console.log(action[i],'----------------conversationStatus-------------');
-        let ResolveOpenChat = await db.excuteQuery('UPDATE Interaction SET interaction_status =? WHERE InteractionId !=? and customerId=?', [action[i]?.Value[0], interactionId, custid]);        
+        let ResolveOpenChat = await db.excuteQuery('UPDATE Interaction SET interaction_status =? WHERE InteractionId =? and customerId=?', [action[i]?.Value[0], interactionId, custid]);        
       }
     }
     
@@ -1475,7 +1487,7 @@ data.nodeId = json?.option[1]?.optionConnectedId;
           console.log(json.option, '---------questionOption ----------------');
           let connectNodeId = json.option[Number(data?.incommingMessage)-1].optionConnectedId;
           data.nodeId = connectNodeId;
-         let returnedData = await botVariablexecute(json,data);
+         let returnedData = await botVariablexecute(json,data,json.option[Number(data?.incommingMessage)-1]?.name);
           identifyNode(returnedData);
         } else{
           invalidQuestionResponse(data,json);
@@ -1869,10 +1881,10 @@ if (typeof right === "string") {
     case 'is equal to': {
       return left == right;
     }
-    
+
      case 'is not equal to': {
       return left != right;
-     }
+    }
 
     case 'is empty': {
       return left ?( left == null || left == 'null' || left =='') : true;
@@ -1886,7 +1898,7 @@ if (typeof right === "string") {
       return String(left).endsWith(String(right));
     }
 
-    case 'starts with': {
+     case 'starts with': {
       return String(left).startsWith(String(right));
     }
 
@@ -1918,9 +1930,9 @@ function isValidNumber(value) {
   return typeof value !== 'boolean' && !isNaN(value) && value !== null && value !== '';
 }
 
-async function botVariablexecute(json,data){
+async function botVariablexecute(json,data,questionOption=''){
    if(json?.data?.variableName && json?.data?.variableName !=''){
-            let variable= {dataType: json?.data?.variableDataType,name: json?.data?.variableName,value: data?.incommingMessage}
+            let variable= {dataType: json?.data?.variableDataType,name: json?.data?.variableName,value: (questionOption =='' ? data?.incommingMessage: questionOption)}
             let variables =[];
             if(data?.botSessionVariables && data?.botSessionVariables != null && data?.botSessionVariables != ''){
               let vari = JSON.parse(data?.botSessionVariables);
@@ -2248,7 +2260,7 @@ const worker = new Worker(
 );
 
 
-/*setTimeout(() => {
+setTimeout(() => {
   
 let mainData = {
   "sid": 55,
@@ -2267,7 +2279,7 @@ let mainData = {
 //-----start------- 0 null 0  559169223950422 Pawan Sharma 917618157986 55 83534 380 Open 7133 80363 null WA API 0 0 0 null 919877594039 ------end-------
 
 
-//autoReplyDefaultAction(0, null, 0, 'Opt - Yes', 559169223950422,'Pawan Sharma', 917618157986, 55, 392584, 380, 'Open', 7204, 80363, null, 'WA API', 0, 0, 0, null, 919877594039)
+autoReplyDefaultAction(0, null, 0, 'Mathura', 559169223950422,'Pawan Sharma', 917618157986, 55, 392584, 380, 'Open', 7204, 80363, null, 'WA API', 0, 0, 0, null, 919877594039)
 
 //  let time = '00:15' ; // Default to 1 hour if not set
 //     let hour = time?.split(':')[0];
@@ -2283,7 +2295,7 @@ let mainData = {
 
 // let stringvaleu = JSON.stringify(value).replace(/[\[\]\s]/g, '');
 
-}, 3000);*/
+}, 3000);
 
 async function triggerSR(){
       var replymessage = await matchSmartReplies('addTag', 55, 'WA API')
