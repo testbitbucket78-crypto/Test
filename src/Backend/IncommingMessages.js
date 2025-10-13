@@ -192,7 +192,7 @@ async function autoReplyDefaultAction(isAutoReply, autoReplyTime, isAutoReplyDis
 async function inActiveAgentTimeOut(inactiveAgent, inactiveTimeOut, sid, newId, agid) {
   try {
     if (inactiveAgent == 1) {
-      let isChatAssign = await db.excuteQuery('select * from InteractionMapping where InteractionId =? and (AgentId != -1 OR AgentId !=?)  order by created_at desc limit 1', [newId, agid]);
+      let isChatAssign = await db.excuteQuery('select * from InteractionMapping where InteractionId =? and (AgentId != -1 OR AgentId != -4 OR AgentId !=?)  order by created_at desc limit 1', [newId, agid]);
       console.log("isChatAssign", isChatAssign.length)
       if (isChatAssign?.length > 0) {
         let isReplySended = await db.excuteQuery(`SELECT * FROM Message WHERE interaction_id = ? and SPID=?  AND message_direction = 'Out'  AND created_at >= NOW() - INTERVAL ? MINUTE; `, [newId, sid, inactiveTimeOut]);
@@ -1343,7 +1343,7 @@ async function botAdvanceAction(botId,custid,interactionId,spid,display_phone_nu
       }else if(actionType =='Mark_Status'){
           isChatAssign = false;
           console.log(action[i],'----------------conversationStatus-------------');
-        let ResolveOpenChat = await db.excuteQuery('UPDATE Interaction SET interaction_status =? WHERE InteractionId !=? and customerId=?', [action[i]?.Value[0], interactionId, custid]);        
+        let ResolveOpenChat = await db.excuteQuery('UPDATE Interaction SET interaction_status =? WHERE InteractionId =? and customerId=?', [action[i]?.Value[0], interactionId, custid]);        
       }
     }
     
@@ -2279,7 +2279,7 @@ let mainData = {
 //-----start------- 0 null 0  559169223950422 Pawan Sharma 917618157986 55 83534 380 Open 7133 80363 null WA API 0 0 0 null 919877594039 ------end-------
 
 
-autoReplyDefaultAction(0, null, 0, 'Assign to Agent', 559169223950422,'Pawan Sharma', 917618157986, 55, 392584, 380, 'Open', 7204, 80363, null, 'WA API', 0, 0, 0, null, 919877594039)
+autoReplyDefaultAction(0, null, 0, 'Mathura', 559169223950422,'Pawan Sharma', 917618157986, 55, 392584, 380, 'Open', 7204, 80363, null, 'WA API', 0, 0, 0, null, 919877594039)
 
 //  let time = '00:15' ; // Default to 1 hour if not set
 //     let hour = time?.split(':')[0];
