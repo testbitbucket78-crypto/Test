@@ -7,7 +7,7 @@ export const sideNavSections: SideNavSection[] = [
     },
 
     {
-        items: ['Contacts', 'teambox', 'SmartReplies', 'camp',  'Funnel', 'BotBuilder', 'rep', 'bot-creation'],
+        items: ['Contacts', 'teambox', 'SmartReplies', 'camp', 'flow', 'Funnel', 'BotBuilder', 'rep', 'bot-creation'],
     },
 ];
 

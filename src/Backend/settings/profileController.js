@@ -191,8 +191,6 @@ const userActiveStatus = async (req, res) => {
             let IsUserAssign = await db.excuteQuery('SELECT * FROM InteractionMapping WHERE AgentId=?', [req.body.uid]);
             if (IsUserAssign?.length > 0) {
                 
-                      const updateQuery = "UPDATE InteractionMapping SET is_active =0 WHERE InteractionId =?";
-                      await db.excuteQuery(updateQuery, [newId]);
                 let unAssignChat = await db.excuteQuery('update InteractionMapping set AgentId=? and is_active =1 where AgentId=?', [-1, req.body.uid])
             }
         }

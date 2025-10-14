@@ -2260,7 +2260,7 @@ const worker = new Worker(
 );
 
 
-setTimeout(() => {
+/*setTimeout(() => {
   
 let mainData = {
   "sid": 55,
@@ -2279,7 +2279,7 @@ let mainData = {
 //-----start------- 0 null 0  559169223950422 Pawan Sharma 917618157986 55 83534 380 Open 7133 80363 null WA API 0 0 0 null 919877594039 ------end-------
 
 
-autoReplyDefaultAction(0, null, 0, 'Mathura', 559169223950422,'Pawan Sharma', 917618157986, 55, 392584, 380, 'Open', 7204, 80363, null, 'WA API', 0, 0, 0, null, 919877594039)
+//autoReplyDefaultAction(0, null, 0, 'Mathura', 559169223950422,'Pawan Sharma', 917618157986, 55, 392584, 380, 'Open', 7204, 80363, null, 'WA API', 0, 0, 0, null, 919877594039)
 
 //  let time = '00:15' ; // Default to 1 hour if not set
 //     let hour = time?.split(':')[0];
@@ -2295,7 +2295,7 @@ autoReplyDefaultAction(0, null, 0, 'Mathura', 559169223950422,'Pawan Sharma', 91
 
 // let stringvaleu = JSON.stringify(value).replace(/[\[\]\s]/g, '');
 
-}, 3000);
+}, 3000);*/
 
 async function triggerSR(){
       var replymessage = await matchSmartReplies('addTag', 55, 'WA API')
