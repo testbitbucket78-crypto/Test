@@ -189,9 +189,9 @@ const userActiveStatus = async (req, res) => {
 
         if (IsActive != 1) {
             let IsUserAssign = await db.excuteQuery('SELECT * FROM InteractionMapping WHERE AgentId=?', [req.body.uid]);
-            if (IsUserAssign?.length > 0) {
-                
-                let unAssignChat = await db.excuteQuery('update InteractionMapping set AgentId=? and is_active =1 where AgentId=?', [-1, req.body.uid])
+            if (IsUserAssign?.length > 0) {                
+                let isActiveChat = await db.excuteQuery("update InteractionMapping is_active =1 where AgentId=?", [req.body.uid])
+                let unAssignChat = await db.excuteQuery("update InteractionMapping set AgentId='-1' where AgentId=?", [req.body.uid])
             }
         }
         let myUTCString = new Date().toUTCString();

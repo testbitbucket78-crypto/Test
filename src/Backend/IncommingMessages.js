@@ -1216,8 +1216,8 @@ async function AssignToContactOwner(sid, newId, custid,display_phone_number) {
         
       const updateQuery = "UPDATE InteractionMapping SET is_active =0 WHERE InteractionId =?";
       await db.excuteQuery(updateQuery, [newId]);
-      let val = [[1,newId, -1, -4]];
-      var assignCon = await db.excuteQuery(updateInteractionMapping, [val]);
+      let val = [[1,newId, -1, -4,-1]];
+      var assignCon = await db.excuteQuery('INSERT INTO InteractionMapping (is_active,InteractionId,AgentId,MappedBy,lastAssistedAgent) VALUES ?', [val]);
     setTimeout(() => {notify.NotifyServer(display_phone_number, false, newId, 0, 'IN', 'Assign Agent');}, 200); 
         defaultRoutingRules(sid, newId, agid, custid, display_phone_number)
       }
@@ -1256,8 +1256,8 @@ async function botOperations(data){
 async function assignment(data,assign){
   const updateQuery = "UPDATE InteractionMapping SET is_active =0 WHERE InteractionId =?";
       await db.excuteQuery(updateQuery, [data.interactionId]);
-      let val = [[1,data.interactionId, assign, -4]];
-      var assignCon = await db.excuteQuery(updateInteractionMapping, [val]);
+      let val = [[1,data.interactionId, assign, -4,-1]];
+      var assignCon = await db.excuteQuery('INSERT INTO InteractionMapping (is_active,InteractionId,AgentId,MappedBy,lastAssistedAgent) VALUES ?', [val]);
       let ResolveOpenChat = await db.excuteQuery('UPDATE Interaction SET interaction_status ="Open" WHERE InteractionId =? and customerId=?', [ data.interactionId, data.custid]);
 }
 
@@ -2279,7 +2279,7 @@ let mainData = {
 //-----start------- 0 null 0  559169223950422 Pawan Sharma 917618157986 55 83534 380 Open 7133 80363 null WA API 0 0 0 null 919877594039 ------end-------
 
 
-//autoReplyDefaultAction(0, null, 0, 'Mathura', 559169223950422,'Pawan Sharma', 917618157986, 55, 392584, 380, 'Open', 7204, 80363, null, 'WA API', 0, 0, 0, null, 919877594039)
+//autoReplyDefaultAction(0, null, 0, 'agent01', 559169223950422,'Pawan Sharma', 917618157986, 55, 392584, 380, 'Open', 7204, 80363, null, 'WA API', 0, 0, 0, null, 919877594039)
 
 //  let time = '00:15' ; // Default to 1 hour if not set
 //     let hour = time?.split(':')[0];
