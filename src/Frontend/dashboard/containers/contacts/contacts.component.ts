@@ -1465,10 +1465,11 @@ timeFormatter(params: any): string {
       item['cellRenderer'] =  this.columnDefs[idx]?.cellRenderer;
   });
  
-
+console.log('-----------inside -----------------');
   this.columnDefs = column;
   this.gridapi.setColumnDefs(column);
 }  
+console.log('-----------outside -----------------');
       this.isLoadingOnInit = false;
       this.isLoading = false;  
   },2000); 
@@ -1557,9 +1558,10 @@ timeFormatter(params: any): string {
     filterIsApplied! : boolean;
     filterApplied(){
       this.filterIsApplied = true;
-    this.gridapi!.setFilterModel(null);
-    this.currPage = this.GridService.currPage;
-        this.paging = this.GridService.paging;
+    this.onBtFirst()
+    // this.currPage = this.GridService.currPage;
+    //     this.paging = this.GridService.paging;
+        this.getContact();
     }
     checkContactOwner(contacOwner:any){
       let contactUid = this.userList.filter((item:any)=> item.name == contacOwner)[0]?.uid;
