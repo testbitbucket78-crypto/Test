@@ -366,9 +366,9 @@ async function batchofScheduledCampaign(users, sp_id, type, message_content, mes
     const batch = users.slice(i, i + batchSize);
     await sendScheduledCampaign(batch, sp_id, type, message_content, message_media, phone_number_id, channel_id, message, list,header,body,templateId);
     const randomdelay = Math.floor(Math.random() * (7000 - 5000 + 1)) + 5000;
-   // if (channel_id == 'WhatsApp Web' || channel_id == 2 || channel_id == 'WA Web') {
+    if (channel_id == 'WhatsApp Web' || channel_id == 2 || channel_id == 'WA Web') {
       await wait(randomdelay);
-   // }
+    }
   }
   setTimeout(() => {
     campaignCompletedAlert(message)

@@ -501,7 +501,7 @@ const handleAuthentication = async (channel_id) => {
          return;
         }
         await channel.saveToDatabase();
-        await addWhatsAppChannel(channel.spid, channel.phone);
+        //await addWhatsAppChannel(channel.spid, channel.phone);
         await updateConnectedChannelNo(channel.phone, channel.spid);
         await CreateChannelResponse.setChannelAlreadyAuthenticated(spid);
         notify.NotifyServer(channel.phone, false, 'Client is ready!');

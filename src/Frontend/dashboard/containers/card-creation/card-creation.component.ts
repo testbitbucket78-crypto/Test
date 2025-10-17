@@ -3464,12 +3464,16 @@ this.currentAttributeList = attributeListCustomize.filter((attr:any) =>
       var comparatorType = this.conditionForm?.value?.conditions[index].comparatorType;
       var SelectComparator = this.conditionForm?.value?.conditions[index].comparator;
       
-       var  values
-      if(comparatorType == 'Multi Select' || comparatorType == 'Select' || comparatorType == 'Switch'  || comparatorType == 'tag'){
+        var  values
+      if( comparatorType == 'Switch'  || comparatorType == 'tag'){
          values = `${variable?.id}:${variable?.optionName}`;
       }
+      if(comparatorType == 'Multi Select' || comparatorType == 'Select' ){
+          values = `${variable?.optionName || `{{${variable.displayName || variable.name || variable.optionName}}}`}`;
+      }
+      
       if(comparatorType == 'User' || comparatorType == 'Multi Select' && SelectComparator  == '{{tag}}'){
-         values = `${variable?.id}`;
+        values = `${variable?.id}`;
       }
 
       group.get(field)?.setValue(`{{${variable.displayName || variable.name || variable.optionName}}}`);
