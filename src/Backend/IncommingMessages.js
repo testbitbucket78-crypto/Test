@@ -1256,7 +1256,8 @@ async function botOperations(data){
 async function assignment(data,assign){
   const updateQuery = "UPDATE InteractionMapping SET is_active =0 WHERE InteractionId =?";
       await db.excuteQuery(updateQuery, [data.interactionId]);
-      let val = [[1,data.interactionId, assign, -4,-1]];
+      let lastAssign = await db.excuteQuery('select AgentId from InteractionMapping where InteractionId=? order by MappingId desc limit 1', [data.interactionId]);
+      let val = [[1,data.interactionId, assign, -4,lastAssign[0]?.AgentId]];
       var assignCon = await db.excuteQuery('INSERT INTO InteractionMapping (is_active,InteractionId,AgentId,MappedBy,lastAssistedAgent) VALUES ?', [val]);
       let ResolveOpenChat = await db.excuteQuery('UPDATE Interaction SET interaction_status ="Open" WHERE InteractionId =? and customerId=?', [ data.interactionId, data.custid]);
 }
@@ -1352,8 +1353,8 @@ async function botAdvanceAction(botId,custid,interactionId,spid,display_phone_nu
 if(!isChatAssign){
   const updateQuery = "UPDATE InteractionMapping SET is_active =0 WHERE InteractionId =?";
       await db.excuteQuery(updateQuery, [interactionId]);
-      let val = [[1,interactionId, -1, -4]];
-      var assignCon = await db.excuteQuery(updateInteractionMapping, [val]);
+      let val = [[1,interactionId, -1, -4,-1]];
+      var assignCon = await db.excuteQuery('INSERT INTO InteractionMapping (is_active,InteractionId,AgentId,MappedBy,lastAssistedAgent) VALUES ?', [val]);
 }
 }
 
