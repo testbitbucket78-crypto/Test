@@ -489,6 +489,7 @@ export class ContactFilterComponent implements OnInit {
         items: groups[filterPrefix]
       };
       });  
+	  let tagQuery = '';
   
       let contactFilter ="SELECT EC.*, IFNULL(GROUP_CONCAT(DISTINCT ECTM.TagName ORDER BY FIND_IN_SET(ECTM.ID, REPLACE(EC.tag, ' ', ''))), '') AS tag_names,maxInteraction.maxInteractionId,Interaction.interaction_status,Message.*,user.uid,user.name,IM.* FROM EndCustomer AS EC LEFT JOIN EndCustomerTagMaster AS ECTM ON FIND_IN_SET(ECTM.ID, REPLACE(EC.tag, ' ', '')) > 0 AND ECTM.isDeleted != 1 LEFT JOIN (SELECT customerId,MAX(InteractionId) AS maxInteractionId FROM Interaction WHERE is_deleted != 1 AND IsTemporary != 1 GROUP BY customerId) AS maxInteraction ON maxInteraction.customerId = EC.customerId LEFT JOIN Interaction AS Interaction ON maxInteraction.maxInteractionId = Interaction.InteractionId LEFT JOIN Message AS Message ON Message.interaction_id = Interaction.InteractionId AND Message.is_deleted != 1 LEFT JOIN user AS user ON EC.uid = user.uid LEFT JOIN InteractionMapping AS IM ON IM.InteractionID = Interaction.InteractionId and IM.is_active =  1 WHERE EC.SP_ID ="+this.SPID +" AND EC.isDeleted != 1 AND EC.IsTemporary != 1";
       if(groupArrays.length>0){
@@ -613,6 +614,9 @@ export class ContactFilterComponent implements OnInit {
           if(filter.filterBy=="Is empty"){
             filterOper = "LIKE '%No%'";
             filterOper = "='' OR EC."+filter.filterPrefix+" IS NULL";
+			if(filters?.filterPrefix =='Tag' || filters?.filterPrefix =='tag'){
+            	filterOper = "='' OR tag_names IS NULL";				
+			}
           }
   
           if(filter.filterBy=="Is not empty"){
@@ -669,16 +673,19 @@ export class ContactFilterComponent implements OnInit {
 			filterOper = this.applyDateCondition(filter);
 		  }
 		  if(filters?.filterPrefix =='Tag' || filters?.filterPrefix =='tag'){
-			colName = "ECTM.TagName";
-		  }
-          
+			tagQuery += ' '+QueryOperator +' '+'tag_names'+' '+filterOper;
+		  }else{          
           contactFilter += ' '+QueryOperator +' '+colName+' '+filterOper
+		  }
             })
           contactFilter += ' )';
 		}
           }
           })
 		  contactFilter += ' ) Group by EC.customerId';
+		  if(tagQuery !=''){
+			contactFilter += ' HAVING '+tagQuery
+		  }
         
         } else{
 			contactFilter += ' Group by EC.customerId';
