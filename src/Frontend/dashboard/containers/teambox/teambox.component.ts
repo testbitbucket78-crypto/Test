@@ -2985,7 +2985,8 @@ export class TeamboxComponent implements OnInit {
 	}
 
 	updateTags() {
-		let name = this.userList.filter((items: any) => items.uid == this.uid)[0]?.name;
+		let name = this.userList.filter((items: any) => items.uid == this.uid)[0]?.name;		
+		this.selectedTags = this.selectedTags.replace(/,$/, '');
 		var bodyData = {
 			tag: this.selectedTags,
 			customerId: this.selectedInteraction.customerId,

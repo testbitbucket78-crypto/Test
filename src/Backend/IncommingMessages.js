@@ -784,7 +784,7 @@ async function assignAction(value, agid, newId, custid, sid, display_phone_numbe
       let val = [[1,newId, -1, -4]];
       var assignCon = await db.excuteQuery(updateInteractionMapping, [val]);
     setTimeout(() => {notify.NotifyServer(display_phone_number, false, newId, 0, 'IN', 'Assign Agent');}, 200); 
-    defaultRoutingRules(sid, newId, agid, custid, display_phone_number)
+    //defaultRoutingRules(sid, newId, agid, custid, display_phone_number)
   }
 
   // console.log("assignAction",assignCon)
@@ -1219,7 +1219,7 @@ async function AssignToContactOwner(sid, newId, custid,display_phone_number) {
       let val = [[1,newId, -1, -4,-1]];
       var assignCon = await db.excuteQuery('INSERT INTO InteractionMapping (is_active,InteractionId,AgentId,MappedBy,lastAssistedAgent) VALUES ?', [val]);
     setTimeout(() => {notify.NotifyServer(display_phone_number, false, newId, 0, 'IN', 'Assign Agent');}, 200); 
-        defaultRoutingRules(sid, newId, agid, custid, display_phone_number)
+        //defaultRoutingRules(sid, newId, agid, custid, display_phone_number)
       }
   } catch (err) {
     console.log("ERR _ _ _ AssignToContactOwner", err);

@@ -78,10 +78,12 @@ app.post('/getFilteredList', authenticateToken, async (req, res) => {
       IsFilteredList = true;
       let filterQuery = (req.body.Query).replace('SELECT EC.*','SELECT EC.customerId');
       filterQuery = (filterQuery).replace('IM.*','IM.InteractionID');
-      contactList = await db.excuteQuery(req.body.Query +' limit ?, ?', [req.body.contactFrom,req.body.contactTo]);
+      filterQuery = filterQuery.replace(/and\s*\(\(\s*\)\s*\)/gi, '');
+      let contactlistQuery = (req.body.Query).replace(/and\s*\(\(\s*\)\s*\)/gi, '');
+      contactList = await db.excuteQuery(contactlistQuery +' limit ?, ?', [req.body.contactFrom,req.body.contactTo]);
       contactCount = await db.excuteQuery(`SELECT COUNT(DISTINCT total_result.customerId) AS totalCount FROM (${filterQuery}) AS total_result`, []);
       console.log(contactCount,'---------------------------------------------contactCount----------------------');
-      logger.info(`Filtered query executed: ${req.body.Query}`);
+      logger.info(`Filtered query executed: ${contactlistQuery}`);
     }
 
     res.send({
