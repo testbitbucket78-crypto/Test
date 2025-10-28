@@ -39,7 +39,7 @@
 			<div id="import-btn" *ngIf="!settingsService.checkRoleExist('6')">
 				<button class="btn  btn-block" id="import-btn" data-bs-toggle="modal" data-bs-target="#importmodal" ><img
 						src="../../../../assets/img/import.svg">
-					Import
+					Import 
 				</button>
 			</div>
 			<div id="add-contact">
@@ -598,6 +598,6 @@ style="background: rgb(240 252 255 / 40%); z-index: 9999;display: block;">
 </div>
 </div>
 <div *ngIf="isShowFilter">
-<sb-contact-filter #child *ngIf="isShowFilter == true" [openPopup]="changingValue" (query)="query=$event; filterApplied(); getContact()" (closeFilterPopup)="closeFilter();" (clearFilters)="clearFilters()"></sb-contact-filter>
+<sb-contact-filter #child *ngIf="isShowFilter == true" [openPopup]="changingValue" (query)="query=$event; filterApplied();" (closeFilterPopup)="closeFilter();" (clearFilters)="clearFilters()"></sb-contact-filter>
 </div>
 </sb-layout-dashboard>
