@@ -362,14 +362,17 @@ function wait(delay) {
 }
 
 async function batchofScheduledCampaign(users, sp_id, type, message_content, message_media, phone_number_id, channel_id, message, list,header,body,templateId) {
+  if (channel_id == 'WhatsApp Web' || channel_id == 2 || channel_id == 'WA Web') {
   for (let i = 0; i < users.length; i += batchSize) {
     const batch = users.slice(i, i + batchSize);
     await sendScheduledCampaign(batch, sp_id, type, message_content, message_media, phone_number_id, channel_id, message, list,header,body,templateId);
     const randomdelay = Math.floor(Math.random() * (7000 - 5000 + 1)) + 5000;
-    if (channel_id == 'WhatsApp Web' || channel_id == 2 || channel_id == 'WA Web') {
+    
       await wait(randomdelay);
-    }
   }
+}else{
+  sendScheduledCampaignOfficial(users, sp_id, type, message_content, message_media, phone_number_id, channel_id, message, list,header,body,templateId);
+}
   setTimeout(() => {
     campaignCompletedAlert(message)
   }, 10000)
@@ -482,6 +485,55 @@ async function sendScheduledCampaign(batch, sp_id, type, message_content, messag
     }
   }
 }
+
+
+async function sendScheduledCampaignOfficial(batchs, sp_id, type, message_content, message_media, phone_number_id, channel_id, message, list,header,body,templateId) {
+  console.log("sendScheduledCampaign", "channel_id", sp_id, type, message_media, phone_number_id, channel_id)
+  if(message.message_variables !='' && message.message_variables != null){
+  body = replaceTemplateVariables(body, message.message_variables);
+  }
+  //for (var i = 0; i < batch.length; i++) {
+  batchs.forEach(async (item)=>{
+   
+    let headers = header ?  '<p><strong>'+header+'</strong></p><br>' : '';
+    let message_text =  headers + message_content
+    let Phone_number = item.Phone_number
+    //Attributes for contact_list
+    let textMessage = await parseMessage(message_text, item.customerId, item.SP_ID, message.message_variables)
+    let headerVar = await commonFun.getTemplateVariables(message.message_variables, header, sp_id, item.customerId);
+    let bodyVar  = await commonFun.getTemplateVariables(message.message_variables, body, sp_id, item.customerId);
+    if (list == 'csv') {
+      Phone_number = item.Contacts_Column
+      let parseMessageVariable = await parseMessageForCSV(message_text, item, message.message_variables)
+      //Attributes for segment contacts
+      textMessage = parseMessageVariable?.content
+      let headerAttribute = await parseMessageForCSV(header, item, message.message_variables);
+      let bodyAttribute = await parseMessageForCSV(body, item, message.message_variables);
+      headerVar = headerAttribute?.extractedValues
+      bodyVar = bodyAttribute?.extractedValues
+
+    }
+
+    let DynamicURLToBESent;
+    let buttonsVariable = typeof message?.buttonsVariable === 'string' ? JSON.parse(message?.buttonsVariable) : message?.buttonsVariable;
+    if (!commonFun.isInvalidParam(message?.buttonsVariable) && buttonsVariable.length > 0) {
+      DynamicURLToBESent = await removeTags.getDynamicURLToBESent(buttonsVariable, sp_id, item.customerId);
+    }
+    var response;
+
+    // setTimeout(async () => {
+    //   //console.log("response",response)     
+    // }, 10)    middlewareresult = await middleWare.sendingTemplate(spid, from, headerVar, testMessage, interactive_buttons);
+    response = await messageThroughselectedchannel(sp_id, Phone_number, type, textMessage, message_media, phone_number_id, channel_id, message.Id, message, message_text,headerVar,bodyVar,templateId,message.buttons,DynamicURLToBESent, message?.interactive_buttons);
+    const randomdelay = Math.floor(Math.random() * (9000 - 7000 + 1)) + 7000;
+    if (channel_id == 'WhatsApp Web' || channel_id == 2 || channel_id == 'WA Web') {
+      await wait(randomdelay);
+    } else{
+      await wait(1000);
+    }
+  })
+}
+
 
 
 function isWorkingTime(item) {

@@ -614,6 +614,9 @@ export class ContactFilterComponent implements OnInit {
           if(filter.filterBy=="Is empty"){
             filterOper = "LIKE '%No%'";
             filterOper = "='' OR EC."+filter.filterPrefix+" IS NULL";
+			if(filters?.filterPrefix =='Tag' || filters?.filterPrefix =='tag'){
+            	filterOper = "='' OR tag_names IS NULL";				
+			}
           }
   
           if(filter.filterBy=="Is not empty"){

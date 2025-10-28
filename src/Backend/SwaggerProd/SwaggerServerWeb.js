@@ -1,4 +1,5 @@
 const express = require("express");
+const { getUrl } = require('../config');
 const app = express();
 const swaggerUi = require("swagger-ui-express");
 const swaggerJSDoc = require('swagger-jsdoc');
@@ -16,7 +17,7 @@ const swagger = swaggerJSDoc({
         },
         servers: [
         {
-            url: 'https://settings.engagekart.com',
+            url: getUrl('settings'),
             description: 'Engagezilla Server',
         }
         ],

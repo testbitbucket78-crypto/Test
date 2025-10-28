@@ -2,10 +2,10 @@
 const { getUrl, env } = require('../config');
 const variables = {
     ENV_URL: {
-        auth: 'https://authapi.stacknize.com', //http://localhost:3003 https://authapi.stacknize.com
-        waweb: 'https://waweb.stacknize.com',//https://waweb.stacknize.com  http://localhost:3009
-        contacts: 'https://contactapi.stacknize.com', // https://contactapi.stacknize.com http://localhost:3002
-        settings: 'https://settings.stacknize.com', // https://settings.stacknize.com http://localhost:3003
+        auth: getUrl('auth'),  //'https://authapi.stacknize.com', //http://localhost:3003 https://authapi.stacknize.com
+        waweb:  getUrl('waweb'),  //'https://waweb.stacknize.com',//https://waweb.stacknize.com  http://localhost:3009
+        contacts: getUrl('contacts'),  //'https://contactapi.stacknize.com', // https://contactapi.stacknize.com http://localhost:3002
+        settings: getUrl('settings'),  //'https://settings.stacknize.com', // https://settings.stacknize.com http://localhost:3003
     },
     WHAPI_URL:{
         gate_api: 'https://gate.whapi.cloud'
