@@ -37,12 +37,14 @@ function isWithinTimeWindow(scheduleDatetime) {
 
 
 async function fetchScheduledMessages() {
+  console.log('-------------------st------------------');
   try {
+     console.log('-------------------st------------------');
     // var messagesData = await db.excuteQuery(`select * from Campaign where (status=1 or status=2) and is_deleted != 1`, [])
     // var messagesData = await db.excuteQuery(`SELECT *, DATE_FORMAT(start_datetime, '%Y-%m-%d %H:%i:%s') AS formatted_date,u.IsActive,u.currentStatus  FROM Campaign u  LEFT JOIN user u ON u.SP_ID = c.spid  WHERE (status = 1 OR status = 6) AND is_deleted != 1`, [])
     var messagesData = await db.excuteQuery(`SELECT c.*, DATE_FORMAT(c.start_datetime, '%Y-%m-%d %H:%i:%s') AS formatted_date, u.isPaused, u.isDisable, u.isDeleted FROM Campaign c LEFT JOIN user u ON u.SP_ID = c.sp_id AND (u.ParentId Is Null) WHERE c.status IN (1, 6) AND c.is_deleted != 1`, [])
     var remaingMessage = [];
-    //console.log(messagesData)
+    console.log(messagesData)
     logger.info(`fetchScheduledMessages ${messagesData?.length}`)
     const currentDate = new Date();
 
@@ -52,6 +54,7 @@ async function fetchScheduledMessages() {
      // console.log("messagesData", messagesData)
 
     // HAVE TO CHANGE THIS IN ASYNC FOR EACH SPID
+    console.log('-------------------st------------------')
     for (const message of messagesData) {
       message.start_datetime = message.formatted_date + 'Z';
       var stDateTime = new Date(message.start_datetime)
@@ -272,6 +275,7 @@ async function sendMessages(phoneNumber, message, id, campaign, response, textMe
       FailureCode: FailureCode
     }
 
+logger.info("campaign table CampaignId-");
 
     saveSendedMessage(MessageBodyData)
   } catch (error) {
@@ -371,7 +375,7 @@ async function batchofScheduledCampaign(users, sp_id, type, message_content, mes
       await wait(randomdelay);
   }
 }else{
-  sendScheduledCampaignOfficial(users, sp_id, type, message_content, message_media, phone_number_id, channel_id, message, list,header,body,templateId);
+  await sendScheduledCampaign(users, sp_id, type, message_content, message_media, phone_number_id, channel_id, message, list,header,body,templateId);
 }
   setTimeout(() => {
     campaignCompletedAlert(message)
@@ -492,21 +496,21 @@ async function sendScheduledCampaignOfficial(batchs, sp_id, type, message_conten
   if(message.message_variables !='' && message.message_variables != null){
   body = replaceTemplateVariables(body, message.message_variables);
   }
-  //for (var i = 0; i < batch.length; i++) {
-  batchs.forEach(async (item)=>{
-   
-    let headers = header ?  '<p><strong>'+header+'</strong></p><br>' : '';
-    let message_text =  headers + message_content
-    let Phone_number = item.Phone_number
-    //Attributes for contact_list
-    let textMessage = await parseMessage(message_text, item.customerId, item.SP_ID, message.message_variables)
-    let headerVar = await commonFun.getTemplateVariables(message.message_variables, header, sp_id, item.customerId);
-    let bodyVar  = await commonFun.getTemplateVariables(message.message_variables, body, sp_id, item.customerId);
-    if (list == 'csv') {
-      Phone_number = item.Contacts_Column
-      let parseMessageVariable = await parseMessageForCSV(message_text, item, message.message_variables)
-      //Attributes for segment contacts
-      textMessage = parseMessageVariable?.content
+logger.info("campaign start templateId-",templateId);
+  const payloadPromises = batch.map(async (item) => {
+    let headers = header ? `<p><strong>${header}</strong></p><br>` : '';
+    let message_text = headers + message_content;
+    let Phone_number = item.Phone_number;
+
+    let textMessage;
+    let headerVar;
+    let bodyVar;
+
+    if (list === 'csv') {
+      Phone_number = item.Contacts_Column;
+      let parseMessageVariable = await parseMessageForCSV(message_text, item, message.message_variables);
+      textMessage = parseMessageVariable?.content;
+
       let headerAttribute = await parseMessageForCSV(header, item, message.message_variables);
       let bodyAttribute = await parseMessageForCSV(body, item, message.message_variables);
       headerVar = headerAttribute?.extractedValues
@@ -519,20 +523,76 @@ async function sendScheduledCampaignOfficial(batchs, sp_id, type, message_conten
     if (!commonFun.isInvalidParam(message?.buttonsVariable) && buttonsVariable.length > 0) {
       DynamicURLToBESent = await removeTags.getDynamicURLToBESent(buttonsVariable, sp_id, item.customerId);
     }
-    var response;
 
-    // setTimeout(async () => {
-    //   //console.log("response",response)     
-    // }, 10)    middlewareresult = await middleWare.sendingTemplate(spid, from, headerVar, testMessage, interactive_buttons);
-    response = await messageThroughselectedchannel(sp_id, Phone_number, type, textMessage, message_media, phone_number_id, channel_id, message.Id, message, message_text,headerVar,bodyVar,templateId,message.buttons,DynamicURLToBESent, message?.interactive_buttons);
-    const randomdelay = Math.floor(Math.random() * (9000 - 7000 + 1)) + 7000;
-    if (channel_id == 'WhatsApp Web' || channel_id == 2 || channel_id == 'WA Web') {
-      await wait(randomdelay);
-    } else{
-      await wait(1000);
-    }
-  })
+    return {
+      sp_id,Phone_number,type,textMessage,message_media,phone_number_id,channel_id,Id: message.Id,message,message_text,headerVar,bodyVar,templateId,buttons: message.buttons,DynamicURLToBESent,interactive_buttons: message?.interactive_buttons
+    };
+  });
+
+  const payloads = await Promise.all(payloadPromises);
+  console.log("Payloads created:", payloads.length);
+let i =0 ;
+  for (const payload of payloads) {
+    i = i++;
+logger.info("campaign message templateId-",templateId, "number-",i);
+     messageThroughselectedchannel(payload.sp_id,payload.Phone_number,payload.type,payload.textMessage,payload.message_media,payload.phone_number_id,payload.channel_id,payload.Id,payload.message,payload.message_text,payload.headerVar,payload.bodyVar,payload.templateId,payload.buttons,payload.DynamicURLToBESent,payload.interactive_buttons);
+    await wait(1000);
+  }
+
+  console.log("All messages sent successfully.");
 }
+
+
+
+// async function sendScheduledCampaignOfficial(batch, sp_id, type, message_content, message_media, phone_number_id, channel_id, message, list,header,body,templateId) {
+//   console.log("sendScheduledCampaign", "channel_id", sp_id, type, message_media, phone_number_id, channel_id)
+//   if(message.message_variables !='' && message.message_variables != null){
+//   body = replaceTemplateVariables(body, message.message_variables);
+//   }
+//   for (var i = 0; i < batch.length; i++) {
+//     sendScheduledCampaignMethod(batch[i],i, sp_id, type, message_content, message_media, phone_number_id, channel_id, message, list,header,body,templateId)
+//       await wait(1000);
+//   }
+// }
+
+
+// async function sendScheduledCampaignMethod(item,i, sp_id, type, message_content, message_media, phone_number_id, channel_id, message, list,header,body,templateId) {
+ 
+//    logger.info(`logger Campaign 12- ${item}`);
+//    console.log('entryy -----------------------------------------------------',1)
+//     let headers = header ?  '<p><strong>'+header+'</strong></p><br>' : '';
+//     let message_text =  headers + message_content
+//     let Phone_number = item.Phone_number
+//     //Attributes for contact_list
+//     let textMessage = await parseMessage(message_text, item.customerId, item.SP_ID, message.message_variables)
+//     let headerVar = await commonFun.getTemplateVariables(message.message_variables, header, sp_id, item.customerId);
+//     let bodyVar  = await commonFun.getTemplateVariables(message.message_variables, body, sp_id, item.customerId);
+//     if (list == 'csv') {
+//       Phone_number = item.Contacts_Column
+//       let parseMessageVariable = await parseMessageForCSV(message_text, item, message.message_variables)
+//       //Attributes for segment contacts
+//       textMessage = parseMessageVariable?.content
+//       let headerAttribute = await parseMessageForCSV(header, item, message.message_variables);
+//       let bodyAttribute = await parseMessageForCSV(body, item, message.message_variables);
+//       headerVar = headerAttribute?.extractedValues
+//       bodyVar = bodyAttribute?.extractedValues
+
+//     }
+
+//     let DynamicURLToBESent;
+//     let buttonsVariable = typeof message?.buttonsVariable === 'string' ? JSON.parse(message?.buttonsVariable) : message?.buttonsVariable;
+//     if (!commonFun.isInvalidParam(message?.buttonsVariable) && buttonsVariable.length > 0) {
+//       DynamicURLToBESent = await removeTags.getDynamicURLToBESent(buttonsVariable, sp_id, item.customerId);
+//     }
+//     var response;
+
+//     // setTimeout(async () => {
+//     //   //console.log("response",response)     
+//     // }, 10)    middlewareresult = await middleWare.sendingTemplate(spid, from, headerVar, testMessage, interactive_buttons);
+//     response = await messageThroughselectedchannel(sp_id, Phone_number, type, textMessage, message_media, phone_number_id, channel_id, message.Id, message, message_text,headerVar,bodyVar,templateId,message.buttons,DynamicURLToBESent, message?.interactive_buttons);
+//     const randomdelay = Math.floor(Math.random() * (9000 - 7000 + 1)) + 7000;
+   
+// }
 
 
 
@@ -818,7 +878,9 @@ async function messageThroughselectedchannel(spid, from, type, text, media, phon
 
       if (!isBlockedContact) {
         let template = await db.excuteQuery('select * from templateMessages where ID=? and spid=?',[templateId,spid])
+        logger.info('create payload started ----',from);
         let response = await middleWare.createWhatsAppPayload(getMediaType, from, template[0]?.TemplateName, template[0]?.Language, headerVar, bodyVar, media, spid, button, DynamicURLToBESent);
+        logger.info('create payload ended ----',from);
         // await middleWare.sendDefultMsg(media, text, getMediaType, metaPhoneNumberID, from, spid);
         console.log("Official response", JSON.stringify(response?.status));
 
@@ -1091,6 +1153,7 @@ async function autoResolveExpireInteraction() {
 function startScheduler() {
   cron.schedule('*/5 * * * *', async () => {
     console.log('Running scheduled task at:', new Date());
+    //logger.log(`schedular starts-${templateId}`);
 
     // Execute your scheduled tasks
     await fetchScheduledMessages();
