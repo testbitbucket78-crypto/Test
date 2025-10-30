@@ -880,14 +880,14 @@ async function messageThroughselectedchannel(spid, from, type, text, media, phon
         let template = await db.excuteQuery('select * from templateMessages where ID=? and spid=?',[templateId,spid])
         logger.info('create payload started ----',from);
         let response = await middleWare.createWhatsAppPayload(getMediaType, from, template[0]?.TemplateName, template[0]?.Language, headerVar, bodyVar, media, spid, button, DynamicURLToBESent);
-        logger.info('create payload ended ----',from);
+        logger.info(`create payload ended ---- ${JSON.stringify(response)}`);
         // await middleWare.sendDefultMsg(media, text, getMediaType, metaPhoneNumberID, from, spid);
         console.log("Official response", JSON.stringify(response?.status));
 
         if (response?.status == 200) {
           //interaction_id,message_direction,message_text,message_media,Type,SPID,media_type,Agent_id,assignAgent,Message_template_id
+          let saveInCampaignMessage = await sendMessages(from, text, campaignId, message, response.status, text, response.message?.messages[0]?.id, 'WA API', '', '');
           let saveSendedMessage = await saveMessage(from, spid, response?.message?.messages[0]?.id, message_content, media, type, type, 'WA API', "Official campaign message", 1,buttons,interactive_buttons);
-          let saveInCampaignMessage = await sendMessages(from, text, campaignId, message, response.status, text, response.message?.messages[0]?.id, 'WA API', '', '')
         } else {
           const errorCode = response.message?.error?.code || '190';
           const errorDetails = response.message?.error?.error_data?.details || 'Channel is disconnected';
@@ -1027,9 +1027,9 @@ async function saveMessage(PhoneNo, spid, msgTemplateId, text, media, type, medi
 
   let InteractionId = await insertInteractionAndRetrieveId(PhoneNo, spid, channel);
   console.log(PhoneNo, fromWhere, spid, "InteractionId InteractionId", InteractionId)
-
+let int_btn = interactive_buttons =='()' ?'[]' :interactive_buttons;
   let msgQuery = `insert into Message (interaction_id,message_direction,message_text,message_media,Type,SPID,media_type,Agent_id,assignAgent,msg_status,Message_template_id,button,interactive_buttons) values ?`
-  let savedMessage = await db.excuteQuery(msgQuery, [[[InteractionId[0]?.InteractionId, 'Out', text, media, 'text', spid, mediaType, '', -1, msg_status, msgTemplateId,buttons,interactive_buttons]]]);
+  let savedMessage = await db.excuteQuery(msgQuery, [[[InteractionId[0]?.InteractionId, 'Out', text, media, 'text', spid, mediaType, '', -1, msg_status, msgTemplateId,buttons,int_btn]]]);
   logger.info(`saved message id  ,${savedMessage?.insertId}`)
   let insertedMsgId = savedMessage?.insertId
   return insertedMsgId;
