@@ -1,0 +1,23 @@
+.message_data.preview {
+  background: #ffffff;
+  border-radius: 8px;
+  padding: 10px;
+  max-width: 100%;
+  min-height: 130px;
+  white-space: pre-wrap;
+  word-wrap: break-word;
+
+  .temp-header {
+    color: #075e54;
+  }
+
+  .temp-footer {
+    font-size: 12px;
+    color: #888;
+  }
+
+}
+:host ::ng-deep .richtext,
+:host ::ng-deep .richtext * {
+  color: #333 !important;
+}

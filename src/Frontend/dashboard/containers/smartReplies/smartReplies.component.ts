@@ -2233,5 +2233,13 @@ console.log(sortedData)
 			const offset = `${offsetSign}${offsetHours}:${offsetMins}`;
 			return offset;
 		}
+		sanitizeKeyword() {
+		if (this.keyword) {
+			this.keyword = this.keyword
+			.normalize('NFKC')      
+			.trim()                       
+			.replace(/\s+/g, ' '); // replace multiple spaces with single space
+		}
+		}
 
   }

@@ -116,11 +116,21 @@
                                   <a [href]="templatesMessageData?.Links"><img src="../../../../assets/img/settings/doc.svg" /></a>
                                 </div>
                             </div>
-                            <div class="message_data" [ngClass]="{'preview': templatesMessageData.media_type === 'text'}">
+
+                            <!-- region Begins - Text Message Preview -->
+                            <!-- <div class="message_data" [ngClass]="{'preview': templatesMessageData.media_type === 'text'}">
                                 <span class="temp-header font-weight-bolder" *ngIf="templatesMessageData?.Header" [innerHTML]="templatesMessageData?.Header | sanitizeHtml"></span><br /><br />
                                 <span *ngIf="templatesMessageData?.BodyText" [innerHTML]="templatesMessageData?.BodyText | sanitizeHtml"></span><br /><br />
                                 <span class="temp-footer"  *ngIf="templatesMessageData?.FooterText" [innerHTML]="templatesMessageData?.FooterText | sanitizeHtml"></span><br />
-                            </div>
+                            </div> -->
+
+                            <app-whatsapp-message-preview
+                            [header]="templatesMessageData?.Header"
+                            [body]="templatesMessageData?.BodyText"
+                            [footer]="templatesMessageData?.FooterText">
+                            </app-whatsapp-message-preview>
+
+                            <!-- region Ends - Text Message Preview -->
 
                             <interactive-button *ngIf="templatesMessageData.interactive_buttons" [interactiveButtons]="templatesMessageData.interactive_buttons"></interactive-button>
 
@@ -265,11 +275,17 @@
                   <a [href]="galleryMessageData?.Links"><img src="../../../../assets/img/settings/doc.svg" /></a>
                 </div>
             </div>
+            
             <div class="message_data" [ngClass]="{'preview': galleryMessageData.media_type === 'text'}">
                 <span class="temp-header font-weight-bolder" [innerHTML]="galleryMessageData?.Header | sanitizeHtml"></span><br /><br />
                 <span [innerHTML]="galleryMessageData?.BodyText | sanitizeHtml"></span><br /><br />
                 <span class="temp-footer"  [innerHTML]="galleryMessageData?.FooterText | sanitizeHtml"></span><br />
             </div>
+              <!-- <app-whatsapp-message-preview
+                [header]="galleryMessageData?.Header"
+                [body]="galleryMessageData?.BodyText"
+                [footer]="galleryMessageData?.FooterText">
+            </app-whatsapp-message-preview> -->
             <!-- <div class="contact-us">
                 Contact Us
             </div> -->
@@ -627,10 +643,21 @@
                     <h6>Body Text<span class="text-danger font-weight-bold"> *</span></h6> <div><span class="characters-count"></span><span>Characters</span></div>
                 </div>
                 <div class="sel-type-text scrollBar-visible">
-                    <ejs-richtexteditor formControlName="BodyText" id='defaultRTE' #chatEditor [toolbarSettings]='tools' [height]="'200px'"
-                    [maxLength]='1024' [showCharCount]='true' placeholder="Enter" (change)="onContentChange()" [pasteCleanupSettings]="pasteCleanupSettings"  [saveInterval]="10">
-                   </ejs-richtexteditor>
-                   <!-- (change)="onContentChange($event)" -->
+                     
+                    <!-- *region start - rich text editor removed as it was causing issues for whats app* making a new comp to resolve formatting issue-->
+                    <!-- <ejs-richtexteditor formControlName="BodyText" id='defaultRTE' #chatEditor [toolbarSettings]='tools' [height]="'200px'"
+                                        [maxLength]='1024' [showCharCount]='true' placeholder="Enter" (change)="onContentChange()" [pasteCleanupSettings]="pasteCleanupSettings"  [saveInterval]="10">
+                                       </ejs-richtexteditor> -->
+                    <!-- (change)="onContentChange($event)" -->
+                    
+                    <ejs-richtexteditor formControlName="BodyText" id="defaultRTE" #chatEditor [toolbarSettings]="tools2" [height]="'200px'"
+                        [maxLength]="1024" [showCharCount]="true" placeholder="Enter message" (toolbarClick)="onToolbarClick($event)"
+                        [pasteCleanupSettings]="pasteCleanupSettings" [saveInterval]="10">
+                    </ejs-richtexteditor>
+                    <!-- *region Closed -->
+                  
+
+
                 </div>
                 <div *ngIf="channelDomain == 'api'"><a class="ft-12" target="_blank" href="https://developers.facebook.com/docs/whatsapp/message-templates/guidelines#common-rejection-reasons">Learn more about formatting in Message Template Guidelines</a></div>
               
@@ -1011,11 +1038,21 @@
                     </div>
                 </div>
                 <!-- <div class="message_type" [ngStyle]="{'background-image': 'url(' + templatesMessageData?.Links + ')'}"></div> -->
-                <div class="message_data" [ngClass]="{'preview': selectedType === 'text'}" >
+                 <!-- *Region Start - Text Message Preview* -->
+                <!-- <div class="message_data" [ngClass]="{'preview': selectedType === 'text'}" >
                     <span class="temp-header font-weight-bolder">{{newTemplateForm.get('Header')!.value}}</span><br /><br />
                     <span *ngIf="newTemplateForm.get('BodyText')!.value" class="richtext BodyText" [innerHTML]="newTemplateForm.get('BodyText')?.value | sanitizeHtml"></span><br /><br />
                     <span class="temp-footer">{{newTemplateForm.get('FooterText')?.value}}</span><br />
-                </div>                
+                </div>  -->
+
+                <app-whatsapp-message-preview
+                [header]="newTemplateForm.get('Header')!.value"
+                [body]="newTemplateForm.get('BodyText')!.value"
+                [footer]="newTemplateForm.get('FooterText')!.value">
+                </app-whatsapp-message-preview>
+                <!-- *Region End - Text Message Preview* -->
+                
+                
                 <div *ngFor="let item of buttonsArray;let i =index">
                     <div  class="text-center" *ngIf="item?.buttonText && i<3"><button class="template-btn" (click)="isAllButtonPopupVisible = !isAllButtonPopupVisible" [ngClass]="{'btn-radius': ((buttonsArray.length-1)== i || (buttonsArray.length >2 && i==2))}">
                         <img class="btn-preview-img" *ngIf="item.type =='Quick Reply' && !(i==2 && buttonsArray?.length>3)" src="../../../../assets/img/settings/reply-arrow.svg"> 
@@ -1106,11 +1143,17 @@
                     </div>
                 </div>
                 <!-- <div class="message_type" [ngStyle]="{'background-image': 'url(' + templatesMessageData?.Links + ')'}"></div> -->
-                <div class="message_data" [ngClass]="{'preview': selectedType === 'text'}" >
+
+                <!-- <div class="message_data" [ngClass]="{'preview': selectedType === 'text'}" >
                     <span class="temp-header" *ngIf="newTemplateForm.get('Header')?.value" class="font-weight-bolder" [innerHTML]="newTemplateForm.get('Header')?.value | sanitizeHtml"></span><br /><br />
                     <span *ngIf="newTemplateForm.get('BodyText')?.value" [innerHTML]="replaceVariablePreview(newTemplateForm.get('BodyText')?.value) | sanitizeHtml" ></span><br /><br />
                     <span class="temp-footer" *ngIf="newTemplateForm.get('FooterText')?.value" [innerHTML]="newTemplateForm.get('FooterText')?.value | sanitizeHtml"></span><br />
-                </div>
+                </div> -->
+                <app-whatsapp-message-preview
+                [header]="newTemplateForm.get('Header')?.value"
+                [body]="newTemplateForm.get('BodyText')?.value"
+                [footer]="newTemplateForm.get('FooterText')?.value">
+                </app-whatsapp-message-preview>
                                
                 <div *ngFor="let item of buttonsArray;let i =index">
                     <div  class="text-center" *ngIf="item?.buttonText && i<3"><button class="template-btn" (click)="isAllButtonPopupVisible = !isAllButtonPopupVisible" [ngClass]="{'btn-radius': ((buttonsArray.length-1)== i || (buttonsArray.length >2 && i==2))}">

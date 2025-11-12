@@ -3,7 +3,7 @@
 	<p *ngIf="successMessage" class="success">{{successMessage}}</p>
 	<p *ngIf="warningMessage" class="warning">{{warningMessage}}</p>
 </div>
-<sb-loader [isLoading]="importData"  [message]="'Please wait, importing a large number of contacts may take some time.'" [maxDuration]="1200000"></sb-loader>
+<sb-loader [isLoading]="importData"  [message]="''" [maxDuration]="1200000"></sb-loader>
 <div class="row h-100">
 	<div class="bs-stepper col-lg-12 h-100">
 		<div class="d-flex justify-content-between align-items-center pb-0 bs_stepper_header">
@@ -314,13 +314,13 @@
 							</div>
 							<div class="col-sm-4 review-right-part">
 								<div class="mb-3 review-right-part-sub1">
-									<sb-loader [isLoading]="importDataLoader" [loaderType]="'small'" [message]="''" [maxDuration]="40000"></sb-loader>
+									<sb-loader [isLoading]="importDataLoader" [loaderType]="'small'" [message]="''" [maxDuration]="120000"></sb-loader>
 									<h5 class="m-0">{{numberOfNewContact}}</h5>
 									<h6 class="m-0">New contact will added</h6>
  
 								</div>
 								<div class="mb-3 review-right-part-sub2">
-									<sb-loader [isLoading]="importDataLoader" [loaderType]="'small'" [message]="''" [maxDuration]="40000"></sb-loader>
+									<sb-loader [isLoading]="importDataLoader" [loaderType]="'small'" [message]="''" [maxDuration]="120000"></sb-loader>
 									<h5 class="m-0">{{countUpdatedData}}</h5>
 									<h6 class="m-0">existing contacts will updated</h6>
 								</div>

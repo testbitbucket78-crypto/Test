@@ -381,8 +381,15 @@
 												</div>
 											</ng-template>
 										  </div> -->
-											<div class="message_text"
-												[innerHTML]="message?.message_text | sanitizeHtml">
+										  <!-- Region Started for message -->
+											<div class="message_text">
+												<!-- Region Started -->
+												<!-- [innerHTML]="message?.message_text | sanitizeHtml"> -->
+												   <app-whatsapp-message-preview
+														type="teambox"
+														[messageText]="message?.message_text">
+													</app-whatsapp-message-preview>
+													<!-- Region Ended -->
 												<button
 													*ngIf="!showFullMessage && message?.message_text?.length> maxLength"
 													(click)="toggleShowFullMessage()">Read More</button>
@@ -525,7 +532,11 @@
 
 
 												</div>
+                                                 <!-- Region Startd -->
 												<div class="message_text" [innerHTML]="note.message_text"></div>
+												
+                                                 <!-- Region Ended -->
+
 												<span class="message_time"
 													*ngIf="note.created_at">{{timeSince(note.created_at)}}</span>
 											</div>
@@ -1191,11 +1202,18 @@
 									<a [href]="template.Links"><img src="../../../../assets/img/settings/doc.svg" /></a>
 									</div>
 									<!-- <embed *ngIf="template.media_type === 'document'" [src]="template.Links" type="application/pdf" width="100%" height="400px"> -->
-								  <div [ngClass]="{'templateText': template.media_type === 'text'}" class="template_text">
+								  <!-- <div [ngClass]="{'templateText': template.media_type === 'text'}" class="template_text">
 									<p *ngIf="template.media_type ==='text' && template.Header" class="temp-header font-weight-bolder" [innerHTML]="template.Header | sanitizeHtml" class="m-0 font-weight-bold"></p>
 									<p [innerHTML]="template.BodyText| sanitizeHtml"></p>
 									<p *ngIf="template.FooterText" class="temp-footer" [innerHTML]="template.FooterText | sanitizeHtml"></p>
-								  </div>
+								  </div> -->
+											<app-whatsapp-message-preview  
+												    [header]="template.Header"
+													[body]="template.BodyText" 
+													[footer]="template.FooterText" 
+													type="whatsapp">
+											</app-whatsapp-message-preview>
+
 								  <interactive-button *ngIf="template?.interactive_buttons"
 								        [width]="'100%'"
 										[interactiveButtons]="template?.interactive_buttons">
@@ -1334,7 +1352,8 @@
 											(click)="editMedia()">
 											<img src="/assets/img/campaign/edit.svg">
 										</p>
-										<div [ngClass]="{'templateText': selectedTemplate.media_type === 'text'}"
+
+										<!-- <div [ngClass]="{'templateText': selectedTemplate.media_type === 'text'}"
 											class="template_text">
 											<p *ngIf="selectedTemplate.media_type ==='text' && selectedTemplate.Header"
 												class="temp-header font-weight-bolder"
@@ -1342,7 +1361,15 @@
 												class="m-0 font-weight-bold"></p>
 											<p [innerHTML]="selectedTemplate.BodyText | sanitizeHtml"></p>
 											<p *ngIf="selectedTemplate.FooterText" class="temp-footer" [innerHTML]="selectedTemplate.FooterText | sanitizeHtml"></p>
-										  </div>
+										  </div> -->
+
+												<app-whatsapp-message-preview  
+												    [header]="selectedTemplate.Header"
+													[body]="selectedTemplate.BodyText" 
+													[footer]="selectedTemplate.FooterText" 
+													type="whatsapp">
+												</app-whatsapp-message-preview>
+
 									<interactive-button *ngIf="selectedTemplate?.interactive_buttons"
 									    [width]="'100%'"
 										[interactiveButtons]="selectedTemplate?.interactive_buttons">
@@ -1676,11 +1703,18 @@
 								<!-- <p class="close-box edit_media" (click)="editMedia()">
 							<img src="/assets/img/campaign/edit.svg">
 						</p> -->
-						 <div [ngClass]="{'templateText': selectedTemplate.media_type === 'text'}" class="template_text">
-							<p *ngIf="selectedTemplate.media_type ==='text' && selectedTemplate.Header" class="temp-header font-weight-bolder" [innerHTML]="selectedTemplate.Header | sanitizeHtml" class="m-0 font-weight-bold"></p>
-							<p [innerHTML]="selectedTemplate.BodyText | sanitizeHtml"></p>
-							<p *ngIf="selectedTemplate.FooterText" class="temp-footer" [innerHTML]="selectedTemplate.FooterText | sanitizeHtml"></p>
-						  </div>
+						<!-- <div [ngClass]="{'templateText': selectedTemplate.media_type === 'text'}" class="template_text">
+													<p *ngIf="selectedTemplate.media_type ==='text' && selectedTemplate.Header" class="temp-header font-weight-bolder" [innerHTML]="selectedTemplate.Header | sanitizeHtml" class="m-0 font-weight-bold"></p>
+													<p [innerHTML]="selectedTemplate.BodyText | sanitizeHtml"></p>
+													<p *ngIf="selectedTemplate.FooterText" class="temp-footer" [innerHTML]="selectedTemplate.FooterText | sanitizeHtml"></p>
+												  </div> -->
+						<app-whatsapp-message-preview 
+						    [header]="selectedTemplate.Header" 
+							[body]="selectedTemplate.BodyText"
+							[footer]="selectedTemplate.FooterText" 
+							type="whatsapp">
+						</app-whatsapp-message-preview>
+
 						<interactive-button *ngIf="selectedTemplate?.interactive_buttons" [width]="'100%'"
 							[interactiveButtons]="selectedTemplate?.interactive_buttons">
 						</interactive-button>

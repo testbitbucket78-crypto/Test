@@ -46,7 +46,10 @@ import { WidgetComponent } from './tools/components/tools-widget/tools-widget.co
 import { WhatsAppFlowsComponent } from './whats-app-flows/whats-app-flows.component';
 import { ToastComponent } from 'assets/toast/toast.component';
 import { InteractiveButtonComponent } from 'assets/interactive-button/interactive-button.component';
-export const containers = [DashboardComponent,WhatsAppFlowsComponent, ContactsComponent, TeamboxComponent, FlowBuilderComponent, SmartRepliesComponent, ImportComponent, CampaignsComponent,FunnelComponent, ReportsComponent,ConversationalReportsComponent, CampaignReportsComponent, AutomationReportsComponent, SettingComponent,AcoountSettingsComponent,NotificationsComponent,SupportComponent,UserguideComponent,MyprofileComponent,ManageplanComponent,WalletusageComponent,BillinghistoryComponent,OrganisationalSettingsComponent,WorkingHoursComponent,RolesSettingsComponent,DefaultMessageSettingsComponent,GeneralSettingsComponent,ManageStorageComponent,RoutingRulesComponent,TeamSettingsComponent,UserSettingsComponent,CampaignSettingsComponent,ContactSettingsComponent,CustomFieldsComponent,TemplateSettingsComponent,TemplateMessageComponent,QuickResponseComponent,ToolsComponent,ToolsLinkComponent,ToolsQRComponent,ToolsChatWidgetComponent,ButtonComponent,DropdownComponent,TooltipComponent,WidgetComponent, ToastComponent, InteractiveButtonComponent];
+import { SwitchToggleComponent } from 'assets/SwitchToggle/SwitchToggle.component';
+import { WhatsappMessagePreviewComponent } from 'assets/whatsapp-message-preview/MessagePreview.component';
+
+export const containers = [DashboardComponent,WhatsAppFlowsComponent, ContactsComponent, TeamboxComponent, FlowBuilderComponent, SmartRepliesComponent, ImportComponent, CampaignsComponent,FunnelComponent, ReportsComponent,ConversationalReportsComponent, CampaignReportsComponent, AutomationReportsComponent, SettingComponent,AcoountSettingsComponent,NotificationsComponent,SupportComponent,UserguideComponent,MyprofileComponent,ManageplanComponent,WalletusageComponent,BillinghistoryComponent,OrganisationalSettingsComponent,WorkingHoursComponent,RolesSettingsComponent,DefaultMessageSettingsComponent,GeneralSettingsComponent,ManageStorageComponent,RoutingRulesComponent,TeamSettingsComponent,UserSettingsComponent,CampaignSettingsComponent,ContactSettingsComponent,CustomFieldsComponent,TemplateSettingsComponent,TemplateMessageComponent,QuickResponseComponent,ToolsComponent,ToolsLinkComponent,ToolsQRComponent,ToolsChatWidgetComponent,ButtonComponent,DropdownComponent,TooltipComponent,WidgetComponent, ToastComponent, InteractiveButtonComponent, SwitchToggleComponent, WhatsappMessagePreviewComponent];
 
 export * from './dashboard/dashboard.component';
 export * from './contacts/contacts.component';
@@ -93,6 +96,8 @@ export * from 'assets/tooltip/tooltip.component';
 export * from './tools/components/tools-widget/tools-widget.component';
 export * from './whats-app-flows/whats-app-flows.component';
 export * from 'assets/toast/toast.component';
+export * from 'assets/SwitchToggle/SwitchToggle.component'
+export * from 'assets/whatsapp-message-preview/MessagePreview.component'
 
 export * from './bot-builder/bot-builder.component';
 export * from './card-creation/card-creation.component';

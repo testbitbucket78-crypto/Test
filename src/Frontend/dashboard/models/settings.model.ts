@@ -64,6 +64,7 @@ export interface workingDataPost {
     day: string;
     startTime: string;
     endTime: string;
+    timeZone: string;
 }
 
 export interface workingData {

@@ -118,6 +118,7 @@ isLoading!: boolean;
   }
 
   saveWorkingDetails(){
+    debugger;
     let workingResponse = this.copyFormValues();
     this._settingsService.saveWorkingData(workingResponse)
     .subscribe(result =>{
@@ -224,7 +225,7 @@ isLoading!: boolean;
       if(item.day?.length >0){
         let st = this.datepipe.transform(new Date(new Date(new Date().setHours(Number(item?.startTime.split(':')[0]),Number(item?.startTime.split(':')[1])))),'HH:mm');
         let et = this.datepipe.transform(new Date(new Date(new Date().setHours(Number(item?.endTime.split(':')[0]),Number(item?.endTime.split(':')[1])))),'HH:mm');
-      workingResponse.days.push({day:item.day.toString(),startTime:st ? st :'',endTime:et ? et :''});
+      workingResponse.days.push({day:item.day.toString(),startTime:st ? st :'',endTime:et ? et :'', timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone});
       }
     });
     return workingResponse;

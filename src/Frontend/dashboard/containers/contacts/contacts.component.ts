@@ -13,6 +13,9 @@ import { PhoneValidationService } from 'Frontend/dashboard/services/phone-valida
 import {ContactFilterComponent} from '../contact-filter/contact-filter.component';
 import { DatePipe } from '@angular/common';
 import { environment } from 'environments/environment';
+import { Subject } from 'rxjs';
+import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
+import { ContactQueryPayload, ContactResponse } from 'Frontend/dashboard/models/contact.model';
 
 declare var $: any;
 @Component({
@@ -265,6 +268,9 @@ countryCodes = [
    isLoading!: boolean;
    isLoadingOnInit!:boolean;
    public channelDomain:string = environment?.chhanel;
+     //private searchSubject = new Subject<string>();
+     private searchSubject = new Subject<{ searchTerm: string; isDeletedContact: boolean; isExportContact: boolean }>();
+
  constructor(config: NgbModalConfig, private modalService: NgbModal,
   public phoneValidator:PhoneValidationService,
      public settingsService: SettingsService, private apiService: DashboardService,
@@ -278,6 +284,18 @@ countryCodes = [
 		config.keyboard = false;  
 
     this.productForm = this.contactForm();
+
+// this.searchSubject.pipe(
+//     debounceTime(400),
+//     distinctUntilChanged((prev, curr) => prev.searchTerm === curr.searchTerm)
+//   ).subscribe(({ searchTerm, isDeletedContact, isExportContact }) => {
+//     this.searchContacts(searchTerm, isDeletedContact, isExportContact);
+//   });
+this.searchSubject.pipe(
+  debounceTime(400)
+).subscribe(({ searchTerm, isDeletedContact, isExportContact }) => {
+  this.searchContacts(searchTerm, isDeletedContact, isExportContact);
+});
  }
 
  actionsCellRenderer(params: any) {
@@ -425,6 +443,7 @@ getPhoneNumberValidation(){
   
 checks=false
 bulk(e: any) {
+  debugger
   if (e.target.checked == true) {
     for (var i = 0; i < this.contacts.length; i++) {
       this.checkedcustomerId.push(this.contacts[i].customerId)
@@ -528,6 +547,7 @@ onChangePage(pageOfItems: any) {
     data.contactFrom = this.currPage * Number(this.paginationPageSize) - Number(this.paginationPageSize);
     data.contactTo = Number(this.paginationPageSize);
     this.isLoading = true;
+      this.onSearchContacts();
     this.apiService.getFilteredContact(data).subscribe((datas:any) => {
       this.isLoading = false;
       this.deleteBloackContactLoader = false;
@@ -543,7 +563,7 @@ onChangePage(pageOfItems: any) {
         this.getGridPageSize();
         
     });
-
+ 
   }
 
   buildArrayWithInsert(totalCount: number,start: number,end: number,insertArr: any[]): any[] {
@@ -614,11 +634,12 @@ console.log(baseArr,'----------------------------------baseArr------------------
         SP_ID: sessionStorage.getItem('SP_ID')
       }
       
-      this.apiService.deletContactById(data).subscribe(response => {
-        this.getContact();
-        this.onRowSelected(null);
+      // this.apiService.deletContactById(data).subscribe(response => {
+      //   this.getContact();
+      //   this.onRowSelected(null);
 
-      });
+      // });
+      this.onSearchContacts(true);
   
   }
 
@@ -1578,4 +1599,63 @@ console.log('-----------outside -----------------');
         control.markAsTouched(); 
       }
     }
+
+     isAllSelected = false;
+     selectedCount = 0;
+     totalContacts: ContactResponse | number = 0;
+     selectedContacts: number = 0;
+
+      toggleSelectAll(): void {
+        debugger;
+        this.isAllSelected = !this.isAllSelected;
+        this.selectedContacts = typeof this.totalContacts === 'number' ? this.totalContacts
+         : (this.totalContacts as ContactResponse)?.totalContacts ?? 0;
+
+         if (this.isAllSelected) {
+            this.GridService.selectAllRows(this.gridapi);
+          } else {
+            this.GridService.deselectAllRows(this.gridapi);
+          }
+        // perform select all logic here if needed
+      }
+
+  onSearchContacts(isDeletedContact: boolean = false, isExportContact: boolean = false) {
+    debugger
+    const searchInput = document.getElementById('Search-Ag') as HTMLInputElement;
+    const searchTerm = searchInput.value.trim().toLowerCase();
+   // this.searchSubject.next(searchTerm, isDeletedContact, isExportContact); 
+    this.searchSubject.next({ searchTerm, isDeletedContact, isExportContact });
+  }
+    private searchContacts(searchTerm: string, isDeletedContact: boolean, isExportContact: boolean) {
+    const payload: ContactQueryPayload = {
+      SP_ID: this.spid,
+      action: 'search',
+      search: searchTerm || '',
+      isSearched: searchTerm ? true : false,
+      page: 0,
+      pageSize: 0,
+      filerationQuerry: this.query || '',
+      isFilterApplied: this.query ? true : false,
+
+      isAllSelected: this.isAllSelected,
+
+      isDeletedContact: isDeletedContact,
+      isExportContact: isExportContact
+    };
+
+this.apiService.ContactQuery(payload).subscribe((data: any) => {
+  const response : ContactResponse = data;
+  if (response?.status === 200) {
+      if (response.actionFlag) {
+        this.getContact();
+      }
+    this.totalContacts = response.totalContacts || 0;
+  } else {
+    console.error('❌ Error:', response.msg || 'Something went wrong');
+  }
+});
+  }
+
+      
+
 }
