@@ -428,7 +428,7 @@ const saveworkingDetails = async (req, res) => {
         console.log("deleteWork " + deleteWork)
         data.forEach(async (item) => {
 
-            const values = [req.body.SP_ID, item.day, item.startTime, item.endTime, created_at, req.body.created_By];
+            const values = [req.body.SP_ID, item.day, item.startTime, item.endTime, created_at, req.body.created_By, item.timeZone];
 
 
             var workResult = await db.excuteQuery(val.insertWork, values)

@@ -35,7 +35,7 @@ selectlocalDetails = 'select * from localDetails where SP_ID=? and isDeleted !=1
 selectBillingDetails = 'select * from billing where SP_ID=? and isDeleted !=1'
 
 
-insertWork = `INSERT INTO WorkingTimeDetails (SP_ID,working_days, start_time, end_time,created_at,created_By) VALUES (?, ?, ?, ?,?,?)`;
+insertWork = `INSERT INTO WorkingTimeDetails (SP_ID,working_days, start_time, end_time,created_at,created_By, timeZone) VALUES (?, ?, ?, ?,?,?,?)`;
 selectWork = `select * from WorkingTimeDetails where SP_ID=? and isDeleted !=1`
 updateWork = `UPDATE WorkingTimeDetails SET working_days=?, start_time=?, end_time=?,updated_at=?,created_By=? where SP_ID=? AND id=?`
 deleteWork = `UPDATE WorkingTimeDetails SET isDeleted=? , updated_at=? where SP_ID=?`

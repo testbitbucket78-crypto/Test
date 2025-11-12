@@ -102,6 +102,100 @@ app.post('/getFilteredList', authenticateToken, async (req, res) => {
   }
 });
 
+const { ContactFilteration, ContactResponse }= require('../settings/model/contacts.js');
+app.post('/ContactQuery', authenticateToken, async (req, res) => {
+  try {
+    const contactFilterationBody = new ContactFilteration(req.body);
+    let IsFilteredList = false;
+    let deletedCount = 0;
+    let customerIds = [];
+    //let contactList = await db.excuteQuery(val.selectAllContactLimit, [contactFilterationBody.SP_ID, contactFilterationBody.contactFrom, contactFilterationBody.contactTo]);
+    let contactCount = await db.excuteQuery(val.selectAllContactCount, [contactFilterationBody.SP_ID]);
+    logger.info(`Query executed: ${val.selectAllContactLimit} with SP_ID: ${contactFilterationBody.SP_ID}`);
+
+    // ------------------------------
+    // CASE 1: Filteration-based deletion
+    // ------------------------------
+    if (contactFilterationBody.filerationQuerry) {
+      IsFilteredList = true;
+      let filterQuery = (contactFilterationBody.filerationQuerry).replace('SELECT EC.*','SELECT EC.customerId');
+      filterQuery = (filterQuery).replace('IM.*','IM.InteractionID');
+      filterQuery = filterQuery.replace(/and\s*\(\(\s*\)\s*\)/gi, '');
+      let contactlistQuery = (contactFilterationBody.filerationQuerry).replace(/and\s*\(\(\s*\)\s*\)/gi, '');
+      contactList = await db.excuteQuery(contactlistQuery +' limit ?, ?', [contactFilterationBody.contactFrom,contactFilterationBody.contactTo]);
+      contactCount = await db.excuteQuery(`SELECT COUNT(DISTINCT total_result.customerId) AS totalCount FROM (${filterQuery}) AS total_result`, []);
+      console.log(contactCount,'---------------------------------------------contactCount----------------------');
+      logger.info(`Filtered query executed: ${contactlistQuery}`);
+
+      if (contactFilterationBody.isDeletedContact) { // <--- add this check from frontend
+        const ids = await db.excuteQuery(filterQuery, []);
+        customerIds = ids.map(r => r.customerId);
+        if (customerIds.length) {
+          await db.excuteQuery('UPDATE EndCustomer SET isDeleted=1 WHERE customerId IN (?) AND SP_ID=?', [customerIds, contactFilterationBody.SP_ID]);
+          deletedCount = customerIds.length;
+        }
+      }
+    }
+
+   // ------------------------------
+    // CASE 2: Search-based deletion
+    // ------------------------------
+    else if (contactFilterationBody.isSearched && contactFilterationBody.search && contactFilterationBody.search.trim() !== '') {
+      const searchQuery = `
+        SELECT customerId FROM EndCustomer
+        WHERE SP_ID=? AND isDeleted=0 AND 
+        (LOWER(Name) LIKE ? OR LOWER(Phone_number) LIKE ? OR LOWER(emailId) LIKE ?)
+      `;
+      const likeTerm = `%${contactFilterationBody.search.toLowerCase()}%`;
+      const ids = await db.excuteQuery(searchQuery, [contactFilterationBody.SP_ID, likeTerm, likeTerm, likeTerm]);
+      customerIds = ids.map(r => r.customerId);
+      contactCount = ids?.length ?? 0 ;
+      if (customerIds.length && contactFilterationBody.isDeletedContact) {
+        await db.excuteQuery(
+          'UPDATE EndCustomer SET isDeleted=1 WHERE customerId IN (?) AND SP_ID=?',
+          [customerIds, contactFilterationBody.SP_ID]
+        );
+        deletedCount = customerIds.length;
+      }
+    }
+
+    // ------------------------------
+    // CASE 3: Delete ALL contacts (no filter/search)
+    // ------------------------------
+    else if (contactFilterationBody.isAllSelected && !contactFilterationBody.isFilterApplied && !contactFilterationBody.isSearched) {
+      const result = await db.excuteQuery(
+        'UPDATE EndCustomer SET isDeleted=1 WHERE SP_ID=?',
+        [SP_ID]
+      );
+      deletedCount = result.affectedRows || 0;
+    }
+
+    // ------------------------------
+    // CASE 4: Delete only manually selected
+    // ------------------------------
+    else if (!contactFilterationBody.isAllSelected && contactFilterationBody.selectedIds) {
+      await db.excuteQuery(
+        'UPDATE EndCustomer SET isDeleted=1 WHERE customerId IN (?) AND SP_ID=?',
+        [selectedIds, SP_ID]
+      );
+      deletedCount = selectedIds.length;
+    }
+    
+    const responseBody = new ContactResponse({
+      totalCount: contactCount.length > 0 ? contactCount[0].totalCount : contactCount || 0,
+       actionFlag: deletedCount > 0 ? true : false, 
+    });
+
+    res.send(responseBody);
+  } catch (err) {
+    logger.error(`Error occurred: ${err.message}`, { stack: err.stack });
+    res.send({
+      status: 500,
+      msg: err.message
+    });
+  }
+});
+
 
 app.post('/addCustomContact', async (req, res) => {
   try {
@@ -576,9 +670,12 @@ app.put('/editContact', authenticateToken, (req, res) => {
 
 
 app.post('/importContact', authenticateToken, async (req, res) => {
+  try{
 
+ res.status(202).send({ msg: 'Contact import started in the Background and we will send confirmation mail when completed', status: 202 });  
+
+ process.nextTick(async () => {
   try {
-
     var result = req.body;
     var fields = result.field
     var CSVdata = result.importedData
@@ -685,6 +782,15 @@ app.post('/importContact', authenticateToken, async (req, res) => {
   } catch (err) {
     console.error(err);
     db.errlog(err);
+  }
+  });
+  } 
+
+  catch (err) {
+    res.status(500).send({
+      msg: err,
+      status: 500
+    });
   }
 })
 

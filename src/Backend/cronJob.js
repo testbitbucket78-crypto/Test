@@ -27,6 +27,7 @@ const { userStatus } = require('./enum.js')
 const variable = require('./common/constant');
 const { whapiService } = require('./webJS/whapiService.js');
 const { getUrl, env } = require('./config');
+const { retryExpiryService }= require('./Services/retryExpiryService.js');
 // Function to check if the schedule_datetime is within 1-2 minutes from the current time
 function isWithinTimeWindow(scheduleDatetime) {
   const currentTime = moment();
@@ -55,6 +56,8 @@ async function fetchScheduledMessages() {
 
     // HAVE TO CHANGE THIS IN ASYNC FOR EACH SPID
     console.log('-------------------st------------------')
+    messagesData = await retryExpiryService({});
+
     for (const message of messagesData) {
       message.start_datetime = message.formatted_date + 'Z';
       var stDateTime = new Date(message.start_datetime)
@@ -1151,7 +1154,7 @@ async function autoResolveExpireInteraction() {
 
 // Function to start the scheduler 
 function startScheduler() {
-  cron.schedule('*/5 * * * *', async () => {
+  cron.schedule('*/1 * * * *', async () => {
     console.log('Running scheduled task at:', new Date());
     //logger.log(`schedular starts-${templateId}`);
 

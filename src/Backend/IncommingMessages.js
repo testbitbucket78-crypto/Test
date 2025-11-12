@@ -232,73 +232,123 @@ async function sendSmartReply(message_text, phone_number_id, contactName, from, 
 
 
 
-async function matchSmartReplies(message_text, sid, channelType) {
-  var allSmartReplies = await db.excuteQuery(`select * from SmartReply where SP_ID =? and (isDeleted is null || isDeleted = 0 )`, [sid]);
-  var reply;
-  // console.log(sid,"allSmartReplies",allSmartReplies)
-  for (let i = 0; i < allSmartReplies.length; i++) {
-    // console.log(allSmartReplies[i])
-    const storedValue = allSmartReplies[i].MatchingCriteria;
-    let id = allSmartReplies[i].ID
-    // console.log("storedValue",storedValue)
-    // console.log(storedValue =='contains' || storedValue == 'Fuzzy Matching' || storedValue=='Exact matching')
+// async function matchSmartReplies(message_text, sid, channelType) { 
+//   var allSmartReplies = await db.excuteQuery(`select * from SmartReply where SP_ID =? and (isDeleted is null || isDeleted = 0 )`, [sid]);
+//   var reply;
+//   // console.log(sid,"allSmartReplies",allSmartReplies)
+//   for (let i = 0; i < allSmartReplies.length; i++) {
+//     // console.log(allSmartReplies[i])
+//     const storedValue = allSmartReplies[i].MatchingCriteria;
+//     let id = allSmartReplies[i].ID
+//     // console.log("storedValue",storedValue)
+//     // console.log(storedValue =='contains' || storedValue == 'Fuzzy Matching' || storedValue=='Exact matching')
 
-    if (storedValue == 'contains') {
+//     if (storedValue == 'contains') {
 
-      sreplyQuery = `SELECT DISTINCT  t2.* 
- FROM SmartReply t1
-JOIN SmartReplyAction t2 ON t1.ID = t2.SmartReplyID and t2.isDeleted !=1
-JOIN SmartReplyKeywords t3 ON t1.ID = t3.SmartReplyId and t3.isDeleted !=1
-WHERE ? LIKE CONCAT('%', t3.Keyword , '%')AND t1.SP_ID=? and t1.ID=?  and (t1.isDeleted is null  || t1.isDeleted =0) and t1.channel=?`
+//       sreplyQuery = `SELECT DISTINCT  t2.* 
+//  FROM SmartReply t1
+// JOIN SmartReplyAction t2 ON t1.ID = t2.SmartReplyID and t2.isDeleted !=1
+// JOIN SmartReplyKeywords t3 ON t1.ID = t3.SmartReplyId and t3.isDeleted !=1
+// WHERE ? LIKE CONCAT('%', t3.Keyword , '%')AND t1.SP_ID=? and t1.ID=?  and (t1.isDeleted is null  || t1.isDeleted =0) and t1.channel=?`
 
-      reply = await db.excuteQuery(sreplyQuery, [[message_text], sid, id, channelType]);
+//       reply = await db.excuteQuery(sreplyQuery, [[message_text], sid, id, channelType]);
 
 
-      if (reply.length > 0) {
-        // console.log(allSmartReplies.length, "break contains i ==", i)
-        // console.log(" reply abc")
-        break;
-      }
-      // break;
+//       if (reply.length > 0) {
+//         // console.log(allSmartReplies.length, "break contains i ==", i)
+//         // console.log(" reply abc")
+//         break;
+//       }
+//       // break;
 
-    } else if (storedValue == 'Fuzzy matching') {
-      //  console.log("Fuzzy Matching");
-      let FuzzyQuery = `SELECT t2.* 
-      FROM SmartReply t1 JOIN SmartReplyAction t2 ON t1.ID = t2.SmartReplyID and t2.isDeleted !=1
-      JOIN SmartReplyKeywords t3 ON t1.ID = t3.SmartReplyId and t3.isDeleted !=1
-      WHERE  SOUNDEX(t3.Keyword) = SOUNDEX(?)
-      AND t1.SP_ID=? and t1.ID=? and (t1.isDeleted is null  || t1.isDeleted =0) and t1.channel=?`
-      reply = await db.excuteQuery(FuzzyQuery, [[message_text], sid, id, channelType]);
-      // console.log(reply)
-      if (reply.length > 0) {
+//     } else if (storedValue == 'Fuzzy matching') {
+//       //  console.log("Fuzzy Matching");
+//       let FuzzyQuery = `SELECT t2.* 
+//       FROM SmartReply t1 JOIN SmartReplyAction t2 ON t1.ID = t2.SmartReplyID and t2.isDeleted !=1
+//       JOIN SmartReplyKeywords t3 ON t1.ID = t3.SmartReplyId and t3.isDeleted !=1
+//       WHERE  SOUNDEX(t3.Keyword) = SOUNDEX(?)
+//       AND t1.SP_ID=? and t1.ID=? and (t1.isDeleted is null  || t1.isDeleted =0) and t1.channel=?`
+//       reply = await db.excuteQuery(FuzzyQuery, [[message_text], sid, id, channelType]);
+//       // console.log(reply)
+//       if (reply.length > 0) {
 
-        break;
-      }
+//         break;
+//       }
 
-      //break;
+//       //break;
 
-    } else if (storedValue == 'Exact matching') {
-      //  console.log("exact match")
-      let exactQuery = `SELECT t2.* 
-      FROM SmartReply t1
-     JOIN SmartReplyAction t2 ON t1.ID = t2.SmartReplyID and t2.isDeleted !=1
-     JOIN SmartReplyKeywords t3 ON t1.ID = t3.SmartReplyId and t3.isDeleted !=1
-     WHERE t3.Keyword=? AND t1.SP_ID=? and t1.ID=? and (t1.isDeleted is null  || t1.isDeleted =0) and t1.channel=?`
-      reply = await db.excuteQuery(exactQuery, [[message_text], sid, id, channelType]);
-      //console.log(reply)
-      if (reply.length > 0) {
+//     } else if (storedValue == 'Exact matching') {
+//       //  console.log("exact match")
+//       let exactQuery = `SELECT t2.* 
+//       FROM SmartReply t1
+//      JOIN SmartReplyAction t2 ON t1.ID = t2.SmartReplyID and t2.isDeleted !=1
+//      JOIN SmartReplyKeywords t3 ON t1.ID = t3.SmartReplyId and t3.isDeleted !=1
+//      WHERE t3.Keyword=? AND t1.SP_ID=? and t1.ID=? and (t1.isDeleted is null  || t1.isDeleted =0) and t1.channel=?`
+//       reply = await db.excuteQuery(exactQuery, [[message_text], sid, id, channelType]);
+//       //console.log(reply)
+//       if (reply.length > 0) {
 
-        break;
-      }
+//         break;
+//       }
 
-      //break;
+//       //break;
 
+//     }
+
+//   }
+//   // console.log(reply,sid, channelType)
+//   return reply;
+// }
+
+// I am deprecating the above code (updating metching Logics as per new requirements also speeding the process of matching smart replies using one querry per incomming.)
+async function matchSmartReplies(message_text, sid, channelType) { 
+  const allSmartReplies = await db.excuteQuery(`
+    SELECT t1.ID, t1.MatchingCriteria, t3.Keyword, t2.*
+    FROM SmartReply t1
+    JOIN SmartReplyAction t2 ON t1.ID = t2.SmartReplyID AND t2.isDeleted != 1
+    JOIN SmartReplyKeywords t3 ON t1.ID = t3.SmartReplyId AND t3.isDeleted != 1
+    WHERE t1.SP_ID = ? AND (t1.isDeleted IS NULL OR t1.isDeleted = 0) AND t1.channel = ?
+  `, [sid, channelType]);
+
+  if (!allSmartReplies?.length) return [];
+
+
+  const normalize = (str) => str
+    .normalize('NFD') 
+    .replace(/[\u0300-\u036f]/g, '') 
+    .replace(/[^\p{L}\p{N}\s]/gu, '')
+    .trim()
+    .toLowerCase();
+
+  const message = normalize(message_text);
+
+  let matched = [];
+
+
+  for (const row of allSmartReplies) {
+    const keyword = normalize(row.Keyword);
+    const criteria = row.MatchingCriteria?.toLowerCase();
+
+    if (!keyword) continue;
+
+    if (criteria === 'exact matching' && message === keyword) {
+      matched.push({ ...row, matchType: 'exact' });
+    } else if (criteria === 'contains' && message.includes(keyword)) {
+      matched.push({ ...row, matchType: 'contains' });
     }
-
   }
-  // console.log(reply,sid, channelType)
-  return reply;
+
+  // Prioritizing matches on the bases of the requirement given to me.
+  matched.sort((a, b) => {
+    if (a.matchType !== b.matchType) {
+      return a.matchType === 'exact' ? -1 : 1; 
+    }
+    return b.Keyword.length - a.Keyword.length;
+  });
+
+  return matched.length ? [matched[0]] : [];
 }
+
 
 async function getSmartReplies(message_text, phone_number_id, contactname, from, sid, custid, agid, replystatus, newId, msg_id, newlyInteractionId, channelType, isContactPreviousDeleted, newiN, display_phone_number) {
   try {
@@ -1002,9 +1052,11 @@ function isWorkingTime(data, currentTime) {
   if(data.length == 0){
     return true;
   }
+  const timeZoneOfWorkingHour = data[0]?.timezone || 'Asia/Kolkata';
+  
   const currentDay = new Date().toLocaleDateString('en-US', { weekday: 'long' });
   const currentTimeStr = currentTime.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
-  let datetime = new Date().toLocaleString(undefined, { timeZone: 'Asia/Kolkata' });
+  let datetime = new Date().toLocaleString(undefined, { timeZone: timeZoneOfWorkingHour });
   // console.log(currentDay)
   const time = new Date()
 

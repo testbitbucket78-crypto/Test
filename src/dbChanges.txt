@@ -363,4 +363,10 @@ ADD COLUMN retry_count INT DEFAULT 0;
 ALTER TABLE templateMessages
 ADD COLUMN renderedButtons JSON;
 
+
+ALTER TABLE WorkingTimeDetails
+ADD COLUMN timezone VARCHAR(100) DEFAULT 'Asia/Kolkata' AFTER working_days;
+
+ALTER TABLE Campaign 
+ADD COLUMN RetryAndExpirySettings JSON NULL AFTER interactive_buttons;
 //Ends of 13 may onwards Changes
