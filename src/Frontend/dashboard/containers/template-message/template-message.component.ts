@@ -470,7 +470,7 @@ intervalSub!: Subscription;
 
     showMessageType() {
         // this.selectedType = type;
-                debugger;
+                
         this.newTemplateForm.get('Links')?.setValue(null);
         this.newTemplateForm.get('Header')?.setValue('');
         this.selectedPreview = '';
@@ -585,7 +585,7 @@ intervalSub!: Subscription;
     }
     
     async saveVideoAndDocument(files: FileList | string) {
-        debugger;
+        
         if (!files) return;
         
         if (typeof files === 'string') {
@@ -1477,7 +1477,7 @@ sanitizeInteractivePayload(payload: any): any {
 
     
 onContentChange() {
-    debugger;
+    
     const container = document.createElement('div');
     container.innerHTML = this.chatEditor?.value;
     console.log(this.chatEditor?.value);
@@ -1687,7 +1687,7 @@ createButton(type: string) {
   countTagOccurrence = (str: string, tag: string) => str.split(tag).length - 1;
 
   validateItems():boolean {
-    debugger;
+    
     let validationErrors = ''; 
     const buttonTextSet = new Set<string>();
     const urlPattern = /^(https?:\/\/).*\.[a-z]{2,}$/i;

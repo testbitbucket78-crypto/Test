@@ -3134,7 +3134,7 @@ console.log(this.allTemplatesMain);
 		  }
 
 	checkCampignTiming(){
-		debugger;
+		
 		let daysList=['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
 		console.log(this.selecteScheduleTime);
 		let sratdatetime:any;
@@ -3466,7 +3466,7 @@ console.log(this.allTemplatesMain);
     }
 tooltipForRetry!: boolean;
 addRetry() {
-	debugger;
+	
   if (!this.RetryAndExpiry) return;
 
   const retryArray = this.RetryAndExpiry.get('retryCount') as FormArray;

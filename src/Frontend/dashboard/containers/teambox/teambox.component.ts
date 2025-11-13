@@ -3160,7 +3160,7 @@ export class TeamboxComponent implements OnInit {
 	}
 
 	createCustomer() {
-		debugger;
+		
 		this.newContact.value.SP_ID = this.SPID;
 		this.newContact.value.Channel = this.selectedChannel;
 		this.newContact.value.OptedIn = this.OptedIn;

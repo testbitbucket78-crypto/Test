@@ -806,7 +806,7 @@ areArraysEqual(arr1: any[], arr2: any[]): boolean {
 }
 
 regenrateApiKey(id : number){
-  debugger;
+  
   this.getApiKeyData(true,true,id);
 }
 

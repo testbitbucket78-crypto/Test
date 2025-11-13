@@ -118,7 +118,7 @@ isLoading!: boolean;
   }
 
   saveWorkingDetails(){
-    debugger;
+    
     let workingResponse = this.copyFormValues();
     this._settingsService.saveWorkingData(workingResponse)
     .subscribe(result =>{

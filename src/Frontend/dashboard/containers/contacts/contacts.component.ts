@@ -1606,7 +1606,7 @@ console.log('-----------outside -----------------');
      selectedContacts: number = 0;
 
       toggleSelectAll(): void {
-        debugger;
+        
         this.isAllSelected = !this.isAllSelected;
         this.selectedContacts = typeof this.totalContacts === 'number' ? this.totalContacts
          : (this.totalContacts as ContactResponse)?.totalContacts ?? 0;

@@ -1426,10 +1426,10 @@ showAddSmartRepliesModal() {
 
 	checkTagStatus (val:any) {
 		console.log(this.assignedTagList,' assigned tag list');
-		debugger;
+		
 		this.assignedAgentList
 		if(this.assignedTagList.includes(val)) {
-			debugger;
+			
 			return true;
 		}
 		else {
@@ -1511,7 +1511,7 @@ stopPropagation(event: Event) {
 	}
 
 	toggleRemoveTag() {
-		debugger;
+		
 		$("#addTagModal").modal('show'); 
 		this.ShowRemoveTag = true;
 	
@@ -1538,7 +1538,7 @@ stopPropagation(event: Event) {
 
 	
 	addBot(index: number) {
-		debugger;
+		
 		var isExist = false;
 		this.assignedAgentList.forEach(item=> {
 			if(item.ActionID == 4) {
@@ -1990,7 +1990,7 @@ stopPropagation(event: Event) {
 		this.isLoading = true;
 		this.apiService.sideNav(data.ID).subscribe((response => {
 			this.data = response;
-			debugger;
+			
 			console.log(this.data)
 			this.repliesData = <repliesList> {} ;
 			this.repliesData.Channel = this.data[0].Channel;
@@ -2218,7 +2218,7 @@ console.log(sortedData)
 					},
 					(error: any) => {
 			            this.isLoading = false;
-						debugger;
+						
 						if (error) {
                           this._toastService.error(error?.error?.error || "An unexpected error occurred while exporting the report.")
 						}
