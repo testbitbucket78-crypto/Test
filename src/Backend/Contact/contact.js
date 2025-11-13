@@ -162,10 +162,10 @@ app.post('/ContactQuery', authenticateToken, async (req, res) => {
     // ------------------------------
     // CASE 3: Delete ALL contacts (no filter/search)
     // ------------------------------
-    else if (contactFilterationBody.isAllSelected && !contactFilterationBody.isFilterApplied && !contactFilterationBody.isSearched) {
+    else if (contactFilterationBody.isAllSelected && !contactFilterationBody.isFilterApplied && !contactFilterationBody.isSearched && contactFilterationBody.isDeletedContact) {
       const result = await db.excuteQuery(
         'UPDATE EndCustomer SET isDeleted=1 WHERE SP_ID=?',
-        [SP_ID]
+        [contactFilterationBody.SP_ID]
       );
       deletedCount = result.affectedRows || 0;
     }
@@ -176,7 +176,7 @@ app.post('/ContactQuery', authenticateToken, async (req, res) => {
     else if (!contactFilterationBody.isAllSelected && contactFilterationBody.selectedIds) {
       await db.excuteQuery(
         'UPDATE EndCustomer SET isDeleted=1 WHERE customerId IN (?) AND SP_ID=?',
-        [selectedIds, SP_ID]
+        [selectedIds, contactFilterationBody.SP_ID]
       );
       deletedCount = selectedIds.length;
     }
@@ -891,6 +891,13 @@ async function addOnlynewContact(CSVdata, identifier, SP_ID, user) {
     `;
       const checkResult = await db.excuteQuery(checkDeletedQuery, [identifierValue, SP_ID]);
       if (checkResult && checkResult.length > 0) {
+        // ✅ Added name check before update
+        const nameField = set.find((f) => f.ActuallName === 'Name');
+        const phoneField = set.find((f) => f.ActuallName === 'Phone_number');
+        if (nameField && phoneField && (!nameField.displayName || nameField.displayName.trim() === '')) {
+          nameField.displayName = phoneField.displayName; // <-- assign phone number if name empty
+        }
+
         let resetContactFields = await commonFun.resetContactFields(identifierValue, SP_ID)
         const updateQuery = `
         UPDATE EndCustomer SET ${fieldNames.replace(/,/g, ' = ?, ')} = ?, isDeleted = 0,IsTemporary =0, created_at = NOW() 
@@ -903,6 +910,13 @@ async function addOnlynewContact(CSVdata, identifier, SP_ID, user) {
         result = await db.excuteQuery(updateQuery, updateValues);
       }
       else {
+        const nameField = set.find((f) => f.ActuallName === 'Name');
+        const phoneField = set.find((f) => f.ActuallName === 'Phone_number');
+
+        if (nameField && phoneField && (!nameField.displayName || nameField.displayName.trim() === '')) {
+          nameField.displayName = phoneField.displayName; // assign phone number as name if name is empty otherwise its good to go 
+       }
+
         let query = `INSERT INTO EndCustomer (${fieldNames}) SELECT ? WHERE NOT EXISTS (SELECT * FROM EndCustomer WHERE ${identifier}=? and SP_ID=? AND (isDeleted IS NULL OR isDeleted = 0) AND (isBlocked IS NULL OR isBlocked = 0));`;
         const values = set.map((field) => field.displayName);
         //  console.log(values, fieldNames);
@@ -1511,10 +1525,16 @@ async function isDataInCorrectFormat(columnDataType, actuallName, displayName, u
     // If the converted data type matches the column data type, return true, else return false
     switch (columnDataType) {
       case 'Number':
+      if (convertedValue === '' || convertedValue === null || convertedValue === undefined) {
+        return { isError: false, reason: '' };
+      }
         return { isError: isNaN(convertedValue), reason: !isNaN(convertedValue) ? "" : `${fieldDisplayName} is not a valid number` };
       case 'Text':
         return { isError: typeof convertedValue !== 'string', reason: typeof convertedValue === 'string' ? "" : `${fieldDisplayName} is not valid text` };
       case 'Switch':
+      if (convertedValue === '' || convertedValue === null || convertedValue === undefined) {
+       return { isError: false, reason: '' };
+      }
         return { isError: typeof convertedValue !== 'string', reason: typeof convertedValue === 'string' ? "" : `${fieldDisplayName} is not valid switch` };
       default:
         return { isError: false, reason: `${fieldDisplayName} Unknown column data type` };

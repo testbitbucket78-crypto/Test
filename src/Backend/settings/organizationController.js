@@ -13,7 +13,7 @@ const awsHelper = require('../awsHelper');
 const moment = require('moment');
 const { EmailConfigurations } =  require('../Authentication/constant');
 const { MessagingName }= require('../enum');
-
+const { convertTimeByTimezone } = require('../Contact/utils');
 app.use(bodyParser.json());
 app.use(cors());
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -448,9 +448,20 @@ const saveworkingDetails = async (req, res) => {
 const getworkingDetails = async (req, res) => {
     try {
         var result = await db.excuteQuery(val.selectWork, [req.params.spID]);
+
+        const updatedResult = result.map(row => {
+            if (row.start_time && row.timezone) {
+                row.start_time = convertTimeByTimezone(row.start_time, row.timezone);
+            }
+            if (row.end_time && row.timezone) {
+                row.end_time = convertTimeByTimezone(row.end_time, row.timezone);
+            }
+            return row;
+            });
+            
         res.status(200).send({
             msg: 'workingDetails got successfully !',
-            result: result,
+            result: updatedResult,
             status: 200
         })
     } catch (err) {
