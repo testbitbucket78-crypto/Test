@@ -56,7 +56,7 @@ async function fetchScheduledMessages() {
 
     // HAVE TO CHANGE THIS IN ASYNC FOR EACH SPID
     console.log('-------------------st------------------')
-    messagesData = await retryExpiryService({});
+    //messagesData = await retryExpiryService({});
 
     for (const message of messagesData) {
       message.start_datetime = message.formatted_date + 'Z';
