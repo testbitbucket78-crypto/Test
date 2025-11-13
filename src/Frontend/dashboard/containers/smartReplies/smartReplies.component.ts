@@ -1407,6 +1407,10 @@ showAddSmartRepliesModal() {
 			this.ShowAddBotOption = true;
 			this.isEditBot =true;
 			this.botIndex = index;
+		} else {
+			this.ShowAddBotOption = true;
+			this.isEditBot =true;
+			this.botIndex = index;
 		}
 	}
 
@@ -1421,7 +1425,11 @@ showAddSmartRepliesModal() {
 	}
 
 	checkTagStatus (val:any) {
+		console.log(this.assignedTagList,' assigned tag list');
+		debugger;
+		this.assignedAgentList
 		if(this.assignedTagList.includes(val)) {
+			debugger;
 			return true;
 		}
 		else {
@@ -1503,6 +1511,7 @@ stopPropagation(event: Event) {
 	}
 
 	toggleRemoveTag() {
+		debugger;
 		$("#addTagModal").modal('show'); 
 		this.ShowRemoveTag = true;
 	
@@ -1529,6 +1538,7 @@ stopPropagation(event: Event) {
 
 	
 	addBot(index: number) {
+		debugger;
 		var isExist = false;
 		this.assignedAgentList.forEach(item=> {
 			if(item.ActionID == 4) {
@@ -1980,6 +1990,7 @@ stopPropagation(event: Event) {
 		this.isLoading = true;
 		this.apiService.sideNav(data.ID).subscribe((response => {
 			this.data = response;
+			debugger;
 			console.log(this.data)
 			this.repliesData = <repliesList> {} ;
 			this.repliesData.Channel = this.data[0].Channel;
@@ -2002,10 +2013,12 @@ stopPropagation(event: Event) {
 						{
 							Message: this.data[i].Message,
 							Name: this.data[i].Name, 
+							ActionID: this.data[i].ActionID,
+							ValueUuid: this.data[i].ValueUuid, 
 							Value: this.data[i].Value,
 							Media: this.data[i].Media,
 							buttons: JSON.parse(this.data[i].buttons),
-							interactive_buttons : this.data[i].interactive_buttons
+							interactive_buttons : this.data[i].interactive_buttons,
 						});
 				   }
 			}
@@ -2059,11 +2072,14 @@ console.log(sortedData)
 			}
 			if (this.repliesData.ActionList[i].Name == 'Trigger Flow') {
 				ActionId = 4
+				uuid = sortedData[i]?.ValueUuid
 			}
 			if (this.repliesData.ActionList[i].Name == 'Add Contact Tag') {
 				ActionId = 1
 				Value = JSON.parse(sortedData[i].Value)
+				this.assignedTagList = Value
 			}
+			
 			this.assignedAgentList.push(
 				{	ActionID: ActionId,
 					Message: sortedData[i].Message,
@@ -2174,6 +2190,7 @@ console.log(sortedData)
 		}
         
 		exportLogsAndMail() {
+			this.isLoading = true;
 			if (this.exportLogsForm.invalid) {
 				return;
 			}
@@ -2190,6 +2207,7 @@ console.log(sortedData)
 			this.apiService.exportLogsSmartReply(payload)
 				.subscribe(
 					(response: any) => {
+			            this.isLoading = false;
 						debugger
 						if (response?.success) {
 						$("#export-logs").modal('hide');
@@ -2199,6 +2217,7 @@ console.log(sortedData)
 						}
 					},
 					(error: any) => {
+			            this.isLoading = false;
 						debugger;
 						if (error) {
                           this._toastService.error(error?.error?.error || "An unexpected error occurred while exporting the report.")

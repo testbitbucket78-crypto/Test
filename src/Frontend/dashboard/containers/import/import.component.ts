@@ -433,6 +433,10 @@ export class ImportComponent implements OnInit {
 
 importData = false ;
 	onImportContacts(modal:any) {
+		if(this.countUpdatedData == 0 && this.numberOfNewContact == 0) {
+			this.toastService.warning('No contacts to import.');
+			return;
+		}
        this.importData = true;
 		const bodyData:importCSVData = {
 			field: [], 

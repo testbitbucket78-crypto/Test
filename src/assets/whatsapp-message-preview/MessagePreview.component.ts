@@ -16,7 +16,6 @@ export class WhatsappMessagePreviewComponent implements OnChanges {
   formattedBody = '';
 
   ngOnChanges(): void {
-    debugger;
     // this.formattedBody = this.formatWhatsAppText(this.body || '');
     if (this.type === 'whatsapp') {
       this.formattedBody = this.formatWhatsAppText(this.body || '');
