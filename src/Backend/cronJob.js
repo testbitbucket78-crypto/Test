@@ -1154,7 +1154,7 @@ async function autoResolveExpireInteraction() {
 
 // Function to start the scheduler 
 function startScheduler() {
-  cron.schedule('*/1 * * * *', async () => {
+  cron.schedule('*/5 * * * *', async () => {
     console.log('Running scheduled task at:', new Date());
     //logger.log(`schedular starts-${templateId}`);
 
