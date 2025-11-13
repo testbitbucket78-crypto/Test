@@ -1,9 +1,7 @@
 const db = require("../dbhelper");
-const logger = require("../../logger");
 
 async function retryExpiryService() {
   try {
-    logger.info("🔁 [RetryExpiryService] Starting retry scan...");
 
     const failedMessages = await db.excuteQuery(`
       SELECT 
@@ -24,7 +22,7 @@ async function retryExpiryService() {
         AND c.RetryAndExpirySettings IS NOT NULL
     `);
 
-    if (!failedMessages.length) {
+    if (!failedMessages?.length) {
       logger.info("✅ [RetryExpiryService] No failed messages found for retry.");
       return [];
     }
