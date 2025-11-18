@@ -769,8 +769,11 @@ WHERE customerId IN (SELECT customerId FROM EndCustomer WHERE Phone_number =? an
     let ack3InId = await db.excuteQuery(notifyInteraction, [customerPhoneNumber, spid])
     notify.NotifyServer(displayPhoneNumber, false, ack3InId[0]?.InteractionId, 'Out', 3, 0,smsId)
   } else if (messageStatus == 'failed') {
+    logger.info(`Failed status Number------------------ ${customerPhoneNumber} --- ${smsId} --- ${failedMessageReason} --- ${failedMessageCode}`);
     let campaignReadQuery = 'UPDATE CampaignMessages set status=0,FailureReason=?,FailureCode=? where phone_number =?  and messageTemptateId =?';
     let campaignRead = await db.excuteQuery(campaignReadQuery, [failedMessageReason, failedMessageCode, customerPhoneNumber, smsId])
+    
+    logger.info(`Campaign Failed updated ------------------ ${customerPhoneNumber} --- ${JSON.stringify(campaignRead)}`);
     const smsupdate = `UPDATE Message SET msg_status = 9 ,failedMessageReason=? where Message_template_id =? and SPID=?`
     //  console.log(smsupdate)
     let resd = await db.excuteQuery(smsupdate, [failedMessageReason, smsId, spid])

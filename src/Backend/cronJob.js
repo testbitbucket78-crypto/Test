@@ -886,7 +886,7 @@ async function messageThroughselectedchannel(spid, from, type, text, media, phon
 
         if (response?.status == 200) {
           //interaction_id,message_direction,message_text,message_media,Type,SPID,media_type,Agent_id,assignAgent,Message_template_id
-          let saveInCampaignMessage = await sendMessages(from, text, campaignId, message, response.status, text, response.message?.messages[0]?.id, 'WA API', '', '');
+          let saveInCampaignMessage =  sendMessages(from, text, campaignId, message, response.status, text, response.message?.messages[0]?.id, 'WA API', '', '');
           let saveSendedMessage = await saveMessage(from, spid, response?.message?.messages[0]?.id, message_content, media, type, type, 'WA API', "Official campaign message", 1,buttons,interactive_buttons);
         } else {
           const errorCode = response.message?.error?.code || '190';

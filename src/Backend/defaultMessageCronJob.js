@@ -676,7 +676,7 @@ async function botTimeOperations(){
     // await NoAgentReplyTimeOut();  
     // await NoCustomerReplyTimeout();     // system_message_type_id  = 6
     // }
-
+ botTimeOperations();
     if (!canProceedWithNewTask) {
     console.log('Previous task still running, skipping this cycle...');
   } else {
@@ -684,9 +684,9 @@ async function botTimeOperations(){
 
     try {
       console.log('Running scheduled task...');
-      NoCustomerReplyReminder();
+     // NoCustomerReplyReminder();
       await NoAgentReplyTimeOut();
-      await NoCustomerReplyTimeout();
+       //await NoCustomerReplyTimeout();
     } catch (err) {
       logger.error(`Error in scheduled tasks: ${err.message}`);
 
@@ -697,7 +697,7 @@ async function botTimeOperations(){
   }
 
        // system_message_type_id = 4
-    botTimeOperations();
+   
 
   });
 //}

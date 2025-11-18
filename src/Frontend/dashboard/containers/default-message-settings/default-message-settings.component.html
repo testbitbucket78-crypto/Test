@@ -15,9 +15,9 @@
             </div>
             <div class="sub-contents">
                 <p>{{data?.description}}</p>
-                <button *ngIf="!data?.uid"  class="white-btn" data-bs-toggle="modal" (click)="selectedButtonType(idx)" data-bs-target="#welcomGreeting">
+                <button *ngIf="!data?.uid"  class="white-btn" data-bs-toggle="modal" (click)="selectedButtonType(idx)" data-bs-target="#welcomGreeting" [disabled]="selectedCategory == 3 || selectedCategory == 5" [attr.title]="(selectedCategory == 3 || selectedCategory == 5) ? 'This feature is under development' : null">
                  <img src="../../../../assets/img/teambox/add.svg" class="pr-1"> Configure </button>
-                 <button *ngIf="data?.uid" class="white-btn" (click)="isShowSideBar(data,idx)">View & Manage</button>
+                 <button *ngIf="data?.uid" class="white-btn" (click)="isShowSideBar(data,idx)" [disabled]="selectedCategory == 3 || selectedCategory == 5">View & Manage</button>
             </div>
           </div>
     </div>

@@ -16,7 +16,8 @@ export const environment = {
     smartApi: 'https://smartapi.stacknize.com',
     waweb: 'https://waweb.stacknize.com',
     API_Keyword: 'stacknize',
-    chhanel: 'api'
+    chhanel: 'api',
+    env:'staging'
 };
 
 /*
