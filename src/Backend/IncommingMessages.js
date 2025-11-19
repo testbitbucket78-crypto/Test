@@ -20,6 +20,7 @@ const { userStatus } = require('./enum.js')
 const { sendEmail } = require('./Services/EmailService');
 const { MessagingName, channelsForTemplates }= require('./enum');
 const { getUrl, env } = require('./config');
+const logger = require('./common/logger.log');
 
 const { Queue, Worker } = require('bullmq');
 
@@ -1122,6 +1123,7 @@ async function messageThroughselectedchannel(spid, from, type, text, media, phon
 }
 }
 const variable = require('./common/constant');
+const { loggers } = require("winston");
 async function SreplyThroughselectedchannel(spid, from, type, text, media, phone_number_id, channelType, agentId, interactionId, testMessage, media_type, display_phone_number,
   isTemplate,
   laungage,
@@ -1230,6 +1232,7 @@ async function AssignToContactOwner(sid, newId, custid,display_phone_number) {
 
 
 async function botOperations(data){
+  logger.info(`botOperations-----------------------${data}`);
   console.log("botOperations started");
   let deleteSessionQuery = `update BotSessions set status = 99 where customerId=?`
   let deletSession = await db.excuteQuery(deleteSessionQuery, [data?.custid]);
@@ -1949,7 +1952,7 @@ async function botVariablexecute(json,data,questionOption=''){
         let updateBotSession = await db.excuteQuery(updateBotSessionQuery, [data?.nodeId,json?.connectedId,null,JSON.stringify(variables),data?.botId,data?.custid]);
         data['isWaiting'] =0;
           } else{
-            var updateBotSessionQuery = "update BotSessions set isWaiting=0,current_nodeId=?,next_nodeId=?,node_timeout=?where botId =? and customerId =? and status=2";
+            var updateBotSessionQuery = "update BotSessions set isWaiting=0,current_nodeId=?,next_nodeId=?,node_timeout=? where botId =? and customerId =? and status=2";
         let updateBotSession = await db.excuteQuery(updateBotSessionQuery, [data?.nodeId,json?.connectedId,null,data?.botId,data?.custid]);
         data['isWaiting'] =0;
           }
@@ -2280,7 +2283,7 @@ let mainData = {
 //-----start------- 0 null 0  559169223950422 Pawan Sharma 917618157986 55 83534 380 Open 7133 80363 null WA API 0 0 0 null 919877594039 ------end-------
 
 
-//autoReplyDefaultAction(0, null, 0, 'agent01', 559169223950422,'Pawan Sharma', 917618157986, 55, 392584, 380, 'Open', 7204, 80363, null, 'WA API', 0, 0, 0, null, 919877594039)
+//autoReplyDefaultAction(0, null, 0, 'abcd', 211544555367892,'Pawan Sharma', 917618157986, 22, 6782, 380, 'Open', 29579, 6782, null, 'WA API', 0, 0, 0, null, 911724610945)
 
 //  let time = '00:15' ; // Default to 1 hour if not set
 //     let hour = time?.split(':')[0];
@@ -2296,11 +2299,14 @@ let mainData = {
 
 // let stringvaleu = JSON.stringify(value).replace(/[\[\]\s]/g, '');
 
-}, 3000);*/
+//console.log('-started----------',new Date());
+
+//triggerSR()
+}, 1000);*/
 
 async function triggerSR(){
-      var replymessage = await matchSmartReplies('addTag', 55, 'WA API')
-      let isSReply = await iterateSmartReplies(replymessage, 559169223950422, 919877594039, 55, 83534, 380, 7133, 'WA API', 919877594039);
+      //var replymessage = await matchSmartReplies('addTag', 55, 'WA API')
+      //let isSReply = await iterateSmartReplies(replymessage, 559169223950422, 919877594039, 55, 83534, 380, 7133, 'WA API', 919877594039);
      
 }
 
