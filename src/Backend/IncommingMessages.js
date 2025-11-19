@@ -20,6 +20,7 @@ const { userStatus } = require('./enum.js')
 const { sendEmail } = require('./Services/EmailService');
 const { MessagingName, channelsForTemplates }= require('./enum');
 const { getUrl, env } = require('./config');
+const logger = require('./common/logger.log');
 
 const { Queue, Worker } = require('bullmq');
 
@@ -1122,6 +1123,7 @@ async function messageThroughselectedchannel(spid, from, type, text, media, phon
 }
 }
 const variable = require('./common/constant');
+const { loggers } = require("winston");
 async function SreplyThroughselectedchannel(spid, from, type, text, media, phone_number_id, channelType, agentId, interactionId, testMessage, media_type, display_phone_number,
   isTemplate,
   laungage,
@@ -1230,6 +1232,7 @@ async function AssignToContactOwner(sid, newId, custid,display_phone_number) {
 
 
 async function botOperations(data){
+  logger.info(`botOperations-----------------------${data}`);
   console.log("botOperations started");
   let deleteSessionQuery = `update BotSessions set status = 99 where customerId=?`
   let deletSession = await db.excuteQuery(deleteSessionQuery, [data?.custid]);
