@@ -256,6 +256,7 @@ WHERE ? LIKE CONCAT('%', t3.Keyword , '%')AND t1.SP_ID=? and t1.ID=?  and (t1.is
 
 
       if (reply.length > 0) {
+console.log('line 259---',reply);
         // console.log(allSmartReplies.length, "break contains i ==", i)
         // console.log(" reply abc")
         break;
@@ -272,7 +273,7 @@ WHERE ? LIKE CONCAT('%', t3.Keyword , '%')AND t1.SP_ID=? and t1.ID=?  and (t1.is
       reply = await db.excuteQuery(FuzzyQuery, [[message_text], sid, id, channelType]);
       // console.log(reply)
       if (reply.length > 0) {
-
+console.log('line 276---',reply);
         break;
       }
 
@@ -288,6 +289,7 @@ WHERE ? LIKE CONCAT('%', t3.Keyword , '%')AND t1.SP_ID=? and t1.ID=?  and (t1.is
       reply = await db.excuteQuery(exactQuery, [[message_text], sid, id, channelType]);
       //console.log(reply)
       if (reply.length > 0) {
+console.log('line 292---',reply);
 
         break;
       }
@@ -1294,10 +1296,8 @@ async function sendDropOffMessage(data) {
       setTimeout(()=>{notify.NotifyServer(data?.display_phone_number, false, data?.interactionId, 0, 'Out', 'Smartreply')},200);
       // var updateBotSessionQuery = "update BotSessions set isWaiting=1,current_nodeId=? where botId =? and status=2";
       //   let updateBotSession = await db.excuteQuery(updateBotSessionQuery, [json?.connectedId,data?.botId]);
-      if(result){
-        botExit(data, 4);
-      }
     }
+      botExit(data, 4);
   }
 }
 
@@ -1968,6 +1968,9 @@ async function invalidQuestionResponse(data,json){
               var updateBotSessionQuery = "update BotSessions set isWaiting=1,node_retry_count=? where botId =? and customerId =? and status=2";
         let updateBotSession = await db.excuteQuery(updateBotSessionQuery, [sessionDetail?.node_retry_count+1,data?.botId,data?.custid]);
             } else{
+               var updateBotSessionQuery = "update BotSessions set isWaiting=0,current_nodeId=?,next_nodeId=?,node_timeout=? where botId =? and customerId =? and status=2";
+        let updateBotSession = await db.excuteQuery(updateBotSessionQuery, [data?.nodeId,json?.connectedId,null,data?.botId,data?.custid]);
+        data['isWaiting'] =0;
               if(json?.data?.invalidAction){
               if(json?.data?.invalidAction =='fallback'){
                 data.nodeId = json?.FallbackId;
@@ -2277,6 +2280,8 @@ let mainData = {
   "phone_number_id": 559169223950422,
   "botId": 269,
 }
+
+//matchSmartReplies('hlo',55,"WA API")
 //botOperations(mainData)
 //triggerSR()
 
