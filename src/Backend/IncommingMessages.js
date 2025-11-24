@@ -1499,7 +1499,7 @@ data.nodeId = json?.option[1]?.optionConnectedId;
       } else if(type =='openQuestion'){
         console.log(json?.data?.answerType,'------------------------answerType--------------');
         console.log(json?.data?.answerType.trim() == 'number','------------------------answerType--------------');
-        if((json?.data?.answerType == 'email' && isValidEmail(data?.incommingMessage)) || (json?.data?.answerType == 'text' && isValidText(json,data?.incommingMessage)) || (json?.data?.answerType.trim() == 'number' && isValidNumberQuestion(json,data?.incommingMessage) && isValidNumber(data?.incommingMessage)) || (json?.data?.answerType == 'custom' && isCustomText(json,data?.incommingMessage))  || (json?.data?.answerType == 'date' && isValidDate(json,data?.incommingMessage))){
+        if((json?.data?.answerType == 'email' && isValidEmail(data?.incommingMessage)) || (json?.data?.answerType == 'text' && isValidText(json,data?.incommingMessage)) || (json?.data?.answerType.trim() == 'number' && isValidNumber(data?.incommingMessage) && isValidNumberQuestion(json,data?.incommingMessage)) || (json?.data?.answerType == 'custom' && isCustomText(json,data?.incommingMessage))  || (json?.data?.answerType == 'date' && isValidDate(json,data?.incommingMessage))){
           data.nodeId = json.option[0]?.optionConnectedId;
          let returnedData = await botVariablexecute(json,data);
           identifyNode(returnedData);
