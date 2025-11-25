@@ -555,7 +555,7 @@
                     style="border: 1px solid #e5e7eb; border-radius: 8px; padding: 10px 12px; font-size: 14px;"
                     placeholder="Set reply wait time in minutes" />
 
-                    <div *ngIf="questionOption.errors?.['timeElapseExceeded']" style="color: red; font-size: 12px;">
+                    <div *ngIf="questionOption.errors?.['timeElapseExceeded'] && !viewMode" style="color: red; font-size: 12px;">
                       Time Elapse Minutes must be less than {{ botTimeout }}.
                     </div>
 
@@ -1010,7 +1010,7 @@
                                             padding: 10px 12px;
                                             font-size: 14px;
                                         " placeholder="Set reply wait time in minutes" />
-                  <div *ngIf="openQuestion.errors?.['timeElapseExceeded']" style="color: red; font-size: 12px;">
+                  <div *ngIf="openQuestion.errors?.['timeElapseExceeded'] && !viewMode" style="color: red; font-size: 12px;">
                     Time Elapse Minutes must be less than {{ botTimeout }}.
                   </div>
                   <div class="form-check mb-2">
@@ -1483,7 +1483,7 @@
                                             font-size: 14px;
                                         " placeholder="Set reply wait time in minutes" />
 
-                          <div *ngIf="buttonOptions.errors?.['timeElapseExceeded']" style="color: red; font-size: 12px;">
+                          <div *ngIf="buttonOptions.errors?.['timeElapseExceeded'] && !viewMode" style="color: red; font-size: 12px;">
   Time Elapse Minutes must be less than {{ botTimeout }}.
 </div>
 
@@ -1934,7 +1934,7 @@
                                             padding: 10px 12px;
                                             font-size: 14px;
                                         " placeholder="Set reply wait time in minutes" />
-            <div *ngIf="listOptions.errors?.['timeElapseExceeded']" style="color: red; font-size: 12px;">
+            <div *ngIf="listOptions.errors?.['timeElapseExceeded'] && !viewMode" style="color: red; font-size: 12px;">
   Time Elapse Minutes must be less than {{ botTimeout }}.
 </div>
 
@@ -2247,7 +2247,7 @@
                                             padding: 10px 12px;
                                             font-size: 14px;
                                         " placeholder="Set reply wait time in minutes" />
-                                                    <div *ngIf="whatsAppFlowForm.errors?.['timeElapseExceeded']" style="color: red; font-size: 12px;">
+                                                    <div *ngIf="whatsAppFlowForm.errors?.['timeElapseExceeded'] && !viewMode" style="color: red; font-size: 12px;">
   Time Elapse Minutes must be less than {{ botTimeout }}.
 </div>
 

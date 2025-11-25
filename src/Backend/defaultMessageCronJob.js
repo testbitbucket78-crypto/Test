@@ -677,10 +677,10 @@ async function botTimeOperations(){
     // await NoCustomerReplyTimeout();     // system_message_type_id  = 6
     // }
  botTimeOperations();
-    if (!canProceedWithNewTask) {
-    console.log('Previous task still running, skipping this cycle...');
-  } else {
-    canProceedWithNewTask = false;
+  //   if (!canProceedWithNewTask) {
+  //   console.log('Previous task still running, skipping this cycle...');
+  // } else {
+  //   canProceedWithNewTask = false;
 
     try {
       console.log('Running scheduled task...');
@@ -694,7 +694,7 @@ async function botTimeOperations(){
       logger.info(`Info in scheduled tasks and we got this in the finally block: ${err?.message}`);
       //canProceedWithNewTask = true;
     }
-  }
+ // }
 
        // system_message_type_id = 4
    
