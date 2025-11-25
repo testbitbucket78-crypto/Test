@@ -506,9 +506,9 @@ if (this.botBuilderForm) {
       this.isLoading = true
       this.botService.saveBotDetails(data).subscribe((response: any) => {
         if (response.status === 200) {
-          this.botBuilderForm.reset();
           sessionStorage.setItem('botId', response.msg.insertId || response.botId)
           sessionStorage.setItem('botTimeOut', this.botBuilderForm.value.botTimeout)
+          this.botBuilderForm.reset();
           if(Type == 'copy'){
                this.botBuilderForm.reset();
             if (this.botDetailsData.node_FE_Json) {
