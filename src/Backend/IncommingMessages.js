@@ -1701,6 +1701,9 @@ data.nodeId = json?.option[1]?.optionConnectedId;
       }
       console.log(delay,'------------------delay-----------------------');
       addJobs(data?.botId,data,delay);
+
+      const delayedJobs = await messageQueue.getJobs(['delayed']);
+  console.log("Delayed Jobs:", delayedJobs);
     }
     else if(type == 'WorkingHoursModal'){
       console.log(isWorkingHour(data.sid),'------------------- isWorkingHour -------------------');
@@ -2253,6 +2256,9 @@ async function addJobs(botId, data, delaySeconds) {
     { botId, data },
     { delay }
   );
+
+ 
+  logger.info(`botOperations-----------------------${data}`);
 }
 
 const worker = new Worker(
@@ -2268,7 +2274,7 @@ const worker = new Worker(
 );
 
 
-/*setTimeout(() => {
+setTimeout(() => {
   
 let mainData = {
   "sid": 55,
@@ -2288,8 +2294,10 @@ let mainData = {
 
 //-----start------- 0 null 0  559169223950422 Pawan Sharma 917618157986 55 83534 380 Open 7133 80363 null WA API 0 0 0 null 919877594039 ------end-------
 
+//-----start------- 0 0000-00-00 00:00:00 0 hlo 559169223950422 Pawan Sharma 917618157986 55 392584 380 Open 10479 104346 null WA API 0 1 6 undefined 919877594039 ------end-------
 
-//autoReplyDefaultAction(0, null, 0, 'abcd', 211544555367892,'Pawan Sharma', 917618157986, 22, 6782, 380, 'Open', 29579, 6782, null, 'WA API', 0, 0, 0, null, 911724610945)
+
+autoReplyDefaultAction(0, null, 0, 'view temp 03', 559169223950422,'Pawan Sharma', 917618157986, 55, 392584, 380, 'Open', 10479, 104346, null, 'WA API', 0, 1, 6, null, 919877594039)
 
 //  let time = '00:15' ; // Default to 1 hour if not set
 //     let hour = time?.split(':')[0];
@@ -2308,7 +2316,7 @@ let mainData = {
 //console.log('-started----------',new Date());
 
 //triggerSR()
-}, 1000);*/
+}, 1000);
 
 async function triggerSR(){
       //var replymessage = await matchSmartReplies('addTag', 55, 'WA API')
