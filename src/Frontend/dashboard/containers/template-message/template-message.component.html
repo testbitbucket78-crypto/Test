@@ -651,7 +651,7 @@
                     <!-- (change)="onContentChange($event)" -->
                     
                     <ejs-richtexteditor formControlName="BodyText" id="defaultRTE" #chatEditor [toolbarSettings]="tools2" [height]="'200px'"
-                        [maxLength]="1024" [showCharCount]="true" placeholder="Enter" (change)="onContentChange();onToolbarClick($event)"
+                        [maxLength]="1024" [showCharCount]="true" placeholder="Enter" (change)="onContentChange()" (toolbarClick)="onToolbarClick($event)"
                         [pasteCleanupSettings]="pasteCleanupSettings" [saveInterval]="10">
                     </ejs-richtexteditor>
                     <!-- *region Closed -->

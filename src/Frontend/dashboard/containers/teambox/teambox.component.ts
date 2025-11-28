@@ -9,7 +9,7 @@ import { WebsocketService } from '../../services/websocket.service';
 import { WebSocketSubject } from 'rxjs/webSocket';
 import { fromEvent } from "rxjs";
 import { parsePhoneNumberFromString } from 'libphonenumber-js';
-import { ToolbarService, NodeSelection, LinkService, ImageService, EmojiPickerService } from '@syncfusion/ej2-angular-richtexteditor';
+import { ToolbarService, NodeSelection, LinkService, ImageService, EmojiPickerService, ToolbarClickEventArgs } from '@syncfusion/ej2-angular-richtexteditor';
 import { RichTextEditorComponent, HtmlEditorService } from '@syncfusion/ej2-angular-richtexteditor';
 import { debounceTime, map } from 'rxjs/operators';
 import { Mention } from '@syncfusion/ej2-angular-dropdowns';
@@ -64,7 +64,11 @@ export class TeamboxComponent implements OnInit {
 	public tools: object = {
 		items: [
 
-			'Bold', 'Italic', 'StrikeThrough', 'EmojiPicker',
+			// 'Bold', 'Italic', 'StrikeThrough', 'EmojiPicker',
+			{ tooltipText: 'Bold (*text*)', command: 'Bold', prefixIcon: 'e-bold' },
+			{ tooltipText: 'Italic (_text_)', command: 'Italic', prefixIcon: 'e-italic' },
+			{ tooltipText: 'StrikeThrough (~text~)', command: 'StrikeThrough', prefixIcon: 'e-strikethrough' },
+			'EmojiPicker',
 			{
 				tooltipText: 'Attachment',
 				undo: true,
@@ -107,6 +111,48 @@ export class TeamboxComponent implements OnInit {
 		plainText: true,
 		keepFormat: false,
 	};
+
+onToolbarClick(e: ToolbarClickEventArgs): void {
+  debugger;
+  const rte = this.chatEditor;
+  const selection = window.getSelection();
+
+  if (!selection || selection.rangeCount === 0) return;
+
+  const range = selection.getRangeAt(0);
+  const selectedText = range.toString();
+  if (!selectedText.trim()) return;
+
+  const command = (e.item as any).command; 
+
+  let wrappedText = selectedText;
+  switch (command) {
+	case 'Bold':
+	  wrappedText = `*${selectedText}*`;
+	  break;
+	case 'Italic':
+	  wrappedText = `_${selectedText}_`;
+	  break;
+	case 'StrikeThrough':
+	  wrappedText = `~${selectedText}~`;
+	  break;
+	default:
+	  return;
+  }
+
+  // Replace selection with wrapped text
+  range.deleteContents();
+  range.insertNode(document.createTextNode(wrappedText));
+
+  // Move cursor after inserted text
+  selection.removeAllRanges();
+  const newRange = document.createRange();
+  newRange.setStartAfter(range.endContainer);
+  newRange.collapse(true);
+  selection.addRange(newRange);
+}
+
+
 	countryCodes = [
 		'AD +376', 'AE +971', 'AF +93', 'AG +1268', 'AI +1264', 'AL +355', 'AM +374', 'AO +244', 'AR +54', 'AS +1684',
 		'AT +43', 'AU +61', 'AW +297', 'AX +358', 'AZ +994', 'BA +387', 'BB +1 246', 'BD +880', 'BE +32', 'BF +226',
@@ -1715,7 +1761,7 @@ export class TeamboxComponent implements OnInit {
 				item['notesList'] = notesList ? this.groupMessageByDate(notesList) : []
 				item['allnotes'] = notesList ? notesList : []
 			})
-
+debugger;
 			this.apiService.getAllMessageByInteractionId(item.InteractionId, 'media', this.SPID).subscribe(mediaList => {
 				item['allmedia'] = mediaList ? mediaList : []
 			})
@@ -1900,6 +1946,7 @@ export class TeamboxComponent implements OnInit {
 
 		this.apiService.getAllMessageByInteractionId(item.InteractionId, 'media', this.SPID, rangeStart, rangeEnd).subscribe((res2: any) => {
 			let mediaList = res2.result;
+			debugger;
 			let val = mediaList ? mediaList : [];
 			if (isNewMessage) {
 				item['allmedia'].push(...val);

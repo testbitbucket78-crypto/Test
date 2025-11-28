@@ -5,7 +5,7 @@ import{ repliestemplateList } from 'Frontend/dashboard/models/settings.model';
 import{ templateList } from 'Frontend/dashboard/models/settings.model';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { TeamboxService } from 'Frontend/dashboard/services/teambox.service';
-import { ToolbarService, NodeSelection, LinkService, ImageService, EmojiPickerService, CountService} from '@syncfusion/ej2-angular-richtexteditor';
+import { ToolbarService, NodeSelection, LinkService, ImageService, EmojiPickerService, CountService, ToolbarClickEventArgs} from '@syncfusion/ej2-angular-richtexteditor';
 import { RichTextEditorComponent, HtmlEditorService } from '@syncfusion/ej2-angular-richtexteditor';
 declare var $:any;
 
@@ -62,28 +62,107 @@ export class QuickResponseComponent implements OnInit {
   loadingVideo:boolean = false;
   @ViewChild('chatEditor') chatEditor?: RichTextEditorComponent | any;
 
-  public tools: object = {
-      items: [
-          'Bold',
-          'Italic',
-          'StrikeThrough',
-          'EmojiPicker',
-          {
-              tooltipText: 'Attributes',
-              undo: true,
-              click: this.ToggleAttributesOption.bind(this),
-              template:
-                  '<button style="width:28px;height:28px;border-radius: 35%!important;border: 1px solid #e2e2e2!important;background:#fff;" class="e-tbar-btn e-btn" tabindex="-1" id="custom_tbar"  >' +
-                  '<div class="e-tbar-btn-text"><img style="width:10px;" src="/assets/img/teambox/attributes.svg"></div></button>',
-          },
-      ],
-  };
+  // public tools: object = {
+  //     items: [
+  //         'Bold',
+  //         'Italic',
+  //         'StrikeThrough',
+  //         'EmojiPicker',
+  //         {
+  //             tooltipText: 'Attributes',
+  //             undo: true,
+  //             click: this.ToggleAttributesOption.bind(this),
+  //             template:
+  //                 '<button style="width:28px;height:28px;border-radius: 35%!important;border: 1px solid #e2e2e2!important;background:#fff;" class="e-tbar-btn e-btn" tabindex="-1" id="custom_tbar"  >' +
+  //                 '<div class="e-tbar-btn-text"><img style="width:10px;" src="/assets/img/teambox/attributes.svg"></div></button>',
+  //         },
+  //     ],
+  // };
 
   public pasteCleanupSettings: object = {
     prompt: false,
     plainText: true,
     keepFormat: false,
 };
+// *region Begins is new formatting settings and new functions needed for custom formatting in RTE
+public tools2: object = {
+  items: [
+    {
+      tooltipText: 'Bold (*text*)',
+      prefixIcon: 'e-bold',
+      command: 'Bold',
+    },
+    {
+      tooltipText: 'Italic (_text_)',
+      prefixIcon: 'e-italic',
+      command: 'Italic',
+    },
+    {
+      tooltipText: 'StrikeThrough (~text~)',
+      prefixIcon: 'e-strikethrough',
+      command: 'StrikeThrough',
+    },
+    'EmojiPicker',
+    {
+      tooltipText: 'Attributes',
+      click: this.ToggleAttributesOption.bind(this),
+      template:
+        `<button style="width:28px;height:28px;border-radius:35%!important;
+        border:1px solid #e2e2e2!important;background:#fff;" 
+        class="e-tbar-btn e-btn" tabindex="-1" id="custom_tbar">
+          <div class="e-tbar-btn-text">
+            <img style="width:10px;" src="/assets/img/teambox/attributes.svg">
+          </div>
+        </button>`,
+    },
+  ],
+};
+
+
+onToolbarClick(e: ToolbarClickEventArgs): void {
+  debugger;
+  const rte = this.chatEditor;
+  const selection = window.getSelection();
+
+  if (!selection || selection.rangeCount === 0) return;
+
+  const range = selection.getRangeAt(0);
+  const selectedText = range.toString();
+  if (!selectedText.trim()) return;
+
+  const command = (e.item as any).command; 
+
+  let wrappedText = selectedText;
+  switch (command) {
+    case 'Bold':
+      wrappedText = `*${selectedText}*`;
+      break;
+    case 'Italic':
+      wrappedText = `_${selectedText}_`;
+      break;
+    case 'StrikeThrough':
+      wrappedText = `~${selectedText}~`;
+      break;
+    default:
+      return;
+  }
+
+  // Replace selection with wrapped text
+  range.deleteContents();
+  range.insertNode(document.createTextNode(wrappedText));
+
+  // Move cursor after inserted text
+  selection.removeAllRanges();
+  const newRange = document.createRange();
+  newRange.setStartAfter(range.endContainer);
+  newRange.collapse(true);
+  selection.addRange(newRange);
+}
+
+
+// *region Closed is new formatting settings and new functions needed for custom formatting in RTE
+
+
   lastCursorPosition: Range | null = null;
   
   constructor(config: NgbModalConfig,private modalService: NgbModal,public apiService:SettingsService,public settingsService:SettingsService, private _teamboxService: TeamboxService) { }

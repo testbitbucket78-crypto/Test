@@ -9,7 +9,7 @@ import { repliesList } from 'Frontend/dashboard/models/smartReplies.model';
 import { Location } from '@angular/common';
 import { agentMessageList } from 'Frontend/dashboard/models/smartReplies.model';
 import { SettingsService } from 'Frontend/dashboard/services/settings.service';
-import { ToolbarService, NodeSelection, LinkService, ImageService } from '@syncfusion/ej2-angular-richtexteditor';
+import { ToolbarService, NodeSelection, LinkService, ImageService,ToolbarClickEventArgs } from '@syncfusion/ej2-angular-richtexteditor';
 import { RichTextEditorComponent, HtmlEditorService,EmojiPickerService } from '@syncfusion/ej2-angular-richtexteditor';
 import { hasEmptyValues, hasEmptyValueInArray } from '../common/Utils/file-utils';
 import { InteractiveButtonPayload } from 'Frontend/dashboard/models/interactiveButtons.model';
@@ -208,7 +208,13 @@ export class SmartRepliesComponent implements OnInit,OnDestroy {
 		// 	{value:2,label:'WhatsApp Web',checked:false}];
 	
 		public tools: object = {
-			items: ['Bold', 'Italic', 'StrikeThrough','EmojiPicker',
+			items: [
+				// 'Bold', 'Italic', 'StrikeThrough','EmojiPicker',
+				{ tooltipText: 'Bold (*text*)', command: 'Bold', prefixIcon: 'e-bold' },
+				{ tooltipText: 'Italic (_text_)', command: 'Italic', prefixIcon: 'e-italic' },
+				{ tooltipText: 'StrikeThrough (~text~)', command: 'StrikeThrough', prefixIcon: 'e-strikethrough' },
+				'EmojiPicker',
+
 				{
 					tooltipText: 'Attachment',
 					undo: true,
@@ -242,6 +248,47 @@ export class SmartRepliesComponent implements OnInit,OnDestroy {
 			plainText: true,
 			keepFormat: false,
 		};
+
+		onToolbarClick(e: ToolbarClickEventArgs): void {
+		  debugger;
+		  const rte = this.chatEditor;
+		  const selection = window.getSelection();
+		
+		  if (!selection || selection.rangeCount === 0) return;
+		
+		  const range = selection.getRangeAt(0);
+		  const selectedText = range.toString();
+		  if (!selectedText.trim()) return;
+		
+		  const command = (e.item as any).command; 
+		
+		  let wrappedText = selectedText;
+		  switch (command) {
+			case 'Bold':
+			  wrappedText = `*${selectedText}*`;
+			  break;
+			case 'Italic':
+			  wrappedText = `_${selectedText}_`;
+			  break;
+			case 'StrikeThrough':
+			  wrappedText = `~${selectedText}~`;
+			  break;
+			default:
+			  return;
+		  }
+		
+		  // Replace selection with wrapped text
+		  range.deleteContents();
+		  range.insertNode(document.createTextNode(wrappedText));
+		
+		  // Move cursor after inserted text
+		  selection.removeAllRanges();
+		  const newRange = document.createRange();
+		  newRange.setStartAfter(range.endContainer);
+		  newRange.collapse(true);
+		  selection.addRange(newRange);
+		}
+
 	isSendButtonDisabled=false
 	click: any;
 	selecetdpdf: any='';
@@ -2069,6 +2116,7 @@ console.log(sortedData)
 			}
 			if (this.repliesData.ActionList[i].Name == 'Assign Conversation') {
 				ActionId = 2
+				uuid = sortedData[i]?.ValueUuid
 			}
 			if (this.repliesData.ActionList[i].Name == 'Trigger Flow') {
 				ActionId = 4

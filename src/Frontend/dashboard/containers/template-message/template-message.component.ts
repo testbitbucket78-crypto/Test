@@ -1477,7 +1477,7 @@ sanitizeInteractivePayload(payload: any): any {
 
     
 onContentChange() {
-    
+    debugger;
     const container = document.createElement('div');
     container.innerHTML = this.chatEditor?.value;
     console.log(this.chatEditor?.value);

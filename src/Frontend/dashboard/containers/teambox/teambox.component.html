@@ -579,6 +579,7 @@
 									#mention_integration (onChange)="onCreate()"
 									[readonly]="(selectedInteraction?.assignTo?.AgentId != uid && showChatNotes=='text') || (this.showChatNotes=='notes' && this.selectedInteraction?.interaction_status != 'Open') || (this.showChatNotes=='text' && this.selectedInteraction.channel=='WA API' && this.selectedInteraction?.progressbar?.progressbarValue ==0) || isPaused"
 									[toolbarSettings]='tools' [height]='100'
+									(toolbarClick)="onToolbarClick($event)"
 									[placeholder]="(this.showChatNotes=='text' && this.selectedInteraction.channel=='WA API' && this.selectedInteraction?.progressbar?.progressbarValue ==0) ? 'Select Template':'Enter Message'"
 									(actionBegin)="onActionBegin($event)" [pasteCleanupSettings]="pasteCleanupSettings">
 								</ejs-richtexteditor>

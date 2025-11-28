@@ -666,7 +666,17 @@ const headers = new HttpHeaders({
   //   return this.http.get<any>(`${this.API_URL}/getChennelWhapiorWeb/${spId}`);
   // }
   
+convertUTCToLocal(utcString: string): string {
+  debugger
+  if (!utcString) return "";
 
+  const date = new Date(utcString);
+  return date.toLocaleTimeString([], {
+    hour: "2-digit",
+    minute: "2-digit",
+    hour12: true
+  });
+}
 
 
 

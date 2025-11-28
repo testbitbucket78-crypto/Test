@@ -362,7 +362,11 @@
 										  <img *ngIf="isDocument(message.Media)" src="../../../../assets/img/settings/doc.svg" alt="Media" style="max-width: 100%; height: auto;"/>
 										  <video *ngIf="isVideo(message.Media)" [src]="message.Media" controls style="max-width: 100%; height: auto;"></video>
 
-										  <p *ngIf="message.Message" id="msgbox-body{{i}}" [innerHTML]="message.Message | sanitizeHtml"></p>
+										  <!-- <p *ngIf="message.Message" id="msgbox-body{{i}}" [innerHTML]="message.Message | sanitizeHtml"></p> -->
+												    <app-whatsapp-message-preview
+														type="teambox"
+														[messageText]="message.Message">
+													</app-whatsapp-message-preview>
 										  <div *ngIf="message?.buttons && message?.buttons?.length >0" class="w-100">
 											<div *ngFor="let item of message?.buttons let i = index" >
 											<div  class="text-center" *ngIf="item?.buttonText && i<3"><button class="template-btn"  [ngClass]="{'btn-radius': ((message?.buttons?.length-1)== i || (message?.buttons?.length >2 && i==2))}">
@@ -496,7 +500,7 @@
 								  <div class="conversation_inout_area">
 					  
 									<div class="input-area">
-									  <ejs-richtexteditor id='defaultRTE' #chatEditor [toolbarSettings]='tools' [width]='0' placeholder="Type Reply..." [pasteCleanupSettings]="pasteCleanupSettings"> </ejs-richtexteditor>
+									  <ejs-richtexteditor id='defaultRTE' #chatEditor [toolbarSettings]='tools' [width]='0' placeholder="Type Reply..." [pasteCleanupSettings]="pasteCleanupSettings" (toolbarClick)="onToolbarClick($event)"> </ejs-richtexteditor>
 									  <button class="submit_btn" (click)="addMessage()">Add</button>
 									</div>
 								  </div>

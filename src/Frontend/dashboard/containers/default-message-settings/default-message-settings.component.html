@@ -158,7 +158,8 @@
 
                          <div class="sel-type-text h-100">
                              <ejs-richtexteditor class="h-100" formControlName="value" id='defaultRTE' #chatEditor [toolbarSettings]='tools'
-                             [maxLength]='1024' [showCharCount]='true' placeholder="Enter"  (change)="onContentChange()" [pasteCleanupSettings]="pasteCleanupSettings">
+                             [maxLength]='1024' [showCharCount]='true' placeholder="Enter"  (change)="onContentChange()" [pasteCleanupSettings]="pasteCleanupSettings"
+                             (toolbarClick)="onToolbarClick($event)">
                             </ejs-richtexteditor>
                          </div>
                     </div>
@@ -232,8 +233,13 @@
                         </a>
                         </div>
                     </div>
-                  <div *ngIf="selectedMessageData.value" class="message_data" [innerHTML]="selectedMessageData.value" 
-                      [ngClass]="{'preview': selectedMessageData.message_type === 'text'}">
+                  <!-- <div *ngIf="selectedMessageData.value" class="message_data" [innerHTML]="selectedMessageData.value" 
+                      [ngClass]="{'preview': selectedMessageData.message_type === 'text'}"> -->
+                    <div *ngIf="selectedMessageData.value" class="message_data">
+                    <app-whatsapp-message-preview
+                        type="teambox"
+                        [messageText]="selectedMessageData?.value">
+                    </app-whatsapp-message-preview>
                 </div>
                 </div>
             </div>

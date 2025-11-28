@@ -77,7 +77,13 @@ isLoading!: boolean;
     this._settingsService.getWorkingData(this.sp_Id)
     .subscribe(result =>{
       if(result){
-        this.workingData = result?.result;
+        // this.workingData = result?.result;
+        this.workingData = result?.result.map(item => ({
+          ...item,
+          start_time: this._settingsService.convertUTCToLocal(item.start_time),
+          end_time: this._settingsService.convertUTCToLocal(item.end_time)
+        }));
+        
         this.isLoading = false;
       }
 
