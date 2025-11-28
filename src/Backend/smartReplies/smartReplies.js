@@ -105,10 +105,15 @@ app.post('/KeywordMatch', async (req, res) => {
     const smartReplyId = req.body.smartReplyId;
 
     console.log(req.body.Keywords)
-    const params = {
-      strings: {
+    // const params = {
+    //   strings: {
 
-        value: myStringArray.join(',')
+    //     value: myStringArray.join(',')
+    //   }
+    // };
+   const params = {
+      strings: {
+        value: myStringArray.map(k => k.trim()).join('|')
       }
     };
     console.log("params " + params.strings.value)

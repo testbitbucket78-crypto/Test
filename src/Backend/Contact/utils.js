@@ -554,17 +554,23 @@ const formatDateTime = (date) => {
 //   }
 // }
 function convertTimeByTimezone(time, timezone) {
-  try {
+ try {
     if (!time || !timezone) return time;
 
-    const now = new Date();
-    const currentDate = moment(now).format('YYYY-MM-DD');
-    const dateTimeString = `${currentDate}T${time}:00`;
+    const currentDate = new Date().toISOString().split("T")[0]; 
+    const dateString = `${currentDate}T${time}:00`;
 
-    const utcTime = moment(dateTimeString).utc();
-    return utcTime.format('HH:mm');
+    // Build time in the selected timezone
+    const localStringInTZ = new Date(dateString).toLocaleString("en-US", {
+      timeZone: timezone
+    });
+
+    // Parse that as local (which effectively becomes UTC conversion)
+    const dateInTZ = new Date(localStringInTZ);
+
+    return dateInTZ.toISOString() ;
   } catch (err) {
-    console.error("Error converting time:", err);
+    console.error("UTC conversion error:", err);
     return time;
   }
 }

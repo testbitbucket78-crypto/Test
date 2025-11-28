@@ -119,7 +119,7 @@ const addCampaign = async (req, res) => {
         } else {
 
             var inserQuery = "INSERT INTO Campaign (status,sp_id,title,channel_id,message_heading,message_content,message_media,message_variables,button_yes,button_no,button_exp,category,time_zone,start_datetime,end_datetime,csv_contacts,segments_contacts,category_id,OptInStatus,start_time,end_time,media_type,message_footer, templateId,headerText,bodyText,buttons,buttonsVariable,interactive_buttons,RetryAndExpirySettings) values ? ";
-            let addCampaignValue = [[status, SP_ID, title, channel_id, message_heading, message_content, message_media, message_variables, button_yes, button_no, button_exp, category, time_zone, start_datetime, end_datetime, csv_contacts, segments_contacts, category_id, OptInStatus, start_time, end_time, media_type, message_footer, templateId,header,body,buttons,buttonsVariable,interactive_buttons,RetryAndExpirySettings]]
+            let addCampaignValue = [[status, SP_ID, title, channel_id, message_heading, message_content, message_media, message_variables, button_yes, button_no, button_exp, category, time_zone, start_datetime, end_datetime, csv_contacts, segments_contacts, category_id, OptInStatus, start_time, end_time, media_type, message_footer, templateId,header,body,buttons,buttonsVariable,interactive_buttons,JSON.stringify(RetryAndExpirySettings)]]
 
             let addcampaign = await db.excuteQuery(inserQuery, [addCampaignValue]);
 

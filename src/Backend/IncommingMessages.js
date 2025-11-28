@@ -333,9 +333,12 @@ async function matchSmartReplies(message_text, sid, channelType) {
 
     if (criteria === 'exact matching' && message === keyword) {
       matched.push({ ...row, matchType: 'exact' });
-    } else if (criteria === 'contains' && message.includes(keyword)) {
-      matched.push({ ...row, matchType: 'contains' });
+    } else if (criteria === 'contains') {
+      const regex = new RegExp(`\\b${keyword}\\b`, 'i'); 
+      if (regex.test(message)) {
+         matched.push({ ...row, matchType: 'contains' });
     }
+}
   }
 
   // Prioritizing matches on the bases of the requirement given to me.
@@ -346,7 +349,10 @@ async function matchSmartReplies(message_text, sid, channelType) {
     return b.Keyword.length - a.Keyword.length;
   });
 
-  return matched.length ? [matched[0]] : [];
+  if (!matched.length) return [];
+
+  const topSmartReplyId = matched[0].SmartReplyID;
+  return matched.filter(r => r.SmartReplyID === topSmartReplyId);
 }
 
 

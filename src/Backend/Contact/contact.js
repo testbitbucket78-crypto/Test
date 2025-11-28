@@ -870,6 +870,12 @@ async function addOnlynewContact(CSVdata, identifier, SP_ID, user) {
 
     for (let i = 0; i < CSVdata.length; i++) {
       const set = CSVdata[i];
+        if (!set.find(f => f.ActuallName === 'Name')) {
+          set.push({
+            ActuallName: 'Name',
+            displayName: ''
+          });
+        }
       const fieldNames = set.map((field) => field.ActuallName).join(', ');
 
       // Find the value of the identifier based on the FieldName
@@ -915,7 +921,7 @@ async function addOnlynewContact(CSVdata, identifier, SP_ID, user) {
 
         if (nameField && phoneField && (!nameField.displayName || nameField.displayName.trim() === '')) {
           nameField.displayName = phoneField.displayName; // assign phone number as name if name is empty otherwise its good to go 
-       }
+        }
 
         let query = `INSERT INTO EndCustomer (${fieldNames}) SELECT ? WHERE NOT EXISTS (SELECT * FROM EndCustomer WHERE ${identifier}=? and SP_ID=? AND (isDeleted IS NULL OR isDeleted = 0) AND (isBlocked IS NULL OR isBlocked = 0));`;
         const values = set.map((field) => field.displayName);

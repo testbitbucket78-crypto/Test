@@ -525,4 +525,21 @@ async function isDeleted(sid) {
   }
 }
 
-module.exports = { isPaused,isDisable,isDeleted,isStatusEmpty,getCodeByLabel, getDefaultAttribue, isHolidays, isWorkingTime, resetContactFields, determineMediaFromLink, notifiactionsToBeSent, currentlyAssigned, updateHealthStatus, convertMessagingLimitTier, updateCurrentLimit, getTemplateVariables, isInvalidParam }
+async function deleteTemplateFromMeta(phoneNumberId, templateName, accessToken) {
+  try {
+    const url = `https://graph.facebook.com/v23.0/${phoneNumberId}/message_templates?name=${templateName}`;
+
+    const response = await axios.delete(url, {
+      headers: {
+        Authorization: `Bearer ${accessToken}`
+      }
+    });
+
+    return response.data;
+  } catch (err) {
+    console.error("Error deleting template from Meta:", err?.response?.data || err.message);
+    return false;
+  }
+}
+
+module.exports = { isPaused,isDisable,isDeleted,isStatusEmpty,getCodeByLabel, getDefaultAttribue, isHolidays, isWorkingTime, resetContactFields, determineMediaFromLink, notifiactionsToBeSent, currentlyAssigned, updateHealthStatus, convertMessagingLimitTier, updateCurrentLimit, getTemplateVariables, isInvalidParam, deleteTemplateFromMeta }
