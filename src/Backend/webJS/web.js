@@ -1770,7 +1770,17 @@ async function sendMail() {
   }
 }
 
+async function getUserStatus(spid) {
+  try {
+     let userStatus = (await db.excuteQuery(`SELECT * FROM user where SP_ID = ? and ParentId is null limit 1`, [spid]))[0];
+     return userStatus;
+  }catch (err) {
+    logger.error(`error in, getUserStatus for spid: ${spid}, error: ${err}`);
+    console.log("err getUserStatus", err)
+  }
+}
 
 
 
-module.exports = { createClientInstance, sendMessages, isActiveSpidClient, sendFunnel, whatsappWebStatus, autoReconnectSessions,sendMail,destroyWrongScan }
+
+module.exports = { createClientInstance, sendMessages, isActiveSpidClient, sendFunnel, whatsappWebStatus, autoReconnectSessions,sendMail,destroyWrongScan, getUserStatus };
