@@ -5,6 +5,7 @@ import { NavigationService } from 'Frontend/navigation/services';
 import { Router } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { SettingsService } from 'Frontend/dashboard/services/settings.service';
+import { environment } from 'environments/environment';
 
 @Component({
     selector: 'sb-side-nav',
@@ -22,13 +23,15 @@ export class SideNavComponent implements OnInit {
     routeDataSubscription!: Subscription;
     sideBarCollapse: boolean = false;
     showNavItem: boolean = true;
+        public chhanel:string = environment?.chhanel;
+        public env:string = environment?.env;
     items = [
         { id: 1, name: 'dashboard' },
         { id: 2, name: 'Contacts' },
         { id: 8, name: 'teambox' },
         { id: 26, name: 'SmartReplies' },
         { id: 20, name: 'camp' },
-        { id: 1, name: 'flow' },
+        { id: 29, name: 'flow' },
         { id: 22, name: 'Funnel' },
         { id: 24, name: 'BotBuilder' },
         { id: 1, name: 'rep' },
@@ -46,7 +49,7 @@ export class SideNavComponent implements OnInit {
             for (let i = 0; i < data?.length; i++) {
                 let idx = this.items.filter((it: any) => it.name == data[i])[0]?.id;
                 console.log(idx);
-                if (this.settingsService.checkRoleExist(idx?.toString())) {
+                if (this.settingsService.checkRoleExist(idx?.toString()) || (idx == 29 && (this.chhanel == 'web' || this.env == 'prod'))) {
                     console.log('remove', data[i]);
                     //     data.splice(i);
                     // i--;

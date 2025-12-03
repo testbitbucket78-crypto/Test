@@ -20,6 +20,7 @@ const { userStatus } = require('./enum.js')
 const { sendEmail } = require('./Services/EmailService');
 const { MessagingName, channelsForTemplates }= require('./enum');
 const { getUrl, env } = require('./config');
+const logger = require('./common/logger.log');
 
 const { Queue, Worker } = require('bullmq');
 
@@ -1180,6 +1181,7 @@ async function messageThroughselectedchannel(spid, from, type, text, media, phon
 }
 }
 const variable = require('./common/constant');
+const { loggers } = require("winston");
 async function SreplyThroughselectedchannel(spid, from, type, text, media, phone_number_id, channelType, agentId, interactionId, testMessage, media_type, display_phone_number,
   isTemplate,
   laungage,
@@ -1288,6 +1290,7 @@ async function AssignToContactOwner(sid, newId, custid,display_phone_number) {
 
 
 async function botOperations(data){
+  logger.info(`botOperations-----------------------${data}`);
   console.log("botOperations started");
   let deleteSessionQuery = `update BotSessions set status = 99 where customerId=?`
   let deletSession = await db.excuteQuery(deleteSessionQuery, [data?.custid]);
@@ -1349,10 +1352,8 @@ async function sendDropOffMessage(data) {
       setTimeout(()=>{notify.NotifyServer(data?.display_phone_number, false, data?.interactionId, 0, 'Out', 'Smartreply')},200);
       // var updateBotSessionQuery = "update BotSessions set isWaiting=1,current_nodeId=? where botId =? and status=2";
       //   let updateBotSession = await db.excuteQuery(updateBotSessionQuery, [json?.connectedId,data?.botId]);
-      if(result){
-        botExit(data, 4);
-      }
     }
+      botExit(data, 4);
   }
 }
 
@@ -1554,7 +1555,7 @@ data.nodeId = json?.option[1]?.optionConnectedId;
       } else if(type =='openQuestion'){
         console.log(json?.data?.answerType,'------------------------answerType--------------');
         console.log(json?.data?.answerType.trim() == 'number','------------------------answerType--------------');
-        if((json?.data?.answerType == 'email' && isValidEmail(data?.incommingMessage)) || (json?.data?.answerType == 'text' && isValidText(json,data?.incommingMessage)) || (json?.data?.answerType.trim() == 'number' && isValidNumberQuestion(json,data?.incommingMessage)) || (json?.data?.answerType == 'custom' && isCustomText(json,data?.incommingMessage))  || (json?.data?.answerType == 'date' && isValidDate(json,data?.incommingMessage))){
+        if((json?.data?.answerType == 'email' && isValidEmail(data?.incommingMessage)) || (json?.data?.answerType == 'text' && isValidText(json,data?.incommingMessage)) || (json?.data?.answerType.trim() == 'number' && isValidNumber(data?.incommingMessage) && isValidNumberQuestion(json,data?.incommingMessage)) || (json?.data?.answerType == 'custom' && isCustomText(json,data?.incommingMessage))  || (json?.data?.answerType == 'date' && isValidDate(json,data?.incommingMessage))){
           data.nodeId = json.option[0]?.optionConnectedId;
          let returnedData = await botVariablexecute(json,data);
           identifyNode(returnedData);
@@ -1756,6 +1757,9 @@ data.nodeId = json?.option[1]?.optionConnectedId;
       }
       console.log(delay,'------------------delay-----------------------');
       addJobs(data?.botId,data,delay);
+
+      const delayedJobs = await messageQueue.getJobs(['delayed']);
+  console.log("Delayed Jobs:", delayedJobs);
     }
     else if(type == 'WorkingHoursModal'){
       console.log(isWorkingHour(data.sid),'------------------- isWorkingHour -------------------');
@@ -1831,6 +1835,7 @@ return true;
 function isValidNumberQuestion(json,messageText) {
   try{
   console.log(json?.data,messageText,'---------messageText ----------------------')
+
   if(json?.data?.maxNumber){
   if((Number(messageText) >json?.data?.maxNumber)){
     return false;
@@ -2007,7 +2012,7 @@ async function botVariablexecute(json,data,questionOption=''){
         let updateBotSession = await db.excuteQuery(updateBotSessionQuery, [data?.nodeId,json?.connectedId,null,JSON.stringify(variables),data?.botId,data?.custid]);
         data['isWaiting'] =0;
           } else{
-            var updateBotSessionQuery = "update BotSessions set isWaiting=0,current_nodeId=?,next_nodeId=?,node_timeout=?where botId =? and customerId =? and status=2";
+            var updateBotSessionQuery = "update BotSessions set isWaiting=0,current_nodeId=?,next_nodeId=?,node_timeout=? where botId =? and customerId =? and status=2";
         let updateBotSession = await db.excuteQuery(updateBotSessionQuery, [data?.nodeId,json?.connectedId,null,data?.botId,data?.custid]);
         data['isWaiting'] =0;
           }
@@ -2023,6 +2028,9 @@ async function invalidQuestionResponse(data,json){
               var updateBotSessionQuery = "update BotSessions set isWaiting=1,node_retry_count=? where botId =? and customerId =? and status=2";
         let updateBotSession = await db.excuteQuery(updateBotSessionQuery, [sessionDetail?.node_retry_count+1,data?.botId,data?.custid]);
             } else{
+               var updateBotSessionQuery = "update BotSessions set isWaiting=0,current_nodeId=?,next_nodeId=?,node_timeout=? where botId =? and customerId =? and status=2";
+        let updateBotSession = await db.excuteQuery(updateBotSessionQuery, [data?.nodeId,json?.connectedId,null,data?.botId,data?.custid]);
+        data['isWaiting'] =0;
               if(json?.data?.invalidAction){
               if(json?.data?.invalidAction =='fallback'){
                 data.nodeId = json?.FallbackId;
@@ -2304,6 +2312,9 @@ async function addJobs(botId, data, delaySeconds) {
     { botId, data },
     { delay }
   );
+
+ 
+  logger.info(`botOperations-----------------------${data}`);
 }
 
 const worker = new Worker(
@@ -2319,7 +2330,7 @@ const worker = new Worker(
 );
 
 
-/*setTimeout(() => {
+setTimeout(() => {
   
 let mainData = {
   "sid": 55,
@@ -2332,13 +2343,17 @@ let mainData = {
   "phone_number_id": 559169223950422,
   "botId": 269,
 }
+
+//matchSmartReplies('hlo',55,"WA API")
 //botOperations(mainData)
 //triggerSR()
 
 //-----start------- 0 null 0  559169223950422 Pawan Sharma 917618157986 55 83534 380 Open 7133 80363 null WA API 0 0 0 null 919877594039 ------end-------
 
+//-----start------- 0 0000-00-00 00:00:00 0 hlo 559169223950422 Pawan Sharma 917618157986 55 392584 380 Open 10479 104346 null WA API 0 1 6 undefined 919877594039 ------end-------
 
-//autoReplyDefaultAction(0, null, 0, 'agent01', 559169223950422,'Pawan Sharma', 917618157986, 55, 392584, 380, 'Open', 7204, 80363, null, 'WA API', 0, 0, 0, null, 919877594039)
+
+autoReplyDefaultAction(0, null, 0, 'view temp 03', 559169223950422,'Pawan Sharma', 917618157986, 55, 392584, 380, 'Open', 10479, 104346, null, 'WA API', 0, 1, 6, null, 919877594039)
 
 //  let time = '00:15' ; // Default to 1 hour if not set
 //     let hour = time?.split(':')[0];
@@ -2354,11 +2369,14 @@ let mainData = {
 
 // let stringvaleu = JSON.stringify(value).replace(/[\[\]\s]/g, '');
 
-}, 3000);*/
+//console.log('-started----------',new Date());
+
+//triggerSR()
+}, 1000);
 
 async function triggerSR(){
-      var replymessage = await matchSmartReplies('addTag', 55, 'WA API')
-      let isSReply = await iterateSmartReplies(replymessage, 559169223950422, 919877594039, 55, 83534, 380, 7133, 'WA API', 919877594039);
+      //var replymessage = await matchSmartReplies('addTag', 55, 'WA API')
+      //let isSReply = await iterateSmartReplies(replymessage, 559169223950422, 919877594039, 55, 83534, 380, 7133, 'WA API', 919877594039);
      
 }
 

@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "description": "",
   "main": "web.js",
-   "scripts": {
+  "scripts": {
     "start:preprod-whatsAppWeb": "cross-env NODE_ENV=preprod node whatsAppWeb.js",
     "start:staging-whatsAppWeb": "cross-env NODE_ENV=staging node whatsAppWeb.js",
     "start:prod-whatsAppWeb": "cross-env NODE_ENV=prod node whatsAppWeb.js"
@@ -13,12 +13,12 @@
   "dependencies": {
     "body-parser": "^1.20.2",
     "cors": "^2.8.5",
+    "cross-env": "^7.0.3",
     "express": "^4.18.2",
+    "moment": "^2.29.4",
     "path": "^0.12.7",
     "qrcode-terminal": "^0.12.0",
     "websocket": "^1.0.34",
-    "moment": "^2.29.4",
-    "cross-env": "^7.0.3",
-    "whatsapp-web.js": "^1.31.0"
+    "whatsapp-web.js": "^1.34.2"
   }
 }

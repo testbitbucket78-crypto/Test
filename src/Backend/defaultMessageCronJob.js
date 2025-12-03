@@ -676,17 +676,17 @@ async function botTimeOperations(){
     // await NoAgentReplyTimeOut();  
     // await NoCustomerReplyTimeout();     // system_message_type_id  = 6
     // }
-
-    if (!canProceedWithNewTask) {
-    console.log('Previous task still running, skipping this cycle...');
-  } else {
-    canProceedWithNewTask = false;
+ botTimeOperations();
+  //   if (!canProceedWithNewTask) {
+  //   console.log('Previous task still running, skipping this cycle...');
+  // } else {
+  //   canProceedWithNewTask = false;
 
     try {
       console.log('Running scheduled task...');
-      NoCustomerReplyReminder();
+     // NoCustomerReplyReminder();
       await NoAgentReplyTimeOut();
-      await NoCustomerReplyTimeout();
+       //await NoCustomerReplyTimeout();
     } catch (err) {
       logger.error(`Error in scheduled tasks: ${err.message}`);
 
@@ -694,10 +694,10 @@ async function botTimeOperations(){
       logger.info(`Info in scheduled tasks and we got this in the finally block: ${err?.message}`);
       //canProceedWithNewTask = true;
     }
-  }
+ // }
 
        // system_message_type_id = 4
-    botTimeOperations();
+   
 
   });
 //}

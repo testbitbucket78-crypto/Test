@@ -506,9 +506,9 @@ if (this.botBuilderForm) {
       this.isLoading = true
       this.botService.saveBotDetails(data).subscribe((response: any) => {
         if (response.status === 200) {
-          this.botBuilderForm.reset();
           sessionStorage.setItem('botId', response.msg.insertId || response.botId)
           sessionStorage.setItem('botTimeOut', this.botBuilderForm.value.botTimeout)
+          this.botBuilderForm.reset();
           if(Type == 'copy'){
                this.botBuilderForm.reset();
             if (this.botDetailsData.node_FE_Json) {
@@ -579,7 +579,7 @@ if (this.botBuilderForm) {
               sessionStorage.setItem('botVarList', JSON.stringify(this.botDetailsData.botVarList))
             }
             sessionStorage.setItem('botId', this.botDetailsData.id)
-            var botTimeout:any = this.convertHHMMToMinutes(this.botDetailsData.timeout_value);
+            var botTimeout:any = this.convertHHMMToMinutes(data?.timeout_value);
             sessionStorage.setItem('botTimeOut', botTimeout)
           this.closeModalById('botModal');
           this.closeModalById('submitBotModal');

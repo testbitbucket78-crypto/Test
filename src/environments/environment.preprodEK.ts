@@ -10,5 +10,6 @@ export const environment = {
     smartApi: 'https://smartapi-preprod.engagekart.com',
     waweb: 'https://waweb-preprod.engagekart.com',
     API_Keyword: 'engagekart',
-    chhanel: 'api'
+    chhanel: 'api',
+    env:'preprod'
 };
