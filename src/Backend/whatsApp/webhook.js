@@ -226,7 +226,6 @@ async function extractDataFromMessage(body) {
         if(button && button?.length > 2)
             repliedMessageText = 'Template';
 
-        console.log(Type,'-------------------Type----------');
         if (Type == 'interactive') {
           if(firstMessage?.interactive && firstMessage?.interactive?.type == 'nfm_reply'){
             message_text = 'Form sent';
@@ -336,6 +335,11 @@ async function extractDataFromMessage(body) {
     let messageStatus = body.entry[0].changes[0].value.statuses[0].status
     let smsId = body.entry[0].changes[0].value.statuses[0].id
     let smsTime = body.entry[0].changes[0].value.statuses[0].timestamp
+
+    const categoryObj = body.entry[0].changes[0].value.statuses[0];
+ 
+
+
     var d = new Date(smsTime * 1000).toUTCString();
 
     const message_time = moment.utc(d).format('YYYY-MM-DD HH:mm:ss');
@@ -350,7 +354,7 @@ async function extractDataFromMessage(body) {
 
     //console.log("messageStatus ,displayPhoneNumber ,customerPhoneNumber " )
     // console.log(messageStatus ,displayPhoneNumber ,customerPhoneNumber)
-    let updatedStatus = await saveSendedMessageStatus(messageStatus, displayPhoneNumber, customerPhoneNumber, smsId, message_time, failedMessageReason, failedMessageCode)
+    let updatedStatus = await saveSendedMessageStatus(messageStatus, displayPhoneNumber, customerPhoneNumber, smsId, message_time, failedMessageReason, failedMessageCode,categoryObj)
   } else if (body.entry && body.entry.length > 0 && body.entry[0].changes && body.entry[0].changes.length > 0 &&
     body.entry[0].changes[0].value) {
 
@@ -706,7 +710,7 @@ async function saveImageFromReceivedMessage(from, message, phone_number_id, disp
   })
 }
 
-async function saveSendedMessageStatus(messageStatus, displayPhoneNumber, customerPhoneNumber, smsId, createdTime, failedMessageReason, failedMessageCode) {
+async function saveSendedMessageStatus(messageStatus, displayPhoneNumber, customerPhoneNumber, smsId, createdTime, failedMessageReason, failedMessageCode,categoryObj) {
   // let getMessageId = await db.excuteQuery(process.env.messageIdQuery, []);
   // console.log(getMessageId)
   // if (getMessageId.length > 0) {
@@ -739,15 +743,17 @@ WHERE customerId IN (SELECT customerId FROM EndCustomer WHERE Phone_number = ? a
     notify.NotifyServer(displayPhoneNumber, false, ack1InId[0]?.InteractionId, 'Out', 1, 0,smsId)
 
   } else if (messageStatus == 'delivered') {
+       const category = categoryObj?.pricing?.category;
+    const type = categoryObj?.pricing?.type;
     let campaignDeliveredQuery = 'UPDATE CampaignMessages set status=2 , DeliveredTime=? where phone_number =? and status = 1  and messageTemptateId =?'
     let campaignDelivered = await db.excuteQuery(campaignDeliveredQuery, [createdTime, customerPhoneNumber, smsId])
     const smsdelupdate = `UPDATE Message
-SET msg_status = 2 
+SET msg_status = 2,pricing_type=?,category=?
 WHERE interaction_id IN (
 SELECT InteractionId FROM Interaction 
 WHERE customerId IN (SELECT customerId FROM EndCustomer WHERE Phone_number = ? and SP_ID=? and isDeleted !=1 AND isBlocked !=1 )) and is_deleted !=1 AND (msg_status IS NULL OR msg_status = 1); `
     //console.log(smsdelupdate)
-    let deded = await db.excuteQuery(smsdelupdate, [customerPhoneNumber, spid])
+    let deded = await db.excuteQuery(smsdelupdate, [type,category,customerPhoneNumber, spid])
     //  console.log("deliver", deded?.affectedRows)
     //notify.NotifyServer(displayPhoneNumber, true)
     let ack2InId = await db.excuteQuery(notifyInteraction, [customerPhoneNumber, spid])
