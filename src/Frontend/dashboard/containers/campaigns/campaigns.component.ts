@@ -903,6 +903,10 @@ constructor(config: NgbModalConfig, private modalService: NgbModal,private datep
 				}else{
 					item['status_label'] ='draft'
 				}
+
+				if(item?.status==9){
+					item['status_label'] ='Paused'
+				}
 				item['start_datetime_formated']=this.formattedDate(item?.start_datetime)
 				item['created_datetime_formated']=this.formateDate(item?.created_at)
 
