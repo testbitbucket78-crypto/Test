@@ -437,6 +437,10 @@ openDiv() {
       this.apiService.craeteQRcode(data).subscribe(
 
         (response) => {
+          debugger;
+          if(response.status === 500) {
+            this._toastService.error(response?.err || 'Internal Server Error');
+          }
           if(response.status === 409 && response.value == "Channel already authenticated") {
             this.channel_status = 1; 
             this.hideModal();
@@ -468,6 +472,7 @@ openDiv() {
           this.getwhatsapp();
         },
         (error) => {
+          debugger;
           if(error.status === 409){
             this.showToaster(error?.error?.value, 'error');
             this.hideModal();

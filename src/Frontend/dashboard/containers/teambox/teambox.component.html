@@ -390,9 +390,9 @@
 														[messageText]="message?.message_text">
 													</app-whatsapp-message-preview>
 													<!-- Region Ended -->
-												<button
+												<!-- <button
 													*ngIf="!showFullMessage && message?.message_text?.length> maxLength"
-													(click)="toggleShowFullMessage()">Read More</button>
+													(click)="toggleShowFullMessage()">Read More</button> -->
 											</div>
 											<div [ngClass]="{'message_box_container':message?.media_type}">
 												<!-- <span *ngIf="message.media_type" class="message_size">{{message.mediaSize}} KB</span> -->

@@ -190,6 +190,17 @@ It is determined by a combination of user feedback signals like blocks, reports 
 								<p><span>Replied</span></p>
 							</div>
 						</div>
+
+						<div class="running_section_row">
+							<div class="icon_outer">
+								<img class="m-0 icon" src="../../../../assets/img/campaign/arrow.png" />
+							</div>
+							<div>
+	                            <sb-loader [isLoading]="!selectedCampaign?.Replied && selectedCampaign?.Replied !== 0" loaderType="mini"></sb-loader>
+								<p>{{selectedCampaign?.dropped}}</p>
+								<p><span>Dropped</span></p>
+							</div>
+						</div>
 						<div class="running_section_row">
 							
 						</div>

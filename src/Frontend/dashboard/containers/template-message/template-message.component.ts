@@ -1484,12 +1484,12 @@ onContentChange() {
     const text = container.innerText;
     this.processText(text);
     this.onEditorChange(this.chatEditor?.value)
-    const emojiRegex = /[\uD800-\uDBFF][\uDC00-\uDFFF]/g; 
-    const characterCount = text?.replace(emojiRegex, '__').length || 0; 
+    const emojiRegex = /[\uD800-\uDBFF][\uDC00-\uDFFF]/g;
+    const characterCount = text?.replace(emojiRegex, '__').length || 0;
     if (characterCount > 1024) {
       const trimmedContent = this.trimContent(text, characterCount);
       this.chatEditor.value = trimmedContent;
-    } 
+    }
   }
 
 // #region Process Text for Value Mapping

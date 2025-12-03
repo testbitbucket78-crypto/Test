@@ -843,7 +843,7 @@ constructor(config: NgbModalConfig, private modalService: NgbModal,private datep
 			let Delivered:any=0
 			let Seen:any=0
 			let Replied:any=0
-			
+			let dropped : any=0
 			responseData?.report.forEach((item:any)=>{
 				if(item.status==0){
 					Failed=item?.status_count;
@@ -860,12 +860,16 @@ constructor(config: NgbModalConfig, private modalService: NgbModal,private datep
 				if(item.status==4){
 					Replied=item?.status_count;
 				}
+				if(item.status==9){
+					dropped=item?.status_count;
+				}
 			})
 			this.selectedCampaign['Replied'] =Replied;
 			this.selectedCampaign['Seen'] =Seen;
 			this.selectedCampaign['Delivered'] =Delivered;
 			this.selectedCampaign['Sent'] =Sent;
 			this.selectedCampaign['Failed'] =Failed;
+			this.selectedCampaign['dropped'] =dropped;
 		})
 
 	}
