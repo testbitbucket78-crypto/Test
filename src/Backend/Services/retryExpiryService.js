@@ -2,87 +2,150 @@ const db = require("../dbhelper");
 
 async function retryExpiryService() {
   try {
-
-    const failedMessages = await db.excuteQuery(`
+    const failedCampaigns = await db.excuteQuery(`
       SELECT 
-        cm.id AS messageId,
-        cm.CampaignId,
-        cm.phone_number,
-        cm.status,
-        cm.FailureReason,
-        cm.updated_at AS lastFailedTime,
+        c.Id AS CampaignId,
         c.RetryAndExpirySettings,
-        c.sp_id,
-        c.status AS campaignStatus
-      FROM CampaignMessages cm
-      INNER JOIN Campaign c ON c.Id = cm.CampaignId
+        c.remainingSegmentAudiance,
+        c.RetryCount,
+        c.status,
+        c.sp_id
+      FROM Campaign c
       WHERE 
-        cm.status = 400 AND cm.FailureReason IS NOT NULL
-        AND c.is_deleted != 1
+        c.is_deleted != 1
+        AND c.remainingSegmentAudiance IS NOT NULL
+        AND JSON_LENGTH(c.remainingSegmentAudiance) > 0
         AND c.RetryAndExpirySettings IS NOT NULL
     `);
 
-    if (!failedMessages?.length) {
-      logger.info("✅ [RetryExpiryService] No failed messages found for retry.");
+    if (!failedCampaigns?.length) {
+      console.log("No campaigns with pending remaining audience.");
       return [];
     }
 
-    const retryList = [];
-
-    for (const msg of failedMessages) {
+    for (const campaign of failedCampaigns) {
       try {
-        const settings =
-          typeof msg.RetryAndExpirySettings === "string"
-            ? JSON.parse(msg.RetryAndExpirySettings)
-            : msg.RetryAndExpirySettings;
+        const settings = typeof campaign.RetryAndExpirySettings === "string"
+          ? JSON.parse(campaign.RetryAndExpirySettings)
+          : campaign.RetryAndExpirySettings;
 
-        if (!settings?.autoRetryEnabled) continue;
+        if (!settings.autoRetryEnabled) continue;
 
-        const retryIntervals = settings.retryCount || []; 
-        const lastFailed = new Date(msg.lastFailedTime);
-        const now = new Date();
+        const retryIntervals = settings.retryCount || [];
+        const currentRetryCount = campaign.RetryCount || 0;
 
-        const retryMeta = await db.excuteQuery(
-          `SELECT COUNT(*) AS retriesDone 
-           FROM CampaignMessages 
-           WHERE CampaignId=? AND phone_number=? AND status IN (400, 408, 504)`,
-          [msg.CampaignId, msg.phone_number]
-        );
-
-        const retriesDone = retryMeta[0]?.retriesDone || 0;
-
-        if (retriesDone < retryIntervals.length) {
-          const hoursToWait = retryIntervals[retriesDone]; // e.g. 2 hours
-          const nextRetryTime = new Date(lastFailed);
-          nextRetryTime.setHours(nextRetryTime.getHours() + hoursToWait);
-
-          if (now >= nextRetryTime) {
-            retryList.push({
-              ...msg,
-              nextRetryAttempt: retriesDone + 1,
-              nextRetryAfterHours: hoursToWait,
-            });
-          }
-        } else {
-          console.log(
-            ` Max retries reached for message ${msg.messageId} (Campaign: ${msg.CampaignId})`
-          );
+        // STEP 2: Stop retry if retry count reached max
+        if (currentRetryCount >= retryIntervals.length) {
+          console.log(`Max retry reached for Campaign ${campaign.CampaignId}`);
+          continue;
         }
+
+        const hoursToWait = retryIntervals[currentRetryCount];
+        const lastRetryTime = await getLastRetryTimestamp(campaign.CampaignId);
+
+        const now = new Date();
+        const nextRetryTime = new Date(lastRetryTime);
+        nextRetryTime.setHours(nextRetryTime.getHours() + hoursToWait);
+
+        if (now < nextRetryTime) {
+          console.log(`Retry not due yet for Campaign ${campaign.CampaignId}`);
+          continue;
+        }
+
+        await processRetrySegments(campaign);
+
       } catch (err) {
-        console.log(
-          `[RetryExpiryService] Error processing message ${msg.messageId}: ${err.message}`
-        );
+        console.log("[RetryExpiryService] Error processing campaign:", err);
       }
     }
-
-    console.log(`[RetryExpiryService] ${retryList.length} messages eligible for retry`);
-    return retryList;
   } catch (err) {
-    console.log(`[RetryExpiryService] Fatal error: ${err.message}`, {
-      stack: err.stack,
-    });
-    return [];
+    console.log("[RetryExpiryService] Fatal error:", err);
   }
 }
 
-module.exports = { retryExpiryService };
+async function processRetrySegments(campaign) {
+  const segments = JSON.parse(campaign.remainingSegmentAudiance || "[]");
+  const updatedSegments = [];
+  const campaignId = campaign.CampaignId;
+
+  for (const seg of segments) {
+    const phone = seg.phone_number; 
+
+    if (response.status === 200) {
+      await db.excuteQuery(
+        `UPDATE CampaignMessages
+         SET status = 1, FailureReason = NULL, FailureCode = NULL
+         WHERE CampaignId = ? AND phone_number = ?`,
+        [campaignId, phone]
+      );
+    } else {
+      updatedSegments.push(seg);
+
+      await db.excuteQuery(
+        `UPDATE CampaignMessages
+         SET status = 400, FailureReason = ?, FailureCode = ?
+         WHERE CampaignId = ? AND phone_number = ?`,
+        [response.reason || "Failed Again", response.code || 400, campaignId, phone]
+      );
+    }
+  }
+
+
+  await db.excuteQuery(
+    `UPDATE Campaign
+     SET remainingSegmentAudiance = ?
+     WHERE Id = ?`,
+    [JSON.stringify(updatedSegments), campaignId]
+  );
+
+
+  await db.excuteQuery(
+    `UPDATE Campaign
+     SET RetryCount = RetryCount + 1
+     WHERE Id = ?`,
+    [campaignId]
+  );
+
+  console.log(`Retry completed for campaign ${campaignId}`);
+}
+
+async function remaining_segments_contacts(segments_contacts, campaignMessageId) {
+  try {
+    let existingData = await db.excuteQuery(
+      `SELECT remainingSegmentAudiance 
+       FROM Campaign 
+       WHERE Id = ?`,
+      [campaignMessageId]
+    );
+
+    let oldArray = [];
+
+    if (existingData.length > 0 && existingData[0].remainingSegmentAudiance) {
+      try {
+        oldArray = JSON.parse(existingData[0].remainingSegmentAudiance);
+        if (!Array.isArray(oldArray)) oldArray = [];
+      } catch (err) {
+        oldArray = [];
+      }
+    }
+
+    oldArray.push(segments_contacts);
+
+    let result = await db.excuteQuery(
+      `UPDATE Campaign 
+       SET 
+         remainingSegmentAudiance = ?, 
+         failedStatusCode = 131049,
+         status = 9
+       WHERE Id = ?`,
+      [JSON.stringify(oldArray), campaignMessageId]
+    );
+
+    return result;
+
+  } catch (err) {
+    console.log("Error updating remaining segments: ", err);
+  }
+}
+
+module.exports = { retryExpiryService, remaining_segments_contacts };
