@@ -21,6 +21,7 @@
     <!-- (selectionChanged)="onSelectionChanged($event)"
     (filterChanged)="onFilterChanged()" -->
     <div class="p-3" *ngIf="isflowDetailLoading">
+		<div>
 		<ag-grid-angular class="ag-theme-alpine"
 						 style="height: 60vh;"
 						 [rowData]="flowList"
@@ -62,6 +63,7 @@
 				</button>
 			</div>
 
+		</div>
 		</div>
     </div>
 

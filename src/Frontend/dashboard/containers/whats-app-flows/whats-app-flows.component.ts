@@ -135,10 +135,10 @@ actionsCellRenderer(params: any) {
   return div;
 }
 
-  onFilterTextBoxChange() {
-    const searchInput = document.getElementById('Search-Ag') as HTMLInputElement;
-    const searchTerm = searchInput.value.trim().toLowerCase();
-    this.gridapi.setQuickFilter(searchTerm);
+  onFilterTextBoxChange(srchText:any) {
+    // const searchInput = document.getElementById('Search-Ag') as HTMLInputElement;
+    // const searchTerm = srchText.value.trim().toLowerCase();
+    this.gridapi.setQuickFilter(srchText);
     //this.flowList = this.rowData.filter((contact: any) => contact.Name.toLowerCase().includes(searchTerm));
     this.setPaging();
   }
@@ -167,8 +167,16 @@ getGridPageSize() {
     setTimeout(() => {
         this.GridService.onChangePageSize(this.paginationPageSize, this.gridapi, this.flowList);
         this.paging = this.GridService.paging;
+         this.onBtFirst();
     }, 50)
 }
+
+    onBtFirst(){
+      this.GridService.onBtFirst(this.gridapi, this.flowList);
+        this.currPage = this.GridService.currPage;
+        this.paging = this.GridService.paging;
+       // this.getContact();
+    }
 
 onBtNext() { 
     this.GridService.onBtNext(this.gridapi, this.flowList);
@@ -242,5 +250,17 @@ getWhatsAppDetails() {
     this.flowList = this.initflowList;
   }
 }
+
+    onFilterChanged() {
+        setTimeout(() => {
+            const rowCount = this.gridOptions.api.getModel().getRowCount();
+            if (rowCount === 0) {
+                this.gridapi.showNoRowsOverlay();
+            } else {
+                this.gridapi.hideOverlay();
+            }
+        }, 100);
+    
+    }
 
 }

@@ -196,6 +196,7 @@ getFlowDetail() {
             data['created_at'] = item?.created_at;
             data['phoneNumber'] = item?.phoneNumber;
             data['name'] = item?.name;
+            delete data['flow_token'];
             responseData.push(data);
           });
           this.flowList = responseData;
@@ -315,7 +316,7 @@ this.initColumnMapping = JSON.parse(JSON.stringify(this.ColumnMapping));
         console.log(this.ColumnMapping, '----ColumnMapping----');    
         this.isflowDetailLoading = false;    
             this.ColumnMapping.forEach((item:any)=>{
-  
+  if(item.ActuallName !='phoneNumber' && item.ActuallName !='name'){
               let columnDesc:any = {
                 field: item.ActuallName,
               headerName: item.displayName,
@@ -333,6 +334,7 @@ this.initColumnMapping = JSON.parse(JSON.stringify(this.ColumnMapping));
               //   columnDesc.valueFormatter= this.timeFormatter.bind(this);
               // }
               this.columnDefs.push(columnDesc);
+            }
             })
             console.log(this.columnDefs, '----columnDefs----');
           }  
@@ -369,13 +371,14 @@ closeModal(){
       this.columnDefs.forEach((item:any) => {
         fieldToHeaderMap[item?.field] = item?.headerName;
     });
+    console.log(fields,'----------------fields')
 console.log(fieldToHeaderMap, '----fieldToHeaderMap----');
     const exportContact = this.flowList.map((obj:any) => {
       const newObj:any = {};
       fields.forEach((field:any) => {
         try {
           const headerName = fieldToHeaderMap[field];
-          if (obj.hasOwnProperty(field) && headerName) {
+          if (obj.hasOwnProperty(field) && headerName ) {
             if(field =="displayPhoneNumber"){
               newObj[headerName] = obj['Phone_number'] ?? '';
             }else{              
