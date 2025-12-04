@@ -53,7 +53,7 @@
 		<div class="header campaigns_section">
 	
 			<div class="campaigns_page_left">
-					<input (input)="onFilterTextBoxChange()" (focus)="onFocus()" (blur)="onBlur()" type="text" placeholder="Search" aria-label="Search" class="search-box" aria-describedby="basic-addon2" />
+					<input (keyup)="onFilterTextBoxChange($event.target.value)" (focus)="onFocus()" (blur)="onBlur()" type="text" placeholder="Search" aria-label="Search" class="search-box" aria-describedby="basic-addon2" />
 			</div>
 			<div class="campaigns_page_right">
 				<div class="D-whatsApp">
@@ -92,9 +92,21 @@
 			
 		</div>
 
+        	<div *ngIf="!flowList || flowList.length ==0" class=" my-5 smartreplies-empty-state">
+		<div class="d-flex justify-content-center my-5 align-items-center container-empty-state">
+			<div class="text-center py-5 body-empty-state">
+				<img src="../../../../assets/img/contact-empty.png" />
+				<h5 class="mt-3">{{'No Flows To Show'}}</h5>
+				<p>You haven’t created any flows yet</p>
+			</div>
+		</div>
+    </div>
+
     <div class="p-3">
+        	<div>
         <ag-grid-angular style="height: calc(64vh - 50px);" class="ag-theme-alpine" [rowData]="flowList" [columnDefs]="columnDefs" [animateRows]="true"
                          [gridOptions]="gridOptions" suppressResize=true [suppressRowClickSelection]="true"
+						 (filterChanged)="onFilterChanged()"
                          (gridReady)="onGridReady($event)" [paginationPageSize]="paginationPageSize">
         </ag-grid-angular>
         <div class="grid-pagination d-flex justify-content-between align-items-center">
@@ -125,6 +137,7 @@
                 </button>
             </div>
 
+        </div>
         </div>
     </div>
 </div>
