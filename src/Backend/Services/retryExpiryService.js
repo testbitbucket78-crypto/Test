@@ -15,6 +15,7 @@ async function retryExpiryService() {
         c.is_deleted != 1
         AND c.remainingSegmentAudiance IS NOT NULL
         AND JSON_LENGTH(c.remainingSegmentAudiance) > 0
+        AND c.status = 9
         AND c.RetryAndExpirySettings IS NOT NULL
     `);
 
@@ -36,7 +37,7 @@ async function retryExpiryService() {
 
         // STEP 2: Stop retry if retry count reached max
         if (currentRetryCount >= retryIntervals.length) {
-          console.log(`Max retry reached for Campaign ${campaign.CampaignId}`);
+           await db.excuteQuery(`update Campaign set status = 3 where Id = ?`, [campaign.CampaignId]);
           continue;
         }
 
