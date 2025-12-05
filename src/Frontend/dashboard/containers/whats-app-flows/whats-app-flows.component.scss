@@ -259,16 +259,17 @@ opacity: 1;
 	}
 
 	.campaigns_page_left{
-	float: left;
-	width:25%;
 	}
 	.campaigns_page_right{
-	float: right;
-	width: 70%;
 	display: flex;
 	flex-wrap: nowrap;
 	flex-direction: row;
 	justify-content: flex-end;
+	}
+    .campaigns_page {
+	font-family: 'Manrope';
+	width: 100%;
+    padding: 0% 5% 0% 4%;
 	}
 
 	.search-box{
@@ -285,6 +286,7 @@ opacity: 1;
 	background: transparent url("/assets/img/teambox/search-icon.svg") no-repeat 10px;
 	}
 
+
 	.drop-down-btn{
 	min-width: 80px;
 	margin: 0 5px;
@@ -292,6 +294,29 @@ opacity: 1;
 	color: #7a86a1;
 	font-size: 12px;
 	font-weight: 400;
+
+	}
+	.toggle-box {
+	height: 35px;
+	background: #FFFFFF 0% 0% no-repeat padding-box;
+	border: 1px solid #EBEBEB;
+	border-radius: 19px;
+	opacity: 1;
+	display: flex;
+	align-content: center;
+	justify-content: center;
+	flex-wrap: wrap;
+	margin: 0px 5px;
+	background: transparent url(/assets/img/teambox/dropdown.svg) no-repeat;
+	background-size: 10px;
+	background-position: center right 10px;
+	padding:0 15px;
+	cursor: pointer;
+	}
+
+
+	.toggle-box span{
+	margin:0 15px 0px 10px;
 
 	}
 
@@ -308,4 +333,97 @@ opacity: 1;
 	border: 0px;
 	font-size: 12px;
 	font-weight: 800;
+	}
+
+    	.filtercampaignheader{
+	padding:1rem 1.5rem 0 1.5rem;
+	}
+	.filtercampaign{
+	padding:1.5rem;
+	max-height: 435px;
+	overflow: auto;
+	}
+	.filtercampaign p.label{
+	color: #000000;
+	margin: 0px;
+	font-size: 12px;
+	font-weight: 600;
+	}		
+	.filtercampaign .input_group{
+	float: left;
+	width: 100%;
+	margin-top: 5px;
+	margin-bottom: 15px;
+	display: flex;
+	flex-direction: row;
+	flex-wrap: wrap;
+	}
+	.filtercampaign .input_group p{
+	float:left;
+	width: 50%;
+	color: #000000;
+	font-size: 14px;
+	font-weight: 400;
+	display: flex;
+	}
+	.filtercampaign .input_group label.container{
+	margin-bottom: 5px;
+	font-size:11px;
+	align-content: flex-start;
+	}
+
+	.input_value_group{
+	display: flex;
+	flex-direction: row;
+	justify-content: space-between;
+	margin-top:15px;
+	}
+	.input_value_group p{
+	width:47%
+	}
+	.input_value_group p label{
+	font-size: 10px;
+	}
+	.input_value{
+	background-color: #fff;
+	border-radius: 10px;
+	border: 1px solid #C0BDCC;
+	color: #7A86A1;
+	font-size: 12px;
+	font-weight: 400;
+	padding:8px;
+	width:100%;
+	}
+
+    	.submit-btn {
+	background: #6149CD 0% 0% no-repeat padding-box;
+	box-shadow: 1px 8px 29px #695F9724;
+	border-radius: 15px;
+	width: auto;
+	height: 32px;
+	color: #ffffff;
+	border: 0px;
+	padding: 0px 25px;
+	font-size: 12px;
+	margin-left: 8px;
+	font-weight: 800;
+    padding: 0 4% 0% 4%;
+	outline: none;
+	}
+
+	.popup-dialog::-webkit-scrollbar {
+		display: none;
+	}
+
+	.cancel-btn {
+	background: #fff;
+	border: 1px solid #EBEBEB;
+	border-radius: 20px;
+	width: auto;
+	height: 35px;
+	color: #7A86A1;
+	padding: 0px 25px;
+	font-size: 12px;
+	font-weight: 800;
+	margin:0 0 0 15px;
 	}

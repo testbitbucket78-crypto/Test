@@ -3,7 +3,7 @@
 	<p *ngIf="successMessage" class="success">{{successMessage}}</p>
 	<p *ngIf="warningMessage" class="warn">{{warningMessage}}</p>
   </div>
-
+<sb-loader [isLoading]="isLoading"></sb-loader>
 	<div class="flow-header">
 		<div class="d-flex">
 			<div class="mx-2 hand-icon" (click)="closeFlowDetailComponent()" > <img src="../../../../assets/img/left-arrow.svg" width="18px" height="18px">  </div>
@@ -21,7 +21,7 @@
     <!-- (selectionChanged)="onSelectionChanged($event)"
     (filterChanged)="onFilterChanged()" -->
     <div class="p-3" *ngIf="isflowDetailLoading">
-		<div>
+	
 		<ag-grid-angular class="ag-theme-alpine"
 						 style="height: 60vh;"
 						 [rowData]="flowList"
@@ -63,7 +63,6 @@
 				</button>
 			</div>
 
-		</div>
 		</div>
     </div>
 

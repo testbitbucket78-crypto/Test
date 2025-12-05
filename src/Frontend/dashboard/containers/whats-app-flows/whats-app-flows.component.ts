@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { GridService } from '../../services/ag-grid.service';
 import { ColDef, GridApi, GridReadyEvent } from 'ag-grid-community';
 import { SettingsService } from 'Frontend/dashboard/services/settings.service';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 
 @Component({
   selector: 'sb-whats-app-flows',
@@ -76,9 +77,23 @@ export class WhatsAppFlowsComponent implements OnInit {
     channelPhoneNumber: string = '';
     channelOption:any;
     ShowAssignOption:boolean = false;
-    isLoading:boolean = false;
+    isLoading:boolean = false;    
+	 modalReference: any;
+    // <option value="PUBLISHED">PUBLISHED</option>
+    //                 <option value="DRAFT">DRAFT</option>
+    //                 <option value="DEPRECATED">DEPRECATED</option>
+    //                 <option value="BLOCKED">BLOCKED</option>
+    //                 <option value="THROTTLED">THROTTLED</option>
+    flowfilter:any[] = [
+      {label:'PUBLISHED',checked:false},
+      {label:'DRAFT',checked:false},
+      {label:'DEPRECATED',checked:false},
+      {label:'BLOCKED',checked:false},
+      {label:'THROTTLED',checked:false},
+    ]
+    initflowfliter:any =[];
    
-  constructor( public GridService: GridService,public settingsService: SettingsService){
+  constructor( public GridService: GridService,public settingsService: SettingsService, private modalService: NgbModal){
     this.spId = Number(sessionStorage.getItem('SP_ID'));
   }
 
@@ -131,9 +146,20 @@ actionsCellRenderer(params: any) {
   `;
   const div = document.createElement('div');
   div.innerHTML = buttonsHtml;
-  //div.addEventListener('click', this.onButtonClick.bind(this, element));
+  div.addEventListener('click', this.onButtonClick.bind(this, element));
   return div;
 }
+
+
+onButtonClick(data:any, event: any) {
+ window.open('https://business.facebook.com/wa/manage/flows/create', '_blank');
+}
+
+
+
+
+
+
 
   onFilterTextBoxChange(srchText:any) {
     // const searchInput = document.getElementById('Search-Ag') as HTMLInputElement;
@@ -260,7 +286,46 @@ getWhatsAppDetails() {
                 this.gridapi.hideOverlay();
             }
         }, 100);
-    
     }
+
+    creatWhatsAppFlow(){
+       window.open('https://business.facebook.com/wa/manage/flows/create', '_blank');
+    }
+
+    
+	filterCampaign(filtercampaign: any) {
+    this.initflowfliter =JSON.parse(JSON.stringify(this.flowfilter));
+		this.closeAllModal()
+		this.modalReference = this.modalService.open(filtercampaign,{size: 'sm', windowClass:'white-pink'});
+	}
+
+  cancelfilter(){
+    this.flowfilter =JSON.parse(JSON.stringify(this.initflowfliter));
+  }
+
+  
+	closeAllModal(){
+		if(this.modalReference){
+			this.modalReference.close();
+	    }
+	}
+
+
+  filterFlows() {
+  const selectedFilters = this.flowfilter
+    .filter(f => f.checked)
+    .map(f => f.label);
+
+  if (selectedFilters.length === 0) {
+    this.flowList = JSON.parse(JSON.stringify(this.initflowList));
+  }
+
+  // Step 3: filter based on selected statuses
+  this.flowList =  this.initflowList.filter((flow:any) =>
+    selectedFilters.includes(flow.status)
+  );  
+  this.getGridPageSize();
+  this.closeAllModal();
+}
 
 }

@@ -7,7 +7,7 @@
 <sb-layout-dashboard>
 <sb-loader [isLoading]="isLoading"></sb-loader>
 		<sb-top-nav title="WhatsApp Flows"></sb-top-nav>
-        <div *ngIf="!isShowDetails">
+        <div *ngIf="!isShowDetails"  class="campaigns_page">
 	<!-- <div class="flow-header">
 		<div class="d-flex">
             <div class="border d-flex flex-row-reverse align-items-center px-3 h-100 search-container">
@@ -50,8 +50,9 @@
 	</div> -->
 
     
-		<div class="header campaigns_section">
+		<div class="mt-4 d-flex justify-content-between">
 	
+			
 			<div class="campaigns_page_left">
 					<input (keyup)="onFilterTextBoxChange($event.target.value)" (focus)="onFocus()" (blur)="onBlur()" type="text" placeholder="Search" aria-label="Search" class="search-box" aria-describedby="basic-addon2" />
 			</div>
@@ -73,19 +74,13 @@
 					</div>
 				</div>
 
-
 				<div class="drop-down-btn">
-					<select class="input-form select-flow" id="select" (change)="onFilterChange($event)">
-                    <option value="">Select</option>
-                    <option value="All">All</option>
-                    <option value="PUBLISHED">PUBLISHED</option>
-                    <option value="DRAFT">DRAFT</option>
-                    <option value="DEPRECATED">DEPRECATED</option>
-                    <option value="BLOCKED">BLOCKED</option>
-                    <option value="THROTTLED">THROTTLED</option>
-                </select>
+					<div class="toggle-box" (click)="filterCampaign(filtercampaign)">
+						<img src="assets/img/teambox/filter-icon.svg">
+					    <span>Filter</span>
+					</div>
 				</div>
-				<button class="new-message-btn" src="https://business.facebook.com/wa/manage/flows/create" alt="blank"><img class="icon" src="/assets/img/teambox/add.svg" /> Create Flow</button>		
+				<button class="new-message-btn" (click)="creatWhatsAppFlow()" ><img class="icon" src="/assets/img/teambox/add.svg" /> Create Flow</button>		
 					
 			</div>
 			
@@ -102,9 +97,9 @@
 		</div>
     </div>
 
-    <div class="p-3">
+    <div class="pt-5">
         	<div>
-        <ag-grid-angular style="height: calc(64vh - 50px);" class="ag-theme-alpine" [rowData]="flowList" [columnDefs]="columnDefs" [animateRows]="true"
+        <ag-grid-angular style="height: calc(70vh - 50px);" class="ag-theme-alpine m-0" [rowData]="flowList" [columnDefs]="columnDefs" [animateRows]="true"
                          [gridOptions]="gridOptions" suppressResize=true [suppressRowClickSelection]="true"
 						 (filterChanged)="onFilterChanged()"
                          (gridReady)="onGridReady($event)" [paginationPageSize]="paginationPageSize">
@@ -139,7 +134,33 @@
 
         </div>
         </div>
-    </div>
+    </div> 
+
+    <ng-template #filtercampaign let-c="close" let-d="dismiss">
+		<div class="modal-header filtercampaignheader">
+			<div class="modal-header-left">
+				<h4 class="modal-title" id="modal-basic-title">Filter</h4>
+			</div>
+			<div class="modal-header-right">
+				<p class="close-box" aria-label="Close" (click)="d('Cross click');cancelfilter()"><img src="assets/img/teambox/icon-close.svg"></p>
+			</div>
+			</div>
+		<div class="modal-body filtercampaign">
+			<!--<p class="label">Campaign Type</p> -->
+            <div class="input_group">				  
+				  <label class="container" *ngFor="let item of flowfilter;let i = index">
+					{{item.label}}
+					<input [(ngModel)]="item.checked" type="checkbox" name="status" >
+					<span class="checkmark"></span>
+				  </label>			
+			</div>
+			<div class="input_group_btn mt-0">
+			<button type="button" class="cancel-btn" aria-label="Close" (click)="d('Cross click');cancelfilter()">Cancel</button>
+			<button type="button" class="date submit-btn" aria-label="Close" (click)="filterFlows()">Apply</button>
+			</div>
+		</div>
+		
+	</ng-template>
 </div>
 
     <sb-whatsapp-flow-detail *ngIf="isShowDetails" [flowId]="flowId" [flowName]="flowName" [ColumnMapping]="mapping" (closeFlowDetail)="isShowDetails = false"></sb-whatsapp-flow-detail>
