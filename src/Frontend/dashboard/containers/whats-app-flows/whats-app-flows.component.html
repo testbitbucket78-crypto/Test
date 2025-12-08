@@ -97,7 +97,7 @@
 		</div>
     </div>
 
-    <div class="pt-5">
+    <div class="pt-5" *ngIf="flowList || flowList.length >0">
         	<div>
         <ag-grid-angular style="height: calc(70vh - 50px);" class="ag-theme-alpine m-0" [rowData]="flowList" [columnDefs]="columnDefs" [animateRows]="true"
                          [gridOptions]="gridOptions" suppressResize=true [suppressRowClickSelection]="true"
