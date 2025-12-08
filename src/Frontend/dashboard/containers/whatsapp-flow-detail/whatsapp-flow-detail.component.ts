@@ -46,6 +46,7 @@ export class WhatsappFlowDetailComponent {
         suppressSizeToFit: false,
         resizable: true,
         sortable: true,
+      valueFormatter:this.dateFormatter.bind(this),
         cellStyle: { background: '#FBFAFF', opacity: 0.86 },
     },           
         ];
@@ -63,6 +64,7 @@ export class WhatsappFlowDetailComponent {
       filteredCustomFields: any =[];
       spId:number;
       initColumnMapping:any =[];
+      isLoading:boolean = false;
        data: Record<string, string>[] = [
         {
           flow_token: "<FLOW_TOKEN>",
@@ -150,9 +152,16 @@ export class WhatsappFlowDetailComponent {
       setTimeout(() => {
           this.GridService.onChangePageSize(this.paginationPageSize, this.gridapi, this.flowList);
           this.paging = this.GridService.paging;
-      }, 50)
-  }
-  
+             this.onBtFirst();
+    }, 50)
+}
+
+    onBtFirst(){
+      this.GridService.onBtFirst(this.gridapi, this.flowList);
+        this.currPage = this.GridService.currPage;
+        this.paging = this.GridService.paging;
+       // this.getContact();
+    }
   onBtNext() { 
       this.GridService.onBtNext(this.gridapi, this.flowList);
       this.currPage = this.GridService.currPage;
@@ -186,8 +195,10 @@ export class WhatsappFlowDetailComponent {
 
 
 getFlowDetail() {
+  this.isLoading = true;
   this.settingsService.getFlowDetail(this.spId,this.flowId).subscribe((response: any) => {
       if (response) {
+  this.isLoading = false;
           let flowData =  response?.flows;
           let responseData:any = [];
           flowData.forEach((item:any)=>{
@@ -197,6 +208,7 @@ getFlowDetail() {
             data['phoneNumber'] = item?.phoneNumber;
             data['name'] = item?.name;
             delete data['flow_token'];
+            console.log(data,'--------------------data--------------------');
             responseData.push(data);
           });
           this.flowList = responseData;
@@ -238,6 +250,7 @@ getRefresh(){
       suppressSizeToFit: false,
       resizable: true,
       sortable: true,
+      valueFormatter:this.dateFormatter.bind(this),
       cellStyle: { background: '#FBFAFF', opacity: 0.86 },
   },       
 ];
@@ -305,6 +318,7 @@ this.initColumnMapping = JSON.parse(JSON.stringify(this.ColumnMapping));
     }
     mappingList.push(mapping);
   })
+  console.log(mappingList,'-----------------------mappingList------------');
   this.ColumnMapping = mappingList;
   this.initColumnMapping = JSON.parse(JSON.stringify(mappingList));
 }
@@ -327,7 +341,7 @@ this.initColumnMapping = JSON.parse(JSON.stringify(this.ColumnMapping));
               sortable: true,
               cellStyle: { background: "#FBFAFF", opacity: 0.86 },
               }             
-              // if(item.type == 'Date'){
+              // if(item.ActuallName == 'Date'){
               //   columnDesc.valueFormatter= this.dateFormatter.bind(this);
               // }
               // if(item.type == 'Time'){
@@ -423,6 +437,13 @@ showToaster(message:any,type:any){
   }, 5000);
   
   }
+
+    dateFormatter(params: any): string {
+    if(!params?.value) return '';
+    const date = new Date(params.value);
+    const formattedDate = this.settingsService.getDateTimeFormate(date, true);
+    return formattedDate ? formattedDate : '';
+}
 
   
 hideToaster(){
