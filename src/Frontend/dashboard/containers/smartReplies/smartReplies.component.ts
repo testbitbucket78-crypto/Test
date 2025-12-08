@@ -250,7 +250,7 @@ export class SmartRepliesComponent implements OnInit,OnDestroy {
 		};
 
 		onToolbarClick(e: ToolbarClickEventArgs): void {
-		  debugger;
+		  ;
 		  const rte = this.chatEditor;
 		  const selection = window.getSelection();
 		
@@ -2256,7 +2256,7 @@ console.log(sortedData)
 				.subscribe(
 					(response: any) => {
 			            this.isLoading = false;
-						debugger
+						
 						if (response?.success) {
 						$("#export-logs").modal('hide');
 						this._toastService.success('Smart Reply usage report has been emailed successfully.');

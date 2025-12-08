@@ -1333,8 +1333,13 @@ insertAtCursor(selectedValue: any) {
     }, 100);
 	const newNode = document.createElement('span');
 	//newNode.innerHTML =  '<span contenteditable="false" class="e-mention-chip"><a _ngcontent-yyb-c67="" title="">{{'+selectedValue+'}}</a></span>';
-	newNode.innerHTML =  `<span contenteditable="false">{{${selectedValue}}}</span>`; // I am making it a locked token so that deleting willbe for all.
-
+	//newNode.innerHTML =  `<span contenteditable="false">{{${selectedValue}}}</span>`; // I am making it a locked token so that deleting willbe for all.
+    newNode.innerHTML = `
+    <span class="token-wrapper" contenteditable="false" style="display:inline-block;">
+        <span>{{${selectedValue}}}</span>
+    </span>
+    `;
+    
 	this.lastCursorPosition?.insertNode(newNode);
     setTimeout(()=>{
         document.execCommand('bold');
@@ -1477,7 +1482,7 @@ sanitizeInteractivePayload(payload: any): any {
 
     
 onContentChange() {
-    debugger;
+    ;
     const container = document.createElement('div');
     container.innerHTML = this.chatEditor?.value;
     console.log(this.chatEditor?.value);

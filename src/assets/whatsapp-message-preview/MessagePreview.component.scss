@@ -6,6 +6,8 @@
   min-height: 130px;
   white-space: pre-wrap;
   word-wrap: break-word;
+  max-height: 300px;
+  overflow-y: auto;
 
   .temp-header {
     color: #075e54;

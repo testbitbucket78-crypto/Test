@@ -93,7 +93,7 @@ export class DefaultMessageSettingsComponent implements OnInit {
     keepFormat: false,
   };
   onToolbarClick(e: ToolbarClickEventArgs): void {
-        debugger;
+        ;
         const rte = this.chatEditor;
         const selection = window.getSelection();
       

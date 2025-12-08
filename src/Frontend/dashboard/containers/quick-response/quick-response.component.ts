@@ -120,7 +120,7 @@ public tools2: object = {
 
 
 onToolbarClick(e: ToolbarClickEventArgs): void {
-  debugger;
+  ;
   const rte = this.chatEditor;
   const selection = window.getSelection();
 

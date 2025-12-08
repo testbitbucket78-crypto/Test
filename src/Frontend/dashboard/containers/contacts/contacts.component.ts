@@ -443,7 +443,7 @@ getPhoneNumberValidation(){
   
 checks=false
 bulk(e: any) {
-  debugger
+  
   if (e.target.checked == true) {
     for (var i = 0; i < this.contacts.length; i++) {
       this.checkedcustomerId.push(this.contacts[i].customerId)
@@ -547,7 +547,11 @@ onChangePage(pageOfItems: any) {
     data.contactFrom = this.currPage * Number(this.paginationPageSize) - Number(this.paginationPageSize);
     data.contactTo = Number(this.paginationPageSize);
     this.isLoading = true;
-      this.onSearchContacts();
+    if(this.isSearchedClicked == true){
+      this.isSearchedClicked = false;
+    }
+    this.onSearchContacts();
+
     this.apiService.getFilteredContact(data).subscribe((datas:any) => {
       this.isLoading = false;
       this.deleteBloackContactLoader = false;
@@ -624,8 +628,10 @@ console.log(baseArr,'----------------------------------baseArr------------------
     this.isShowSidebar = false;
    }
    deleteBloackContactLoader! : boolean;
+   selectedCustomerIds: any[] = [];
   deleteRow(arr:any ["id"]) {
       var deleteList = this.checkedConatct.map(x => x.customerId);
+      this.selectedCustomerIds = deleteList;
       var data = {
 
         customerId: deleteList,
@@ -1195,12 +1201,16 @@ deletContactByID(data: any) {
 
   }
 
+  searchedKeyword: string = '';
+  isSearchedClicked: boolean = false;
   onFilterTextBoxChange() {
     const searchInput = document.getElementById('Search-Ag') as HTMLInputElement;
-    const searchTerm = searchInput.value.trim().toLowerCase();
-    this.gridapi.setQuickFilter(searchTerm);
-    this.contacts = this.rowData.filter((contact: any) => contact.Name.toLowerCase().includes(searchTerm));
-    this.setPaging()
+    this.searchedKeyword = searchInput.value.trim().toLowerCase();
+
+    // const searchTerm = searchInput.value.trim().toLowerCase();
+    // this.gridapi.setQuickFilter(searchTerm);
+    // this.contacts = this.rowData.filter((contact: any) => contact.Name.toLowerCase().includes(searchTerm));
+    // this.setPaging()
   }
 
   onFocus() {
@@ -1620,9 +1630,12 @@ console.log('-----------outside -----------------');
       }
 
   onSearchContacts(isDeletedContact: boolean = false, isExportContact: boolean = false) {
-    debugger
-    const searchInput = document.getElementById('Search-Ag') as HTMLInputElement;
-    const searchTerm = searchInput.value.trim().toLowerCase();
+    
+    this.isLoading = true;
+    // const searchInput = document.getElementById('Search-Ag') as HTMLInputElement;
+    // const searchTerm = searchInput.value.trim().toLowerCase();
+    const searchTerm = this.searchedKeyword.trim().toLowerCase();
+
    // this.searchSubject.next(searchTerm, isDeletedContact, isExportContact); 
     this.searchSubject.next({ searchTerm, isDeletedContact, isExportContact });
   }
@@ -1640,22 +1653,61 @@ console.log('-----------outside -----------------');
       isAllSelected: this.isAllSelected,
 
       isDeletedContact: isDeletedContact,
-      isExportContact: isExportContact
+      isExportContact: isExportContact,
+
+      selectedIds: this.selectedCustomerIds
     };
 
 this.apiService.ContactQuery(payload).subscribe((data: any) => {
+  ;
   const response : ContactResponse = data;
   if (response?.status === 200) {
-      if (response.actionFlag) {
+      if (response.isDeleted) {
         this.getContact();
+        this.onRowSelected(null);
+      }
+      if(response.actionFlag){
+        this.getContactsOnActions(
+          response.contactList,
+          response.totalContacts,
+        );
       }
     this.totalContacts = response.totalContacts || 0;
+    this.selectedCustomerIds = []
+    this.isButtonEnabled = false;
+
+    this.onRowSelected(null);
+    this.isLoading = false;
+
   } else {
     console.error('❌ Error:', response.msg || 'Something went wrong');
   }
 });
   }
 
-      
+
+getContactsOnActions(contactList: any = [], totalCount: number = 0) {
+    let contactFrom = this.currPage * Number(this.paginationPageSize) - Number(this.paginationPageSize);
+    let contactTo = Number(this.paginationPageSize);
+
+  this.contacts = contactList;
+  this.rowData = this.buildArrayWithInsert(
+    totalCount,
+    contactFrom,
+    contactFrom + contactTo,
+    this.contacts
+  );
+
+  console.log(this.rowData);
+
+  if (this.contacts?.length === 0) {
+    this.isEmptyData();
+  }
+
+  if (contactFrom === 0) {
+    this.productForm.get('countryCode')?.setValue('IN +91');
+    this.getGridPageSize();
+  }
+}
 
 }

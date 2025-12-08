@@ -12,6 +12,8 @@ SP_ID: any;               // service provider ID
 
   isDeletedContact: boolean; // true if searching in deleted contacts
   isExportContact: boolean; // true if exporting contacts
+
+  selectedIds: number[];    // list of selected contact IDs
 }
 
 
@@ -22,4 +24,6 @@ export interface ContactResponse {
   IsFilteredList?: boolean;       // true if filters applied
   msg?: string;                   // optional error message
   actionFlag: boolean;            // indicates if action was successful
+  contactList?: any[];          // optional: list of contacts
+  isDeleted: boolean;         // true if deleted contacts
 }

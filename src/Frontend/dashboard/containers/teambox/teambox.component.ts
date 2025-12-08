@@ -113,7 +113,7 @@ export class TeamboxComponent implements OnInit {
 	};
 
 onToolbarClick(e: ToolbarClickEventArgs): void {
-  debugger;
+  ;
   const rte = this.chatEditor;
   const selection = window.getSelection();
 
@@ -1761,7 +1761,7 @@ onToolbarClick(e: ToolbarClickEventArgs): void {
 				item['notesList'] = notesList ? this.groupMessageByDate(notesList) : []
 				item['allnotes'] = notesList ? notesList : []
 			})
-debugger;
+;
 			this.apiService.getAllMessageByInteractionId(item.InteractionId, 'media', this.SPID).subscribe(mediaList => {
 				item['allmedia'] = mediaList ? mediaList : []
 			})
@@ -1946,7 +1946,7 @@ debugger;
 
 		this.apiService.getAllMessageByInteractionId(item.InteractionId, 'media', this.SPID, rangeStart, rangeEnd).subscribe((res2: any) => {
 			let mediaList = res2.result;
-			debugger;
+			;
 			let val = mediaList ? mediaList : [];
 			if (isNewMessage) {
 				item['allmedia'].push(...val);
