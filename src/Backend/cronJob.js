@@ -448,11 +448,26 @@ function escapeRegExp(string) {
 
 
 async function campaignCompletedAlert(message) {
-  let updateQuery = `UPDATE Campaign SET status=3,updated_at=? where Id=?`;
-  let myUTCString = new Date().toUTCString();
-  const currenttime = moment.utc(myUTCString).format('YYYY-MM-DD HH:mm:ss');
-  let updatedStatus = await db.excuteQuery(updateQuery, [currenttime, message.Id])
-  campaignAlerts(message, 3) // Campaign Finish 
+
+  const check = await db.excuteQuery(
+    `SELECT status, failedStatusCode FROM Campaign WHERE Id = ?`,
+    [message.Id]
+  );
+  if (
+    check.length > 0 &&
+    (
+      check[0].status == 9 
+    )
+  ) {
+    return; // this is for campaign not finished.
+  }
+  else {
+    let updateQuery = `UPDATE Campaign SET status=3,updated_at=? where Id=?`;
+    let myUTCString = new Date().toUTCString();
+    const currenttime = moment.utc(myUTCString).format('YYYY-MM-DD HH:mm:ss');
+    let updatedStatus = await db.excuteQuery(updateQuery, [currenttime, message.Id])
+    campaignAlerts(message, 3) // Campaign Finish 
+  }
 
 }
 

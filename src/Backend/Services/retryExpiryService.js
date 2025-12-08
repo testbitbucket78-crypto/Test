@@ -136,7 +136,6 @@ async function remaining_segments_contacts(segments_contacts, campaignMessageId)
       `UPDATE Campaign 
        SET 
          remainingSegmentAudiance = ?, 
-         failedStatusCode = 131049,
          status = 9
        WHERE Id = ?`,
       [JSON.stringify(oldArray), campaignMessageId]

@@ -370,3 +370,15 @@ ADD COLUMN timezone VARCHAR(100) DEFAULT 'Asia/Kolkata' AFTER working_days;
 ALTER TABLE Campaign 
 ADD COLUMN RetryAndExpirySettings JSON NULL AFTER interactive_buttons;
 //Ends of 13 may onwards Changes
+
+ALTER TABLE Campaign
+ADD COLUMN remainingSegmentAudiance JSON DEFAULT NULL;
+
+ALTER TABLE Campaign
+ADD COLUMN failedStatusCode JSON DEFAULT NULL;
+
+ALTER TABLE Campaign
+ADD COLUMN CSVremainingAudience JSON DEFAULT NULL;
+
+ALTER TABLE Campaign 
+ADD COLUMN RetryCount INT DEFAULT 0;
