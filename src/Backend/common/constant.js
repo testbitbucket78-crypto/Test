@@ -33,6 +33,10 @@ const variables = {
     },
     provider: "webJS", // webJS or whapi
     SPID : "1068",
+    providers: {
+        web: "webJS",
+        whapi: "whapi",
+    },
     webhookSPIDs : ['847','91','159','55','163','1055','1068']
 };
 
