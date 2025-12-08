@@ -39,7 +39,7 @@ class ProviderService {
         spid = String(spid);
 
         if (!Object.values(ProviderType).includes(provider)) {
-            throw new Error(`This could be a new Provide Please Map this in our Service: ${provider}`);
+            throw new Error(`This could be a new Provider Please Map this in our Service: ${provider}`);
         }
 
         const serverType = this.providerToServerMap[provider];
