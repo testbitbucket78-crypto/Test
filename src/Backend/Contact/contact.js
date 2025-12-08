@@ -108,7 +108,9 @@ app.post('/ContactQuery', authenticateToken, async (req, res) => {
     const contactFilterationBody = new ContactFilteration(req.body);
     let IsFilteredList = false;
     let deletedCount = 0;
+    let isSearched = false;
     let customerIds = [];
+    let contactList = [];
     //let contactList = await db.excuteQuery(val.selectAllContactLimit, [contactFilterationBody.SP_ID, contactFilterationBody.contactFrom, contactFilterationBody.contactTo]);
     let contactCount = await db.excuteQuery(val.selectAllContactCount, [contactFilterationBody.SP_ID]);
     logger.info(`Query executed: ${val.selectAllContactLimit} with SP_ID: ${contactFilterationBody.SP_ID}`);
@@ -141,12 +143,45 @@ app.post('/ContactQuery', authenticateToken, async (req, res) => {
     // CASE 2: Search-based deletion
     // ------------------------------
     else if (contactFilterationBody.isSearched && contactFilterationBody.search && contactFilterationBody.search.trim() !== '') {
+      isSearched = true;
+
+      // Need to return contactsList based on search as well on the bases of limits 
+       const likeTerm = `%${contactFilterationBody.search.toLowerCase()}%`;
+      const searchListQuery = `
+        SELECT 
+          EC.*,
+          IFNULL(GROUP_CONCAT(ECTM.TagName ORDER BY FIND_IN_SET(ECTM.ID, REPLACE(EC.tag, ' ', ''))), '') AS tag_names
+        FROM EndCustomer AS EC
+        LEFT JOIN EndCustomerTagMaster AS ECTM 
+          ON FIND_IN_SET(ECTM.ID, REPLACE(EC.tag, ' ', '')) AND (ECTM.isDeleted != 1)
+        WHERE 
+          EC.isDeleted != 1
+          AND EC.SP_ID = ?
+          AND EC.IsTemporary != 1
+          AND (
+            LOWER(EC.Name) LIKE ?
+            OR LOWER(EC.Phone_number) LIKE ?
+            OR LOWER(EC.emailId) LIKE ?
+          )
+        GROUP BY EC.customerId
+        ORDER BY EC.updated_at DESC
+        LIMIT ?, ?
+      `;
+
+    contactList = await db.excuteQuery(searchListQuery, [
+      contactFilterationBody.SP_ID,
+      likeTerm, likeTerm, likeTerm,
+      contactFilterationBody.page,
+      contactFilterationBody.pageSize
+    ]);
+
+
       const searchQuery = `
         SELECT customerId FROM EndCustomer
         WHERE SP_ID=? AND isDeleted=0 AND 
         (LOWER(Name) LIKE ? OR LOWER(Phone_number) LIKE ? OR LOWER(emailId) LIKE ?)
       `;
-      const likeTerm = `%${contactFilterationBody.search.toLowerCase()}%`;
+      //const likeTerm = `%${contactFilterationBody.search.toLowerCase()}%`;
       const ids = await db.excuteQuery(searchQuery, [contactFilterationBody.SP_ID, likeTerm, likeTerm, likeTerm]);
       customerIds = ids.map(r => r.customerId);
       contactCount = ids?.length ?? 0 ;
@@ -175,15 +210,19 @@ app.post('/ContactQuery', authenticateToken, async (req, res) => {
     // ------------------------------
     else if (!contactFilterationBody.isAllSelected && contactFilterationBody.selectedIds) {
       await db.excuteQuery(
-        'UPDATE EndCustomer SET isDeleted=1 WHERE customerId IN (?) AND SP_ID=?',
-        [selectedIds, contactFilterationBody.SP_ID]
-      );
-      deletedCount = selectedIds.length;
+    'UPDATE EndCustomer SET isDeleted=1 WHERE customerId IN (?) AND SP_ID=?',
+    [contactFilterationBody.selectedIds, contactFilterationBody.SP_ID]
+  );
+
+  deletedCount = contactFilterationBody.selectedIds.length;
     }
     
     const responseBody = new ContactResponse({
       totalCount: contactCount.length > 0 ? contactCount[0].totalCount : contactCount || 0,
-       actionFlag: deletedCount > 0 ? true : false, 
+      //  actionFlag: deletedCount > 0 ? true : false, 
+      actionFlag : isSearched,
+      isDeleted : deletedCount > 0,
+      contactList: contactList,
     });
 
     res.send(responseBody);
@@ -1402,6 +1441,9 @@ async function isDataInCorrectFormat(columnDataType, actuallName, displayName, u
     let convertedValue;
     switch (columnDataType) {
       case 'Number':
+        if(displayName == ''){
+          return { isError: false, reason: '' };  
+        }
         if (actuallName === 'Phone_number' && !existPhone) {    //&& !displayName.match(phoneFormat)  remove this for country code validation
           return { isError: true, reason: `${fieldDisplayName} is not valid` };
         } else {

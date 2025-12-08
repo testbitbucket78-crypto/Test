@@ -1,7 +1,7 @@
 const db = require("../../dbhelper");
 
 class ContactFilteration {
-  constructor({SP_ID, action, search, page, pageSize, filerationQuerry, isSearched, isFilterApplied, isAllSelected, isDeletedContact, isExportContact }) {
+  constructor({SP_ID, action, search, page, pageSize, filerationQuerry, isSearched, isFilterApplied, isAllSelected, isDeletedContact, isExportContact, selectedIds }) {
     this.SP_ID = SP_ID;      
 
     this.action = action || 'search';      
@@ -21,15 +21,19 @@ class ContactFilteration {
 
     this.contactFrom = 0;
     this.contactTo = 9999999;
+
+    this.selectedIds = selectedIds || [];
   }
 }
 
 class ContactResponse {
-  constructor({ totalCount = 0, actionFlag = false }) {
+  constructor({ totalCount = 0, actionFlag = false, isDeleted, contactList = [] }) {
     this.status = 200;
 
     this.totalContacts = totalCount;
     this.actionFlag = actionFlag || false;
+     this.isDeleted = Boolean(isDeleted);
+    this.contactList = contactList || [];
   }
 
 }
