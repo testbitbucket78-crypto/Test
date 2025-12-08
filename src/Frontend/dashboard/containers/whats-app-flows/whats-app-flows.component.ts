@@ -78,6 +78,9 @@ export class WhatsAppFlowsComponent implements OnInit {
     channelOption:any;
     ShowAssignOption:boolean = false;
     isLoading:boolean = false;    
+        successMessage = '';
+    errorMessage = '';
+    warningMessage = '';
 	 modalReference: any;
     // <option value="PUBLISHED">PUBLISHED</option>
     //                 <option value="DRAFT">DRAFT</option>
@@ -107,11 +110,14 @@ export class WhatsAppFlowsComponent implements OnInit {
   }
 
   rowClicked = (event: any) => {
-
+// if(event.data?.responses > 0){
 this.isShowDetails = true;
     this.flowId = event.data?.flowid;
     this.flowName = event.data?.flowname;
     this.mapping = JSON.parse(event.data?.col_Mapping || '{}');
+// } else{
+//   this.showToaster('error', 'There is no responce')
+// }
 };    
 
 gridOptions:any = {
@@ -327,5 +333,25 @@ getWhatsAppDetails() {
   this.getGridPageSize();
   this.closeAllModal();
 }
+
+
+showToaster(type:any,message:any){
+    if(type=='success'){
+      this.successMessage=message;
+    }else if(type=='error'){
+      this.errorMessage=message;
+    }else{
+      this.warningMessage=message;
+    }
+    setTimeout(() => {
+      this.hideToaster()
+    }, 5000);
+    
+  }
+  hideToaster(){
+    this.successMessage='';
+    this.errorMessage='';
+    this.warningMessage='';
+  }
 
 }

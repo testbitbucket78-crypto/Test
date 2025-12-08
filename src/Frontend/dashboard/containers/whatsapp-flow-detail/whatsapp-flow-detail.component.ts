@@ -208,6 +208,7 @@ getFlowDetail() {
             data['phoneNumber'] = item?.phoneNumber;
             data['name'] = item?.name;
             delete data['flow_token'];
+            console.log(data,'--------------------data--------------------');
             responseData.push(data);
           });
           this.flowList = responseData;
@@ -317,6 +318,7 @@ this.initColumnMapping = JSON.parse(JSON.stringify(this.ColumnMapping));
     }
     mappingList.push(mapping);
   })
+  console.log(mappingList,'-----------------------mappingList------------');
   this.ColumnMapping = mappingList;
   this.initColumnMapping = JSON.parse(JSON.stringify(mappingList));
 }
