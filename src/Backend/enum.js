@@ -75,4 +75,15 @@ const  WebhookEventType = {
   };
 
 
-module.exports = { MessagingLimitTiers, MessagingName, channelName, channelForSendingMessage, channelsForTemplates,userStatus, WebhookEventType, ConversationStatusMap, messageAckStatus }
+const ServerType = {
+  WEBJS: 1, 
+  WHAPI: 2   
+};
+
+const ProviderType = {
+  WEBJS: "webJS",  
+  WHAPI: "whapi"
+};
+
+
+module.exports = { MessagingLimitTiers, MessagingName, channelName, channelForSendingMessage, channelsForTemplates,userStatus, WebhookEventType, ConversationStatusMap, messageAckStatus, ServerType, ProviderType }

@@ -3,7 +3,7 @@
 	<p *ngIf="successMessage" class="success">{{successMessage}}</p>
 	<p *ngIf="warningMessage" class="warn">{{warningMessage}}</p>
   </div>
-
+<sb-loader [isLoading]="isLoading"></sb-loader>
 	<div class="flow-header">
 		<div class="d-flex">
 			<div class="mx-2 hand-icon" (click)="closeFlowDetailComponent()" > <img src="../../../../assets/img/left-arrow.svg" width="18px" height="18px">  </div>
@@ -12,15 +12,16 @@
 		
 		<div class="d-flex">
 			<div class="mx-2 hand-icon" (click)="getRefresh()" > <img src="../../../../assets/img/retry.svg" width="22px" height="22px">  </div>			
-				<button class="flow-btn" data-bs-toggle="modal" data-bs-target="#mapColumnsModal"  > <img src="../../../../assets/img/export.svg">Map Column</button>
+				<button class="flow-btn" data-bs-toggle="modal" data-bs-target="#mapColumnsModal"  > <img class="mr-1" src="../../../../assets/img/export.svg">Map Column</button>
 				<button class="flow-btn" id="import-btn" data-bs-toggle="modal" data-bs-target="#editColumnsModal" ><img
-						src="../../../../assets/img/import.svg">Edit Column</button>
-				<button class="flow-btn" id="add-contact"  (click)="exportFlowData()"> <img src="../../../../assets/img/export.svg">Export</button>
+						class="edit-icon mr-1" src="../../../../assets/img/edit_colunm.svg">Edit Column</button>
+				<button class="flow-btn" id="add-contact"  (click)="exportFlowData()"> <img class="mr-1" src="../../../../assets/img/export.svg">Export</button>
 		</div>
 	</div>
     <!-- (selectionChanged)="onSelectionChanged($event)"
     (filterChanged)="onFilterChanged()" -->
     <div class="p-3" *ngIf="isflowDetailLoading">
+	
 		<ag-grid-angular class="ag-theme-alpine"
 						 style="height: 60vh;"
 						 [rowData]="flowList"
@@ -78,15 +79,16 @@
 					</button>
 				</div>
 				<div class="modal-body px-5 pt-0 modal-body-scroll">
-					<div class="d-flex justify-content-between">
+					<div class="d-flex space-around f-bold">
 						<div>Edit Column Names</div>
 						<div>Column Data Type</div>
 					</div>
+					<div class="edit-column-slim">
 				<div *ngFor="let item of ColumnMapping;let idx=index" class="my-2">						
 					<div class="d-flex justify-content-between">
 						<div class="d-flex pl-4">
 						<diV class="mr-3">
-							<input type="checkbox" [(ngModel)]="item.isInputSelected" (change)="onSelectEditing(idx)" class="form-check-input mr-2" id="exampleCheck1">
+							<input type="checkbox" [(ngModel)]="item.isInputSelected" (change)="onSelectEditing(idx)" class="form-check-input mr-2 p-relative" id="exampleCheck1">
 						</diV>
 						<div class="billing-form-row d-flex flex-column  ">
 							<input type="text" class="input-form" type="text" [(ngModel)]="item.displayName" [disabled]="item?.isInputSelected == false"
@@ -95,14 +97,14 @@
 					</div>
 						<div class="billing-form-row d-flex flex-column pl-3 ">
 							<select class="input-form select-flow" [(ngModel)]="item.type"  [disabled]="item?.isInputSelected == false"
-								placeholder="Select end time" >
-								<option value="">Select data type</option>
+								placeholder="Select data type" >
+								<option value="" disabled>Select data type</option>
 								<option *ngFor="let type of types" [value]="type" >{{type}}</option>
 							</select>
 						</div>
 					</div>
 				</div>
-
+				</div>
 				</div>
 				<div class="modal-footer sticky-footer">
 					<button type="button" class="account-btn" (click)="SaveEditColumn()">Save</button>
@@ -122,21 +124,22 @@
 				</div>
 				<div class="modal-body px-5 pt-0 modal-body-scroll">
 					<!-- <form [formGroup]="workingHourForm" class="mt-4"> -->
-						<div class="d-flex justify-content-between">
-							<div></div>
-							<div>Map to Contact Fields</div>
+						<div class="d-flex ">
+							<div class="w-40"></div>
+							<div class="f-bold">Map to Contact Fields</div>
 						</div>
+						<div class="edit-column-slim">
 					<div *ngFor="let item of ColumnMapping;let idx=index" class="my-2">						
 						<div class="d-flex">
 							<div class="billing-form-row d-flex flex-column  ">
-								<input type="text" class="input-form" type="text" [(ngModel)]="item.displayName" disabled
+								<input type="text" class="input-form clr-txt" type="text" [(ngModel)]="item.displayName" disabled
 									 placeholder="Select start time">
 	
 							</div>
 							<div class="billing-form-row d-flex flex-column pl-3 ">
 								<select class="input-form select-flow" [(ngModel)]="item.attributeMapped" (change)="onSelectMapping()"
-									placeholder="Select end time">
-									<option value="">Select an attribute to map</option>
+									placeholder="Select an attribute to map">
+									<option value="" disabled>Select an attribute to map</option>
 									<option *ngFor="let att of attributesList" [value]="att.ActuallName" [disabled]="att?.isSelected == true" >{{att?.displayName}}</option>
 								</select>
 							</div>
@@ -153,10 +156,11 @@
 							</div>
 						</div>
 					</div>
+					</div>
 
 					<div class="mt-2">
 						<input type="checkbox" class="form-check-input mr-2" id="exampleCheck1" [(ngModel)]="isUpdateValuesFromEarlierFlowResponses">
-						Update values from earlier Flow responses also
+						<div class="pl-2">Update values from earlier Flow responses also</div>
 					</div>
 					<!-- </form> -->
 				</div>
