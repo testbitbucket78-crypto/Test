@@ -6,11 +6,13 @@ class ProviderService {
         this.cache = {
             [ServerType.WHAPI]: new Set(),
             [ServerType.WEBJS]: new Set(),
+            [ServerType.API]: new Set(),
         };
 
         this.providerToServerMap = {
             [ProviderType.WHAPI]: ServerType.WHAPI,
             [ProviderType.WEBJS]: ServerType.WEBJS,
+            [ProviderType.API]: ServerType.API,
         };
     }
 
