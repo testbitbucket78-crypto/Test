@@ -25,6 +25,7 @@ const { exportLog, BrandConfigRequest } = require('../Services/ServiceModel');
 const { makeXLSXFileOfData } = require('../Contact/utils');
 const { sendEmail }= require('../Services/EmailService');
 const { MessagingName }= require('../enum');
+const ProviderService = require('../Services/ProviderService');
 
 const insertAndEditWhatsAppWeb = async (req, res) => {
     try {
@@ -133,17 +134,18 @@ const selectDetails = async (req, res) => {
 const getChennelWhapiorWeb = async (req, res) => {
   try {
     const { spid } = req.params;
-    const currentProvider = variables.provider;
-    const currentSPID = variables.SPID;
-
     let selectedProvider;
 
-    if (currentProvider === "whapi") {
+    if (await ProviderService.isValidSPID(variables?.providers.whapi, spid)) {
       selectedProvider = "whapi";
-    } else if (currentProvider === "webJS") {
-      selectedProvider = spid === currentSPID ? "whapi" : "webJS";
+    }
+    else if (await ProviderService.isValidSPID(variables?.providers.web, spid)) {
+      selectedProvider = "webJS";
+    } 
+    else if (await ProviderService.isValidSPID(variables?.providers.api, spid)) {
+      selectedProvider = "api"; 
     } else {
-      selectedProvider = "webJS"; 
+      selectedProvider = "unknown"; 
     }
 
     res.status(200).send({ provider: selectedProvider });

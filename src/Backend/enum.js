@@ -77,12 +77,14 @@ const  WebhookEventType = {
 
 const ServerType = {
   WEBJS: 1, 
-  WHAPI: 2   
+  WHAPI: 2,
+  API: 3
 };
 
 const ProviderType = {
   WEBJS: "webJS",  
-  WHAPI: "whapi"
+  WHAPI: "whapi",
+  API: "api"
 };
 
 

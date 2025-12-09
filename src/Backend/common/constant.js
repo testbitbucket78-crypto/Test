@@ -36,6 +36,7 @@ const variables = {
     providers: {
         web: "webJS",
         whapi: "whapi",
+        api: "api"
     },
     webhookSPIDs : ['847','91','159','55','163','1055','1068']
 };
