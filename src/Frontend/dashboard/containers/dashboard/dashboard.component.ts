@@ -37,6 +37,7 @@ export class DashboardComponent implements OnInit {
     errorMessage='';
 	successMessage='';
 	warningMessage='';
+    isPlanExpired:boolean=false;
 
     whatsAppDisplay: any[] = [];
     constructor(private apiService: DashboardService, private router: Router,private profileService:ProfileService,public settingsService:SettingsService) { }
@@ -93,7 +94,12 @@ export class DashboardComponent implements OnInit {
                 if (response?.status === 404) {
                     console.log(response?.message);
                     this.whatsAppDisplay = response?.result
-                    this.showToaster('Channel not connected', 'error');
+                    if(this.whatsAppDisplay[0]?.channel_id == "WA API"  && this.whatsAppDisplay[0]?.channel_status == 0 && response?.isPlanActive == false){
+                        this.isPlanExpired = true;
+                        this.showToaster(response?.message, 'error');
+                    }else{
+                        this.showToaster('Channel not connected', 'error');
+                    }
                 }
             });
         },600);

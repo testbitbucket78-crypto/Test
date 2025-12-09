@@ -740,6 +740,24 @@ async function isActiveSpidClient(spid) {
 }
 
 
+
+async function isPlanActive(spid) {
+
+  if (spid) {
+    console.log("if client ready")
+    const data = await db.excuteQuery(
+        'select isPlanExpired from user where SP_ID = ? and isDeleted != 1',
+        [spid]
+    );
+    if (data[0].isPlanExpired == 1) {
+        return { isPlanActive: false ,message: "Attention! Your channel has been disconnected as the plan validity has expired. Recharge your plan to resume services."};
+    } else {
+        return { isPlanActive: true };
+  } 
+  }
+}
+
+
 function getAllWidData(clientSpidMapping) {
   const widDataMap = {}; // Initialize an empty object to store wid data
   console.log("getAllWidData-------------")
@@ -1630,4 +1648,4 @@ function getWhapiEndpoint(type) {
 }
 
 
-module.exports = { createClientInstance, isActiveSpidClient, sendFunnel, whatsappWebStatus,sendMessageViaWhapi, Message, messageAck, handleDisconnection, handleAuthentication, handleWhatsAppReady, sendTemplateViaWhapi }
+module.exports = { createClientInstance,isPlanActive, isActiveSpidClient, sendFunnel, whatsappWebStatus,sendMessageViaWhapi, Message, messageAck, handleDisconnection, handleAuthentication, handleWhatsAppReady, sendTemplateViaWhapi }
