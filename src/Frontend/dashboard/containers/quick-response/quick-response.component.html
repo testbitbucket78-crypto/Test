@@ -215,7 +215,7 @@
 					 </div>
 					 <div class="sel-type-text h-100">
 						<!-- <textarea name="text-editor" formControlName="BodyText" maxlength="1024"rows="8" placeholder="Enter" (input)="updateCharacterCount($event,4)"></textarea> -->
-						<ejs-richtexteditor class="h-100"
+						<!-- <ejs-richtexteditor class="h-100"
 						[(value)]="BodyText"
 						formControlName="BodyText"
 						id='defaultRTE'
@@ -225,6 +225,22 @@
 						[maxLength]='1024'
 						[showCharCount]='true'
 						(valueChange)="onContentChange()"
+						placeholder="Enter"
+						[pasteCleanupSettings]="pasteCleanupSettings"
+						[saveInterval]="10"
+						>
+					  </ejs-richtexteditor> -->
+					<ejs-richtexteditor class="h-100"
+						[(value)]="BodyText"
+						formControlName="BodyText"
+						id='defaultRTE'
+						#chatEditor
+						[toolbarSettings]='tools2'
+						[height]="'200px'"
+						[maxLength]='1024'
+						[showCharCount]='true'
+						(valueChange)="onContentChange()"
+						(toolbarClick)="onToolbarClick($event)"
 						placeholder="Enter"
 						[pasteCleanupSettings]="pasteCleanupSettings"
 						[saveInterval]="10"
@@ -321,8 +337,14 @@
                 						<span [innerHTML]="galleryMessageData?.FooterText"></span><br />
             						</div> -->
 								<div class="boxbody">									
-									<div class="descbody" [innerHTML]="repliestemplateData?.BodyText | sanitizeHtml"></div>
+									<!-- <div class="descbody" [innerHTML]="repliestemplateData?.BodyText | sanitizeHtml"></div> -->
+								<app-whatsapp-message-preview
+										type="teambox"
+										[messageText]="repliestemplateData?.BodyText">
+								</app-whatsapp-message-preview>
 								</div>
+
+
 							</div>
 
 

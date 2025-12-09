@@ -1982,3 +1982,7 @@ input[type="radio"]:checked + label::before {
 	bottom: 0;
 	left: 0;
   }
+  
+:host ::ng-deep .e-richtexteditor .e-content p span {
+  color: #333 !important;
+}

@@ -1,13 +1,14 @@
 import { Component, OnInit,ViewChild, ElementRef,HostListener  } from '@angular/core';
 import { Router } from '@angular/router';
 import { NgbModalConfig, NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { FormBuilder, FormControl, Validators } from '@angular/forms';
+import { FormBuilder, FormControl, Validators, FormGroup,FormArray } from '@angular/forms';
 import { SettingsService } from 'Frontend/dashboard/services/settings.service';
 import { DashboardService, TeamboxService } from './../../services';
 import { DatePipe } from '@angular/common';
 import * as XLSX from 'xlsx'; 
 import { convertCsvToXlsx } from '../common/Utils/file-utils';
 import { hasEmptyValues } from '../common/Utils/file-utils';
+import { ToastService } from 'assets/toast/toast.service';
 const moment = require('moment');
 declare var $: any;
 
@@ -197,14 +198,16 @@ export class CampaignsComponent implements OnInit {
     indexSelectedForDynamicURL: number = 0;
 	isDynamicURLClicked! :boolean;
 	isScheduled : number = 0;
-
+    
+	
 constructor(config: NgbModalConfig, private modalService: NgbModal,private datepipe: DatePipe,private datePipe: DatePipe,private dashboardService: DashboardService,
-	private apiService: TeamboxService,public settingsService:SettingsService,private _settingsService:SettingsService,
+	private apiService: TeamboxService,public settingsService:SettingsService,private _settingsService:SettingsService,private _ToastService:ToastService,
 	private fb: FormBuilder,private router: Router,private el: ElementRef) {
 		// customize default values of modals used by this component tree
 		config.backdrop = 'static';
 		config.keyboard = false;
 		this.newCampaignDetail= this.prepareCampaingForm();
+
 	}
 
 	ngOnInit() {
@@ -239,6 +242,7 @@ constructor(config: NgbModalConfig, private modalService: NgbModal,private datep
 		this.getContactFilterBy();
 		this.getUserList();
 		this.getAllTemplates();
+		this.initRetryAndExpiryForm();
 	}
 
 	@HostListener('document:scroll', ['$event'])
@@ -839,7 +843,7 @@ constructor(config: NgbModalConfig, private modalService: NgbModal,private datep
 			let Delivered:any=0
 			let Seen:any=0
 			let Replied:any=0
-			
+			let dropped : any=0
 			responseData?.report.forEach((item:any)=>{
 				if(item.status==0){
 					Failed=item?.status_count;
@@ -856,12 +860,16 @@ constructor(config: NgbModalConfig, private modalService: NgbModal,private datep
 				if(item.status==4){
 					Replied=item?.status_count;
 				}
+				if(item.status==9){
+					dropped=item?.status_count;
+				}
 			})
 			this.selectedCampaign['Replied'] =Replied;
 			this.selectedCampaign['Seen'] =Seen;
 			this.selectedCampaign['Delivered'] =Delivered;
 			this.selectedCampaign['Sent'] =Sent;
 			this.selectedCampaign['Failed'] =Failed;
+			this.selectedCampaign['dropped'] =dropped;
 		})
 
 	}
@@ -894,6 +902,10 @@ constructor(config: NgbModalConfig, private modalService: NgbModal,private datep
 					item['status_label'] ='completed'
 				}else{
 					item['status_label'] ='draft'
+				}
+
+				if(item?.status==9){
+					item['status_label'] ='Paused'
 				}
 				item['start_datetime_formated']=this.formattedDate(item?.start_datetime)
 				item['created_datetime_formated']=this.formateDate(item?.created_at)
@@ -1894,6 +1906,8 @@ formateDate(dateTime:string){
 			buttons: JSON.stringify(this.selectedTemplate?.buttons),
 			buttonsVariable: JSON.stringify(this.buttonsVariable),
 			interactive_buttons: typeof this.selectedTemplate?.interactive_buttons == 'string' ? this.selectedTemplate?.interactive_buttons : JSON.stringify(this.selectedTemplate?.interactive_buttons),
+
+			RetryAndExpirySettings: this.RetryAndExpiry.getRawValue(), //NEW payload for campaign retry and expiry settings
 		}
 		if(action=='save'){
 			BodyData['status']=2;
@@ -3128,6 +3142,7 @@ console.log(this.allTemplatesMain);
 		  }
 
 	checkCampignTiming(){
+		
 		let daysList=['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
 		console.log(this.selecteScheduleTime);
 		let sratdatetime:any;
@@ -3151,6 +3166,11 @@ console.log(this.allTemplatesMain);
 				}
 			})
 			this.isCampaignTiming = !flag;
+
+			if(this.workingData.length ==0){// for new SP we need to allow all time
+			  this.isCampaignTiming = false;
+			}
+
 	}
 
 
@@ -3452,4 +3472,44 @@ console.log(this.allTemplatesMain);
 		const documentExtensions = ['.pdf', '.doc', '.docx', '.xls', '.xlsx', '.ppt', '.pptx'];
 		return documentExtensions.some(ext => url.toLowerCase().includes(ext));
     }
+tooltipForRetry!: boolean;
+addRetry() {
+	
+  if (!this.RetryAndExpiry) return;
+
+  const retryArray = this.RetryAndExpiry.get('retryCount') as FormArray;
+
+    const hasEmpty = retryArray.controls.some(ctrl => !ctrl.value?.toString().trim());
+  if (hasEmpty) {
+	this._ToastService.warning('Please fill the existing empty retry before adding a new one.');
+    return;
+  }
+
+  if (retryArray?.length < 3) {
+    retryArray.push(this.createRetryControl());
+  }else {
+	this._ToastService.warning('More then 3 retries are not allowed.');
+  }
+}
+removeRetry(index: number) {
+  const retryArray = this.RetryAndExpiry.get('retryCount') as FormArray;
+  retryArray.removeAt(index);
+}
+get retryControls(): FormControl[] {
+  const array = this.RetryAndExpiry?.get('retryCount') as FormArray;
+  return array ? array.controls as FormControl[] : [];
+}
+    RetryAndExpiry!: FormGroup;
+		initRetryAndExpiryForm() {
+			this.RetryAndExpiry = new FormGroup({
+				autoRetryEnabled: new FormControl(false),
+				retryCount: new FormArray([this.createRetryControl()]), 
+				expiryEnabled: new FormControl(false),
+				scheduleDate: new FormControl(''),
+				scheduleTime: new FormControl(''),
+			});
+		}
+  createRetryControl(): FormControl {
+	return new FormControl('', [Validators.min(1)]);
+  }
 }

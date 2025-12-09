@@ -145,6 +145,7 @@ It is determined by a combination of user feedback signals like blocks, reports 
 						<div class="running_section_row">
 							<img class="icon" src="/assets/img/teambox/sent.svg" />
 							<div>
+	                            <sb-loader [isLoading]="!selectedCampaign?.Sent && selectedCampaign?.Sent !== 0" loaderType="mini"></sb-loader>
 								<p>{{selectedCampaign?.Sent}}</p>
 								<p><span>Sent</span></p>
 							</div>
@@ -152,6 +153,7 @@ It is determined by a combination of user feedback signals like blocks, reports 
 						<div class="running_section_row">
 							<img class="icon" src="/assets/img/teambox/failed-camp-1.svg" />
 							<div>
+	                            <sb-loader [isLoading]="!selectedCampaign?.Failed && selectedCampaign?.Failed !== 0" loaderType="mini"></sb-loader>
 								<p>{{selectedCampaign?.Failed}}</p>
 								<p><span>Failed</span></p>
 							</div>
@@ -162,6 +164,7 @@ It is determined by a combination of user feedback signals like blocks, reports 
 						<div class="running_section_row">
 							<img class="icon" src="/assets/img/teambox/delivered.svg" />
 							<div>
+	                            <sb-loader [isLoading]="!selectedCampaign?.Delivered && selectedCampaign?.Delivered !== 0" loaderType="mini"></sb-loader>
 								<p>{{selectedCampaign?.Delivered}}</p>
 								<p><span>Delivered</span></p>
 							</div>
@@ -169,6 +172,7 @@ It is determined by a combination of user feedback signals like blocks, reports 
 						<div class="running_section_row">
 							<img class="icon" src="/assets/img/teambox/seen.svg" />
 							<div>
+	                            <sb-loader [isLoading]="!selectedCampaign?.Seen && selectedCampaign?.Seen !== 0" loaderType="mini"></sb-loader>
 								<p>{{selectedCampaign?.Seen}}</p>
 								<p><span>Seen</span></p>
 							</div>
@@ -181,8 +185,20 @@ It is determined by a combination of user feedback signals like blocks, reports 
 								<img class="m-0 icon" src="../../../../assets/img/campaign/quick-replies.svg" />
 							</div>
 							<div>
+	                            <sb-loader [isLoading]="!selectedCampaign?.Replied && selectedCampaign?.Replied !== 0" loaderType="mini"></sb-loader>
 								<p>{{selectedCampaign?.Replied}}</p>
 								<p><span>Replied</span></p>
+							</div>
+						</div>
+
+						<div class="running_section_row">
+							<div class="icon_outer">
+								<img class="m-0 icon" src="../../../../assets/img/campaign/arrow.png" />
+							</div>
+							<div>
+	                            <sb-loader [isLoading]="!selectedCampaign?.Replied && selectedCampaign?.Replied !== 0" loaderType="mini"></sb-loader>
+								<p>{{selectedCampaign?.dropped}}</p>
+								<p><span>Dropped</span></p>
 							</div>
 						</div>
 						<div class="running_section_row">
@@ -233,14 +249,20 @@ It is determined by a combination of user feedback signals like blocks, reports 
 							</div>
 							<video *ngIf="getMediaType(selectedCampaign?.media_type,'video')" controls muted id="video-background" [src]="selectedCampaign?.message_media"></video>
 							<img *ngIf="getMediaType(selectedCampaign?.media_type,'image')" class="template_img" src="{{selectedCampaign?.message_media}}">
-						<!-- <div *ngIf="selectedCampaign.message_media" class="template_img">
+						<div *ngIf="selectedCampaign.message_media" class="template_img">
 							<img src="{{selectedCampaign.message_media}}">
-						</div> -->
-					<div class="template_text">
+						</div> 
+					 <!-- <div class="template_text">
 						<p [innerHTML]="selectedCampaign?.message_heading" class="name"></p>
 						<p class="description" [innerHTML]="selectedCampaign?.message_content |sanitizeHtml"></p>
-						<!-- <p class="footer" [innerHTML]="selectedCampaign.message_footer" ></p> -->
-					</div>
+						 <p class="footer" [innerHTML]="selectedCampaign.message_footer" ></p> 
+					</div> -->
+					<app-whatsapp-message-preview
+						[header]="selectedCampaign?.message_heading"
+						[body]="selectedCampaign?.message_content"
+						[footer]="selectedCampaign.message_footer">
+					</app-whatsapp-message-preview>
+
 					<div *ngIf="selectedCampaign?.buttons && selectedCampaign?.buttons?.length >0" class="w-100">
 						<div *ngFor="let item of selectedCampaign?.buttons let i = index" >
 						<div  class="text-center" *ngIf="item?.buttonText && i<3"><button class="template-btn"  [ngClass]="{'btn-radius': ((selectedCampaign?.buttons?.length-1)== i || (selectedCampaign?.buttons?.length >2 && i==2))}">
@@ -521,11 +543,17 @@ It is determined by a combination of user feedback signals like blocks, reports 
 								<video *ngIf="template.media_type=='video'" controls muted id="video-background" [src]="template.Links"></video>
 								<img *ngIf="template.media_type=='image'" class="template_img" src="{{template.Links}}">
 								<div *ngIf="!template.media_type" class="template_img_placeholder"></div>
-								<div class="template_text">
+								<!-- <div class="template_text">
 									<p *ngIf="template?.Header" class="temp-header font-weight-bolder" [innerHTML]="template?.Header | sanitizeHtml" class="m-0 font-weight-bold"></p>
 									<div [innerHTML]="template.BodyText | sanitizeHtml"> </div>
 									<p class="temp-footer"  *ngIf="template?.FooterText" [innerHTML]="template?.FooterText | sanitizeHtml" class="footer" style="font-style: italic;"></p>
-								  </div>
+								  </div> -->
+								<app-whatsapp-message-preview
+									[header]="template?.Header"
+									[body]="template.BodyText"
+									[footer]="template?.FooterText">
+								</app-whatsapp-message-preview>
+
 								  <div *ngIf="template?.buttons && template?.buttons?.length >0 && template?.Channel === 'WA API'" class="w-100">
 									<div *ngFor="let item of template?.buttons let i = index" >
 									<div  class="text-center" *ngIf="item?.buttonText && i<3"><button class="template-btn"  [ngClass]="{'btn-radius': ((template?.buttons?.length-1)== i || (template?.buttons?.length >2 && i==2))}">
@@ -567,11 +595,17 @@ It is determined by a combination of user feedback signals like blocks, reports 
 									<img *ngIf="isImageType(selectedTemplate?.media_type)" class="template_img" src="{{selectedTemplate.Links}}">
 						            <div *ngIf="!selectedTemplate?.media_type" class="template_img_placeholder"></div>
 								</div>
-								<div class="template_text">
+								<!-- <div class="template_text">
 									<p *ngIf="selectedTemplate?.Header" class="temp-header font-weight-bolder" [innerHTML]="selectedTemplate?.Header | sanitizeHtml" class="name"></p>
 									<p [innerHTML]="selectedTemplate?.BodyText | sanitizeHtml" class="description"></p>
 									<p class="temp-footer" *ngIf="selectedTemplate?.FooterText" [innerHTML]="selectedTemplate?.FooterText | sanitizeHtml" class="footer" style="font-style: italic;"></p>
-								</div>
+								</div> -->
+								<app-whatsapp-message-preview
+									[header]="selectedTemplate?.Header"
+									[body]="selectedTemplate?.BodyText"
+									[footer]="selectedTemplate?.FooterText">
+								</app-whatsapp-message-preview>
+
 								<div *ngIf="selectedTemplate?.buttons && selectedTemplate?.buttons?.length >0 && selectedTemplate?.Channel === 'WA API'" class="w-100">
 									<div *ngFor="let item of selectedTemplate?.buttons let i = index" >
 									<div  class="text-center" *ngIf="item?.buttonText && i<3"><button class="template-btn"  [ngClass]="{'btn-radius': ((selectedTemplate?.buttons?.length-1)== i || (selectedTemplate?.buttons?.length >2 && i==2))}">
@@ -675,11 +709,17 @@ It is determined by a combination of user feedback signals like blocks, reports 
 						            <div *ngIf="!selectedTemplate?.media_type" class="template_img_placeholder"></div>
 								</div>
 								<!-- <div><img src="/assets/img/teambox/edit-icon.svg"></div> -->
-								<div class="template_text">
+								<!-- <div class="template_text">
 									<p *ngIf="selectedTemplate?.TemplateName"  [innerHTML]="selectedTemplate?.TemplateName |sanitizeHtml" class="name"></p>
 									<p [innerHTML]="selectedTemplate?.BodyText |sanitizeHtml" class="description"></p>
 									<p class="temp-footer" *ngIf="selectedTemplate?.FooterText" [innerHTML]="selectedTemplate?.FooterText |sanitizeHtml" class="footer" style="font-style: italic;"></p>
-								</div>
+								</div> -->
+								<app-whatsapp-message-preview
+									[header]="selectedTemplate?.TemplateName"
+									[body]="selectedTemplate?.BodyText"
+									[footer]="selectedTemplate?.FooterText">
+								</app-whatsapp-message-preview>
+								
 								<div *ngIf="selectedTemplate?.buttons && selectedTemplate?.buttons?.length >0 && selectedTemplate?.Channel === 'WA API'" class="w-100">
 									<div *ngFor="let item of selectedTemplate?.buttons let i = index" >
 									<div  class="text-center" *ngIf="item?.buttonText && i<3"><button class="template-btn"  [ngClass]="{'btn-radius': ((selectedTemplate?.buttons?.length-1)== i || (selectedTemplate?.buttons?.length >2 && i==2))}">
@@ -703,7 +743,7 @@ It is determined by a combination of user feedback signals like blocks, reports 
 			</div>
 
 			<div [ngClass]="activeStep ==4 ? 'addeidtcampaign_step active' : 'addeidtcampaign_step'">
-				<div class="campaign_preview">
+				<div class="campaign_preview w-100">
 					<div class="campaign_preview_left">
 						<p class="label">Summery</p>
 						<p class="heading">{{newCampaignDetail.value.title}}</p>
@@ -723,11 +763,17 @@ It is determined by a combination of user feedback signals like blocks, reports 
 								<img *ngIf="selectedTemplate?.media_type=='image'" class="template_img" src="{{selectedTemplate?.Links}}">
 								<div *ngIf="!selectedTemplate?.media_type" class="template_img_placeholder"></div>
 							</div>
-							<div class="template_text">
+							<!-- <div class="template_text">
 								<p *ngIf="selectedTemplate?.Header" [innerHTML]="selectedTemplate?.Header |sanitizeHtml" class="name"></p>
 								<p [innerHTML]="selectedTemplate?.BodyText |sanitizeHtml" class="description"></p>
 								<p class="temp-footer" *ngIf="selectedTemplate?.FooterText" [innerHTML]="selectedTemplate?.FooterText |sanitizeHtml" class="footer" style="font-style: italic;"></p>
-							</div>
+							</div> -->
+							<app-whatsapp-message-preview
+								[header]="selectedTemplate?.Header"
+								[body]="selectedTemplate?.BodyText"
+								[footer]="selectedTemplate?.FooterText">
+							</app-whatsapp-message-preview>
+
 							<div *ngIf="selectedTemplate?.buttons && selectedTemplate?.buttons?.length >0 && selectedTemplate?.Channel === 'WA API'" class="w-100">
 								<div *ngFor="let item of selectedTemplate?.buttons let i = index" >
 								<div  class="text-center" *ngIf="item?.buttonText && i<3"><button class="template-btn"  [ngClass]="{'btn-radius': ((selectedTemplate?.buttons?.length-1)== i || (selectedTemplate?.buttons?.length >2 && i==2))}">
@@ -766,27 +812,131 @@ It is determined by a combination of user feedback signals like blocks, reports 
 					<div class="campaign_preview_right">
 						<p>Schedule</p>
 						<div class="container_row">
-						<label class="container" (click)="selectScheduled(0)">
-							<input type="radio" name="schedule" value="0" checked>
-							<span class="checkmark radio"></span>
-							<p><span>Start Now</span></p>
-						</label>
-						<label class="container" (click)="selectScheduled(1)">
-							<input type="radio" name="schedule" value="1" [checked]="isScheduled === 1" >
-							<span class="checkmark radio"></span>
-							<p><span>Schedule Later</span></p>
-						</label>
+							<label class="container" (click)="selectScheduled(0)">
+								<input type="radio" name="schedule" value="0" checked>
+								<span class="checkmark radio"></span>
+								<p><span>Start Now</span></p>
+							</label>
+							<label class="container" (click)="selectScheduled(1)">
+								<input type="radio" name="schedule" value="1" [checked]="isScheduled === 1" >
+								<span class="checkmark radio"></span>
+								<p><span>Schedule Later</span></p>
+							</label>
 						</div>
-						<div class="middel_section_outer">
+
+						 <!-- this is for schedule later UI  -->
+						<div class="middel_section_outer" *ngIf="scheduled==1">
+							<div class="middel_section">
+						
+								<div class="formrow">
+									<p class="mb-2">Schedule Date</p>
+									<input (change)="selectScheduleDate($event)" type="date" class="form-control btn white_bg d-block"
+										[(ngModel)]="selecteScheduleDate">
+									<div *ngIf="selScheduleDate < currDate" class="invalid-feedback f-11">Schedule date should not be in past
+									</div>
+								</div>
+								<div class="formrow">
+									<p class="mb-2">Schedule Time</p>
+									<sb-timepicker [(timebind)]="selecteScheduleTime" [step]="5"
+										(timeChanged)="selectScheduleTime($event)"></sb-timepicker>
+									<div *ngIf="!(selScheduleDate < currDate || selScheduleDate > currDate) && isTimingPast"
+										class="invalid-feedback f-11">Schedule time should not be in past</div>
+								</div>
+						
+							</div>
+						</div>
+						<div class="d-flex mt-2 align-items-center justify-content-between">
+							<div>
+								<p class="mb-0">Automatic reply for failed message <span class="form-hint">(optional)</span>
+								<sb-tooltip
+								   style="margin-right: 9px;"
+									class="d-inline-block"
+									[tooltipText]="'A retry time can be set — Each retry can be sent with a delay, with maximum delay up to 24 hours after the previous attempt is finished.'"
+									[isVisible]="tooltipForRetry"
+									(visibilityChange)="tooltipForRetry = !tooltipForRetry"
+								></sb-tooltip>
+								 </p>
+
+							</div>
+							<div>
+								<sb-SwitchToggle [label]="'Enable'" [isEnabled]="RetryAndExpiry.get('autoRetryEnabled')?.value"
+									(toggleChange)="RetryAndExpiry.get('autoRetryEnabled')?.setValue($event)"
+									[size]="'small'"></sb-SwitchToggle>
+							</div>
+						</div>
+						
+						<div class="w-100 d-flex flex-column mt-2 align-items-center justify-content-between"
+							*ngIf="RetryAndExpiry.get('autoRetryEnabled')?.value">
+							
+								<p class="mb-1 fw-semibold">
+									Automatically retry messages that failed due to Meta’s frequency capping to improve reach.
+								</p>
+
+
+							
+						    <div class="mt-2 d-flex align-items-center justify-content-end w-100">
+								<!-- <button type="button" class="btn btn-outline-primary btn-sm" (click)="addRetry()">
+									+ Add
+								</button> -->
+								<small (click)="addRetry()" 
+								   style="cursor: pointer; color: #6149CD;"
+                                   class="text-center mx-2 mb-0">
+								   + Add
+								</small>
+							</div>
+							<div *ngFor="let control of retryControls; let i = index" class="w-100 d-flex align-items-center mb-2 justify-content-between">
+								<div class="w-100 d-flex align-items-center" style="gap: 10px;">
+									<small class="mb-1">
+										{{ i + 1 }}{{ i === 0 ? 'st' : i === 1 ? 'nd' : i === 2 ? 'rd' : 'th' }} try in 
+									</small>
+									<input style="width: 60px" type="number" [formControl]="control" min="1" max="24"
+										 />
+									<small class="mb-0">Hours</small>
+								</div>
+						
+								<button *ngIf="i > 0" type="button" class="btn btn-sm ms-2 d-flex align-items-center justify-content-center"
+									(click)="removeRetry(i)">
+									<!-- Remove -->
+									 <img src="assets/img/delete.png" alt="Remove" />
+								</button>
+							</div>
+						
+							<!-- <div class="mt-2">
+								<button type="button" class="btn btn-outline-primary btn-sm d-flex align-items-center" (click)="addRetry()">
+									<i class="bi bi-plus-lg me-1"></i> Add
+								</button>
+							</div> -->
+						</div>
+						
+						<div class="d-flex mt-2 align-items-center justify-content-between">
+							<div>
+								<p class="mb-0">Expiry&nbsp;<span class="form-hint">(optional)</span></p>
+							</div>
+							<div>
+								<!-- <input type="checkbox"> -->
+								<sb-SwitchToggle [label]="'Enable'" [isEnabled]="RetryAndExpiry.get('expiryEnabled')?.value"
+									(toggleChange)="RetryAndExpiry.get('expiryEnabled')?.setValue($event)" [size]="'small'"></sb-SwitchToggle>
+							</div>
+						</div>
+						
+						<!-- expiry -->
+						<div *ngIf="RetryAndExpiry.get('expiryEnabled')?.value">
+							<div class="mb-2 pr-2 formrow">
+								<small class="mb-1" for="">Schedule Date</small>
+								<input type="date" class="w-100 form-control btn white_bg d-block" formControlName="scheduleDate" />
+							</div>
+							<div class="mb-2 pr-2">
+								<small class="mb-1" for="">Schedule Time</small>
+								<sb-timepicker [(timebind)]="selecteScheduleTime" [step]="5"
+									(timeChanged)="selectScheduleTime($event)"></sb-timepicker>
+						
+							</div>
+						</div>
+                          
+						 <!-- this is for schedule lated  -->
+						<!-- <div class="middel_section_outer"> 
 							<div *ngIf="scheduled==1" class="middel_section">
-								<!-- <div class="formrow">
-		<p>Time Zone</p>
-		<p (click)="toggleTimeZone()" class="form-control select_box btn">{{selecteTimeZone}}</p>
-		<div *ngIf="showTimeZoneOption" class="popup-dialog">
-			<p class="label">Zone</p>
-			<p *ngFor='let timezone of timeZonesList ;let i = index' (click)="selectTimeZone(timezone)"><span>{{timezone}}</span></p>
-		</div>
-	</div> -->
+
 								<div class="formrow">
 									<p class="mb-2">Schedule Date</p>
 									<input (change)="selectScheduleDate($event)" type="date" class="form-control btn white_bg d-block" [(ngModel)]="selecteScheduleDate">
@@ -798,14 +948,9 @@ It is determined by a combination of user feedback signals like blocks, reports 
 									<div *ngIf="!(selScheduleDate < currDate || selScheduleDate > currDate) && isTimingPast" class="invalid-feedback f-11">Schedule time should not be in past</div>
 								</div>
 								
-								<!--<div class="formrow">
-									// This Input Field is replaced with the above with same functionality
-									<p class="mb-2">Schedule Time</p>
-									<input (change)="selectScheduleTime($event)" type="time" class="form-control btn white_bg d-block" value={{selecteScheduleTime}}>
-									<div *ngIf="!(selScheduleDate < currDate || selScheduleDate > currDate) && isTimingPast" class="invalid-feedback f-11">Schedule time should not be in past</div>
-								</div>-->
 							</div>
-						</div>
+						</div> -->
+
 						<div class="bottom_section">
 							<p class="form-control m-0" (click)="TestCampaign(TestCampaignModal)">Test Campaign</p>
 							<div>

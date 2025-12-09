@@ -8,7 +8,8 @@ import { Component, OnInit, OnChanges, SimpleChanges, Input } from '@angular/cor
 export class LoaderComponent implements OnInit, OnChanges {
   @Input() isLoading: boolean = false;
   @Input() message: string = 'Loading... Please wait...';
-  @Input() loaderType: string = 'standard'; 
+  //@Input() loaderType: string = 'standard'; 
+  @Input() loaderType: 'standard' | 'small' | 'mini' = 'standard'; 
   @Input() customStyles: { [key: string]: string } = {};
   @Input() maxDuration: number = 15000; // default to 15 seconds
 
