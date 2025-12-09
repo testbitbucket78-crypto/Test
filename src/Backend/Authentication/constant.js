@@ -6,6 +6,10 @@ const host= getUrl('host');
 const user= getUrl('user');
 const password= getUrl('password');
 const database= getUrl('database');
+// const host = "cip-pre-prod.cnq0kiwmcdcv.ap-south-1.rds.amazonaws.com";
+// const user = "cip_preprod";
+// const password = "cip_preprod@123$";
+// const database = "cip_preprod";
 
 const awsaccessKeyId ='AKIAU2DXFI5LOZMFTY5J' //'AKIAYY5FSMYVNUZHPOEH'
 const awssecretAccessKey ='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' //'1GRtbJy2ZfwFDSNUZpESn4fOE1NtXattU1839phj'

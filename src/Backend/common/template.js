@@ -118,4 +118,31 @@ async function find_message_status(alert) {
     Failed: Failed,
   };
 }
-  module.exports = { EmailTemplateProvider };
+
+async function TemplateQualityUpdateEmail(templateName, status, rejectionReason = "N/A") {
+  const emailSender = "Engagekart";
+
+  const subject = `Update - WhatsApp Template Status Changed`;
+
+  const body = `
+    <p>Hello,</p>
+
+    <p>The Status for your below mentioned WhatsApp template has been updated by Meta.</p>
+
+    <ul>
+      <li><strong>Template Name:</strong> ${templateName}</li>
+      <li><strong>Updated Status:</strong> ${status}</li>
+      <li><strong>Rejection Reason:</strong> ${status === "Rejected" ? rejectionReason : "N/A"}</li>
+    </ul>
+
+    <p>This change has been synced across your account. Please review your campaigns or automations using this template to ensure everything remains aligned.</p>
+
+    <p>Best regards,<br>Team ${emailSender}</p>
+  `;
+
+  return { subject, body, emailSender };
+}
+
+
+
+  module.exports = { EmailTemplateProvider, TemplateQualityUpdateEmail };

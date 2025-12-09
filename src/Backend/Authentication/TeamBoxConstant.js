@@ -542,6 +542,9 @@ UNION
         NULL AS assignAgent,
         NULL AS button,
         NULL AS interactive_buttons,
+        NULL AS repliedMessageTo,
+        NULL AS repliedMessage,
+        NULL AS repliedMessageId,
         InteractionEvents.action,
         InteractionEvents.action_at,
         InteractionEvents.action_by

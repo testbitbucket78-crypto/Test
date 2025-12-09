@@ -25,6 +25,8 @@ const XLSX = require('xlsx');
 const { EmailConfigurations } =  require('../Authentication/constant');
 const { MessagingName }= require('../enum');
 const commonFun = require('../common/resuableFunctions.js')
+
+
 const addCampaignTimings = async (req, res) => {
     try {
         console.log(req.body)
@@ -1012,7 +1014,27 @@ const deleteTemplates = async (req, res) => {
         let myUTCString = new Date().toUTCString();
         const created_at = moment.utc(myUTCString).format('YYYY-MM-DD HH:mm:ss');
         ID = req.body.ID;
-        let deleteVal = await db.excuteQuery(val.deleteTemplate, [created_at, ID]);
+        let SPID = req.body.SPID;
+
+        const phoneNumberDetails = (await db.excuteQuery('select * from WA_API_Details where spid = 55 order by 1 desc limit 1', [SPID]))?.[0]?.phoneNumber_id;
+        const { TemplateName, token} = (await db.excuteQuery('select * from templateMessages where ID = ? and and isDeleted != 1', [ID]))?.[0] ;
+        if(phoneNumberDetails){
+            var metaResponse = await commonFun.deleteTemplateFromMeta(
+                phoneNumberId,
+                TemplateName,
+                token
+            );
+            if(metaResponse?.success){
+              
+            }
+        }
+        
+        if(metaResponse?.success) {
+            let deleteVal = await db.excuteQuery(val.flagStatusToisDeleted, [created_at, ID]);
+        } else{
+           let deleteVal = await db.excuteQuery(val.deleteTemplate, [created_at, ID]);
+        }
+
         res.status(200).send({
             deleteVal: deleteVal,
             status: 200

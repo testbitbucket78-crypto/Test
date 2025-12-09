@@ -27,6 +27,7 @@ const { userStatus } = require('./enum.js')
 const variable = require('./common/constant');
 const { whapiService } = require('./webJS/whapiService.js');
 const { getUrl, env } = require('./config');
+const { retryExpiryService, remaining_segments_contacts }= require('./Services/retryExpiryService.js');
 // Function to check if the schedule_datetime is within 1-2 minutes from the current time
 function isWithinTimeWindow(scheduleDatetime) {
   const currentTime = moment();
@@ -55,6 +56,12 @@ async function fetchScheduledMessages() {
 
     // HAVE TO CHANGE THIS IN ASYNC FOR EACH SPID
     console.log('-------------------st------------------')
+    //messagesData = await retryExpiryService({});
+    const retryData = await retryExpiryService({});
+
+    if (Array.isArray(retryData) && retryData.length > 0) {
+        messagesData = [...messagesData, ...retryData];
+    }
     for (const message of messagesData) {
       message.start_datetime = message.formatted_date + 'Z';
       var stDateTime = new Date(message.start_datetime)
@@ -64,7 +71,7 @@ async function fetchScheduledMessages() {
       logger.info(`fetchScheduledMessages isWorkingTime ${isWorkingTime(message)}  time ${new Date(message.start_datetime) <= new Date(currentDateTime)}`)
       if (isWorkingTime(message)) {
 
-        if (stDateTime <= currentDateTime) {
+        if (stDateTime  <= currentDateTime) {
           console.log(" isWorkingTime messagesData loop",)
             const phoneNumber = message.segments_contacts.length > 0 ? mapPhoneNumberfomList(message) : mapPhoneNumberfomCSV(message);
 
@@ -251,7 +258,7 @@ function parseMessageTemplate(template) {
   return placeholders;
 }
 
-async function sendMessages(phoneNumber, message, id, campaign, response, textMessage, msgId, channel, FailureCode, FailureReason) {
+async function sendMessages(phoneNumber, message, id, campaign, response, textMessage, msgId, channel, FailureCode, FailureReason, segments_contacts) {
   try {
     var status = 0
     if (response == 200) {
@@ -273,6 +280,10 @@ async function sendMessages(phoneNumber, message, id, campaign, response, textMe
       msgId: msgId,
       FailureReason: FailureReason,
       FailureCode: FailureCode
+    }
+
+    if(FailureCode == 131049){
+      await remaining_segments_contacts(segments_contacts, campaign.Id);
     }
 
 logger.info("campaign table CampaignId-");
@@ -437,11 +448,26 @@ function escapeRegExp(string) {
 
 
 async function campaignCompletedAlert(message) {
-  let updateQuery = `UPDATE Campaign SET status=3,updated_at=? where Id=?`;
-  let myUTCString = new Date().toUTCString();
-  const currenttime = moment.utc(myUTCString).format('YYYY-MM-DD HH:mm:ss');
-  let updatedStatus = await db.excuteQuery(updateQuery, [currenttime, message.Id])
-  campaignAlerts(message, 3) // Campaign Finish 
+
+  const check = await db.excuteQuery(
+    `SELECT status, failedStatusCode FROM Campaign WHERE Id = ?`,
+    [message.Id]
+  );
+  if (
+    check.length > 0 &&
+    (
+      check[0].status == 9 
+    )
+  ) {
+    return; // this is for campaign not finished.
+  }
+  else {
+    let updateQuery = `UPDATE Campaign SET status=3,updated_at=? where Id=?`;
+    let myUTCString = new Date().toUTCString();
+    const currenttime = moment.utc(myUTCString).format('YYYY-MM-DD HH:mm:ss');
+    let updatedStatus = await db.excuteQuery(updateQuery, [currenttime, message.Id])
+    campaignAlerts(message, 3) // Campaign Finish 
+  }
 
 }
 
@@ -872,7 +898,7 @@ async function messageThroughselectedchannel(spid, from, type, text, media, phon
       if (message.isPaused != 0 || message.isDisable != 0 || message.isDeleted != 0) {
         var errorMessaage = message.isDeleted != 0 ? 'Attention! Your account has been DELETED. Please contact your solution provider': message.isDisable != 0 ? 'Attention! Your account has been DISABLED. Please contact your solution provider' : 'Attention! Your account has been PAUSED. Please contact your solution provider'
         let saveSendedMessage = await saveMessage(from, spid, '', message_content, media, type, type,'WA API', errorMessaage, 9,buttons,interactive_buttons);
-        let saveInCampaignMessage = await sendMessages(from, text, campaignId, message, 403, text, saveSendedMessage, 'WA API', 403, errorMessaage)
+        let saveInCampaignMessage = await sendMessages(from, text, campaignId, message, 403, text, saveSendedMessage, 'WA API', 403, errorMessaage, message?.segments_contacts)
         return response = { status: 403, message: errorMessaage };
       }
 

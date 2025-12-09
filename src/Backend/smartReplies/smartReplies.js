@@ -50,10 +50,14 @@ app.post('/addNewReply', async (req, res) => {
     const myStringArray = req.body.Keywords;
     let Channel = req.body?.Channel
     let Deleted;
+    // const params = {
+    //   strings: {
+    //     value: myStringArray.join(',')
+    //   }
+    // };
     const params = {
       strings: {
-
-        value: myStringArray.join(',')
+        value: myStringArray.map(k => k.trim()).join('|')
       }
     };
     //console.log("params " + params.strings.value)
@@ -101,10 +105,15 @@ app.post('/KeywordMatch', async (req, res) => {
     const smartReplyId = req.body.smartReplyId;
 
     console.log(req.body.Keywords)
-    const params = {
-      strings: {
+    // const params = {
+    //   strings: {
 
-        value: myStringArray.join(',')
+    //     value: myStringArray.join(',')
+    //   }
+    // };
+   const params = {
+      strings: {
+        value: myStringArray.map(k => k.trim()).join('|')
       }
     };
     console.log("params " + params.strings.value)
@@ -123,7 +132,7 @@ app.post('/KeywordMatch', async (req, res) => {
       let botKeyword = await db.excuteQuery(isKeywordUsed, [req.body.SP_ID]);
 
     // Check if any element from array1 is present in array2
-    const matchedElements = myStringArray.filter(element => findKey.some(obj => obj.Keyword === element));
+    const matchedElements = myStringArray.filter(element => findKey?.some(obj => obj?.Keyword === element));
     const matchedBotElements = myStringArray.filter(element => botKeyword.some(obj => obj.Keyword === element));
     console.log(findKey);
     console.log(matchedElements)
@@ -234,12 +243,18 @@ app.put('/updateSmartReply', async (req, res) => {
 
   const myStringArray = Array.isArray(req.body.Keywords) ? req.body.Keywords : [];
   //console.log(req.body.Keywords)
-  const params = {
-    strings: {
+  // const params = {
+  //   strings: {
 
-      value: myStringArray.join(',')
-    }
-  };
+  //     value: myStringArray.join(',')
+  //   }
+  // };
+    const params = {
+      strings: {
+        value: myStringArray.map(k => k.trim()).join('|')
+      }
+    };
+
   //console.log("params " + params.strings.value)
   const jsonData = JSON.stringify(req.body.ReplyActions);
 
@@ -248,6 +263,7 @@ app.put('/updateSmartReply', async (req, res) => {
 
  
  let response = await db.excuteQuery( val.updateSmartReply, [req.body.ID, req.body.Title, req.body.Description, req.body.MatchingCriteria,req.body?.Channel, params.strings.value, jsonData])
+ 
  res.send({
   status:200,
   response:response
