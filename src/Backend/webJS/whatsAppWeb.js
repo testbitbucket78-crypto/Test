@@ -366,6 +366,19 @@ app.post('/IsClientReady', async (req, res) => {
            result = await web.isActiveSpidClient(spid);
         }
         logger.info(`IsClientReady ready api result  ${result.isActiveSpidClient}`)
+
+        if(result.WAweb[0]?.channel_id == 'WA API' && result.WAweb[0]?.channel_status == 0){
+         const planResult = await Whapi.isPlanActive(spid);
+            if (!planResult?.isPlanActive) {
+                return res.send({
+                    status: 404,
+                    message: planResult.message,
+                    result: result.WAweb,
+                    isPlanActive: false
+                });
+            }
+        }
+        
         if(result.WAweb[0]?.channel_id == 'WA API'){
             return res.send({ status: 200, message: "Client is ready !" ,result: result.WAweb})
         }
