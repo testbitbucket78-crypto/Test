@@ -100,9 +100,18 @@ app.post('/craeteQRcode', async (req, res) => {
 
         let isProcessing = processStart(spid); // To check Process for SPID 
         const {isDisable = 0, isPaused = 0, isPlanExpired = 0} = await web.getUserStatus(spid);
-            const _isPaused = Number(isPaused) || 0;
-            if(isDisable || _isPaused || isPlanExpired){
-                throw new Error(isDisable ? 'Service Provider is Disabled' : isPaused ? 'Service Provider is Paused' : 'Service Provider Plan is Expired');
+            const _isDisable = Number(isDisable);
+            const _isPaused = Number(isPaused);
+            const _isPlanExpired = Number(isPlanExpired);
+
+            const messages = [];
+
+            if (_isDisable) messages.push('Disabled');
+            if (_isPaused) messages.push('Paused');
+            if (_isPlanExpired) messages.push('Plan Expired');
+
+            if (messages.length > 0) {
+              throw new Error(`Service Provider is ${messages.join(', ')}`);
             }
 
         console.log(`current: ${spid}, current processSet:`, processSet);
