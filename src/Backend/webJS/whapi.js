@@ -749,7 +749,7 @@ async function isPlanActive(spid) {
         'select isPlanExpired from user where SP_ID = ? and isDeleted != 1',
         [spid]
     );
-    if (data[0].isPlanExpired == 1) {
+    if (data?.length > 0 && data[0].isPlanExpired == 1) {
         return { isPlanActive: false ,message: "Attention! Your channel has been disconnected as the plan validity has expired. Recharge your plan to resume services."};
     } else {
         return { isPlanActive: true };
