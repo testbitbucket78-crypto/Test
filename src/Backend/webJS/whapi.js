@@ -1022,13 +1022,13 @@ async function saveInMessages(message) {
             Type = 'text';
             message_text = msg.reply?.list_reply?.title || message_text;
           }
-        if (message_text) {
-          message_text = message_text
-            .replace(/\*(.*?)\*/g, '<strong>$1</strong>')
-            .replace(/_(.*?)_/g, '<em>$1</em>')
-            .replace(/~(.*?)~/g, '<del>$1</del>')
-            .replace(/\n/g, '<br>');
-        }
+        // if (message_text) {
+        //   message_text = message_text
+        //     .replace(/\*(.*?)\*/g, '<strong>$1</strong>')
+        //     .replace(/_(.*?)_/g, '<em>$1</em>')
+        //     .replace(/~(.*?)~/g, '<del>$1</del>')
+        //     .replace(/\n/g, '<br>');
+        // }
   
         let countryCodeObj;
         if (from) {

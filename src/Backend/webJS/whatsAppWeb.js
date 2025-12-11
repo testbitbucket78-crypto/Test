@@ -17,6 +17,7 @@ const logger = require('../common/logger.log');
 var processSet = new Set();
 const variables = require('../common/constant')
 const { getUrl, env } = require('../config');
+const ProviderService = require('../Services/ProviderService'); 
 
 
 // const { MessageMedia, Location, Contact } = require('whatsapp-web.js');
@@ -98,13 +99,29 @@ app.post('/craeteQRcode', async (req, res) => {
         phoneNo = req.body.phoneNo
 
         let isProcessing = processStart(spid); // To check Process for SPID 
+        const {isDisable = 0, isPaused = 0, isPlanExpired = 0} = await web.getUserStatus(spid);
+            const _isDisable = Number(isDisable);
+            const _isPaused = Number(isPaused);
+            const _isPlanExpired = Number(isPlanExpired);
+
+            const messages = [];
+
+            if (_isDisable) messages.push('Disabled');
+            if (_isPaused) messages.push('Paused');
+            if (_isPlanExpired) messages.push('Plan Expired');
+
+            if (messages.length > 0) {
+              throw new Error(`Service Provider is ${messages.join(', ')}`);
+            }
+
         console.log(`current: ${spid}, current processSet:`, processSet);
         if(!isProcessing){
             return res.status(409).json({ value: 'Please wait for 60 seconds as the previous request is closing down' });
-          }
-        //const provider = ProviderFactory.getProvider();
+        }
+       //const provider = ProviderFactory.getProvider();
         let response
-        if(variables.provider == "whapi" || variables.SPID == spid){
+        // if(variables.provider == "whapi" || variables.SPID == spid){
+        if(await ProviderService.isValidSPID(variables?.providers.whapi, spid)){
         response = await Whapi.createClientInstance(spid, phoneNo);
         Whapi.handleWhatsAppReady(spid, phoneNo, response.channelToken); //todo need to check
         }else{
@@ -130,7 +147,7 @@ app.post('/craeteQRcode', async (req, res) => {
         logger.error(`err while Creating QR CODE for SPID ${req?.body?.spid}, error: ${err}`)
          res.send({
             status: 500,
-            err: err
+            err: err?.message ?? err
         })
 
     }
@@ -229,7 +246,8 @@ app.post('/sendMessage', async (req, res) => {
         msg_id = req.body?.msg_id
         spNumber = req.body?.spNumber
         let response
-        if(variables.provider == "whapi" || variables.SPID == spid){
+        // if(variables.provider == "whapi" || variables.SPID == spid){
+        if(await ProviderService.isValidSPID(variables?.providers.whapi, spid)){
             response = await Whapi.sendMessageViaWhapi(spid, phoneNo, type, text, link, interaction_id, msg_id, spNumber);
         }else{
             response = await web.sendMessages(spid, phoneNo, type, text, link, interaction_id, msg_id, spNumber);
@@ -254,7 +272,8 @@ app.post('/sendFunnelMessage', async (req, res) => {
         text = req.body.text
         phoneNo = req.body.phoneNo
         let response;
-        if(variables.provider == "whapi" || variables.SPID == spid){
+        // if(variables.provider == "whapi" || variables.SPID == spid){
+        if(await ProviderService.isValidSPID(variables?.providers.whapi, spid)){
             response = await Whapi.sendFunnel(spid, phoneNo, type, text, link);
         }else{
             response = await web.sendFunnel(spid, phoneNo, type, text, link);
@@ -349,7 +368,8 @@ app.post('/IsClientReady', async (req, res) => {
     try {
         spid = req.body.spid
         let result
-        if(variables.provider == "whapi" || variables.SPID == spid){
+        // if(variables.provider == "whapi" || variables.SPID == spid){
+        if(await ProviderService.isValidSPID(variables?.providers.whapi, spid)){
            result = await Whapi.isActiveSpidClient(spid);
         }else{
            result = await web.isActiveSpidClient(spid);

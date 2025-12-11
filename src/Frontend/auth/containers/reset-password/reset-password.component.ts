@@ -81,7 +81,7 @@ export class ResetPasswordComponent implements OnInit {
 
  onSubmit() {
         var SP_ID = sessionStorage.getItem('SP_ID');
-      
+
         this.apiService.resetPassword(this.resetpassword.value, this.uid).subscribe({
             next: (data: any) => {
                 console.log(data);

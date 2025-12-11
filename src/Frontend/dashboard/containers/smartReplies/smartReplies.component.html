@@ -125,7 +125,12 @@
 					<img *ngIf="isDocument(item.Media)" src="../../../../assets/img/settings/doc.svg" alt="Media" style="max-width: 100%; height: auto;"/>
                     <video *ngIf="isVideo(item.Media)" [src]="item.Media" controls style="max-width: 100%; height: auto;"></video>
 				    </div>
-					<p [innerHTML]="item.Message | sanitizeHtml"></p>
+					<!-- <p [innerHTML]="item.Message | sanitizeHtml"></p> -->
+					<app-whatsapp-message-preview
+							type="teambox"
+							[messageText]="item.Message">
+					</app-whatsapp-message-preview>
+
 					<div *ngIf="item?.buttons && item?.buttons?.length >0" class="w-70">
 						<div *ngFor="let it of item?.buttons let i = index" >
 						<div  class="text-center" *ngIf="it?.buttonText && i<3"><button class="template-btn"  [ngClass]="{'btn-radius': ((item?.buttons?.length-1)== i || (item?.buttons?.length >2 && i==2))}">
@@ -274,7 +279,7 @@
 								<h5>Add Keyword</h5>
 								<div class="box2 d-flex" data-required="">
 								  <input class="form-control" id="form-box" #keyowrdtxt [(ngModel)]="keyword" type="text"
-									onKeyPress="return /^[a-zA-Z0-9\s]$/.test(event.key)" placeholder="Enter Keywords" maxlength="56" />
+									 placeholder="Enter Keywords" maxlength="50" (input)="sanitizeKeyword()" />
 								  <button type="button" class="btn7 btn-block ml-2" (click)="addKeyword()">ADD</button>
 								</div>
 								<div *ngIf="keyword.length > 56" class="text-danger mt-2"></div>
@@ -290,8 +295,8 @@
 								</div>
 								<div class="line1"></div>
 								<h4 id="line1-h4">Matching Criteria</h4>
-								<div class="ll d-flex">
-								  <div class="form-check template_box_inner">
+								<div class="ll d-flex justify-content-center align-items-center mr-5">
+								  <!-- <div class="form-check template_box_inner">
 									<input class="form-check-input" type="radio" name="exampleRadios" value="Fuzzy matching"
 									  (change)="onSelectionChange('Fuzzy matching')" [checked]="this.model == 'Fuzzy matching'"  id="exampleRadios1" >
 									<label class="form-check-label" id="exampleRadios1" for="exampleRadios1">
@@ -303,7 +308,7 @@
 									<p id="p-title">Fuzzy Matching</p>
 									<p id="p-body">As long as the message contains a certain % of the Keyword defined.</p>
 									<button id="radio-close-btn" (click)="showBox=false">X</button>
-								  </div>
+								  </div> -->
 								  <div class="form-check template_box_inner">
 									<input type="radio" class="form-check-input" value=" Exact matching" name="exampleRadios"
 									  (change)="onSelectionChange('Exact matching')" [checked]="this.model == 'Exact matching'"  id="exampleradios2">
@@ -357,7 +362,11 @@
 										  <img *ngIf="isDocument(message.Media)" src="../../../../assets/img/settings/doc.svg" alt="Media" style="max-width: 100%; height: auto;"/>
 										  <video *ngIf="isVideo(message.Media)" [src]="message.Media" controls style="max-width: 100%; height: auto;"></video>
 
-										  <p *ngIf="message.Message" id="msgbox-body{{i}}" [innerHTML]="message.Message | sanitizeHtml"></p>
+										  <!-- <p *ngIf="message.Message" id="msgbox-body{{i}}" [innerHTML]="message.Message | sanitizeHtml"></p> -->
+												    <app-whatsapp-message-preview
+														type="teambox"
+														[messageText]="message.Message">
+													</app-whatsapp-message-preview>
 										  <div *ngIf="message?.buttons && message?.buttons?.length >0" class="w-100">
 											<div *ngFor="let item of message?.buttons let i = index" >
 											<div  class="text-center" *ngIf="item?.buttonText && i<3"><button class="template-btn"  [ngClass]="{'btn-radius': ((message?.buttons?.length-1)== i || (message?.buttons?.length >2 && i==2))}">
@@ -491,7 +500,7 @@
 								  <div class="conversation_inout_area">
 					  
 									<div class="input-area">
-									  <ejs-richtexteditor id='defaultRTE' #chatEditor [toolbarSettings]='tools' [width]='0' placeholder="Type Reply..." [pasteCleanupSettings]="pasteCleanupSettings"> </ejs-richtexteditor>
+									  <ejs-richtexteditor id='defaultRTE' #chatEditor [toolbarSettings]='tools' [width]='0' placeholder="Type Reply..." [pasteCleanupSettings]="pasteCleanupSettings" (toolbarClick)="onToolbarClick($event)"> </ejs-richtexteditor>
 									  <button class="submit_btn" (click)="addMessage()">Add</button>
 									</div>
 								  </div>
@@ -725,11 +734,17 @@
 								  <a [href]="template.Links"><img src="../../../../assets/img/settings/doc.svg" /></a>
 								  </div>
 								  <!-- <embed *ngIf="template.media_type === 'document'" [src]="template.Links" type="application/pdf" width="100%" height="400px"> -->
-								<div [ngClass]="{'templateText': template.media_type === 'text'}" class="template_text">
+								<!-- <div [ngClass]="{'templateText': template.media_type === 'text'}" class="template_text">
 								  <p *ngIf="template.media_type ==='text' && template.Header" class="temp-header font-weight-bolder" [innerHTML]="template.Header | sanitizeHtml" class="temp-header font-weight-bolder" class="m-0 font-weight-bold"></p>
 								  <p [innerHTML]="template.BodyText | sanitizeHtml"></p>
 								  <p class="temp-footer"  *ngIf="template.FooterText" [innerHTML]="template.FooterText | sanitizeHtml"></p>
-								</div>
+								</div> -->
+                                <app-whatsapp-message-preview
+									[header]="template.Header"
+									[body]="template.BodyText"
+									[footer]="template.FooterText">
+								</app-whatsapp-message-preview>
+
 								<div *ngIf="template?.buttons && template?.buttons?.length >0 && template?.Channel === 'WA API'" class="w-100">
 									<div *ngFor="let item of template?.buttons let i = index" >
 									<div  class="text-center" *ngIf="item?.buttonText && i<3"><button class="template-btn"  [ngClass]="{'btn-radius': ((template?.buttons?.length-1)== i || (template?.buttons?.length >2 && i==2))}">
@@ -802,11 +817,16 @@
 										  <p *ngIf="selectedTemplate.media_type !== 'text'" class="close-box edit_media" (click)="editMedia()">
 										  <img src="/assets/img/campaign/edit.svg">
 										</p>
-										 <div [ngClass]="{'templateText': selectedTemplate.media_type === 'text'}" class="template_text">
+										 <!-- <div [ngClass]="{'templateText': selectedTemplate.media_type === 'text'}" class="template_text">
 										  <p *ngIf="selectedTemplate.media_type ==='text' && selectedTemplate.Header" [innerHTML]="selectedTemplate.Header | sanitizeHtml" class="temp-header font-weight-bolder" class="m-0 font-weight-bold"></p>
 										  <p [innerHTML]="selectedTemplate.BodyText | sanitizeHtml"></p>
 										  <p class="temp-footer" *ngIf="selectedTemplate.FooterText" [innerHTML]="selectedTemplate.FooterText | sanitizeHtml"></p>
-										  </div>
+										  </div> -->
+                                <app-whatsapp-message-preview
+									[header]="selectedTemplate.Header"
+									[body]="selectedTemplate.BodyText"
+									[footer]="selectedTemplate.FooterText">
+								</app-whatsapp-message-preview>
 									  </div>
 									  <div *ngIf="selectedTemplate?.buttons && selectedTemplate?.buttons?.length >0 && selectedTemplate?.Channel === 'WA API'" class="w-100 px-2 mb-2">
 										<div *ngFor="let item of selectedTemplate?.buttons let i = index" >
@@ -1127,11 +1147,17 @@
 								  <!-- <p class="close-box edit_media" (click)="editMedia()">
 								  <img src="/assets/img/campaign/edit.svg">
 								</p> -->
-								 <div [ngClass]="{'templateText': selectedTemplate.media_type === 'text'}" class="template_text">
+								 <!-- <div [ngClass]="{'templateText': selectedTemplate.media_type === 'text'}" class="template_text">
 								  <p *ngIf="selectedTemplate.media_type ==='text' && selectedTemplate.Header" [innerHTML]="selectedTemplate.Header | sanitizeHtml" class="temp-header font-weight-bolder" class="m-0 font-weight-bold"></p>
 								  <p [innerHTML]="selectedTemplate.BodyText | sanitizeHtml"></p>
 								  <p class="temp-footer" *ngIf="selectedTemplate.FooterText" [innerHTML]="selectedTemplate.FooterText | sanitizeHtml"></p>
-								  </div>
+								  </div> -->
+                                <app-whatsapp-message-preview
+									[header]="selectedTemplate.Header"
+									[body]="selectedTemplate.BodyText"
+									[footer]="selectedTemplate.FooterText">
+								</app-whatsapp-message-preview>
+
 								  <div *ngIf="selectedTemplate?.buttons && selectedTemplate?.buttons?.length >0 && selectedTemplate?.Channel === 'WA API'" class="w-100">
 									<div *ngFor="let item of selectedTemplate?.buttons let i = index" >
 									<div  class="text-center" *ngIf="item?.buttonText && i<3"><button class="template-btn"  [ngClass]="{'btn-radius': ((selectedTemplate?.buttons?.length-1)== i || (selectedTemplate?.buttons?.length >2 && i==2))}">

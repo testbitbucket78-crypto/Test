@@ -32,7 +32,12 @@ const variables = {
         callback_persist: true
     },
     provider: "webJS", // webJS or whapi
-    SPID : "1068",
+    SPID : "1248",
+    providers: {
+        web: "webJS",
+        whapi: "whapi",
+        api: "api"
+    },
     webhookSPIDs : ['847','91','159','55','163','1055','1068']
 };
 

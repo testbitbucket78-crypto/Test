@@ -168,5 +168,36 @@ formatResponse(config) {
   };
 }
 }
+
+class RetryExpiryServiceModel {
+  constructor({ campaignId, spId, phoneNumber, messageId, retryAttempt, nextRetryTime, status }) {
+    this.campaignId = campaignId;
+    this.spId = spId;
+    this.phoneNumber = phoneNumber;
+    this.messageId = messageId;
+    this.retryAttempt = retryAttempt || 0;
+    this.nextRetryTime = nextRetryTime || null;
+    this.status = status || 'pending';
+  }
+
+  validate() {
+    if (!this.campaignId || !this.spId) {
+      throw new Error("Invalid RetryExpiryServiceModel: campaignId and spId are required");
+    }
+  }
+
+  toJSON() {
+    return {
+      campaignId: this.campaignId,
+      spId: this.spId,
+      phoneNumber: this.phoneNumber,
+      messageId: this.messageId,
+      retryAttempt: this.retryAttempt,
+      nextRetryTime: this.nextRetryTime,
+      status: this.status
+    };
+  }
+}
+
   
-  module.exports = { WebhookLog, logData, exportLog, SmartReplyLogModel, BrandConfigRequest };
+  module.exports = { WebhookLog, logData, exportLog, SmartReplyLogModel, BrandConfigRequest, RetryExpiryServiceModel };

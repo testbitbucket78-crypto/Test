@@ -38,5 +38,7 @@ export interface actionData {
     Media:any;
     buttons: any;
     interactive_buttons: any;
+    ActionID: any;
+    ValueUuid: any;
 }
 

@@ -5,7 +5,7 @@ import { SettingsService } from 'Frontend/dashboard/services/settings.service';
 import { TeamboxService } from 'Frontend/dashboard/services';
 import { parsePhoneNumberFromString } from 'libphonenumber-js';
 import { ToolbarService, LinkService, ImageService, EmojiPickerService, CountService} from '@syncfusion/ej2-angular-richtexteditor';
-import { RichTextEditorComponent, HtmlEditorService } from '@syncfusion/ej2-angular-richtexteditor';
+import { RichTextEditorComponent, HtmlEditorService, ToolbarClickEventArgs } from '@syncfusion/ej2-angular-richtexteditor';
 import { faSmileWink } from '@fortawesome/free-solid-svg-icons';
 import { PhoneValidationService } from 'Frontend/dashboard/services/phone-validation.service';
 import { environment } from 'environments/environment';
@@ -240,6 +240,86 @@ export class TemplateMessageComponent implements OnInit {
         plainText: true,
         keepFormat: false,
     };
+
+
+// *region Begins is new formatting settings and new functions needed for custom formatting in RTE
+public tools2: object = {
+  items: [
+    {
+      tooltipText: 'Bold (*text*)',
+      prefixIcon: 'e-bold',
+      command: 'Bold',
+    },
+    {
+      tooltipText: 'Italic (_text_)',
+      prefixIcon: 'e-italic',
+      command: 'Italic',
+    },
+    {
+      tooltipText: 'StrikeThrough (~text~)',
+      prefixIcon: 'e-strikethrough',
+      command: 'StrikeThrough',
+    },
+    'EmojiPicker',
+    {
+      tooltipText: 'Attributes',
+      click: this.ToggleAttributesOption.bind(this),
+      template:
+        `<button style="width:28px;height:28px;border-radius:35%!important;
+        border:1px solid #e2e2e2!important;background:#fff;" 
+        class="e-tbar-btn e-btn" tabindex="-1" id="custom_tbar">
+          <div class="e-tbar-btn-text">
+            <img style="width:10px;" src="/assets/img/teambox/attributes.svg">
+          </div>
+        </button>`,
+    },
+  ],
+};
+
+
+onToolbarClick(e: ToolbarClickEventArgs): void {
+  const rte = this.chatEditor;
+  const selection = window.getSelection();
+
+  if (!selection || selection.rangeCount === 0) return;
+
+  const range = selection.getRangeAt(0);
+  const selectedText = range.toString();
+  if (!selectedText.trim()) return;
+
+  const command = (e.item as any).command; 
+
+  let wrappedText = selectedText;
+  switch (command) {
+    case 'Bold':
+      wrappedText = `*${selectedText}*`;
+      break;
+    case 'Italic':
+      wrappedText = `_${selectedText}_`;
+      break;
+    case 'StrikeThrough':
+      wrappedText = `~${selectedText}~`;
+      break;
+    default:
+      return;
+  }
+
+  // Replace selection with wrapped text
+  range.deleteContents();
+  range.insertNode(document.createTextNode(wrappedText));
+
+  // Move cursor after inserted text
+  selection.removeAllRanges();
+  const newRange = document.createRange();
+  newRange.setStartAfter(range.endContainer);
+  newRange.collapse(true);
+  selection.addRange(newRange);
+}
+
+
+// *region Closed is new formatting settings and new functions needed for custom formatting in RTE
+
+
     newTemplateForm!: FormGroup;
     buttonsArray:any[] =[];
     channel='webJS';
@@ -390,7 +470,7 @@ intervalSub!: Subscription;
 
     showMessageType() {
         // this.selectedType = type;
-                debugger;
+                
         this.newTemplateForm.get('Links')?.setValue(null);
         this.newTemplateForm.get('Header')?.setValue('');
         this.selectedPreview = '';
@@ -505,6 +585,9 @@ intervalSub!: Subscription;
     }
     
     async saveVideoAndDocument(files: FileList | string) {
+        
+        if (!files) return;
+        
         if (typeof files === 'string') {
         const fileName = this.extractActualFileName(files);
         this.loadingVideo = true;
@@ -1249,7 +1332,14 @@ insertAtCursor(selectedValue: any) {
         selection?.addRange(range);
     }, 100);
 	const newNode = document.createElement('span');
-	newNode.innerHTML =  '<span contenteditable="false" class="e-mention-chip"><a _ngcontent-yyb-c67="" title="">{{'+selectedValue+'}}</a></span>';
+	//newNode.innerHTML =  '<span contenteditable="false" class="e-mention-chip"><a _ngcontent-yyb-c67="" title="">{{'+selectedValue+'}}</a></span>';
+	//newNode.innerHTML =  `<span contenteditable="false">{{${selectedValue}}}</span>`; // I am making it a locked token so that deleting willbe for all.
+    newNode.innerHTML = `
+    <span class="token-wrapper" contenteditable="false" style="display:inline-block;">
+        <span>{{${selectedValue}}}</span>
+    </span>
+    `;
+    
 	this.lastCursorPosition?.insertNode(newNode);
     setTimeout(()=>{
         document.execCommand('bold');
@@ -1392,36 +1482,37 @@ sanitizeInteractivePayload(payload: any): any {
 
     
 onContentChange() {
+    ;
     const container = document.createElement('div');
     container.innerHTML = this.chatEditor?.value;
     console.log(this.chatEditor?.value);
     const text = container.innerText;
-    //this.processText(text);
+    this.processText(text);
     this.onEditorChange(this.chatEditor?.value)
-    const emojiRegex = /[\uD800-\uDBFF][\uDC00-\uDFFF]/g; 
-    const characterCount = text?.replace(emojiRegex, '__').length || 0; 
+    const emojiRegex = /[\uD800-\uDBFF][\uDC00-\uDFFF]/g;
+    const characterCount = text?.replace(emojiRegex, '__').length || 0;
     if (characterCount > 1024) {
       const trimmedContent = this.trimContent(text, characterCount);
       this.chatEditor.value = trimmedContent;
-    } 
+    }
   }
 
 // #region Process Text for Value Mapping
-//   processText(text: string){
-//     this.valuesMap.clear();
-//     const headerText = document.getElementById('headerText') as HTMLInputElement;
-//     if(headerText.value) text += headerText.value;
-//     const customValueRegex = /{{var(\d+)}}/g;
-//     let match;
+  processText(text: string){
+    this.valuesMap.clear();
+    const headerText = document.getElementById('headerText') as HTMLInputElement;
+    if(headerText.value) text += headerText.value;
+    const customValueRegex = /{{var(\d+)}}/g;
+    let match;
     
-//     while ((match = customValueRegex.exec(text)) !== null) {
-//       const num = parseInt(match[1], 10);
-//       this.valuesMap.set(num, `var${num}`);
-//     }
+    while ((match = customValueRegex.exec(text)) !== null) {
+      const num = parseInt(match[1], 10);
+      this.valuesMap.set(num, `var${num}`);
+    }
 
-//     let sortedEntries = Array.from(this.valuesMap.entries()).sort((a, b) => a[0] - b[0]);
-//     this.valuesMap = new Map(sortedEntries);
-//   }
+    let sortedEntries = Array.from(this.valuesMap.entries()).sort((a, b) => a[0] - b[0]);
+    this.valuesMap = new Map(sortedEntries);
+  }
 // #endregion
 
   trimContent(text: string, characterCount: number): string {
@@ -1435,25 +1526,25 @@ onContentChange() {
     return trimmedText;
   }
   
-addCustomAttribute(){
-     this.customValue = `var${this.countValue}`
-     this.countValue++;
-}
+// addCustomAttribute(){
+//      this.customValue = `var${this.countValue}`
+//      this.countValue++;
+// }
 
-//   addCustomAttribute(){
-//     if (this.valuesMap.size == 0) {
-//         this.valuesMap.set(1, `var${1}`);
-//         return;
-//     }
-//     this.valuesMap.forEach((value, key) => {
-//         if (key == this.countValue ) {
-//             this.countValue++
-//         }
-//     });
-//     this.valuesMap.set(this.countValue,`var${this.countValue}`);
-//     this.customValue = `var${this.countValue}`
-//     this.countValue = 1;
-//   }
+  addCustomAttribute(){
+    if (this.valuesMap.size == 0) {
+        this.valuesMap.set(1, `var${1}`);
+        return;
+    }
+    this.valuesMap.forEach((value, key) => {
+        if (key == this.countValue ) {
+            this.countValue++
+        }
+    });
+    this.valuesMap.set(this.countValue,`var${this.countValue}`);
+    this.customValue = `var${this.countValue}`
+    this.countValue = 1;
+  }
 
 addButtons(type: string) {
     const button = this.createButton(type);
@@ -1601,6 +1692,7 @@ createButton(type: string) {
   countTagOccurrence = (str: string, tag: string) => str.split(tag).length - 1;
 
   validateItems():boolean {
+    
     let validationErrors = ''; 
     const buttonTextSet = new Set<string>();
     const urlPattern = /^(https?:\/\/).*\.[a-z]{2,}$/i;
@@ -1752,9 +1844,9 @@ return true
   }
 
   wrapWithEmTags(text:string) {
-    if (!/^<em>.*<\/em>$/.test(text)) {
-        return `<em>${text}</em>`;
-    }
+    // if (!/^<em>.*<\/em>$/.test(text)) {
+    //     return `<em>${text}</em>`;
+    // } todo impact cant be analysed in current but no need of it 
     return text;
 }
 addButtonsPatch(type: string, buttonText: string , webUrl: string , phoneNumber: string, code: string , flowId: string) {

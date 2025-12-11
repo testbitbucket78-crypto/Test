@@ -541,4 +541,39 @@ const formatDateTime = (date) => {
   });
 };
 
-module.exports = {formatterDate, formatterTime, mapCountryCode, formatterDateTime,getCountryDetails, formatDateTimeAccToTimeZone, makeXLSXFileOfData, makeXLSXForSmartReplies};
+// function convertTimeByTimezone(time, timezone) {
+//   try {
+//     if (!time || !timezone) return time;
+//     const now = new Date();
+//     const currentDate = moment(now).format('YYYY-MM-DD');
+//     const dateTimeString = `${currentDate}T${time}:00`;
+//     return moment(dateTimeString).utc().format();
+//   } catch (err) {
+//     console.error("Error converting time:", err);
+//     return time;
+//   }
+// }
+function convertTimeByTimezone(time, timezone) {
+ try {
+    if (!time || !timezone) return time;
+
+    const currentDate = new Date().toISOString().split("T")[0]; 
+    const dateString = `${currentDate}T${time}:00`;
+
+    // Build time in the selected timezone
+    const localStringInTZ = new Date(dateString).toLocaleString("en-US", {
+      timeZone: timezone
+    });
+
+    // Parse that as local (which effectively becomes UTC conversion)
+    const dateInTZ = new Date(localStringInTZ);
+
+    return dateInTZ.toISOString() ;
+  } catch (err) {
+    console.error("UTC conversion error:", err);
+    return time;
+  }
+}
+
+
+module.exports = {formatterDate, formatterTime, mapCountryCode, formatterDateTime,getCountryDetails, formatDateTimeAccToTimeZone, makeXLSXFileOfData, makeXLSXForSmartReplies, convertTimeByTimezone};

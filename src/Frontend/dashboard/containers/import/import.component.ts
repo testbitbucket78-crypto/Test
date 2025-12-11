@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, EventEmitter, HostListener, OnInit, Output } from '@angular/core';
+import { ChangeDetectionStrategy, Component, EventEmitter, HostListener, OnInit, Output, ChangeDetectorRef } from '@angular/core';
 import { NgbModalConfig, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { DashboardService } from './../../services';
 import { SettingsService } from 'Frontend/dashboard/services/settings.service';
@@ -7,6 +7,8 @@ import Stepper from 'bs-stepper';
 import { Router } from '@angular/router';
 import * as XLSX from 'xlsx'; 
 import { convertCsvToXlsx } from '../common/Utils/file-utils';
+import { ToastService } from 'assets/toast/toast.service';
+
 declare var $: any;
 
 
@@ -67,7 +69,7 @@ export class ImportComponent implements OnInit {
 	identifierTooltip: boolean = false;
     userList!:any;
 
-	constructor(config: NgbModalConfig, private modalService: NgbModal, private apiService: DashboardService,private _settingsService:SettingsService,private router:Router) {
+	constructor(config: NgbModalConfig, private modalService: NgbModal, private apiService: DashboardService,private _settingsService:SettingsService,private router:Router, private toastService: ToastService, private cdr: ChangeDetectorRef) {
 
 		config.backdrop = 'static';
 		config.keyboard = false;
@@ -429,9 +431,13 @@ export class ImportComponent implements OnInit {
 	  
 	  
 
-importData!: boolean ;
+importData = false ;
 	onImportContacts(modal:any) {
-       this.importData = true
+		if(this.countUpdatedData == 0 && this.numberOfNewContact == 0) {
+			this.toastService.warning('No contacts to import.');
+			return;
+		}
+       this.importData = true;
 		const bodyData:importCSVData = {
 			field: [], 
 			identifier: this.Identifier,
@@ -449,7 +455,7 @@ importData!: boolean ;
 			this.apiService.importContact(bodyData).subscribe(
 				(response:any) => {
 					this.importData = false;
-				if (response.status === 200) {
+				if (response.status === 200 || response?.status === 202) {
 					this.modalService.open(modal);
 					$("#importmodal").modal('hide'); 
 					this.file=null;
@@ -457,7 +463,10 @@ importData!: boolean ;
 					this.stepper.reset()
 					this.getContact.emit('');
 					this.closePopup();
+					this.toastService.warning(response?.msg, 8000);
+
 				}
+				this.cdr.detectChanges();
 			},
 				(error)=> {
 					if(error) {

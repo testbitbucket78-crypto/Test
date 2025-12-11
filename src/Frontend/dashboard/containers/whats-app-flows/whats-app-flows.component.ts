@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { GridService } from '../../services/ag-grid.service';
 import { ColDef, GridApi, GridReadyEvent } from 'ag-grid-community';
 import { SettingsService } from 'Frontend/dashboard/services/settings.service';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 
 @Component({
   selector: 'sb-whats-app-flows',
@@ -76,9 +77,26 @@ export class WhatsAppFlowsComponent implements OnInit {
     channelPhoneNumber: string = '';
     channelOption:any;
     ShowAssignOption:boolean = false;
-    isLoading:boolean = false;
+    isLoading:boolean = false;    
+        successMessage = '';
+    errorMessage = '';
+    warningMessage = '';
+	 modalReference: any;
+    // <option value="PUBLISHED">PUBLISHED</option>
+    //                 <option value="DRAFT">DRAFT</option>
+    //                 <option value="DEPRECATED">DEPRECATED</option>
+    //                 <option value="BLOCKED">BLOCKED</option>
+    //                 <option value="THROTTLED">THROTTLED</option>
+    flowfilter:any[] = [
+      {label:'PUBLISHED',checked:false},
+      {label:'DRAFT',checked:false},
+      {label:'DEPRECATED',checked:false},
+      {label:'BLOCKED',checked:false},
+      {label:'THROTTLED',checked:false},
+    ]
+    initflowfliter:any =[];
    
-  constructor( public GridService: GridService,public settingsService: SettingsService){
+  constructor( public GridService: GridService,public settingsService: SettingsService, private modalService: NgbModal){
     this.spId = Number(sessionStorage.getItem('SP_ID'));
   }
 
@@ -92,11 +110,14 @@ export class WhatsAppFlowsComponent implements OnInit {
   }
 
   rowClicked = (event: any) => {
-
+// if(event.data?.responses > 0){
 this.isShowDetails = true;
     this.flowId = event.data?.flowid;
     this.flowName = event.data?.flowname;
     this.mapping = JSON.parse(event.data?.col_Mapping || '{}');
+// } else{
+//   this.showToaster('error', 'There is no responce')
+// }
 };    
 
 gridOptions:any = {
@@ -131,14 +152,25 @@ actionsCellRenderer(params: any) {
   `;
   const div = document.createElement('div');
   div.innerHTML = buttonsHtml;
-  //div.addEventListener('click', this.onButtonClick.bind(this, element));
+  div.addEventListener('click', this.onButtonClick.bind(this, element));
   return div;
 }
 
-  onFilterTextBoxChange() {
-    const searchInput = document.getElementById('Search-Ag') as HTMLInputElement;
-    const searchTerm = searchInput.value.trim().toLowerCase();
-    this.gridapi.setQuickFilter(searchTerm);
+
+onButtonClick(data:any, event: any) {
+ window.open('https://business.facebook.com/wa/manage/flows/create', '_blank');
+}
+
+
+
+
+
+
+
+  onFilterTextBoxChange(srchText:any) {
+    // const searchInput = document.getElementById('Search-Ag') as HTMLInputElement;
+    // const searchTerm = srchText.value.trim().toLowerCase();
+    this.gridapi.setQuickFilter(srchText);
     //this.flowList = this.rowData.filter((contact: any) => contact.Name.toLowerCase().includes(searchTerm));
     this.setPaging();
   }
@@ -167,8 +199,16 @@ getGridPageSize() {
     setTimeout(() => {
         this.GridService.onChangePageSize(this.paginationPageSize, this.gridapi, this.flowList);
         this.paging = this.GridService.paging;
+         this.onBtFirst();
     }, 50)
 }
+
+    onBtFirst(){
+      this.GridService.onBtFirst(this.gridapi, this.flowList);
+        this.currPage = this.GridService.currPage;
+        this.paging = this.GridService.paging;
+       // this.getContact();
+    }
 
 onBtNext() { 
     this.GridService.onBtNext(this.gridapi, this.flowList);
@@ -242,5 +282,76 @@ getWhatsAppDetails() {
     this.flowList = this.initflowList;
   }
 }
+
+    onFilterChanged() {
+        setTimeout(() => {
+            const rowCount = this.gridOptions.api.getModel().getRowCount();
+            if (rowCount === 0) {
+                this.gridapi.showNoRowsOverlay();
+            } else {
+                this.gridapi.hideOverlay();
+            }
+        }, 100);
+    }
+
+    creatWhatsAppFlow(){
+       window.open('https://business.facebook.com/wa/manage/flows/create', '_blank');
+    }
+
+    
+	filterCampaign(filtercampaign: any) {
+    this.initflowfliter =JSON.parse(JSON.stringify(this.flowfilter));
+		this.closeAllModal()
+		this.modalReference = this.modalService.open(filtercampaign,{size: 'sm', windowClass:'white-pink'});
+	}
+
+  cancelfilter(){
+    this.flowfilter =JSON.parse(JSON.stringify(this.initflowfliter));
+  }
+
+  
+	closeAllModal(){
+		if(this.modalReference){
+			this.modalReference.close();
+	    }
+	}
+
+
+  filterFlows() {
+  const selectedFilters = this.flowfilter
+    .filter(f => f.checked)
+    .map(f => f.label);
+
+  if (selectedFilters.length === 0) {
+    this.flowList = JSON.parse(JSON.stringify(this.initflowList));
+  }
+
+  // Step 3: filter based on selected statuses
+  this.flowList =  this.initflowList.filter((flow:any) =>
+    selectedFilters.includes(flow.status)
+  );  
+  this.getGridPageSize();
+  this.closeAllModal();
+}
+
+
+showToaster(type:any,message:any){
+    if(type=='success'){
+      this.successMessage=message;
+    }else if(type=='error'){
+      this.errorMessage=message;
+    }else{
+      this.warningMessage=message;
+    }
+    setTimeout(() => {
+      this.hideToaster()
+    }, 5000);
+    
+  }
+  hideToaster(){
+    this.successMessage='';
+    this.errorMessage='';
+    this.warningMessage='';
+  }
 
 }

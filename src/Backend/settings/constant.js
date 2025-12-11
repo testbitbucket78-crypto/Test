@@ -35,7 +35,7 @@ selectlocalDetails = 'select * from localDetails where SP_ID=? and isDeleted !=1
 selectBillingDetails = 'select * from billing where SP_ID=? and isDeleted !=1'
 
 
-insertWork = `INSERT INTO WorkingTimeDetails (SP_ID,working_days, start_time, end_time,created_at,created_By) VALUES (?, ?, ?, ?,?,?)`;
+insertWork = `INSERT INTO WorkingTimeDetails (SP_ID,working_days, start_time, end_time,created_at,created_By, timeZone) VALUES (?, ?, ?, ?,?,?,?)`;
 selectWork = `select * from WorkingTimeDetails where SP_ID=? and isDeleted !=1`
 updateWork = `UPDATE WorkingTimeDetails SET working_days=?, start_time=?, end_time=?,updated_at=?,created_By=? where SP_ID=? AND id=?`
 deleteWork = `UPDATE WorkingTimeDetails SET isDeleted=? , updated_at=? where SP_ID=?`
@@ -417,6 +417,7 @@ var selectTemplateForGallery = `SELECT * FROM templateMessages WHERE spid=? and 
 var selectApprovedTemplate = `SELECT * FROM templateMessages WHERE spid=? and isDeleted !=1  and (status='saved' OR status='APPROVED') and isTemplate=?`
 var updateTemplate = `UPDATE templateMessages SET TemplateName=?,Channel=?,Category=?,Language=?,media_type=?,Header=?,BodyText=?,Links=?,FooterText=?,template_json=?,status=?,spid=?,created_By=?,updated_at=?,isTemplate=?,industry=?,category_id=?,templateID=?,buttons=?,categoryChange=?,interactive_buttons=?,renderedButtons=?,metaUploadedId=? where ID=?`
 var deleteTemplate = `UPDATE templateMessages set isDeleted=1 ,updated_at=? where ID=?`
+var flagStatusToisDeleted = `UPDATE templateMessages set status='IsDeleted',updated_at=? where ID=?`
 var addGallery = `INSERT INTO templateMessages (TemplateName,Channel,Category,Language,media_type,Header,BodyText,Links,FooterText,template_json,status,spid,created_By,created_at,isTemplate,industry,category_id,updated_at,topic) VALUES ?`
 var updateGallery = `UPDATE templateMessages SET TemplateName=?,Channel=?,Category=?,Language=?,media_type=?,Header=?,BodyText=?,Links=?,FooterText=?,template_json=?,status=?,spid=?,created_By=?,updated_at=?,isTemplate=?,industry=?,category_id=?,topic=? where ID=?`
 var getGallery = `SELECT * FROM templateMessages WHERE spid=? and isDeleted !=1 and isTemplate=?`
@@ -481,5 +482,5 @@ module.exports = {
     Whatsappdetails,addTokenQuery,updateTokenQuery,deleteTokenQuery,selectTokenQuery,isEnableQuery,baseURL,accessToken,deleteIPQuery,insertIPAddress,updateNotification,
     getColCount,addcolumn,getcolumn,deletecolumn,getcolumnid,enableMandatory,enablestatus,editfield ,selectApprovedTemplate ,addGallery ,getGallery,selectUserByIdQuery,
     content_type,access_token,url,selectActiveQuery,getAllUserQuery,checkDeletedColumn,getCustomColumnById,permanentDeleteColumn,selectHealthStatus,insertHealthStatus, insertUserAPIKeys, updateUserAPIKeysAndTokenName
-    ,getUserAPIKeys, updateAPIkeysState, updateWebhookUrl, getAgentId, getChannel, getRateLimit, getCampaignId, updateUserAPIKeysAndKeyGenerate, selectTemplateForGallery,getflowDetail,getflows,saveflowMapping, deleteAPIKey
+    ,getUserAPIKeys, updateAPIkeysState, updateWebhookUrl, getAgentId, getChannel, getRateLimit, getCampaignId, updateUserAPIKeysAndKeyGenerate, selectTemplateForGallery,getflowDetail,getflows,saveflowMapping, deleteAPIKey, flagStatusToisDeleted
 }

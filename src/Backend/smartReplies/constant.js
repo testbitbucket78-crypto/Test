@@ -150,6 +150,8 @@ m.Value ,
 m.media_type,
 m.Media,
 n.Name,
+m.ActionID,
+m.ValueUuid, 
 JSON_UNQUOTE(m.buttons) as buttons,
 JSON_UNQUOTE(m.buttonsVariable) as buttonsVariable,
 JSON_UNQUOTE(m.interactive_buttons) as interactive_buttons

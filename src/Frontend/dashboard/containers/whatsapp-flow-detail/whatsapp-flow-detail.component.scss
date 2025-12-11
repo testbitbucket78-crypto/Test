@@ -100,7 +100,6 @@ opacity: 1;
 .flow-btn{
     border: 2px solid grey;
     border-radius: 20px;
-    min-width: 110px;
     margin: 0px 5px;
 }
 
@@ -259,10 +258,16 @@ opacity: 1;
 .form-check-input{
     height: 20px;
     width: 20px;
+    cursor: pointer;
 }
 
 .select-flow{
     width: 250px;
+    cursor: pointer;
+}
+
+.w-40{
+    width: 40% !important;
 }
 
 .modal-footer{
@@ -277,6 +282,32 @@ opacity: 1;
     word-wrap: break-word;
 }
 
+.f-bold{
+    font-weight: bold !important;
+}
+
+.space-around{
+    justify-content: space-around !important;
+}
+
 .hand-icon{
     cursor: pointer !important;
+}
+.edit-column-slim {
+    height: 350px;
+    overflow-y: scroll;
+}
+
+.clr-txt{
+    color: #000000 !important;
+}
+
+.edit-icon{
+        width: 14px;
+    padding-bottom: 4px;
+    margin-right: 3px;
+}
+
+.p-relative{
+    position: relative !important;
 }

@@ -82,17 +82,17 @@
               Open Question
               <i class="uil-angle-right"></i>
             </button>
-            <button *ngIf="!(ChannelWhatsAppOrWebSelection == 'webJS' && channelName == 'web')" (click)="openCreateModal('buttonOptions', 'buttonOptions')" id="draggable-button-1"
+            <button *ngIf="(ChannelWhatsAppOrWebSelection == 'api' || ChannelWhatsAppOrWebSelection == 'whapi')" (click)="openCreateModal('buttonOptions', 'buttonOptions')" id="draggable-button-1"
               class="draggable btn btn_des1" draggable="true" class="child-option">
               Button Options
               <i class="uil-angle-right"></i>
             </button>
-            <button *ngIf="!(ChannelWhatsAppOrWebSelection == 'webJS' && channelName == 'web')" (click)="openCreateModal('listOptions', 'listOptions')" id="draggable-button-1"
+            <button *ngIf="(ChannelWhatsAppOrWebSelection == 'api' || ChannelWhatsAppOrWebSelection == 'whapi')" (click)="openCreateModal('listOptions', 'listOptions')" id="draggable-button-1"
               class="draggable btn btn_des1" draggable="true" class="child-option">
               List Options
               <i class="uil-angle-right"></i>
             </button>
-            <button *ngIf="channelName == 'api'" (click)="openCreateModal('whatsAppFlow', 'whatsAppFlow')"
+            <button *ngIf="ChannelWhatsAppOrWebSelection == 'api'" (click)="openCreateModal('whatsAppFlow', 'whatsAppFlow')"
               id="draggable-button-1" class="draggable btn btn_des1" draggable="true" class="child-option">
               WhatsApp Flow
               <i class="uil-angle-right"></i>

@@ -77,4 +77,12 @@ export class GridService {
         gridApi.paginationGoToPage(page - 1);
         this.getLastPage(rolesList);
     }
+      selectAllRows(gridApi: any) {
+    gridApi.selectAll();
+  }
+
+  deselectAllRows(gridApi: any) {
+    gridApi?.deselectAll();
+  }
+
 }

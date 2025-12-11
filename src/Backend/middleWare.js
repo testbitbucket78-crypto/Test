@@ -7,6 +7,7 @@ const db = require("./dbhelper");
 const variables = require('./common/constant');
 const Whapi = require("./webJS/whapi");
 const { getUrl, env } = require('./config');
+const ProviderService = require('./Services/ProviderService'); 
 function postDataToAPI(spid, phoneNo, type, text, link, interaction_id, msg_id, spNumber) {
 
     return new Promise(async (resolve, reject) => {
@@ -64,7 +65,8 @@ async function channelssetUp(spid, channelType, mediaType, messageTo, message_bo
 
             // console.log("content middleware" ,content ,"-00098")
             let messages
-            if(variables.provider === 'whapi' || variables.SPID == spid){
+            // if(variables.provider === 'whapi' || variables.SPID == spid){
+            if(await ProviderService.isValidSPID(variables?.providers.whapi, spid)){
               messages = await Whapi.sendMessageViaWhapi(spid, phoneNumber, mediaType, message_body, media, interaction_id, msg_id, spNumber)
             }else{
               messages = await postDataToAPI(spid, phoneNumber, mediaType, message_body, media, interaction_id, msg_id, spNumber)

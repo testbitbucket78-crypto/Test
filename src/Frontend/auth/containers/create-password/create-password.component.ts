@@ -97,7 +97,6 @@ export class CreatePasswordComponent {
       return;
     }
 
-    this.createpassword.value.userDateAndTime = new Date().getTimezoneOffset()
     this.apiService.createpassword(this.createpassword.value,this.uid).subscribe((data:any) => {
 
       if (data.status == 200) { 

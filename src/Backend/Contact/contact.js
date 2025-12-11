@@ -102,6 +102,139 @@ app.post('/getFilteredList', authenticateToken, async (req, res) => {
   }
 });
 
+const { ContactFilteration, ContactResponse }= require('../settings/model/contacts.js');
+app.post('/ContactQuery', authenticateToken, async (req, res) => {
+  try {
+    const contactFilterationBody = new ContactFilteration(req.body);
+    let IsFilteredList = false;
+    let deletedCount = 0;
+    let isSearched = false;
+    let customerIds = [];
+    let contactList = [];
+    //let contactList = await db.excuteQuery(val.selectAllContactLimit, [contactFilterationBody.SP_ID, contactFilterationBody.contactFrom, contactFilterationBody.contactTo]);
+    let contactCount = await db.excuteQuery(val.selectAllContactCount, [contactFilterationBody.SP_ID]);
+    logger.info(`Query executed: ${val.selectAllContactLimit} with SP_ID: ${contactFilterationBody.SP_ID}`);
+
+    // ------------------------------
+    // CASE 1: Filteration-based deletion
+    // ------------------------------
+    if (contactFilterationBody.filerationQuerry) {
+      IsFilteredList = true;
+      let filterQuery = (contactFilterationBody.filerationQuerry).replace('SELECT EC.*','SELECT EC.customerId');
+      filterQuery = (filterQuery).replace('IM.*','IM.InteractionID');
+      filterQuery = filterQuery.replace(/and\s*\(\(\s*\)\s*\)/gi, '');
+      let contactlistQuery = (contactFilterationBody.filerationQuerry).replace(/and\s*\(\(\s*\)\s*\)/gi, '');
+      contactList = await db.excuteQuery(contactlistQuery +' limit ?, ?', [contactFilterationBody.contactFrom,contactFilterationBody.contactTo]);
+      contactCount = await db.excuteQuery(`SELECT COUNT(DISTINCT total_result.customerId) AS totalCount FROM (${filterQuery}) AS total_result`, []);
+      console.log(contactCount,'---------------------------------------------contactCount----------------------');
+      logger.info(`Filtered query executed: ${contactlistQuery}`);
+
+      if (contactFilterationBody.isDeletedContact) { // <--- add this check from frontend
+        const ids = await db.excuteQuery(filterQuery, []);
+        customerIds = ids.map(r => r.customerId);
+        if (customerIds.length) {
+          await db.excuteQuery('UPDATE EndCustomer SET isDeleted=1 WHERE customerId IN (?) AND SP_ID=?', [customerIds, contactFilterationBody.SP_ID]);
+          deletedCount = customerIds.length;
+        }
+      }
+    }
+
+   // ------------------------------
+    // CASE 2: Search-based deletion
+    // ------------------------------
+    else if (contactFilterationBody.isSearched && contactFilterationBody.search && contactFilterationBody.search.trim() !== '') {
+      isSearched = true;
+
+      // Need to return contactsList based on search as well on the bases of limits 
+       const likeTerm = `%${contactFilterationBody.search.toLowerCase()}%`;
+      const searchListQuery = `
+        SELECT 
+          EC.*,
+          IFNULL(GROUP_CONCAT(ECTM.TagName ORDER BY FIND_IN_SET(ECTM.ID, REPLACE(EC.tag, ' ', ''))), '') AS tag_names
+        FROM EndCustomer AS EC
+        LEFT JOIN EndCustomerTagMaster AS ECTM 
+          ON FIND_IN_SET(ECTM.ID, REPLACE(EC.tag, ' ', '')) AND (ECTM.isDeleted != 1)
+        WHERE 
+          EC.isDeleted != 1
+          AND EC.SP_ID = ?
+          AND EC.IsTemporary != 1
+          AND (
+            LOWER(EC.Name) LIKE ?
+            OR LOWER(EC.Phone_number) LIKE ?
+            OR LOWER(EC.emailId) LIKE ?
+          )
+        GROUP BY EC.customerId
+        ORDER BY EC.updated_at DESC
+        LIMIT ?, ?
+      `;
+
+    contactList = await db.excuteQuery(searchListQuery, [
+      contactFilterationBody.SP_ID,
+      likeTerm, likeTerm, likeTerm,
+      contactFilterationBody.page,
+      contactFilterationBody.pageSize
+    ]);
+
+
+      const searchQuery = `
+        SELECT customerId FROM EndCustomer
+        WHERE SP_ID=? AND isDeleted=0 AND 
+        (LOWER(Name) LIKE ? OR LOWER(Phone_number) LIKE ? OR LOWER(emailId) LIKE ?)
+      `;
+      //const likeTerm = `%${contactFilterationBody.search.toLowerCase()}%`;
+      const ids = await db.excuteQuery(searchQuery, [contactFilterationBody.SP_ID, likeTerm, likeTerm, likeTerm]);
+      customerIds = ids.map(r => r.customerId);
+      contactCount = ids?.length ?? 0 ;
+      if (customerIds.length && contactFilterationBody.isDeletedContact) {
+        await db.excuteQuery(
+          'UPDATE EndCustomer SET isDeleted=1 WHERE customerId IN (?) AND SP_ID=?',
+          [customerIds, contactFilterationBody.SP_ID]
+        );
+        deletedCount = customerIds.length;
+      }
+    }
+
+    // ------------------------------
+    // CASE 3: Delete ALL contacts (no filter/search)
+    // ------------------------------
+    else if (contactFilterationBody.isAllSelected && !contactFilterationBody.isFilterApplied && !contactFilterationBody.isSearched && contactFilterationBody.isDeletedContact) {
+      const result = await db.excuteQuery(
+        'UPDATE EndCustomer SET isDeleted=1 WHERE SP_ID=?',
+        [contactFilterationBody.SP_ID]
+      );
+      deletedCount = result.affectedRows || 0;
+    }
+
+    // ------------------------------
+    // CASE 4: Delete only manually selected
+    // ------------------------------
+    else if (!contactFilterationBody.isAllSelected && contactFilterationBody.selectedIds) {
+      await db.excuteQuery(
+    'UPDATE EndCustomer SET isDeleted=1 WHERE customerId IN (?) AND SP_ID=?',
+    [contactFilterationBody.selectedIds, contactFilterationBody.SP_ID]
+  );
+
+  deletedCount = contactFilterationBody.selectedIds.length;
+    }
+    
+    const responseBody = new ContactResponse({
+      totalCount: contactCount.length > 0 ? contactCount[0].totalCount : contactCount || 0,
+      //  actionFlag: deletedCount > 0 ? true : false, 
+      actionFlag : isSearched,
+      isDeleted : deletedCount > 0,
+      contactList: contactList,
+    });
+
+    res.send(responseBody);
+  } catch (err) {
+    logger.error(`Error occurred: ${err.message}`, { stack: err.stack });
+    res.send({
+      status: 500,
+      msg: err.message
+    });
+  }
+});
+
 
 app.post('/addCustomContact', async (req, res) => {
   try {
@@ -576,9 +709,12 @@ app.put('/editContact', authenticateToken, (req, res) => {
 
 
 app.post('/importContact', authenticateToken, async (req, res) => {
+  try{
 
+ res.status(202).send({ msg: 'Contact import started in the Background and we will send confirmation mail when completed', status: 202 });  
+
+ process.nextTick(async () => {
   try {
-
     var result = req.body;
     var fields = result.field
     var CSVdata = result.importedData
@@ -686,6 +822,15 @@ app.post('/importContact', authenticateToken, async (req, res) => {
     console.error(err);
     db.errlog(err);
   }
+  });
+  } 
+
+  catch (err) {
+    res.status(500).send({
+      msg: err,
+      status: 500
+    });
+  }
 })
 
 function sendMailAfterImport(emailId, user, noOfContact,Channel) {
@@ -764,6 +909,12 @@ async function addOnlynewContact(CSVdata, identifier, SP_ID, user) {
 
     for (let i = 0; i < CSVdata.length; i++) {
       const set = CSVdata[i];
+        if (!set.find(f => f.ActuallName === 'Name')) {
+          set.push({
+            ActuallName: 'Name',
+            displayName: ''
+          });
+        }
       const fieldNames = set.map((field) => field.ActuallName).join(', ');
 
       // Find the value of the identifier based on the FieldName
@@ -785,6 +936,13 @@ async function addOnlynewContact(CSVdata, identifier, SP_ID, user) {
     `;
       const checkResult = await db.excuteQuery(checkDeletedQuery, [identifierValue, SP_ID]);
       if (checkResult && checkResult.length > 0) {
+        // ✅ Added name check before update
+        const nameField = set.find((f) => f.ActuallName === 'Name');
+        const phoneField = set.find((f) => f.ActuallName === 'Phone_number');
+        if (nameField && phoneField && (!nameField.displayName || nameField.displayName.trim() === '')) {
+          nameField.displayName = phoneField.displayName; // <-- assign phone number if name empty
+        }
+
         let resetContactFields = await commonFun.resetContactFields(identifierValue, SP_ID)
         const updateQuery = `
         UPDATE EndCustomer SET ${fieldNames.replace(/,/g, ' = ?, ')} = ?, isDeleted = 0,IsTemporary =0, created_at = NOW() 
@@ -797,6 +955,13 @@ async function addOnlynewContact(CSVdata, identifier, SP_ID, user) {
         result = await db.excuteQuery(updateQuery, updateValues);
       }
       else {
+        const nameField = set.find((f) => f.ActuallName === 'Name');
+        const phoneField = set.find((f) => f.ActuallName === 'Phone_number');
+
+        if (nameField && phoneField && (!nameField.displayName || nameField.displayName.trim() === '')) {
+          nameField.displayName = phoneField.displayName; // assign phone number as name if name is empty otherwise its good to go 
+        }
+
         let query = `INSERT INTO EndCustomer (${fieldNames}) SELECT ? WHERE NOT EXISTS (SELECT * FROM EndCustomer WHERE ${identifier}=? and SP_ID=? AND (isDeleted IS NULL OR isDeleted = 0) AND (isBlocked IS NULL OR isBlocked = 0));`;
         const values = set.map((field) => field.displayName);
         //  console.log(values, fieldNames);
@@ -1276,6 +1441,9 @@ async function isDataInCorrectFormat(columnDataType, actuallName, displayName, u
     let convertedValue;
     switch (columnDataType) {
       case 'Number':
+        if(displayName == ''){
+          return { isError: false, reason: '' };  
+        }
         if (actuallName === 'Phone_number' && !existPhone) {    //&& !displayName.match(phoneFormat)  remove this for country code validation
           return { isError: true, reason: `${fieldDisplayName} is not valid` };
         } else {
@@ -1405,10 +1573,16 @@ async function isDataInCorrectFormat(columnDataType, actuallName, displayName, u
     // If the converted data type matches the column data type, return true, else return false
     switch (columnDataType) {
       case 'Number':
+      if (convertedValue === '' || convertedValue === null || convertedValue === undefined) {
+        return { isError: false, reason: '' };
+      }
         return { isError: isNaN(convertedValue), reason: !isNaN(convertedValue) ? "" : `${fieldDisplayName} is not a valid number` };
       case 'Text':
         return { isError: typeof convertedValue !== 'string', reason: typeof convertedValue === 'string' ? "" : `${fieldDisplayName} is not valid text` };
       case 'Switch':
+      if (convertedValue === '' || convertedValue === null || convertedValue === undefined) {
+       return { isError: false, reason: '' };
+      }
         return { isError: typeof convertedValue !== 'string', reason: typeof convertedValue === 'string' ? "" : `${fieldDisplayName} is not valid switch` };
       default:
         return { isError: false, reason: `${fieldDisplayName} Unknown column data type` };

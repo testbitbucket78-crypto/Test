@@ -9,7 +9,7 @@ import { repliesList } from 'Frontend/dashboard/models/smartReplies.model';
 import { Location } from '@angular/common';
 import { agentMessageList } from 'Frontend/dashboard/models/smartReplies.model';
 import { SettingsService } from 'Frontend/dashboard/services/settings.service';
-import { ToolbarService, NodeSelection, LinkService, ImageService } from '@syncfusion/ej2-angular-richtexteditor';
+import { ToolbarService, NodeSelection, LinkService, ImageService,ToolbarClickEventArgs } from '@syncfusion/ej2-angular-richtexteditor';
 import { RichTextEditorComponent, HtmlEditorService,EmojiPickerService } from '@syncfusion/ej2-angular-richtexteditor';
 import { hasEmptyValues, hasEmptyValueInArray } from '../common/Utils/file-utils';
 import { InteractiveButtonPayload } from 'Frontend/dashboard/models/interactiveButtons.model';
@@ -208,7 +208,13 @@ export class SmartRepliesComponent implements OnInit,OnDestroy {
 		// 	{value:2,label:'WhatsApp Web',checked:false}];
 	
 		public tools: object = {
-			items: ['Bold', 'Italic', 'StrikeThrough','EmojiPicker',
+			items: [
+				// 'Bold', 'Italic', 'StrikeThrough','EmojiPicker',
+				{ tooltipText: 'Bold (*text*)', command: 'Bold', prefixIcon: 'e-bold' },
+				{ tooltipText: 'Italic (_text_)', command: 'Italic', prefixIcon: 'e-italic' },
+				{ tooltipText: 'StrikeThrough (~text~)', command: 'StrikeThrough', prefixIcon: 'e-strikethrough' },
+				'EmojiPicker',
+
 				{
 					tooltipText: 'Attachment',
 					undo: true,
@@ -242,6 +248,47 @@ export class SmartRepliesComponent implements OnInit,OnDestroy {
 			plainText: true,
 			keepFormat: false,
 		};
+
+		onToolbarClick(e: ToolbarClickEventArgs): void {
+		  ;
+		  const rte = this.chatEditor;
+		  const selection = window.getSelection();
+		
+		  if (!selection || selection.rangeCount === 0) return;
+		
+		  const range = selection.getRangeAt(0);
+		  const selectedText = range.toString();
+		  if (!selectedText.trim()) return;
+		
+		  const command = (e.item as any).command; 
+		
+		  let wrappedText = selectedText;
+		  switch (command) {
+			case 'Bold':
+			  wrappedText = `*${selectedText}*`;
+			  break;
+			case 'Italic':
+			  wrappedText = `_${selectedText}_`;
+			  break;
+			case 'StrikeThrough':
+			  wrappedText = `~${selectedText}~`;
+			  break;
+			default:
+			  return;
+		  }
+		
+		  // Replace selection with wrapped text
+		  range.deleteContents();
+		  range.insertNode(document.createTextNode(wrappedText));
+		
+		  // Move cursor after inserted text
+		  selection.removeAllRanges();
+		  const newRange = document.createRange();
+		  newRange.setStartAfter(range.endContainer);
+		  newRange.collapse(true);
+		  selection.addRange(newRange);
+		}
+
 	isSendButtonDisabled=false
 	click: any;
 	selecetdpdf: any='';
@@ -1407,6 +1454,10 @@ showAddSmartRepliesModal() {
 			this.ShowAddBotOption = true;
 			this.isEditBot =true;
 			this.botIndex = index;
+		} else {
+			this.ShowAddBotOption = true;
+			this.isEditBot =true;
+			this.botIndex = index;
 		}
 	}
 
@@ -1421,7 +1472,11 @@ showAddSmartRepliesModal() {
 	}
 
 	checkTagStatus (val:any) {
+		console.log(this.assignedTagList,' assigned tag list');
+		
+		this.assignedAgentList
 		if(this.assignedTagList.includes(val)) {
+			
 			return true;
 		}
 		else {
@@ -1503,6 +1558,7 @@ stopPropagation(event: Event) {
 	}
 
 	toggleRemoveTag() {
+		
 		$("#addTagModal").modal('show'); 
 		this.ShowRemoveTag = true;
 	
@@ -1529,6 +1585,7 @@ stopPropagation(event: Event) {
 
 	
 	addBot(index: number) {
+		
 		var isExist = false;
 		this.assignedAgentList.forEach(item=> {
 			if(item.ActionID == 4) {
@@ -1980,6 +2037,7 @@ stopPropagation(event: Event) {
 		this.isLoading = true;
 		this.apiService.sideNav(data.ID).subscribe((response => {
 			this.data = response;
+			
 			console.log(this.data)
 			this.repliesData = <repliesList> {} ;
 			this.repliesData.Channel = this.data[0].Channel;
@@ -2002,10 +2060,12 @@ stopPropagation(event: Event) {
 						{
 							Message: this.data[i].Message,
 							Name: this.data[i].Name, 
+							ActionID: this.data[i].ActionID,
+							ValueUuid: this.data[i].ValueUuid, 
 							Value: this.data[i].Value,
 							Media: this.data[i].Media,
 							buttons: JSON.parse(this.data[i].buttons),
-							interactive_buttons : this.data[i].interactive_buttons
+							interactive_buttons : this.data[i].interactive_buttons,
 						});
 				   }
 			}
@@ -2056,14 +2116,18 @@ console.log(sortedData)
 			}
 			if (this.repliesData.ActionList[i].Name == 'Assign Conversation') {
 				ActionId = 2
+				uuid = sortedData[i]?.ValueUuid
 			}
 			if (this.repliesData.ActionList[i].Name == 'Trigger Flow') {
 				ActionId = 4
+				uuid = sortedData[i]?.ValueUuid
 			}
 			if (this.repliesData.ActionList[i].Name == 'Add Contact Tag') {
 				ActionId = 1
 				Value = JSON.parse(sortedData[i].Value)
+				this.assignedTagList = Value
 			}
+			
 			this.assignedAgentList.push(
 				{	ActionID: ActionId,
 					Message: sortedData[i].Message,
@@ -2174,6 +2238,7 @@ console.log(sortedData)
 		}
         
 		exportLogsAndMail() {
+			this.isLoading = true;
 			if (this.exportLogsForm.invalid) {
 				return;
 			}
@@ -2190,7 +2255,8 @@ console.log(sortedData)
 			this.apiService.exportLogsSmartReply(payload)
 				.subscribe(
 					(response: any) => {
-						debugger
+			            this.isLoading = false;
+						
 						if (response?.success) {
 						$("#export-logs").modal('hide');
 						this._toastService.success('Smart Reply usage report has been emailed successfully.');
@@ -2199,7 +2265,8 @@ console.log(sortedData)
 						}
 					},
 					(error: any) => {
-						debugger;
+			            this.isLoading = false;
+						
 						if (error) {
                           this._toastService.error(error?.error?.error || "An unexpected error occurred while exporting the report.")
 						}
@@ -2232,6 +2299,14 @@ console.log(sortedData)
 			const offsetMins = String(Math.abs(offsetMinutes) % 60).padStart(2, '0');
 			const offset = `${offsetSign}${offsetHours}:${offsetMins}`;
 			return offset;
+		}
+		sanitizeKeyword() {
+		if (this.keyword) {
+			this.keyword = this.keyword
+			.normalize('NFKC')      
+			.trim()                       
+			.replace(/\s+/g, ' '); // replace multiple spaces with single space
+		}
 		}
 
   }

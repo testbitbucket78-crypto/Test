@@ -25,6 +25,8 @@ const { WhapiIncomingMessage } = require('../webJS/model/whapiModel');
 const WhapiProvider = require("../webJS/whapi.js");
 const { messageRecieved, conversationStatus, templateStatus } = require('../common/webhookEvents.js');
 const { ConversationStatusMap } = require('../enum')
+const { TemplateQualityUpdateEmail } = require('../common/template');
+const { sendEmail } = require('../Services/EmailService');
 app.listen(process.env.PORT, () => {
   console.log('Server is running on port ' + process.env.PORT);
 });
@@ -390,6 +392,27 @@ async function extractDataFromMessage(body) {
             const newQualityStatus = change?.value?.new_quality_score;
             if (templateId) await updateQuality(templateId, newQualityStatus);
             console.log("message_template_quality_update" + newQualityStatus);
+            
+
+            const {subject, body, emailSender} = await TemplateQualityUpdateEmail(templateName, newStatus, rejectionReason);
+
+            const user = await db.excuteQuery('SELECT u.email_id FROM user u JOIN WA_API_Details w ON u.SP_ID = w.spid WHERE w.phoneNumber_id = ?', [metaPhoneNumberID]);
+            const userEmail = user && user[0] ? user[0].email_id : null;
+
+             const emailOptions = {
+              to: userEmail,
+              subject,
+              html: body,
+              fromChannel: emailSender,
+            };
+
+            try {
+            if(body){
+                let emailSent = sendEmail(emailOptions);
+            }
+            } catch (error) {
+              console.error(`Failed to send email to ${user[i]?.email}:`, error.message);
+            }
           }
         });
       });

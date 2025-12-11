@@ -3,7 +3,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { defaultMessagesData } from 'Frontend/dashboard/models/settings.model';
 import { SettingsService } from 'Frontend/dashboard/services/settings.service';
 import { TeamboxService } from 'Frontend/dashboard/services';
-import { ToolbarService, NodeSelection, LinkService, ImageService, EmojiPickerService,CountService } from '@syncfusion/ej2-angular-richtexteditor';
+import { ToolbarService, NodeSelection, LinkService, ImageService, EmojiPickerService,CountService, ToolbarClickEventArgs } from '@syncfusion/ej2-angular-richtexteditor';
 import { RichTextEditorComponent, HtmlEditorService } from '@syncfusion/ej2-angular-richtexteditor';
 
 declare var $:any;
@@ -80,7 +80,11 @@ export class DefaultMessageSettingsComponent implements OnInit {
   public tools: object = {
 		items: [
 			
-			'Bold', 'Italic', 'StrikeThrough','EmojiPicker',
+			// 'Bold', 'Italic', 'StrikeThrough','EmojiPicker',
+      	{ tooltipText: 'Bold (*text*)', command: 'Bold', prefixIcon: 'e-bold' },
+				{ tooltipText: 'Italic (_text_)', command: 'Italic', prefixIcon: 'e-italic' },
+				{ tooltipText: 'StrikeThrough (~text~)', command: 'StrikeThrough', prefixIcon: 'e-strikethrough' },
+				'EmojiPicker',
 
   ]};  
   public pasteCleanupSettings: object = {
@@ -88,6 +92,45 @@ export class DefaultMessageSettingsComponent implements OnInit {
     plainText: true,
     keepFormat: false,
   };
+  onToolbarClick(e: ToolbarClickEventArgs): void {
+        ;
+        const rte = this.chatEditor;
+        const selection = window.getSelection();
+      
+        if (!selection || selection.rangeCount === 0) return;
+      
+        const range = selection.getRangeAt(0);
+        const selectedText = range.toString();
+        if (!selectedText.trim()) return;
+      
+        const command = (e.item as any).command; 
+      
+        let wrappedText = selectedText;
+        switch (command) {
+        case 'Bold':
+          wrappedText = `*${selectedText}*`;
+          break;
+        case 'Italic':
+          wrappedText = `_${selectedText}_`;
+          break;
+        case 'StrikeThrough':
+          wrappedText = `~${selectedText}~`;
+          break;
+        default:
+          return;
+        }
+      
+        // Replace selection with wrapped text
+        range.deleteContents();
+        range.insertNode(document.createTextNode(wrappedText));
+      
+        // Move cursor after inserted text
+        selection.removeAllRanges();
+        const newRange = document.createRange();
+        newRange.setStartAfter(range.endContainer);
+        newRange.collapse(true);
+        selection.addRange(newRange);
+      }
   lastCursorPosition: Range | null = null;
 
   constructor(private apiService:SettingsService,private _teamboxService:TeamboxService,private fb: FormBuilder) { }
