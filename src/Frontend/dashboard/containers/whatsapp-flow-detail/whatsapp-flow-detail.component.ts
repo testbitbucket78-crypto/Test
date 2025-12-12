@@ -118,7 +118,7 @@ export class WhatsappFlowDetailComponent {
     suppressPaginationPanel: true,
     paginateChildRows: true,
     overlayNoRowsTemplate:
-        '<span style="padding: 10px; background-color: #FBFAFF; box-shadow: 0px 0px 14px #695F972E;">No rows to show</span>',
+        '<span style="padding: 10px; background-color: #FBFAFF; box-shadow: 0px 0px 14px #695F972E;">No response received yet.</span>',
     overlayLoadingTemplate:
         '<span class="ag-overlay-loading-center">Please wait while your rows are loading</span>',
   };
@@ -184,9 +184,12 @@ export class WhatsappFlowDetailComponent {
     this._teamboxService.getAttributeList(this.spId).subscribe((response: any) => {
         if (response) {
             let attributeListData = response?.result;
-            this.attributesList = attributeListData;
-            this.attributesList.forEach((item:any)=>{
+            this.attributesList = [];
+            attributeListData.forEach((item:any)=>{
               item.isSelected= false;
+              if(item.ActuallName != 'Phone_number'){
+              this.attributesList.push(item);
+              }
               })
             console.log(this.attributesList, '----attributesList----'); 
         }
@@ -277,19 +280,29 @@ saveFlowMapping() {
 onSelectMapping(){
   this.attributesList.forEach((item:any)=>{ 
     this.ColumnMapping.forEach((mapping:any)=>{
-      if(item.ActuallName == mapping.attributeMapped){
-        item.isSelected = true;
-        return;
-      } else{
-        item.isSelected = false;
-      }
+      item.isSelected = this.ColumnMapping.some(
+    (mapping: any) => item.ActuallName === mapping.attributeMapped
+  );
     })
   });
+  console.log(this.attributesList,'-----------------this.attributesList--------------')
 }
 
 SaveEditColumn(){
+  const hasDuplicate = this.ColumnMapping.some(
+  (item:any, index:any) => this.ColumnMapping.findIndex((obj:any) => obj?.displayName == item?.displayName) !== index);
+
+  const hasEmpty = this.ColumnMapping.some((item:any) => !item.displayName || item.displayName.toString().trim() === "");
+
+console.log(hasDuplicate);
+if(hasDuplicate){
+  this.showToaster('Column Name should not be duplicate','error');
+} else if(hasEmpty){
+  this.showToaster('Column Name should not be empty','error');
+}else{
 this.initColumnMapping = JSON.parse(JSON.stringify(this.ColumnMapping));
 this.saveFlowMapping();
+}
 }
 
 extractUniqueKeys(arr: any[]){
@@ -314,7 +327,7 @@ this.initColumnMapping = JSON.parse(JSON.stringify(this.ColumnMapping));
       type: 'String',
       attributeMapped:'',
       isOverride: false,
-      isInputSelected: false,
+      isInputSelected: true,
     }
     mappingList.push(mapping);
   })
@@ -323,6 +336,7 @@ this.initColumnMapping = JSON.parse(JSON.stringify(this.ColumnMapping));
   this.initColumnMapping = JSON.parse(JSON.stringify(mappingList));
 }
   this.getfilteredCustomFields();
+  this.onSelectMapping();
 }
 
     getfilteredCustomFields() {
@@ -330,7 +344,7 @@ this.initColumnMapping = JSON.parse(JSON.stringify(this.ColumnMapping));
         console.log(this.ColumnMapping, '----ColumnMapping----');    
         this.isflowDetailLoading = false;    
             this.ColumnMapping.forEach((item:any)=>{
-  if(item.ActuallName !='phoneNumber' && item.ActuallName !='name'){
+  if(item.ActuallName !='phoneNumber' && item.ActuallName !='name' && item.ActuallName !="created_at" && item?.isInputSelected){
               let columnDesc:any = {
                 field: item.ActuallName,
               headerName: item.displayName,
@@ -357,6 +371,7 @@ this.initColumnMapping = JSON.parse(JSON.stringify(this.ColumnMapping));
                 this.gridOptions?.api.sizeColumnsToFit();
               }
               this.isflowDetailLoading = true;
+              this.getGridPageSize();
             },50);
     }
 
@@ -368,9 +383,9 @@ closeModal(){
   this.ColumnMapping = JSON.parse(JSON.stringify(this.initColumnMapping));
 }
   onSelectEditing(idx:number){
-    if(this.ColumnMapping[idx]?.isInputSelected)
-    this.ColumnMapping[idx].displayName = this.ColumnMapping[idx]?.ActuallName;
-    this.ColumnMapping[idx].type = '';
+    // if(this.ColumnMapping[idx]?.isInputSelected)
+    // // this.ColumnMapping[idx].displayName = this.ColumnMapping[idx]?.ActuallName;
+    // // this.ColumnMapping[idx].type = '';
   }
 
   
@@ -395,7 +410,10 @@ console.log(fieldToHeaderMap, '----fieldToHeaderMap----');
           if (obj.hasOwnProperty(field) && headerName ) {
             if(field =="displayPhoneNumber"){
               newObj[headerName] = obj['Phone_number'] ?? '';
-            }else{              
+            }if(field =="created_at"){
+              newObj[headerName] = this.dateFormatter(obj['created_at']);
+            }
+            else{              
                 newObj[headerName] = obj[field] ?? '';
             }
           }
@@ -438,10 +456,10 @@ showToaster(message:any,type:any){
   
   }
 
-    dateFormatter(params: any): string {
+  dateFormatter(params: any): string {
     if(!params?.value) return '';
     const date = new Date(params.value);
-    const formattedDate = this.settingsService.getDateTimeFormate(date, true);
+    const formattedDate = this.settingsService.getDateTimeFormate(date, false);
     return formattedDate ? formattedDate : '';
 }
 

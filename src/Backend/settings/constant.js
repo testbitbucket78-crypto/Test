@@ -460,7 +460,7 @@ var getChannel = `SELECT channel_id, connected_id FROM WhatsAppWeb WHERE spid = 
 var getRateLimit = `select count(*) AS Count from Message WHERE (created_at >= NOW() - INTERVAL 1 MINUTE) and message_direction = 'Out' and SPID =?`
 
 // ------------------------- WhatsApp Flow ----------------------------------//
-var getflowDetail = `select * from FlowsData where spid =? and flowid =?`
+var getflowDetail = `select * from FlowsData where spid =? and flowid =? order by 1 desc`
 //var getflowDetail = `select * from FlowsData where spid = ? and flowid = ?`
 var getflows = `select * from Flows where spid =? order by 1 desc`
 var saveflowMapping = `update Flows SET col_Mapping =? where spid =? and flowid =?`
