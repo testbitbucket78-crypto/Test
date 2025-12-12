@@ -7,8 +7,7 @@
 }
 
 .body-empty-state img {
-    width: 123px;
-    height: 109px;
+    margin-bottom: -40px;
 }
 
 .body-empty-state h5 {
@@ -415,6 +414,19 @@ opacity: 1;
 		display: none;
 	}
 
+	.popup-dialog{
+		    background: #FFFFFF 0% 0% no-repeat padding-box;
+    box-shadow: 4px 22px 54px rgba(105, 95, 151, 0.1882352941);
+    border-radius: 20px;
+    padding: 10px 0px;
+    position: absolute;
+    max-width: 200px;
+    margin-top: 10px;
+    max-height: 200px;
+    overflow: auto;
+    z-index: 9999999;
+	}
+
 	.cancel-btn {
 	background: #fff;
 	border: 1px solid #EBEBEB;
@@ -426,4 +438,33 @@ opacity: 1;
 	font-size: 12px;
 	font-weight: 800;
 	margin:0 0 0 15px;
+	}
+
+	.applied{
+		color: #000000;
+		background-color: red !important;
+	}
+
+img.icon   {
+	width: 15px;
+    margin-right: 5px;
+    margin-left: 0px;
+    cursor: pointer;
+}
+
+
+	.popup-dialog p{
+	color:#000;
+	float:left;
+	width: 100%;
+	margin: 0;
+	font-size: 12px;
+	cursor: pointer;
+	}
+	.popup-dialog p span{
+	padding: 5px 15px;
+	width: 100%;
+	float: left;
+	margin:0px;
+	cursor: pointer;
 	}
