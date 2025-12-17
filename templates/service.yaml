@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "testbitbucket78.fullname" . }}
+spec:
+  type: {{ .Values.service.type }}
+  selector:
+    app: {{ include "testbitbucket78.name" . }}
+  ports:
+    - port: {{ .Values.service.port }}
+      targetPort: 80
+

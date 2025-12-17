@@ -1,0 +1,16 @@
+replicaCount: 1
+
+image:
+  repository: https://github.com/testbitbucket78-crypto/Test.git   # e.g. 514076760324.dkr.ecr.ap-south-1.amazonaws.com/test-nginx
+  pullPolicy: IfNotPresent
+  tag: "latest"
+
+service:
+  type: ClusterIP
+  port: 80
+
+ingress:
+  enabled: false
+
+resources: {}
+
