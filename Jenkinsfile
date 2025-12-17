@@ -2,12 +2,12 @@ pipeline {
     agent any
 
     environment {
-        AWS_REGION = 'ap-south-1'
-        ECR_REPO  = '514076760324.dkr.ecr.ap-south-1.amazonaws.com/test-nginx'
-        IMAGE_TAG = "${env.BUILD_ID}"
-        HELM_RELEASE = 'testbitbucket78'
-        HELM_CHART_DIR = '.'  // assuming Chart.yaml and values.yaml are in repo root
-        KUBECONFIG = '/home/ubuntu/.kube/config' // path to kubeconfig
+        AWS_REGION    = 'ap-south-1'
+        ECR_REPO      = '514076760324.dkr.ecr.ap-south-1.amazonaws.com/test-nginx'
+        IMAGE_TAG     = "${env.BUILD_ID}"
+        HELM_RELEASE  = 'testbitbucket78'
+        HELM_CHART_DIR = '.'             // root of your repo where Chart.yaml is
+        KUBECONFIG    = '/var/lib/jenkins/.kube/config'  // kubeconfig for Jenkins user
     }
 
     stages {
@@ -20,31 +20,41 @@ pipeline {
 
         stage('Build Docker Image') {
             steps {
-                sh 'docker build -t $ECR_REPO:$IMAGE_TAG .'
+                sh '''
+                docker build -t $ECR_REPO:$IMAGE_TAG .
+                '''
             }
         }
 
         stage('Login to ECR') {
             steps {
-                sh 'aws ecr get-login-password --region $AWS_REGION | docker login --username AWS --password-stdin $ECR_REPO'
+                sh '''
+                aws ecr get-login-password --region $AWS_REGION | docker login --username AWS --password-stdin $ECR_REPO
+                '''
             }
         }
 
         stage('Push Docker Image') {
             steps {
-                sh 'docker push $ECR_REPO:$IMAGE_TAG'
+                sh '''
+                docker push $ECR_REPO:$IMAGE_TAG
+                '''
             }
         }
 
         stage('Update Helm values.yaml') {
             steps {
-                sh 'sed -i "s|tag:.*|tag: \\"$IMAGE_TAG\\"|" $HELM_CHART_DIR/values.yaml'
+                sh '''
+                sed -i "s|tag:.*|tag: \\"$IMAGE_TAG\\"|" $HELM_CHART_DIR/values.yaml
+                '''
             }
         }
 
         stage('Deploy with Helm') {
             steps {
-                sh 'helm upgrade --install $HELM_RELEASE $HELM_CHART_DIR --namespace default'
+                sh '''
+                helm upgrade --install $HELM_RELEASE $HELM_CHART_DIR --namespace default --kubeconfig $KUBECONFIG
+                '''
             }
         }
     }
