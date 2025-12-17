@@ -1,7 +1,7 @@
 replicaCount: 1
 
 image:
-  repository: https://github.com/testbitbucket78-crypto/Test.git   # e.g. 514076760324.dkr.ecr.ap-south-1.amazonaws.com/test-nginx
+  repository: https://github.com/testbitbucket78-crypto/Test.git
   pullPolicy: IfNotPresent
   tag: "3"
 
@@ -13,4 +13,8 @@ ingress:
   enabled: false
 
 resources: {}
+
+serviceAccount:
+  create: true
+  name: ""
 
