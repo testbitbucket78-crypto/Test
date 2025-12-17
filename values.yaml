@@ -3,7 +3,7 @@ replicaCount: 1
 image:
   repository: https://github.com/testbitbucket78-crypto/Test.git
   pullPolicy: IfNotPresent
-  tag: "3"
+  tag: "5"
 
 service:
   type: ClusterIP
@@ -17,4 +17,7 @@ resources: {}
 serviceAccount:
   create: true
   name: ""
+
+autoscaling:
+  enabled: false
 
