@@ -78,7 +78,7 @@
 					</button>
 				</div>
 				<div class="modal-body px-5 pt-0 modal-body-scroll">
-					<div class="d-flex space-around f-bold">
+					<div class="d-flex space-around f-bold" *ngIf="flowList?.length >0">
 						<div>Edit Column Names</div>
 						<div>Column Data Type</div>
 					</div>
@@ -91,9 +91,12 @@
 						</diV>
 						<div class="billing-form-row d-flex flex-column  ">
 							<input type="text" class="input-form" type="text" [(ngModel)]="item.displayName" 
-								 maxlength="30">
+								 maxlength="30"  #nameInput disabled>
 						</div>
 					</div>
+							<div (click)="nameInput.disabled = false">
+								<img src="../../../../assets/img/Edit-icon.png">
+							</div>
 						<div class="billing-form-row d-flex flex-column pl-3 ">
 							<select class="input-form select-flow" [(ngModel)]="item.type"  
 								placeholder="Select data type" >
@@ -103,6 +106,7 @@
 						</div>
 					</div>
 				</div>
+				<div *ngIf="flowList?.length ==0" class="norecord">No response received yet.</div>
 				</div>
 				<div class="small-note mt-2 mx-2">Note: If you don’t see any column as defined under the WhatsApp Flow, it could be a optional field and nobody might have filled it yet</div>
 				</div>
@@ -124,7 +128,7 @@
 				</div>
 				<div class="modal-body px-5 pt-0 modal-body-scroll">
 					<!-- <form [formGroup]="workingHourForm" class="mt-4"> -->
-						<div class="d-flex ">
+						<div class="d-flex " *ngIf="flowList?.length >0">
 							<div class="w-40"></div>
 							<div class="f-bold">Map to Contact Fields</div>
 						</div>
@@ -156,12 +160,14 @@
 							</div>
 						</div>
 					</div>
+					<div *ngIf="flowList?.length ==0" class="norecord">No response received yet.</div>
 					</div>
 
 					<div class="mt-2">
 						<input type="checkbox" class="form-check-input mr-2" id="exampleCheck1" [(ngModel)]="isUpdateValuesFromEarlierFlowResponses">
 						<div class="pl-2">Update values from earlier Flow responses also</div>
 					</div>
+					<div class="small-note mt-2 mx-2">Note: If you don’t see any column as defined under the WhatsApp Flow, it could be a optional field and nobody might have filled it yet</div>
 					<!-- </form> -->
 				</div>
 				<div class="modal-footer sticky-footer">

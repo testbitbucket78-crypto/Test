@@ -406,12 +406,13 @@ console.log(fieldToHeaderMap, '----fieldToHeaderMap----');
       const newObj:any = {};
       fields.forEach((field:any) => {
         try {
+          console.log(field,obj)
           const headerName = fieldToHeaderMap[field];
           if (obj.hasOwnProperty(field) && headerName ) {
             if(field =="displayPhoneNumber"){
               newObj[headerName] = obj['Phone_number'] ?? '';
             }if(field =="created_at"){
-              newObj[headerName] = this.dateFormatter(obj['created_at']);
+              newObj[headerName] = this.dateFormatterExport(obj['created_at']);
             }
             else{              
                 newObj[headerName] = obj[field] ?? '';
@@ -459,6 +460,13 @@ showToaster(message:any,type:any){
   dateFormatter(params: any): string {
     if(!params?.value) return '';
     const date = new Date(params.value);
+    const formattedDate = this.settingsService.getDateTimeFormate(date, false);
+    return formattedDate ? formattedDate : '';
+}
+
+  dateFormatterExport(params: any): string {
+    if(!params) return '';
+    const date = new Date(params);
     const formattedDate = this.settingsService.getDateTimeFormate(date, false);
     return formattedDate ? formattedDate : '';
 }
