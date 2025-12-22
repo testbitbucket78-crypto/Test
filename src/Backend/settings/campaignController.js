@@ -1290,6 +1290,36 @@ const getFlowDetail = async (req, res) => {
     }
 }
 
+
+const flowPreviewurl = async (req, res) => {
+    try {
+        let flowId = req.body?.flowId;
+            let spid = req.body.spId;
+             let url ='';
+        let details = await db.excuteQuery('select * from WA_API_Details where spid=? and isDeleted !=1', [spid]);
+
+                  const response = await axios.get(`https://graph.facebook.com/v19.0/${flowId}?fields=preview.invalidate(false)`, {
+                        headers: {
+                            'Authorization': `Bearer ${details[0]?.token}`
+                        }
+                    });
+            console.log("****META APIS****",payload );
+                   url = response.preview;
+
+            return {
+                status: 200,
+                message: url
+            }; 
+    } catch (err) {
+         res.send({
+            status: 500,
+            err: err.message
+        })
+    }
+}
+
+
+
 const saveFlowMapping = async (req, res) => {
     try {
             let flowId = req.body?.flowId;
@@ -1313,7 +1343,7 @@ const saveFlowMapping = async (req, res) => {
 
 async function updatePreviousValue(req){
     try {
-        let FlowDetail = await db.excuteQuery(val.getflowDetail, [req.body.spId, req.body?.flowId]);
+        let FlowDetail = await db.excuteQuery(val.getflowslatestResponse, [req.body.spId, req.body?.flowId]);
         FlowDetail.forEach((record) => {
            let mapping =  req.body.mapping;
            let flowresponse= JSON.parse(JSON.parse(record?.flowresponse));

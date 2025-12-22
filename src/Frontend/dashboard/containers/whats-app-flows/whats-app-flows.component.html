@@ -76,7 +76,8 @@
 
 				<div class="drop-down-btn" >
 					<div class="toggle-box" [ngClass]="{'applied' : isFilterApplied}" (click)="filterCampaign(filtercampaign)">
-						<img src="assets/img/teambox/filter-icon.svg">
+						<img *ngIf="!isFilterApplied" src="assets/img/teambox/filter-icon.svg">
+						<img *ngIf="isFilterApplied" src="assets/img/Filter_White.svg">
 					    <span>Filter</span>
 					</div>
 				</div>

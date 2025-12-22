@@ -290,7 +290,7 @@ onSelectMapping(){
 
 SaveEditColumn(){
   const hasDuplicate = this.ColumnMapping.some(
-  (item:any, index:any) => this.ColumnMapping.findIndex((obj:any) => obj?.displayName == item?.displayName) !== index);
+  (item:any, index:any) => this.ColumnMapping.findIndex((obj:any) => obj?.displayName.trim().toLowerCase() == item?.displayName.trim().toLowerCase()) !== index);
 
   const hasEmpty = this.ColumnMapping.some((item:any) => !item.displayName || item.displayName.toString().trim() === "");
 

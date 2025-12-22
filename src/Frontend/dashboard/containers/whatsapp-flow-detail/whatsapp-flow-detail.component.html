@@ -94,7 +94,7 @@
 								 maxlength="30"  #nameInput disabled>
 						</div>
 					</div>
-							<div (click)="nameInput.disabled = false" class="d-flex align-items-center pl-2">
+							<div (click)="nameInput.disabled = false" class="d-flex cursor-pointer align-items-center pl-2">
 								<img src="../../../../assets/img/Edit-icon.png">
 							</div>
 						<div class="billing-form-row d-flex flex-column pl-2 ">
@@ -106,7 +106,7 @@
 						</div>
 					</div>
 				</div>
-				<div *ngIf="flowList?.length ==0" class="norecord677">No response received yet.</div>
+				<div *ngIf="flowList?.length ==0" class="norecord">No response received yet.</div>
 				</div>
 				<div class="small-note mt-2 mx-2">Note: If you don’t see any column as defined under the WhatsApp Flow, it could be a optional field and nobody might have filled it yet</div>
 				</div>

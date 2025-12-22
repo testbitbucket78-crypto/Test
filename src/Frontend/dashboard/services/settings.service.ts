@@ -350,6 +350,12 @@ const headers = new HttpHeaders({
     return this.http.post<any>(`${this.API_URL}/exportFlowData`,data);
   }
 
+  
+  whatsAppFlowUrl(data: any): Observable<any> {
+    return this.http.post<any>(`${this.API_URL}/flowPreview`,data);
+  }
+
+
   saveCompanyDetail(companyData:companyDetail): Observable<any> {
     return this.http.post(`${this.API_URL}/companyDetail`, companyData)
   }
