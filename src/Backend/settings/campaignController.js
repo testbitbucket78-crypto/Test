@@ -1300,22 +1300,30 @@ const flowPreviewurl = async (req, res) => {
         let details = await db.excuteQuery('select * from WA_API_Details where spid=? and isDeleted !=1', [spid]);
 
         if(isPreview){
-
+            console.log('preview-----',flowId,details)
                   const response = await axios.get(`https://graph.facebook.com/v19.0/${flowId}?fields=preview.invalidate(false)`, {
                         headers: {
                             'Authorization': `Bearer ${details[0]?.token}`
                         }
                     });
-            console.log("****META APIS****",payload );
-                   url = response.preview;
+                    console.log('response------',response);
+                   url = response?.data.preview?.preview_url;
                 }
                 else{
-
+            //         console.log('preview-----',flowId,details)
+            // const response = await axios.get(`https://graph.facebook.com/v19.0/${details[0]?.waba_id}?fields=owner_business`, {
+            //             headers: {
+            //                 'Authorization': `Bearer ${details[0]?.token}`
+            //             }
+            //         });
+                    
+            //         console.log('response------',response);
+                   url =`https://business.facebook.com/latest/whatsapp_manager/flow_create/?business_id=${details[0]?.phoneNumber_id}&tab=flow-create&nav_ref=whatsapp_manager&asset_id=${details[0]?.waba_id}`;
                 }
-            return {
+             res.send({
                 status: 200,
                 url: url
-            }; 
+            }) ;
     } catch (err) {
          res.send({
             status: 500,
@@ -1332,7 +1340,7 @@ const saveFlowMapping = async (req, res) => {
             let spid = req.body.spId;
             let ColumnMapping = req.body.mapping;
        
-            let save = await db.excuteQuery(val.saveflowMapping, [JSON.stringify(ColumnMapping),spid,flowId]);
+            let save = await db.excuteQuery(val.saveflowMapping, [JSON.stringify(ColumnMapping),req.body.isUpdateValues,spid,flowId]);
             if(req.body.isUpdateValues){
                  updatePreviousValue(req); 
             }

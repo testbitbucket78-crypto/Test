@@ -463,7 +463,7 @@ var getRateLimit = `select count(*) AS Count from Message WHERE (created_at >= N
 var  getflowDetail = `select * from FlowsData where spid =? and flowid =? order by 1 desc`
 //var getflowDetail = `select * from FlowsData where spid = ? and flowid = ?`
 var getflows = `select * from Flows where spid =? order by 1 desc`
-var saveflowMapping = `update Flows SET col_Mapping =? where spid =? and flowid =?`
+var saveflowMapping = `update Flows SET col_Mapping =?, isEarlierResponse =? where spid =? and flowid =?`
 var getflowslatestResponse = `SELECT f.* FROM FlowsData f JOIN (SELECT phoneNumber, MAX(created_at) AS latest_time FROM FlowsData GROUP BY phoneNumber) l ON f.phoneNumber = l.phoneNumber AND f.created_at = l.latest_time`
 
 
