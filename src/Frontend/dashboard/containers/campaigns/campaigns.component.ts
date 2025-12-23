@@ -888,7 +888,7 @@ constructor(config: NgbModalConfig, private modalService: NgbModal,private datep
 
 		try {
 			allCampaignList.forEach((item:any) => {
-				
+
 				if(item?.status==0){
 					item['status_label'] ='draft'
 				}else
@@ -1575,6 +1575,19 @@ formateDate(dateTime:string){
 		this.selectedScheduleTime = this.datepipe.transform(new Date(new Date(new Date().setHours(event.split(':')[0],event.split(':')[1])).setSeconds(0)),'hh:mm a');
 		this.checkScheduleTiming(event);
 	  }
+	  selectExpiryDateTime(event : any){
+		this.RetryAndExpiry.patchValue({
+			scheduleTime: this.datepipe.transform(new Date(new Date(new Date().setHours(event.split(':')[0],event.split(':')[1])).setSeconds(0)),'hh:mm a')
+		});
+
+		this.checkScheduleTiming(event);
+	  }
+
+		onScheduleDateChange(e: any) {
+			this.RetryAndExpiry.patchValue({
+				scheduleDate: e.target.value
+			});
+		}
 
 	checkScheduleTiming(e:any){
 		let hr =  new Date().getHours();

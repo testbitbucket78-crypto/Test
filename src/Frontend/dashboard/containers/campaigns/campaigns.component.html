@@ -923,12 +923,12 @@ It is determined by a combination of user feedback signals like blocks, reports 
 						<div *ngIf="RetryAndExpiry.get('expiryEnabled')?.value">
 							<div class="mb-2 pr-2 formrow">
 								<small class="mb-1" for="">Schedule Date</small>
-								<input type="date" class="w-100 form-control btn white_bg d-block" formControlName="scheduleDate" />
+								<input type="date" class="w-100 form-control btn white_bg d-block" formControlName="scheduleDate" (change)="onScheduleDateChange($event)"/>
 							</div>
 							<div class="mb-2 pr-2">
 								<small class="mb-1" for="">Schedule Time</small>
 								<sb-timepicker [(timebind)]="selecteScheduleTime" [step]="5"
-									(timeChanged)="selectScheduleTime($event)"></sb-timepicker>
+									(timeChanged)="selectExpiryDateTime($event)"></sb-timepicker>
 						
 							</div>
 						</div>
