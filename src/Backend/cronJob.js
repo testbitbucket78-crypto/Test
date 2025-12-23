@@ -71,7 +71,7 @@ async function fetchScheduledMessages() {
       logger.info(`fetchScheduledMessages isWorkingTime ${isWorkingTime(message)}  time ${new Date(message.start_datetime) <= new Date(currentDateTime)}`)
       if (isWorkingTime(message)) {
 
-        if (stDateTime  <= currentDateTime) {
+        if (stDateTime) {
           console.log(" isWorkingTime messagesData loop",)
             const phoneNumber = message.segments_contacts.length > 0 ? mapPhoneNumberfomList(message) : mapPhoneNumberfomCSV(message);
 
@@ -298,8 +298,9 @@ logger.info("campaign table CampaignId-");
 
 
 async function saveSendedMessage(MessageBodyData) {
-  var inserQuery = "INSERT INTO CampaignMessages (phone_number,button_yes,button_no,button_exp,message_media,message_content,message_heading,CampaignId,schedule_datetime,status_message,status,SP_ID,messageTemptateId,FailureReason,FailureCode) values ?";
-  let saveMessage = await db.excuteQuery(inserQuery, [[[MessageBodyData.phone_number, '', '', '', MessageBodyData.message_media, MessageBodyData.message_content, '', MessageBodyData.CampaignId, MessageBodyData.schedule_datetime, MessageBodyData.status_message, MessageBodyData.status, MessageBodyData.sp_id, MessageBodyData.msgId, MessageBodyData.FailureReason, MessageBodyData.FailureCode]]])
+  const LastModifiedDate = moment.utc(new Date().toUTCString()).format('YYYY-MM-DD HH:mm:ss');
+  var inserQuery = "INSERT INTO CampaignMessages (phone_number,button_yes,button_no,button_exp,message_media,message_content,message_heading,CampaignId,schedule_datetime,status_message,status,SP_ID,messageTemptateId,FailureReason,FailureCode, SentTime) values ?";
+  let saveMessage = await db.excuteQuery(inserQuery, [[[MessageBodyData.phone_number, '', '', '', MessageBodyData.message_media, MessageBodyData.message_content, '', MessageBodyData.CampaignId, MessageBodyData.schedule_datetime, MessageBodyData.status_message, MessageBodyData.status, MessageBodyData.sp_id, MessageBodyData.msgId, MessageBodyData.FailureReason, MessageBodyData.FailureCode, LastModifiedDate]]]);
 }
 
 
@@ -848,7 +849,7 @@ async function isClientActive(spid) {
   return new Promise(async (resolve, reject) => {
     try {
 
-      const apiUrl = getUrl('waweb') + '/IsClientReady'; // Replace with your API endpoint
+      const apiUrl = 'http://localhost:3009/IsClientReady'//getUrl('waweb') + '/IsClientReady'; // Replace with your API endpoint
       const dataToSend = {
         spid: spid
       };
@@ -1177,7 +1178,7 @@ async function autoResolveExpireInteraction() {
 
 // Function to start the scheduler 
 function startScheduler() {
-  cron.schedule('*/5 * * * *', async () => {
+  cron.schedule('*/1 * * * *', async () => {
     console.log('Running scheduled task at:', new Date());
     //logger.log(`schedular starts-${templateId}`);
 

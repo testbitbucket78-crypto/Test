@@ -553,22 +553,54 @@ const formatDateTime = (date) => {
 //     return time;
 //   }
 // }
+// function convertTimeByTimezone(time, timezone) {
+//  try {
+//     if (!time || !timezone) return time;
+
+//     const currentDate = new Date().toISOString().split("T")[0]; 
+//     const dateString = `${currentDate}T${time}:00`;
+
+//     // Build time in the selected timezone
+//     const localStringInTZ = new Date(dateString).toLocaleString("en-US", {
+//       timeZone: timezone
+//     });
+
+//     // Parse that as local (which effectively becomes UTC conversion)
+//     const dateInTZ = new Date(localStringInTZ);
+
+//     return dateInTZ.toISOString() ;
+//   } catch (err) {
+//     console.error("UTC conversion error:", err);
+//     return time;
+//   }
+// }
 function convertTimeByTimezone(time, timezone) {
- try {
+  try {
     if (!time || !timezone) return time;
 
-    const currentDate = new Date().toISOString().split("T")[0]; 
-    const dateString = `${currentDate}T${time}:00`;
+    const today = new Date();
+    const [hh, mm] = time.split(":").map(Number);
 
-    // Build time in the selected timezone
-    const localStringInTZ = new Date(dateString).toLocaleString("en-US", {
-      timeZone: timezone
+    // Create date parts in target timezone
+    const formatter = new Intl.DateTimeFormat("en-US", {
+      timeZone: timezone,
+      year: "numeric",
+      month: "2-digit",
+      day: "2-digit"
     });
 
-    // Parse that as local (which effectively becomes UTC conversion)
-    const dateInTZ = new Date(localStringInTZ);
+    const parts = formatter.formatToParts(today);
+    const dateParts = Object.fromEntries(parts.map(p => [p.type, p.value]));
 
-    return dateInTZ.toISOString() ;
+    // Build ISO string explicitly
+    const iso = `${dateParts.year}-${dateParts.month}-${dateParts.day}T${hh
+      .toString()
+      .padStart(2, "0")}:${mm
+      .toString()
+      .padStart(2, "0")}:00`;
+
+    // Convert once to UTC
+    return new Date(`${iso}`).toISOString();
   } catch (err) {
     console.error("UTC conversion error:", err);
     return time;

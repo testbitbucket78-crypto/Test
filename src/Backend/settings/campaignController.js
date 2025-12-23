@@ -1016,11 +1016,11 @@ const deleteTemplates = async (req, res) => {
         ID = req.body.ID;
         let SPID = req.body.SPID;
 
-        const phoneNumberDetails = (await db.excuteQuery('select * from WA_API_Details where spid = 55 order by 1 desc limit 1', [SPID]))?.[0]?.phoneNumber_id;
-        const { TemplateName, token} = (await db.excuteQuery('select * from templateMessages where ID = ? and and isDeleted != 1', [ID]))?.[0] ;
-        if(phoneNumberDetails){
+        const { phoneNumber_id, token }= (await db.excuteQuery('select * from WA_API_Details where spid = ? order by 1 desc limit 1', [SPID]))?.[0];
+        const { TemplateName} = (await db.excuteQuery('select * from templateMessages where ID = ? and isDeleted != 1', [ID]))?.[0] ;
+        if(phoneNumber_id){
             var metaResponse = await commonFun.deleteTemplateFromMeta(
-                phoneNumberId,
+                phoneNumber_id,
                 TemplateName,
                 token
             );
