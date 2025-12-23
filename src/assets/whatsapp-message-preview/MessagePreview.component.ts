@@ -12,6 +12,7 @@ export class WhatsappMessagePreviewComponent implements OnChanges {
 
   @Input() type: 'whatsapp' | 'teambox' = 'whatsapp';
   @Input() messageText = ''; 
+  @Input() elementId!: string;
 
   formattedBody = '';
 
@@ -25,10 +26,12 @@ export class WhatsappMessagePreviewComponent implements OnChanges {
   }
 
   private formatWhatsAppText(text: string): string {
+    debugger;
     if (!text) return '';
 
     // 1️⃣ Handle line breaks like WhatsApp
-    let formatted = text.replace(/\n/g, '<br>');
+    // let formatted = text.replace(/\n/g, '<br>');
+    let formatted = text
 
     // 2️⃣ WhatsApp-like bold ( *text* )
     // - no space just inside markers

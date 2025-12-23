@@ -4,7 +4,6 @@
   padding: 10px;
   max-width: 100%;
   min-height: 130px;
-  white-space: pre-wrap;
   word-wrap: break-word;
   max-height: 300px;
   overflow-y: auto;
@@ -22,4 +21,9 @@
 :host ::ng-deep .richtext,
 :host ::ng-deep .richtext * {
   color: #333 !important;
+}
+
+.teambox-preview{
+  color: black;
+  font-weight: 500;
 }
