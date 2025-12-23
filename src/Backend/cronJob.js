@@ -71,7 +71,7 @@ async function fetchScheduledMessages() {
       logger.info(`fetchScheduledMessages isWorkingTime ${isWorkingTime(message)}  time ${new Date(message.start_datetime) <= new Date(currentDateTime)}`)
       if (isWorkingTime(message)) {
 
-        if (stDateTime) {
+        if (stDateTime <= currentDateTime) {
           console.log(" isWorkingTime messagesData loop",)
             const phoneNumber = message.segments_contacts.length > 0 ? mapPhoneNumberfomList(message) : mapPhoneNumberfomCSV(message);
 
@@ -1178,7 +1178,7 @@ async function autoResolveExpireInteraction() {
 
 // Function to start the scheduler 
 function startScheduler() {
-  cron.schedule('*/1 * * * *', async () => {
+  cron.schedule('*/5 * * * *', async () => {
     console.log('Running scheduled task at:', new Date());
     //logger.log(`schedular starts-${templateId}`);
 
