@@ -81,14 +81,14 @@
 					    <span>Filter</span>
 					</div>
 				</div>
-				<button class="new-message-btn" (click)="creatWhatsAppFlow()" ><img class="icon" src="/assets/img/teambox/add.svg" /> Create Flow</button>		
+				<button class="new-message-btn" (click)="creatWhatsAppFlow(false,'')" ><img class="icon" src="/assets/img/teambox/add.svg" /> Create Flow</button>		
 					
 			</div>
 			
 			
 		</div>
 
-        	<div *ngIf="!flowList || flowList.length ==0" class=" my-5 smartreplies-empty-state">
+        	<div *ngIf="!flowList || flowList?.length ==0" class=" my-5 smartreplies-empty-state">
 		<div class="d-flex justify-content-center my-5 align-items-center container-empty-state">
 			<div class="text-center py-5 body-empty-state">
 				<img src="../../../../assets/img/flow.svg" />

@@ -352,7 +352,7 @@ const headers = new HttpHeaders({
 
   
   whatsAppFlowUrl(data: any): Observable<any> {
-    return this.http.post<any>(`${this.API_URL}/flowPreview`,data);
+    return this.http.post<any>(`${this.API_URL}/flowPreviewurl`,data);
   }
 
 

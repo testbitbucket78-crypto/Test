@@ -1295,8 +1295,11 @@ const flowPreviewurl = async (req, res) => {
     try {
         let flowId = req.body?.flowId;
             let spid = req.body.spId;
+            let isPreview = req.body.isPreview;
              let url ='';
         let details = await db.excuteQuery('select * from WA_API_Details where spid=? and isDeleted !=1', [spid]);
+
+        if(isPreview){
 
                   const response = await axios.get(`https://graph.facebook.com/v19.0/${flowId}?fields=preview.invalidate(false)`, {
                         headers: {
@@ -1305,10 +1308,13 @@ const flowPreviewurl = async (req, res) => {
                     });
             console.log("****META APIS****",payload );
                    url = response.preview;
+                }
+                else{
 
+                }
             return {
                 status: 200,
-                message: url
+                url: url
             }; 
     } catch (err) {
          res.send({
@@ -1586,6 +1592,6 @@ module.exports = {
     addCampaignTimings, updateCampaignTimings, selectCampaignTimings, getUserList, addAndUpdateCampaign,
     selectCampaignAlerts, addCampaignTest, selectCampaignTest, addTag, gettags, deleteTag, addTemplate, getTemplate, deleteTemplates,
     testCampaign, addCustomField, editCustomField, getCustomField, deleteCustomField, getCustomFieldById, enableMandatoryfield,
-    enableStatusfield, getApprovedTemplate, addGallery, getGallery, isExistTemplate ,uploadMediaOnMeta,getFlows, getTemplateForGallery,getFlowDetail,saveFlowMapping,exportFlowData
+    enableStatusfield, getApprovedTemplate, addGallery, getGallery, isExistTemplate ,uploadMediaOnMeta,getFlows, getTemplateForGallery,getFlowDetail,saveFlowMapping,exportFlowData,flowPreviewurl
 
 }
