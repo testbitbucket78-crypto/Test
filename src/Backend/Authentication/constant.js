@@ -1,7 +1,7 @@
 const db = require("../dbhelper");
 const { getUrl, env } = require('../config');
 
-const host= getUrl('host');
+ const host= getUrl('host');
 
 const user= getUrl('user');
 const password= getUrl('password');

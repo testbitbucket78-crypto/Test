@@ -3,6 +3,7 @@ import { GridService } from '../../services/ag-grid.service';
 import { ColDef, GridApi, GridReadyEvent } from 'ag-grid-community';
 import { SettingsService } from 'Frontend/dashboard/services/settings.service';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { integer } from 'aws-sdk/clients/cloudfront';
 
 @Component({
   selector: 'sb-whats-app-flows',
@@ -160,7 +161,8 @@ actionsCellRenderer(params: any) {
 
 
 onButtonClick(data:any, event: any) {
- window.open('https://business.facebook.com/wa/manage/flows/create', '_blank');
+  console.log(data,'---------data-------------');
+ this.creatWhatsAppFlow(true,data?.flowid)
 }
 
 
@@ -297,8 +299,18 @@ getWhatsAppDetails() {
         }, 100);
     }
 
-    creatWhatsAppFlow(){
-       window.open('https://business.facebook.com/wa/manage/flows/create', '_blank');
+    creatWhatsAppFlow(preview:boolean=false,flowid:any){
+      let data ={
+        spId:this.spId,
+        flowId:flowid,
+        isPreview:preview,
+      }
+      this.settingsService.whatsAppFlowUrl(data).subscribe((response: any) => {
+      if (response) {     
+          window.open(response?.url, '_blank');
+      }
+  });
+       
     }
 
     
