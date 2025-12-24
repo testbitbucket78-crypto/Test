@@ -2,6 +2,7 @@ const db = require("../dbhelper");
 
 async function retryExpiryService() {
   try {
+    await markExpiredCampaigns();
     const failedCampaigns = await db.excuteQuery(`
       SELECT 
         c.Id AS CampaignId,
@@ -145,6 +146,58 @@ async function remaining_segments_contacts(segments_contacts, campaignMessageId)
 
   } catch (err) {
     console.log("Error updating remaining segments: ", err);
+  }
+}
+
+async function markExpiredCampaigns() {
+  try {
+    const campaigns = await db.excuteQuery(`
+    SELECT 
+      Id,
+      RetryAndExpirySettings
+    FROM Campaign
+    WHERE 
+      is_deleted != 1
+      AND status != 1
+      AND status != 0
+      AND status != 3
+      AND RetryAndExpirySettings IS NOT NULL
+      AND dateTimeSettings >= UTC_DATE()
+      AND dateTimeSettings < UTC_DATE() + INTERVAL 1 DAY;
+    `);
+
+    if (!campaigns?.length) return;
+
+    const nowUTC = new Date();
+
+    for (const campaign of campaigns) {
+      try {
+        const settings = typeof campaign.RetryAndExpirySettings === "string"
+          ? JSON.parse(campaign.RetryAndExpirySettings)
+          : campaign.RetryAndExpirySettings;
+
+        if (!settings?.expiryEnabled) continue;
+        if (!settings.scheduleDate || !settings.scheduleTime) continue;
+
+        const expiryDateTime = new Date(
+          `${settings.scheduleDate}T${settings.scheduleTime}:00Z`
+        );
+
+        if (nowUTC >= expiryDateTime) {
+          await db.excuteQuery(
+            `UPDATE Campaign SET status = 1 WHERE Id = ?`,
+            [campaign.Id]
+          );
+
+          console.log(`Campaign ${campaign.Id} marked as expired`);
+        }
+
+      } catch (err) {
+        console.log("[ExpiryCheck] Campaign parse error:", err);
+      }
+    }
+  } catch (err) {
+    console.log("[ExpiryCheck] Fatal error:", err);
   }
 }
 

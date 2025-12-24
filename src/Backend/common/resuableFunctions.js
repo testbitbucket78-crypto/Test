@@ -527,7 +527,7 @@ async function isDeleted(sid) {
 
 async function deleteTemplateFromMeta(phoneNumberId, templateName, accessToken) {
   try {
-    const url = `https://graph.facebook.com/v23.0/${phoneNumberId}/message_templates?name=${templateName}`;
+    const url = `https://graph.facebook.com/v18.0/${phoneNumberId}/message_templates?name=${templateName}`;
 
     const response = await axios.delete(url, {
       headers: {
@@ -535,6 +535,7 @@ async function deleteTemplateFromMeta(phoneNumberId, templateName, accessToken) 
       }
     });
 
+    console.log(`Template ${templateName} deleted successfully.`);
     return response.data;
   } catch (err) {
     console.error("Error deleting template from Meta:", err?.response?.data || err.message);

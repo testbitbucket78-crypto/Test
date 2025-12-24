@@ -1008,8 +1008,11 @@ async function saveInMessages(message) {
           const LastModifiedDate = moment.utc(new Date().toUTCString()).format('YYYY-MM-DD HH:mm:ss');
           repliedMessage_id = msg?.context.quoted_id;
           repliedMessageText = msg?.context?.quoted_content?.body || '';
-          db.excuteQuery('UPDATE CampaignMessages SET status=4, DeliveredTime=? WHERE  messageTemptateId=?', [LastModifiedDate, msg?.context?.quoted_id]);
-
+          // db.excuteQuery('UPDATE CampaignMessages SET status=4, DeliveredTime=? WHERE  messageTemptateId=?', [LastModifiedDate, msg?.context?.quoted_id]);
+          db.excuteQuery(
+            'UPDATE CampaignMessages SET status = 4, RepliedTime = ? WHERE messageTemptateId = ?',
+            [ LastModifiedDate, msg?.context?.quoted_id]
+          );
         }
 
         console.log(r1,display_phone_number, from, message_text, Type, contactName, Message_template_id);

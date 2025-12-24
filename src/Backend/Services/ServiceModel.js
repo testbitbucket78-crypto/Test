@@ -92,27 +92,29 @@ class WebhookLog {
   }
 
   class SmartReplyLogModel {
-  constructor({ spid, customerNumber, keywordSent }) {
+  constructor({ spid, customerNumber, keywordSent, utcTimestamp}) {
     this.spid = spid;
     this.customerNumber = customerNumber;
     this.keywordSent = keywordSent;
+    this.utcTimestamp = utcTimestamp;
   }
 
   validate() {
-    if (!this.spid || !this.customerNumber || !this.keywordSent) {
+    if (!this.spid || !this.customerNumber || !this.keywordSent || !this.utcTimestamp) {
       throw new Error("spid, customerNumber, and keywordSent are required");
     }
   }
 
   async save() {
     const query = `
-      INSERT INTO SmartReplyLogs (SP_ID, CustomerNumber, KeywordSent)
-      VALUES (?, ?, ?)
+      INSERT INTO SmartReplyLogs (SP_ID, CustomerNumber, KeywordSent, TriggerTime)
+      VALUES (?, ?, ?, ?)
     `;
     return await db.excuteQuery(query, [
       this.spid,
       this.customerNumber,
       this.keywordSent,
+      this.utcTimestamp
     ]);
   }
   
