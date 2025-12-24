@@ -1860,6 +1860,14 @@ formateDate(dateTime:string){
 		this.isLoading = true;
 		this.closeAllModal();
 		this.modalReference2.close();
+		let _scheduleDate = this.RetryAndExpiry.controls.scheduleDate.value;
+		let _scheduleTime = this.RetryAndExpiry.controls.scheduleTime.value;
+        let utcDateTime
+		if (_scheduleDate && _scheduleTime) {
+			const localDate = new Date(`${_scheduleDate}T${_scheduleTime}`);
+			utcDateTime = localDate.toISOString();
+		}
+
 		//this.modalReference.close('addNewCampaign');
 		let sratdatetime:any='';
 		if(this.scheduled==1){
@@ -1885,6 +1893,8 @@ formateDate(dateTime:string){
 			
 		sratdatetime = this.datePipe.transform(sratdatetime,'yyyy-MM-dd HH:mm:ss','UTC');	
 		this.processMediaType(this.selectedTemplate?.media_type, this.selectedTemplate?.Links)
+
+        
 		let BodyData:any={
 			Id:this.newCampaignDetail.Id?this.newCampaignDetail.Id:'',
 			SP_ID:this.SPID,
@@ -1919,8 +1929,11 @@ formateDate(dateTime:string){
 			buttons: JSON.stringify(this.selectedTemplate?.buttons),
 			buttonsVariable: JSON.stringify(this.buttonsVariable),
 			interactive_buttons: typeof this.selectedTemplate?.interactive_buttons == 'string' ? this.selectedTemplate?.interactive_buttons : JSON.stringify(this.selectedTemplate?.interactive_buttons),
-
+            
+			
 			RetryAndExpirySettings: this.RetryAndExpiry.getRawValue(), //NEW payload for campaign retry and expiry settings
+            dateTimeSettings: utcDateTime 
+
 		}
 		if(action=='save'){
 			BodyData['status']=2;

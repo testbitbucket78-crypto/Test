@@ -1245,6 +1245,7 @@ checkTemplateName(e:any){
     deleteTemplate() {
         const TemplateID = {
             ID: this.templatesMessageData?.ID,
+            SPID: this.spid
         };
         this.selectedType = 'text';
         this.apiService.deleteTemplateData(TemplateID).subscribe(result => {

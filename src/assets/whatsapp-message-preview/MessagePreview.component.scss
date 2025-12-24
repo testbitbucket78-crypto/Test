@@ -9,7 +9,7 @@
   overflow-y: auto;
 
   .temp-header {
-    color: #075e54;
+    color: #000000;
   }
 
   .temp-footer {
@@ -26,4 +26,24 @@
 .teambox-preview{
   color: black;
   font-weight: 500;
+}
+
+:host ::ng-deep .richtext div {
+  display: block;
+  margin: 0 0 1em 0;
+  font-size: inherit;
+  line-height: inherit;
+  font-family: inherit;
+}
+
+:host ::ng-deep .richtext p,
+:host ::ng-deep .richtext div {
+  color: #333;
+}
+:host ::ng-deep app-whatsapp-message-preview .teambox-body,
+:host ::ng-deep app-whatsapp-message-preview .teambox-body * {
+  font-family: inherit;
+  font-size: 14px;
+  line-height: 1.4;
+  color: #333;
 }

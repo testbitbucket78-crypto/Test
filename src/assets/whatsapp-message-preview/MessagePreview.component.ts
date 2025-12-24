@@ -23,10 +23,10 @@ export class WhatsappMessagePreviewComponent implements OnChanges {
     } else if (this.type === 'teambox') {
       this.formattedBody = this.formatWhatsAppText(this.messageText || '');
     }
+    this.formattedBody = this.normalizeRichText(this.formattedBody);
   }
 
   private formatWhatsAppText(text: string): string {
-    debugger;
     if (!text) return '';
 
     // 1️⃣ Handle line breaks like WhatsApp
@@ -70,4 +70,18 @@ export class WhatsappMessagePreviewComponent implements OnChanges {
 
     return formatted;
   }
+
+private  normalizeRichText(html: string): string {
+  if (!html) return '';
+
+  const doc = new DOMParser().parseFromString(html, 'text/html');
+
+  doc.querySelectorAll('div').forEach(div => {
+    const p = document.createElement('p');
+    p.innerHTML = div.innerHTML;
+    div.replaceWith(p);
+  });
+
+  return doc.body.innerHTML;
+}
 }
