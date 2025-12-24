@@ -1245,6 +1245,7 @@ checkTemplateName(e:any){
     deleteTemplate() {
         const TemplateID = {
             ID: this.templatesMessageData?.ID,
+            SPID: this.spid
         };
         this.selectedType = 'text';
         this.apiService.deleteTemplateData(TemplateID).subscribe(result => {
@@ -1482,7 +1483,7 @@ sanitizeInteractivePayload(payload: any): any {
 
     
 onContentChange() {
-    ;
+    debugger;
     const container = document.createElement('div');
     container.innerHTML = this.chatEditor?.value;
     console.log(this.chatEditor?.value);

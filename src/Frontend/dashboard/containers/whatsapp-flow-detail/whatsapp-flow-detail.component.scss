@@ -98,9 +98,16 @@ opacity: 1;
 
 
 .flow-btn{
-    border: 2px solid grey;
-    border-radius: 20px;
-    margin: 0px 5px;
+cursor: pointer;
+    width: max-content;
+    color: #7A86A1;
+    background-color: #ffffff;
+    border: 1px solid #EBEBEB;
+    border-radius: 17px;
+    font-family: "Manrope";
+    font-size: 14px;
+    height: 43px;
+    margin-right: 10px;
 }
 
 .flow-header{
@@ -262,7 +269,7 @@ opacity: 1;
 }
 
 .select-flow{
-    width: 250px;
+    width: 230px;
     cursor: pointer;
 }
 
@@ -310,4 +317,17 @@ opacity: 1;
 
 .p-relative{
     position: relative !important;
+}
+
+.small-note{
+    font-size: 13px;
+}
+
+.norecord{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+    font-size: 18px;
+    font-weight: bold;
 }

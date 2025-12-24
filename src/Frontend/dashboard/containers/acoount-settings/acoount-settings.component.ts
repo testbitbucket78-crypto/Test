@@ -437,9 +437,9 @@ openDiv() {
       this.apiService.craeteQRcode(data).subscribe(
 
         (response) => {
-          ;
           if(response.status === 500) {
             this._toastService.error(response?.err || 'Internal Server Error');
+            this.hideModal();
           }
           if(response.status === 409 && response.value == "Channel already authenticated") {
             this.channel_status = 1; 

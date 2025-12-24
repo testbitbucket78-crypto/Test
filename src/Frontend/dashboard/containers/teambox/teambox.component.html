@@ -887,8 +887,8 @@
 						<div class="profile pl-2 flex-row"
 							*ngIf="selectedInteraction.InteractionId && showAttachedMedia">
 
-							<div class="attached_media_list"
-								*ngFor="let file of selectedInteraction.allmedia | filterMedia;let m = index">
+							<div class="attached_media_list" 
+								*ngFor="let file of getUniqueMedia(selectedInteraction.allmedia | filterMedia) ;let m = index">
 
 								<p *ngIf="(file?.message_media != '0' && file?.message_media != 'text')"
 									class="preview_media">
