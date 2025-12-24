@@ -599,8 +599,15 @@ function convertTimeByTimezone(time, timezone) {
       .toString()
       .padStart(2, "0")}:00`;
 
+      let _date = new Date(iso);
+      const tzString = _date.toLocaleString("en-US", { timeZone: timezone, hour12: false });
+      const _localString = _date.toLocaleString("en-US", { hour12: false });
+      const diff = new Date(_localString) - new Date(tzString);
+      const timereturn = new Date(_date.getTime() + diff)
+
+     return timereturn;
     // Convert once to UTC
-    return new Date(`${iso}`).toISOString();
+    //return new Date(`${iso}`).toISOString();
   } catch (err) {
     console.error("UTC conversion error:", err);
     return time;

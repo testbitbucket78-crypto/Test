@@ -159,7 +159,11 @@ async function markExpiredCampaigns() {
     WHERE 
       is_deleted != 1
       AND status != 1
-      AND RetryAndExpirySettings IS NOT NULL;
+      AND status != 0
+      AND status != 3
+      AND RetryAndExpirySettings IS NOT NULL
+      AND dateTimeSettings >= UTC_DATE()
+      AND dateTimeSettings < UTC_DATE() + INTERVAL 1 DAY;
     `);
 
     if (!campaigns?.length) return;
