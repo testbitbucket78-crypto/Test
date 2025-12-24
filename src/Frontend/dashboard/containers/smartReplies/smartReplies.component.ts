@@ -1447,6 +1447,7 @@ showAddSmartRepliesModal() {
 
 /* edit message and assinged conversation */ 
 	toggleEditableBot(index: number) {
+		debugger;
 		//this.isEditable[index] = !this.isEditable[index];
 		//this.editableMessageIndex = this.isEditable[index] ? index : null;
 		this.editableMessageIndex = index ;
@@ -1487,6 +1488,7 @@ showAddSmartRepliesModal() {
   /***  reply-action function  ***/
 
 	toggleAssignOption(index: number) {
+		debugger;
   if (this.assignActionList[index] === "Assign Conversation") {
     this.ShowAssignOption = !this.ShowAssignOption;
 	this.ShowAddAction = false;

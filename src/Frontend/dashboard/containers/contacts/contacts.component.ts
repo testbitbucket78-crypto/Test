@@ -434,16 +434,21 @@ getPhoneNumberValidation(){
             }
         }
     }
+    previousCount : number = 0;
  onSelectionChanged(event: any) {
-
      this.isButtonEnabled = this.checkedConatct.length > 0 && event !== null;
      this.isShowSidebar = false;
+     if(this.isAllSelected === true && this.checkedConatct.length <  this.previousCount){
+        this.isAllSelected = false;
+        this.GridService.deselectAllRows(this.gridapi);
+     }
+      this.previousCount = this.checkedConatct.length;
     
   }
   
 checks=false
 bulk(e: any) {
-  
+  console.log(e.target.checked,"------------------");
   if (e.target.checked == true) {
     for (var i = 0; i < this.contacts.length; i++) {
       this.checkedcustomerId.push(this.contacts[i].customerId)
@@ -1659,7 +1664,6 @@ console.log('-----------outside -----------------');
     };
 
 this.apiService.ContactQuery(payload).subscribe((data: any) => {
-  ;
   const response : ContactResponse = data;
   if (response?.status === 200) {
       if (response.isDeleted) {
@@ -1707,6 +1711,13 @@ getContactsOnActions(contactList: any = [], totalCount: number = 0) {
   if (contactFrom === 0) {
     this.productForm.get('countryCode')?.setValue('IN +91');
     this.getGridPageSize();
+  }
+}
+
+onSearchInput(event : Event){
+  if((event.target as HTMLInputElement).value === ''){
+    this.isSearchedClicked = false;
+    this.getContact(); 
   }
 }
 
