@@ -321,6 +321,11 @@ async function matchSmartReplies(message_text, sid, channelType) {
     .trim()
     .toLowerCase();
 
+    const normalizeExact = (str) => str
+    .normalize('NFC') 
+    .trim()
+    .toLowerCase();
+
   const message = normalize(message_text);
 
   let matched = [];
@@ -332,14 +337,23 @@ async function matchSmartReplies(message_text, sid, channelType) {
 
     if (!keyword) continue;
 
-    if (criteria === 'exact matching' && message === keyword) {
-      matched.push({ ...row, matchType: 'exact' });
-    } else if (criteria === 'contains') {
+    // if (criteria === 'exact matching' && message === keyword) {
+    //   matched.push({ ...row, matchType: 'exact' });
+    // } 
+    if (criteria === 'exact matching') {
+      const messageExact = normalizeExact(message_text);
+      const keywordExact = normalizeExact(row.Keyword);
+
+      if (messageExact === keywordExact) {
+        matched.push({ ...row, matchType: 'exact' });
+      }
+    }
+    else if (criteria === 'contains') {
       const regex = new RegExp(`\\b${keyword}\\b`, 'i'); 
       if (regex.test(message)) {
          matched.push({ ...row, matchType: 'contains' });
     }
-}
+    }
   }
 
   // Prioritizing matches on the bases of the requirement given to me.

@@ -58,6 +58,7 @@ const addCampaign = async (req, res) => {
         var buttons = req.body?.buttons
         var buttonsVariable = req.body?.buttonsVariable
         var interactive_buttons = req.body?.interactive_buttons
+        var dateTimeSettings = req.body?.dateTimeSettings
         message_variables = (message_variables?.length <= 0) ? '' : message_variables;
         csv_contacts = (csv_contacts?.length <= 0) ? '' : csv_contacts;
         segments_contacts = (segments_contacts?.length <= 0) ? '' : segments_contacts;
@@ -99,7 +100,8 @@ const addCampaign = async (req, res) => {
             updateQuery += " buttons= '" + req.body?.buttons + "',";
             updateQuery += " buttonsVariable= '" + req.body?.buttonsVariable + "',";
             updateQuery += " interactive_buttons= '" + req.body?.interactive_buttons + "',";
-            updateQuery += " RetryAndExpirySettings = " + mysql.escape(JSON.stringify(RetryAndExpirySettings)) + " ";
+            updateQuery += " RetryAndExpirySettings = " + mysql.escape(JSON.stringify(RetryAndExpirySettings)) + ",";
+            updateQuery += "dateTimeSettings = " + mysql.escape(dateTimeSettings) + " ";
             updateQuery += " WHERE Id =" + req.body.Id
             let editedCampaign = await db.excuteQuery(updateQuery, [])
             let editCampaign = {
@@ -118,8 +120,8 @@ const addCampaign = async (req, res) => {
             })
         } else {
 
-            var inserQuery = "INSERT INTO Campaign (status,sp_id,title,channel_id,message_heading,message_content,message_media,message_variables,button_yes,button_no,button_exp,category,time_zone,start_datetime,end_datetime,csv_contacts,segments_contacts,category_id,OptInStatus,start_time,end_time,media_type,message_footer, templateId,headerText,bodyText,buttons,buttonsVariable,interactive_buttons,RetryAndExpirySettings) values ? ";
-            let addCampaignValue = [[status, SP_ID, title, channel_id, message_heading, message_content, message_media, message_variables, button_yes, button_no, button_exp, category, time_zone, start_datetime, end_datetime, csv_contacts, segments_contacts, category_id, OptInStatus, start_time, end_time, media_type, message_footer, templateId,header,body,buttons,buttonsVariable,interactive_buttons,JSON.stringify(RetryAndExpirySettings)]]
+            var inserQuery = "INSERT INTO Campaign (status,sp_id,title,channel_id,message_heading,message_content,message_media,message_variables,button_yes,button_no,button_exp,category,time_zone,start_datetime,end_datetime,csv_contacts,segments_contacts,category_id,OptInStatus,start_time,end_time,media_type,message_footer, templateId,headerText,bodyText,buttons,buttonsVariable,interactive_buttons,RetryAndExpirySettings,dateTimeSettings) values ? ";
+            let addCampaignValue = [[status, SP_ID, title, channel_id, message_heading, message_content, message_media, message_variables, button_yes, button_no, button_exp, category, time_zone, start_datetime, end_datetime, csv_contacts, segments_contacts, category_id, OptInStatus, start_time, end_time, media_type, message_footer, templateId,header,body,buttons,buttonsVariable,interactive_buttons,JSON.stringify(RetryAndExpirySettings), dateTimeSettings]]
 
             let addcampaign = await db.excuteQuery(inserQuery, [addCampaignValue]);
 
