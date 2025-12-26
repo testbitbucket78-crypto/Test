@@ -1837,6 +1837,7 @@ formateDate(dateTime:string){
 		this.resetSchedule();
 		this.resetSelectedContactList();
 		this.removecontact('');
+		this.RetryAndExpiry.reset();
 	}
 	resetSchedule() {
 		this.scheduled = 0;
@@ -1862,10 +1863,22 @@ formateDate(dateTime:string){
 		this.modalReference2.close();
 		let _scheduleDate = this.RetryAndExpiry.controls.scheduleDate.value;
 		let _scheduleTime = this.RetryAndExpiry.controls.scheduleTime.value;
-        let utcDateTime
+
+		let utcDateTime: string | null = null;
+
 		if (_scheduleDate && _scheduleTime) {
-			const localDate = new Date(`${_scheduleDate}T${_scheduleTime}`);
+		const [time, modifier] = _scheduleTime.split(' ');
+		let [hours, minutes] = time.split(':').map(Number);
+
+		if (modifier === 'AM' && hours === 12) hours = 0;
+		if (modifier === 'PM' && hours < 12) hours += 12;
+
+		const localDate = new Date(_scheduleDate);
+		localDate.setHours(hours, minutes, 0, 0);
+
+		if (!isNaN(localDate.getTime())) {
 			utcDateTime = localDate.toISOString();
+		}
 		}
 
 		//this.modalReference.close('addNewCampaign');
