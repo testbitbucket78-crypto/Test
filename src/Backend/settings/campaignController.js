@@ -1339,8 +1339,12 @@ const saveFlowMapping = async (req, res) => {
             let flowId = req.body?.flowId;
             let spid = req.body.spId;
             let ColumnMapping = req.body.mapping;
-       
-            let save = await db.excuteQuery(val.saveflowMapping, [JSON.stringify(ColumnMapping),req.body.isUpdateValues,spid,flowId]);
+            let updateValues = req.body.isUpdateValues
+       if(updateValues){
+            let save = await db.excuteQuery(val.isEarlierResponseSaveflowMapping, [req.body.isUpdateValues,spid,flowId]);
+       }
+
+            let save = await db.excuteQuery(val.saveflowMapping, [JSON.stringify(ColumnMapping),spid,flowId]);
             if(req.body.isUpdateValues){
                  updatePreviousValue(req); 
             }
@@ -1363,6 +1367,8 @@ async function updatePreviousValue(req){
            let flowresponse= JSON.parse(JSON.parse(record?.flowresponse));
               mapping.forEach((map) => {
                   let value= flowresponse[map?.ActuallName];
+                   value=value.replace(/^\d+_/, '');
+                  value = value.replaceAll('_',' ');
                   if(map.attributeMapped != "" && map?.isOverride && value){
                     let updateQuery = `UPDATE EndCustomer SET ${map.attributeMapped}=? WHERE SP_ID=? AND customerId=?`;
                     db.excuteQuery(updateQuery, [value, req.body.spId, record.customerId]);

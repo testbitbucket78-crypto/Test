@@ -238,12 +238,14 @@ getFlowList() {
   this.settingsService.getFlowData(this.spId).subscribe((response: any) => {
       if (response) {     
           console.log(response);
+          if(Array.isArray(response?.flows)){
           this.initflowList =  response?.flows;
           this.flowList =  response?.flows;
           this.getGridPageSize();   
   setTimeout(() => {
     this.isLoading = false;
   }, 100); 
+}
       }
   });
 }
