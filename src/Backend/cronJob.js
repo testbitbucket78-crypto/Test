@@ -477,7 +477,7 @@ async function sendScheduledCampaign(batch, sp_id, type, message_content, messag
   if(message.message_variables !='' && message.message_variables != null){
   body = replaceTemplateVariables(body, message.message_variables);
   }
-var userStatus = await commonFun.getUserStatus(spid);
+var userStatus = await commonFun.getUserStatus(sp_id);
 
   
   for (var i = 0; i < batch.length; i++) {
