@@ -5,8 +5,8 @@
 export const environment = {
     production: true,
     baseUrl: 'https://authapi.stacknize.com',
-    // AdminbaseUrl: 'https://adminapi.stacknize.com',
-    AdminbaseUrl: 'http://localhost:4000',
+    AdminbaseUrl: 'https://adminapi.stacknize.com',
+    // AdminbaseUrl: 'http://localhost:4000',
     botsAPI: 'https://bots.stacknize.com',
     settingAPI: 'https://settings.stacknize.com',
     notify: 'wss://notify.stacknize.com/',
