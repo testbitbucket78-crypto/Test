@@ -164,7 +164,7 @@
 					</div>
 
 					<div class="mt-2">
-						<input type="checkbox" class="form-check-input mr-2" id="exampleCheck1" [(ngModel)]="isUpdateValuesFromEarlierFlowResponses">
+						<input type="checkbox" class="form-check-input mr-2" id="exampleCheck1" [(ngModel)]="isEarlierResponse" [disabled]="isEarlierResponseInit">
 						<div class="pl-2">Update values from earlier Flow responses also</div>
 					</div>
 					<div class="small-note mt-2 mx-2">Note: If you don’t see any column as defined under the WhatsApp Flow, it could be a optional field and nobody might have filled it yet</div>

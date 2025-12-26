@@ -67,11 +67,12 @@ export class WhatsAppFlowsComponent implements OnInit {
     paging: any = 1;
     lastElementOfPage: any;
 
-    flowList: any;
+    flowList: any = [];
     isFilterApplied:boolean = false;
-    initflowList: any;
+    initflowList: any =[];
     spId:number;
     isShowDetails:boolean = false;
+    isEarlierResponse:boolean = false;
     flowId:number = 0;
     flowName:string = '';
     mapping: any = {};
@@ -117,6 +118,7 @@ export class WhatsAppFlowsComponent implements OnInit {
 this.isShowDetails = true;
     this.flowId = event.data?.flowid;
     this.flowName = event.data?.flowname;
+    this.isEarlierResponse = event.data?.isEarlierResponse == 0 ? false :  true;
     this.mapping = JSON.parse(event.data?.col_Mapping || '{}');
 // } else{
 //   this.showToaster('error', 'There is no responce')
@@ -236,12 +238,14 @@ getFlowList() {
   this.settingsService.getFlowData(this.spId).subscribe((response: any) => {
       if (response) {     
           console.log(response);
+          if(Array.isArray(response?.flows)){
           this.initflowList =  response?.flows;
           this.flowList =  response?.flows;
           this.getGridPageSize();   
   setTimeout(() => {
     this.isLoading = false;
   }, 100); 
+}
       }
   });
 }

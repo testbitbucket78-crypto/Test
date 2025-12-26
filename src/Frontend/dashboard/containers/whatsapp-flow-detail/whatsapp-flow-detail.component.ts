@@ -17,6 +17,7 @@ export class WhatsappFlowDetailComponent {
   @Input() flowId: any;
   @Input() flowName: string ='';
   @Input() ColumnMapping:any =[];
+  @Input() isEarlierResponse:boolean =false;
   @Output() closeFlowDetail = new EventEmitter<string>();
      public channelDomain:string = environment?.chhanel;
 
@@ -90,12 +91,14 @@ export class WhatsappFlowDetailComponent {
       errorMessage='';
       successMessage='';
       warningMessage='';
+      isEarlierResponseInit:boolean = false;
 
     constructor( public GridService: GridService, private _teamboxService: TeamboxService,public settingsService: SettingsService){
       this.spId = Number(sessionStorage.getItem('SP_ID'));  
     }
   
     ngOnInit(): void {
+      this.isEarlierResponseInit = this.isEarlierResponse;
       this.getAttributeList();
       this.getFlowDetail();
       //this.setEverything();
@@ -264,12 +267,13 @@ saveFlowMapping() {
     spId: this.spId,
     mapping: this.ColumnMapping,
     flowId: this.flowId,
-    isUpdateValues: this.isUpdateValuesFromEarlierFlowResponses
+    isUpdateValues: this.isEarlierResponseInit ? false : this.isEarlierResponse
   }
   this.settingsService.saveFlowMapping(data).subscribe((response: any) => {
       if (response) {
           //this.flowList =  response?.flows;
           this.getGridPageSize();
+          this.isEarlierResponseInit = this.isEarlierResponse;
           $("#editColumnsModal").modal('hide');
           $("#mapColumnsModal").modal('hide');
         this.showToaster('Flow mapping saved successfully', 'success');

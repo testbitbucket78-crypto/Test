@@ -428,6 +428,8 @@ async function updatePreviousValue(body){
            let flowresponse= JSON.parse(JSON.parse(body?.flowresponse));
               mapping.forEach((map) => {
                   let value= flowresponse[map?.ActuallName];
+                  value=value.replace(/^\d+_/, '');
+                  value = value.replaceAll('_',' ');
                   if(map.attributeMapped != "" && map?.isOverride && value){
                     let updateQuery = `UPDATE EndCustomer SET ${map.attributeMapped}=? WHERE SP_ID=? AND customerId=?`;
                     db.excuteQuery(updateQuery, [value, body.spId, body.customerId]);

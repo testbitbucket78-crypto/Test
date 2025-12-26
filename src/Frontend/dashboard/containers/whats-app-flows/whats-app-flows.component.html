@@ -164,6 +164,6 @@
 	</ng-template>
 </div>
 
-    <sb-whatsapp-flow-detail *ngIf="isShowDetails" [flowId]="flowId" [flowName]="flowName" [ColumnMapping]="mapping" (closeFlowDetail)="getFlowList();isShowDetails = false"></sb-whatsapp-flow-detail>
+    <sb-whatsapp-flow-detail *ngIf="isShowDetails" [flowId]="flowId" [flowName]="flowName" [ColumnMapping]="mapping" [isEarlierResponse]="isEarlierResponse" (closeFlowDetail)="getFlowList();isShowDetails = false"></sb-whatsapp-flow-detail>
 	
 </sb-layout-dashboard>
