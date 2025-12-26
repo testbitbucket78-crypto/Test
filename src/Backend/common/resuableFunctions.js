@@ -525,6 +525,41 @@ async function isDeleted(sid) {
   }
 }
 
+
+async function getUserStatus(sid) {
+  try {
+    const result = await db.excuteQuery(
+      `SELECT isPaused, isDisable, isDeleted
+       FROM user
+       WHERE SP_ID = ? AND ParentId IS NULL`,
+      [sid]
+    );
+
+    if (!result || result.length === 0) {
+      return {
+        isPaused: false,
+        isDisable: false,
+        isDeleted: false
+      };
+    }
+
+    const { isPaused, isDisable, isDeleted } = result[0];
+
+    return {
+      isPaused: String(isPaused) === '1',
+      isDisable: String(isDisable) === '1',
+      isDeleted: String(isDeleted) === '1',
+    };
+  } catch (err) {
+    return {
+      isPaused: false,
+      isDisable: false,
+      isDeleted: false
+    };
+  }
+}
+
+
 async function deleteTemplateFromMeta(phoneNumberId, templateName, accessToken) {
   try {
     const url = `https://graph.facebook.com/v18.0/${phoneNumberId}/message_templates?name=${templateName}`;
@@ -543,4 +578,4 @@ async function deleteTemplateFromMeta(phoneNumberId, templateName, accessToken) 
   }
 }
 
-module.exports = { isPaused,isDisable,isDeleted,isStatusEmpty,getCodeByLabel, getDefaultAttribue, isHolidays, isWorkingTime, resetContactFields, determineMediaFromLink, notifiactionsToBeSent, currentlyAssigned, updateHealthStatus, convertMessagingLimitTier, updateCurrentLimit, getTemplateVariables, isInvalidParam, deleteTemplateFromMeta }
+module.exports = { getUserStatus,isPaused,isDisable,isDeleted,isStatusEmpty,getCodeByLabel, getDefaultAttribue, isHolidays, isWorkingTime, resetContactFields, determineMediaFromLink, notifiactionsToBeSent, currentlyAssigned, updateHealthStatus, convertMessagingLimitTier, updateCurrentLimit, getTemplateVariables, isInvalidParam, deleteTemplateFromMeta }

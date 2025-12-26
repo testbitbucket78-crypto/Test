@@ -43,7 +43,7 @@ async function fetchScheduledMessages() {
      console.log('-------------------st------------------');
     // var messagesData = await db.excuteQuery(`select * from Campaign where (status=1 or status=2) and is_deleted != 1`, [])
     // var messagesData = await db.excuteQuery(`SELECT *, DATE_FORMAT(start_datetime, '%Y-%m-%d %H:%i:%s') AS formatted_date,u.IsActive,u.currentStatus  FROM Campaign u  LEFT JOIN user u ON u.SP_ID = c.spid  WHERE (status = 1 OR status = 6) AND is_deleted != 1`, [])
-    var messagesData = await db.excuteQuery(`SELECT c.*, DATE_FORMAT(c.start_datetime, '%Y-%m-%d %H:%i:%s') AS formatted_date, u.isPaused, u.isDisable, u.isDeleted FROM Campaign c LEFT JOIN user u ON u.SP_ID = c.sp_id AND (u.ParentId Is Null) WHERE c.status IN (1, 6) AND c.is_deleted != 1`, [])
+    var messagesData = await db.excuteQuery(`SELECT c.*, DATE_FORMAT(c.start_datetime, '%Y-%m-%d %H:%i:%s') AS formatted_date FROM Campaign c LEFT JOIN user u ON u.SP_ID = c.sp_id AND (u.ParentId Is Null) WHERE c.status IN (1, 6) AND c.is_deleted != 1`, [])
     var remaingMessage = [];
     console.log(messagesData)
     logger.info(`fetchScheduledMessages ${messagesData?.length}`)
@@ -477,6 +477,9 @@ async function sendScheduledCampaign(batch, sp_id, type, message_content, messag
   if(message.message_variables !='' && message.message_variables != null){
   body = replaceTemplateVariables(body, message.message_variables);
   }
+var userStatus = await commonFun.getUserStatus(spid);
+
+  
   for (var i = 0; i < batch.length; i++) {
     let headers = header ?  '<p><strong>'+header+'</strong></p><br>' : '';
     let message_text =  headers + message_content
@@ -507,7 +510,7 @@ async function sendScheduledCampaign(batch, sp_id, type, message_content, messag
     // setTimeout(async () => {
     //   //console.log("response",response)     
     // }, 10)    middlewareresult = await middleWare.sendingTemplate(spid, from, headerVar, testMessage, interactive_buttons);
-    response = await messageThroughselectedchannel(sp_id, Phone_number, type, textMessage, message_media, phone_number_id, channel_id, message.Id, message, message_text,headerVar,bodyVar,templateId,message.buttons,DynamicURLToBESent, message?.interactive_buttons);
+    response = await messageThroughselectedchannel(sp_id, Phone_number, type, textMessage, message_media, phone_number_id, channel_id, message.Id, message, message_text,headerVar,bodyVar,templateId,message.buttons,DynamicURLToBESent, message?.interactive_buttons,userStatus);
     const randomdelay = Math.floor(Math.random() * (9000 - 7000 + 1)) + 7000;
  //   if (channel_id == 'WhatsApp Web' || channel_id == 2 || channel_id == 'WA Web') {
       await wait(randomdelay);
@@ -887,17 +890,19 @@ async function isContactBlocked(phone, spid) {
 
 //_________________________COMMON METHOD FOR SEND MESSAGE___________________________//
 
-async function messageThroughselectedchannel(spid, from, type, text, media, phone_number_id, channelType, campaignId, message, message_content,headerVar,bodyVar,templateId,buttons,DynamicURLToBESent,interactive_buttons) {
+async function messageThroughselectedchannel(spid, from, type, text, media, phone_number_id, channelType, campaignId, message, message_content,headerVar,bodyVar,templateId,buttons,DynamicURLToBESent,interactive_buttons,userStatus) {
   //console.log("messageThroughselectedchannel", spid, from, type, channelType,web.isActiveSpidClient(spid))
   try {
     let button = typeof buttons === 'string' ? JSON.parse(buttons) : buttons;
     let isBlockedContact = await isContactBlocked(from, spid)
 
     let getMediaType = determineMediaType(type);
+    
     if (getMediaType === 'unknown' && media) getMediaType = determineMediaFromLink(media);
     if (channelType == 'WhatsApp Official' || channelType == 1 || channelType == 'WA API') {
-      if (message.isPaused != 0 || message.isDisable != 0 || message.isDeleted != 0) {
-        var errorMessaage = message.isDeleted != 0 ? 'Attention! Your account has been DELETED. Please contact your solution provider': message.isDisable != 0 ? 'Attention! Your account has been DISABLED. Please contact your solution provider' : 'Attention! Your account has been PAUSED. Please contact your solution provider'
+      
+      if (userStatus.isPaused || userStatus.isDisable || userStatus.isDeleted) {
+        var errorMessaage = userStatus.isDeleted ? 'Attention! Your account has been DELETED. Please contact your solution provider': userStatus.isDisable ? 'Attention! Your account has been DISABLED. Please contact your solution provider' : 'Attention! Your account has been PAUSED. Please contact your solution provider'
         let saveSendedMessage = await saveMessage(from, spid, '', message_content, media, type, type,'WA API', errorMessaage, 9,buttons,interactive_buttons);
         let saveInCampaignMessage = await sendMessages(from, text, campaignId, message, 403, text, saveSendedMessage, 'WA API', 403, errorMessaage, message?.segments_contacts)
         return response = { status: 403, message: errorMessaage };
@@ -930,8 +935,10 @@ async function messageThroughselectedchannel(spid, from, type, text, media, phon
         let saveInCampaignMessage = await sendMessages(from, text, campaignId, message, 403, text, '', 'WA API', '', 'This contact is blocked')
       }
     } if (channelType == 'WhatsApp Web' || channelType == 2 || channelType == 'WA Web') {
-      if (message.isPaused != 0 || message.isDisable != 0 || message.isDeleted != 0) {
-        var errorMessaage = message.isDeleted != 0 ? 'Attention! Your account has been DELETED. Please contact your solution provider': message.isDisable != 0 ? 'Attention! Your account has been DISABLED. Please contact your solution provider' : 'Attention! Your account has been PAUSED. Please contact your solution provider'
+
+
+      if (userStatus.isPaused || userStatus.isDisable || userStatus.isDeleted) {
+        var errorMessaage = userStatus.isDeleted ? 'Attention! Your account has been DELETED. Please contact your solution provider': userStatus.isDisable ? 'Attention! Your account has been DISABLED. Please contact your solution provider' : 'Attention! Your account has been PAUSED. Please contact your solution provider'
          let saveSendedMessage = await saveMessage(from, spid, '', message_content, media, type, type,'WA Web', errorMessaage, 9,buttons,interactive_buttons);
         let saveInCampaignMessage = await sendMessages(from, text, campaignId, message, 403, text, saveSendedMessage, 'WA Web', 403, errorMessaage)
         return response = { status: 403, message: errorMessaage };
