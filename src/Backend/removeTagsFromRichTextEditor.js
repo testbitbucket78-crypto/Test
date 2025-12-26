@@ -363,8 +363,8 @@ function convertHTML(htmlString) {
   result = result.replace('<p class="temp-footer">','\n<p class="temp-footer">')
   result = result.replace('<p class=\"custom-class-attachmentType\"></p>','')
   // Replace <p> and <br> tags with newline characters
-  result = result.replace(/<p>/, '');
-    result = result.replace(/<p>/g, '\n').replace(/<br>/g, '\n');
+  
+    result = result.replace(/<p>\s*<br\s*\/?>\s*<\/p>/gi, '\n\n');
   
   // Replace <strong> tags with * (for bold) but ensure no extra spaces around asterisks
   //result = result.replace(/<strong>\s*(.*?)\s*<\/strong>/g, '*$1*');

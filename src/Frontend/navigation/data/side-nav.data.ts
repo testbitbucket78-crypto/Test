@@ -44,7 +44,7 @@ export const sideNavItems: SideNavItems = {
 
     flow: {
         icon: 'assets/img/Humburger.svg',
-        text: 'WhatsApp Flow',
+        text: 'WhatsApp Flows',
         link: '/flow',
     },
     BotBuilder: {

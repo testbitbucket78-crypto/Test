@@ -58,3 +58,4 @@ src/environments/environment.ts
 package-lock.json
 
 .vscode/
+*.log

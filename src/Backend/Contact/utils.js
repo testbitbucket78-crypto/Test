@@ -541,34 +541,40 @@ const formatDateTime = (date) => {
   });
 };
 
-// function convertTimeByTimezone(time, timezone) {
-//   try {
-//     if (!time || !timezone) return time;
-//     const now = new Date();
-//     const currentDate = moment(now).format('YYYY-MM-DD');
-//     const dateTimeString = `${currentDate}T${time}:00`;
-//     return moment(dateTimeString).utc().format();
-//   } catch (err) {
-//     console.error("Error converting time:", err);
-//     return time;
-//   }
-// }
 function convertTimeByTimezone(time, timezone) {
- try {
+  try {
     if (!time || !timezone) return time;
 
-    const currentDate = new Date().toISOString().split("T")[0]; 
-    const dateString = `${currentDate}T${time}:00`;
+    const today = new Date();
+    const [hh, mm] = time.split(":").map(Number);
 
-    // Build time in the selected timezone
-    const localStringInTZ = new Date(dateString).toLocaleString("en-US", {
-      timeZone: timezone
+    // Create date parts in target timezone
+    const formatter = new Intl.DateTimeFormat("en-US", {
+      timeZone: timezone,
+      year: "numeric",
+      month: "2-digit",
+      day: "2-digit"
     });
 
-    // Parse that as local (which effectively becomes UTC conversion)
-    const dateInTZ = new Date(localStringInTZ);
+    const parts = formatter.formatToParts(today);
+    const dateParts = Object.fromEntries(parts.map(p => [p.type, p.value]));
 
-    return dateInTZ.toISOString() ;
+    // Build ISO string explicitly
+    const iso = `${dateParts.year}-${dateParts.month}-${dateParts.day}T${hh
+      .toString()
+      .padStart(2, "0")}:${mm
+      .toString()
+      .padStart(2, "0")}:00`;
+
+      let _date = new Date(iso);
+      const tzString = _date.toLocaleString("en-US", { timeZone: timezone, hour12: false });
+      const _localString = _date.toLocaleString("en-US", { hour12: false });
+      const diff = new Date(_localString) - new Date(tzString);
+      const timereturn = new Date(_date.getTime() + diff)
+
+     return timereturn;
+    // Convert once to UTC
+    //return new Date(`${iso}`).toISOString();
   } catch (err) {
     console.error("UTC conversion error:", err);
     return time;

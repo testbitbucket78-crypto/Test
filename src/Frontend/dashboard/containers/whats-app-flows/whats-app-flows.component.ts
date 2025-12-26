@@ -3,6 +3,7 @@ import { GridService } from '../../services/ag-grid.service';
 import { ColDef, GridApi, GridReadyEvent } from 'ag-grid-community';
 import { SettingsService } from 'Frontend/dashboard/services/settings.service';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { integer } from 'aws-sdk/clients/cloudfront';
 
 @Component({
   selector: 'sb-whats-app-flows',
@@ -67,6 +68,7 @@ export class WhatsAppFlowsComponent implements OnInit {
     lastElementOfPage: any;
 
     flowList: any;
+    isFilterApplied:boolean = false;
     initflowList: any;
     spId:number;
     isShowDetails:boolean = false;
@@ -100,7 +102,8 @@ export class WhatsAppFlowsComponent implements OnInit {
     this.spId = Number(sessionStorage.getItem('SP_ID'));
   }
 
-  ngOnInit(): void {
+  ngOnInit(): void {    
+  this.isLoading = true;
     this.getFlowList();
     this.getWhatsAppDetails();
   }
@@ -158,7 +161,8 @@ actionsCellRenderer(params: any) {
 
 
 onButtonClick(data:any, event: any) {
- window.open('https://business.facebook.com/wa/manage/flows/create', '_blank');
+  console.log(data,'---------data-------------');
+ this.creatWhatsAppFlow(true,data?.flowid)
 }
 
 
@@ -229,14 +233,15 @@ gotoPage(page: any) {
 }
 
 getFlowList() {
-  this.isLoading = true;
   this.settingsService.getFlowData(this.spId).subscribe((response: any) => {
-      if (response) {        
-  this.isLoading = false;
+      if (response) {     
           console.log(response);
           this.initflowList =  response?.flows;
           this.flowList =  response?.flows;
-          this.getGridPageSize();
+          this.getGridPageSize();   
+  setTimeout(() => {
+    this.isLoading = false;
+  }, 100); 
       }
   });
 }
@@ -294,8 +299,18 @@ getWhatsAppDetails() {
         }, 100);
     }
 
-    creatWhatsAppFlow(){
-       window.open('https://business.facebook.com/wa/manage/flows/create', '_blank');
+    creatWhatsAppFlow(preview:boolean=false,flowid:any){
+      let data ={
+        spId:this.spId,
+        flowId:flowid,
+        isPreview:preview,
+      }
+      this.settingsService.whatsAppFlowUrl(data).subscribe((response: any) => {
+      if (response) {     
+          window.open(response?.url, '_blank');
+      }
+  });
+       
     }
 
     
@@ -322,14 +337,18 @@ getWhatsAppDetails() {
     .filter(f => f.checked)
     .map(f => f.label);
 
-  if (selectedFilters.length === 0) {
-    this.flowList = JSON.parse(JSON.stringify(this.initflowList));
-  }
+    console.log(selectedFilters,'------------selectedFilters--------------');
 
+  if (selectedFilters.length == 0) {
+    this.isFilterApplied = false;
+    this.flowList = JSON.parse(JSON.stringify(this.initflowList));
+  } else{
+this.isFilterApplied = true;
   // Step 3: filter based on selected statuses
   this.flowList =  this.initflowList.filter((flow:any) =>
     selectedFilters.includes(flow.status)
   );  
+}
   this.getGridPageSize();
   this.closeAllModal();
 }

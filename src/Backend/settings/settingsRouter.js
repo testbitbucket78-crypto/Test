@@ -136,6 +136,7 @@ router.get('/getFlows/:spid/:isPublished',authenticateToken,campaignController.g
 router.get('/getFlowDetail/:spid/:flowId',authenticateToken,campaignController.getFlowDetail);
 router.post('/saveFlowMapping',authenticateToken,campaignController.saveFlowMapping)  
 router.post('/exportFlowData',authenticateToken,campaignController.exportFlowData)  
+router.post('/flowPreviewurl',authenticateToken,campaignController.flowPreviewurl)  
 
 // -------------- WhatsApp Flows End -------------------//
 

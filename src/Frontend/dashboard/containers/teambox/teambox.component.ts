@@ -4352,5 +4352,19 @@ sendMessage(isTemplate:boolean=false,templateTxt:string='',type: any = ''){
 		});
 	}
 
+getUniqueMedia(mediaList: any[]) {
+  const seen = new Set();
+  return mediaList.filter(item => {
+    if (!item.Message_id) return true; 
+
+    if (!seen.has(item.Message_id)) {
+      seen.add(item.Message_id);
+      return true;
+    }
+
+    return false;
+  });
+}
+
 
 }

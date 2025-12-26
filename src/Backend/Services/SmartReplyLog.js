@@ -1,8 +1,11 @@
 const { SmartReplyLogModel } = require('./ServiceModel');
+const moment = require('moment');
 
 async function logSmartReplyUsage({ spid, customerNumber, keywordSent }) {
   try {
-    const log = new SmartReplyLogModel({ spid, customerNumber, keywordSent });
+    const utcTimestamp = moment.utc(new Date().toUTCString()).format('YYYY-MM-DD HH:mm:ss');
+    
+    const log = new SmartReplyLogModel({ spid, customerNumber, keywordSent, utcTimestamp});
     log.validate();
     await log.save();
     

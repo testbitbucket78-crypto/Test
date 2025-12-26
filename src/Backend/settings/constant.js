@@ -460,11 +460,11 @@ var getChannel = `SELECT channel_id, connected_id FROM WhatsAppWeb WHERE spid = 
 var getRateLimit = `select count(*) AS Count from Message WHERE (created_at >= NOW() - INTERVAL 1 MINUTE) and message_direction = 'Out' and SPID =?`
 
 // ------------------------- WhatsApp Flow ----------------------------------//
-var getflowDetail = `select * from FlowsData where spid =? and flowid =?`
+var  getflowDetail = `select * from FlowsData where spid =? and flowid =? order by 1 desc`
 //var getflowDetail = `select * from FlowsData where spid = ? and flowid = ?`
 var getflows = `select * from Flows where spid =? order by 1 desc`
 var saveflowMapping = `update Flows SET col_Mapping =? where spid =? and flowid =?`
-//var saveflowMapping = `update Flows SET col_Mapping =? where spid = ? and flowid = ?`
+var getflowslatestResponse = `SELECT f.* FROM FlowsData f JOIN (SELECT phoneNumber, MAX(created_at) AS latest_time FROM FlowsData GROUP BY phoneNumber) l ON f.phoneNumber = l.phoneNumber AND f.created_at = l.latest_time`
 
 
 module.exports = {
@@ -482,5 +482,5 @@ module.exports = {
     Whatsappdetails,addTokenQuery,updateTokenQuery,deleteTokenQuery,selectTokenQuery,isEnableQuery,baseURL,accessToken,deleteIPQuery,insertIPAddress,updateNotification,
     getColCount,addcolumn,getcolumn,deletecolumn,getcolumnid,enableMandatory,enablestatus,editfield ,selectApprovedTemplate ,addGallery ,getGallery,selectUserByIdQuery,
     content_type,access_token,url,selectActiveQuery,getAllUserQuery,checkDeletedColumn,getCustomColumnById,permanentDeleteColumn,selectHealthStatus,insertHealthStatus, insertUserAPIKeys, updateUserAPIKeysAndTokenName
-    ,getUserAPIKeys, updateAPIkeysState, updateWebhookUrl, getAgentId, getChannel, getRateLimit, getCampaignId, updateUserAPIKeysAndKeyGenerate, selectTemplateForGallery,getflowDetail,getflows,saveflowMapping, deleteAPIKey, flagStatusToisDeleted
+    ,getUserAPIKeys, updateAPIkeysState, updateWebhookUrl, getAgentId, getChannel, getRateLimit, getCampaignId, updateUserAPIKeysAndKeyGenerate, selectTemplateForGallery,getflowDetail,getflows,saveflowMapping,getflowslatestResponse, deleteAPIKey, flagStatusToisDeleted
 }

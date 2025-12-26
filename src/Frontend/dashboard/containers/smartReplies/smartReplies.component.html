@@ -365,7 +365,8 @@
 										  <!-- <p *ngIf="message.Message" id="msgbox-body{{i}}" [innerHTML]="message.Message | sanitizeHtml"></p> -->
 												    <app-whatsapp-message-preview
 														type="teambox"
-														[messageText]="message.Message">
+														[messageText]="message.Message"
+														[elementId]="'msgbox-body' + i">
 													</app-whatsapp-message-preview>
 										  <div *ngIf="message?.buttons && message?.buttons?.length >0" class="w-100">
 											<div *ngFor="let item of message?.buttons let i = index" >

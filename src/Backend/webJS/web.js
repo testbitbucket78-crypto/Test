@@ -1776,7 +1776,7 @@ async function getUserStatus(spid) {
      return userStatus;
   }catch (err) {
     logger.error(`error in, getUserStatus for spid: ${spid}, error: ${err}`);
-    console.log("err getUserStatus", err)
+    throw new Error(err);
   }
 }
 

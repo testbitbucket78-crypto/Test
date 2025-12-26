@@ -6,6 +6,7 @@ import * as agGrid from 'ag-grid-community';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { GridService } from '../../services/ag-grid.service';
 import { DatePipe } from '@angular/common';
+import { environment } from 'environments/environment';
  declare var $:any;
 
 @Component({
@@ -92,7 +93,8 @@ export class RolesSettingsComponent implements OnInit {
     paging: any = 1;
     lastElementOfPage: any;
     isLoading!:boolean;
-    disabledRights=[7,22,23,28,29,30,47,48];
+    disabledRights:any[]=[7,22,23,28,30,47,48];
+    public chhanel:string = environment?.chhanel;
     constructor(public _settingsService: SettingsService,public settingsService: SettingsService,private datePipe:DatePipe, private fb: FormBuilder, public GridService: GridService) {
         this.sp_Id = Number(sessionStorage.getItem('SP_ID'));
     }
@@ -105,6 +107,9 @@ export class RolesSettingsComponent implements OnInit {
         this.myForm = this.fb.group({
             roleName: ['', Validators.required],
           });
+          if(this.chhanel == 'web'){
+            this.disabledRights.push(29);
+          }
     }
 
     cellStyle(params: agGrid.CellClassParams):string {

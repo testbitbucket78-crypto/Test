@@ -1016,17 +1016,14 @@ const deleteTemplates = async (req, res) => {
         ID = req.body.ID;
         let SPID = req.body.SPID;
 
-        const phoneNumberDetails = (await db.excuteQuery('select * from WA_API_Details where spid = 55 order by 1 desc limit 1', [SPID]))?.[0]?.phoneNumber_id;
-        const { TemplateName, token} = (await db.excuteQuery('select * from templateMessages where ID = ? and and isDeleted != 1', [ID]))?.[0] ;
-        if(phoneNumberDetails){
+        const { phoneNumber_id, token }= (await db.excuteQuery('select * from WA_API_Details where spid = ? order by 1 desc limit 1', [SPID]))?.[0];
+        const { TemplateName, templateID} = (await db.excuteQuery('select * from templateMessages where ID = ? and isDeleted != 1', [ID]))?.[0] ;
+        if(phoneNumber_id){
             var metaResponse = await commonFun.deleteTemplateFromMeta(
-                phoneNumberId,
+                phoneNumber_id,
                 TemplateName,
                 token
             );
-            if(metaResponse?.success){
-              
-            }
         }
         
         if(metaResponse?.success) {
@@ -1290,6 +1287,42 @@ const getFlowDetail = async (req, res) => {
     }
 }
 
+
+const flowPreviewurl = async (req, res) => {
+    try {
+        let flowId = req.body?.flowId;
+            let spid = req.body.spId;
+            let isPreview = req.body.isPreview;
+             let url ='';
+        let details = await db.excuteQuery('select * from WA_API_Details where spid=? and isDeleted !=1', [spid]);
+
+        if(isPreview){
+
+                  const response = await axios.get(`https://graph.facebook.com/v19.0/${flowId}?fields=preview.invalidate(false)`, {
+                        headers: {
+                            'Authorization': `Bearer ${details[0]?.token}`
+                        }
+                    });
+            console.log("****META APIS****",payload );
+                   url = response.preview;
+                }
+                else{
+
+                }
+            return {
+                status: 200,
+                url: url
+            }; 
+    } catch (err) {
+         res.send({
+            status: 500,
+            err: err.message
+        })
+    }
+}
+
+
+
 const saveFlowMapping = async (req, res) => {
     try {
             let flowId = req.body?.flowId;
@@ -1313,7 +1346,7 @@ const saveFlowMapping = async (req, res) => {
 
 async function updatePreviousValue(req){
     try {
-        let FlowDetail = await db.excuteQuery(val.getflowDetail, [req.body.spId, req.body?.flowId]);
+        let FlowDetail = await db.excuteQuery(val.getflowslatestResponse, [req.body.spId, req.body?.flowId]);
         FlowDetail.forEach((record) => {
            let mapping =  req.body.mapping;
            let flowresponse= JSON.parse(JSON.parse(record?.flowresponse));
@@ -1556,6 +1589,6 @@ module.exports = {
     addCampaignTimings, updateCampaignTimings, selectCampaignTimings, getUserList, addAndUpdateCampaign,
     selectCampaignAlerts, addCampaignTest, selectCampaignTest, addTag, gettags, deleteTag, addTemplate, getTemplate, deleteTemplates,
     testCampaign, addCustomField, editCustomField, getCustomField, deleteCustomField, getCustomFieldById, enableMandatoryfield,
-    enableStatusfield, getApprovedTemplate, addGallery, getGallery, isExistTemplate ,uploadMediaOnMeta,getFlows, getTemplateForGallery,getFlowDetail,saveFlowMapping,exportFlowData
+    enableStatusfield, getApprovedTemplate, addGallery, getGallery, isExistTemplate ,uploadMediaOnMeta,getFlows, getTemplateForGallery,getFlowDetail,saveFlowMapping,exportFlowData,flowPreviewurl
 
 }

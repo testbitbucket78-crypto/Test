@@ -11,8 +11,8 @@
 		</div>
 		
 		<div class="d-flex">
-			<div class="mx-2 hand-icon" (click)="getRefresh()" > <img src="../../../../assets/img/retry.svg" width="22px" height="22px">  </div>			
-				<button class="flow-btn" data-bs-toggle="modal" data-bs-target="#mapColumnsModal"  > <img class="mr-1" src="../../../../assets/img/export.svg">Map Column</button>
+			<div class="mx-2 hand-icon d-flex align-items-center" (click)="getRefresh()" > <img src="../../../../assets/img/retry.svg" width="22px" height="22px">  </div>			
+				<button class="flow-btn" data-bs-toggle="modal" data-bs-target="#mapColumnsModal"  > <img class="mr-1" width="15px" src="../../../../assets/img/Map_Column.svg">Map Column</button>
 				<button class="flow-btn" id="import-btn" data-bs-toggle="modal" data-bs-target="#editColumnsModal" ><img
 						class="edit-icon mr-1" src="../../../../assets/img/edit_colunm.svg">Edit Column</button>
 				<button class="flow-btn" id="add-contact"  (click)="exportFlowData()"> <img class="mr-1" src="../../../../assets/img/export.svg">Export</button>
@@ -29,7 +29,6 @@
 						 [animateRows]="true"
 						 [gridOptions]="gridOptions"
 						 (gridReady)="onGridReady($event)"
-						 
 						 suppressResize=true
 						 [suppressRowClickSelection]="true"
 						 [paginationPageSize]="paginationPageSize"
@@ -79,32 +78,37 @@
 					</button>
 				</div>
 				<div class="modal-body px-5 pt-0 modal-body-scroll">
-					<div class="d-flex space-around f-bold">
+					<div class="d-flex space-around f-bold" *ngIf="flowList?.length >0">
 						<div>Edit Column Names</div>
 						<div>Column Data Type</div>
 					</div>
-					<div class="edit-column-slim">
+					<div class="edit-column-slim pr-2">
 				<div *ngFor="let item of ColumnMapping;let idx=index" class="my-2">						
-					<div class="d-flex justify-content-between">
+					<div class="d-flex justify-content-between" *ngIf="item?.ActuallName != 'name' && item?.ActuallName != 'phoneNumber' && item?.ActuallName != 'created_at'">
 						<div class="d-flex pl-4">
 						<diV class="mr-3">
 							<input type="checkbox" [(ngModel)]="item.isInputSelected" (change)="onSelectEditing(idx)" class="form-check-input mr-2 p-relative" id="exampleCheck1">
 						</diV>
 						<div class="billing-form-row d-flex flex-column  ">
-							<input type="text" class="input-form" type="text" [(ngModel)]="item.displayName" [disabled]="item?.isInputSelected == false"
-								 placeholder="Select start time" maxlength="30">
+							<input type="text" class="input-form" type="text" [(ngModel)]="item.displayName" 
+								 maxlength="30"  #nameInput disabled>
 						</div>
 					</div>
-						<div class="billing-form-row d-flex flex-column pl-3 ">
-							<select class="input-form select-flow" [(ngModel)]="item.type"  [disabled]="item?.isInputSelected == false"
+							<div (click)="nameInput.disabled = false" class="d-flex cursor-pointer align-items-center pl-2">
+								<img src="../../../../assets/img/Edit-icon.png">
+							</div>
+						<div class="billing-form-row d-flex flex-column pl-2 ">
+							<select class="input-form select-flow" [(ngModel)]="item.type"  
 								placeholder="Select data type" >
-								<option value="" disabled>Select data type</option>
+								<option value="" >Select data type</option>
 								<option *ngFor="let type of types" [value]="type" >{{type}}</option>
 							</select>
 						</div>
 					</div>
 				</div>
+				<div *ngIf="flowList?.length ==0" class="norecord">No response received yet.</div>
 				</div>
+				<div class="small-note mt-2 mx-2">Note: If you don’t see any column as defined under the WhatsApp Flow, it could be a optional field and nobody might have filled it yet</div>
 				</div>
 				<div class="modal-footer sticky-footer">
 					<button type="button" class="account-btn" (click)="SaveEditColumn()">Save</button>
@@ -118,19 +122,19 @@
 			<div class="modal-content ">
 				<div class="modal-header sticky-header">
 					<h5 class="modal-title">Map Columns</h5>
-					<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
+					<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" (click)="closeModal();onSelectMapping();">
 						<img src="../../../../assets/img/teambox/icon-close.svg">
 					</button>
 				</div>
 				<div class="modal-body px-5 pt-0 modal-body-scroll">
 					<!-- <form [formGroup]="workingHourForm" class="mt-4"> -->
-						<div class="d-flex ">
+						<div class="d-flex " *ngIf="flowList?.length >0">
 							<div class="w-40"></div>
 							<div class="f-bold">Map to Contact Fields</div>
 						</div>
 						<div class="edit-column-slim">
 					<div *ngFor="let item of ColumnMapping;let idx=index" class="my-2">						
-						<div class="d-flex">
+						<div class="d-flex" *ngIf="item?.ActuallName != 'name' && item?.ActuallName != 'phoneNumber' && item?.ActuallName != 'created_at'">
 							<div class="billing-form-row d-flex flex-column  ">
 								<input type="text" class="input-form clr-txt" type="text" [(ngModel)]="item.displayName" disabled
 									 placeholder="Select start time">
@@ -139,14 +143,14 @@
 							<div class="billing-form-row d-flex flex-column pl-3 ">
 								<select class="input-form select-flow" [(ngModel)]="item.attributeMapped" (change)="onSelectMapping()"
 									placeholder="Select an attribute to map">
-									<option value="" disabled>Select an attribute to map</option>
+									<option value="">Select an attribute to map</option>
 									<option *ngFor="let att of attributesList" [value]="att.ActuallName" [disabled]="att?.isSelected == true" >{{att?.displayName}}</option>
 								</select>
 							</div>
 							<div>
 								<div class="col-auto d-flex align-items-center active-toggle ml-2">
 									<label for="toggle-switch{{idx}}" class="m-0 switch">
-										<input type="checkbox" class="form-check-input" id="toggle-switch{{idx}}"
+										<input type="checkbox" class="form-check-input" id="toggle-switch{{idx}}" [disabled]="!item?.attributeMapped"
 											[(ngModel)]="item.isOverride">
 										<span  class="slider">
 										</span>
@@ -156,12 +160,14 @@
 							</div>
 						</div>
 					</div>
+					<div *ngIf="flowList?.length ==0" class="norecord">No response received yet.</div>
 					</div>
 
 					<div class="mt-2">
 						<input type="checkbox" class="form-check-input mr-2" id="exampleCheck1" [(ngModel)]="isUpdateValuesFromEarlierFlowResponses">
 						<div class="pl-2">Update values from earlier Flow responses also</div>
 					</div>
+					<div class="small-note mt-2 mx-2">Note: If you don’t see any column as defined under the WhatsApp Flow, it could be a optional field and nobody might have filled it yet</div>
 					<!-- </form> -->
 				</div>
 				<div class="modal-footer sticky-footer">
