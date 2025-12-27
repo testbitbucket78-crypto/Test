@@ -20,24 +20,4 @@ spec:
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           ports:
             - containerPort: 80
-          volumeMounts:
-            - name: html-volume
-              mountPath: /usr/share/nginx/html
-      volumes:
-        - name: html-volume
-          configMap:
-            name: {{ include "testbitbucket78.fullname" . }}-html
----
-apiVersion: v1
-kind: ConfigMap
-metadata:
-  name: {{ include "testbitbucket78.fullname" . }}-html
-data:
-  index.html: |
-    <html>
-    <head><title>Test App</title></head>
-    <body>
-      <h1>Hello from Helm + Jenkins + EKS!</h1>
-    </body>
-    </html>
 

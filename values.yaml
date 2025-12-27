@@ -1,37 +1,11 @@
-# Number of replicas
 replicaCount: 1
 
-# Docker image configuration
 image:
   repository: 514076760324.dkr.ecr.ap-south-1.amazonaws.com/test-nginx
-  tag: "1"                  # Jenkins BUILD_ID or static tag
-  pullPolicy: IfNotPresent   # Always pulls if not present
+  tag: "5"              # Jenkins updates this
+  pullPolicy: Always
 
-# Service configuration
 service:
-  type: NodePort             # Could also be LoadBalancer in prod
+  type: NodePort
   port: 80
-
-# Ingress configuration
-ingress:
-  enabled: false
-  annotations: {}
-  hosts: []
-  tls: []
-
-# Resource requests and limits
-resources: {}
-
-# Service account
-serviceAccount:
-  create: true
-  name: ""
-
-# Autoscaling configuration
-autoscaling:
-  enabled: false
-  minReplicas: 1
-  maxReplicas: 3
-  targetCPUUtilizationPercentage: 80
-  targetMemoryUtilizationPercentage: 80
 
