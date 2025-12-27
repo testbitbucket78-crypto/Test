@@ -2,17 +2,23 @@ replicaCount: 1
 
 image:
   repository: 514076760324.dkr.ecr.ap-south-1.amazonaws.com/test-nginx
-  tag: "8"
-  pullPolicy: Always
+  tag: "10"
+  pullPolicy: IfNotPresent
 
 service:
   type: NodePort
   port: 80
-  nodePort: 31538
 
 serviceAccount:
   create: false
+  name: ""
 
 ingress:
   enabled: false
+
+autoscaling:
+  enabled: false
+  minReplicas: 1
+  maxReplicas: 3
+  targetCPUUtilizationPercentage: 80
 
