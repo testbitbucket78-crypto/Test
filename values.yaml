@@ -2,22 +2,17 @@ replicaCount: 1
 
 image:
   repository: 514076760324.dkr.ecr.ap-south-1.amazonaws.com/test-nginx
-  tag: "7"
+  tag: "8"
   pullPolicy: Always
 
 service:
   type: NodePort
   port: 80
+  nodePort: 31538
 
 serviceAccount:
   create: false
-  name: ""
 
-resources: {}
-
-nodeSelector: {}
-
-tolerations: []
-
-affinity: {}
+ingress:
+  enabled: false
 
