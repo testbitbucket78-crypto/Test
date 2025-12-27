@@ -2,12 +2,12 @@ pipeline {
     agent any
 
     environment {
-        AWS_REGION    = 'ap-south-1'
-        ECR_REPO      = '514076760324.dkr.ecr.ap-south-1.amazonaws.com/test-nginx'
-        IMAGE_TAG     = "${env.BUILD_ID}"
-        HELM_RELEASE  = 'testbitbucket78'
-        HELM_CHART_DIR = '.'             // root of your repo where Chart.yaml is
-        KUBECONFIG    = '/var/lib/jenkins/.kube/config'  // kubeconfig for Jenkins user
+        AWS_REGION       = 'ap-south-1'
+        ECR_REPO         = '514076760324.dkr.ecr.ap-south-1.amazonaws.com/test-nginx'
+        IMAGE_TAG        = "${env.BUILD_ID}"  // Unique tag per build
+        HELM_RELEASE     = 'testbitbucket78'
+        HELM_CHART_DIR   = '.'                 // Path to Helm chart
+        KUBECONFIG       = '/var/lib/jenkins/.kube/config'
     }
 
     stages {
@@ -22,6 +22,7 @@ pipeline {
             steps {
                 sh '''
                 docker build -t $ECR_REPO:$IMAGE_TAG .
+                docker tag $ECR_REPO:$IMAGE_TAG $ECR_REPO:latest
                 '''
             }
         }
@@ -38,6 +39,7 @@ pipeline {
             steps {
                 sh '''
                 docker push $ECR_REPO:$IMAGE_TAG
+                docker push $ECR_REPO:latest
                 '''
             }
         }
@@ -53,7 +55,9 @@ pipeline {
         stage('Deploy with Helm') {
             steps {
                 sh '''
-                helm upgrade --install $HELM_RELEASE $HELM_CHART_DIR --namespace default --kubeconfig $KUBECONFIG
+                helm upgrade --install $HELM_RELEASE $HELM_CHART_DIR \
+                    --namespace default \
+                    --kubeconfig $KUBECONFIG
                 '''
             }
         }
@@ -61,10 +65,10 @@ pipeline {
 
     post {
         success {
-            echo 'Deployment succeeded!'
+            echo "Deployment succeeded! App is live on EKS."
         }
         failure {
-            echo 'Deployment failed.'
+            echo "Deployment failed! Check logs for errors."
         }
     }
 }

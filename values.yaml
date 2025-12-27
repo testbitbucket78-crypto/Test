@@ -1,23 +1,37 @@
+# Number of replicas
 replicaCount: 1
 
+# Docker image configuration
 image:
-  repository: https://github.com/testbitbucket78-crypto/Test.git
-  pullPolicy: IfNotPresent
-  tag: "5"
+  repository: 514076760324.dkr.ecr.ap-south-1.amazonaws.com/test-nginx
+  tag: "1"                  # Jenkins BUILD_ID or static tag
+  pullPolicy: IfNotPresent   # Always pulls if not present
 
+# Service configuration
 service:
-  type: ClusterIP
+  type: NodePort             # Could also be LoadBalancer in prod
   port: 80
 
+# Ingress configuration
 ingress:
   enabled: false
+  annotations: {}
+  hosts: []
+  tls: []
 
+# Resource requests and limits
 resources: {}
 
+# Service account
 serviceAccount:
   create: true
   name: ""
 
+# Autoscaling configuration
 autoscaling:
   enabled: false
+  minReplicas: 1
+  maxReplicas: 3
+  targetCPUUtilizationPercentage: 80
+  targetMemoryUtilizationPercentage: 80
 
