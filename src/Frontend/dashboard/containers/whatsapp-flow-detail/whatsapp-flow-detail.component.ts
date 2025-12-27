@@ -1,0 +1,484 @@
+import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { GridService } from '../../services/ag-grid.service';
+import { ColDef, GridApi, GridReadyEvent } from 'ag-grid-community';
+import { TeamboxService } from 'Frontend/dashboard/services/teambox.service';
+import { SettingsService } from 'Frontend/dashboard/services/settings.service';
+import { map } from 'rxjs/operators';
+import { environment } from 'environments/environment';
+declare var $: any;
+
+@Component({
+  selector: 'sb-whatsapp-flow-detail',
+  templateUrl: './whatsapp-flow-detail.component.html',
+  styleUrls: ['./whatsapp-flow-detail.component.scss']
+})
+export class WhatsappFlowDetailComponent {
+
+  @Input() flowId: any;
+  @Input() flowName: string ='';
+  @Input() ColumnMapping:any =[];
+  @Input() isEarlierResponse:boolean =false;
+  @Output() closeFlowDetail = new EventEmitter<string>();
+     public channelDomain:string = environment?.chhanel;
+
+    columnDefs: ColDef[] | any = [ 
+      {
+        field: 'name',
+        headerName: 'Name',
+        width:200,
+        suppressSizeToFit: false,
+        resizable: true,
+        sortable: true,
+        cellStyle: { background: '#FBFAFF', opacity: 0.86 },
+    },       
+    {
+      field: 'phoneNumber',
+      headerName: 'Phone Number',
+      width:200,
+      suppressSizeToFit: false,
+      resizable: true,
+      sortable: true,
+      cellStyle: { background: '#FBFAFF', opacity: 0.86 },
+  },                  
+      {
+        field: 'created_at',
+        headerName: 'Received At',
+        width:200,
+        suppressSizeToFit: false,
+        resizable: true,
+        sortable: true,
+      valueFormatter:this.dateFormatter.bind(this),
+        cellStyle: { background: '#FBFAFF', opacity: 0.86 },
+    },           
+        ];
+        public gridapi!: GridApi;
+        paginationPageSize: string = '10';
+      currPage: any = 10;
+      totalPage: any;
+      paging: any = 1;
+      lastElementOfPage: any;
+      isflowDetailLoading:boolean = true;
+      flowList: any =[];
+      rowData: any =[];
+      attributesList: any =[];  
+      isUpdateValuesFromEarlierFlowResponses: boolean = false;
+      filteredCustomFields: any =[];
+      spId:number;
+      initColumnMapping:any =[];
+      isLoading:boolean = false;
+       data: Record<string, string>[] = [
+        {
+          flow_token: "<FLOW_TOKEN>",
+          optional_param1: "<value1>"
+        },
+        {
+          flow_token: "<ANOTHER_FLOW_TOKEN>",
+          optional_param2: "<value2>",
+          extra_param: "<extra_value>"
+        },
+        {
+          optional_param1: "<value3>",
+          optional_param2: "<value4>"
+        },
+        {
+          flow_token: "<FLOW_TOKEN_3>",
+          optional_param1: "<value5>",
+          optional_param3: "<value6>"
+        }
+      ];
+
+      types:string[] =['Text','Number','Select','Switch','Date','Time','Multi Select' ];
+      errorMessage='';
+      successMessage='';
+      warningMessage='';
+      isEarlierResponseInit:boolean = false;
+
+    constructor( public GridService: GridService, private _teamboxService: TeamboxService,public settingsService: SettingsService){
+      this.spId = Number(sessionStorage.getItem('SP_ID'));  
+    }
+  
+    ngOnInit(): void {
+      this.isEarlierResponseInit = this.isEarlierResponse;
+      this.getAttributeList();
+      this.getFlowDetail();
+      //this.setEverything();
+    }
+  
+    onGridReady(params: GridReadyEvent) {
+      this.gridapi = params.api;
+    }
+    
+  gridOptions:any = {
+    rowSelection: 'multiple',
+    rowHeight: 48,
+    headerHeight: 50,
+    suppressRowClickSelection: true,
+    groupSelectsChildren: true,
+    suppressDragLeaveHidesColumns: true,
+    noRowsOverlay: true,
+    pagination: true,
+    paginationPageSize: 15,
+    suppressPaginationPanel: true,
+    paginateChildRows: true,
+    overlayNoRowsTemplate:
+        '<span style="padding: 10px; background-color: #FBFAFF; box-shadow: 0px 0px 14px #695F972E;">No response received yet.</span>',
+    overlayLoadingTemplate:
+        '<span class="ag-overlay-loading-center">Please wait while your rows are loading</span>',
+  };
+  
+  
+    onFilterTextBoxChange() {
+      const searchInput = document.getElementById('Search-Ag') as HTMLInputElement;
+      const searchTerm = searchInput.value.trim().toLowerCase();
+      this.gridapi.setQuickFilter(searchTerm);
+      // this.contacts = this.rowData.filter((contact: any) => contact.Name.toLowerCase().includes(searchTerm));
+      // this.setPaging()
+    }
+  
+    onFocus() {
+      const searchInput = document.querySelector('.search-container')
+      if (searchInput)
+        searchInput.classList.add('focused');
+    }
+  
+    onBlur() {
+      const searchInput = document.querySelector('.search-container')
+      if (searchInput)
+        searchInput.classList.remove('focused');
+    }
+  
+    setPaging() {
+      this.getGridPageSize();
+  }
+  
+  getGridPageSize() {
+      setTimeout(() => {
+          this.GridService.onChangePageSize(this.paginationPageSize, this.gridapi, this.flowList);
+          this.paging = this.GridService.paging;
+             this.onBtFirst();
+    }, 50)
+}
+
+    onBtFirst(){
+      this.GridService.onBtFirst(this.gridapi, this.flowList);
+        this.currPage = this.GridService.currPage;
+        this.paging = this.GridService.paging;
+       // this.getContact();
+    }
+  onBtNext() { 
+      this.GridService.onBtNext(this.gridapi, this.flowList);
+      this.currPage = this.GridService.currPage;
+      this.paging = this.GridService.paging;
+  
+  }
+  
+  onBtPrevious() {
+      this.GridService.onBtPrevious(this.gridapi, this.flowList);
+      this.currPage = this.GridService.currPage;
+      this.paging = this.GridService.paging;
+  
+  }
+  
+  gotoPage(page: any) {
+      this.GridService.gotoPage(page, this.gridapi, this.flowList)
+  }
+
+  getAttributeList() {
+    this._teamboxService.getAttributeList(this.spId).subscribe((response: any) => {
+        if (response) {
+            let attributeListData = response?.result;
+            this.attributesList = [];
+            attributeListData.forEach((item:any)=>{
+              item.isSelected= false;
+              if(item.ActuallName != 'Phone_number'){
+              this.attributesList.push(item);
+              }
+              })
+            console.log(this.attributesList, '----attributesList----'); 
+        }
+    });
+}
+
+
+getFlowDetail() {
+  this.isLoading = true;
+  this.settingsService.getFlowDetail(this.spId,this.flowId).subscribe((response: any) => {
+      if (response) {
+  this.isLoading = false;
+          let flowData =  response?.flows;
+          let responseData:any = [];
+          flowData.forEach((item:any)=>{
+            let data = JSON.parse(JSON.parse(item.flowresponse));
+            console.log(data, '----data----');
+            data['created_at'] = item?.created_at;
+            data['phoneNumber'] = item?.phoneNumber;
+            data['name'] = item?.name;
+            delete data['flow_token'];
+            console.log(data,'--------------------data--------------------');
+            responseData.push(data);
+          });
+          this.flowList = responseData;
+          console.log(this.flowList, '----flowList----');
+          console.log(responseData, '----responseData----');
+          this.extractUniqueKeys(responseData);
+          this.getGridPageSize();
+      }
+  });
+}
+
+getRefresh(){
+  this.getFlowDetail();
+  //this.getAttributeList();
+  this.ColumnMapping = JSON.parse(JSON.stringify(this.initColumnMapping));
+  this.columnDefs = [
+    {
+      field: 'name',
+      headerName: 'Name',
+      width:200,
+      suppressSizeToFit: false,
+      resizable: true,
+      sortable: true,
+      cellStyle: { background: '#FBFAFF', opacity: 0.86 },
+  },       
+  {
+    field: 'phoneNumber',
+    headerName: 'Phone Number',
+    width:200,
+    suppressSizeToFit: false,
+    resizable: true,
+    sortable: true,
+    cellStyle: { background: '#FBFAFF', opacity: 0.86 },
+},                  
+    {
+      field: 'created_at',
+      headerName: 'Received At',
+      width:200,
+      suppressSizeToFit: false,
+      resizable: true,
+      sortable: true,
+      valueFormatter:this.dateFormatter.bind(this),
+      cellStyle: { background: '#FBFAFF', opacity: 0.86 },
+  },       
+];
+}
+
+saveFlowMapping() {
+  let data = {
+    spId: this.spId,
+    mapping: this.ColumnMapping,
+    flowId: this.flowId,
+    isUpdateValues: this.isEarlierResponseInit ? false : this.isEarlierResponse
+  }
+  this.settingsService.saveFlowMapping(data).subscribe((response: any) => {
+      if (response) {
+          //this.flowList =  response?.flows;
+          this.getGridPageSize();
+          this.isEarlierResponseInit = this.isEarlierResponse;
+          $("#editColumnsModal").modal('hide');
+          $("#mapColumnsModal").modal('hide');
+        this.showToaster('Flow mapping saved successfully', 'success');
+      }
+  });
+}
+
+onSelectMapping(){
+  this.attributesList.forEach((item:any)=>{ 
+    this.ColumnMapping.forEach((mapping:any)=>{
+      item.isSelected = this.ColumnMapping.some(
+    (mapping: any) => item.ActuallName === mapping.attributeMapped
+  );
+    })
+  });
+  console.log(this.attributesList,'-----------------this.attributesList--------------')
+}
+
+SaveEditColumn(){
+  const hasDuplicate = this.ColumnMapping.some(
+  (item:any, index:any) => this.ColumnMapping.findIndex((obj:any) => obj?.displayName.trim().toLowerCase() == item?.displayName.trim().toLowerCase()) !== index);
+
+  const hasEmpty = this.ColumnMapping.some((item:any) => !item.displayName || item.displayName.toString().trim() === "");
+
+console.log(hasDuplicate);
+if(hasDuplicate){
+  this.showToaster('Column Name should not be duplicate','error');
+} else if(hasEmpty){
+  this.showToaster('Column Name should not be empty','error');
+}else{
+this.initColumnMapping = JSON.parse(JSON.stringify(this.ColumnMapping));
+this.saveFlowMapping();
+}
+}
+
+extractUniqueKeys(arr: any[]){
+  const uniqueKeys = new Set<string>();
+  arr.forEach((obj:any) => {
+    Object.keys(obj).forEach(key => uniqueKeys.add(key));
+  });
+  this.filteredCustomFields = Array.from(uniqueKeys);
+  console.log(this.filteredCustomFields)
+  this.createMapping();
+};
+
+createMapping(){
+  if(this.ColumnMapping.length > 0){
+this.initColumnMapping = JSON.parse(JSON.stringify(this.ColumnMapping));
+  }else{
+  let mappingList:any[] =[];
+  this.filteredCustomFields.forEach((item:any)=>{
+    let mapping = {
+      displayName: item,
+      ActuallName: item,
+      type: 'String',
+      attributeMapped:'',
+      isOverride: false,
+      isInputSelected: true,
+    }
+    mappingList.push(mapping);
+  })
+  console.log(mappingList,'-----------------------mappingList------------');
+  this.ColumnMapping = mappingList;
+  this.initColumnMapping = JSON.parse(JSON.stringify(mappingList));
+}
+  this.getfilteredCustomFields();
+  this.onSelectMapping();
+}
+
+    getfilteredCustomFields() {
+      if(this.ColumnMapping.length > 0){ 
+        console.log(this.ColumnMapping, '----ColumnMapping----');    
+        this.isflowDetailLoading = false;    
+            this.ColumnMapping.forEach((item:any)=>{
+  if(item.ActuallName !='phoneNumber' && item.ActuallName !='name' && item.ActuallName !="created_at" && item?.isInputSelected){
+              let columnDesc:any = {
+                field: item.ActuallName,
+              headerName: item.displayName,
+              flex: 2, 
+              hide:false,
+              resizable: true,
+              minWidth: 100,
+              sortable: true,
+              cellStyle: { background: "#FBFAFF", opacity: 0.86 },
+              }             
+              // if(item.ActuallName == 'Date'){
+              //   columnDesc.valueFormatter= this.dateFormatter.bind(this);
+              // }
+              // if(item.type == 'Time'){
+              //   columnDesc.valueFormatter= this.timeFormatter.bind(this);
+              // }
+              this.columnDefs.push(columnDesc);
+            }
+            })
+            console.log(this.columnDefs, '----columnDefs----');
+          }  
+            setTimeout(()=>{
+              if (this.gridOptions?.api) {
+                this.gridOptions?.api.sizeColumnsToFit();
+              }
+              this.isflowDetailLoading = true;
+              this.getGridPageSize();
+            },50);
+    }
+
+  closeFlowDetailComponent() {
+    this.closeFlowDetail.emit(' ');
+  }
+
+closeModal(){
+  this.ColumnMapping = JSON.parse(JSON.stringify(this.initColumnMapping));
+}
+  onSelectEditing(idx:number){
+    // if(this.ColumnMapping[idx]?.isInputSelected)
+    // // this.ColumnMapping[idx].displayName = this.ColumnMapping[idx]?.ActuallName;
+    // // this.ColumnMapping[idx].type = '';
+  }
+
+  
+  exportFlowData() {
+    let fields:any[] =[];
+    this.columnDefs.forEach((item:any)=>{
+      
+      fields.push(item?.field)
+    })
+
+    const fieldToHeaderMap:any = {};
+      this.columnDefs.forEach((item:any) => {
+        fieldToHeaderMap[item?.field] = item?.headerName;
+    });
+    console.log(fields,'----------------fields')
+console.log(fieldToHeaderMap, '----fieldToHeaderMap----');
+    const exportContact = this.flowList.map((obj:any) => {
+      const newObj:any = {};
+      fields.forEach((field:any) => {
+        try {
+          console.log(field,obj)
+          const headerName = fieldToHeaderMap[field];
+          if (obj.hasOwnProperty(field) && headerName ) {
+            if(field =="displayPhoneNumber"){
+              newObj[headerName] = obj['Phone_number'] ?? '';
+            }if(field =="created_at"){
+              newObj[headerName] = this.dateFormatterExport(obj['created_at']);
+            }
+            else{              
+                newObj[headerName] = obj[field] ?? '';
+            }
+          }
+        } catch (error) {
+          console.error(`Error processing field: ${field}`, error);
+        }
+      });
+      return newObj;
+    });
+if(exportContact.length ==0){
+  this.showToaster('No data to export', 'error');
+  return 0;
+}
+    var exContact = {
+      data: exportContact,
+      loginData: (JSON.parse(sessionStorage.loginDetails)).email_id,
+      Name: (JSON.parse(sessionStorage.loginDetails)).name,
+      flowName:this.flowName,
+      Channel: this.channelDomain,
+      spId: this.spId,
+    }
+    this.settingsService.exportFlowData(exContact).subscribe(response => {
+
+    this.showToaster('Flow data exported successfully', 'success');
+    });
+  }
+
+  
+showToaster(message:any,type:any){
+  if(type=='success'){
+    this.successMessage=message;
+  }else if(type=='error'){
+    this.errorMessage=message;
+  }else{
+    this.warningMessage=message;
+  }
+  setTimeout(() => {
+    this.hideToaster()
+  }, 5000);
+  
+  }
+
+  dateFormatter(params: any): string {
+    if(!params?.value) return '';
+    const date = new Date(params.value);
+    const formattedDate = this.settingsService.getDateTimeFormate(date, false);
+    return formattedDate ? formattedDate : '';
+}
+
+  dateFormatterExport(params: any): string {
+    if(!params) return '';
+    const date = new Date(params);
+    const formattedDate = this.settingsService.getDateTimeFormate(date, false);
+    return formattedDate ? formattedDate : '';
+}
+
+  
+hideToaster(){
+	this.successMessage='';
+	this.errorMessage='';
+	this.warningMessage='';
+}
+}

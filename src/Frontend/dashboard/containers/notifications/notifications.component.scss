@@ -1,0 +1,159 @@
+* {
+    font-family: 'Manrope';
+}
+
+
+
+#teambox-btn {
+    text-decoration: none;
+    outline: none;
+    border: none;
+    background: #6149CD 0% 0% no-repeat padding-box;
+    border-radius: 19px;
+    width: 99px;
+    height: 45px;
+    color: #FFFFFF;
+    font-size: 14px;
+}
+
+#others-btn {
+    text-decoration: none;
+    outline: none;
+    border: none;
+    background: #FFFFFF 0% 0% no-repeat padding-box;
+    border-radius: 19px;
+    width: 99px;
+    height: 45px;
+    color: #7A86A1;
+    font-size: 14px;
+    font-weight: 700;
+}
+
+
+.notification-card {
+    background: #FFFFFF 0% 0% no-repeat padding-box;
+    box-shadow: 4px 22px 54px #695F971A;
+    border-radius: 30px;
+    // height: 75vh;
+
+}
+
+::-webkit-scrollbar {
+    display: none;
+}
+
+.notification-content-parent {
+    height: 560px;
+    overflow-y: scroll;
+}
+
+
+.notification-card-header {
+    border-bottom: 2px solid #695F971A;
+    color: #C0BDCC;
+}
+
+.data h6 {
+    font-size: 1rem;
+    font-weight: 700;
+    line-height: 35px;
+}
+
+
+.data p {
+    font-size: 0.875rem;
+    font-weight: 400;
+}
+
+#assigned-user {
+    font-size: 0.875rem;
+    color: #6149CD;
+}
+
+#date {
+    font-size: 14px;
+    color: #7A86A1;
+}
+
+// Search input field styling 
+
+.search img {
+    position: absolute;
+    margin: 15px 0px 0px 13px;
+    width: 15px;
+    height: 15px;
+}
+
+.input-group>.form-control,
+.input-group>.form-control-plaintext,
+.input-group>.custom-select,
+.input-group>.custom-file {
+    position: relative;
+    border-radius: 19px;
+    border: 1px solid #EBEBEB;
+    background-color: #ffffff;
+    font-size: 0.875rem;
+    min-width: 350px;
+    padding: 20px 35px;
+}
+
+.search-field-text {
+    color: #7A86A1;
+}
+
+
+
+//pagination styling
+
+.notification-footer p {
+    color: #7A86A1;
+}
+
+select {
+    border: none;
+    outline: none;
+    color: #7A86A1;
+
+}
+
+// pagination style//
+
+.pagination-btn {
+    border: none;
+    outline: none;
+    cursor: pointer;
+    background: #ffffff;
+    width: 36px;
+    height: 36px;
+    opacity: 0.5;
+
+}
+
+.pagination-btn:enabled {
+    background: #FFFFFF;
+    box-shadow: 1px 8px 29px #695F972E;
+    border-radius: 15px;
+    opacity: 1;
+}
+
+.pagination-num-container {
+    padding: 0% 2%;
+}
+
+.pagination-num-body {
+
+    font-size: 15px;
+    font-weight: 500;
+    color: #6149CD;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+.pagination-disabled {
+    color: #C0BDCC!important;
+}
+
+.btn-list {
+    padding: 0 2%;
+}
+

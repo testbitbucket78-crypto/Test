@@ -1,0 +1,625 @@
+<div class="toaster" (click)="hideToaster()">
+	<p *ngIf="errorMessage" class="error">{{errorMessage}}</p>
+	<p *ngIf="successMessage" class="success">{{successMessage}}</p>
+	<p *ngIf="warnMessage" class="warn">{{warnMessage}}</p>
+  </div>
+
+<sb-layout-dashboard>
+
+		<sb-top-nav title="Contacts"></sb-top-nav>
+	<div class="contact-header">
+		<div class="border d-flex flex-row align-items-center p-1" style="border-radius: 20px;">
+			<input class="h-100 border-0 search-bar-v2" type="search" placeholder="Search" name="Search"
+				(input)="onFilterTextBoxChange();" id="Search-Ag" style="height: 40px; outline: none !important; box-shadow: none !important;"
+				(focus)="onFocus()" (blur)="onBlur()" (input)="onSearchInput($event)"/>
+
+				<div class="d-flex p-2 align-items-center justify-content-center" style="background-color: #836de4; height: 30px; width: 30px; border-radius: 50%; cursor: pointer;">
+					<img src="assets/img/search.png" style="height: auto; width: 100%;" class="search-icon" (click)="onSearchContacts(); isSearchedClicked = true;">
+				</div>
+		</div>
+		<div class="d-flex">
+			<div id="export-btn">
+			<button *ngIf="filterIsApplied" class="btn-press btn-9 " (click)="clearFilters()" > <img
+					src="../../../../assets/img/export.svg"> Clear Filters</button>
+			<button class="btn-press btn-9 " (click)="openFilters()" [ngStyle]="filterIsApplied == true? { 'background-color': '#f23b3b', 'color' : 'white'} : {}">
+				<img class="mr-2"
+				[src]="filterIsApplied == true ? '../../../../assets/img/Filter_White.svg' : '../../../../assets/img/filter.svg'" 
+				>Filters
+				<img class="ml-1"
+						[src]="filterIsApplied==true ? '../../../../assets/img/teambox/dropdown-w.svg' : '../../../../assets/img/arrow-down.svg'">
+			</button>
+			<button class="btn-press btn-9 " (click)="isShowColumn = true">
+				<img class="mr-1"
+						src="../../../../assets/img/column.svg"> Column Prefrences
+				<img class="ml-1"
+						src="../../../../assets/img/arrow-down.svg">
+			</button>
+			</div>
+			<div id="export-btn" *ngIf="!settingsService.checkRoleExist('6')">
+				<button class="btn-press btn-9 "  (click)="openExport(content)" > <img
+						src="../../../../assets/img/export.svg"> Export </button>
+			</div>
+			<div id="import-btn" *ngIf="!settingsService.checkRoleExist('6')">
+				<button class="btn  btn-block" id="import-btn" data-bs-toggle="modal" data-bs-target="#importmodal" ><img
+						src="../../../../assets/img/import.svg">
+					Import 
+				</button>
+			</div>
+			<div id="add-contact">
+				<button class="btn  btn-block" id="add-contact" (click)="open(contactadd)" [disabled]="settingsService.checkRoleExist('3')"><span><img src="../../../../assets/img/teambox/add.svg" /></span>Add Contact</button>
+			</div>
+			<div id="delete-btn" *ngIf="!settingsService.checkRoleExist('6')">
+				<button class="btn-delete row-delete-btn" data-bs-toggle="modal" data-bs-target="#deleteContact" ><img
+						src="../../../../assets/img/profile/delete.svg"></button>
+			</div>
+		</div>
+	</div>
+	<sb-loader [isLoading]="isLoading"></sb-loader>
+    <sb-loader [isLoading]="isLoadingOnInit"></sb-loader>
+	<div *ngIf="!contacts && !filterIsApplied" class=" my-5 smartreplies-empty-state">
+		<div class="d-flex justify-content-center my-5 align-items-center container-empty-state">
+			<div class="text-center py-5 body-empty-state">
+				<img src="../../../../assets/img/contact-empty.png" />
+				<h5 class="mt-3">{{isSearchedClicked ? 'No records found.' : 'No contacts to show!'}}</h5>
+				<p>Add contacts individually or Import in bulk</p>
+			</div>
+		</div>
+    </div>
+
+
+	<div *ngIf="contacts || filterIsApplied" class="box">
+
+		<div *ngIf="isButtonEnabled" class="w-100 d-flex" style="margin-left: 67px !important; margin-bottom: -28px;">
+		<div class="d-flex align-items-center">
+			<!-- <p class="px-2">All <b>{{ selectedCount }}</b> contacts on this page are selected.</p> -->
+			<!-- <p>{{ this.checkedConatct.length }} Selected,</p> -->
+			 <p>{{ isAllSelected ? selectedContacts : checkedConatct.length }} Selected</p>
+			<p 
+			class="px-2 select-all-text select-all-box"
+			[ngStyle]="{ color: isAllSelected ? '#6149cd' : 'black' }"
+			(click)="toggleSelectAll()"
+			>
+			 Select all
+			</p>
+		</div>
+		</div>
+
+		<ag-grid-angular class="ag-theme-alpine"
+						 style="height: 60vh;"
+						 [rowData]="rowData"
+						 [columnDefs]="columnDefs"
+						 [animateRows]="true"
+						 [gridOptions]="gridOptions"
+						 (gridReady)="onGridReady($event)"
+						 (selectionChanged)="onSelectionChanged($event)"
+						 suppressResize=true
+						 [suppressRowClickSelection]="true"
+						 [paginationPageSize]="paginationPageSize"
+						 (filterChanged)="onFilterChanged()">
+		</ag-grid-angular>
+
+		<div class="grid-pagination d-flex justify-content-between align-items-center">
+			<div class="d-flex align-items-center">
+				<p class="p-0 m-0">Showing:</p>
+				<select class="mx-3" [(ngModel)]="paginationPageSize" (change)="setPaging()">
+					<option value="10">10</option>
+					<option [value]="20">20</option>
+					<option [value]="50">50</option>
+					<option [value]="100">100</option>
+					<option [value]="200">200</option>
+					<option [value]="300">300</option>
+					<option [value]="500">500</option>
+				</select>
+				<p class="mt-3">of&nbsp;&nbsp;&nbsp;&nbsp;{{totalContacts}}</p>
+			</div>
+			
+			<div class="d-flex page-next-back mt-2">
+				<button class="pagination-btn left">
+					<img class="next-img" src="assets/img/profile/previous.svg" (click)="onBtPrevious()">
+				</button>
+				<div class="mx-2 d-flex align-items-center pages-gap-2">
+					<div *ngFor="let item of paging" [ngClass]="item == currPage ? 'page-No-selected':'page-No-unselected'"
+						 (click)="gotoPage(item)">{{item}}</div>
+				</div>
+				<button class="pagination-btn right button-box-shadow">
+					<img class="next-img" src="assets/img/profile/next.svg" (click)="onBtNext()">
+				</button>
+			</div>
+
+		</div>
+
+		<div *ngIf="isShowSidebar" id="sidebar" class="sidebar ">
+			<button type="button" class=" mt-3 mx-2 btn5 btn-close" aria-label="Close" id="close-btn" (click)="('Cross click')"
+					(click)="closesidenav(items)">X
+			</button>
+			<div *ngFor="let items of customerData " class="scroll-height">
+				<div class="p-2 sidebar-head">
+					<div class="parent d-flex justify-content-center w-100">
+						<div class="parent-img">
+							<div *ngIf="!items?.contact_profile" class="inti">{{intials}}</div>
+
+							<img *ngIf="items?.contact_profile" id="profile-pic" src="{{items?.contact_profile}}?{{randomNumber}}"/>
+
+						</div>
+
+						<div class="child">
+							<h4 class="dialog-h4"><span class="text-capitalize">{{items?.Name}}</span></h4>
+							<div class="child1 d-flex flex-column">
+								<h5>Customer Id:</h5>
+								<h6>{{items?.customerId}}</h6>
+							</div>
+							<div class="child1 d-flex flex-column">
+								<h5>Created Date:</h5>
+								<h6>{{settingsService?.getDateTimeFormate(items?.created_at)}}</h6>
+							</div>
+							<div class="child1 d-flex flex-column">
+								<h5>Last Updated:</h5>
+								<h6>{{settingsService?.getDateTimeFormate(items?.updated_at)}}</h6>
+							</div>
+						</div>
+					</div>
+				</div>
+
+				<div class="p-4 sidebar-body">
+					<div class="parent d-flex justify-content-between px-2 flex-column">
+						<div class="child2 pb-3">
+							<h5>Email Id</h5>
+							<h6 class="mt-2">{{items?.emailId}}</h6>
+						</div>
+						<div class="child3 pb-2">
+							<h5>Phone Number</h5>
+							<h6 class="mt-2">{{items?.countryCode}} {{items?.displayPhoneNumber}}</h6>
+						</div>
+					</div>
+					<div class="parent d-flex justify-content-between p-2 flex-column">
+						<div class="child2 pb-3">
+							<h5>Message Opt-in</h5>
+							<h6 class="mt-2">{{items?.OptInStatus}}</h6>
+						</div>
+						<div class="child3 pb-1">
+							<h5>Contact Owner </h5>
+							<h6 class="mt-2">{{items?.ContactOwner}}</h6>
+						</div>
+					</div>
+					<div class="parent d-flex justify-content-between p-2">
+						<div class="child5 pb-1">
+
+							<h5> <img class="m-0" data-bs-toggle="modal" data-bs-target="#edittag" (click)="editTagS()" src="../../../../assets/img/teambox/edit-icon.svg">Tag</h5>
+							<div class="child4 d-flex pb-2">
+								<h6 class="mt-2">{{items?.tag_names?.replaceAll(',', ' | ')}}</h6>
+							</div>
+						</div>
+					</div>
+					<div class="parent d-block justify-content-between p-2 flex-column">
+						<h4 class="m-0">Custom Fields </h4>
+					</div>
+					<div class="parent-flex p-2 parent d-flex flex-column">
+						<div class="child23" *ngFor="let it of filteredCustomFields">
+							<h5>{{it?.displayName}}</h5>
+							<h6 class="mt-2" *ngIf="it?.type != 'Select' && it?.type != 'Multi Select' && it?.type != 'Date' && it?.type != 'Time'">{{items[it?.ActuallName]}}</h6>
+							<h6 class="mt-2" *ngIf="it?.type == 'Select'">{{getSplitItem(items[it?.ActuallName])}}</h6>
+							<h6 class="mt-2" *ngIf="it?.type == 'Multi Select'">{{getSplitMultiSelect(items[it?.ActuallName])}}</h6>
+							<h6 class="mt-2" *ngIf="it?.type == 'Date'">{{settingsService?.getDateTimeFormate(items[it?.ActuallName],true)}}</h6>
+							<h6 class="mt-2" *ngIf="it?.type == 'Time'">{{settingsService?.convertTimeFormat(items[it?.ActuallName])}}</h6>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="btn-footer mt-3" *ngFor="let items of customerData ">
+				<div class="button my-4 d-flex justify-content-center align-items-center">
+					<button class="btn6  btn-block " data-bs-toggle="modal" data-bs-target="#Delete" [disabled]="settingsService.checkRoleExist('5') && (settingsService.checkRoleExist('4') || checkContactOwner(items?.ContactOwner))">
+						<img src="../../../../assets/img/profile/delete.svg">
+					</button>
+
+					<button class="btn6  btn-block " (click)="openedit(contactadd)" [disabled]="settingsService.checkRoleExist('5') && (settingsService.checkRoleExist('4') || checkContactOwner(items?.ContactOwner))">
+						<img src="../../../../assets/img/teambox/Edit.svg">
+					</button>
+					<button class="btn6  btn-block " data-bs-toggle="modal" data-bs-target="#Block" id="block-btn" [ngClass]="{'blocked':this.isBlocked==1}">{{this.isBlocked==1 ? 'Blocked' : 'Block'}}</button>
+
+				</div>
+
+			</div>
+
+
+		</div>
+
+	</div>
+	<sb-loader [isLoading]="deleteBloackContactLoader"  [message]="''"></sb-loader>
+	<div class="modal fade" id="deleteContact" tabindex="-1" aria-labelledby="exampleModalLabel" data-bs-backdrop="static" aria-hidden="true">
+		<div class="modal-dialog deletecontacts">
+			<div class="modal-content deletecontacts-content">
+
+				<div class="modal-body deletecontacts-body">
+					Do you really want to delete <br /> selected contact
+				</div>
+				<div class="deletefile d-flex">
+					<button type="button" class="btn9 btn-secondary" data-bs-dismiss="modal">Cancel</button>
+					<button type="button" class="btn99 btn-primary" data-bs-dismiss="modal" (click)="deleteRow(1)">Yes,
+						Delete</button>
+				</div>
+			</div>
+		</div>
+	</div>
+
+
+	<div class="modal fade" id="Delete" tabindex="-1" aria-labelledby="exampleModalLabel" data-bs-backdrop="static" aria-hidden="true">
+		<div class="modal-dialog deletecontacts">
+			<div class="modal-content deletecontacts-content">
+
+				<div class="modal-body deletecontacts-body">
+					Do you really want to delete <br /> selected contact
+				</div>
+				<div class="deletefile d-flex" *ngFor="let items of customerData ">
+					<button type="button" class="btn9 btn-secondary" data-bs-dismiss="modal">Cancel</button>
+					<button type="button" class="btn99 btn-primary" data-bs-dismiss="modal"
+						(click)="deletContactByID(items)">Yes, Delete</button>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<div class="modal fade" id="Block" tabindex="-1" aria-labelledby="exampleModalLabel" data-bs-backdrop="static" aria-hidden="true">
+		<div class="modal-dialog deletecontacts">
+			<div class="modal-content deletecontacts-content">
+
+				<div class="modal-body deletecontacts-body">
+					Do you really want to {{this.isBlocked==1 ? 'unblock':'block'}} <br /> selected contact
+				</div>
+				<div class="deletefile d-flex" *ngFor="let items of customerData ">
+					<button type="button" class="btn9 btn-secondary" data-bs-dismiss="modal">Cancel</button>
+					<button type="button" class="btn99 btn-primary" data-bs-dismiss="modal"
+						(click)="blockContactByID(items)">Yes, {{this.isBlocked==1 ? 'Unblock':'Block'}}</button>
+				</div>
+			</div>
+		</div>
+	</div>
+
+<ng-template #addcontact let-c="close" let-d="dismiss">
+	<div class="modal-content m-0 p-3 addcontacterror">
+		<div class="modal-header align-items-center addcontacterrorheader">
+		
+			</div>
+	<div class="modal-body px-5 text-center addcontacterrorbody ">
+		<p id="contact-save">Your new contact is saved successfully<br /> you can close this dialog box</p>
+	</div>
+	<div class="modal-footer justify-content-center addcontacterrorfooter">
+
+		<div class="">
+			<button type="button" class="btn-close" aria-label="Close" id="contact-save-btn"
+				(click)="d('Cross click')">Close</button>
+		</div>
+	</div>
+	</div>
+</ng-template>
+
+	<ng-template #addcontacterror let-c="close" let-d="dismiss">
+		<div class="modal-content m-0 p-3 addcontacterror">
+			<div class="modal-header align-items-center addcontacterrorheader">
+			
+				</div>
+		<div class="modal-body px-5  text-center addcontacterrorbody ">
+			<p id="contact-save">! Phone Number already exist<br /> Please Try Again.</p>
+
+		</div>
+		<div class="modal-footer justify-content-center  addcontacterrorfooter">
+
+			<div class="">
+				<button type="button" class="btn-close" aria-label="Close" id="contact-save-btn"
+					(click)="d('Cross click')">Close</button>
+			</div>
+		</div>
+		</div>
+	</ng-template>
+
+	<ng-template #content let-c="close" let-d="dismiss">
+		<div class="dd"><img src="assets/img/export1.png">
+			<div class="modal-header">
+
+				<h4 class="modal-title" id="modal-basic-title">Export</h4>
+
+			</div>
+			<div class="modal-body">
+				<p>your selected contacts will exported and <br /> sent on your registered email
+				</p>
+				<div class="ss">
+					<img src="assets/img/your.png">
+				</div>
+			</div>
+			<div class="modal-footer popfooter row text">
+				<div class="col-md-3 text right">
+					<button type="button" class="btn btn-outline-dark" (click)="c('Save click')">Cancel</button>
+				</div>
+				<div class="col-md-5">
+					<button type="button" class="btn1 btn-outline-dark "
+						(click)="c(exportCheckedContact())">Export</button>
+				</div>
+			</div>
+		</div>
+	</ng-template>
+
+
+	<ng-template #contactadd let-c="close" let-d="dismiss">
+		<div class="modal-header px-4 pb-0 align-items-center">
+			<h4 class="modal-title" id="modal-basic-title">{{ addContactTitle === 'add' ? 'Add' : 'Edit' }} Contact</h4>
+			<button type="button" class="btn-cross" aria-label="Close" id="close-btn" (click)="resetForm()">X</button>
+		</div>
+		<form [formGroup]="productForm" autocomplete="off" class="contact-scroll auto-contact-scroll" >
+			<div class="px-4 modal-body">
+
+				<div class="row g-2">
+					<div class="col-md">
+						<label for="Name">Name <span class="text-danger">*</span></label>
+						<div class="form-floating">
+							<input class="form-control" type="text"
+								   [ngClass]="{'is-invalid':productForm.controls.Name.touched && productForm.controls.Name.errors}"
+								   placeholder="Enter Full Name" name="Name" formControlName="Name" id="Name" />
+							<div *ngIf="productForm.controls.Name.touched && productForm.controls.Name.hasError('required')"
+								 class="text-danger">
+								! Name is required.
+							</div>
+							<div *ngIf="productForm.get('Name')?.hasError('maxlength') && productForm.get('Name')?.touched"
+								 class="text-danger">
+								! Maximum 50 characters are allowed.
+							</div>
+							<div *ngIf="productForm.get('Name')?.hasError('pattern') && productForm.get('Name')?.touched"
+								 class="text-danger">
+								! Invalid Name.
+							</div>
+							<div *ngIf="productForm.get('Name')?.hasError('minlength') && productForm.get('Name')?.touched"
+								 class="text-danger">
+								! Minimum 3 characters required.
+							</div>
+						</div>
+					</div>
+				</div>
+
+				<div class="row g-2 mt-3 mb-2">
+					<div class="col-md">
+						<label for="displayPhoneNumber">Phone Number<span class="text-danger">*</span></label>
+						<div class="form-floating">
+							<div class="d-flex ss">
+
+								<select class="input-form" id="countryCode" formControlName="countryCode">
+									<option  *ngFor="let countryCode of countryCodes" [ngValue]="countryCode" >
+										{{ countryCode }}
+									</option>
+								</select>
+								<input type="text" class="form-control" id="Phone_number" formControlName="Phone_number" style="display: none" />
+								<input type="text" class="form-control" id="displayPhoneNumber" formControlName="displayPhoneNumber"
+									   name="displayPhoneNumber" placeholder="Enter Phone Number" (change)="formatPhoneNumber()" (input)="validatorsToggle()"
+									   [ngClass]="{'is-invalid' :productForm.controls.displayPhoneNumber.touched && productForm.controls.displayPhoneNumber.errors }">
+							</div>
+							<div *ngIf="productForm.controls.displayPhoneNumber.touched && productForm.controls.displayPhoneNumber.hasError('required')"
+								 class="text-danger">
+								! Phone Number is required.
+							</div>
+							<div *ngIf="productForm.controls.displayPhoneNumber.touched && productForm.get('displayPhoneNumber')?.hasError('invalidPhoneNumberLength')"
+								 class="text-danger">
+								! Invalid phone number length for the selected country.
+							</div>
+
+						</div>
+					</div>
+				</div>
+				<div class="row g-2 mt-3 mb-2">
+					<div class="col-md">
+						<label for="emailId">Email Id</label>
+						<div class="form-floating">
+							<input class="form-control" type="text"
+								   [ngClass]="{'is-invalid' :productForm.controls.emailId.touched && productForm.controls.emailId.errors}"
+								   placeholder="Enter Email" name="emailId" formControlName="emailId" id="emailId" />
+
+							<div *ngIf="productForm.controls.emailId.touched && productForm.controls.emailId.errors"
+								 class="text-danger">
+								! Please enter a valid email address.
+							</div>
+						</div>
+					</div>
+
+				</div>
+				<div class="py-2 row-md">
+					<label for="ContactOwner">Contact Owner<span class="text-danger">*</span></label>
+					<div class="info-container">
+						<div class="Info-Iconn">
+							<img src="assets/img/profile/Info.svg" (click)="contactOwnerTooltip =!contactOwnerTooltip">
+						</div>
+						<div class="identfierTooltip" *ngIf="contactOwnerTooltip">
+							<button id="radio-close-btn" (click)="contactOwnerTooltip = false">X</button>
+							<p class="p-body">
+								The contact owner by default is the individual who added the contact to the system either by filling up a form or through bulk import.
+							</p>
+						</div>
+					</div>
+					<input class="form-control" type="text" readonly placeholder="Select Contact Owner" name="ContactOwner"
+						   formControlName="ContactOwner" id="ContactOwner" (click)="toggleContactOption()"
+						   [ngClass]="{'is-invalid' :productForm.controls.ContactOwner.touched && productForm.controls.ContactOwner.errors}" />
+
+					<div *ngIf="ShowContactOwner" class="popup-dialog ContactOption">
+						<input *ngIf="ShowContactOwner" type="search" class="form-control mb-2 searchContact" placeholder="Search"
+							   name="Search" id="contactOwnerValue"
+							   (keyup)="filterContactOwners()" />
+						<div (click)="stopPropagation($event)">
+							<p *ngFor="let uL of filteredUserList" (click)="selectContactOwner(uL?.name)">
+								<span>{{uL?.name}} {{uL?.RoleName == 'Admin' ? '(Admin)' :''}}</span>
+							</p>
+						</div>
+					</div>
+					<div *ngIf="ShowContactOwner" class="overlay" (click)="this.ShowContactOwner=false"></div>
+				</div>
+				<div *ngIf="productForm.controls.ContactOwner.touched && productForm.controls.ContactOwner.hasError('required')"
+					 class="text-danger">
+					! Contact Owner is required.
+				</div>
+				<div class="py-2 row-md">
+					<label for="tag">Tag</label>
+					<ng-multiselect-dropdown (click)="this.ShowContactOwner=false" class="multiselect" name="tag" formControlName="tag" id="tag"
+											 [settings]="dropdownSettings" [data]="tag" [placeholder]="'Select Tag from dropdown'">
+					</ng-multiselect-dropdown>
+				</div>
+				<div>
+					<div class="py-2 row-md" *ngFor="let item of filteredCustomFields">
+						<label for="tag">{{item.displayName}}<span class="text-danger" *ngIf="item.mandatory == 1">*</span></label>
+						<input type="text" class="form-control" [formControlName]="item.ActuallName" *ngIf="item.type == 'Text'" (input)="updateValidation(item?.ActuallName,item?.mandatory)">
+						<input type="number" class="form-control" [formControlName]="item.ActuallName" *ngIf="item.type == 'Number'" (input)="updateValidation(item?.ActuallName,item?.mandatory)">
+						<input type="datetime-local" class="form-control" [formControlName]="item.ActuallName" *ngIf="item.type == 'Date Time'" (input)="updateValidation(item?.ActuallName,item?.mandatory)">
+						<input type="time" class="form-control" [formControlName]="item.ActuallName" *ngIf="item.type == 'Time'" (input)="updateValidation(item?.ActuallName,item?.mandatory)">
+						<input type="date" class="form-control" [formControlName]="item.ActuallName" *ngIf="item.type == 'Date'" (input)="updateValidation(item?.ActuallName,item?.mandatory)">
+
+
+					   <select *ngIf="item?.type == 'Select'" class="form-control" [formControlName]="item.ActuallName">
+							<option *ngFor="let opt of item?.options" [value]="opt?.id">{{opt?.optionName}}</option>
+						</select>
+						<select *ngIf="item?.type == 'Switch'" class="form-control" [formControlName]="item.ActuallName">
+							<option value="" selected disabled>Select {{item?.displayName}}</option>
+							<option value="Yes">Yes</option>
+							<option value="No">No</option>
+						</select>
+						<ng-multiselect-dropdown *ngIf="item?.type == 'Multi Select'" class="multiselect" [formControlName]="item?.ActuallName"
+												 [settings]="dynamicDropdownSettings" [data]="item?.options">
+						</ng-multiselect-dropdown>
+						<div *ngIf="productForm.get(item?.ActuallName)?.touched && productForm.get(item?.ActuallName)?.hasError('required') && (item.mandatory == 1)"
+							 class="text-danger">
+							! {{item?.displayName}} is required.
+						</div>
+						<div *ngIf="productForm.get(item?.ActuallName)?.touched && productForm.get(item?.ActuallName)?.errors?.['invalidYear']" class="text-danger">
+							Year must be a 4-digit number.
+						</div>
+
+					</div>
+				</div>
+
+				<div class="row align-items-center pl-3 pt-3">
+					<div class="row_inline d-flex align-items-center">
+						<input class="form-control-checkbox" type="checkbox" id="Opted-in" [checked]="OptInStatus=='Yes'" (click)="updateOptedIn($event)" />
+						<span>Message Opt-In</span>
+						<span class="px-2 opt-In-Info">
+							<img src="../../../../assets/img/info-icon.png" (click)="toggleInfoIcon()">
+							<div *ngIf="showInfoIcon" class="opt-In-Info-div">
+								<button type="button" class="m-2 btn-close" (click)="showInfoIcon=false">
+									<img src="../../../../assets/img/teambox/icon-close.svg">
+								</button>
+								<p id="p-body">Opt-In/Opt-Out indicates if your contacts want to receive promotional messages or not.</p>
+							</div>
+						</span>
+					</div>
+				</div>
+
+
+			</div>
+		</form>
+		<div class="modal-footer px-4 row popfooter sticky-footer">
+			
+			<div class="col-md-6 text-right">
+				<button type="submit" [disabled]="productForm.invalid || !productForm.touched" (click)="saveContact(addcontact,addcontacterror)" [class.disabled]="(productForm.invalid || !productForm.touched)" class="btn1 btn-success">Save</button>
+			</div>
+		</div>
+	</ng-template>
+	
+	<div class="modal fade" tabindex="-1" id="edittag" role="dialog" data-bs-backdrop="static">
+		<div class="modal-dialog" role="document" >
+			<div class="modal-content p-2 pl-3 edittag ">
+				<div class="modal-header edit-tag-header">
+					<p id="edit-tag-head">Edit Tag</p>
+					<button type="button" class="btn-close" data-bs-dismiss="modal" (click)="isEditTag=false" aria-label="Close">
+						<img src="../../../../assets/img/teambox/icon-close.svg">
+					</button>
+				</div>
+				<div class="modal-body edit-tag-body">
+					<div class="edit-tag-dropdown">
+						<div *ngFor="let tag of tagListData; let i = index">
+								<div class="py-2 px-0 form-check">
+									<label class="m-0 form-check-label" for="flexCheckDefault{{i}}">
+									<input class="form-check-input" type="checkbox" 									       
+									       id="flexCheckDefault{{i}}"
+										   [(ngModel)]="tag.isSelected">
+										   <span class="checkmark"></span>
+									<span [ngClass]="{'color-dots': true}" [style.background]="tag.TagColour"></span>
+									 {{tag.TagName}} 
+							    	</label>
+								</div>
+						</div>
+						<div class="d-flex justify-content-center" *ngIf="!tagListData.length">
+                             <p>No Data Available.</p>
+						</div>
+					</div>
+				</div>
+				<div class="modal-footer edittag-footer">
+					<button type="button" class="btn-close" id="edit-btn" data-bs-dismiss="modal" aria-label="Close">Cancel</button>
+					<button type="button" class="btn-close" id="edit-btn-save" (click)="saveContact(addcontact,addcontacterror,true)">Save</button>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<div class="modal fade" tabindex="-1" id="pictureCropModal" data-bs-backdrop="static" role="dialog">
+		<div class="modal-dialog" role="document">
+			<div class="modal-content px-3 pictureCropPopupModal">
+				<form>
+				<div class="modal-header align-items-center">
+					<h5 class="modal-title">Crop & Adjust</h5>
+					<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
+						<img class="m-0" src="../../../../assets/img/teambox/icon-close.svg"/> 
+					</button>
+				</div>
+				<div class="modal-body p-4 text-center pictureCropPopupbody">
+				  <div class="pic-cont">
+						   <image-cropper
+							[imageChangedEvent]="imageChangedEvent"
+							[maintainAspectRatio]="true"
+							format="jpg"
+							(imageCropped)="imageCropped($event)">
+							</image-cropper>
+					</div>
+	  
+				</div>
+				<div class="modal-footer justify-content-end my-2 border-0">
+					<button type="button" (click)="saveContactsProfilePicture()" class="update-pass-btn">Save</button>
+				</div>
+				</form>
+			</div>
+		</div>
+	</div>
+
+	<div class="modal fade" tabindex="-1" id="importmodal" role="dialog" data-bs-backdrop="static">
+        <div class="modal-dialog importsModal" role="document">
+            <div class="modal-content" id="model">
+                <div class="modal-body alertmessage h-100" id="model-message">
+                <sb-import *ngIf = "isImport" (getContact)="getContact()" (closeImportPopup)="closeImport()">					
+				</sb-import>
+                </div>
+            </div>
+        </div>
+    </div>
+
+	
+<div class="modal column-modal" tabindex="-1" role="dialog" *ngIf="isShowColumn" id="columnsModal"
+style="background: rgb(240 252 255 / 40%); z-index: 9999;display: block;">
+<div class="modal-dialog" style="width:415px;height: 85vh;" >
+  <div class="modal-content " style="border-radius: 15px 15px 19px 19px; cursor: default !important;">
+	<div class="modal-header"
+	  style="font-size: 17px;border-radius: 15px 15px 0px 0px; font-weight: bolder;color: black;background-color:white;">
+	  <span class="modal-title" id="staticBackdropLabel">Column Preferences</span>
+	  <div (click)="isShowColumn = false" class="closestPopup" style="cursor: pointer">
+		X
+	  </div>
+	</div>
+	<div class="modal-body" style=" margin: 0px 0px 16px 10px; overflow-y: scroll;max-height: 500px;">
+	  <div class=" pt-2 column-school-container column-container" style="margin-right: 10px;margin-left: 10px;">		
+		<div class="clm-prf forms-check" *ngFor="let item of arrHideColumn; let ith = index">
+			<label class="form-check-label" for="displayNameInput{{ith}}" >
+				<input type="checkbox" id="displayNameInput{{ith}}" 
+				class="form-check-input" [(ngModel)]="item.hide"
+				[disabled]="checkHideFields() && item.hide"  (change)="showHideColumns(item.field,$event)">
+				<span class="checkmark"></span>
+			</label>
+			<div class="clm_name">{{item?.headerName}}</div>
+		</div>
+	  </div>
+	</div>
+  </div>
+</div>
+</div>
+<div *ngIf="isShowFilter">
+<sb-contact-filter #child *ngIf="isShowFilter == true" [openPopup]="changingValue" (query)="query=$event; filterApplied();" (closeFilterPopup)="closeFilter();" (clearFilters)="clearFilters()"></sb-contact-filter>
+</div>
+</sb-layout-dashboard>

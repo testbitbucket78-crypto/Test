@@ -1,0 +1,25 @@
+.common-input {
+    font-size: 16px;
+    outline: none;
+    border-radius: 10px;
+    border: 1px solid #0000001d;
+    
+    &::placeholder {
+        font-size: 13px;
+    }
+}
+.fw-700 {
+    font-weight: 700;
+}
+.custom-box-style{
+    box-shadow: 2px 13px 54px rgba(105, 95, 151, 0.0784313725);
+    border-radius: 30px;
+    h4, h2, h5, h6{
+        font-family: 'Manrope';
+
+    }
+    p {
+        font-family: 'Manrope';
+        font-size: 13px;
+    }
+}

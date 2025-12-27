@@ -1,0 +1,782 @@
+* {
+    font-family: 'Manrope';
+}
+
+.toaster{
+	float:left;
+	width:auto;
+	position: fixed;
+	right: 50px;
+	top: 65px;
+	z-index: 9999;
+	}
+	.toaster p{
+	padding:8px;
+	font-size:14px;
+    font-weight: 400;
+	color:#ffffff;
+	margin: 0;
+	min-width: 250px;
+	text-align: center;
+	border-radius: 10px;
+
+	}
+	.toaster p.error{
+	background-color: #E02020;
+	}
+	.toaster p.success{
+	background-color: #6149cd;
+	}
+	.toaster p.warning{
+	background-color: orange;
+	}
+
+
+.teambox-card {
+    background: #ffffff 0% 0% no-repeat padding-box;
+    box-shadow: 2px 13px 54px #695f9714;
+    border-radius: 30px;
+}
+.account-info-sidebar1 {
+    background: #fbf9fe 0% 0% no-repeat padding-box;
+    height: 900px;
+}
+.account-info-sidebar2 {
+    background: #fbf9fe 0% 0% no-repeat padding-box;
+    height: 30vh;
+    column-gap: 10px;
+    margin-top: 10%;
+    border-top: 1px solid #695f9724;
+    padding: 0 5% 0 5%;
+}
+
+.billing-card {
+    background: #fff4f2 0% 0% no-repeat padding-box;
+    border-radius: 30px;
+    height: 465px;
+}
+
+.payment-card {
+    background: #ffffff 0% 0% no-repeat padding-box;
+    box-shadow: 2px 13px 54px #695f9714;
+    border-radius: 30px;
+    height: 465px;
+    word-break: break-word;
+
+}
+
+//teambox-card
+
+.teambox-heading h5 {
+    letter-spacing: -0.55px;
+    font-weight: 800;
+}
+// toggle-headings
+
+.push-noti p,
+.sound-noti p {
+    font-size: 0.7rem;
+    font-weight: 700;
+}
+
+.teambox-notificaiton-content h6 {
+    font-weight: 800;
+}
+
+.teambox-notificaiton-content p {
+    color: #7a86a1;
+    line-height: 1.5em;
+}
+
+//toggles button
+
+.teambox-notificaiton-row .switch {
+    position: relative;
+    display: inline-block;
+    width: 36px;
+    height: 20px;
+}
+.teambox-notificaiton-row .slider {
+    position: absolute;
+    cursor: pointer;
+    top: 1px;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: 20px;
+    width: 36px;
+    background-color: #6149cd30;
+    transition: 0.3s ease-out;
+    border-radius: 10px;
+}
+.teambox-notificaiton-row .switch input {
+    display: none;
+}
+
+.teambox-notificaiton-row .slider:before {
+    position: absolute;
+    content: '';
+    height: 16px;
+    width: 16px;
+    left: 3px;
+    bottom: 2px;
+    transition: 0.3s ease-out;
+    border-radius: 10px;
+    background: #FFFFFF 0% 0% no-repeat padding-box;
+    box-shadow: 0.35px 2px 7px #6149CD30;
+}
+
+.teambox-notificaiton-row input:checked + .slider {
+    background-color: #6149cd;
+}
+
+.teambox-notificaiton-row input:checked + .slider::before {
+    transform: translateX(15px);
+}
+
+// media queries for modile devices 
+
+.teambox-notificaiton-row .col-sm-1 {
+    width: 0;
+    height: 0;
+} 
+
+.browse-notification-card {
+    background: #fff4f2 0% 0% no-repeat padding-box;
+    border-radius: 30px;
+}
+
+.enable-noti-info h5 {
+    letter-spacing: -0.55px;
+    font-weight: 700;
+}
+.enable-noti-info p {
+    color: #7a86a1;
+    line-height: 1.5em;
+}
+
+.enable-notification-btn button {
+    outline: none;
+    border: none;
+    color: #ffffff;
+    font-size: 0.875rem;
+    font-weight: 500;
+    background: #6149cd 0% 0% no-repeat padding-box;
+    box-shadow: 1px 8px 29px #695f9724;
+    border-radius: 17px;
+    width: 12.5rem;
+    height: 2.5rem;
+}
+
+// sidebar
+
+.profile-heading img {
+    display: block;
+    width: 100%;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+#pic-bg {
+    width: 193px;
+    height: 190px;
+    display: block;
+    margin-top: -8rem;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+#profile-pic {
+    width: 128px;
+    height: 127px;
+    border-radius: 50%;
+    margin-top: -10rem;
+    margin-left: auto;
+    margin-right: auto;
+    background-color: #ffffff;
+}
+
+.image-container {
+    width: 128px;
+    height: 127px;
+    border-radius: 50%;
+    margin-top: -7.9rem;
+    margin-left: auto;
+    margin-right: auto;
+    background-color: #6149CD;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    z-index: 0;
+    box-shadow: 1px 8px 29px #695F9724;
+}
+
+  
+  .initials {
+    font-size: 36px;
+    color: #fff;
+    text-transform: uppercase;
+    font-weight: bold;
+  }
+
+
+
+// .profile-content1 {
+//     margin-top: 2rem;
+// }
+
+.profile-content1 h4 {
+    font-weight: 700;
+    font-size: 1.375rem;
+}
+
+.profile-content1 p {
+    color: #7a86a1;
+    font-size: 1rem;
+}
+
+// toggle button
+
+.active-toggle {
+    height: 45px;
+    background: #ffffff 0% 0% no-repeat padding-box;
+    box-shadow: 1px 8px 29px #695f9724;
+    border: 1px solid #e9e9ea;
+    border-radius: 19px;
+    width: 120px;
+}
+
+.active-toggle .switch {
+    position: relative;
+    display: inline-block;
+    width: 48px;
+    height: 20px;
+}
+.active-toggle .slider {
+    position: absolute;
+    cursor: pointer;
+    top: 1px;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: 24px;
+    width: 44px;
+    background-color: #6149cd30;
+    transition: 0.3s ease-out;
+    border-radius: 34px;
+}
+.active-toggle .switch input {
+    display: none;
+}
+
+.active-toggle .slider:before {
+    position: absolute;
+    content: '';
+    height: 18px;
+    width: 17px;
+    left: 3px;
+    bottom: 3px;
+    background-color: white;
+    transition: 0.3s ease-out;
+    border-radius: 50px;
+    box-shadow: 0.35px 2px 7px #6149cd30;
+}
+
+.active-toggle input:checked + .slider {
+    background-color: #6149cd;
+}
+
+.active-toggle input:checked + .slider::before {
+    transform: translateX(22px);
+}
+
+.switch-text p {
+    font-weight: 600;
+    font-weight: 0.875rem;
+}
+
+//billing card
+
+.billing-card-head {
+    background: url(/assets/img/profile/img2.png) center no-repeat;
+    min-height: 145px;
+    position: relative;
+    overflow: hidden;
+}
+
+.dotted-pic {
+    position: absolute;
+    top: -139px;
+    right: -72px;
+}
+
+.billing-history-btn button {
+    font-size: 0.8rem;
+    border: none;
+    outline: none;
+    background: transparent linear-gradient(90deg, #6149cd 0%, #a654ac 47%, #ea5f8b 100%) 0% 0% no-repeat padding-box;
+    border-radius: 19px;
+    color: #ffffff;
+    padding: 2% 5% 2% 5%;
+    height: 42px;
+}
+
+.billing-card-head button {
+    border: none;
+    outline: none;
+    color: #ffffff;
+    background: #6149CD 0% 0% no-repeat padding-box;
+    font-size: 0.7rem;
+    border-radius: 12px;
+    z-index: 1040;
+    position: inherit;
+
+}
+
+.payment-card-btn button {
+    border: none;
+    outline: none;
+    color: #ffffff;
+    background: #6149CD 0% 0% no-repeat padding-box;
+    font-size: 0.7rem;
+    border-radius: 12px;
+}
+
+.txt-head h2 {
+    font-weight: 800;
+    letter-spacing: -1.2px;
+}
+
+.txt-para p {
+    font-weight: 600;
+    line-height: 1.5em;
+    // font-size: 0.9vw;
+}
+
+// payment card
+
+.payment-method {
+  
+     background:transparent url(/assets/img/profile/wallet-usage-bg.png) no-repeat center;
+    //  background-repeat: no-repeat; 
+    //  background-size: 100%;
+    //  width: 100%;
+    //  height: inherit;
+
+
+}
+.cardholder-name p {
+    font-weight: 700;
+}
+
+.cardholder-detail p.card-number {
+    font-size: 0.875rem;
+    font-weight: 500;
+}
+.cardholder-detail p.expiry {
+    font-size: 0.7rem;
+    color: #7A86A1;
+
+}
+
+.payment-card h6 {
+    letter-spacing: -0.4px;
+    font-weight: 700;
+}
+
+.payment-card h1 {
+    letter-spacing: -1.2px;
+    font-weight: 600;
+}
+
+.sidebar-team .heading p {
+   color: #6149CD;
+   font-weight: 600;
+}
+
+.sidebar-role .heading p {
+    color: #6149CD;
+    font-weight: 600;
+}
+
+//change password popup button
+
+
+.btn-text {
+    cursor: pointer;
+}
+.btn-text p {
+    font-size: 12px;
+    color: #7a86a1;
+    font-weight: 700;
+    text-align: center;
+}
+
+//change password popup
+
+.modal-header-left h4 {
+    font-size: 1rem;
+    font-weight: 700;
+    color: #6149cd;
+}
+
+.modal-content.changepassowrd-popup-modal {
+    box-shadow: 4px 22px 54px #695f971a;
+    border-radius: 30px;
+}
+
+.close-box {
+    height: 35px;
+    background: #ffffff 0% 0% no-repeat padding-box;
+    border: 1px solid #ebebeb;
+    border-radius: 15px;
+    opacity: 1;
+    display: flex;
+    align-content: space-around;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin: 0px;
+    min-width: 35px;
+}
+.close-box img {
+    width: 10px;
+}
+
+.update-pass-btn {
+    border: none;
+    // outline: none;
+    color: #FFFFFF;
+    background: #6149cd;
+    font-size: 0.7rem;
+    font-weight: 500;
+    padding: 2% 8%;
+    box-shadow: 1px 8px 29px #695F9724;
+    border-radius: 15px;
+}
+
+.update-pass-btn.disabled {
+    background: grey;
+  }
+
+.changepassform {
+    font-size: 0.75rem;
+    color: #000000;
+
+}
+
+::placeholder {
+    font-size: 0.8rem;
+    color: #7A86A1;
+    font-size: 400;
+
+}
+
+
+.inputpassowrdfield {
+    background: #FFFFFF;
+    border: 1px solid #EBEBEB;
+    border-radius: 19px;
+    height: 40px;
+    margin: 0% 0 3% 0;
+}
+
+.changepasswordbody {
+    padding: 0 17% 0 17%;
+}
+
+.change-pass-error-message {
+    color: #E02020;
+    font-size: 0.875rem;
+}
+
+
+// delete popup 
+
+.delete-modal{
+    width: 355px;
+    display: flex;
+    margin-left: auto;
+    margin-right: auto;
+    justify-content: center;
+    align-items: center;
+   }
+
+   .cancel-btn{
+    background: #fff;
+    border: 1px solid #EBEBEB;
+    border-radius: 20px;
+    width: auto;
+    height: 35px;
+    color: #7A86A1;
+    padding: 0px 25px;
+    font-size: 12px;
+    font-weight: 800;
+    margin: 0 0 0 15px;
+   }
+
+   .delete-btn{
+    box-shadow: 1px 8px 29px #695F9724;
+    border-radius: 20px;
+    width: auto;
+    height: 35px;
+    border: 0px;
+    color: #fff;
+    padding: 0px 25px;
+    font-size: 12px;
+    font-weight: 800;
+    margin: 0 0 0 15px;
+    background: #FF3636;
+   }
+
+   .alertmessage p{
+    font-size: 0.875rem;
+    padding: 7% 0;
+    margin: 0;
+    font-weight: 700;
+    text-align: center;
+   }
+
+   .delete_group_button {
+    padding: 12% 0%;
+   }
+
+   .del-popup-btn {
+    background: white;
+    border-radius: 18px;
+    padding: 10px 14px;
+    box-shadow: 1px 8px 29px #695F9724;
+    border:none;
+    outline: none;
+   }
+
+   // change password popup
+
+   .mt-6{
+
+    position: absolute;
+
+}
+.input-group-addon.eyeicon{
+    position: absolute;
+    right: 1.5rem;
+    top: 0.5rem;
+    z-index: 1030;
+    cursor: pointer;
+
+}
+.input-group > .form-control:not(:last-child), .input-group > .custom-select:not(:last-child) {
+    border-top-right-radius: 20px;
+    border-bottom-right-radius: 20px;
+    font-size: 14px;
+    padding: 0 45px 0 25px;
+}
+
+input::-ms-reveal,
+input::-ms-clear {
+  display: none;
+}
+
+ .fa.fa-eye {
+    font-family: 'FontAwesome'!important;
+}
+
+.fa.fa-eye-slash{
+    font-family: 'FontAwesome';
+}
+
+.modal-title {
+    font-size: 14px;
+    font-weight: 700;
+    color: #6149CD;
+}
+
+.btn-close {
+    // border: none;
+    outline: none;
+    height: 40px;
+    width: 40px;
+    background: #FFFFFF;
+    border: 1px solid #EBEBEB;
+    border-radius: 15px;
+}
+
+.btn-close img {
+    width: 10px;
+    height: 32px;   
+}
+
+// picture crop popup //
+
+// .profile-container {
+//     position: absolute;
+// }
+
+.picture-crop-button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    width: 36px;
+    height: 36px;
+    right: -2.5rem;
+    top: -2rem;
+    background: #FFFFFF 0% 0% no-repeat padding-box;
+    box-shadow: 1px 8px 29px #695F972E;
+    border-radius: 15px;
+}
+
+.picture-crop-button img {
+    height: 11px;
+    cursor: pointer;
+}
+
+
+.pictureCropPopupModal {
+    width: 460px;
+    margin: auto;
+    min-height: 500px;
+    top: 40px;
+}
+
+.pic-cont {
+    border: 1px solid #7a86a1;
+    // width: 380px;
+    //  height: 295px;
+}
+
+// add funds popup //
+
+.addfunds-popup-modal {
+    width: 400px;
+    margin: auto;
+}
+
+.addfunds-continue-btn {
+    border: none;
+    // outline: none;
+    background: #6149CD;
+    color: #ffffff;
+    box-shadow: 1px 8px 29px #695F9724;
+    border-radius: 17px;
+    padding: 1% 14% 1% 14%;
+    font-size: 0.75rem;
+    height: 35px;
+}
+
+.addfunds-continue-btn.disabled {
+    background: grey;
+}
+
+.addfundsbody h1 {
+    font-weight: 600;
+}
+
+.addfundsbody .head {
+    font-weight: 700;
+}
+
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+// input element //
+#enter-amount {
+    border: none;
+    outline: none;
+    overflow: hidden;
+    font-size: 35px;
+    width: 194px;
+}
+
+.amount-para {
+    font-size: 0.75rem;
+    font-weight: 300;
+    color: #7A86A1;
+}
+.amount-body {
+    padding: 5% 5% 0% 5%;
+}
+
+.sel-amount {
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px dashed #C7CBDD;
+    border-radius: 12px;
+    width: 80px;
+    height: 30px;
+    cursor: pointer;
+    color: #7A86A1;
+    font-weight: 300;
+    font-size: 12px;
+
+}
+
+.sel-amount-active {
+    color: #6149CD;
+    background: #FFF4F2;
+    border: none;
+    font-weight: 500;
+}
+
+
+input[type="file"] {
+    display: none;
+}
+
+.low-balance p {
+    color: #F23B3B;
+    font-size: 0.8rem;
+    font-weight: 600;
+}
+
+// addfundssucces popup styling
+
+
+.addFundsSuccess {
+    background:#FFF4F2;
+    height: 300px;
+}
+
+.addFundsSuccessheader {
+    margin: auto;
+
+}
+
+.addFundsSuccessheader img {
+    width: 51px;
+    height: 46px;
+}
+
+.addFundsSuccessbody h5 {
+    font-weight: 700;
+}
+
+.addFundsSuccessbody p {
+   color: #7A86A1;
+   font-size: 0.8rem;
+   font-weight: 300;
+}
+
+.addFundsSuccessfooter img {
+    width: 200px;
+}
+
+.addFundsSuccessfooter {
+    border: none;
+}
+
+.addFundsSuccessfooter button {
+    background: #6149CD;
+    box-shadow: 3px 16px 40px #695F970D;
+    border-radius: 17px;
+    color: #ffffff;
+    border: none;
+    outline: none;
+    padding: 0% 10% 0% 10%;
+    height: 40px;
+}

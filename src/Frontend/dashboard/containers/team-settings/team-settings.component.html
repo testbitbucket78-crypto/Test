@@ -1,0 +1,98 @@
+<div class="setting-card">
+    <div class="flex-header">
+        <span class="working-hour-heading">Teams</span>
+
+        <div class="d-flex">
+            <div class="input-group gf ">
+                <input class="form-control" type="text" (keyup)="searchUserData($event.target.value)" placeholder="Search" aria-label="Search"
+                    aria-describedby="basic-addon2" name="Name" id="Search-Ag" />
+                <img src="assets/img/search.png">
+            </div>
+            <button class="new-token-btn" (click)="addTeam()" data-bs-toggle="modal" data-bs-target="#teamsModal">
+                <img src="../../../../assets/img/teambox/add.svg" class="pr-1">
+                Add Team</button>
+        </div>
+    </div>
+    <div class="p-3 w-100">
+        <ag-grid-angular style="height: calc(70vh - 50px);" class="ag-theme-alpine" #agGrid [rowData]="teamList" [columnDefs]="columnDefs" [animateRows]="true"
+            [gridOptions]="gridOptions" suppressResize=true [suppressRowClickSelection]="true" (gridReady)="onGridReady($event)">
+        </ag-grid-angular>
+    </div>
+
+</div>
+
+
+<div class="modal fade" tabindex="-1" id="teamsModal" data-bs-backdrop="static" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content roles-modal p-2 pl-3">
+            <div class="modal-header">
+                <h5 class="modal-title">Add Team</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
+                    <img src="../../../../assets/img/teambox/icon-close.svg">
+                </button>
+            </div>
+            <div class="modal-body px-5 pt-0">
+                <div>
+                    <label>Team Name</label> <br>
+                    <input type="text" class="input-form" [(ngModel)]="teamName" placeholder="Enter team name">
+                </div>
+                <div class="custom-control custom-checkbox pt-3 pl-0">
+                    <label class= "pb-2">Select Users</label> <br>
+                    <div *ngFor="let item of selectedUser; let i = index" class="user-dropdown pl-4">
+                        <input type="checkbox" class="custom-control-input user-checkbox"  id="custom-control-input{{i}}" [(ngModel)]="item.isSelected">
+                        <label class="custom-control-label ml-2" for="custom-control-input{{i}}">
+                        <img  class="user-img mr-2" [src]="profilePicture">
+                        {{item.name}}</label>
+                    </div>
+                </div>
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="account-btn" (click)="saveTeamDetails()">Save</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="sideBar" *ngIf="showSideBar">
+    <div class="sidebar-close">
+    <button type="button" class="btn-close" (click)="showSideBar = false">
+        <img src="../../../../assets/img/teambox/icon-close.svg">
+    </button>
+</div>
+    <div class="sidebar-content">
+        <p class="mb-2"> Team id:<span class="team-id">{{teamData?.id}}</span></p>
+        <span class="heading">{{teamData?.team_name}}</span>
+        <p class="mt-2 date-time" >Created on: <span class="created-at">{{teamData?.created_at | date: 'dd MMM yyyy'}}</span> | Last Modified: <span class="updated-at">{{teamData?.updated_at | date: 'dd MMM yyyy'}}</span></p>
+        <div class="mt-3 sub-heading py-2">No. of Users Assigned <span class="length-user">({{users_count}})</span></div>
+        <div *ngFor="let item of selectedUser">
+            <div class="user-row" *ngIf="item.isSelected">
+                <img [src]="profilePicture"/>
+                <span>{{item?.name}}</span>
+            </div>
+        </div>
+    </div>
+    <div class="sideBar-footer">
+        <button type="button" class="account-white-btn" (click)="editTeam()" data-bs-toggle="modal" data-bs-target="#teamsModal" >
+            <img class="p-0" src="../../../../assets/img/edit.png"></button>
+        <button type="button" class="account-white-btn ml-2" data-bs-toggle="modal" data-bs-target="#deleteModal">
+            <img class="p-0" src="../../../../assets/img/delete.png">
+        </button>
+    </div>
+</div>
+
+
+<div class="modal fade" tabindex="-1" id="deleteModal" data-bs-backdrop="static" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content delete-token-modal">
+            <div class="modal-body alertmessage">
+                <p class="label pb-2">Do you really want to delete this API Token ?</p>
+                <div class="input_group_btn">
+                    <button type="button" class="cancel-btn" aria-label="Close"
+                        data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="delete-btn" aria-label="Close" (click)="deleteTeam()">Yes, Delete</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

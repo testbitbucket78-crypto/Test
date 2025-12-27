@@ -1,0 +1,1207 @@
+import { Component, OnInit, ChangeDetectorRef, Renderer2, ViewChild, ElementRef } from '@angular/core';
+import { SettingsService } from 'Frontend/dashboard/services/settings.service';
+import { repliesaccountList, whatsAppDetails, healthStatusData } from 'Frontend/dashboard/models/settings.model';
+import { accountmodel } from 'Frontend/dashboard/models/settings.model';
+import { WebsocketService } from '../../services/websocket.service';
+import { WebSocketSubject } from 'rxjs/webSocket';
+import { FacebookService } from 'Frontend/dashboard/services/facebook-embedded.service';
+import { environment } from 'environments/environment';
+import { Clipboard } from '@angular/cdk/clipboard';
+import { json } from 'stream/consumers';
+import { ToastService } from 'assets/toast/toast.service';
+import { FormControl, FormGroup, Validators,ValidatorFn, AbstractControl, ValidationErrors, } from '@angular/forms';
+import { WebhookEventGroup, WebhookPayload, WebhookEventType, ExportLogsPayload } from 'Frontend/dashboard/models/webhookEvent.model';
+import { DropdownComponent } from '../../../../assets/dropdown/dropdown.component';
+
+declare var $:any;
+declare var FB: any; 
+
+@Component({
+  selector: 'sb-acoount-settings',
+  templateUrl: './acoount-settings.component.html',
+  styleUrls: ['./acoount-settings.component.scss']
+})
+export class AcoountSettingsComponent implements OnInit {
+  
+  id!:number;
+  spid!:number;
+  data:any;
+  email!:string;
+  getWhatsAppDetails:any;
+  whatsAppDetails!: any[];
+  whatsAppDetailsDisplay!: any[];
+  Quemescou!:number;
+  channel!:number;
+  connectionn!:number;
+  wave!:number;
+  AppDetails!:number;
+  selectedId!: any;
+  connectionIds: number[] = [];
+  channel_status!:number;
+  selectedWhatsappData: any;
+  phone!:any;
+  phoneNumber!:number;
+  SPPhonenumber!:number;
+  repliesaccountData!:repliesaccountList;
+  whatAppDetails = <whatsAppDetails> {};
+  fetchdata:any;
+  QueueLimit:any;
+  delay_Time:any;
+  DisconnAlertEmail:any;
+  showMessage: boolean = false;
+  channel_id:string ='';
+  accoountsetting=<accountmodel>{};
+  numberCount:number = 0;
+  qrcode:any;
+  link:any;
+  isLoading!:boolean;
+
+  errorMessage = '';
+	successMessage = '';
+	warnMessage = '';
+  whatsAppDataUpdated!:boolean;
+  
+  INGrMessage=[0];
+  OutGrMessage=[0];
+  online_status=[0];
+  InMessageStatus=[0];
+  OutMessageStatus=[0];
+  serviceMonetringTool=[0];
+  syncContact=[0];
+  roboot=[0];
+  restart=[0];
+  reset=[0];
+  phoneNo = 0;
+	phone_no_id = 0;
+	WABA_Id = 0;
+  healthStatusData: healthStatusData[] = [];
+  addButtonDisabled: boolean = false;
+  conversationType!:string;
+  phoneType!:string;
+  channelOption: any = [];
+  loadingQRCode: boolean = false;
+ @ViewChild('dropdownAddWebhook') dropdownAddWebhook: DropdownComponent | null = null;
+
+  connection:number[] =[1,3,2,4];
+  selectedTab:number = 1;
+  public ipAddress:string[] = [''];
+  public channelDomain:string = environment.chhanel;
+  private sessionInfoListener: any;
+Authcode:any='';
+phoneId:any='';
+wabaId:any='';
+uid = (JSON.parse(sessionStorage.getItem('loginDetails')!)).uid;
+apiName:string='';
+@ViewChild('confirmCheckbox') confirmCheckbox!: ElementRef;
+//-------------
+isEnabled:boolean = false;
+isEdit:boolean = false;
+isSaveEnabled:boolean = false;
+webSocketUrl:string= '';
+apiKeyData:any;
+ipRegex: string ='^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?))$|^(([0-9a-fA-F]{1,4}:){7,7}[0-9a-fA-F]{1,4}|([0-9a-fA-F]{1,4}:){1,7}:|([0-9a-fA-F]{1,4}:){1,6}:[0-9a-fA-F]{1,4}|([0-9a-fA-F]{1,4}:){1,5}(:[0-9a-fA-F]{1,4}){1,2}|([0-9a-fA-F]{1,4}:){1,4}(:[0-9a-fA-F]{1,4}){1,3}|([0-9a-fA-F]{1,4}:){1,3}(:[0-9a-fA-F]{1,4}){1,4}|([0-9a-fA-F]{1,4}:){1,2}(:[0-9a-fA-F]{1,4}){1,5}|[0-9a-fA-F]{1,4}:((:[0-9a-fA-F]{1,4}){1,6})|:((:[0-9a-fA-F]{1,4}){1,7}|:)|fe80:(:[0-9a-fA-F]{0,4}){0,4}%[0-9a-zA-Z]{1,}|::(ffff(:0{1,4}){0,1}:){0,1}((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?))|([0-9a-fA-F]{1,4}:){1,4}:((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)))$';
+ipRegexTs = /^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?))$|^(([0-9a-fA-F]{1,4}:){7,7}[0-9a-fA-F]{1,4}|([0-9a-fA-F]{1,4}:){1,7}:|([0-9a-fA-F]{1,4}:){1,6}:[0-9a-fA-F]{1,4}|([0-9a-fA-F]{1,4}:){1,5}(:[0-9a-fA-F]{1,4}){1,2}|([0-9a-fA-F]{1,4}:){1,4}(:[0-9a-fA-F]{1,4}){1,3}|([0-9a-fA-F]{1,4}:){1,3}(:[0-9a-fA-F]{1,4}){1,4}|([0-9a-fA-F]{1,4}:){1,2}(:[0-9a-fA-F]{1,4}){1,5}|[0-9a-fA-F]{1,4}:((:[0-9a-fA-F]{1,4}){1,6})|:((:[0-9a-fA-F]{1,4}){1,7}|:)|fe80:(:[0-9a-fA-F]{0,4}){0,4}%[0-9a-zA-Z]{1,}|::(ffff(:0{1,4}){0,1}:){0,1}((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?))|([0-9a-fA-F]{1,4}:){1,4}:((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)))$/;
+  constructor( private apiService:SettingsService,
+    private clipboard: Clipboard,
+    public facebookService:FacebookService,
+    public settingsService:SettingsService,
+    private renderer: Renderer2,
+    private websocketService: WebsocketService,private changeDetector: ChangeDetectorRef, 
+    private _toastService : ToastService) {}
+
+  private socket$: WebSocketSubject<any> = new WebSocketSubject('wss://notify.engagekart.com');
+
+
+  ngOnInit(): void {
+    this.initWebhookForm();
+    this.initExportLogsForm();
+    this.isLoading = true;
+    this.spid = Number(sessionStorage.getItem('SP_ID'));
+    this.loadWebhooks();
+    this.phoneNumber = (JSON.parse(sessionStorage.getItem('loginDetails')!))?.mobile_number;
+    this.email = (JSON.parse(sessionStorage.getItem('loginDetails')!))?.email_id;
+    this.SPPhonenumber = sessionStorage.getItem('SPPhonenumber') ? (JSON.parse(sessionStorage.getItem('SPPhonenumber')!)) :null;
+    this.getwhatsapp();
+    this.subscribeToNotifications();
+    this.loadFacebookSDK();
+    this.fetchLastName();
+    this.getApiKeyData(false);
+    this.sessionInfoListener = (event: MessageEvent) => {
+      if (!event.origin || !event.origin.endsWith("facebook.com")) {
+        return;
+      }
+      
+      try {
+        const data = JSON.parse(event.data);
+        console.log(data);
+        if (data.type === 'WA_EMBEDDED_SIGNUP') {
+          if (data.event === 'FINISH') {
+            const { phone_number_id, waba_id } = data.data;
+            this.phoneId = phone_number_id;
+            this.wabaId = waba_id;
+            
+            setTimeout(() => {
+              console.log(this.Authcode);
+              this.saveWhatsappAPIDetails()
+            }, 2500); 
+            console.log("Phone number ID ", phone_number_id, " WhatsApp business account ID ", waba_id);
+          } else if (data.event === 'ERROR') {
+            const { error_message } = data.data;
+            console.error("Error: ", error_message);
+          } else {
+            const { current_step } = data.data;
+            console.warn("Cancel at ", current_step);
+          }
+        }
+      } catch {
+        console.log('Non JSON Response', event.data);
+      }
+    };
+
+    this.renderer.listen('window', 'message', this.sessionInfoListener);
+  }
+  webhookForm!: FormGroup;
+  exportLogsForm!: FormGroup;
+  initWebhookForm() {
+    this.webhookForm = new FormGroup({
+      name: new FormControl('', [Validators.required]),
+      url: new FormControl('', Validators.required),
+      secret: new FormControl(''),
+      channel: new FormControl('', Validators.required),
+      eventType: new FormControl('', Validators.required),
+    });
+  }
+
+  initExportLogsForm(){
+    this.exportLogsForm = new FormGroup({
+      fromDate: new FormControl('', Validators.required),
+      toDate: new FormControl('', Validators.required),
+    }, { validators: this.dateRangeValidator });
+  }
+
+  dateRangeValidator: ValidatorFn = (control: AbstractControl): ValidationErrors | null => {
+    const group = control as FormGroup;
+    const from = new Date(group.get('fromDate')?.value);
+    const to = new Date(group.get('toDate')?.value);
+  
+    if (from && to && from > to) {
+      this._toastService.error('From date should be less than To date');
+      return { invalidDateRange: true };
+    }
+  
+    return null;
+  };
+
+  showToaster(message:any,type:any){
+		if(type=='success'){
+			this.successMessage=message;
+		}	
+		else if(type=='warn'){
+			this.warnMessage=message;
+		}
+		else if(type=='error'){
+			this.errorMessage=message;
+		}
+	
+		setTimeout(() => {
+			this.hideToaster()
+		}, 5000);
+		
+	}
+	hideToaster(){
+		this.successMessage='';
+		this.warnMessage='';
+		this.errorMessage='';
+	}
+  checkChannel(): boolean {
+    if (this.channelDomain == 'web') {
+      return true;
+    }
+    return false;
+  }
+
+  // getwhatsappwebdetails
+getwhatsapp() { 
+  this.apiService.getWhatsAppDetails(this.spid).subscribe(response => {
+    if (response) {
+      if (response && response?.whatsAppDetails) {
+          this.channelOption = response?.whatsAppDetails.map((item: any) => ({
+              value: item?.id,
+              label: item?.channel_id,
+              connected_id: item?.connected_id,
+              channel_status: item?.channel_status,
+          })
+        );
+        if(this.channelOption.length){
+          this.channelSelected = this.channelOption[0]?.label; 
+          this.channelPhoneNumber = this.channelOption[0]?.connected_id;
+        }
+      }
+  }
+
+    this.isLoading = false
+    this.whatsAppDetails=response?.whatsAppDetails;
+    this.numberCount = response?.channelCounts[0]?.count_of_channel_id;
+    this.selectedId = [];
+    this.whatsAppDetails.forEach(detail => {
+    this.selectedId.push(detail.id);
+    });
+    if(this.whatsAppDetails.length > 0){
+      this.channel=this.whatsAppDetails[0]?.channel_status;
+      this.connectionn=this.whatsAppDetails[0]?.connection_date;
+      this.wave=this.whatsAppDetails[0]?.WAVersion;
+  
+      this.phoneNo =  this.whatsAppDetails[0]?.connected_id;
+      this.phone_no_id = this.whatsAppDetails[0]?.phone_number_id;
+      this.WABA_Id = this.whatsAppDetails[0]?.WABA_ID;
+      if(this.channelDomain == 'api') this.getQualityRating();
+    }
+    this.mapHealthStatus({});
+    if(this.whatsAppDataUpdated){
+      if(this.whatsAppDetails[0]?.channel_id) this.setChannelId(this.whatsAppDetails[0]?.channel_id);
+    }
+  });
+}
+
+getQualityRating() {
+  this.isLoading = true;
+  this.apiService.getQualityRating(this.phoneNo, this.phone_no_id, this.WABA_Id, this.spid).subscribe(
+    data => {
+      let res: any = data
+      if (res?.status === 200) {
+        if (res?.response) {
+         this.mapHealthStatus(res?.response);
+         this.addButtonDisabled = true;
+        }
+        this.isLoading = false;
+      }
+      else {
+        console.log("Error Code : " +res?.status);
+        this.isLoading = false;
+      }
+    },
+    error => {
+      this.isLoading = false;
+      console.error('Error fetching quality rating:', error);
+    }
+  );
+}
+
+mapHealthStatus(qualityStatus: any){
+  this.healthStatusData = [];
+  this.whatsAppDetails.forEach(data => {
+    const healthStatus: healthStatusData = {
+       phone_no: data?.connected_id,
+       channel_id: qualityStatus?.channel_id,
+       Quality_Rating: this.settingsService.getQualityRatingClass(qualityStatus?.quality_rating),
+       Status: data?.channel_status,
+       WABA_Id: data?.WABA_ID,
+       Message_Limit: qualityStatus?.balance_limit_today,
+       Fb_Verification: qualityStatus?.fb_verification,
+       channel_type: data?.channel_id
+     }
+     this.healthStatusData.push(healthStatus);
+   });
+   //this.isLoading = false;
+}
+
+getaccountByID(data:any) {
+  this.repliesaccountData=data;
+  const fetchdata=data;
+  this.QueueLimit=fetchdata?.QueueLimit;
+  this.delay_Time=fetchdata?.delay_Time;
+  this.DisconnAlertEmail=fetchdata?.DisconnAlertEmail;
+}
+
+populateModal() {
+  this.selectedWhatsappData = this.whatsAppDetails;
+}
+
+
+getDetailById(id: number) {
+  return this.whatsAppDetails.find(detail => detail?.id === id);
+}
+
+setChannelId(id: string) {
+  const matchingDetail = this.whatsAppDetails.filter(detail => detail?.channel_id === id);
+  if (matchingDetail) {
+    this.whatsAppDetailsDisplay = matchingDetail;
+  } else {
+    this.whatsAppDetailsDisplay = [];
+  }
+  this.channel_id = id;
+}
+
+getUserAndWhatsappDetails(id: number) {
+  if(id==0){
+    this.getUserById(id);
+  }else{
+    this.saveWhatsappWebDetails(id);
+  }
+}
+
+getUserById(id:number) {
+  this.apiService.userById(this.spid,this.uid).subscribe(result => {
+      if (result) {
+        console.log(result);
+        let userData = result?.getUser[0];
+        console.log(userData);
+        this.SPPhonenumber = userData?.mobile_number;
+        console.log(this.SPPhonenumber);
+        this.saveWhatsappWebDetails(id)
+      }
+  });
+}
+
+saveWhatsappWebDetails(id:number) { 
+  this.whatAppDetails.id = id;
+  this.whatAppDetails.spid = this.spid;
+  this.whatAppDetails.channel_id= this.channel_id;
+  this.whatAppDetails.channel_status = this.channel_status;
+  this.whatAppDetails.connected_id = this.SPPhonenumber;
+  this.whatAppDetails.phone_type=this.phoneType;
+  this.whatAppDetails.import_conversation = 0;
+  this.whatAppDetails.QueueMessageCount = 0;
+  this.whatAppDetails.WAVersion = '2.23.24.82';
+  this.whatAppDetails.InMessageStatus = 0;
+  this.whatAppDetails.OutMessageStatus = 0;
+  this.whatAppDetails.QueueLimit = '';
+  this.whatAppDetails.delay_Time = '';
+  this.whatAppDetails.INGrMessage = 0;
+  this.whatAppDetails.OutGrMessage = 0;
+  this.whatAppDetails.online_status = 0;
+  this.whatAppDetails.serviceMonetringTool = 0;
+  this.whatAppDetails.syncContact  = 0;
+  this.whatAppDetails.disconnalertemail = this.email;
+  this.whatAppDetails.roboot = 0;
+  this.whatAppDetails.restart = 0;
+  this.whatAppDetails.reset = 0;
+
+  this.apiService.addWhatsAppDetails(this.whatAppDetails).subscribe
+  ((resopnse :any) => {
+    if(resopnse.status === 200) {
+      console.log(this.whatAppDetails)
+      console.log(resopnse)
+     // this.showToaster('Your Session Details Updated Succesfully','success');
+      this.whatsAppDataUpdated = true;
+      this.getwhatsapp();
+    }
+
+  });
+  ((error: any) => {
+    if(error) {
+      this.showToaster('An error occurred please contact adminintrator', 'error');
+    }
+  })
+}
+
+ saveaccountsettingState() {
+  this.accoountsetting.id = this.id;
+  this.accoountsetting.INGrMessage = this.INGrMessage[this.id - 1] ? 1 : 0;
+  this.accoountsetting.online_status = this.online_status[this.id - 1] ? 1 : 0;
+  this.accoountsetting.InMessageStatus = this.InMessageStatus[this.id - 1] ? 1 : 0;
+  this.accoountsetting.OutMessageStatus = this.OutMessageStatus[this.id - 1] ? 1 : 0;
+  this.accoountsetting.serviceMonetringTool = this.serviceMonetringTool[this.id - 1] ? 1 : 0;
+  this.accoountsetting.syncContact = this.syncContact[this.id - 1] ? 1 : 0;
+
+
+  this.apiService.addWhatsAppDetails(this.accoountsetting).subscribe((response) => {
+      console.log(response + JSON.stringify(this.accoountsetting));
+  });
+ }
+
+
+ updateNotificationId(id: number) {
+  this.id = id;
+  this.saveaccountsettingState();
+ }
+
+openDiv() {
+    $("#qrWhatsappModal").modal('show');
+    this.generateQR();
+  
+}
+
+  generateQR() {
+    $("#connectWhatsappModal").modal('hide');
+    this.loadingQRCode = true; // Show the loadeßr
+    let data = {
+      spid: this.spid,
+      phoneNo: this.SPPhonenumber
+    }
+    var id =0;
+    if (this.selectedId?.length > 0) {
+      id= this.selectedId[this.selectedId?.length - 1] ? this.selectedId[this.selectedId?.length - 1] :0;
+   }
+    try {
+      this.apiService.craeteQRcode(data).subscribe(
+
+        (response) => {
+          if(response.status === 500) {
+            this._toastService.error(response?.err || 'Internal Server Error');
+            this.hideModal();
+          }
+          if(response.status === 409 && response.value == "Channel already authenticated") {
+            this.channel_status = 1; 
+            this.hideModal();
+            this._toastService.success('Channel already authenticated');
+            setTimeout(()=> {
+              this.saveWhatsappWebDetails(id);
+            },2000); 
+          }
+          if (response.status === 200) {
+            this.qrcode = response.QRcode;
+            if(this.qrcode) {
+              //this.channel_status = 1;  
+            //   setTimeout(()=> {
+            //   this.saveWhatsappWebDetails(id);
+            // },15000); 
+            }
+          }
+          if(response.status === 404) $("#qrWhatsappModal").modal('hide');
+          this.loadingQRCode = false;
+          if (response.QRcode === 'Client is ready!') {    
+            this.channel_status = 1;      
+            $("#qrWhatsappModal").modal('hide');
+            this.showToaster('! User is already authenticated', 'success');   
+            this.hideModal();
+            setTimeout(()=> {
+              this.getUserAndWhatsappDetails(id);
+            },2000); 
+          }
+          this.getwhatsapp();
+        },
+        (error) => {
+          ;
+          if(error.status === 409){
+            this.showToaster(error?.error?.value, 'error');
+            this.hideModal();
+            return;
+          }
+          if(error.status === 400) {
+            this.showToaster('Bad Request!', 'error');
+            this.channel_status = 0;
+           // this.saveWhatsappWebDetails(id);
+          }
+          if (error) {
+            this.showToaster('Something Went Wrong!', 'error');
+            this.loadingQRCode = false;
+            $("#qrWhatsappModal").modal('hide');
+            this.channel_status = 0;
+           // this.saveWhatsappWebDetails(id);
+          }
+          this.getwhatsapp();
+        }
+      );
+    } catch (error) {
+      console.error('An error occurred:', error);
+    }
+    
+  }
+   hideModal(){
+    setTimeout(() => {
+      $("#qrWhatsappModal").modal('hide');
+  }, 500);
+   }
+  removeIP(index:number){
+    this.ipAddress.splice(index,1); 
+  }
+
+  addIP(){
+    let flag:boolean = false
+    this.ipAddress.forEach((item:any)=>{
+      if(item == '' || item.trim() == '' || !item){
+        this.showToaster('please fill the previous ip first','error');
+        flag = true;
+        return '';
+      }
+    });
+    if(!flag)
+    this.ipAddress.push('');
+  }
+
+
+async subscribeToNotifications() {
+  let notificationIdentifier = {
+    "UniqueSPPhonenumber": (JSON.parse(sessionStorage.getItem('loginDetails')!))?.mobile_number,
+    "spPhoneNumber": sessionStorage.getItem('SPPhonenumber') ? JSON.parse(sessionStorage.getItem('SPPhonenumber')!): null
+  };
+  this.websocketService.connect(notificationIdentifier);
+  this.websocketService.getMessage()?.subscribe(message => {
+    if (message != undefined) {
+      console.log("Seems like some message update from webhook");
+      console.log(message);
+      try {
+        let msgjson = message;
+        console.log(msgjson);
+        if (msgjson.displayPhoneNumber) {
+          this.qrcode = msgjson.message;
+          this.changeDetector.detectChanges();
+          var id =0;
+          if (this.selectedId?.length > 0) {
+            id= this.selectedId[this.selectedId?.length - 1] ? this.selectedId[this.selectedId?.length - 1] :0;
+          }
+          if (msgjson.message == 'Client is ready!') {
+            this.channel_status = 1; 
+            this.showToaster('Your Device Linked Successfully !', 'success');
+            this.getUserAndWhatsappDetails(id);
+            $("#qrWhatsappModal").modal('hide');
+            this.hideModal();
+          }
+         
+          if(msgjson.message == 'Wrong Number'){
+            this.channel_status = 0; 
+            //this.saveWhatsappWebDetails(id);
+            this.showToaster('Wrong Number, Please use logged in number!', 'error');
+            this.hideModal();
+          }
+
+          if (msgjson.message == 'QR generation timed out. Plese re-open account settings and generate QR code') {           
+            this.channel_status = 0; 
+           // this.saveWhatsappWebDetails(id);
+            this.showToaster('QR generation timed out. Plese re-open account settings and generate QR code', 'error');
+            this.loadingQRCode = false;
+            $("#qrWhatsappModal").modal('hide');
+            this.hideModal();
+          }
+          if(msgjson.message == 'This number is already used as an SP number. Please use a different one.'){
+            this.channel_status = 0; 
+            //this.saveWhatsappWebDetails(id);
+            this.showToaster('This number is already used as an SP number. Please use a different one.', 'error');
+            this.loadingQRCode = false;
+            $("#qrWhatsappModal").modal('hide');
+            this.hideModal();
+          }
+          if(msgjson.message == 'Wrong Number Scanned. Destroying session.'){
+            this.channel_status = 0; 
+            //this.saveWhatsappWebDetails(id);
+            this.showToaster('Wrong Number Scanned. Destroying session.', 'error');
+            this.loadingQRCode = false;
+            $("#qrWhatsappModal").modal('hide');
+            this.hideModal();
+          }
+          if(msgjson.message == 'This Phone is already used in EngageKart !'){
+            this.channel_status = 0; 
+            //this.saveWhatsappWebDetails(id);
+            this.showToaster('This number is already used as an SP number. Please use a different one.', 'error');
+            this.loadingQRCode = false;
+            $("#qrWhatsappModal").modal('hide');
+            this.hideModal();
+          }
+          
+        }
+      } catch (e) {
+        console.log(e);
+      }
+    }
+  });
+ }
+
+ close(){
+  let notificationIdentifier = {
+    "UniqueSPPhonenumber": (JSON.parse(sessionStorage.getItem('loginDetails')!))?.mobile_number,
+    "spPhoneNumber": sessionStorage.getItem('SPPhonenumber') ? JSON.parse(sessionStorage.getItem('SPPhonenumber')!) :null,
+    "isClose":true
+  };
+  this.websocketService.connect(notificationIdentifier);
+ }
+
+ loadFacebookSDK(): void {
+  //if (!(window as any).fbAsyncInit) {
+    (window as any).fbAsyncInit = () => {
+      FB.init({
+        appId: '1147412316230943', // Replace with your app id
+        cookie: true,
+        xfbml: true,
+        version: 'v2.4' // Use the latest version
+      });
+    };
+ // }
+
+  // Dynamically load SDK if not already loaded
+  const scriptElement = document.createElement('script');
+  scriptElement.id = 'facebook-jssdk';
+  scriptElement.src = 'https://connect.facebook.net/en_US/sdk.js';
+  const firstScript = document.getElementsByTagName('script')[0];
+  if (document.getElementById('facebook-jssdk')) {
+    firstScript.parentNode?.insertBefore(scriptElement, firstScript);
+  }
+}
+
+fetchLastName(): void {
+  this.facebookService.getMyLastName().subscribe({
+    next: (response) => {
+      let lastName = response.last_name;
+      console.log(lastName);
+    },
+    error: (err) => {
+      console.error('Error fetching last name:', err);
+    }
+  });
+}
+
+fbLoginCallback(response: any): void {
+  if (response.authResponse) {
+    const code = response.authResponse.code;
+    this.Authcode = code;
+    console.log('Auth Code:', code);
+  }
+}
+
+launchWhatsAppSignup(): void {
+  FB.login((response: any) => this.fbLoginCallback(response), {
+    config_id: '523980490418313',
+    response_type: 'code', 
+    override_default_response_type: true,
+    extras: {
+      setup: {},
+      featureType: '',
+      sessionInfoVersion: '2',
+    }
+  });
+}
+
+saveWhatsappAPIDetails() { 
+  let data={
+    spid : this.spid,
+    Code : this.Authcode,  
+    user_uid : this.uid,
+    phoneNumber_id : this.phoneId,
+    waba_id : this.wabaId,
+    phoneNo: this.SPPhonenumber,
+  }
+  this.apiService.addWhatsAppAPIDetails(data).subscribe
+  ((resopnse :any) => {
+    if(resopnse.status === 200) {
+      console.log(this.whatAppDetails)
+      this.getwhatsapp();
+      console.log(resopnse)
+    }
+
+  });
+  ((error: any) => {
+    if(error) {
+      this.showToaster('An error occurred please contact adminintrator', 'error');
+    }
+  })
+}
+
+saveWebhook(){
+  if(this.webSocketUrl){
+  let data = {
+    spId : this.spid,
+    webhookURL: this.webSocketUrl
+  }
+  this.apiService.saveWebhook(data).subscribe((response) => {
+    if(response){
+      this.isSaveEnabled = false;
+      this.showToaster('Web socket saved successfully','success');
+    } else{
+      this.showToaster(response?.msg,'error');
+    }
+});
+  }
+  else
+    this.showToaster('web socket url should not be empty','error');
+}
+
+newAPIToken(){
+  this.isEdit = false;
+  this.apiName = '';
+  this.ipAddress = [''];
+  this.webSocketUrl = '';
+  this.isNew = true;
+
+}
+currentAPIkey: string = '';
+showConfirmationModal = false;
+isNew : boolean = false;
+SelectedIdToken : number = 0;
+getApiKeyData(isSave:boolean,isRegenrate:boolean=false, id?:number){
+  //isSave = !isSave;
+  let data: { spId: number; ip: string[]; isSave: boolean; isRegenerate: boolean,tokenName:string, id : number,isNew:boolean, Channel: string } = {
+    spId : this.spid,
+    id : id ? id : this.SelectedIdToken,
+    ip:[],
+    isSave :!isSave ,
+    isRegenerate: this.isEdit ? false :isRegenrate,
+    tokenName:this.apiName ? this.apiName : '',
+    isNew: this.isNew,
+    Channel: this.selectedChannelForToken
+  }
+  if(isSave){
+    console.log(this.ipAddress);
+    let flag:boolean = false;
+    if(this.apiName?.trim() ==''){
+      this.showToaster('Token Name should not be empty','error');
+        flag = true;
+        return '';
+    }
+    this.ipAddress.forEach((item:any)=>{
+      // if(item == '' || item.trim() == '' || !item){
+      //   this.showToaster('ip address should not be empty','error');
+      //   flag = true;
+      //   return '';
+      // }
+      if (!this.ipRegexTs.test(item) && !(item == '' || item.trim() == '' || !item)) {
+        this.showToaster(`Invalid IP address format: ${item}`, 'error');
+        flag = true;
+        return;
+      }
+    })
+    if(flag)
+    return '';
+    let arrIp:any = [];
+    this.ipAddress.forEach((item)=>{
+      if(item)
+        arrIp.push(item);
+    })
+    data['ip'] = arrIp;
+  }
+this.apiService.getApiKeyData(data).subscribe({
+  next: (response) => {
+    console.log(response + JSON.stringify(this.accoountsetting));
+    if (response) {
+      if (isSave) {
+        $("#createTokenModal").modal('hide');
+        if (!this.isEdit) {
+         $('#apiConfirmationModal').modal('show');
+        }
+      }
+      this.isEdit = false;
+      this.apiKeyData = response;
+      if (this.apiKeyData.length > 0) {
+        const last = this.apiKeyData[this.apiKeyData.length - 1];
+
+        this.isEnabled = last?.isEnabled;
+        this.apiName = last?.tokenName;
+        this.webSocketUrl = last?.webhookURL;
+        this.ipAddress = last?.ips ? JSON.parse(JSON.stringify(last.ips)) : [''];
+        this.currentAPIkey = last?.apiKey;
+        this.selectedChannelForToken = last?.channel ? last?.channel : 'Select Channel';
+      }
+
+      if (this.ipAddress?.length === 0) {
+        this.ipAddress = [''];
+      }
+    }
+  },
+  error: (err) => {
+    this._toastService.error(err.error?.message || "Something went wrong!");
+    console.error("Error fetching API key data:", err);
+
+  }
+});
+}
+
+disableSaveBtn(){
+  console.log(this.ipAddress);
+  console.log(this.apiKeyData?.ips);
+  if(this.areArraysEqual(this.ipAddress, this.apiKeyData?.ips) && this.apiName == this.apiKeyData?.tokenName)
+    return true;
+  else 
+    return false;
+}
+
+areArraysEqual(arr1: any[], arr2: any[]): boolean {
+  if (arr1?.length !== arr2?.length) {
+      return false;
+  }
+  return arr1.every((value, index) => value === arr2[index]);
+}
+
+regenrateApiKey(id : number){
+  
+  this.getApiKeyData(true,true,id);
+}
+
+
+testWebhook(){
+  let data = {
+    spId : this.spid
+  }
+  this.apiService.testWebhook(data).subscribe((response) => {
+    if(response){
+      this.showToaster('Request has been sent to your Web socket','success');
+    } else{
+      this.showToaster(response?.msg,'error');
+    }
+});
+}
+
+disableApiKeyData(){
+  let data = {
+    spId : this.spid,
+    isEnabled: this.isEnabled ? 0 : 1
+  }
+  this.apiService.apiKeyState(data).subscribe((response) => {
+    console.log(response + JSON.stringify(this.accoountsetting));
+    if(this.isEnabled){
+      this.showToaster('API Token Enabled successfully','success');
+    }else
+      this.showToaster('API Token Disabled successfully','success');
+});
+}
+
+editToken(id: number){
+  this.SelectedIdToken = id;
+  const tokenData = this.apiKeyData.find((item: any) => item.id === id);
+  if (!tokenData) return;
+
+  this.apiName = tokenData.tokenName;
+  this.ipAddress = tokenData.ips && tokenData.ips.length > 0 ? [...tokenData.ips] : [''];
+  this.channelSelected = tokenData.channel || null;
+
+  this.isEdit = true;
+  $("#createTokenModal").modal('show');
+  this.ipAddress = JSON.parse( JSON.stringify(this.apiKeyData?.ips));
+  if(this.ipAddress?.length == 0)
+  this.ipAddress =[''];
+}
+
+copyToClipboard(): void {
+  const textToCopy = this.currentAPIkey;
+      navigator.clipboard.writeText(textToCopy).then(
+        () => {
+          this.showToaster('Text copied to clipboard','success');
+         // alert('Text copied successfully!');
+        },
+        (err) => {
+          console.error('Failed to copy text: ', err);
+          //alert('Failed to copy text');
+        }
+      );
+}
+
+resetCheckbox(checkbox: HTMLInputElement): void {
+  checkbox.checked = false; 
+}
+
+trackByIndex(index: number): number {
+  return index;
+}
+
+channelSelected: string = 'Select Channel';
+channelPhoneNumber: string = '';
+channelSelectedWebhook: string = 'Select Channel';
+channelPhoneNumberWebhook: string = '';
+ShowAssignOption: boolean = false;
+eventType = ['Created', 'Updated', 'Deleted'];
+webhookDetails: any = [];
+eventTypeDropdown!: boolean;
+eventSubscribedDropdownMap: { [index: number]: boolean } = {};
+webhookIdSelected: number | undefined;
+loadingIds: Set<number> = new Set();
+
+openModal() {
+    $('#webhookModal').modal('show');   
+}
+
+submitForm(){
+  if (this.webhookForm.valid) {
+    const formData = this.webhookForm.value;
+    const matchedWebhook = this.webhookDetails?.find((w: any) => w.id === this.webhookIdSelected);
+
+    const payload: WebhookPayload = {
+      name: this.settingsService.trimText(formData.name),
+      url: this.settingsService.trimText(formData.url),
+      secret: this.settingsService.trimText(formData.secret),
+      channel: formData.channel,
+      eventType: formData.eventType,
+      spid : this.spid,
+      id : this.webhookIdSelected,
+      isEnabled : matchedWebhook?.isEnabled ?? true 
+    };
+    this.apiService.Webhooks(payload).subscribe({
+      next: (response) => {
+        this._toastService.success(response.message);
+        this.loadWebhooks();
+        $('#webhookModal').modal('hide');
+        this.resetWebhookForm();
+      },
+      error: (err) => {
+        const errorMsg = err?.error?.msg || "Something went wrong!";
+        this._toastService.error(errorMsg);
+      }
+    });
+  }
+}
+
+secondaryDropdown! : boolean;
+toggleEventDropdown(index: number): void {
+  this.eventSubscribedDropdownMap[index] = !this.eventSubscribedDropdownMap[index];
+  this.secondaryDropdown = Object.values(this.eventSubscribedDropdownMap).some(val => val);
+}
+closeSecondaryDropdown(){
+  for (const key in this.eventSubscribedDropdownMap) {
+    this.eventSubscribedDropdownMap[key] = false;
+  }
+
+  this.secondaryDropdown = false;
+}
+loadWebhooks() {
+  this.apiService.getWebhooks(this.spid).subscribe((response: WebhookPayload) => {
+    if(response){
+      this.webhookDetails = response;
+      this.changeDetector.detectChanges();
+    } else {
+      this._toastService.error("No webhook Data Found!")
+    }
+  });
+}
+
+updateDropdown(id: string) {
+  const selectedChannel = this.channelOption.find(
+      (channel: any) => channel.connected_id === id
+  );
+  if (selectedChannel) {
+      this.channelSelectedWebhook= selectedChannel.label;
+      this.channelPhoneNumberWebhook = selectedChannel.connected_id;
+      let saveData = `${selectedChannel.label} (${selectedChannel.connected_id})`
+      this.webhookForm.controls['channel'].setValue(saveData);
+  }
+  this.ShowAssignOption = false;
+}
+selectedChannelForToken = 'Select Channel';
+updateDropdownForToken(id: string){
+  const selectedChannel = this.channelOption.find(
+      (channel: any) => channel.connected_id === id
+  );
+  if (selectedChannel) {
+      let saveData = `${selectedChannel.label} (${selectedChannel.connected_id})`
+     this.selectedChannelForToken = saveData;
+  }
+  this.ShowAssignOption = false;
+}
+
+eventGroups: WebhookEventGroup[] = [
+  {
+    label: 'Contact',
+    events: [
+      { label: 'contact.created', value: WebhookEventType.ContactCreated },
+      { label: 'contact.updated', value: WebhookEventType.ContactUpdated },
+      { label: 'contact.deleted', value: WebhookEventType.ContactDeleted },
+      { label: 'contact.bulkupdate', value: WebhookEventType.ContactBulkUpdate},
+    ]
+  },
+  {
+    label: 'Message',
+    events: [
+      { label: 'message.received', value: WebhookEventType.MessageReceived },
+      { label: 'message.status', value: WebhookEventType.MessageStatus },
+      { label: 'message.flow.received', value: WebhookEventType.MessageFlowReceived },
+    ]
+  },
+  {
+    label: 'Conversation',
+    events: [
+      { label: 'conversation.created', value: WebhookEventType.ConversationCreated },
+      // { label: 'conversation.open', value: WebhookEventType.ConversationOpen },
+      // { label: 'conversation.resolved', value: WebhookEventType.ConversationResolved },
+      { label: 'conversation.status.update', value: WebhookEventType.ConversationStatusUpdate },
+      
+     // { label: 'conversation.assigned', value: WebhookEventType.ConversationAssigned },
+      { label: 'conversation.assignment.update', value: WebhookEventType.ConversationAssigned },
+
+    ]
+  },
+  {
+    label: 'Template',
+    events: [
+      { label: 'template.status', value: WebhookEventType.TemplateStatus }
+    ]
+  }
+];
+
+isEventSelected(value: WebhookEventType): boolean {
+  return this.webhookForm.get('eventType')?.value?.includes(value);
+}
+
+toggleEventSelection(value: WebhookEventType, event: Event) {
+  const checked = (event.target as HTMLInputElement).checked;
+  const selected = this.webhookForm.get('eventType')?.value || [];
+
+  if (checked && !selected.includes(value)) {
+    this.webhookForm.get('eventType')?.setValue([...selected, value]);
+  } else if (!checked) {
+    this.webhookForm.get('eventType')?.setValue(selected.filter((v: any) => v !== value));
+  }
+}
+
+isGroupSelected(group: WebhookEventGroup): boolean {
+  const selected = this.webhookForm.get('eventType')?.value || [];
+  return group.events.every(e => selected.includes(e.value));
+}
+
+toggleGroupSelection(group: WebhookEventGroup, event: Event) {
+  const checked = (event.target as HTMLInputElement).checked;
+  const selected = this.webhookForm.get('eventType')?.value || [];
+
+  if (checked) {
+    const added = group.events
+      .map(e => e.value)
+      .filter(val => !selected.includes(val));
+    this.webhookForm.get('eventType')?.setValue([...selected, ...added]);
+  } else {
+    const filtered = selected.filter((val : any) => !group.events.map(e => e.value).includes(val));
+    this.webhookForm.get('eventType')?.setValue(filtered);
+  }
+}
+
+
+openDeletePopup(id: number) {
+  this.webhookIdSelected = id;
+  $("#deleteModal").modal('show');
+}
+
+deleteWebhook(){
+  this.apiService.deleteWebhook(this.webhookIdSelected).subscribe((response) => {
+    $("#deleteModal").modal('hide');
+    if(response){
+      this.loadWebhooks();
+    } else {
+      this._toastService.error("No webhook Data Found!")
+    }
+  });
+}
+
+isEditingWebhook! : boolean;
+
+editWebhook(webhookData: WebhookPayload){
+  this.isEditingWebhook = true;
+  this.webhookIdSelected = webhookData.id;
+
+   this.webhookForm.patchValue({
+    name: webhookData.name || '',
+    url: webhookData.url || '',
+    secret: webhookData.secret || '',
+    channel: webhookData.channel || '',
+    eventType: webhookData.eventType || []
+  });
+
+   this.webhookForm.controls['channel'].setValue(webhookData.channel || 'Select Channel');
+  const channelMatch = webhookData.channel.match(/^(.*?)\s*\((\d+)\)$/);
+  this.channelSelectedWebhook = channelMatch?.[1] || 'Select Channel';
+  this.channelPhoneNumberWebhook = channelMatch?.[2] || '';
+   this.openModal();
+}
+
+resetWebhookForm(){
+  this.webhookIdSelected = undefined;
+  this.isEditingWebhook = false;
+  this.webhookForm.reset();
+  this.eventTypeDropdown = false;
+  if (this.dropdownAddWebhook) {
+    this.dropdownAddWebhook.ShowAssignOption = false;
+    this.dropdownAddWebhook.channelSelected = 'Select Channel';
+    this.dropdownAddWebhook.channelPhoneNumber = '';
+  }
+}
+
+deleteToken(id : number){
+  let payload = {
+    spId: this.spid,
+    id: id
+  }
+  this.apiService.deleteToken(payload).subscribe({
+    next: (response) => {
+      if (response) {
+        this.resetAPIKeyData();
+        this.getApiKeyData(false);
+        this._toastService.success("Token Deleted successfully!");
+      } else {
+        this._toastService.error(response?.msg || 'Unknown error occurred.');
+      }
+    },
+    error: (err) => {
+      this._toastService.error(err?.error?.error);
+    },
+  });
+  
+}
+resetAPIKeyData(){
+    this.isEdit = false;
+    this.apiKeyData = '';
+    this.isEnabled = false;
+    this.apiName = '';
+    this.webSocketUrl = '';
+    this.ipAddress = this.apiKeyData?.ips ? JSON.parse( JSON.stringify(this.apiKeyData?.ips)) : [''];
+
+}
+
+
+testWebhooks(webhookData: WebhookPayload) {
+  if(webhookData.id) this.loadingIds.add(webhookData.id);
+  this.apiService.testWebhooks(webhookData).subscribe({
+    next: (response) => {
+      if(webhookData.id) this.loadingIds.delete(webhookData.id);
+      if (response) {
+        this._toastService.success("Webhook request is successfully sent!");
+      } else {
+        this._toastService.error(response?.msg || 'Unknown error occurred.');
+      }
+    },
+    error: (err) => {
+      if(webhookData.id) this.loadingIds.delete(webhookData.id);
+      this._toastService.error(err?.error?.error);
+    },
+  });
+}
+
+onToggleWebhook(webhookData: WebhookPayload){
+webhookData.isEnabled = !webhookData.isEnabled
+let currentToggle = webhookData.isEnabled ? "Webhook is Enabled" : "Webhook is Disabled";
+  this.apiService.Webhooks(webhookData).subscribe((response) => {
+    if(response){
+      this._toastService.success(currentToggle);
+      this.loadWebhooks()
+    } else{
+      this._toastService.error("Something went wrong!")
+    }
+});
+}
+exportLogs(webhookData: WebhookPayload){
+  $("#export-logs").modal('show');
+}
+
+exportLogsAndMail(){
+  const formData = this.exportLogsForm.value;
+  const payload: ExportLogsPayload = {
+    spid: this.spid,
+    fromDate: formData.toDate,
+    toDate: formData.toDate,
+    email: this.email,
+    channel: this.channelDomain
+  };
+ this.apiService.exportLogs(payload).subscribe(
+  (response) => {
+    if (response) {
+      this._toastService.success(response?.message || "Logs exported successfully.");
+      $("#export-logs").modal('hide');
+      this.exportLogsForm.reset();
+    } else {
+      this._toastService.error("Something went wrong!");
+      this.exportLogsForm.reset();
+
+    }
+  },
+  (error) => {
+    this._toastService.error(error?.error?.message || "Something went wrong!");
+  }
+);
+}
+
+		today = this.getToday();
+		sixMonthsAgo = this.getSixMonthsAgo();
+
+		getToday(): string {
+		return new Date().toISOString().split('T')[0];
+		}
+
+		getSixMonthsAgo(): string {
+		const date = new Date();
+		date.setMonth(date.getMonth() - 6);
+		return date.toISOString().split('T')[0];
+		}
+
+}

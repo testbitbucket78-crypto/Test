@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="70" height="70" viewBox="0 0 70 70">
+  <defs>
+    <clipPath id="clip-path">
+      <rect id="your_image_here" data-name="your image here" width="70" height="70" rx="28" transform="translate(776 749)" fill="#ebedf1"/>
+    </clipPath>
+  </defs>
+  <g id="painding-camp" transform="translate(-395 -1032)">
+    <g id="project_1" data-name="project 1" transform="translate(-381 283)">
+      <g id="image">
+        <g id="your_image_here-2" data-name="your image here">
+          <rect id="your_image_here-3" data-name="your image here" width="70" height="70" rx="28" transform="translate(776 749)" fill="#ebedf1"/>
+        </g>
+      </g>
+    </g>
+    <g id="Time_Circle" data-name="Time Circle" transform="translate(420 1057)">
+      <path id="Time_Circle-2" data-name="Time Circle" d="M10,20A10,10,0,1,1,10,0a10,10,0,0,1,7.074,17.074A9.936,9.936,0,0,1,10,20ZM9.65,4.93a.751.751,0,0,0-.75.75v5.05a.747.747,0,0,0,.37.64l3.92,2.34a.764.764,0,0,0,.39.111.746.746,0,0,0,.64-.371.756.756,0,0,0-.26-1.03L10.4,10.3V5.68A.751.751,0,0,0,9.65,4.93Z" fill="#7f889a"/>
+    </g>
+  </g>
+</svg>

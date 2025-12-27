@@ -1,0 +1,866 @@
+<div>
+
+    <div class="toaster" (click)="hideToaster()">
+        <p *ngIf="errorMessage" class="error">{{errorMessage}}</p>
+        <p *ngIf="successMessage" class="success">{{successMessage}}</p>
+        <p *ngIf="warnMessage" class="warn">{{warnMessage}}</p>
+      </div>
+      <sb-loader [isLoading]="isLoading"></sb-loader>
+    <div class="row">
+        <div class="col-sm-9 py-4 setting-field">
+            <a class="setting-field-link" [ngClass]="selectedTab==1 ? 'active' : ''"  *ngIf="!settingsService.checkRoleExist('45')"
+                (click)="selectedTab = 1">Channels</a>
+            <a class="setting-field-link" [ngClass]="selectedTab==2 ? 'active' : ''" (click)="selectedTab = 2" *ngIf="!settingsService.checkRoleExist('46')">API
+                Token</a>
+            <a class="setting-field-link" [ngClass]="selectedTab==3 ? 'active' : ''" (click)="selectedTab = 3" *ngIf="!settingsService.checkRoleExist('46')">Webhook</a>
+             <!--<a class="setting-field-link" [ngClass]="selectedTab==3 ? 'active' : ''" *ngIf="!settingsService.checkRoleExist('47')"
+                (click)="selectedTab = 3">Integration</a> -->
+        </div>
+    </div>
+    <div class="setting-card" *ngIf="selectedTab==1 && !settingsService.checkRoleExist('45') && checkChannel()">
+        <h4>Channels</h4>
+        <div class="row">
+            <div class="col-sm-6 p-5">
+                <div (click)="setChannelId('WA Web')" [ngClass]="{'card1_Wb': channel_id === 'WA Web'}" class="account-card card1 mb-3" *ngIf="channelDomain =='web'">
+                    <div class="account-card-header">
+                        <img src="../../../../assets/img/teambox/whatsapp-icon-l.svg">
+                        <button *ngIf="whatsAppDetails?.length ==0" class="account-btn" (click)="openDiv()">Connect</button>
+                    </div>
+                    <div>
+                        <h5>WhatsApp Web</h5>
+                        <p>WhatsApp Web automation of your WhatsApp Personal or WhatsApp Business numbers</p>
+                        <div class="whatsapp-cSonnect">
+                            <span class="font-weight-bold">{{whatsAppDetails?.length >0 ? (whatsAppDetails[0]?.channel_id == 'WA Web' ? (numberCount !== undefined ? numberCount : 0) : 0):0 }} Configured</span>
+                        <span class="grey">&nbsp;&nbsp;&nbsp;></span>
+                    </div>
+                    </div>
+                </div>
+                <div (click)="setChannelId('WA API')" [ngClass]="{'card2_Wof': channel_id === 'WA API'}" class="account-card card2 mb-3" *ngIf="channelDomain =='api'">
+                    <div class="account-card-header">
+                        <img src="../../../../assets/img/teambox/whatsapp-icon-l.svg">
+                        <button  class="account-btn" (click)="launchWhatsAppSignup()">Connect</button>
+                    </div>
+                    <div>
+                        <h5>WhatsApp Official</h5>
+                        <p>WhatsApp Official API to automate and scale your business messaging requirements</p>
+                        <div class="whatsapp-connect">
+                        <span>{{whatsAppDetails?.length >0 ? ( whatsAppDetails[0]?.channel_id == 'WA API' ? (numberCount !== undefined ? numberCount : 0) : 0):0 }} Configured</span>
+                        <span class="grey">&nbsp;&nbsp;&nbsp;></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-6">
+                <h5 *ngIf="channel_id==='WA Web'" class="mt-5">WhatsApp Web</h5>
+                <h5 *ngIf="channel_id==='WA API'" class="mt-5">WhatsApp Official</h5>
+                <div class="connected_agent_list">
+                <div class="connection-card"  *ngFor="let detail of whatsAppDetailsDisplay">
+                    <div class="account-card-header" >
+                        <div >
+                            <div class="card-desc">Configured Number : {{ detail?.connected_id}}</div>
+                            <div class="d-flex align-items-center p-1">
+                                <!-- <div class="card-desc">Channel Id: {{ detail.id}}</div> -->
+                                <div *ngIf="!detail?.channel_status" class="card-desc">
+                                  <img src="../../../../assets/img/settings/not-connected.svg" alt="error" />Disconnected</div>
+                                <div *ngIf="detail?.channel_status" class="card-desc">
+                                  <img src="../../../../assets/img/settings/connected.svg" alt="error" />Connected</div>
+                                  <button [ngClass]="{'disableBtn': detail?.channel_status}" class="account-btn h-33" [disabled]="detail?.channel_status"  (click)="openDiv()">Connect</button>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+    <!-- Here making UI for the channel Web API  -->
+    <div>
+        <div class="setting-card" *ngIf="selectedTab==1 && channelDomain =='api'">
+            <h4>Channels</h4>
+            <div class="d-flex flex-column px-4">
+                <div class="py-4 setting-field">
+                    <a class="setting-field-link" [ngClass]="selectedTab==1 ? 'active' : ''"
+                        *ngIf="!settingsService.checkRoleExist('45')" (click)="selectedTab = 1">WhatsApp API</a>
+                </div>
+                <div class="d-flex align-items-center justify-content-end mb-3">
+                    <button class="new-token-btn" [ngStyle]="{ 
+                        'color': addButtonDisabled ? 'grey' : '', 
+                        'background-color': addButtonDisabled ? 'lightgrey' : '' 
+                      }" [disabled]="addButtonDisabled == true" (click)="launchWhatsAppSignup()">Add New +</button>
+                </div>
+                <div *ngFor="let Details of healthStatusData" class="setting-card-status-details">
+
+                <div class="row">
+                    <div class="col-6">
+                        <div class="d-flex flex-column">
+                            <p class="p-2 rounded-pill bg-white mb-3">Phone Number : <span>{{Details?.phone_no}}</span></p>
+                            <p class="p-2 rounded-pill bg-white mb-3">Channel Id : <span>{{Details?.channel_id}}</span></p>
+                            <p class="p-2 rounded-pill bg-white mb-3">WABA Id : <span>{{Details?.WABA_Id}}</span></p>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="d-flex flex-column">
+                            <p class="p-2 rounded-pill bg-white mb-3">Quality Rating : <span [ngClass]="Details?.Quality_Rating">{{Details?.Quality_Rating}}</span></p>
+                            <p class="p-2 rounded-pill bg-white mb-3">Messaging Limit : <span>{{Details?.Message_Limit}}</span></p>
+                            <p class="p-2 rounded-pill bg-white mb-3">FB Verification : <span>
+                                <img 
+                                [src]="Details?.Fb_Verification === 'verified' ? '../../../../assets/img/settings/connected.svg' : '../../../../assets/img/settings/not-connected.svg'"
+                                class="me-2" 
+                                 />
+                                {{Details?.Fb_Verification}}</span></p>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <p class="p-2 rounded-pill bg-white m-0">Status: 
+                            <span class="ml-2">
+                            <img 
+                            [src]="Details?.Status === 1 ? '../../../../assets/img/settings/connected.svg' : '../../../../assets/img/settings/not-connected.svg'" 
+                            alt="{{ Details?.Status === 1 ? 'Connected' : 'Disconnected' }}" 
+                            class="me-2" 
+                          />
+                            {{ Details?.Status === 1 ? 'Connected' : 'Disconnected' }}</span></p>
+                    </div>
+                    <div class="d-flex col-6">
+                        <button class="new-token-btn mr-2">Manage Profile</button>
+                        <button class="new-token-btn">Channel Settings</button>
+                    </div>
+                </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" tabindex="-1" id="connectWhatsappModal" data-bs-backdrop="static"  role="dialog">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content account-modal">
+                <div class="modal-header">
+                    <h5 class="modal-title">Connect WhatsApp Web</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
+                        <img src="../../../../assets/img/teambox/icon-close.svg">
+                    </button>
+                </div>
+                <div class="modal-body pt-0">
+                    <div class="px-3">
+                        <span>Which phone do you use?</span>
+                        <div class="d-flex pt-1 pb-3 sel-type-btns">
+                            <!-- <input type="radio" class="radio-btn" name="phoneType"[(ngModel)]="phoneType" value="android">
+                            <label class="pl-1 pr-5">Android</label> -->
+                            
+							<input type="radio" id="sel-Android" class="d-none" name="phoneType" [(ngModel)]="phoneType" value="android"><label  for="sel-Android">Android</label>
+							<input type="radio" id="sel-iOS" class="d-none" name="phoneType" [(ngModel)]="phoneType" value="ios"><label class="ml-2" for="sel-iOS">iOS</label>
+                            <!-- <input type="radio" class="radio-btn" name="phoneType" [(ngModel)]="phoneType" value="ios">
+                            <span class="pl-1">iOS</span> -->
+                        </div>
+                        <span>After connecting do you want to import<br /> upto 30 conversations?</span>
+                        <div class="d-flex pt-1 pb-3 sel-type-btns">
+							<input type="radio" id="sel-texts-yes" class="d-none" name="ConversationType" [(ngModel)]="conversationType" value="yes"><label  for="sel-texts-yes">Yes</label>
+							<input type="radio" id="sel-texts-no" class="d-none" name="ConversationType" [(ngModel)]="conversationType" value="no"><label class="ml-2" for="sel-texts-no">No</label>
+                            <!-- <input type="radio" class="radio-btn" name="ConversationType" [(ngModel)]="conversationType" value="yes">
+                            <span class="pl-1 pr-5">Yes</span>
+                            <input type="radio" class="radio-btn" name="ConversationType" [(ngModel)]="conversationType" value="no">
+                            <span class="pl-1">No</span> -->
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="account-btn" (click)="openDiv()">Next</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="modal fade" tabindex="-1" id="qrWhatsappModal" data-bs-backdrop="static" role="dialog">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content qr-modal">
+                <div class="align-items-center modal-header">
+                    <h5 class="modal-title" *ngIf="channel_id==='WA Web'">Connect WhatsApp Web</h5>
+                    <h5 class="modal-title" *ngIf="channel_id==='WA API'">Connect WhatsApp Official</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" (click)="close()" aria-label="Close">
+                        <img src="../../../../assets/img/teambox/icon-close.svg">
+                    </button>
+                </div>
+                <div class="modal-body d-flex justify-content-center p-5">
+                    <div class="px-3 qr-card text-center" >
+                        <div *ngIf="loadingQRCode" class="text-center">
+                            <div class="spinner-border" role="status">
+                              <span class="sr-only">Loading...</span>
+                            </div>
+                            <p>QR Code is Loading... Please Wait!</p>
+                          </div>
+                        <div *ngIf="!loadingQRCode">
+                            <qrcode [qrdata]="qrcode" [width]="256" [errorCorrectionLevel]="'M'"></qrcode>
+                        </div>
+                      
+                        <br>
+                        <span class="qr-heading">Scan the QR Code</span>
+                        <p>It will take 20-30 seconds to sync your WhatsApp number with our server, so please wait till
+                            the system shows you the next screen.</p>
+                    </div>
+                    <div class="qr-card">
+                        <span class="qr-heading">Follow the steps to connect your WhatsApp number</span><br><br>
+                        <p>1. Open WhatsApp from you mobile<br><br>
+                            2. Go to <b>Settings > Linked Devices</b><br><br>
+                            3. Tap on <b>add device</b> and point the camera to the QR code shown here</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="modal fade" tabindex="-1" id="whatsWebSetting" role="dialog">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content whatsWebSetting-modal">
+                <div class="modal-header" >
+                    <h5 *ngIf="repliesaccountData?.channel_id==='WA Web'" class="modal-title">WhatsApp Web Settings</h5>
+                    <h5 *ngIf="repliesaccountData?.channel_id==='WA API'" class="modal-title">WhatsApp Official Settings</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"(click)="populateModal()">
+                        <img src="../../../../assets/img/teambox/icon-close.svg">
+                    </button>
+                </div>
+                <div class="settings-scroll">
+                    <div class="seetings2-scroll">
+                 <div class="modal-body px-5">
+                    <div class="p-4 websetting-card">
+                        <div class="websetting-data">
+                            <span class="left-col">WhatsApp No.</span>
+                            <span class="mid-col">{{repliesaccountData?.connected_id}}</span>
+                            <div class="right-col">
+                                <button class="right-col websetting-btn text-danger">Disconnect</button>
+                            </div>
+                        </div>
+                        <div class="websetting-data">
+                            <span class="left-col">Queued Messages</span>
+                            <span class="mid-col">{{repliesaccountData?.QueueMessageCount}}</span>
+                            <div class="right-col">
+                                <button class="right-col websetting-btn text-voilet">Clear Queue</button>
+                            </div>
+                        </div>
+                        <div class="websetting-data">
+                            <span class="left-col">Connected Status</span>
+                            <span class="mid-col">{{repliesaccountData?.channel_status}}</span>
+                        </div>
+                        <div class="websetting-data">
+                            <span class="left-col">Connected Date</span>
+                            <span class="mid-col">{{repliesaccountData?.connection_date | date: 'dd MMM yyyy'}}</span>
+                        </div>
+                        <div class="websetting-data">
+                            <span class="left-col">WA Version</span>
+                            <span class="mid-col">{{repliesaccountData?.WAVersion}}</span>
+                        </div>
+                    </div>
+                    </div>
+        
+                    <div class="tog-rebo">
+                      
+                        <div class="incoming-card row py-2">
+                            <div class="col-sm-6">
+                                <span>Incoming Message</span> <br>
+                                <div class="toggle-container">
+                                    <input type="checkbox" id="toggle" class="toggle-input"  [(ngModel)]="InMessageStatus" (change)="updateNotificationId(1)">
+                                    <label for="toggle" class="toggle-label"></label>
+                                  </div>
+                                  
+                            </div>
+                            <div class="col-sm-6">
+                                <span>Outgoing Messages</span> <br>
+                                <div class="tooggle-container">
+                                    <input type="checkbox" id="toggle" class="tooggle-input"  [(ngModel)]="OutMessageStatus" (change)="updateNotificationId(2)">
+                                    <label for="toggle" class="tooggle-label"></label>
+                                  </div>
+                            </div>
+                        </div>
+
+                        <div class="incoming-card row py-2">
+                            <div class="col-sm-6">
+                                <span>Queue Limit</span> <br>
+                                <input class="input-form" type="input" placeholder="Enter"  [value]="QueueLimit">
+                            </div>
+                            <div class="col-sm-6">
+                                <span>Delay b/w Messages</span> <br>
+                                <input class="input-form" type="input" placeholder="Enter" [value]="delay_Time">
+                                <span>Sec</span>
+                            </div>
+                        </div>
+                     
+                        <div class="incoming-card row py-2">
+                            <div class="col-sm-6">
+                                <span>Download Incoming vedio</span> <br>
+                                <div class="toggle-container">
+                                    <input type="checkbox" id="toggle" class="toggle-input" >
+                                    <label for="toggle" class="toggle-label"></label>
+                                  </div>
+                            </div>
+                            <div class="col-sm-6">
+                                <span>Keep Online</span> <br>
+                                <div class="toggle-container">
+                                    <input type="checkbox" id="toggle" class="toggle-input"  [(ngModel)]="online_status" (change)="updateNotificationId(3)">
+                                    <label for="toggle" class="toggle-label"></label>
+                                  </div>
+                            </div>
+                        </div>
+                        <div class="incoming-card row py-2">
+                            <div class="col-sm-6">
+                                <span>Group incoming message</span> <br>
+                                <div class="toggle-container">
+                                    <input type="checkbox" id="toggle" class="toggle-input"  [(ngModel)]="INGrMessage" (change)="updateNotificationId(4)">
+                                    <label for="toggle" class="toggle-label"></label>
+                                  </div>
+                            </div>
+                            <div class="col-sm-6">
+                                <span>Group Outgoing Messages</span> <br>
+                                <div class="toggle-container">
+                                    <input type="checkbox" id="toggle" class="toggle-input"  [(ngModel)]="OutGrMessage" (change)="updateNotificationId(5)">
+                                    <label for="toggle" class="toggle-label"></label>
+                                  </div>
+                            </div>
+                        </div>
+                        <div class="incoming-card row py-2">
+                            <div class="col-sm-6">
+                                <span>Service monitoring Tool</span> <br>
+                                <div class="toggle-container">
+                                    <input type="checkbox" id="toggle" class="toggle-input" [(ngModel)]="serviceMonetringTool" (change)="updateNotificationId(6)">
+                                    <label for="toggle" class="toggle-label"></label>
+                                  </div>
+                            </div>
+                            <div class="col-sm-6">
+                                <span>Sync Data</span> <br>
+                                <div class="toggle-container">
+                                    <input type="checkbox" id="toggle" class="toggle-input" [(ngModel)]="syncContact" (change)="updateNotificationId(7)">
+                                    <label for="toggle" class="toggle-label"></label>
+                                  </div>
+        
+                            </div>
+                        </div>
+                        <div>
+                            <span>Disconnect Event Alert Email Id</span><br>
+                            <input class="inputEmail-form pl-3" type="input" placeholder="Enter">
+                        </div>
+                        <div class="reboapp pt-4 pl-4">
+                        <div class="rebo-footer">
+                            <button type="button" class="reboot-btnnn websetting-btn text-danger">Reboot Server</button>
+                        </div>
+
+                        <div class="rebo-footer">
+                            <button type="button" class="reboot-btnnn websetting-btn text-danger">Restart App</button>
+                        </div>
+
+                        <div class="rebo-footer">
+                            <button type="button" class="reboot-btnnn websetting-btn text-danger">Reset Server</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+         </div>
+                    <div class="save-footer mx-3">
+                        <button type="button" (click)="this.saveWhatsappWebDetails(this.repliesaccountData?.id)" class="account-bttn">Save</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+
+
+
+    <!-- <div class="setting-card api-card" *ngIf="selectedTab==2 && !settingsService.checkRoleExist('46')">
+        <div class="account-card-header">
+            <h4>API Token</h4>
+            <button class="new-token-btn" data-bs-toggle="modal" data-bs-target="#createTokenModal">
+                <img src="../../../../assets/img/teambox/add.svg" class="pr-1">
+                New API Token</button>
+        </div>
+        <div *ngIf="apiKeyData" >
+            <div class="connection-card tokens-card" >
+            <div class="account-card-header">
+                <div>
+                    <span class="api-card-desc">{{apiName}}</span><br>
+                    <span class="api-card-desc">127.1.1.0</span> <br>
+                    <small>12 June 2025 | 13 june 2025</small>
+                    <div class="word-wrapper">
+                        
+                    <span *ngFor="let item of apiKeyData?.ips; trackBy: trackByIndex">"{{item}}", &nbsp;</span>
+                    </div>
+                </div>
+                <div class="min-button-width">
+                    <button class="account-white-btn mx-1" (click)="editToken()">
+                        <img class="p-0" src="../../../../assets/img/edit.png">
+                    </button>
+                    <button class="account-white-btn mx-1" (click)="deleteToken()">
+                        <img class="p-0" src="/assets/img/teambox/delete.svg">
+                    </button>
+                    <button class="disable-btn ml-2 " >
+                        <div class="active-toggle">
+                            <span>Enable</span>
+                            <div class="px-2 switch-toggle">
+                                <label class="m-0 switch">
+                                    <input type="checkbox" class="m-0 form-control-checkbox"(click)="disableApiKeyData()" [(ngModel)]="isEnabled"
+                                           data-bs-toggle="modal"
+                                           data-bs-target="#disableModal" />
+                                    <span class="slider"></span>
+                                </label>
+                            </div>
+                        </div>
+                    </button>
+                </div>
+            </div>
+            <div class="d-flex align-items-center justify-content-between">
+                <p class="api-time mb-0">{{settingsService?.getDateTimeFormate(apiKeyData?.updatedAt)}}</p>
+                                 <sb-dropdown style="width: 220px" [channelOption]="channelOption"
+                                [ShowAssignOption]="ShowAssignOption"
+                                [customWidth]="'110%'">
+                            </sb-dropdown>
+                <button class="account-btn" (click)="regenrateApiKey()">Regenerate</button>
+            </div>
+            </div>
+        </div>
+        <div *ngIf="!apiKeyData" class="save-empty-card">
+            <div>
+                <img class="p-0" src="../../../../assets/img/settings/image.png">
+                <br>
+                <span class="text-bold">Generate New API Token</span>
+            </div>
+        </div>
+    </div> -->
+
+       <div class="setting-card api-card" *ngIf="selectedTab==2 && !settingsService.checkRoleExist('46')">
+        <div class="account-card-header">
+            <h4>API Token</h4>
+            <button class="new-token-btn" data-bs-toggle="modal" data-bs-target="#createTokenModal" (click)="newAPIToken()">
+                <img src="../../../../assets/img/teambox/add.svg" class="pr-1">
+                New API Token</button>
+        </div>
+        <div *ngFor = "let item of apiKeyData">
+            <div class="connection-card tokens-card" >
+            <div class="account-card-header">
+                <div>
+                    <span class="api-card-desc">{{item.tokenName}}</span><br>
+                    <span class="api-card-desc">
+                    <ng-container *ngFor="let ip of item?.ips; let last = last">
+                        {{ ip }}<span *ngIf="!last">, </span>
+                    </ng-container>
+                    </span><br>
+                    <small>{{settingsService?.getDateTimeFormate(item.createdAt)}} | {{settingsService?.getDateTimeFormate(item.updatedAt)}}</small>
+                    <div class="word-wrapper">
+                        
+                    <!-- <span *ngFor="let item of apiKeyData?.ips; trackBy: trackByIndex">"{{item}}", &nbsp;</span> -->
+                    </div>
+                </div>
+                <div class="min-button-width">
+                    <button class="account-white-btn mx-1" (click)="editToken(item.id)">
+                        <img class="p-0" src="../../../../assets/img/edit.png">
+                    </button>
+                    <button class="account-white-btn mx-1" (click)="deleteToken(item.id)">
+                        <img class="p-0" src="/assets/img/teambox/delete.svg">
+                    </button>
+                    <button class="disable-btn ml-2 " >
+                        <div class="active-toggle">
+                            <span>Enable</span>
+                            <div class="px-2 switch-toggle">
+                                <label class="m-0 switch">
+                                    <input type="checkbox" class="m-0 form-control-checkbox"(click)="disableApiKeyData()" [(ngModel)]="item.isEnabled"
+                                           data-bs-toggle="modal"
+                                           data-bs-target="#disableModal" />
+                                    <span class="slider"></span>
+                                </label>
+                            </div>
+                        </div>
+                    </button>
+                </div>
+            </div>
+            <div class="d-flex align-items-center justify-content-between">
+                <p class="api-time mb-0" style="color: #6149CD; font-weight: 600;">{{item.apiToken}}</p>
+                                 <sb-dropdown style="width: 160px" [channelOption]="channelOption" [channelSelected]="item?.Channel"
+                                [ShowAssignOption]="ShowAssignOption"
+                                [customWidth]="'110%'">
+                            </sb-dropdown>
+                <button class="account-btn" (click)="regenrateApiKey(item.id)">Regenerate</button>
+            </div>
+            </div>
+        </div>
+        <div *ngIf="!apiKeyData" class="save-empty-card">
+            <div>
+                <img class="p-0" src="../../../../assets/img/settings/image.png">
+                <br>
+                <span class="text-bold">Generate New API Token</span>
+            </div>
+        </div>
+    </div>
+  
+
+    <div class="setting-card api-card" *ngIf="selectedTab==3 ">
+
+        <div class="account-card-header d-flex align-items-center justify-content-between">
+            <h4>Webhook</h4>
+            <!-- <button class="border-0 outline-0 bg-transparent" style="color:#6149CD;" (click)="openModal();resetWebhookForm()">+ Add Webhook</button> -->
+            <sb-button [label]="'Add Webhook'" [type]="'secondary'" [labelColor]="'accent'" 
+                       (click)="openModal();resetWebhookForm()" [leftIcon]="'<img src=\'../../../../assets/img/teambox/add.svg\'/>'">
+            </sb-button>
+        </div>
+        <div *ngIf="!webhookDetails.length" class="save-empty-card">
+            <div>
+                <img class="p-0" src="../../../../assets/img/settings/image.png">
+                <br>
+                <span class="text-bold">Add New Webhook</span>
+            </div>
+        </div>
+        <div>
+            <div *ngFor="let item of webhookDetails; let i = index">
+                <div class="py-2 my-2 px-4" style="background :#FFF4F2; border-radius: 30px;">
+            
+                    <div class="d-flex align-items-center justify-content-between mb-2">
+                        <div>
+            
+                            <h4 class="mb-0">{{item.name}}</h4>
+                            <p class="mb-0"><b>{{item.url}}</b></p>
+                            <small style="font-size: 12px;" class="text-muted">
+                                <span>
+                                    Created At: {{settingsService?.getDateTimeFormate(item.createdAt)}}
+                                </span>
+                                <span>&nbsp;|&nbsp;</span>
+                                <span>
+                                    Modified At: {{settingsService?.getDateTimeFormate(item.updatedAt)}}
+                                </span>
+                            </small>
+                        </div>
+                        <div class="d-flex">
+                            <!-- Export  Edit  Delete-->
+                            <button class="account-white-btn mr-3" (click)="exportLogs(item)"><img src="../../../../assets/img/export.svg"/></button> 
+                            <button class="account-white-btn mr-3" (click)="editWebhook(item)"><img src="/assets/img/teambox/Edit.svg"/></button>
+                            <button class="account-white-btn" (click)="openDeletePopup(item.id)"><img src="assets/img/delete.png"/></button>
+                            <!-- ; deleteWebhook(item.id) -->
+                        </div>
+                    </div>
+               <div *ngIf="secondaryDropdown" class="overlay" (click)="closeSecondaryDropdown()"></div>
+                    <div class="row no-gutters align-items-center justify-content-between">
+                        <div class="col-3 d-flex flex-column justify-content-start">
+                            <p (click)="toggleEventDropdown(i)" style="color: #6149CD; cursor: pointer;" class="mb-0"><b class="mx-1">Subscribed Events ({{item.eventType.length}})</b> <img src="../../../../assets/img/arrow-down.svg"/></p>
+                            <!-- <p *ngFor="let event_type of item.eventType" class="d-flex flex-column">
+                                <span>{{event_type}}</span>
+                            </p> -->
+                            <sb-dropdown
+                             style="height: 0"
+                             [isOpen]="eventSubscribedDropdownMap[i]"
+                             [type]="'secondary'"
+                             [ShowAssignOption] ="false"
+                             [channelOption]="item.eventType"
+                             [customWidth]="'100px'">
+                           </sb-dropdown>
+                        </div>
+                        <div class="col-3 d-flex align-items-center justify-content-center">
+                            <sb-dropdown style="width: 110%" [channelOption]="channelOption" [channelSelected]="item.channel"
+                                [ShowAssignOption]="false" [preventDropdownOpening]="true"
+                                [customWidth]="'110%'">
+                            </sb-dropdown>
+                        </div>
+                        <div class="col-3 d-flex align-items-center justify-content-end">
+                            <!-- <button class="account-btn" (click)="testWebhooks(item)">
+                                Test
+                            </button> -->
+                            <button class="account-btn custom-padding" (click)="testWebhooks(item)" [disabled]="loadingIds.has(item.id)">
+                                Test
+                              </button>
+                            <button class="disable-btn ml-2 ">
+                                <div class="active-toggle">
+                                    <span>Enable</span>
+                                    <div class="px-2 switch-toggle">
+                                        <label class="m-0 switch">
+                                            <input type="checkbox" class="m-0 form-control-checkbox"
+                                                data-bs-toggle="modal"
+                                                data-bs-target="#disableModal" 
+                                                (input)="onToggleWebhook(item)" 
+                                                [checked]="item.isEnabled"/>
+                                            <span class="slider"></span>
+                                        </label>
+                                    </div>
+                                </div>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+            <!-- <div class="connection-card tokens-card">
+            <div class="account-card-header">
+                <div class="w-70">
+                    <input type="text" class="token-input-form" [(ngModel)]="webSocketUrl" (change)="isSaveEnabled = true" placeholder="Enter Webhook url">
+                </div>
+                <div>
+                    <button class="account-btn mx-1" (click)="saveWebhook()" [disabled]="!webSocketUrl || !isSaveEnabled">Save</button>
+                    <button class="account-btn mx-1" (click)="testWebhook()" [disabled]="!webSocketUrl">Test</button>
+                </div>
+            </div>
+            <div class="account-card-header">
+                <p class="api-time m-0">{{settingsService?.getDateTimeFormate(apiKeyData?.updatedAt)}}</p>
+            </div>
+            </div> -->
+        </div>
+    </div>
+
+    <div class="modal fade" id="webhookModal" tabindex="-1" aria-labelledby="webhookModalLabel" aria-hidden="true" data-bs-backdrop="static" data-bs-keyboard="false">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <form [formGroup]="webhookForm" class="p-4">
+                    <div class="modal-header p-0">
+                        <h5 class="modal-title mb-0" id="webhookModalLabel">{{ isEditingWebhook ? 'Edit Webhook' : 'Add Webhook' }} </h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="X" (click)="resetWebhookForm()">
+                            <img src="../../../../assets/img/teambox/icon-close.svg">
+                        </button>
+                    </div>
+    
+                    <div class="modal-body p-0">
+                        <div>
+                            <label for="name" class="form-label">Webhook Name <span class="text-danger">*</span></label>
+                            <input type="text" id="name" class="form-control p-1 common-input w-100 mb-2" 
+                                placeholder="Give any name to your webhook (max 20 characters)"
+                                formControlName="name" maxlength="20"/>
+                        </div>
+    
+                        <div>
+                            <label for="url" class="form-label">Webhook URL <span class="text-danger">*</span></label>
+                            <input type="text" id="url" class="form-control p-1 common-input w-100 mb-2"
+                                placeholder="Enter the webhook request URL"
+                                formControlName="url" />
+                        </div>
+    
+                        <div>
+                            <label for="secret" class="form-label">Secret</label>
+                            <input type="text" id="secret" class="form-control p-1 common-input w-100 mb-2"
+                                placeholder="Enter the Secret"
+                                formControlName="secret" />
+                        </div>
+    
+                        <div>
+                            <label for="channel" class="form-label">Channel <span class="text-danger mb-2">*</span></label>
+                            <sb-dropdown #dropdownAddWebhook [channelOption]="channelOption" [channelSelected]="channelSelectedWebhook"
+                                [channelPhoneNumber]="channelPhoneNumberWebhook" [ShowAssignOption]="ShowAssignOption"
+                                [customWidth]="'100%'" (selectionChange)="updateDropdown($event)">
+                            </sb-dropdown>
+                        </div>
+    
+                        <!-- <div class="mb-3">
+                      <label for="eventType" class="form-label">Event Type <span class="text-danger">*</span></label>
+                      <select class="form-select" id="eventType" formControlName="eventType">
+                        <option value="" disabled>Select Event Type</option>
+                        <option *ngFor="let type of eventTypes" [value]="type">{{ type }}</option>
+                      </select>
+                    </div> -->
+    
+                        <div class="mb-3 mt-1 position-relative">
+                            <label class="form-label">Webhook Event Types <span class="text-danger">*</span></label>
+                            <div (click)="eventTypeDropdown = !eventTypeDropdown" style="border-radius: 10px;cursor: pointer;" class="border d-flex align-items-center justify-content-between w-100 px-3 py-2">
+                                <small style="font-size: 12px; color: #70767b;">
+                                    Select Event
+                                </small>
+                                <img src="../../../../assets/img/arrow-down.svg" style="width: 12px; height: 12px;" />
+                            </div>
+                            <div *ngIf="eventTypeDropdown" class="border p-2 bg-white position-absolute left-0 w-100"
+                                style="z-index: 999;top: 100%; max-height: 150px; overflow-y: auto;">
+                                <div class="p-1 mb-2" *ngFor="let group of eventGroups">
+                                    <!-- Group Master Checkbox -->
+                                    <div class="form-check fw-bold">
+                                        <input class="form-check-input" style="cursor: pointer;" type="checkbox" [checked]="isGroupSelected(group)"
+                                            (change)="toggleGroupSelection(group, $event)">
+                                        <label class="form-check-label">{{ group.label }}</label>
+                                    </div>
+    
+                                    <!-- Sub Event Checkboxes -->
+                                    <div class="px-3" *ngFor="let event of group.events">
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="checkbox" [value]="event.value" style="cursor: pointer;"
+                                                [checked]="isEventSelected(event.value)"
+                                                (change)="toggleEventSelection(event.value, $event)">
+                                            <label class="form-check-label">{{ event.label }}</label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+    
+                    </div>
+    
+                    <div class="modal-footer border-top-0" style="padding: 11px 0px;">
+                        <sb-button [label]="'Save'" [type]="'primary'" [isActive]="true" [disabled]="!webhookForm.touched || webhookForm.invalid"
+                            (click)="submitForm()">
+                        </sb-button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="export-logs" tabindex="-1" aria-labelledby="exportLogsModal" aria-hidden="true" data-bs-backdrop="static" data-bs-keyboard="false">
+        <div class="modal-dialog">
+            <div class="modal-content p-4">
+                <div class="modal-header p-0">
+                    <h5 class="modal-title mb-0" id="webhookModalLabel">Export Logs</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="X">X</button>
+                </div>
+
+                <form [formGroup]="exportLogsForm">
+                    <div>
+                      <label for="fromDate" class="form-label">From Date <span class="text-danger">*</span></label>
+                      <input type="date" id="fromDate" class="form-control p-1 common-input w-100 mb-2" formControlName="fromDate"              
+                         [attr.max]="today"
+                         [attr.min]="sixMonthsAgo"/>
+                    </div>
+          
+                    <div>
+                      <label for="toDate" class="form-label">To Date <span class="text-danger">*</span></label>
+                      <input type="date" id="toDate" class="form-control p-1 common-input w-100 mb-2" formControlName="toDate"               
+                        [attr.max]="today"
+                        [attr.min]="sixMonthsAgo"/>
+                    </div>
+
+                    <div class="modal-footer border-top-0">
+                        <sb-button [label]="'Cancel'" [type]="'primary'"
+                          data-bs-dismiss="modal"
+                          (click)="null">
+                        </sb-button>
+
+                        <sb-button [label]="'Confirm and Export'" [type]="'primary'" [isActive]="true"
+                            [disabled]="exportLogsForm.invalid || exportLogsForm.errors?.invalidDateRange"
+                            (click)="exportLogsAndMail()">
+                        </sb-button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" tabindex="-1" id="createTokenModal" role="dialog">
+        <div class="modal-dialog create-token-modal" role="document">
+            <div class="modal-content h-100">
+                <div class="modal-header">
+                    <h5 class="modal-title">{{isEdit ? 'Edit API Token' :'Create API Token'}}</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
+                        <img src="../../../../assets/img/teambox/icon-close.svg">
+                    </button>
+                </div>
+                <div class="modal-body token-scroll px-5 pb-5 h-100">
+                    <div class="">
+                        <label>Token Name</label><br>
+                        <input class="token-input-form" type="input" [(ngModel)]="apiName" placeholder="Enter Token name" maxlength="20">
+                    </div>
+                    <div class="mt-3">
+                        <label>Channel</label><br>
+                        <sb-dropdown [channelOption]="channelOption" [channelSelected]="selectedChannelForToken"
+                            [ShowAssignOption]="ShowAssignOption" [customWidth]="'100%'"
+                            (selectionChange)="updateDropdownForToken($event)">
+                        </sb-dropdown>
+                    <div class="mt-2" *ngFor="let item of ipAddress; trackBy: trackByIndex;let idx=index">
+                        <label>IP Address<span class="optional">(optional)</span></label><br>
+                        <input class="token-input-form" type="text" placeholder="Enter IP address"
+                            [(ngModel)]="ipAddress[idx]" #ipField="ngModel"
+                            [pattern]="ipRegex">                           
+                          <div *ngIf="ipField.invalid && ipField.touched" class="error">
+                            <div class="error-val" *ngIf="ipField.errors?.pattern">Invalid IP Address format.</div>
+                          </div>
+                        <div class="incoming-card">
+                            <div>
+                            <a class="add-btn" (click)="addIP()" *ngIf="idx == (ipAddress?.length-1) && ipAddress?.length<5">+ Add</a>
+                            </div>
+                            <a class="remove-btn" (click)="removeIP(idx)" *ngIf="ipAddress?.length>1">- Remove</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button class="account-btn" (click)="getApiKeyData(true)" [disabled]="disableSaveBtn()">{{isEdit ? 'Save' : 'Genrate'}}</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    </div>
+
+
+
+    <div class="modal fade" tabindex="-1" id="deleteModal" role="dialog">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content delete-token-modal">
+                <div class="modal-body alertmessage">
+                    <p class="label pb-2">Do you really want to delete this Webhook?</p>
+                    <div class="input_group_btn">
+                        <button type="button" class="cancel-btn" aria-label="Close"
+                            data-bs-dismiss="modal">Cancel</button>
+                        <button type="button" class="delete-btn" (click)="deleteWebhook()" aria-label="Close">Yes, Delete</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    
+    <div class="modal fade" tabindex="-1" id="apiConfirmationModal" #apiConfirmationModal role="dialog" data-bs-backdrop="static" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content api-confiormation-modal">
+                <div class="modal-header">
+                    <img src="../../../../assets/img/settings/api.svg">
+                </div>
+                <div class="modal-body text-center pt-0">
+                    <div class="px-3">
+                        <span class="token-heading">API Token Sucessfully Created</span>
+                       <p>Kindly copy and keep the API token securely, we will not able to display the API Token again once this window is closed</p>
+                       <div class="d-flex justify-content-center">
+                           <input type="text" class="token-input-form" [value]="currentAPIkey" readonly>
+                           <img class="copy-btn" (click)="copyToClipboard()" src="../../../../assets/img/settings/attribute-button.svg">
+                       </div><br>
+                       <div class="token-checkbox">
+                           <input type="checkbox" class="checkbox" #confirmCheckbox>
+                           <p>&nbsp;&nbsp;Please check this before close button</p>
+                       </div>
+                    </div>
+                </div>
+                <div class="modal-footer justify-content-center">
+                    <button type="button" class="account-btn"  data-bs-dismiss="modal" (click)="resetCheckbox(confirmCheckbox)" [disabled]="!confirmCheckbox.checked" aria-label="Close">close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+    <div class="setting-card " *ngIf="selectedTab==4 && !settingsService.checkRoleExist('47')">
+        <div class="account-card-header">
+            <h4>Integration</h4>            
+        </div>
+        <div class="inegration-block">
+            <div class="integration-card">
+                <img src="../../../../assets/img/settings/fb.svg"><br>
+                <span>Facebook Leads</span>
+                <p>Lorium ipsum dolor sit amet lopnikumn gonia</p>
+            </div>
+            <div class="integration-card">
+                <img src="../../../../assets/img/settings/g-sheet.svg"><br>
+                <span>Google Sheet</span>
+                <p>Lorium ipsum dolor sit amet lopnikumn gonia</p>                
+            </div>
+        </div>
+
+    
+</div>
+<!-- 
+<script>
+    window.fbAsyncInit = function() {
+      FB.init({
+        appId: '{your-app-id}', // Replace with your App ID
+        cookie: true,
+        xfbml: true,
+        version: 'v2.4' // Use the latest version
+      });
+    };
+  
+    (function(d, s, id){
+       var js, fjs = d.getElementsByTagName(s)[0];
+       if (d.getElementById(id)) { return; }
+       js = d.createElement(s); js.id = id;
+       js.src = "https://connect.facebook.net/en_US/sdk.js";
+       fjs.parentNode.insertBefore(js, fjs);
+     }(document, 'script', 'facebook-jssdk'));
+  </script> -->
+  

@@ -1,0 +1,185 @@
+<div class="row">
+    <div class="toaster" (click)="hideToaster()">
+        <p *ngIf="errorMessage" class="error">{{errorMessage}}</p>
+        <p *ngIf="successMessage" class="success">{{successMessage}}</p>
+        <p *ngIf="warningMessage" class="warning">{{warningMessage}}</p>
+    </div>
+    <sb-loader [isLoading]="isLoading"></sb-loader>
+    <div class="col-sm-4">
+        <div class="setting-card">
+            <span class="working-hour-heading px-2">Working Hours</span>
+            <p class="pt-2 px-2">Define your team’s working hours during which they are available to communicate with
+                customers</p>
+
+            <div class="working-hour-img-card modal-body" *ngIf="!workingData">
+                <img src="../../../../assets/img/settings/image.png"><br>
+                <span class="working-hour-heading">Add Working Hours</span>
+            </div>
+            <div *ngIf="workingData" class="modal-body pt-0">
+                <div class="row pt-4" *ngIf="workingData.length > 0">
+                    <div *ngFor="let item of workingData; let idx=index" class="w-100">
+                        <div class="working-days ">{{ item?.working_days }}</div>
+                        <div class="working-time">{{ _settingsService?.convertTimeFormat(item?.start_time) }} - {{ _settingsService?.convertTimeFormat(item?.end_time) }}</div>
+                    </div>
+                </div>
+                <div *ngIf="workingData.length ==0" class="empty-working-time">
+                    <div class="w-100">
+                        <img src="../../../../assets/img/settings/image.png">
+                        <div class="pt-2 text-bold">Add Working Hours</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="text-center pt-3">
+                <button class="working-hour-btn" (click)="manageWorkingHour()" data-bs-toggle="modal"
+                        data-bs-target="#workingHourModal">Manage Working
+                    Hours</button>
+            </div>
+
+
+        </div>
+    </div>
+    <div class="col-sm-8">
+        <div class="setting-card">
+            <div class="flex-header">
+                <div class="working-hour-heading pt-2 d-flex">
+                    Holidays
+                    <div class="Info-Iconn ml-2">
+                        <img src="../../../../assets/img/settings/Info-icons.svg" (click)="timinginfo($event)">
+                        <div class="specific" *ngIf="holidayTooltip" (click)="stopPropagation($event)">
+                            <p class="p-body">
+                                You can mark specific days as holidays, which will result in messages being auto replied to users to inform them about the holiday if they try to reach us and no other automation is triggered.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- <img src="../../../../assets/img/settings/drag.svg" /> -->
+                <select class="holiday-dropdown multiselect" [(ngModel)]="selectedYear" (change)="selectYear()">
+                    <option *ngFor="let item of yearList" [value]="item">{{item}}</option>
+                </select>
+            </div>
+            <div class="months-view">
+                <div class="month-card" *ngFor="let item of totalmonths;let idx =index"
+                     (click)="createDynamicDate(idx+1)">
+                    <div class=" date-time p-2 px-3">
+                        <img src="../../../../assets/img/settings/Edit-icon.svg">&nbsp;{{item?.monthName}}
+                    </div>
+                    <div class="dates-view px-3" *ngIf="item.values.length>0">
+                        <div class="month-date" *ngFor="let dt of item.values; let i=index">
+                            <span *ngIf="i < 15">{{ dt | date:'dd' }}</span>
+                            <ng-container *ngIf="i === 15 && item.values.length > 15">
+                                <span class="additional-items"> +{{ item.values.length - 15 }}</span>
+                            </ng-container>
+                        </div>
+                        
+                    </div>
+                    <div *ngIf="item.values.length ==0" class="no-holidays">No holidays to show</div>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+<div *ngIf="holidayTooltip" class="overlay" (click)="closeUtility()"></div>
+
+<div class="modal fade" tabindex="-1" data-bs-backdrop="static" id="workingHourModal" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content working-hour-modal ">
+            <div class="modal-header sticky-header">
+                <h5 class="modal-title">Update Working Hours</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
+                    <img src="../../../../assets/img/teambox/icon-close.svg">
+                </button>
+            </div>
+            <div class="modal-body px-5 pt-0 modal-body-scroll">
+                <!-- <form [formGroup]="workingHourForm" class="mt-4"> -->
+                <div *ngFor="let item of workingFormData;let idx=index">
+                    <div class="billing-form-row">
+                        <label>Days</label>
+                        <ng-multiselect-dropdown class="multiselect dropdown" name="tag" [(ngModel)]="item.day" id="tag"
+                            [settings]="dropdownSettings" [data]="daysList" [placeholder]="'Add Days'">
+                        </ng-multiselect-dropdown>
+                    </div>
+                    <div class="d-flex">
+                        <div class="billing-form-row d-flex flex-column  ">
+                            <label for="appt">Start Time</label>
+                            <input type="text" class="input-form" type="time" id="appt" name="appt" min="09:00"
+                                [(ngModel)]="item.startTime" placeholder="Select start time">
+
+                        </div>
+                        <div class="billing-form-row d-flex flex-column pl-3 ">
+                            <label for="appt">End Time</label>
+                            <input type="text" class="input-form" type="time" id="appt" name="appt" max="18:00"
+                                [(ngModel)]="item.endTime" placeholder="Select end time">
+                        </div>
+                    </div>
+                    <div class="incoming-card">
+                        <div>
+                            <a class="add-btn" (click)="addWorkingHours()" *ngIf="idx == (workingFormData?.length-1)">+
+                                Add</a>
+                        </div>
+                        <a class="remove-btn" (click)="removeWorkingHours(idx)" *ngIf="workingFormData?.length>1">-
+                            Remove</a>
+                    </div>
+                </div>
+                <!-- </form> -->
+            </div>
+            <div class="modal-footer sticky-footer">
+                <button type="button" class="account-btn" (click)="ValidateWorkingDetails()">Save</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div class="modal fade" tabindex="-1" id="holidayModal" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content holiday-calender-modal p-2 pl-3">
+            <div class="modal-header">
+                <h5 class="modal-title">Edit Holidays</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
+                    <img src="../../../../assets/img/teambox/icon-close.svg">
+                </button>
+            </div>
+            <div class="modal-body px-5 pt-4">
+                <span class="month-heading pb-2 pl-4">{{totalmonths[selectedMonth-1]?.monthName}}, {{selectedYear}}</span>
+                <div class="calender pl-4 date-grid">
+                        <span class="calender-day">Mon</span>
+                        <span class="calender-day">Tue</span>
+                        <span class="calender-day">Wed</span>
+                        <span class="calender-day">Thu</span>
+                        <span class="calender-day">Fri</span>
+                        <span class="calender-day">Sat</span>
+                        <span class="calender-day">Sun</span>
+                        <span *ngFor="let item of monthDates;let idx = index">
+                            <span tabindex="0" *ngIf="item?.onlyDate !=0" class="calender-date focusable-span" [ngClass]="item?.selected ? 'active' : ''" (click)="selectDates(idx)">
+                                {{item?.onlyDate}}
+                            </span>
+                        </span>
+                </div>
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="account-btn" (click)="saveHolidayDetails()">Save</button>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade confirmModal" tabindex="-1" id="confirmModal" data-bs-backdrop="static" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content confirm-token-modal">
+            <div class="modal-body alertmessage">
+                <p class="label pb-2">Are you sure you want to save?</p>
+                <div class="input_group_btn">
+                    <button type="button" class="cancel-btn" aria-label="Close"
+                        data-bs-dismiss="modal" (click)="openModal()">Cancel</button>
+                    <button type="button" class="delete-btn" aria-label="Close" 
+                        data-bs-dismiss="modal" (click)="saveWorkingDetails()">Yes</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

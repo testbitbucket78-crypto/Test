@@ -1,0 +1,471 @@
+<div class="toaster" (click)="hideToaster()">
+    <p *ngIf="errorMessage" class="error">{{errorMessage}}</p>
+    <p *ngIf="successMessage" class="success">{{successMessage}}</p>
+    <p *ngIf="warningMessage" class="warning">{{warningMessage}}</p>
+</div>
+<div>
+    <sb-loader [isLoading]="isLoading"></sb-loader>
+    <div class="row">
+        <div class="col-sm-9 py-4 setting-field">
+            <a class="setting-field-link" [ngClass]="selectedTab==1 ? 'active' : ''" (click)="selectedTab = 1" *ngIf="!settingsService.checkRoleExist('35')">Business
+                Profile</a>
+            <a class="setting-field-link" [ngClass]="selectedTab==2 ? 'active' : ''" (click)="selectedTab = 2" *ngIf="!settingsService.checkRoleExist('36')">Working
+                Hours</a>
+            <a class="setting-field-link" [ngClass]="selectedTab==3 ? 'active' : ''" (click)="selectedTab = 3" *ngIf="!settingsService.checkRoleExist('37')">Roles</a>
+            <!--<a class="setting-field-link" [ngClass]="selectedTab==4 ? 'active' : ''" (click)="selectedTab = 4" *ngIf="!settingsService.checkRoleExist('40')">Teams</a>-->
+            <a class="setting-field-link" [ngClass]="selectedTab==5 ? 'active' : ''" (click)="selectedTab = 5" *ngIf="!settingsService.checkRoleExist('38')">Users</a>
+        </div>
+    </div>
+    <div class="setting-card" *ngIf="selectedTab==1 && !settingsService.checkRoleExist('35')">
+        <div class="row justify-content-center">
+            <div class="w-90">
+                <!-- [ngStyle]="{'background-image': 'url(' + companyimage + '?' + randomNumber + ')'}" -->
+                <div class="profile-img profile-margin-left">
+                    <div class="companyimg">{{intials}}</div>
+                </div>
+            </div>
+            <button class="account-white-btn mx-1" (click)="patchCompanyForm()" data-bs-toggle="modal" data-bs-target="#companyDetailModal">
+                <img class="p-0" src="../../../../assets/img/edit.png">
+            </button>
+        </div>
+        <div class="profile-card mt-3" *ngIf="!companyData">
+            <span class="profile-heading">Add Company Details</span><br>
+            <p class="pb-0 mb-0">--</p>
+        </div>
+        <div class="profile-card mt-3" *ngIf="companyData">
+            <span class="profile-heading">{{companyData?.Company_Name}}</span><br>
+            <p class="pb-0 mb-0">{{companyData?.Country}}&nbsp;|&nbsp;{{companyData?.country_code ? companyData?.country_code : ''}}{{companyData?.Phone_Number}}</p>
+        </div>
+        <div class="flex-row mx-5">
+            <div class="d-flex">
+                <img src="../../../../assets/img/settings/Path 1968.svg">
+                <p *ngIf="!companyData?.Industry" class="industry-txt">--</p>
+                <p *ngIf="companyData?.Industry" class="industry-txt">{{companyData?.Industry}}</p>
+            </div>
+            <div class="d-flex">
+                <img src="../../../../assets/img/settings/Path 1967.svg">
+                <p *ngIf="!companyData?.Company_Website" class="industry-txt">--</p>
+                <p *ngIf="companyData?.Company_Website" class="industry-txt">{{companyData?.Company_Website}}</p>
+            </div>
+        </div>
+
+        <div class="detail-card">
+            <div class="flex-header">
+                <span class="profile-heading pt-2">Locale Details</span>
+                <button class="account-white-btn mx-1" (click)="patchLocaleForm()" data-bs-toggle="modal" data-bs-target="#localeDetailModal">
+                    <img class="p-0" src="../../../../assets/img/edit.png">
+                </button>
+            </div>
+            <!-- {{localeData?.Time_Zone ? localeData?.Time_Zone:'--'}}&nbsp;|&nbsp; -->
+            <p>{{localeData?.Currency ? localeData?.Currency:'--'}}</p>
+            <div class="d-flex">
+                <div class="left-col">
+                    <span class="profile-sub-heading">Time Format</span>
+                    <p *ngIf="!localeData?.Time_Format">--</p>
+                    <p *ngIf="localeData?.Time_Format">{{localeData?.Time_Format}} HRS</p>
+                </div>
+                <div>
+                    <span class="profile-sub-heading">Date Format</span>
+                    <p *ngIf="!localeData?.Date_Format">--</p>
+                    <p *ngIf="localeData?.Date_Format">{{localeData?.Date_Format}}</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="detail-card">
+            <div class="flex-header pt-3">
+                <span class="profile-heading">Billing Address</span>
+                <button class="account-white-btn mx-1" (click)="patchBillingForm()" data-bs-toggle="modal" data-bs-target="#billingDetailModal">
+                    <img class="p-0" src="../../../../assets/img/edit.png">
+                </button>
+            </div>
+            <div class="billy-address">
+                {{ billingData?.Address1 ? billingData.Address1 + ',' : '--' }}
+                &nbsp;
+                {{ billingData?.Address2 ? billingData.Address2 : '--' }}
+              </div>
+              
+            <div class="d-flex pt-3">
+                <div class="left-col">
+                    <span class="profile-sub-heading">Billing Email Id</span>
+                    <p>{{billingData?.billing_email ? billingData?.billing_email:'--'}}</p>
+                </div>
+                <div>
+                    <span class="profile-sub-heading">Tax/Vat/GST ID</span>
+                    <p>{{billingData?.InvoiceId ? billingData?.InvoiceId:'--'}}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" data-bs-backdrop="static" tabindex="-1" id="companyDetailModal" role="dialog">
+        <div class="m-auto d-flex justify-content-center align-items-center h-100 modal-dialog" role="document">
+            <div class="m-0 modal-content account-modal">
+                <div class="model-setting">
+                <div class="modal-header mt-2 ml-2">
+                    <h5 class="modal-title">Edit Company Details</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
+                        <img src="../../../../assets/img/teambox/icon-close.svg">
+                    </button>
+                </div>
+                <div class="modal-body px-5 pt-0 modalHeight">
+                    <div class="d-flex px-3">
+                        <div class="profile-img" >
+                            <div class="companyimg">{{intials}}</div>
+                        </div>
+                        <div class="d-flex justify-content-center picture-crop-button-container">
+                            <!-- <div class="text-center picture-crop-button">
+                                [ngStyle]="{'background-image': 'url(' + companyimage + '?' + randomNumber + ')'}"
+                             <input type="file" id="myFileInput"  (change)="fileChangeEvent($event)" accept="image/jpeg, image/png" />
+                             <label for="myFileInput" class="m-0 fileLabel" ><img src="../../../../assets/img/profile/Fill 4.svg" /></label>    
+                            </div> -->
+                        </div>
+
+                        <div class="modal fade" tabindex="-1" id="pictureCropModal" data-bs-backdrop="static" role="dialog">
+                            <div class="modal-dialog" role="document">
+                                <div class="modal-content px-3 pictureCropPopupModal">
+                                    <form>
+                                    <div class="modal-header align-items-center">
+                                        <h5 class="modal-title">Crop & Adjust</h5>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
+                                            <img src="../../../../assets/img/teambox/icon-close.svg"/> 
+                                        </button>
+                                    </div>
+                                    <div class="modal-body p-4 text-center pictureCropPopupbody">
+                                      <div class="pic-cont">
+                                               <image-cropper
+                                                [imageChangedEvent]="imageChangedEvent"
+                                                [maintainAspectRatio]="false"
+                                                [aspectRatio]="4 / 3"
+                                                output="jpg"
+                                                format="jpg"
+                                                [imageQuality]="50"
+                                                (imageCropped)="imageCropped($event)">
+                                                </image-cropper>
+                                        </div>
+                          
+                                    </div>
+                                    <div class="modal-footer justify-content-end my-2 border-0">
+                                        <button type="button" (click)="saveVideoAndDocument()" class="update-pass-btn">Save</button>
+                                    </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                        <span class="Add-company pt-4 pl-3">Add<br> Company logo</span>
+                    </div>
+                    <form [formGroup]="companyDetailForm" class="mt-4">
+                        <div class="profile-form-row">
+                            <div class="profile-form-left">
+                                <span>Company Name<span class="aestric">*</span></span>
+                                <input type="text" class="company input-form" formControlName="Company_Name" placeholder="Enter company name" maxlength="17">
+                                <div *ngIf="companyDetailForm.get('Company_Name')?.invalid && (companyDetailForm.get('Company_Name')?.touched || companyDetailForm.get('Company_Name')?.dirty)" class="invalid-feedback">
+                                    <div *ngIf="companyDetailForm.get('Company_Name')?.hasError('required')">
+                                        Company Name is required.
+                                    </div>
+                                </div>
+                            </div>
+                            <div>
+                                <span>Company Website</span>
+                                <input type="text" class="company input-form" formControlName="Company_Website" placeholder="Enter URL" maxlength="30">
+                            </div>
+                        </div>
+                        <div class="profile-form-row">
+                            <div class="profile-form-left">
+                                <span>Country<span class="aestric">*</span></span>
+                                <select class="company input-form" formControlName="Country" required (change)="getStateList($event)">
+                                    <option value="" selected>Select country</option>
+                                    <option *ngFor="let item of country" [value]="item.name">{{item?.name}}</option>
+                                </select>
+                                <div *ngIf="companyDetailForm.get('Country')?.invalid && (companyDetailForm.get('Country')?.touched || companyDetailForm.get('Country')?.dirty)" class="invalid-feedback">
+                                    <div *ngIf="companyDetailForm.get('Country')?.hasError('required')">
+                                        Country is required.
+                                    </div>
+                                </div>
+                            </div>
+                          
+                            <div>
+                                <span>Phone Number<span class="aestric">*</span></span>
+                                <div class="numb-1">
+
+                                    <!-- <div class="ss d-flex justify-content-start">
+                                        <select class="input-form code-selector" id="country_code" formControlName="country_code">
+                                          <option [selected]="countryCode === countryCodes[101]" *ngFor="let countryCode of countryCodes">
+                                            {{ countryCode }}
+                                          </option>
+                                          </select>
+                                          <input type="text" class="form-control" id="mobile_number" formControlName="mobile_number" 
+                                          name="mobile_number" style="display: none">  
+                                          <input type="text" class="form-control phone-input" id="mobile_number"  autocomplete="none" formControlName="display_mobile_number" 
+                                            name="display_mobile_number" placeholder="Phone Number" aria-label="City" pattern="^[^+\-.,?*%$eE]+$"
+                                            onKeyPress="return /^[0-9]$/.test(event.key)"
+                                            [ngClass]="{'is-invalid' : userDetailForm.controls.display_mobile_number.errors && (userDetailForm.get('display_mobile_number')?.touched || userDetailForm.get('display_mobile_number')?.dirty) }" 
+                                          (change)="formatPhoneNumber()" #text>    
+                                        </div> -->
+                              
+                                    <div class="row">
+                                        <!-- <label for="floatingSelectGrid" class="required">Phone Number*</label> -->
+                                        <select class="input-formm" id="country_code" formControlName="country_code" (change)="formatPhoneNumber()">
+                                            <option *ngFor="let countryCoode of countryCodes; let i = index" [value]="countryCoode" >
+                                                {{ countryCoode }}
+                                            </option>
+                                        </select>
+                                        <input (input)="hangeEditContactInuts($event)" class="form-control phone-no" type="text"
+                                            onKeyPress="return /^[\d+]$/.test(event.key)" name="Phone_number" formControlName="Phone_Number"
+                                            value={{EditContactForm.Phone_number}} minlength="6" maxlength="15" />                                       
+                                         
+                                    </div> 
+                                     <div *ngIf="(companyDetailForm.get('Phone_Number')?.touched || companyDetailForm.get('Phone_Number')?.dirty)
+                                    " class="invalid-feedback validation-margin">
+                                    <div *ngIf="companyDetailForm.get('Phone_Number')?.hasError('required')">
+                                        Phone number is required.
+                                    </div>
+                                    <!-- <div *ngIf="companyDetailForm.get('Phone_Number')?.hasError('minlength') || companyDetailForm.get('Phone_Number')?.hasError('maxlength')">
+                                        Phone number must consist of 6 to 15 digits.
+                                    </div> -->
+                                    <div *ngIf="companyDetailForm.controls.Phone_Number.touched && companyDetailForm.get('Phone_Number')?.hasError('invalidPhoneNumberLength')"
+								         class="text-danger">
+								         ! Invalid phone number length for the selected country.
+							         </div>
+                                  </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="profile-form-row">
+                            <div class="profile-form-left">
+                                <span>Industry<span class="aestric">*</span></span>
+                                <select class="company input-form" formControlName="Industry" required>
+                                    <option value="" selected>Select Industry</option>
+                                    <option *ngFor="let item of industry" [value]="item">{{item}}</option>
+                                </select>
+                                <div *ngIf="companyDetailForm.get('Industry')?.invalid && (companyDetailForm.get('Industry')?.touched || companyDetailForm.get('Industry')?.dirty)" class="invalid-feedback">
+                                    <div *ngIf="companyDetailForm.get('Industry')?.hasError('required')">
+                                        Industry is required.
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="noemploye">
+                                <span>No. of Employees<span class="aestric">*</span></span>
+                                <select class="company input-form" formControlName="Employees_count" required>
+                                    <option value="" selected>Select no of employees</option>
+                                    <option *ngFor="let item of noOfEmployees" [value]="item">{{item}}</option>
+                                </select>
+                                <div *ngIf="companyDetailForm.get('Employees_count')?.invalid && (companyDetailForm.get('Employees_count')?.touched || companyDetailForm.get('Employees_count')?.dirty)" class="invalid-feedback">
+                                    <div *ngIf="companyDetailForm.get('Employees_count')?.hasError('required')">
+                                        Number of Employees must be at least 1.
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer mt-2">
+                    <button type="button" class="account-btn" (click)="saveCompanyDetails()">Save</button>
+                </div>
+            </div>
+        </div>
+        </div>
+    </div>
+
+
+    <div class="modal fade" data-bs-backdrop="static" tabindex="-1" id="billingDetailModal" role="dialog">
+        <div class="m-auto d-flex justify-content-center align-items-center h-100  modal-dialog" role="document">
+            <div class="m-0 modal-content billing-modal">
+                <div class="modal-header pt-4 pl-4">
+                    <h5 class="modal-title">Update Billing Address</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
+                        <img src="../../../../assets/img/teambox/icon-close.svg">
+                    </button>
+                </div>
+                <div class="modal-body px-5 pt-0">
+                    <form [formGroup]="billingForm" class="mt-4">
+                        <div class="billing-form-row">
+                            <span class="billing-left-col">Billing Email Id<span class="aestric">*</span></span>
+                            <div class="billing-right-col">
+                            <input type="text" class="billing input-form" formControlName="billing_email" placeholder="Enter billing email id">
+                            <div *ngIf="billingForm.get('billing_email')?.invalid && (billingForm.get('billing_email')?.touched || billingForm.get('billing_email')?.dirty)
+                            " class="invalid-feedback">
+                            <div *ngIf="billingForm.get('billing_email')?.hasError('required')">
+                              Email is required.
+                            </div>
+                            <div *ngIf="billingForm.get('billing_email')?.hasError('email')">
+                              Invalid email format.
+                            </div>
+                          </div>
+                        </div>
+                        </div>
+                        <div class="billing-form-row">
+                            <span class="billing-left-col">Tax/VAT/GST Id</span>
+                            <div class="billing-right-col">
+                            <input type="text" class="billing input-form" formControlName="InvoiceId" placeholder="Enter Tax/VAT/GST ID" maxlength="15" type="text" pattern="^[^+\-.,?*%$eE]+$" onKeyPress="if(this.value.length==15) return false; return /^[0-9]$/.test(event.key)">
+                            <!-- <div *ngIf="billingForm.get('InvoiceId')?.invalid && (billingForm.get('InvoiceId')?.touched || billingForm.get('InvoiceId')?.dirty)
+                            " class="invalid-feedback">
+                            <div *ngIf="billingForm.get('InvoiceId')?.hasError('required')">
+                                Tax/VAT/GST Id is required.
+                            </div>
+                            <div *ngIf="billingForm.get('InvoiceId')?.hasError('minlength')">
+                                Tax/VAT/GST Id should be 15 digits long.
+                            </div>
+                          </div> -->
+                        </div>
+                        </div>
+                        <div class="billing-form-row">
+                            <span class="billing-left-col">Location<span class="aestric">*</span></span>
+                            <div class="billing-right-col">
+                            <select style="cursor: pointer;" class="billing input-form" formControlName="Country" required (change)="getStateList($event.target.value)">
+                                <option value="">Select country</option>
+                                <option *ngFor="let item of country" [value]="item.name">{{item?.name}}</option>
+                            </select>
+                            <div *ngIf="billingForm.get('Country')?.invalid && (billingForm.get('Country')?.touched || billingForm.get('Country')?.dirty)
+                            " class="invalid-feedback">
+                            <div *ngIf="billingForm.get('Country')?.hasError('required')">
+                                Country is required.
+                            </div>
+                          </div>
+                        </div>
+                        </div>
+                        <div class="billing-form-row">
+                            <span class="billing-left-col"></span>
+                            <div class="billing-right-col">
+                            <select style="cursor: pointer;" class="billing input-form" formControlName="State" required>
+                                <option value="">State</option>
+                                <option *ngFor="let item of state" [value]="item.name">{{item.name}}</option>
+                            </select>
+                            <div *ngIf="billingForm.get('State')?.invalid && (billingForm.get('State')?.touched || billingForm.get('State')?.dirty)
+                            " class="invalid-feedback">
+                            <div *ngIf="billingForm.get('State')?.hasError('required')">
+                                State is required.
+                            </div>
+                          </div>
+                        </div>
+                        </div>
+                        <!-- <div class="billing-form-row">
+                            <span class="billing-left-col"></span>
+                            <div class="billing-right-col">
+                            <select class="billing input-form" formControlName="City" required>
+                                <optivalue="">City</option>
+                            </select>on 
+                        </div>
+                        </div> -->
+                        <div class="billing-form-row">
+                            <span class="billing-left-col">Address line 1<span class="aestric">*</span></span>
+                            <div class="billing-right-col">
+                            <input type="text" class="billing input-form" formControlName="Address1" placeholder="Your address">
+                            <div *ngIf="billingForm.get('Address1')?.invalid && (billingForm.get('Address1')?.touched || billingForm.get('Address1')?.dirty)
+                            " class="invalid-feedback">
+                            <div *ngIf="billingForm.get('Address1')?.hasError('required')">
+                                Address is required.
+                            </div>
+                          </div>
+                        </div>
+                        </div>
+                        <div class="billing-form-row">
+                            <span class="billing-left-col">Address line 2</span>
+                            <div class="billing-right-col">
+                            <input type="text" class="billing input-form" formControlName="Address2" placeholder="Your address">
+                        </div>
+                        </div>
+                        <div class="billing-form-row">
+                            <span class="billing-left-col">Zip code<span class="aestric">*</span></span>
+                            <div class="billing-right-col">
+                            <input
+                                class="billing input-form"
+                                formControlName="zip_code"
+                                placeholder="Your zip code"
+                                [pattern]="zipCodePattern"
+                                type="text" pattern="^[^+\-.,?*%$eE]+$" onKeyPress="if(this.value.length==6) return false; return /^[0-9]$/.test(event.key)"
+                            >
+                            <div *ngIf="billingForm.get('zip_code')?.invalid && (billingForm.get('zip_code')?.touched || billingForm.get('zip_code')?.dirty)
+                            " class="invalid-feedback">
+                            <div *ngIf="billingForm.get('zip_code')?.hasError('required')">
+                              Zip code is required.
+                            </div>
+                          </div>
+                        </div>
+                        </div>
+                        
+                    </form>
+                </div>
+                <div class="modal-footer mb-4 pr-4">
+                    <button type="button" class="account-btn" (click)="saveBillingDetails()">Save</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" data-bs-backdrop="static" tabindex="-1" id="localeDetailModal" role="dialog">
+        <div class="locale-detail modal-dialog" role="document">
+            <div class="m-0 modal-content locale-modal">
+                <div class="modal-header mt-3 ml-2">
+                    <h5 class="modal-title">Update Locale Details</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
+                        <img src="../../../../assets/img/teambox/icon-close.svg">
+                    </button>
+                </div>
+                <div class="modal-body px-5 pt-0">
+                    <form [formGroup]="localeForm" class="mt-4">
+                        <div class="billing-form-row">
+                            <span class="billing-left-col">Date Format</span>
+                            <select class="input-form selectpicker" formControlName="Date_Format" required >
+                                <option value="" selected>Select date format</option>
+                                <option *ngFor="let item of dateFormates" [value]="item">{{item}}</option>
+                            </select>
+                        </div>
+                        <div class="billing-form-row">
+                            <span class="billing-left-col">Time Format</span>
+                            <select class="input-form" formControlName="Time_Format" required>
+                                <option value="">Select Time Format</option>
+                                <option [value]='12'>12 Hours</option>
+                                <option [value]='24'>24 Hours</option>
+                            </select>
+                        </div>
+                        <!-- <div class="billing-form-row">
+                            <span class="billing-left-col">Time Zone</span>                            
+                            <select name="timezone" class="input-form" formControlName="Time_Zone" required>
+                                <option value="" >Select time zone</option>
+                                <option *ngFor="let item of timezoneList" [value]="item?.value">{{item?.name}}</option>
+                             </select>
+                        </div> -->
+                        <!-- <div class="billing-form-row">
+                            <span class="billing-left-col">Currency</span>
+                            <select class="input-form" id="currency" formControlName="Currency" required>
+                                <option value="">Select currency</option>
+                                <option value="INR">Indian Rupee</option>
+                                <option value="AUD">Australian Dollar</option>                             
+                                <option value="EUR">Euro</option>
+                                <option value="USD">US Dollar</option>
+                                <option value="IDR">Indonesian Rupiah</option>
+                                <option value="GBP">British Pound Sterling</option>
+                            </select>
+                        </div> -->
+                    </form>
+                    <div class="local-detail-note mt-3">
+                        <div class="note-heading">Note :</div>
+                        <div>1. Date and Time format you choose here will be applicable across the service while viewing these values as output.</div>
+                        <div>2. Date and Time format for all the input fields will be as per your system format.</div>
+                    </div>
+                </div>
+                <div class="modal-footer mb-2 mr-3">
+                    <button type="button" class="account-btn" (click)="saveLocaleDetails()">Save</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div *ngIf="selectedTab==2 && !settingsService.checkRoleExist('36')" class="margin-left">
+        <sb-working-hours></sb-working-hours>
+    </div>
+
+    <div *ngIf="selectedTab==3 && !settingsService.checkRoleExist('37')">
+        <sb-roles-settings></sb-roles-settings>
+    </div>
+
+    <div *ngIf="selectedTab==5 && !settingsService.checkRoleExist('38')">
+        <sb-user-settings></sb-user-settings>
+    </div>
+
+    <div *ngIf="selectedTab==4 && !settingsService.checkRoleExist('38')">
+        <sb-team-settings></sb-team-settings>
+    </div>
+
+</div>

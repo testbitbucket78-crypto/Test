@@ -1,0 +1,49 @@
+.message_data.preview {
+  background: #ffffff;
+  border-radius: 8px;
+  padding: 10px;
+  max-width: 100%;
+  min-height: 130px;
+  word-wrap: break-word;
+  max-height: 300px;
+  overflow-y: auto;
+
+  .temp-header {
+    color: #000000;
+  }
+
+  .temp-footer {
+    font-size: 12px;
+    color: #888;
+  }
+
+}
+:host ::ng-deep .richtext,
+:host ::ng-deep .richtext * {
+  color: #333 !important;
+}
+
+.teambox-preview{
+  color: black;
+  font-weight: 500;
+}
+
+:host ::ng-deep .richtext div {
+  display: block;
+  margin: 0 0 1em 0;
+  font-size: inherit;
+  line-height: inherit;
+  font-family: inherit;
+}
+
+:host ::ng-deep .richtext p,
+:host ::ng-deep .richtext div {
+  color: #333;
+}
+:host ::ng-deep app-whatsapp-message-preview .teambox-body,
+:host ::ng-deep app-whatsapp-message-preview .teambox-body * {
+  font-family: inherit;
+  font-size: 14px;
+  line-height: 1.4;
+  color: #333;
+}

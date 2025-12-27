@@ -1,0 +1,211 @@
+
+<ng-template #addNewItemss let-modal id="addNewItemss">
+    <div class="modal-header">
+        
+        <div class="modal-header-left">
+            <h4 class="modal-title" id="modal-basic-title">Create List</h4>
+        </div>
+        <div class="modal-header-right">
+            <div style="cursor:pointer" class="close-box" aria-label="Close" (click)="closeFilter()"><img src="assets/img/teambox/icon-close.svg"></div>
+        </div>
+    </div>
+    <div class="overlay" *ngIf="showContactFilter" (click)="showContactFilter=!showContactFilter"></div>
+    <div class="overlay" *ngIf="showFilterByOption" (click)="showFilterByOption=!showFilterByOption"></div>
+    
+    <div class="modal-body addnewitem">
+        
+        <div class="addnewitem-content">
+            <div class="addnewitem-content-left filterby">
+                <div *ngIf="selectedcontactFilterBy">
+                
+                <p>Filter {{selectedcontactFilterBy.label}}</p>
+                
+                
+                <div *ngFor="let addedF of ContactListNewFilters; let i=index;let last = last;">
+                        <div *ngIf="i<ContactListNewFilters.length-1">
+                        
+                                <div *ngIf="addedF?.filterOperator && i != 0" class="addnewitem_content_inner">
+                                    <div class="switchbtn">
+                                        <p [ngClass]="addedF?.filterOperator=='AND' ? 'left active' : 'left'">AND</p>
+                                        <p [ngClass]="addedF?.filterOperator=='OR' ? 'right active' : 'right'">Or</p>
+                                    </div>
+                                </div>
+                                <div class="d-flex">
+                                <div class="formrow form-filter-type w-100">
+                                    <p class="form-control">
+                                        {{getActualName(addedF?.filterPrefix)}}
+                                    </p>
+                                </div>
+                                <div class="formrow form-filter-type w-100">
+                                    <p class="form-control">
+                                        {{addedF?.filterBy}}
+                                    </p>
+                                </div>
+                            </div>
+
+                                <div class="addnewitem_content_inner">
+                                    <p><span>Value</span></p>
+                                    <div class="formrow">
+                                        <input type="text" class="form-control" value={{addedF.filterValue}} >
+                                    </div>
+                                </div>
+
+                        </div>
+
+                        <div *ngIf="i==ContactListNewFilters.length-1">
+                        
+                            <div *ngIf="ContactListNewFilters.length>1 " class="addnewitem_content_inner">
+                                <div class="switchbtn">
+                                    <p [ngClass]="addedF?.filterOperator=='AND' ? 'left active' : 'left'" (click)="selectFilterOperator(i,'AND')">AND</p>
+                                    <p [ngClass]="addedF?.filterOperator=='OR' ? 'right active' : 'right'"  (click)="selectFilterOperator(i,'OR')">Or</p>
+                                </div>
+                            </div>
+                            <div class="d-flex">
+                            <div class="formrow w-100 form-filter-type">
+                                <p (click)="toggleContactFilter();showContact=!showContact"  class="form-control select_box btn">
+                                    {{selectedcontactFilterBy.label}}
+                                </p>
+                                <!-- *ngIf="showContactFilter"  -->                                 
+                                <div *ngIf="showContactFilter" class="popup-dialog">
+                                    <p class="label">Select Column</p>
+                                    <p *ngFor="let filterItem of contactFilterBy" (click)="selectContactFilter(i,filterItem)">
+                                        <span>{{filterItem?.label}}</span>
+                                    </p>
+                                </div>
+        
+                            </div>
+
+                            <div class="formrow w-100 form-filter-type">
+                                <p (click)="toggleFilterByOption()"  class="form-control select_box btn">
+                                    {{addedF?.filterBy}}
+                                </p>
+                                <div *ngIf="showFilterByOption" class="popup-dialog">
+                                    <p *ngFor="let option of selectedcontactFilterBy.option ;let k = index" (click)="selectFilterBy(i,selectedcontactFilterBy,option)">
+                                        <span>{{option?.label}}</span>
+                                    </p>
+                                </div>
+
+                            </div>
+                        </div>
+
+                            <div class="addnewitem_content_inner" *ngIf="addedF?.filterType !='switch' &&  addedF?.filterType != 'none'" >
+                                <p><span>Value</span></p>
+                                
+                                <div *ngIf="addedF?.filterType =='text' " class="formrow">
+                                    <input type="text" class="form-control" value={{addedF.filterValue}}  (change)="selectFilterValue(i,$event)">
+                                </div>
+
+                                <div *ngIf="addedF?.filterType =='number' " class="formrow">
+                                    <input type="number" class="form-control" value={{addedF.filterValue}} (change)="selectFilterValue(i,$event)">
+                                </div>
+
+
+                                <div *ngIf="addedF?.filterType =='date'" class="formrow dateview">
+                                    <input type="date" class="form-control" name="start_date" value={{addedF.filterValue}}  (change)="selectFilterDates(i,$event)">
+                                </div>
+
+                                <div *ngIf="addedF?.filterType =='d_date'" class="formrow dateview">
+                                    <input type="date" class="form-control" name="start_date" [value]="extractslace('start_date',addedF?.filterValue)"  (change)="selectFilterDates(i,$event)">
+                                    <input type="date" class="form-control" name="end_date" [value]="extractslace('end_date',addedF?.filterValue)" (change)="selectFilterDates(i,$event)">
+                                </div>
+
+                                <div *ngIf="addedF?.filterType =='time'" class="formrow dateview">
+                                    <input type="time" class="form-control" name="start_date" value={{addedF.filterValue}}  (change)="selectFilterDates(i,$event)">
+                                </div>
+
+                                <div *ngIf="addedF?.filterType =='d_time'" class="formrow dateview">
+                                    <input type="time" class="form-control" name="start_date" [value]="extractslace('start_date',addedF?.filterValue)"  (change)="selectFilterDates(i,$event)">
+                                    <input type="time" class="form-control" name="end_date" [value]="extractslace('end_date',addedF?.filterValue)"  (change)="selectFilterDates(i,$event)">
+                                </div>
+
+                                <div *ngIf="addedF?.filterType =='datetime'" class="formrow dateview">
+                                    <input type="datetime-local" class="form-control" name="start_date" value={{addedF.filterValue}}  (change)="selectFilterDates(i,$event)">
+                                    <input type="datetime-local" class="form-control" name="end_date"  (change)="selectFilterDates(i,$event)">
+                                </div>
+                                <div *ngIf="addedF?.filterType =='d_datetime'" class="formrow dateview">
+                                    <input type="datetime-local" class="form-control" name="start_date" value={{addedF.filterValue}}  (change)="selectFilterDates(i,$event)">
+                                </div>
+
+
+                                <div *ngIf="addedF?.filterType =='select'" class="formrow">
+                                    <p (click)="toggleFilterTagOption()"  class="form-control select_box btn">
+                                        {{addedF?.filterValue}}
+                                    </p>
+                                    <div *ngIf="showFilterTagOption" class="popup-dialog">
+                                        <p *ngFor="let option of addedF.selectedOptions ;let l = index" (click)="selectFilterOption(i,option)">
+                                            <span>{{option}}</span>
+                                        </p>
+                                    </div>
+                                </div>
+                                <div *ngIf="addedF?.filterType =='user'" class="formrow">
+                                    <p (click)="toggleFilterTagOption()"  class="form-control select_box btn">
+                                        {{addedF?.filterValue}}
+                                    </p>
+                                    <div *ngIf="showFilterTagOption" class="popup-dialog">
+                                        <p *ngIf="addedF?.filterPrefix == 'Conversation Assigned to'" (click)="selectFilterOption(i,'Unassigned')">
+                                            <span>Unassigned</span>
+                                        </p>
+                                        <p *ngIf="addedF?.filterPrefix == 'Conversation Assigned to' || addedF?.filterPrefix == 'Last Conversation With'" (click)="selectFilterOption(i,'bot')">
+                                            <span>bot</span>
+                                        </p>
+                                        <p *ngIf="addedF?.filterPrefix == 'Creator'" (click)="selectFilterOption(i,'System')">
+                                            <span>System</span>
+                                        </p>
+                                        <p *ngFor="let option of userList ;let l = index" (click)="selectFilterOption(i,option?.name)">
+                                            <span>{{option?.name}}</span>
+                                        </p>
+                                    </div>
+                                </div>
+                                <div *ngIf="addedF?.filterType =='select_opt' || addedF?.filterType =='multi_select_opt'" class="formrow">
+                                    <p (click)="toggleFilterTagOption()"  class="form-control select_box btn">
+                                        {{addedF?.filterValue}}
+                                    </p>
+                                    <div *ngIf="showFilterTagOption" class="popup-dialog">
+                                        <p *ngFor="let option of addedF.selectedOptions ;let l = index" (click)="selectFilterOption(i,option?.optionName)">
+                                            <span>{{option?.optionName}}</span>
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+
+                        <div class="filter_buttons">
+                            <button *ngIf="!last" type="button" class="btn remove-btn" (click)="removeFilter(i)">- Remove</button>
+                            <button *ngIf="last" type="button" class="btn add-btn" (click)="addNewFilter()">+ Add</button>
+                        </div>
+                
+                </div>					 
+                <div  class="addnewitem_content_inner">
+                  <div class="input_group_btn">
+                    <button type="button" class="submit-btn" (click)="addFilter()">Update</button>
+                </div>
+                </div>
+
+            </div>
+
+            </div>
+
+            <div class="addnewitem-content-left">
+                <p>Filter</p>
+                
+
+                <div class="applied_filter_popup">
+                    <div class="item" *ngFor="let filter of selectedcontactFilterBy.addeFilter; let i=index;let last = last;" title="Click to remove">
+                        <div class="d-flex">
+                        <span *ngIf="filter?.filterOperator">{{filter.filterOperator}} </span>
+                        <p>{{getActualName(filter?.filterPrefix)}} {{filter?.filterBy}} {{filter?.filterValue}}</p>
+                    </div>
+                        <div  style="cursor:pointer;" (click)="removeFilter(i)"><img src="../../../../assets/img/settings/remove.svg" /></div>
+                    </div>
+                </div>	
+
+            </div>
+        </div>
+        <div class="input_group_btn">
+              <button type="button" class="submit-btn" aria-label="Close" (click)="createListFromFilters()">Apply</button>
+        </div>
+
+    </div>
+    
+</ng-template>

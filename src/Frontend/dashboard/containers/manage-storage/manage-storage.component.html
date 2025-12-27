@@ -1,0 +1,246 @@
+<div class="toaster" (click)="hideToaster()">
+    <p *ngIf="errorMessage" class="error">{{errorMessage}}</p>
+    <p *ngIf="successMessage" class="success">{{successMessage}}</p>
+    <p *ngIf="warnMessage" class="warn">{{warnMessage}}</p>
+  </div>
+  <sb-loader [isLoading]="isLoading"></sb-loader>
+<div class="d-flex">
+    <div class="setting-card storage-card">
+        <div class="default-actions-heading">Manage Storage</div>
+        <div class="pt-4">
+            <figure class="figure">
+                <ng-container>
+                  <svg viewBox="0 0 36 36" class="circular-chart blue" >
+                    <title>{{percentage}}% of Total Storage Utilized by User</title>
+                    <path
+                      class="circle-bg"
+                      d="M18 2.0845
+                          a 15.9155 15.9155 0 0 1 0 31.831
+                          a 15.9155 15.9155 0 0 1 0 -31.831"
+                    />
+                    <path
+                      class="circle"
+                      [attr.stroke-dasharray]="formattedDashArray"
+                      d="M18 2.0845
+                          a 15.9155 15.9155 0 0 1 0 31.831
+                          a 15.9155 15.9155 0 0 1 0 -31.831"
+                    />
+                    <text x="18" y="22.35" class="percentage">{{percentage}}%</text>
+                  </svg>
+
+              </ng-container>
+              </figure>
+        </div>
+        <div class="text-align-center"> 
+            <span class="default-actions-heading">Storage Utilization</span>
+            <p><span class="storage-number">{{storageUtilization}} GB</span> Used of {{totalStorage}} GB</p>
+        </div>
+        <div class="d-flex justify-content-around">
+            <button type="button" class="account-btn" >Update Plan</button>
+            <button type="button" class="del-btn"  data-bs-toggle="modal" data-bs-target="#Delete-Manually" (click)="resetData()">Delete Manually</button>
+        </div>
+    </div>
+    
+    <div class="setting-card deletion-card ml-3">
+      <div class="flex-row">
+        <div class="default-actions-heading">Auto-Deletion</div>
+        <button class="account-white-btn mx-1" data-bs-toggle="modal" (click)="patchFormValue()" data-bs-target="#edit-auto-deletion">
+            <img class="p-0" src="../../../../assets/img/edit.png">
+        </button>
+    </div>
+
+    <div class="d-flex align-items-center pb-3 pt-3">
+        <div class="auto-deletion-img">
+          <img class="img0" src="../../../../assets/img/manage-storage/manage-storage2.png">
+        </div>
+        <div class="pl-3">
+            <span class="sub-heading">Auto-Delete all messaged older than</span>
+            <div *ngIf="autodeletion_message !== '-1'" class="deletion-time">{{autodeletion_message}} Days</div>
+            <div *ngIf="autodeletion_message == '-1'" class="deletion-time">Don't Delete</div>
+        </div>
+    </div>
+
+    <div class="d-flex align-items-center pb-3">
+        <div class="auto-deletion-img image1">
+          <img class="img1" src="../../../../assets/img/manage-storage/manage-storage1.png">
+        </div>
+        <div class="pl-3">
+            <span class="sub-heading">Auto-Delete all Media older than</span>
+            <div *ngIf="autodeletion_media !== '-1'" class="deletion-time">{{autodeletion_media}} Days</div>
+            <div *ngIf="autodeletion_media == '-1'" class="deletion-time">Don't Delete</div>
+        </div>
+    </div>
+
+    <div class="d-flex align-items-center pb-3">
+        <div class="auto-deletion-img">
+          <img class="img2" src="../../../../assets/img/manage-storage/manage-storage.png">
+        </div>
+        <div class="pl-3">
+            <span class="sub-heading">Auto-Delete all Contacts older than</span>
+            <div *ngIf="autodeletion_contacts !== '-1'" class="deletion-time">{{autodeletion_contacts}} Days</div>
+            <div *ngIf="autodeletion_contacts == '-1'" class="deletion-time">Don't Delete</div>
+        </div>
+    </div>
+    </div>
+    <div class="modal fade" tabindex="-1" id="edit-auto-deletion" data-bs-backdrop="static" role="dialog">
+        <div class="m-auto d-flex justify-content-center align-items-center h-100 modal-dialog" role="document">
+            <div class="m-0 modal-content edit-auto-deletion">
+                <div class="align-items-center modal-header">
+                    <h5 class="modal-title">Edit Auto-Deletion</h5>
+                    <button type="button" class="close-box" data-bs-dismiss="modal" aria-label="Close">
+                        <img src="../../../../assets/img/teambox/icon-close.svg">
+                    </button>
+                </div>
+                <form [formGroup]="editAutoDeletionForm" autocomplete="off" (ngSubmit)="editAutoDeletion()">
+                    <div class="px-5 pt-4 modal-body edit-auto-deletion">
+                      <div class="py-3 option-1">
+                        <p>Auto-Delete all messages older than</p>
+                        <div class="d-flex justify-content-between align-items-center">
+                          <label for="autodeletion_message">
+                            <input type="text" class="option-input" id="autodeletion_message" 
+                                   onKeyPress="if(this.value.length==3) return false; return /^[0-9]$/.test(event.key)"
+                                   formControlName="autodeletion_message"> Days
+                          </label>
+                  
+                          <div class="optionradio">
+                            <input id="optionradio1" type="radio" name="optionradio1"  value="1" [checked]="autodeletion_message == '-1'" formControlName="optionradio1">
+                            <label class="optionradio1" for="optionradio1">Never Delete</label>
+                          </div>
+                        </div>
+                      </div>
+                  
+                      <div class="py-3 option-2">
+                        <p>Auto-Delete all Media older than</p>
+                        <div class="d-flex justify-content-between align-items-center">
+                          <label for="autodeletion_media">
+                            <input type="text" id="autodeletion_media" class="option-input" 
+                                   onKeyPress="if(this.value.length==3) return false; return /^[0-9]$/.test(event.key)" 
+                                   formControlName="autodeletion_media"> Days
+                          </label>
+                  
+                          <div class="optionradio">
+                            <input id="optionradio2" type="radio" name="optionradio2" value="1" [checked]="autodeletion_media == '-1'" formControlName="optionradio2">
+                            <label class="optionradio2" for="optionradio2" >Never Delete</label>
+                          </div>
+                        </div>
+                      </div>
+                  
+                      <div class="py-3 option-3">
+                        <p>Auto-Delete all Contacts older than</p>
+                        <div class="d-flex justify-content-between align-items-center">
+                          <label for="autodeletion_contacts">
+                            <input type="text" id="autodeletion_contacts" class="option-input" 
+                                   onKeyPress="if(this.value.length==3) return false; return /^[0-9]$/.test(event.key)" 
+                                   formControlName="autodeletion_contacts"> Days
+                          </label>
+                          <div class="optionradio">
+                            <input id="optionradio3" type="radio" name="optionradio3" value="1" [checked]="autodeletion_contacts == '-1'" formControlName="optionradio3">
+                            <label class="optionradio3" for="optionradio3" >Never Delete</label>
+                          </div>
+                         
+                        </div>
+                      </div>
+                    </div>
+                  
+                    <div class="modal-footer">
+                      <button type="submit" class="account-btn">Save</button>
+                    </div>
+                  </form>
+                  
+            </div>
+        </div>
+    </div>
+    
+</div>
+
+
+<div class="modal fade" tabindex="-1" id="Delete-Manually" data-bs-backdrop="static" role="dialog">
+
+    <div class="modal-dialog" role="document">
+        <div class="modal-content deletemodal p-2 pl-3">
+            <div class="pb-4 modal-header">
+                <h5 class="modal-title manually">Delete Manually</h5>
+                <button type="button" (click)="resetForm()" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
+                    <img src="../../../../assets/img/teambox/icon-close.svg">
+                </button>
+            </div>
+         <form #deleteManually="ngForm" autocomplete="off">
+          <div class="row d-flex">
+          <div class=" col-7 pl-4 modal-body Allmesaages">
+            <div>
+            <div class="messages">
+            <div class="delte-messages">
+                <p class="head-messages" >Messages older than how many<br> days you want to delete?</p>
+            </div>
+            <div class="d-flex input-days">
+              <input class="message-input" type="text" name="manually_deletion_days" [(ngModel)]="manually_deletion_days" 
+                 onKeyPress="if(this.value.length==3) return false; return /^[0-9]$/.test(event.key)">
+              <p>Days</p>
+            </div>
+        </div>
+        <div class="messages">
+            <div class="delte-messages">
+                <p class="head-messages" >Which type of messages you<br> want to delete?</p>
+            </div>
+            <div class="input-days">
+                <div class="custom-control custom-checkbox check-input">
+                  <input class="custom-control-input text-media" type="checkbox"  id="custom-control-input2" name="textChecked" [(ngModel)]="textChecked" (change)="updateMessageType()" value="Text" >
+                <label class="custom-control-label d-flex" for="custom-control-input2" >
+                  <p class="text-checkbox">Text</p>
+            </label>
+
+            <div class="custom-control custom-checkbox check-input">
+            <input  class="custom-control-input text-media" type="checkbox"   id="custom-control-input1" name="mediaChecked"  [(ngModel)]="mediaChecked" (change)="updateMessageType()" value="media">
+            <label class="custom-control-label d-flex" for="custom-control-input1">
+             <p class="text-checkbox">Media</p>
+            </label>
+            </div>
+        </div>
+            </div>
+        </div>
+    </div>
+        <div class="modal-footer show">
+            <button type="button" class="show-btn" (click)="getmanualDelation()">Show</button>
+        </div>
+          </div>
+          <div class="col-4 show-message"  *ngIf="showMessages" >
+            <div *ngIf="!message_type" class="displaymessage">- -</div>
+            <div *ngIf="message_type == 'Text'" class="displaymessage">{{ message_count }}</div>
+            <div *ngIf="message_type == 'Media'"  class="displaymessage">{{ mediaCount }}</div>
+            <div *ngIf="message_type == 'Both'"  class="displaymessage">{{ combinedCount }}</div>
+            <div class="show-messages">
+                <p>No of Messages</p>
+            </div>
+            <div *ngIf="!message_type" class="displaymessage">- -</div>
+            <div *ngIf="message_type == 'Text'" class="displaymessage">{{ message_size }} MB</div>
+            <div *ngIf="message_type == 'Media'" class="displaymessage">{{ totalSize }} MB</div>
+            <div *ngIf="message_type == 'Both'"  class="displaymessage">{{ combinedSize }} MB</div>
+            <div  class="show-messages">
+               <p> Size of Message</p>
+            </div>
+        </div>
+    </div>
+            <div class="modal-footer">
+                <button type="button" (click)="deletemodal()" class="account-button">Proceed</button>
+            </div>
+          </form>
+        </div>
+    </div>
+</div>
+<div class="modal fade" tabindex="-1" id="messagedeleteModal" data-bs-backdrop="static" role="dialog">
+    <div class="m-auto d-flex justify-content-center align-items-center h-100 modal-dialog" role="document">
+        <div class="m-0 modal-content delete-modal">
+            <div class="modal-body alertmessage">
+             <p *ngIf="message_type == 'Text'">You are about to delete <b>{{ message_count}} messages</b>,which will free up<br /> <b>{{ message_size }} MB</b> of data for you</p>
+             <p *ngIf="message_type == 'Media'">You are about to delete <b>{{ mediaCount}} messages</b>,which will free up<br /> <b>{{ totalSize }} MB</b> of data for you</p>
+             <p *ngIf="message_type == 'Both'">You are about to delete <b>{{ combinedCount}} messages</b>,which will free up<br /> <b>{{ combinedSize }} MB</b> of data for you</p>
+                <p class="label pb-2"><b>Please</b> confirm to <b>delete</b></p>
+                <div class="delete_group_button d-flex justify-content-center">
+                    <button type="button" class="cancel-btn" aria-label="Close" (click)="resetForm()"
+                        data-bs-dismiss="modal">Cancel</button>
+                        <button type="button" class="delete-btn" aria-label="Close" (click)="postmanualDelation()">Yes, Delete</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

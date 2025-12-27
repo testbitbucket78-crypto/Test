@@ -1,0 +1,12 @@
+<!-- whats app preview  -->
+<div *ngIf="type === 'whatsapp'" class="message_data preview">
+  <span *ngIf="header" class="temp-header font-weight-bolder">{{ header }}</span>
+  <span *ngIf="body" class="richtext BodyText" [innerHTML]="formattedBody"></span>
+  <span *ngIf="footer" class="temp-footer">{{ footer }}</span>
+</div>
+
+<!-- Team box Preview  -->
+ <!-- 👥 TeamBox Preview -->
+<div *ngIf="type === 'teambox'" class="message_data teambox-preview">
+  <div class="teambox-body" [innerHTML]="formattedBody" [attr.id]="elementId"></div>
+</div>

@@ -1,0 +1,42 @@
+{
+    "angularCompilerOptions": {
+        "enableIvy": false,
+        "fullTemplateTypeCheck": true,
+        "preserveWhitespaces": false,
+        "strictTemplates": false,
+        "strictInjectionParameters": false
+    },
+    "compileOnSave": false,
+    "compilerOptions": {
+        "baseUrl": "src",
+        "declaration": false,
+        "downlevelIteration": true,
+        "emitDecoratorMetadata": true,
+        "esModuleInterop": true,
+        "experimentalDecorators": true,
+        "importHelpers": true,
+        "lib": ["es2022", "dom"],
+        "module": "es2022",
+        "moduleResolution": "node",
+        "noImplicitAny": true,
+        "outDir": "./dist/out-tsc",
+        "typeRoots": ["node_modules/@types"],
+        "paths": {
+            "@app/*": ["app/*"],
+            "@common/*": ["modules/app-common/*"],
+            "@modules/*": ["modules/*"],
+            "@testing/*": ["testing/*"]
+        },
+         
+        "resolveJsonModule": true,
+        "sourceMap": true,
+        "strict": true,
+        "target": "es2022",
+        "typeRoots": ["node_modules/@types", "src/typings"],
+        "types": ["@angular/localize"]
+    },
+    "include": [
+        "src/**/*",
+        "index.d.ts",   // declaration file path
+      ],
+}

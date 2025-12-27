@@ -1,0 +1,612 @@
+.container-empty-state {
+    font-family: 'Manrope';
+}
+
+.container-empty-state {
+    height: 65vh;
+}
+
+.body-empty-state img {
+    width: 90px;
+    height: 75px;
+}
+
+.body-empty-state h5 {
+    font-weight: 700;
+}
+
+.body-empty-state p{
+    color: #7A86A1;
+}
+
+.content-head.d-flex {
+    display: flex !important;
+    justify-content: space-between;
+    padding:0 3.5 0 2%;
+}
+
+.input-group > .form-control, .input-group > .form-control-plaintext, .input-group > .custom-select, .input-group > .custom-file {
+    position: relative;
+    border-radius: 19px;
+    border: 1px solid #EBEBEB;
+    background-color: #ffffff;
+    font-family: 'Manrope';
+    font-size: 14px;
+    min-width: 350px;
+    min-height: 45px;
+    padding: 20px 35px;
+    margin: 0;
+}
+
+// .sideBar-header {
+//     padding: 34px 0 35px 0px;
+//     position: fixed;
+//     right: 0
+// }
+// .collumn{
+//     margin: 26% 0% 6% 6%;
+// }
+
+.channel-selected {
+    margin: 0 3px 0 0;
+    width: 14px;
+    height: 14px;
+}
+.sideBar-body {
+    // margin-top: 75px;
+    // margin-bottom: 20px;
+    overflow-y: scroll;
+    height: 80%;
+    width: 400px;
+    margin: 70px 0 10px 0;
+  }
+    
+.content-header {
+    padding: 0 1.5% 0 1.5%;
+}
+
+
+.add-smartrep-btn {
+   
+    color: #6149cd;
+    font-weight: 700;
+    background-color: #ffffff;
+    border: 1px solid #EBEBEB;
+    border-radius: 17px;
+    font-family: "Manrope";
+    font-size: 14px;
+    width: 165px;
+    height: 45px;
+    cursor: pointer;
+}
+
+
+.btn:not(:disabled):not(.disabled):hover {
+    cursor: pointer;
+    color: #6149CD;
+    box-shadow: 1px 8px 29px #695F9724;
+    opacity: 1;
+    font-weight: bolder;
+}
+
+.add-smartrep-btn img {
+    height: 14px;
+    margin: 4px;
+}
+
+.card{
+    display: flex;
+    flex-direction: row;
+    opacity: 1;
+    font-family: 'Manrope';
+    margin: 0 0 25px 0;
+    border: none;
+}
+
+.card-body {
+    background-color: #FDEFEF;
+    border-radius: 25px;
+    cursor: pointer;
+}
+.card .id{
+    color: #7A86A1;
+    font-size: 12px;
+    margin-bottom: 5px;
+    font-family: 'Manrope';
+}
+.card .card-title {
+    margin-bottom: 0.75rem;
+    margin-left: 11px;
+    font-weight: 500;
+    font-size: 15px;
+    font-family: 'Manrope';
+    letter-spacing: -0.5px;
+
+}
+.card p {
+    margin-top: 0;
+    color: #7A86A1;
+    margin-left: 14px;
+    text-align: justify;
+    font-size: 13px;
+    font-family: 'Manrope';
+}
+.card .text-muted {
+    color: #000000!important;
+    font-size: 11px;
+    font-family: 'Manrope';
+    font-weight: 400;
+}
+
+.card-text {
+    word-break: break-word;
+}
+
+h6.text-justify{
+    word-break: break-word;
+}
+
+.card .card1 .card-text1{
+    display: block;
+}
+.card .card1 .card-text2{
+    display: block;
+    margin: 0 0 0 40px;
+}
+.card .card1 .card-text2 p{
+    color: #000000;
+    font-size: 15px;
+    margin-top: 7px;
+    word-break: break-word;
+}
+.card .card1 .card-text2 h6{
+    color: #7A86A1;
+    font-size: 10px;
+    margin-top: -12px;
+}
+.card .card1 .card-text1 p{
+    color: #000000;
+    font-size: 15px;
+    margin-top: 7px;
+}
+.card .card1 .card-text1 h6{
+    color: #7A86A1;
+    font-size: 10px;
+    margin-top: -12px;
+}
+
+.input-group.gf {
+    width: auto;
+}
+.gf img {
+    position: absolute;
+    margin: 15px 0px 0px 13px!important;
+    width: 15px;
+    height: 15px;
+}
+// .input-group > .form-control:not(:last-child), .input-group > .custom-select:not(:last-child) {
+   
+//     margin: 0px 0px 0px -20px;
+//     padding: 0px 0px 0px 34px;
+// }
+.sidebar {
+    height: 100%;
+    width: 400px;
+    position: fixed;
+    z-index: 1040;
+    top: 0;
+    right: 0;
+    background-color: #FBF9FE;
+    overflow-x: hidden;
+    transition: 0.5s;
+  }
+  .sidebar .btn5{
+    border: 1px solid #EBEBEB;
+    border-radius: 15px;
+    background-color: #ffffff;
+    float: right;
+    width: inherit;
+    height: inherit;
+    // margin-top: 33px;
+    margin-right: 15px;
+    outline: none;
+  }
+
+  .sidebar .btn5 img {
+    width: 11px;
+  }
+
+  .sidebar::-webkit-scrollbar {
+    display: none;
+  }
+
+  .col-md-12 {
+
+    max-width: 100%;
+    margin-left: 3px;
+  }
+
+  .collumn h6 {
+
+    font-size: 12px;
+    color: #7A86A1;
+    font-family: 'Manrope';
+}
+
+
+.collumn h5 {
+
+    font-size: 12px;
+    color: #000000;
+    font-family: 'Manrope';
+}
+
+.collumn .line {
+    width: 1px;
+    height: 13px;
+    background-color: #7A86A1;
+    margin: 0px 10px 0px 10px;
+}
+
+.row {
+    margin-right: 1.25rem;
+    margin-left: 1.25rem;
+}
+
+.row.r1 {
+    display: flex;
+    flex-direction: column;
+    padding: 0% 4% 0% 4%;
+}
+
+.row h6 {
+
+    font-size: 14px;
+    color: #7A86A1;
+    font-family: 'Manrope';
+    margin: 3px 0px 0px 14px;
+}
+
+h4 {
+    font-family: 'Manrope';
+    color: #000000;
+    font-size: 21px;
+    font-weight: bold;
+    margin: 15px 0px 15px 17px;
+}
+
+h3{
+        color: #6149CD;
+        font-family: 'Manrope';
+        font-size: 14px;
+        margin: 20px 0px 20px 20px;
+        font-weight: bold;
+    }
+    // .box{
+    //     width: 120px;
+    //     height: 30px;
+    //     background-color: #ffffff;
+    //     border-radius: 20px;
+    //     border: 1px solid #EBEBEB;
+    //     margin: 5px -34px 0px 40px;
+    // }
+   
+//     .box1 h6{
+//         font-size: 15px;
+//         color: #7A86A1;
+//         font-family: Manrope;
+//     border-radius: 20px;
+//     border: 1px solid #EBEBEB;
+// }
+
+.box3 {
+    width: 130px;
+    height: 30px;
+    background-color: #ffffff;
+    border-radius: 20px;
+    border: 1px solid #EBEBEB;
+    margin: 7px 0px 7px 0px;
+}
+
+.sidebar_box1 h6 {
+    font-size: 15px;
+    color: #7A86A1;
+    font-family: 'Manrope';
+    margin: 20px 0px 10px 26px;
+}
+
+.sidebar_box1 h5 {
+    color: #000000;
+    font-family: 'Manrope';
+    font-size: 15px;
+    margin: 20px 0px 10px 5px;
+    font-weight: 800;
+}
+
+.sidebar_box p {
+    color: #000000;
+    font-family: 'Manrope';
+    font-size: 14px;
+    font-weight: 600;
+    text-align: center;
+    line-height: 25px;
+}
+
+.sidebar_box {
+    max-width: fit-content;
+    height: 30px;
+    line-height: 30px;
+    padding-left: 10px;
+    padding-right: 10px;
+    background-color: #ffffff;
+    border-radius: 20px;
+    border: 1px solid #EBEBEB;
+    margin-left: 8px;
+    margin-bottom: 10px;
+}
+
+
+.box4 {
+    // width: 90%;
+    background-color: #ffffff;
+    border-radius: 20px;
+    border: 1px solid #EBEBEB;
+    margin: 10px 80px 0px 20px;
+}
+
+.box4 h3 {
+    font-family: 'Manrope';
+    font-size: 14px;
+    color: #6149CD;
+    margin: 20px 0px 20px 12px!important;
+}
+
+.box4 p {
+    font-family: 'Manrope';
+    font-size: 14px;
+    color: #000000;
+    padding: 0 6px 0 6px;
+}
+
+.mt-4 {
+    font-size: 51px;
+}
+
+.sidebar .footer {
+    // position: relative;
+    // margin-top: -46px;
+    z-index: 1040;
+    // border-top: 1px solid #ebebeb;
+    background: #FBF9FE 0% 0% no-repeat padding-box;
+
+}
+.sidebar .footer .btn1{
+margin: 22px 0 0 16pc;
+background: #FFFFFF;
+box-shadow: 1px 8px 29px #695F9724;
+border: 1px solid #EBEBEB;
+border-radius: 19px;
+opacity: 1;
+width: 20px;
+height: 24px;
+}
+#Edit-icon {
+ padding: 6px;   
+}
+.bb.d-flex {
+    font-family: "Manrope";
+    padding: 20px;
+}
+.deletesmartreplies-content {
+      
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    width: 310px;
+    height: 196px;
+    pointer-events: auto;
+    background: #ffffff 0% 0% no-repeat padding-box;
+    box-shadow: 4px 22px 54px #695F971A;
+    border-radius: 30px;
+    outline: 0;
+    border: none;
+}
+
+.deletesmartreplies-body {
+    font-family: "Manrope";
+    font-size: 14px;
+    top: 40px;
+    font-weight: 600;
+    text-align: center;
+}
+
+ .deletefile .btn9 {
+    border: 1px solid #695F9724;
+    position: absolute;
+    font-size: 11px;
+    font-family: "Manrope";
+    background-color: #ffffff;
+    color: #7A86A1;
+    margin: -58px 22px 15px 61px;
+    border-radius: 15px;
+    width: 80px;
+    height: 32px;
+    outline: none;
+    border: none;
+    cursor: pointer;
+}
+ .deletefile .btn99 {
+    border: 1px solid #695F9724;
+    position: absolute;
+    font-size: 11px;
+    font-family: "Manrope";
+    color: #ffffff;
+    background: #F23B3B;
+    width: 93px;
+    top: 70%;
+    left: 52%;
+    height: 33px;
+    border-radius: 14px;
+    outline: none;
+    border: none;
+    cursor: pointer;
+ 
+}
+.footer .delete-btn {
+    margin: 0;
+    padding: 0;
+    width: 45px;
+    height: 45px;
+    text-decoration: none;
+    outline: none;
+    border: 1px solid #ebebeb;
+    background: #FFFFFF 0% 0% no-repeat padding-box;
+    box-shadow: 1px 8px 29px #695F9724;
+    border-radius: 19px;
+    opacity: 1;
+}
+.bs-stepper {
+    width: 1109px!important;
+    height: 597px!important;
+}
+
+// button:not(:disabled), [type=reset]:not(:disabled) {
+//     font-size: 11px;
+//     width: 126px;
+//     height: 36px;
+//     margin: 62px 0px 0px 489px; 
+// }
+// .card {
+//     width: 329px;
+//     height: 249px;
+//     margin: 0 18px 29px;
+// }
+.col-md-12 {
+width: 100%;
+margin-left: -17px;
+}
+.card .card1 .card-text1 h6 {
+margin-top: -12px;
+}
+.card .card1 .card-text2 h6 {
+margin-top: -12px;
+}
+#close-btn {
+    width: 40px;
+    height: 40px;
+    background: #FFFFFF;
+    border-radius: 17px;
+    opacity: 1;
+    border: 1px solid #ebebeb;
+    font-family: "Manrope";
+    font-size: 13px;
+    margin: 21px 31px 0 0;
+}
+.modal-content {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    pointer-events: auto;
+    background: #FFFFFF 0% 0% no-repeat padding-box;
+    box-shadow: 4px 22px 54px #695F971A;
+    border-radius: 30px;
+    outline: 0;
+    border: none;
+}
+.modal-dialog .modal-content .modal-body {
+   font-family: "Manrope";
+    font-size: 14px;
+    font-weight: 800;
+}
+
+.addsmartreplies.modal-dialog {
+    display: flex;
+    justify-content: center;
+    max-width: 65rem;
+    padding: 0;
+}
+.modal-dialog .modal-content .deletefile .btn9 {
+    border: 1px solid #695F9724;
+    position: absolute;
+    background-color: #ffffff;
+    color: #7A86A1;
+    margin: -58px 22px 15px 61px;
+    border-radius: 15px;
+    width: 80px;
+    cursor: pointer;
+}
+.modal-dialog .modal-content .deletefile .btn99 {
+    border: 1px solid #695F9724;
+    position: absolute;
+    color: #ffffff;
+    background: #F23B3B;
+    width: 93px;
+    top: 70%;
+    left: 52%;
+    border-radius: 14px;
+    cursor: pointer;
+}
+.form-inline .input-group, .form-inline .custom-select {
+    max-width: 340px;
+    margin-left: 17px;
+}
+#delete-tok{
+    width: 65rem;
+}
+
+.sidebar-assign-conversation {
+    background: #f6efff;
+    border: 1px solid #ebebeb;
+    border-radius: 12px;
+    opacity: 1;
+    max-width: 65%;
+    max-height: 20%;
+    margin-left: 1.5em;
+    margin-top: 0.5em;
+    font-family: 'Manrope';
+}
+
+#sidebar-msgbox-head1 {
+    text-align: left;
+    letter-spacing: 0px;
+    color: #6149cd;
+    font-size: 11px;
+    margin-left: 1em;
+    margin-top: 0.5em;
+}
+
+#sidebar-msgbox-body1 {
+    font-size: 12px;
+}
+
+#sidebar-msgbox-body2 {
+    font-size: 11px;
+    font-weight: 500;
+}
+
+.reply-action-btn {
+    cursor: pointer;
+}
+
+.keywords-btn {
+    cursor: pointer;
+}
+
+.help-support-btn {
+    cursor: pointer;
+}
+
+body.modal-open {
+    overflow: hidden;
+    position: fixed;
+}
+
+.box4 p {
+    margin-bottom: 0px !important;
+  }
+  .box4 p p {
+    margin-bottom: 0px !important;
+  }
+  .modal-smart-reply-open .box4 p {
+    margin-bottom: 0px !important;
+  }

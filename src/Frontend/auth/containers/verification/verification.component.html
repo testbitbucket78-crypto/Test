@@ -1,0 +1,134 @@
+<sb-layout-auth>
+    
+    <div class="toaster" (click)="hideToaster()">
+        <p *ngIf="errorMessage" class="error">{{errorMessage}}</p>
+        <p *ngIf="successMessage" class="success">{{successMessage}}</p>
+        <p *ngIf="warnMessage" class="warn">{{warnMessage}}</p>
+      </div>
+
+
+    <div class=" row  d-flex mr-0" id="first-di">
+        <div class="col-lg-5">
+            
+            <span *ngIf="channelDomain =='web'" class="tag-line">An effective tool for<br /> marketing with WhatsApp</span>
+            <span *ngIf="channelDomain !='web'" class="tag-line">Supercharge Your Marketing<br /> and Customer Engagement</span>
+        <img *ngIf="channelDomain == 'api'" src="assets/img/img-reg.png" class="float-left"  >
+        <img *ngIf="channelDomain == 'web'" src="../../../../assets/img/Engagezilla-Login-Signup.png" class="float-left"  >
+      <span class="copyright-text">&copy; Copyright 2024 {{channelDomain =='web' ? 'Engagezilla' : 'Engagekart'}}</span>
+        </div>
+        <div class="col-lg-1"></div>
+        <div class="col-lg-6" id="full">
+          
+      <div class="mt-4 ml-5">
+
+                <div class="text"><a routerLink="/register" style="display: inline-flex" (click)="backBtnClicked()">
+                        Back to Create Account</a>
+                </div>
+
+                <div class=" ml-1 ">
+                    <h3 class="font-weight-light">Verify Email & Phone No.</h3>
+                </div>
+                <div>
+                        <h5>Please enter verification code sent to your phone via <strong>WhatsApp & </strong>email. </h5>
+                    </div>
+                <form [formGroup]="otpForm">
+                    <div class="">
+                        <div class="" [(ngModel)]="phone">
+
+                            <label class="conten" for="floatingInputGrid">Verify your Phone  No. +{{ phone}}</label>
+                            <div class=" d-md-flex justify-content">
+                                <input type="number" class="form-control" [disabled]="isverifyphoneOtp" [readonly]="isverifyphoneOtp"
+                                    [ngClass]="{'is-invalid' :submitted && otpForm.controls.otp.errors}"
+                                    placeholder="Enter OTP" aria-label="City" name="otp" formControlName="otp" id="otp" (input)="otpOnChange()">
+                                <button [disabled]="isverifyphoneOtp" class="btn1 me-1" type="button" (click)="onVerifyphoneOtp()"[ngClass]="{'btn-verified': isverifyphoneOtp}">{{isverifyphoneOtp ? 'Verified' : 'Verify'}}</button>
+                                <!-- <button class="verified1" *ngIf="showSecondButton1"><img src="assets/img/verified.png"></button> -->
+                            </div>
+                        </div>
+                        <div class="disc"><a style="display: inline-flex ">
+                                <h6>Did not receive the code? </h6>
+                                <h6 (click)="resendOtp('phone'); startOtpTimer('phone', 30); openWarningPoup()" class="ml-1" [class.disabled]="phoneOtpTimer > 0 || isverifyphoneOtp"
+                                    [style.pointer-events]="(phoneOtpTimer > 0 || isverifyphoneOtp )? 'none' : 'auto'"
+                                    [style.cursor]="(phoneOtpTimer > 0 || isverifyphoneOtp)? 'default' : 'pointer'"> Resend {{ phoneOtpTimer > 0 ? ' (' + phoneOtpTimer + 's)' : '' }}</h6>
+                            </a></div>
+
+                        <div *ngIf="submitted && otpForm.controls.otp.errors" class="text-danger">
+                            ! Otp Required
+                        </div>
+                        <div id="error-message1"></div>
+                        <div id="success-message1"></div>
+                    </div>
+                    <div class="">
+                       <!-- <div class="" [(ngModel)]="email_id"> -->
+                            <label class="conten" for="floatingInputGrid">Verify your Email Id {{email_id}}</label>
+                            <div class=" d-md-flex justify-content">
+                                <input type="number" class="form-control" [disabled]="isverfyEmailOtp" [readonly]="isverfyEmailOtp"
+                                    [ngClass]="{'is-invalid' :submitted && otpForm.controls.otp1.errors}"
+                                    placeholder="Enter OTP" aria-label="City" name="otp" formControlName="otp1" id="otp1" (input)="otp1OnChange()">
+                                <button [disabled]="isverfyEmailOtp" class="btn1 me-1" type="button" (click)="onVerify()" [ngClass]="{'btn-verified': isverfyEmailOtp}">{{isverfyEmailOtp ? 'Verified' : 'Verify'}}</button>
+
+                            </div>
+                        <!-- </div> -->
+                        <!-- <button *ngIf="!showSecondButton" (click)="showSecondButton = true">Click me to show second button</button> -->
+                        <button class="verified" *ngIf="showSecondButton"><img src="assets/img/verified.png"></button>
+                        <div class="disc"><a style="display: inline-flex">
+                                <h6>Did not receive the code? </h6>
+                                <h6 (click)="resendOtp('email');startOtpTimer('email', 30)" class="ml-1" [class.disabled]="emailotpTimer > 0 || isverfyEmailOtp"
+                                    [style.pointer-events]="(emailotpTimer > 0 || isverfyEmailOtp)? 'none' : 'auto'"
+                                    [style.cursor]="(emailotpTimer > 0 || isverfyEmailOtp) ? 'default' : 'pointer'"> Resend {{ emailotpTimer > 0 ? ' (' + emailotpTimer + 's)' : '' }}</h6>
+                            </a></div>
+                        <div *ngIf="submitted && otpForm.controls.otp1.errors" class="text-danger1">
+                            ! Otp Required
+                        </div>
+                        <div id="error-message"></div>
+                        <div id="success-message"></div>
+                    </div>
+
+
+                    <!-- <div class="form-group d-flex align-items-center justify-content-between  "> -->
+                        <!-- <a class="btn btn2" routerLink="/login">Submit</a> -->
+                        <!-- <button class="btn btn2" type="submit"
+                            (click)="onSubmitRegisterform()">Submit
+                        </button>
+                    </div> -->
+
+                </form>
+            </div>
+
+            <div class="text1"><a routerLink="/login" style="display: inline-flex">Already a member?<h6 class="sign1">
+                        Sign In</h6></a></div>
+
+        </div>
+
+       
+    </div>
+
+    <div class="modal fade" id="successRegister" tabindex="-1" aria-labelledby="exampleModalLabel" 
+    data-bs-backdrop="static" aria-hidden="true">
+    <div class="modal-dialog deletesmartreplies-dialog">
+        <div class="modal-content deletesmartreplies-content">
+
+            <div class="modal-body deletesmartreplies-body">
+                Your Account is Successfully Created<br /> Sign In Now
+            </div>
+            <div class="deletefile d-flex">
+                <button type="button" class="btn99 btn-primary" data-bs-dismiss="modal" routerLink="">Login</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="openWarningPoup" tabindex="-1" aria-labelledby="exampleModalLabel" 
+    data-bs-backdrop="static" aria-hidden="true">
+    <div class="modal-dialog deletesmartreplies-dialog w-360">
+        <div class="modal-content deletesmartreplies-content" style="width: 360px !important;">
+
+            <div class="modal-body deletesmartreplies-body">
+                Please note we have sent you OTP via WhatsApp on the provided phone number. Please ensure you have provided a WhatsApp enabled phone no.
+            </div>
+            <div class="deletefile d-flex">
+                <button type="button" class="btn99 btn-primary" data-bs-dismiss="modal">Ok</button>
+            </div>
+        </div>
+    </div>
+</div>
+</sb-layout-auth>

@@ -1,0 +1,169 @@
+<div class="toaster" (click)="hideToaster()">
+	<p *ngIf="errorMessage" class="error">{{errorMessage}}</p>
+	<p *ngIf="successMessage" class="success">{{successMessage}}</p>
+	<p *ngIf="warningMessage" class="warn">{{warningMessage}}</p>
+  </div>
+
+<sb-layout-dashboard>
+<sb-loader [isLoading]="isLoading"></sb-loader>
+		<sb-top-nav title="WhatsApp Flows"></sb-top-nav>
+        <div *ngIf="!isShowDetails"  class="campaigns_page">
+	<!-- <div class="flow-header">
+		<div class="d-flex">
+            <div class="border d-flex flex-row-reverse align-items-center px-3 h-100 search-container">
+                <input class="form-control border-0" type="search" placeholder="Search" name="Search"
+                    (input)="onFilterTextBoxChange()" id="Search-Ag" style="outline: none !important; box-shadow: none !important;"
+                    (focus)="onFocus()" (blur)="onBlur()" />
+                <img src="assets/img/search.png" style="height: 15px; width: 15px;">
+            </div>
+        </div>
+		<div class="d-flex">
+            <div class="mx-2">
+                <select class="input-form select-flow" id="select" (change)="onFilterChange($event)">
+                    <option value="">Select</option>
+                    <option value="All">All</option>
+                    <option value="PUBLISHED">PUBLISHED</option>
+                    <option value="DRAFT">DRAFT</option>
+                    <option value="DEPRECATED">DEPRECATED</option>
+                    <option value="BLOCKED">BLOCKED</option>
+                    <option value="THROTTLED">THROTTLED</option>
+                </select>
+            </div>
+            <div class="D-whatsApp mx-2">
+                <button class="D2-whatsApp" >
+                    <span>
+                        <img class="icon" src="/assets/img/teambox/whatsapp-icon-l.svg" />
+                        {{channelSelected}} ({{channelPhoneNumber}})
+                        <img src="../../../../assets/img/arrow-down.svg"/>
+                    </span>
+                </button>
+                <div *ngIf="ShowAssignOption" class="popup-dialog AssignOption p-15">
+                    <p *ngFor="let channel of channelOption" class="d-flex align-items-center px-2 py-1" 
+                    (click)="updateDropdown(channel.connected_id)">
+                    <img class="icon" src="/assets/img/teambox/whatsapp-icon-l.svg" />
+                        <span class="text-capitalize initials">{{channel.label}} ({{channel.connected_id}})</span>
+                    </p>
+                </div>
+            </div>				
+				<button class="flow-btn" id="add-contact"  ><span><img src="../../../../assets/img/teambox/add.svg" /></span>Create Flow</button>			
+		</div>
+	</div> -->
+
+    
+		<div class="mt-4 d-flex justify-content-between">
+	
+			
+			<div class="campaigns_page_left">
+					<input (keyup)="onFilterTextBoxChange($event.target.value)" (focus)="onFocus()" (blur)="onBlur()" type="text" placeholder="Search" aria-label="Search" class="search-box" aria-describedby="basic-addon2" />
+			</div>
+			<div class="campaigns_page_right">
+				<div class="D-whatsApp">
+					<button class="D2-whatsApp" (click)="toggleAssignOption()" >
+						<span>
+							<img class="icon" src="/assets/img/teambox/whatsapp-icon-l.svg" />
+							{{channelSelected}} ({{channelPhoneNumber}})
+							<img src="../../../../assets/img/arrow-down.svg"/>
+						</span>
+					</button>
+					<div *ngIf="ShowAssignOption" class="popup-dialog AssignOption p-15">
+						<p *ngFor="let channel of channelOption" class="d-flex align-items-center px-2 py-1" 
+						(click)="updateDropdown(channel.connected_id)">
+						<img class="icon" src="/assets/img/teambox/whatsapp-icon-l.svg" />
+							<span class="text-capitalize initials">{{channel.label}} ({{channel.connected_id}})</span>
+						</p>
+					</div>
+				</div>
+
+				<div class="drop-down-btn" >
+					<div class="toggle-box" [ngClass]="{'applied' : isFilterApplied}" (click)="filterCampaign(filtercampaign)">
+						<img *ngIf="!isFilterApplied" src="assets/img/teambox/filter-icon.svg">
+						<img *ngIf="isFilterApplied" src="assets/img/Filter_White.svg">
+					    <span>Filter</span>
+					</div>
+				</div>
+				<button class="new-message-btn" (click)="creatWhatsAppFlow(false,'')" ><img class="icon" src="/assets/img/teambox/add.svg" /> Create Flow</button>		
+					
+			</div>
+			
+			
+		</div>
+
+        	<div *ngIf="!flowList || flowList?.length ==0" class=" my-5 smartreplies-empty-state">
+		<div class="d-flex justify-content-center my-5 align-items-center container-empty-state">
+			<div class="text-center py-5 body-empty-state">
+				<img src="../../../../assets/img/flow.svg" />
+				<h5 class="mt-3">No Flows To Show</h5>
+				<p *ngIf="!isFilterApplied">You haven’t created any flows yet</p>
+			</div>
+		</div>
+    </div>
+
+    <div class="pt-5" *ngIf="flowList && flowList?.length >0">
+        	<div>
+        <ag-grid-angular style="height: calc(70vh - 50px);" class="ag-theme-alpine m-0" [rowData]="flowList" [columnDefs]="columnDefs" [animateRows]="true"
+                         [gridOptions]="gridOptions" suppressResize=true [suppressRowClickSelection]="true"
+						 (filterChanged)="onFilterChanged()"
+                         (gridReady)="onGridReady($event)" [paginationPageSize]="paginationPageSize">
+        </ag-grid-angular>
+        <div class="p-1 grid-pagination d-flex justify-content-between align-items-center">
+            <div class="d-flex align-items-center">
+                <p class="p-0 m-0">Showing:</p>
+                <select class="mx-3" [(ngModel)]="paginationPageSize" (change)="setPaging()">
+                    <option value="10">10</option>
+                    <option value="15">15</option>
+                    <option value="20">20</option>
+                    <option value="25">25</option>
+                    <option value="30">30</option>
+                    <option value="45">35</option>
+                    <option value="40">40</option>
+                    <option value="45">45</option>
+                    <option value="50">50</option>
+                </select>
+            </div>
+            <div class="d-flex page-next-back mt-2">
+                <button class="pagination-btn left">
+                    <img class="next-img" src="assets/img/profile/previous.svg" (click)="onBtPrevious()">
+                </button>
+                <div class="mx-2 d-flex align-items-center pages-gap-2">
+                    <div *ngFor="let item of paging" [ngClass]="item == currPage ? 'page-No-selected':'page-No-unselected'"
+                         (click)="gotoPage(item)">{{item}}</div>
+                </div>
+                <button class="pagination-btn right button-box-shadow">
+                    <img class="next-img" src="assets/img/profile/next.svg" (click)="onBtNext()">
+                </button>
+            </div>
+
+        </div>
+        </div>
+    </div> 
+
+    <ng-template #filtercampaign let-c="close" let-d="dismiss">
+		<div class="modal-header filtercampaignheader">
+			<div class="modal-header-left">
+				<h4 class="modal-title" id="modal-basic-title">Filter</h4>
+			</div>
+			<div class="modal-header-right">
+				<p class="close-box" aria-label="Close" (click)="d('Cross click');cancelfilter()"><img src="assets/img/teambox/icon-close.svg"></p>
+			</div>
+			</div>
+		<div class="modal-body filtercampaign">
+			<!--<p class="label">Campaign Type</p> -->
+            <div class="input_group">				  
+				  <label class="container" *ngFor="let item of flowfilter;let i = index">
+					{{item.label}}
+					<input [(ngModel)]="item.checked" type="checkbox" name="status" >
+					<span class="checkmark"></span>
+				  </label>			
+			</div>
+			<div class="input_group_btn mt-0">
+			<button type="button" class="cancel-btn" aria-label="Close" (click)="d('Cross click');cancelfilter()">Cancel</button>
+			<button type="button" class="date submit-btn" aria-label="Close" (click)="filterFlows()">Apply</button>
+			</div>
+		</div>
+		
+	</ng-template>
+</div>
+
+    <sb-whatsapp-flow-detail *ngIf="isShowDetails" [flowId]="flowId" [flowName]="flowName" [ColumnMapping]="mapping" [isEarlierResponse]="isEarlierResponse" (closeFlowDetail)="getFlowList();isShowDetails = false"></sb-whatsapp-flow-detail>
+	
+</sb-layout-dashboard>

@@ -1,0 +1,137 @@
+<div class="toaster" (click)="hideToaster()">
+    <p *ngIf="errorMessage" class="error">{{errorMessage}}</p>
+    <p *ngIf="successMessage" class="success">{{successMessage}}</p>
+    <p *ngIf="warningMessage" class="warning">{{warningMessage}}</p>
+</div>
+<sb-loader [isLoading]="isLoading"></sb-loader>
+<div class="setting-card" >
+    <div class="default-actions-heading">Routing Rules</div>
+    <p>New conversations can be assigned using below routing rules</p>
+    <div class="pt-4 px-3">
+        <div class="pl-2 pr-5 pb-3">
+            <div class="d-flex align-items-center custom-control custom-checkbox">
+                <input type="checkbox" id="contactowner" class="custom-control-input" (change)="routingRulesState('contactowner', $event.target.checked)" [(ngModel)]="contactowner">
+               <label class="custom-control-label" for="contactowner"><span class="sub-heading">Assign to Contact Owner</span></label>
+            </div>
+            <div class="sub-contents">
+                <p>If this rule is selected override all other rules and always assign the conversation to its Contact Owner. If the Contact Owner is not defined or In-active then below routing rules will apply as defined.</p>           
+            </div>
+        </div>
+        <div class="pl-2 pr-5 pb-3">
+            <div class="d-flex align-items-center custom-control custom-checkbox">
+                <input type="checkbox" id="assignagent" class="custom-control-input" (change)="routingRulesState('assignagent', $event.target.checked)" [(ngModel)]="assignagent" >
+               <label class="custom-control-label" for="assignagent"><span class="sub-heading">Assign to Last Assisted Agent</span></label> 
+            </div>
+            <div class="sub-contents">
+                <p>If this rule is selected override all other rules and always assign the conversation to its last assigned agent. If there is no Last Assigned Agent or In-active then below rules will apply as defined.</p>           
+            </div>
+        </div>
+        <div>
+            <span class="sub-heading">Default Assignment Rules</span>    
+            <div class="sub-contents pl-0 py-2">
+                <p>A conversation when Opened will be assigned based on the Routing rule chosen here if no other automation is applicable.</p>           
+            </div>
+        </div>
+        <div class="pl-2 pr-5 pb-3">
+            <div class="d-flex align-items-center sel-type-btns">
+                <input type="radio" id="assign-rule-bc" name="assign-rule" [checked]="broadcast" (change)="defaultAssignmentRules('broadcast')" [value]="broadcast"><label class="m-0" for="assign-rule-bc">Broadcast</label>
+            </div>
+            <div class="sub-contents">
+                <p>Conversation will be placed in the Unassigned tab of Teambox where anyone can assign it to themselves to start chatting with the customers.</p>           
+            </div>
+        </div>
+        <div class="pl-2 pr-5 pb-3">
+            <div class="d-flex align-items-center sel-type-btns">
+                <input type="radio" id="assign-rule-rr" name="assign-rule" [checked]="roundrobin" (change)="defaultAssignmentRules('roundrobin')" [value]="roundrobin"><label class="m-0" for="assign-rule-rr">Round Robin</label>
+            </div>
+            <div class="sub-contents">
+                <p>Assign new incoming conversation to all the active agents one after another ensuring these are getting distributed equally among them.</p>           
+                <div class="select-heading py-2">Maximum Concurrent Open Conversations Allowed per Agent </div>
+                <select class="input-form" [disabled]="defaultAssignRule!=='roundrobin'" [(ngModel)]="conversationallowed"
+                [ngClass]="{'error-outline': conversationallowed === '' && defaultAssignRule === 'roundrobin'}" >
+                    <option [ngValue]="'1'">1</option>
+                    <option [ngValue]="'2'">2</option>
+                    <option [ngValue]="'3'">3</option>
+                    <option [ngValue]="'4'">4</option>
+                    <option [ngValue]="'5'">5</option>
+                    <option [ngValue]="'6'">6</option>
+                    <option [ngValue]="'7'">7</option>
+                    <option [ngValue]="'8'">8</option>
+                    <option [ngValue]="'9'">9</option>
+                </select>
+            </div>
+            <div class="d-flex align-items-center custom-control custom-checkbox ml-4 mt-1">
+                <input type="checkbox" id="enableAdmin" class="custom-control-input" [disabled]="defaultAssignRule!=='roundrobin'"  [(ngModel)]="enableAdmin">
+               <label class="custom-control-label" for="enableAdmin"><span class="select-heading">Enable Admin(s) to be included for assigning chats</span></label>
+            </div>
+            <div class="sub-contents ml-2">
+                <p>Note: Round Robin routing rule will not work during non-working hours and holidays if these are defined under organization settings. Broadcast routing rule will be applicable at that time.</p>   
+            </div>
+        </div>
+        <div class="pl-2 pr-5 pb-3">
+            <div class="d-flex align-items-center sel-type-btns">
+                <input type="radio" id="assign-rule-ma" name="assign-rule" [checked]="manualassign" (change)="defaultAssignmentRules('manualassign')" [value]="manualassign"><label class="m-0" for="assign-rule-ma">Manual Assign</label>
+            </div>
+            <div class="sub-contents">
+                <p>All the conversations are assigned to a user as defined here (usually a manager who further assigns agents to each of these conversation). If this selected user is In-Active at the time of allocation, then conversation will be assigned according to the rules defined under “Missed Chat”.</p>           
+                <div class="select-heading py-2">Assign a User</div>
+                <select class="input-form" [disabled]="defaultAssignRule!=='manualassign'" [(ngModel)]="assignuser" 
+                [ngClass]="{'error-outline': assignuser === '' && defaultAssignRule==='manualassign'}">
+                    <option *ngFor="let name of usernames" [ngValue]="name"><span class="text-capitalize" >{{ name }}</span></option>
+                </select>
+            </div>
+        </div>
+        <div>
+            <div class="d-flex align-items-center custom-control custom-checkbox ml-1 mt-1">
+                <input type="checkbox" id="manageMissedChat" class="custom-control-input" (change)="manageMissedChatChange('manageMissedChat', $event.target.checked)" [(ngModel)]="manageMissedChat">
+               <label class="custom-control-label" for="manageMissedChat"><span class="select-heading">Manage Missed Chat</span></label>
+            </div>
+            <div class="sub-contents p-sub-heading">
+                <p>A fallback assignment rule if the conversation could not be assigned even once after being marked Open as per the above defined rules within the allowed time as configured here.</p>           
+            </div>
+            <div class="sub-contents">
+            <div class="select-heading pt-3 pb-2">
+                Chat Assign Timeout Period
+            </div>
+            <form #myForm="ngForm">
+            <div class="d-flex align-items-baseline select-content">
+                <input class="form-control" name="chatAssignTimeout" type="text" 
+                    [disabled]="isManageMissedChat"
+                    onKeyPress="if(this.value.length==4) return false; return /^[0-9]$/.test(event.key)"
+                    required
+                    [pattern]="chatAssignTimeoutPattern"
+                    [(ngModel)]="timeoutperiod"
+                    placeholder="Enter chat timeout (1-1440 minutes)"
+                    [ngClass]="{'is-invalid error-outline':myForm.controls['chatAssignTimeout']?.dirty && (myForm.controls['chatAssignTimeout']?.hasError('pattern') 
+                    || (errorOnchatAssignTimeout()  && checkIfValid))}">
+            </div>
+            </form>
+            <div class="d-flex py-2">
+                <div class="sel-type-btns">
+                    <input type="radio" [disabled]="isManageMissedChat" id="chat-assign-co" name="chat-assign" [checked]="isMissChatAssigContactOwner" (change)="missedChatOptionsChange('isMissChatAssigContactOwner')" [value]="isMissChatAssigContactOwner">
+                    <label class="m-0" for="chat-assign-co">Contact Owner</label>
+                </div>
+                <div class="pl-2 sel-type-btns">
+                    <input type="radio" [disabled]="isManageMissedChat" id="chat-assign-admin" name="chat-assign" [checked]="isadmin" (change)="missedChatOptionsChange('isadmin')" [value]="isadmin" >
+                    <label class="m-0" for="chat-assign-admin">Default Admin</label>
+                </div>
+                <div class="pl-2 sel-type-btns">
+                    <input type="radio" [disabled]="isManageMissedChat" id="chat-assign-su" name="chat-assign" [checked]="assignspecificuser" (change)="missedChatOptionsChange('assignspecificuser')"[value]="assignspecificuser">
+                    <label class="m-0" for="chat-assign-su">Assign a Specific User</label>
+                </div>
+            </div>
+            <div class="select-heading py-2">Assign a Specific User</div>
+            <select [disabled]="missedChatOption!=='assignspecificuser' || isManageMissedChat" class="input-form pointerCursor" [(ngModel)]="selectuser" 
+            [ngClass]="{'is-invalid error-outline': errorOnMissedChatOption() && checkIfValid}">
+                <option *ngFor="let name of usernames" [ngValue]="name"><span class="text-capitalize" >{{ name }}</span></option>
+            </select>
+            <p>If the contact owner is not defined or there are multiple admins, then the chat is assigned to default Admin.</p>
+            </div>
+        </div>
+    </div>
+    <div class="d-flex justify-content-end pb-4 default-footer">
+        <button (click)="saveRoutingRules()" [disabled]="checkIfValid" [class.disabled]="checkIfValid" type="button" class="account-btn">Save</button>
+    </div>
+    
+
+</div>

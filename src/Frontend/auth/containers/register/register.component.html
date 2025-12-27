@@ -1,0 +1,168 @@
+<sb-layout-auth>
+    <div class="row mr-0" id="con">
+      <div class="col-lg-5">
+        <span *ngIf="channelDomain =='web'" class="tag-line">An effective tool for<br /> marketing with WhatsApp</span>
+        <span *ngIf="channelDomain !='web'" class="tag-line">Supercharge Your Marketing<br /> and Customer Engagement</span>
+      <img *ngIf="channelDomain == 'api'" src="assets/img/img-reg.png" class="float-left"  >
+        <img *ngIf="channelDomain == 'web'" src="../../../../assets/img/Engagezilla-Login-Signup.png" class="float-left"  >
+      <span class="copyright-text">&copy; Copyright 2024 {{brandService.getBrandConfig()?.brandName || (channelDomain =='web' ? 'Engagezilla' : 'Engagekart')}}</span>
+    </div>
+    <div class="toaster" (click)="errorMessage=''">
+      <p *ngIf="errorMessage" class="error">{{errorMessage}}</p>
+    </div>
+      <div class="col-lg-7 register-cip ">
+  
+        <div class="">
+              <div class="log">
+            <h3 class="font-weight-light">Create Your Account</h3>
+          </div>
+  
+  
+          <div class="card-body">
+            <form [formGroup]="registerForm" autocomplete="none" (ngSubmit)="onSubmit()">
+              <div class="name-number">
+                <div [ngClass]="{'invalid-input': registerForm.controls.name.invalid && (registerForm.controls.name.dirty || registerForm.controls.name.touched)}"
+                class="">
+                  <label for="floatingInputGrid">Name</label>
+                  <input type="text-right" 
+                         class="form-control" 
+                         [ngClass]="{'is-invalid' : submitted && registerForm.controls.name.errors }" 
+                         placeholder="Name" 
+                         aria-label="City" 
+                         name="name" 
+                         formControlName="name" 
+                         id="name" 
+                         maxlength="30">
+                         
+                 </div>
+                <div class="col-sm-1"></div>
+                <div class="pp"  id="col">
+                  <label for="floatingInputGrid" id="la-ph">Phone Number</label> 
+                  <div class="ss d-flex justify-content-start position-relative">
+                  <select class="input-form" id="country_code" formControlName="country_code" (change)="formatPhoneNumber()">
+                    <option [selected]="countryCode === defaultCountryCode" *ngFor="let countryCode of countryCodes">
+                      {{ countryCode }}
+                    </option>
+                    </select>
+                    <input type="text" class="form-control" id="mobile_number" formControlName="mobile_number" 
+                    name="mobile_number" style="display: none">  
+                    <input type="text" class="form-control" id="mobile_number"  autocomplete="none" formControlName="display_mobile_number" 
+                      name="display_mobile_number" placeholder="WhatsApp number" aria-label="City" pattern="^[^+\-.,?*%$eE]+$"
+                      onKeyPress="return /^[0-9]$/.test(event.key)"
+                      [ngClass]="{'is-invalid' :submitted && registerForm.controls.display_mobile_number.errors }" 
+                    (change)="formatPhoneNumber()" (input)="ValidatePhone()" #text> 
+                    <img *ngIf="isVerifiedPhone" src="assets/img/verified.svg" width="16px" height="16px" style="inset: 0 10px 0 auto;margin: auto;" class="position-absolute" alt="verified-logo"/>
+                  </div>
+                  <div *ngIf="registerForm.controls.display_mobile_number.touched && registerForm.get('display_mobile_number')?.hasError('invalidPhoneNumberLength')"
+								 class="text-danger">
+							</div>
+              <p style="color: black">(share your WhatsApp enabled phone number)</p> 
+                </div>
+           
+              </div>
+              <div class="you-em">
+                <div class="">
+                  <label for="floatingInputGrid">Your Email</label>
+                  <div class="position-relative">  
+                    <input formControlName="email_id"  type="text-right mr-3" class="form-control" id="gem" [ngClass]="{'is-invalid' :submitted && registerForm.controls.email_id.errors}" placeholder="Email" aria-label="City" name="email_id"
+                    formControlName="email_id" id="email_id" (input)="ValidateEmail()">
+                    <img *ngIf="isVerifiedEmail" src="assets/img/verified.svg" width="16px" height="16px" style="inset: 0 10px 0 auto;margin: auto;" class="position-absolute" alt="verified-logo"/>
+                  </div>
+
+                </div>
+              </div>
+              <div class="password-confirm">
+                <div class="col-6 pl-0 pr-3">
+                  <label for="floatingInputGrid">Password</label>
+  
+                  <input [type]="changetype?'password':'text'" class="form-control password pass-contol" [ngClass]="{'is-invalid' :submitted && registerForm.controls.password.errors  }" placeholder="8 character" aria-label="City"
+                    name="password" formControlName="password" id="password">
+                    <span class="eyeicon"(click)="viewpass()"><i [ngClass]="visible?'fa fa-eye-slash':'fa fa-eye'"></i></span>
+                </div>
+                <div class=""></div>
+                <div class="col-6 pl-1 pr-0" id="kop">
+                  <label for="floatingInputGrid">Confirm Password</label>
+  
+                  <input [type]="change?'password':'text'" class="form-control confirm pass-contol" [ngClass]="{'is-invalid' :submitted && registerForm.controls.confirmPassword.errors}" placeholder="8 character" aria-label="State"
+                    name="confirmPassword" formControlName="confirmPassword" id="confirmPassword">
+                    <span class="eyeicon1"(click)="viewpassword()"><i [ngClass]="visible1?'fa fa-eye-slash':'fa fa-eye'"></i></span>
+                </div>
+              </div>
+              <div class="form-group row">
+                <div class=""></div>
+                <div class="custom-control custom-checkbox">
+                  <input class="custom-control-input" type="checkbox" id="custom-control-input1" [checked]="checkboxChecked" (change)="onCheckboxChange($event.target.checked)">
+                  <label *ngIf="channelDomain !='web'" class="custom-control-label" for="custom-control-input1" [ngClass]="{'bgwhite': checkboxChecked}">
+                    I accept the <a href="https://engagekart.com/terms-and-conditions/" target="_blank">Terms & Conditions</a> and <a href="https://engagekart.com/privacy-policy/" target="_blank">Privacy Policy</a>
+                  </label>
+                  <label *ngIf="channelDomain =='web'" class="custom-control-label" for="custom-control-input1" [ngClass]="{'bgwhite': checkboxChecked}">
+                    I accept the <a href="https://engagezilla.com/terms-and-conditions/  " target="_blank">Terms & Conditions</a> and <a href=" https://engagezilla.com/privacy-policy/ " target="_blank">Privacy Policy</a>
+                  </label>
+                  </div>
+                 
+                <!-- <div class="checkbox2" id="chbo">
+                  <div class="custom-control custom-checkbox">
+                  <input class="custom-control-input" type="checkbox" id="custom-control-input2" [checked]="checkbox2Checked" (change)="onCheckbox2Change($event.target.checked)">
+                  <label class="custom-control-label" [ngClass]="{'bgwhite': checkbox2Checked}" for="custom-control-input2">Remember Me</label>
+                </div> 
+              
+            
+                </div> -->
+              </div>
+              <!-- <p *ngIf="!checkboxChecked"> Please check the checkbox .</p> -->
+              <div class="form row">
+                <div class="col-sm-3"></div>
+                <button class="btn btn2" [disabled]="!checkboxChecked" [style.background-color]="buttonColor" [ngStyle]="{'opacity': checkboxChecked ? 1 : 0.5}">
+                  Next
+                </button>
+              </div>
+            </form>
+            <!-- <div  class="invalid-feedback" >
+              <div *ngIf="registerForm.controls.name.errors.invalidName">
+                Name must be at least 3 characters or not a single digit.
+              </div>
+            </div>        -->
+            <br>
+            <div *ngIf="submitted && registerForm.get('name').hasError('pattern')"  class="text-danger">
+              Name should contain only alphabetic characters.
+            </div>
+          <div *ngIf="submitted && registerForm.controls.name.errors" class="text-danger">
+            ! Name should have at least 2 characters.
+          </div>
+                    
+          <div *ngIf="submitted && registerForm.controls.display_mobile_number.errors" class="text-danger">
+            ! Invalid phone number length for the selected country.
+          </div>
+          <div *ngIf="submitted && registerForm.controls.email_id.errors" class="text-danger">
+            ! Invalid Email Id
+          </div>
+            <div *ngIf="submitted && registerForm.controls.password.errors" class="text-danger">
+            ! Password is required
+          </div>
+          <div *ngIf="submitted && registerForm.controls.password.errors" class="text-danger">
+            ! Password must contain at least eight characters,<br> at least one number and both lower and uppercase letters<br> and special characters.
+          </div>
+          <div *ngIf="submitted && registerForm.controls.confirmPassword.errors" class="text-danger">
+            ! Confirm Password is required
+                </div>
+          <div *ngIf=" registerForm.hasError('mismatch')" class="text-danger">
+          !  Passwords do not match
+            </div>
+            <div *ngIf="errorDiv" id="error-message" class="text-danger">
+              {{ errorDiv }}
+            </div>
+          </div>
+         
+          </div>
+         
+       </div>
+    </div>
+    <div class="col-md-12 d-flex " id="sigal">
+      <div class="d-flex text-left" >
+      <a routerLink="/login" style="display: inline-flex">Already member?<h6 class="mi"> Sign In
+
+    </h6></a>
+  </div>
+  </div>
+
+  </sb-layout-auth>

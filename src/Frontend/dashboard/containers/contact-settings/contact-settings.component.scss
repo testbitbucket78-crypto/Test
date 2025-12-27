@@ -1,0 +1,381 @@
+* {
+    font-family: 'Manrope';
+}
+
+.setting-field {
+    display: flex;
+}
+
+.setting-field .setting-field-link {
+    color: #7A86A1;
+    font-size: 15px;
+    padding: 0.5rem 1.2rem;
+    text-decoration: none;
+    margin-right: 8px;
+    cursor: pointer;
+}
+
+.setting-field .active {
+    color: #FFFFFF !important;
+    background: #6149CD 0% 0% no-repeat padding-box;
+    border-radius: 19px;
+}
+
+.setting-card {
+    border-radius: 30px;
+    padding: 20px 30px 0px 30px;
+    box-shadow: 2px 13px 54px #695F9714;
+    min-height: 75vh;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    width: 65%;
+    margin-left: 16px;
+}
+
+.form-control {
+    display: block;
+    width: 100%;
+    height: calc(1.5em + 0.75rem + 2px);
+    padding: 0.375rem 0.75rem;
+    font-size: 14px;
+    line-height: 1.5;
+    color: #495057;
+    background-color: #ffffff;
+    background-clip: padding-box;
+    border: 1px solid #ced4da;
+    border-radius: 20px;
+    transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+    font-family: 'Manrope';
+}
+
+.account-btn.disabled {
+    background: grey;
+  }
+
+.input-group>.form-control,
+.input-group>.form-control-plaintext,
+.input-group>.custom-select,
+.input-group>.custom-file {
+    position: relative;
+    border-radius: 19px !important;
+    border: 1px solid #EBEBEB;
+    background-color: #ffffff;
+    margin: -0px 15px 0px -18px;
+    font-family: "Manrope";
+    font-size: 14px;
+    padding-left: 35px;
+    width: 272px;
+    height: 43px;
+}
+
+.input-group img {
+    position: absolute;
+    margin: 11px 0px 0px -5px;
+    width: 15px;
+    height: 15px;
+}
+
+.working-hour-heading {
+    font-size: 22px;
+    font-weight: 700;
+}
+
+.flex-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.new-token-btn {
+    color: #6149CD;
+    font-weight: 600;
+    font-size: 14px;
+    background: white;
+    border-radius: 18px;
+    padding: 8px 12px;
+    box-shadow: 1px 8px 29px #695F9724;
+    border: 1px;
+    width: 100%;
+}
+
+.new-token-btn img {
+    font-size: 13px;
+}
+
+.modal-body label {
+    font-weight: 500;
+    font-size: 15px;
+}
+
+.user-modal {
+    width: 500px;
+    height: 350px;
+    border-radius: 26px;
+}
+
+.input-form {
+    height: 37px;
+    border-radius: 16px;
+    border: 1px solid #EBEBEB;
+    padding: 5px 15px;
+    width: 100%;
+}
+
+.btn-close {
+    background: white;
+    margin: 2px;
+    border-radius: 15px;
+    padding: 6px 12px;
+    border: 1px solid #EBEBEB;
+}
+
+.modal-footer {
+    border: none;
+}
+
+.modal-body label {
+    font-weight: bold;
+    font-size: 15px;
+}
+
+.user-modal .modal-title {
+    font-weight: bold;
+    font-size: 19px;
+}
+
+.account-btn {
+    background: #6149CD 0% 0% no-repeat padding-box;
+    border-radius: 17px;
+    padding: 7px 30px;
+    border: 1px;
+    color: white;
+    font-weight: 400;
+}
+
+//pagination styling
+
+.notification-footer p {
+    color: #7A86A1;
+}
+
+select {
+    border: none;
+    outline: none;
+    color: #7A86A1;
+
+}
+
+
+// pagination style//
+
+.pagination-btn {
+    border: none;
+    outline: none;
+    cursor: pointer;
+    background: #ffffff;
+    width: 36px;
+    height: 36px;
+    opacity: 0.5;
+
+}
+
+.pagination-btn:enabled {
+    background: #FFFFFF;
+    box-shadow: 1px 8px 29px #695F972E;
+    border-radius: 15px;
+    opacity: 1;
+}
+
+.pagination-num-container {
+    padding: 0% 2%;
+}
+
+.pagination-num-body {
+
+    font-size: 15px;
+    font-weight: 500;
+    color: #6149CD;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+.pagination-disabled {
+    color: #C0BDCC!important;
+}
+
+.btn-list {
+    padding: 0 2%;
+}
+
+
+// table styles
+.notification-card-header {
+    border-bottom: 1px solid #695F971A;
+    color: #C0BDCC;
+}
+.notification-content-parent {
+    max-height: 270px;
+    min-height: 270px;
+    overflow-y: auto;
+    overflow-x: hidden;
+    position: relative;
+    .no-data-found {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 50%; 
+        width: 100%;  
+        position: absolute;
+      }
+}
+.header-col {
+    flex: 1 1;
+    font-size: 0.875rem;
+    font-weight: 500;
+}
+.data h6 {
+    font-size: 1rem;
+    font-weight: 700;
+}
+
+.data p {
+    font-size: 0.875rem;
+    font-weight: 400;
+}
+
+.color-dots {
+    display: inline-block;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    margin: 0;
+
+}
+
+//sideview styles
+
+.sideBar{
+    height: 100%;
+    width: 21%;
+    position: fixed;
+    z-index: 1040;
+    top: 0;
+    right: 0;
+    background-color: #FBF9FE;
+    overflow-x: hidden;
+    transition: 0.5s;
+  }
+
+  .sidebar-close{
+    text-align: right;
+    padding: 25px 15px 35px 0px;
+  }
+  
+  .sidebar-content{
+    padding-left:20px;
+  }
+  
+  .sidebar-content p{
+  margin: 0;
+  color: #7A86A1;
+  }
+  
+  .sidebar-content .heading{
+    font-size: 21px;
+    font-weight: bold;
+  }
+  
+  .sidebar-content .sub-heading{
+    color: #6149CD;
+      font-weight: 600;
+  }
+  
+  .sidebar-content .rights{
+    padding: 5px 15px;
+    font-size: 14px;
+    background: white;
+    border-radius: 12px;
+    opacity: 1;
+  }
+
+  .sideBar .sideBar-footer{
+    border-top: 2px solid #e5e0e0;
+    position: fixed;
+    bottom: 0;
+    width: 21%;
+    padding: 15px;
+    text-align: center;
+    background-color: #FBF9FE;
+  }
+
+  .account-white-btn {
+    background: white;
+    border-radius: 18px;
+    padding: 8px 13px;
+    box-shadow: 1px 8px 29px #695F9724;
+    border: 1px;
+    height: fit-content;
+   }
+
+  // delete popup common styles
+
+.delete-modal{
+    width: 355px;
+    height: 183px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+   }
+
+   .cancel-btn{
+    background: #fff;
+    border: 1px solid #EBEBEB;
+    border-radius: 20px;
+    width: auto;
+    height: 35px;
+    color: #7A86A1;
+    padding: 0px 25px;
+    font-size: 12px;
+    font-weight: 800;
+    margin: 0 0 0 15px;
+   }
+
+   .delete-btn{
+    box-shadow: 1px 8px 29px #695F9724;
+    border-radius: 20px;
+    width: auto;
+    height: 35px;
+    border: 0px;
+    color: #fff;
+    padding: 0px 25px;
+    font-size: 12px;
+    font-weight: 800;
+    margin: 0 0 0 15px;
+    background: #FF3636;
+   }
+
+   .alertmessage p{
+    font-size: 0.875rem;
+    padding: 15% 0;
+    margin: 0;
+    font-weight: 700;
+    text-align: center;
+   }
+
+   .delete_group_button {
+    padding: 10% 0%;
+   }
+
+   .del-popup-btn {
+    background: white;
+    border-radius: 18px;
+    padding: 10px 14px;
+    box-shadow: 1px 8px 29px #695F9724;
+    border:none;
+    outline: none;
+   }
+
+.select-pointer {
+    cursor: pointer;
+}

@@ -1,0 +1,405 @@
+<div class="toaster" (click)="hideToaster()">
+	<p *ngIf="errorMessage" class="error">{{errorMessage}}</p>
+	<p *ngIf="successMessage" class="success">{{successMessage}}</p>
+	<p *ngIf="warningMessage" class="warning">{{warningMessage}}</p>
+</div>
+<sb-loader [isLoading]="importData"  [message]="''" [maxDuration]="1200000"></sb-loader>
+<div class="row h-100">
+	<div class="bs-stepper col-lg-12 h-100">
+		<div class="d-flex justify-content-between align-items-center pb-0 bs_stepper_header">
+			<h1>Import Contacts</h1>
+			<button class="btn-cross" aria-label="Close" data-bs-dismiss="modal" (click)="closePopup()">X</button>
+		</div>
+		<div class="d-flex justify-content-center col-sm-12">
+			<button *ngIf="stepper._currentIndex>0" type="button" (click)="previous()" class="previous-btn">
+				<img src="../../../../assets/img/profile/previous.svg" />
+			</button>
+			<div class="bs-stepper-header" role="tablist">
+				<div class="step" data-target="#logins-part">
+					<button [ngClass]="{'trigger-active': stepper._currentIndex>0}" type="button" class="step-trigger" role="tab" aria-controls="logins-part"
+						id="logins-part-trigger">
+						<span [ngClass]="{'currentStep': stepper._currentIndex>=0}" class="bs-stepper-circle">1</span>
+						<span [ngClass]="{'currentLabel': stepper._currentIndex>=0}" class="bs-stepper-label">Upload</span>
+					</button>
+				</div>
+				<div class="col-sm-1 bs-stepper-line"></div>
+				<div class="step" data-target="#information-part">
+					<button [ngClass]="{'trigger-active': stepper._currentIndex>=1}" type="button" class="step-trigger" role="tab" aria-controls="information-part"
+						id="information-part-trigger">
+						<span [ngClass]="{'currentStep': stepper._currentIndex>=1}" class="bs-stepper-circle">2</span>
+						<span [ngClass]="{'currentLabel': stepper._currentIndex>=1}" class="bs-stepper-label">Map</span>
+					</button>
+				</div>
+				<div class="col-sm-1 bs-stepper-line"></div>
+				<div class="step" data-target="#review-part">
+					<button [ngClass]="{'trigger-active': stepper._currentIndex==2}" type="button" class="step-trigger" role="tab" aria-controls="review-part"
+						id="review-part-trigger">
+						<span [ngClass]="{'currentStep': stepper._currentIndex==2}" class="bs-stepper-circle">3</span>
+						<span class="bs-stepper-label">Review</span>
+					</button>
+				</div>
+			</div>
+		</div>
+		<div class="import-body">
+			<div class="bs-stepper">
+				<!-- upload csv step 1 -->
+				<div id="logins-part" class="content" role="tabpanel" aria-labelledby="logins-part-trigger">
+
+						<div class="col-lg-12 py-2 pt-1 upload-part-container">
+							<!-- <div class="head d-flex">
+								<h4>Attach files</h4>
+								<button class="btn" (click)="download()">
+									<img src="../../../../assets/img/profile/download-file.svg" />
+									Download sample file
+								</button>
+							</div> -->
+							<div class="w-100 px-5">
+								<div class="row px-5 justify-content-center">
+									<div class="col-4 d-flex flex-column justify-content-center">
+										<p class="font-weight-bold">Attach Files</p>
+										<div class="box1" ngClass="{{dragAreaClass}}">
+											<div class="d-img mt-4">
+												<img src="assets/img/im.png">
+											</div>
+											<h5 *ngIf="!this.file" class="mb-0">Drag & Drop a file<br>to add or update
+												contacts</h5>
+											<h5 *ngIf="this.file" class="mb-4">Your file attached<br>successfully</h5>
+											<span *ngIf="!this.file" class="or">or</span>
+											<div class="px-3">
+												<div class="d-flex flex-column px-5">
+													<button *ngIf="!this.file" class="mb-1 uploadFile-btn">
+														<img class="px-2" src="../../../../assets/img/profile/upload.svg" />
+														<label class="m-0 uploadFile" for="uploadFile">
+															<input type="file" (change)="onUpload($event)" id="uploadFile" accept=".csv,.xlsx" />
+															Browse files
+														</label>
+													</button>
+													<button *ngIf="this.file" class="mb-1 uploadFile-btn">
+														{{this.fileName}}
+														<img class="ml-4 remove-file" src="../../../../assets/img/profile/icon-close.svg"
+															(click)="removeFile()" />
+													</button>
+													<button 
+													class="uploadFile-btn mb-4 d-flex align-items-center justify-content-center"
+														(click)="download()">
+														<img src="../../../../assets/img/profile/download-file.svg" />
+														<label class="m-0 uploadFile pl-2">
+															Download sample file
+														</label>
+													</button>
+												</div>
+											</div>
+										</div>
+									</div>
+									<div class="col-4 d-flex justify-content-start px-4">
+										
+										<div class="d-flex flex-column">
+											<div class="d-flex align-items-center mb-2">
+												<h6 class="m-0 fs-15 fw-600">Instructions</h6>
+											  </div>
+											<div class="box3 p-3">
+												<div class="overflow-container">
+												<div class="import contact info_box">
+													<p class="info">
+														<span>1. Use only .xlsx or .csv file format</span>
+														<span>2. Maximum file size allowed 10 MB.</span>
+														<span>3. Phone number must include country code, e.g. 91 for India - 919876543210</span>
+														<span>4. If you see the phone number in the cell, e.g. "8.5265E+10", please right click "Format" and change the data cell to "numbers" with zero decimal place.</span>
+														<span>5. Each row in the file represents a contact and each column represents a contact field (attribute).</span>
+														<span>6. Data in first row is not imported. Ensure first row contains ONLY column headings with proper labels to help in attributes mapping.</span>
+														<span>7. Only column that have a value in first row will be imported.</span>
+														<span>8. Remove column that you do not wish to import before uploading.</span>
+													</p>
+												</div>
+											</div>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+				
+					
+				
+					<div class="col-lg-12 purpose-identifier-container">
+
+						<div class="row purpose-identifier pb-0">
+							<div class="col-6">
+								<label for="floatingInputGrid">Purpose</label>
+								<div class="form-floating w-100">
+									<select class="form-select w-100" id="floatingSelectGrid"
+										aria-label="Floating label select example" #pure
+										(change)="onSelectPurpose(pure.value)">
+										<option value="Add new contact only">Add new contact only</option>
+										<option value="Update Existing Contacts Only">Update Existing Contacts Only</option>
+										<option value="Add and Update Contacts">Add and Update Contacts</option>
+									</select>
+								</div>
+								<span *ngIf="pure.value==='Add new contact only'" id="con" style="white-space: nowrap;">
+									Add only NEW CONTACTS from the imported file. Existing contacts will not be affected.</span>
+								<span *ngIf="pure.value==='Update Existing Contacts Only'" id="con" style="white-space: nowrap;">
+									Update only EXISTING CONTACTS with the values from the imported file. New contacts will not be added.</span>
+								<span *ngIf="pure.value==='Add and Update Contacts'" id="con" style="white-space: nowrap;"> 
+									Update EXISTING CONTACTS and add NEW CONTACTS from the imported file.</span><br>
+								<span *ngIf="Identifier==='Phone_number'" id="worksa">
+									<span class="bold-text">Note: </span>
+								    <span class="note-text"> Phone Number works as identifier</span>
+								</span>
+							</div>
+							<div class="col-6">
+								<label for="floatingSelectGrid">Message Opt-In</label>
+								<div class="form-floating w-100">
+									<select class="form-select w-100" id="floatingSelectGrid"
+										aria-label="Floating label select example" [(ngModel)]="messageOptIn">
+										<option value="" selected disabled>Select Message Opt-In</option>
+										<option value="Yes">Yes</option>
+										<option value="No">No</option>
+									</select>
+								</div>
+							</div>
+							<!-- <div class="ml-4">
+								<label class="px-1" for="floatingSelectGrid">Identifier</label>
+								<div class="info-container">
+									
+									<div class="Info-Iconn">
+										<img src="../../../../assets/img/settings/Info-icons.svg" (click)="identifierTooltip =!identifierTooltip">
+									</div>
+									<div class="identfierTooltip" *ngIf="identifierTooltip">
+										<button id="radio-close-btn" (click)="identifierTooltip=false">X</button>
+										<p class="p-body">
+											Identifier will be a primary column, selected identifier will be kept as primary column and no duplicate entries can be made there.
+										</p>
+									</div>
+								</div>
+								<div class="form-floating">
+									<select class="form-select" id="floatingSelectGrid"
+											aria-label="Floating label select example" #identifier
+											(change)="onSelected(identifier.value)">
+										<option value="Phone_number">Phone Number</option>
+									</select>
+								</div>
+								<span *ngIf="Identifier==='Phone_number'" id="worksa">Phone Number works as identifier</span>
+								<span *ngIf="Identifier==='emailId'" id="worksa">Email ID works as identifier</span>
+							</div> -->
+						</div>
+					
+					</div>
+					<div class="col-sm-12 pb-3 pt-1 d-flex justify-content-end next_button_container">
+						<button type="button" (click)="incorrectFile(content)" class="next-button">Next</button>
+					</div>
+				</div>
+
+				<ng-template #content let-c="close" let-d="dismiss">
+
+					<div class="incorrect-card-main">
+						<p>File is incorrectly formed & cannot <br /> be read. Please try again.
+						</p>
+						<div class="d-flex justify-content-center">
+						  <button type="button" class="btn closeErrorModal" (click)="closeErrorModal()">Close</button>
+						  
+					    </div>
+					</div>
+				</ng-template>
+
+
+				<div id="information-part" class="content" role="tabpanel" aria-labelledby="information-part-trigger">
+
+					<span class="mapping-head">Select the appropriate contact field for each column in the CSV</span>
+					<div class="col-12 pt-4 pb-2 d-flex container-mapping">
+						<div class="col-1"></div>
+
+						<div class="col-3 pr-0 mr-1 left-part">
+							<div class="pt-5 pb-2 pl-5 head-section">
+								<span class="pb-2">Sample Data from your CSV</span>
+								<div class="m-0 sample_csv_data">
+									<p [ngClass]="{'NA':values==null}" *ngFor="let values of csvfieldValues">
+										 {{ values !== null ? values : 'NA' }}</p>
+								</div>
+							</div>
+						</div>
+
+						<div class="col-7 pl-0 ml-1 d-flex right-part">
+							<div class="col-sm-12 px-0">
+								<div class="pt-5 pb-2 head-section">
+									<span class="heading">Select the columns to import</span>
+									<span class="pl-4 heading">Map to Contact Fields</span>
+								</div>
+								<div class="body-section">
+									<div *ngFor="let fields of csvfieldHeaders; let ith = index"
+									      class="row py-1 justify-content-between align-items-center">
+										<div class="col-4 word-break">
+											
+											<div class="form-check">
+												<label class="form-check-label" for="displayNameInput{{ith}}" >
+													<input type="checkbox" id="displayNameInput{{ith}}" 
+													class="form-check-input" 
+													[(ngModel)]="displayNameChecked[ith]"
+													(change)="removeUncheck($event,ith)">
+													<span class="checkmark"></span>
+													{{fields}}
+												</label>
+											</div>
+										</div>
+
+										<div class="col-8 d-flex column_mapping_field ">
+											<div class="">
+												<select class="form-select input-form" aria-label="Select column or attribute" [(ngModel)]="selectedCustomFields[ith]" [ngClass]="{'select-placeholder':!selectedValue}"
+												    (change)="onSelectMapping($event.target.value, ith)">
+													<option [disabled]="true" [selected]="true" [hidden]="true" [value]="''">Select column or attribute</option>
+													<option *ngFor="let fieldData of customFieldData;let i = index" [disabled]="!displayNameChecked[ith] || fieldData?.isSelected == true" [value]="fieldData.ActuallName">{{fieldData.displayName}}
+													</option>
+												  </select>
+												  
+
+
+											</div>
+											<div class="col-auto d-flex align-items-center active-toggle">
+												<label for="toggle-switch{{ith}}" class="m-0 switch">
+													<input type="checkbox" class="form-check-input" id="toggle-switch{{ith}}"
+														[disabled]="purpose==='Add new contact only' || !displayNameChecked[ith] || selectedCustomFields[ith] =='Phone_number'"
+														[(ngModel)]="toggleOverride[ith]">
+													<span [ngClass]="{'toggle-disabled-slider':purpose==='Add new contact only'
+													       || !displayNameChecked[ith]}" class="slider" 
+														   [ngStyle]="{'cursor': selectedCustomFields[ith] == 'Phone_number' ? 'default' : 'pointer'}"
+														   >
+													</span>
+												</label>
+												<p [ngClass]="{'toggle-disabled':purpose==='Add new contact only'|| !displayNameChecked[ith]}" 
+												   class="m-0 ml-2">{{ toggleOverride[ith] ? 'Override on' : 'Override off' }}</p>
+											</div>
+										</div>
+									</div>
+							
+										
+						
+								</div>
+							</div>
+						</div>
+						<div class="col-1"></div>
+					</div>
+
+					<div class="col-sm-12 pb-3 d-flex justify-content-end next_button_container">
+						<button type="button" (click)="isIdentifierColumn(contents)"  class="next-button">Next</button>
+					</div>
+					<ng-template #contents let-c="close" let-d="dismiss">
+						<div class="incorrect-card-main d-flex flex-column align-items-center">
+							<p>The identifier column must be <br /> mapped before proceeding</p>
+							<button type="button" class="btn" (click)="closeErrorModal()">Ok, Got it</button>
+						</div>
+					</ng-template>
+				</div>
+
+				<!-- review upload step 3 -->
+				<div id="review-part" class="content" role="tabpanel" aria-labelledby="review-part-trigger">				
+					<div class="py-4 row">
+						<div class="col-lg-12 py-3 d-flex">
+							<div class="col-sm-2"></div>
+							<div class=" col-sm-4 review-left-part">
+								<div class="card">
+										<h4>Imported File Details</h4>
+										<div class="sub-card">
+											<h5>File Name</h5>
+											<h6>{{fileName}}</h6>
+										</div>
+										<div class="sub-card">
+											<h5>Purpose</h5>
+											<h6>{{purpose}}</h6>
+
+										</div>
+										<div class="sub-card">
+											<h5>Identifier</h5>
+											<h6>{{Identifier}}</h6>
+										</div>							
+								</div>
+							</div>
+							<div class="col-sm-4 review-right-part">
+								<div class="mb-3 review-right-part-sub1">
+									<sb-loader [isLoading]="importDataLoader" [loaderType]="'small'" [message]="''" [maxDuration]="120000"></sb-loader>
+									<h5 class="m-0">{{numberOfNewContact}}</h5>
+									<h6 class="m-0">New contact will added</h6>
+ 
+								</div>
+								<div class="mb-3 review-right-part-sub2">
+									<sb-loader [isLoading]="importDataLoader" [loaderType]="'small'" [message]="''" [maxDuration]="120000"></sb-loader>
+									<h5 class="m-0">{{countUpdatedData}}</h5>
+									<h6 class="m-0">existing contacts will updated</h6>
+								</div>
+								<div class="mb-3 review-right-part-sub3">
+									<sb-loader [isLoading]="importDataLoader" [loaderType]="'small'" [message]="''" [maxDuration]="40000"></sb-loader>
+									<h5 class="m-0">{{skipCont}}</h5>
+									<h6 class="mb-3">Contact skipped due to error</h6>
+
+									<button class="mb-1 btn" (click)="downloadERRfile()">
+									<img src="../../../../assets/img/profile/download-file.svg" /> 
+									  Download error file
+								   </button>
+								</div>
+							</div>
+							<div class="col-sm-2"></div>
+						</div>
+						  <div class="col-sm-12 pb-3 d-flex justify-content-end next_button_container">
+							<button type="button" (click)="onImportContacts(imports)" class="next-button">Import</button>
+						</div>
+					</div>
+					<ng-template #imports let-c="close" let-d="dismiss">
+						<div class="dd d-flex flex-column align-items-center justify-content-center p-4 hide-outer">
+							<img class="rotate-180deg" src="assets/img/export1.png"/>
+							<div class="modal-header">
+
+								<h4 class="modal-title modal-title-p-0" id="modal-basic-title">Import started in the background</h4>
+
+							</div>
+							<div class="modal-body">
+								<p class="pos-inherit">We will notify you by email once the job has been <br /> 
+									completed. Now you can close this dialog box.
+								</p>
+								<div class="ss image-to-left">
+									<img src="assets/img/your.png">
+								</div>
+							</div>
+							<div class="modal-footer popfooter row text footer-align">
+								<div class="col">
+									<button type="button" class="btn btn-outline-dark" data-bs-dismiss="modal"
+										aria-label="Close" data-bs-target="#importmodal" (click)="c('Save click')">Ok,Got it</button>
+								</div>
+							</div>
+						</div>
+					</ng-template>
+
+					<ng-template #importfailed let-c="close" let-d="dismiss">
+						<div class="dd"><img src="assets/img/export1.png">
+							<div class="modal-header">
+
+							</div>
+							<div class="modal-body">
+								<p>Import has been failed due to error<br /> in csv file.
+								</p>
+								<div class="ss">
+									<img src="assets/img/your.png">
+								</div>
+							</div>
+							<div class="modal-footer popfooter row text">
+								<div class="col-md-3">
+									<button type="button" class="btn btn-outline-dark" data-bs-toggle="modal" data-bs-target="#importmodal">Ok, Got it
+									</button>
+								</div>
+							</div>
+						</div>
+					</ng-template>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+	<ng-template #instruction let-c="close" let-d="dismiss">
+		<div class="modal-header text-right">
+			<button type="button" class="btn-close" aria-label="Close" (click)="d('Cross click')"></button>
+		</div>
+		<div class="modal-body">
+			<div class="campaigndata">
+				<p>Upload a csv file</p>
+
+			</div>
+		</div>
+
+	</ng-template>

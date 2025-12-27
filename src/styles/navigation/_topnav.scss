@@ -1,0 +1,40 @@
+// Base styling for the topnav
+
+.sb-topnav {
+  padding-left: 0;
+  height: $topnav-base-height;
+  z-index: $zindex-topnav;
+  background-color: #ffffff;
+  .navbar-brand {
+      width: $sidenav-base-width;
+    //   padding-left: $navbar-padding-x;
+    //   padding-right: $navbar-padding-x;
+      margin: 0;
+    //   color: #000000;
+    //   font-family: 'Manrope';
+    //   font-weight: bolder;
+      font-size: 30px;
+      //border-right: 1px solid #EBEBEB;
+      width: 209px;
+  }
+ 
+
+
+  &.navbar-light {
+      #sidebarToggle {
+          color: $topnav-light-toggler-color;
+      }
+  }
+  svg:not(:root).svg-inline--fa {
+    overflow: visible;
+    color: #7A86A1;
+}
+}
+
+
+
+@media all and (max-width:1536px) {
+    .sb-topnav .navbar-brand {
+        font-size: 25px;
+    }
+}

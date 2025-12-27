@@ -1,0 +1,808 @@
+*{
+  ::-webkit-scrollbar {
+      display: none;
+  }
+}
+
+.token-scroll::-webkit-scrollbar {
+  display: block !important;
+}
+
+.toaster {
+  float: left;
+  width: auto;
+  position: fixed;
+  right: 50px;
+  top: 65px;
+  z-index: 9999;
+}
+
+.toaster p {
+  padding: 8px;
+  font-size: 14px;
+  color: #fff;
+  margin: 0;
+  min-width: 250px;
+  text-align: center;
+  border-radius: 20px;
+  font-weight: 500;
+
+}
+
+.toaster p.error {
+  background-color: red;
+
+}
+
+.toaster p.success {
+  background-color: green;
+}
+
+.toaster p.warn {
+  background-color: orange;
+}
+
+
+
+
+.setting-card {
+    background: #FFFFFF 0% 0% no-repeat padding-box;
+    box-shadow: 2px 13px 54px #695F9714;
+    border-radius: 30px;
+    padding: 20px;
+    width: 90%;
+}
+
+
+.setting-field {
+    display: flex;
+   }
+   
+   .setting-field .setting-field-link {
+       color: #7A86A1;
+       font-size: 15px;
+       padding: 8px 20px;
+       text-decoration: none;
+       margin-right: 12px;
+       cursor: pointer;
+   }
+   
+   .setting-field .active{
+       color: #FFFFFF !important;
+       background: #6149CD 0% 0% no-repeat padding-box;
+       border-radius: 19px;    
+   }
+
+   .account-card {
+    border-radius: 30px;
+    margin: 1%;
+    flex-direction: column;
+    flex-wrap: nowrap;
+    padding: 10px 20px;
+    min-height: 190px;
+    cursor: pointer;
+   }
+
+   .account-card p {
+    font-size: 12px;
+    color: #7A86A1;
+   }
+
+   .account-card-header {
+    padding: 10px 0px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 5px;
+   }
+
+   .account-btn {
+    background: #6149CD 0% 0% no-repeat padding-box;
+    border-radius: 17px;
+    padding: 6px 25px;
+    border: 1px;    
+    color: white;
+    font-weight: 400;
+   }
+
+   .connected_agent_list {
+    height: 440px;
+    overflow: scroll;
+   }
+
+   .card1_Wb, .card2_Wof {
+    background: #FFF4F2!important;
+    border: none!important;
+   }
+   .setting-card .card1 {
+    background: #ffffff;
+    border: 2px solid #F0F0F0;
+   }
+   .setting-card .card2 {
+    background: #ffffff;
+   border: 2px solid #F0F0F0;
+   }
+
+   .connection-card {
+    border-radius: 30px;
+    margin: 15px 10px 10px 5px;
+    flex-direction: column;
+    flex-wrap: nowrap;
+    padding: 7px 20px;
+    min-height: 85px;
+    cursor: pointer;
+    background: #FFF4F2 0% 0% no-repeat padding-box;
+    font-size: 14px;
+   }
+
+   .connection-card .card-desc {
+    background: white;
+    padding: 3px 5px;
+    border-radius: 15px;
+    margin: 3px 6px;
+   }
+
+   .connection-card img {
+    box-shadow: 1px 8px 29px #695F9724;
+    background: white;
+    padding: 12px;
+    border-radius: 40%;
+   }
+
+   .card-desc img {
+    box-shadow: none;
+    padding: 5px
+   }
+
+   .account-modal{
+    background: #FFF4F2;
+    width: 380px;
+    height: 330px;
+    border-radius: 1.5rem;
+   }
+
+   .modal-content .btn-close {
+    background: white;
+    margin: 2px;
+    border-radius: 15px;
+    padding: 6px 12px;
+    border: 1px solid #EBEBEB;
+   }
+
+   .modal-content .btn-close img{
+    width: 12px;
+   }
+
+   .modal-content .modal-title{
+    color: #6149CD;
+    font-size: 18px;
+   }
+   
+   .account-modal .modal-footer {
+    border: none;
+   }
+
+   .radio-btn{
+    width: 18px;
+   }
+
+   .qr-modal {
+    background: #FFF4F2;
+    min-width: 925px;
+    height: 547px;
+    border-radius: 1.5rem;
+   }
+
+   .scanner-img {
+    width: 200px;
+    height: 200px;
+    border-radius: 24px;
+    padding-bottom:5px ;
+   }
+
+   .qr-card {
+    width: 40%;
+   }
+   
+   .qr-heading{
+    font-weight: bold;
+    font-size: 24px;
+   }
+
+   .websetting-card{    
+    background: #FFF4F2;
+    border-radius: 20px;
+    min-height: 200px;
+   }
+
+   .api-card{
+    width: 90%;
+   }
+
+   .account-white-btn {
+    background: white;
+    border-radius: 18px;
+    padding: 10px 14px;
+    box-shadow: 1px 8px 29px #695F9724;
+    border: 1px;
+   }
+
+   .account-white-btn img {
+    border-radius: 0px;
+   }
+
+   .api-card .api-card-desc{
+    font-size: 18px;
+    font-weight: 500;
+   }
+
+   .api-card .api-time{
+    color: #7A86A1;
+   }
+
+   .api-card .tokens-card {
+    width: 80%;
+   }
+   .new-token-btn{
+    color: #6149CD;
+    font-weight: 600;
+    font-size: 14px;
+    background: white;
+    border-radius: 18px;
+    padding: 8px 14px;
+    box-shadow: 1px 8px 29px #695F9724;
+    border: 1px;
+    width: auto;
+   }
+   .new-token-btn:disabled{
+    opacity: 0.6 !important;
+   }
+   .account-btn:disabled{
+    opacity: 0.6 !important;
+   }
+
+   .left-col{
+    width: 33%;
+    color: #6149CD;      
+    font-size: 15px;
+   }
+
+   .mid-col{
+    width: 33%;     
+    font-size: 14px;   
+   }
+
+   .right-col{
+    width: 33%;   
+    float: right; 
+   }
+
+   .websetting-data{
+    display: flex;
+    min-height: 46px;
+   }
+
+   .websetting-btn{
+    font-weight: 600;
+    font-size: 14px;
+    background: white;
+    border-radius: 18px;
+    padding: 6px 16px;
+    border: 1px;
+    height: fit-content;
+    width: fit-content;
+   }
+
+   .whatsWebSetting-modal{
+    min-width: 700px;
+    min-height: 500px;
+    border-radius: 30px;
+   }
+
+   .text-voilet{
+       color:#6149CD;
+   }
+
+   .incoming-card{
+    display: flex;
+    justify-content: space-between;
+   }
+
+   .input-form{
+    width: 115px;
+    height: 30px;
+    border-radius: 11px;
+    border: 1px solid #EBEBEB;
+   }
+
+   .create-token-modal label{
+    font-size: 15px;
+    font-weight: 600;
+   }
+
+   .create-token-modal {
+    height: 80vh !important;
+   }
+
+   .create-token-modal .modal-body{
+    overflow-y: scroll !important;
+   }
+
+   .token-input-form {
+    width: 100%;
+    height: 40px;
+    border-radius: 16px;
+    border: 1px solid #EBEBEB;
+    padding: 5px 15px;
+   }
+
+   .remove-btn {
+    color: #FF3636;
+    font-size: 14px;
+    cursor: pointer;
+   }
+
+   .add-btn {
+    color: #6236FF;
+    font-size: 14px;
+    cursor: pointer;
+   }
+
+   .save-empty-card{
+    width: 100%;
+    justify-content: center;
+    display: flex;
+    text-align: center;
+    align-items: center;
+    height: 60vh;
+   }
+   .delete-token-modal{
+    width: 320px;
+   }
+
+   .cancel-btn{
+    background: #fff;
+    border: 1px solid #EBEBEB;
+    border-radius: 20px;
+    width: auto;
+    height: 35px;
+    color: #7A86A1;
+    padding: 0px 25px;
+    font-size: 12px;
+    font-weight: 800;
+    margin: 0 0 0 15px;
+   }
+
+   .delete-btn{
+    box-shadow: 1px 8px 29px #695F9724;
+    border-radius: 20px;
+    width: auto;
+    height: 35px;
+    border: 0px;
+    color: #fff;
+    padding: 0px 25px;
+    font-size: 12px;
+    font-weight: 800;
+    margin: 0 0 0 15px;
+    background: #FF3636;
+   }
+
+   .alertmessage p{
+    font-size: 16px;
+    font-weight: 600;
+    text-align: center;
+   }
+
+   .create-token-modal .modal-footer {
+    border: none;
+   }
+
+   .inegration-block{
+    display: flex;
+    justify-content: space-evenly;
+    padding-top: 1.5rem;
+   }
+
+   .inegration-block .integration-card {
+    border: 2px solid #F0F0F0;
+    width: 43%;
+    min-height: 160px;
+    border-radius: 30px;
+    padding: 1rem 1.6rem;
+   }
+
+   .integration-card img {
+    width: 35px;
+    height: 35px;
+    margin-bottom: 0.5rem;
+   }
+
+   .api-confiormation-modal .modal-header{
+    justify-content: center;
+   }
+
+   .token-heading{
+    font-size: 17px;
+    font-weight: 800;
+   }
+   .api-confiormation-modal{
+    background: #FFF4F2
+   }
+
+   .api-confiormation-modal p{
+    font-size: 14px;
+    color: #7A86A1;
+   }
+
+   .api-confiormation-modal .token-input-form{
+    width: 85%;
+    height: 35px;
+    border-radius: 16px;
+    border: 1px solid #EBEBEB;
+    padding: 5px 15px;
+   }
+
+   .copy-btn{
+    position: relative;
+    width: 26px;
+    margin-left: -10%;
+    cursor: pointer;
+   }
+
+   .checkbox{
+    width: 16px;
+    height: 16px;
+   }
+
+   .token-checkbox{
+    width: 85%;
+    justify-content: center;
+    display: flex;
+   }
+
+   .api-confiormation-modal .modal-footer{
+    border: none;
+   }
+
+   .whatsapp-connect{
+    display: flex;
+    font-size: 16px !important;
+    font-weight: 600;
+   }
+
+   .grey{
+    color: #7A86A1;
+
+   }
+
+
+
+.toggle-container {
+    display: inline-block;
+    position: relative;
+  }
+  
+  .toggle-input {
+    display: none;
+  }
+  
+  .toggle-label {
+    display: block;
+    width: 40px;
+    height: 20px;
+    background-color: #ccc;
+    border-radius: 10px;
+    position: relative;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    top: 0.5rem;
+  }
+ 
+  .toggle-input:checked + .toggle-label {
+    background-color: #6149CD ;
+  }
+  
+ 
+  .toggle-label::before {
+    content: "";
+    position: absolute;
+    width: 18px;
+    height: 18px;
+    background-color: white;
+    border-radius: 50%;
+    left: 2px;
+    top: 1px;
+    transition: left 0.3s;
+  }
+  
+  .toggle-input:checked + .toggle-label::before {
+    left: 20px;
+  }
+  
+  .message {
+    display: none;
+    margin-top: 20px;
+    padding: 10px;
+    background-color: #4caf50;
+    color: white;
+    border-radius: 5px;
+  }
+  
+  /* Styles for the visible message */
+  .message.visible {
+    display: block;
+  }
+
+
+
+
+
+  .tooggle-container {
+    display: inline-block;
+    position: relative;
+  }
+  
+  .tooggle-input {
+    display: none;
+  }
+  
+  .tooggle-label {
+    display: block;
+    width: 40px;
+    height: 20px;
+    background-color: #ccc;
+    border-radius: 10px;
+    position: relative;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    top: 0.5rem;
+  }
+ 
+  .tooggle-input:checked + .tooggle-label {
+    background-color: #6149CD ;
+  }
+
+  .tooggle-label::before {
+    content: "";
+    position: absolute;
+    width: 18px;
+    height: 18px;
+    background-color: white;
+    border-radius: 50%;
+    left: 2px;
+    top: 1px;
+    transition: left 0.3s;
+  }
+  
+  .tooggle-input:checked + .tooggle-label::before {
+    left: 20px;
+  }
+
+  .welcomGreeting .modal-footer {
+    border: none;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: flex-end;
+    padding: 0.75rem;
+}
+.reboot-btnnn{
+  background: #FFFFFF ;
+    border-radius: 14px;
+    padding: 4px 30px;
+    border: 1px;
+    color: #F96767;
+    font-weight: 400;
+    border: 1px solid #EBEBEB;
+    font-family: "Manrope";
+    font-weight: 600;
+    font-size: 14px;
+    box-shadow: 4px 22px 54px #695F971A;
+    opacity: 1;
+    height: 2.3rem;
+}
+
+.account-bttn{
+  background: #6149CD 0% 0% no-repeat padding-box;
+    border-radius: 14px;
+    padding: 4px 30px;
+    height: 2.2rem;
+    border: 1px;
+    color: white;
+    font-weight: 400;
+    font-family: "Manrope";
+}
+.reboapp{
+  display: flex;
+}
+
+.tog-rebo{
+display: flex;
+    flex-wrap: wrap;
+    flex-direction: column;
+    align-content: space-around;
+}
+.inputEmail-form{
+  width: 100%;
+  height: 2.5rem;
+  border-radius: 16px;
+  border: 1px solid #EBEBEB;
+}
+
+.rebo-footer{
+  display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: flex-end;
+    padding: 0.75rem;
+    border-bottom-right-radius: calc(0.3rem - 1px);
+    border-bottom-left-radius: calc(0.3rem - 1px);
+}
+
+.save-footer{
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: flex-end;
+  padding: 0.75rem;
+  border-bottom-right-radius: calc(0.3rem - 1px);
+  border-bottom-left-radius: calc(0.3rem - 1px);
+  height: 6rem;
+}
+.settings-scroll{
+  overflow: scroll;
+  height: 32rem;
+}
+
+input[type="radio"]:checked + label::before {
+  border: 3.5px solid #6149CD; 
+  background-color: #FFFFFF;
+}
+
+
+.sel-type-btns label {
+  display: inline-block;
+  position: relative;
+  padding-left: 30px; 
+  margin-right: 15px;
+  cursor: pointer;
+  user-select: none;
+}
+
+.sel-type-btns label::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 18px;
+  height: 18px;
+  border: 1px solid #C0BDCC; 
+  border-radius: 50%;
+  background-color: #FFFFFF;
+  transition: border-color 0.3s, background-color 0.3s;
+}
+.h-33{
+  height: 33px;
+}
+
+.h-100{
+  height: 100% !important;
+}
+.disableBtn{
+  background-color: grey;
+}
+
+
+
+.setting-card-status-details {
+  background-color: #FFF4F2;
+  border-radius: 20px;
+  padding: 20px;
+  
+}
+.High {
+  color: green;
+  font-weight: 1000;
+}
+
+.Low {
+  color: red;
+  font-weight: 1000;
+}
+
+.Medium {
+  color: yellow;
+  font-weight: 1000;
+}
+
+.w-70{
+  width: 70% !important;
+}
+
+
+.disable-btn{
+  background: #FFFFFF 0% 0% no-repeat padding-box;
+  box-shadow: 1px 8px 29px #695F9724;
+  border: 1px solid #E9E9EA;
+  border-radius: 19px;
+  padding: 7px 10px;
+}
+
+.disable-btn label{
+  margin: 0px;
+}
+
+.disable-btn span{
+  font-weight: 600;
+  font-family: 'Manrope';
+}
+
+.active-toggle {
+  /* height: 45px; */
+  /* background: #FFFFFF 0% 0% no-repeat padding-box; */
+  /* box-shadow: 1px 8px 29px rgba(105, 95, 151, 0.1411764706); */
+  /* border: 1px solid #E9E9EA; */
+  border-radius: 19px;
+  width: 100%;
+  display: flex;
+}
+
+.error-val{
+  color: red !important;
+}
+
+.word-wrapper{
+  word-break: break-all !important;
+}
+
+.min-button-width{
+  min-width: 178px !important;
+}
+
+.common-input {
+  font-size: 16px;
+  outline: none;
+  border-radius: 10px;
+  border: 1px solid #0000001d;
+  
+  &::placeholder {
+      font-size: 13px;
+  }
+}
+
+.disable-btn{
+  background: #FFFFFF 0% 0% no-repeat padding-box;
+  box-shadow: 1px 8px 29px #695F9724;
+  border: 1px solid #E9E9EA;
+  border-radius: 19px;
+  padding: 7px 10px;
+}
+
+.disable-btn label{
+  margin: 0px;
+}
+
+.disable-btn span{
+  font-weight: 600;
+  font-family: 'Manrope';
+}
+
+.active-toggle {
+  border-radius: 19px;
+  width: 100%;
+  display: flex;
+}
+.custom-padding{
+  padding: 7px 14px !important;
+}  
+.border-top-0{
+  border-top: 0;
+}
+.overlay {
+	position: fixed;
+	top: 0;
+	right: 0;
+	bottom: 0;
+	left: 0;
+  }

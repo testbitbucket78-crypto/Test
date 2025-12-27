@@ -1,0 +1,35 @@
+{
+  "scripts": {
+    "start:preprod-cronJob": "cross-env NODE_ENV=preprod node cronJob.js",
+    "start:staging-cronJob": "cross-env NODE_ENV=staging node cronJob.js",
+    "start:prod-cronJob": "cross-env NODE_ENV=prod node cronJob.js",
+    "start:preprod-defaultMessageCronJob": "cross-env NODE_ENV=preprod node defaultMessageCronJob.js",
+    "start:staging-defaultMessageCronJob": "cross-env NODE_ENV=staging node defaultMessageCronJob.js",
+    "start:prod-defaultMessageCronJob": "cross-env NODE_ENV=prod node defaultMessageCronJob.js",
+    "start:preprod-AutoDeletion": "cross-env NODE_ENV=preprod node AutoDeletion.js",
+    "start:staging-AutoDeletion": "cross-env NODE_ENV=staging node AutoDeletion.js",
+    "start:prod-AutoDeletion": "cross-env NODE_ENV=prod node AutoDeletion.js"
+  },
+  "dependencies": {
+    "aws-sdk": "^2.1396.0",
+    "axios": "^1.4.0",
+    "bullmq": "^4.0.0",
+    "cors": "^2.8.5",
+    "cross-env": "^7.0.3",
+    "dotenv": "^17.2.2",
+    "express": "^4.18.2",
+    "ioredis": "^5.3.2",
+    "is-port-reachable": "^4.0.0",
+    "json2csv": "^6.0.0-alpha.2",
+    "jsonwebtoken": "^8.5.1",
+    "k6": "^0.0.0",
+    "moment": "^2.29.4",
+    "mysql": "^2.18.1",
+    "node-cron": "^3.0.2",
+    "node-fetch": "^3.3.2",
+    "node-schedule": "^2.1.1",
+    "nodemailer": "^6.8.0",
+    "winston": "^3.13.1",
+    "winston-daily-rotate-file": "^5.0.0"
+  }
+}

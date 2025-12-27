@@ -1,0 +1,309 @@
+const express = require('express');
+const router=express.Router();
+const authenticateToken = require('../Authorize');
+const verifyAPIKeyAndToken = require('../Middlewares/authenticateToken'); // Middleware to verify API key and token
+const organizationController=require('./organizationController');
+const profileController=require('./profileController');
+const notification=require('./NotifyClients')
+const campaignController=require('./campaignController');
+const accountController=require('./accountController')
+const generalcontroller=require('./generalcontrolller');
+const dynamicRateLimiter = require('./ratelimitter');
+const {v4 : uuidv4} = require('uuid')
+//_____________________________Organization Settings_______________________//
+
+
+router.post('/uploadCompanylogo',authenticateToken,organizationController.uploadCompanylogo)
+router.post('/companyDetail',authenticateToken,organizationController.savecompanyDetail)
+router.post('/localDetails',authenticateToken,organizationController.savelocalDetails)
+router.post('/billingDetails',authenticateToken,organizationController.savebillingDetails)
+router.post('/updateCompanyDetail',authenticateToken,organizationController.updateCompanyDetail)
+router.post('/updateLocalDetails',authenticateToken,organizationController.updateLocalDetails)
+router.post('/updatebillingDetails',authenticateToken,organizationController.updatebillingDetails)
+router.get('/companyDetail/:spID',authenticateToken,organizationController.getcompanyDetail)
+router.get('/localDetails/:spID',authenticateToken,organizationController.getlocalDetails)
+router.get('/billingDetails/:spID',authenticateToken,organizationController.getbillingDetails)
+
+router.post('/workingDetails',authenticateToken,organizationController.saveworkingDetails)//for add and update
+router.get('/workingDetails/:spID',authenticateToken,organizationController.getworkingDetails)
+router.post('/updateWorkingHours',authenticateToken,organizationController.updateWorkingHours)//unused
+
+router.post('/holidays',authenticateToken,organizationController.addholidays)
+router.get('/holidays/:spID/:dateFrom/:dateTo',authenticateToken,organizationController.getHolidays)
+router.post('/removeHolidays',authenticateToken,organizationController.removeHolidays)//unused
+
+router.get('/subrights',authenticateToken,organizationController.subrights)
+router.get('/rights',authenticateToken,organizationController.rights)
+
+router.post('/addRole',authenticateToken,organizationController.addRole)
+router.get('/getRoles/:roleID/:spid',authenticateToken,organizationController.getRolesbyroleIDspid)
+router.get('/getUser/:spid/:userType',authenticateToken,organizationController.getUserbyspiduserType)
+router.get('/deleteRole/:roleID/:spid',authenticateToken,organizationController.deleteRoleByroleIDspid)
+
+router.post('/addUser',authenticateToken,organizationController.addUser)
+router.get('/rolesList/:spid',authenticateToken,organizationController.rolesListByspid)
+router.post('/deleteUser',authenticateToken,organizationController.deleteUser)
+router.post('/editUser',authenticateToken,organizationController.editUser)
+router.get('/getActiveUser/:spid/:IsActive',authenticateToken,organizationController.getUserByspid)
+router.get('/getUserByuid/:spid/:uid',authenticateToken,organizationController.getUserByuid)
+router.get('/getUsers/:spid',authenticateToken,organizationController.getUsers)
+router.post('/addTeam',authenticateToken,organizationController.addTeam)//unused 
+router.post('/deleteTeam',authenticateToken,organizationController.deleteTeam)//unused
+router.post('/editTeam',authenticateToken,organizationController.editTeam)//unused
+router.get('/teamsList/:spid',authenticateToken,organizationController.teamsListByspid)//unused
+
+
+//____________________________Profile Sttings_____________________________________//
+
+router.get('/teamName/:uid',authenticateToken,profileController.teamName)
+router.get('/roleName/:uid',authenticateToken,profileController.roleName)
+router.post('/userProfileImg',authenticateToken,profileController.userProfile)//unused
+router.post('/changePassword',authenticateToken,profileController.changePassword)
+router.post('/userActiveStatus',authenticateToken,profileController.userActiveStatus)
+
+router.post('/addNotification',authenticateToken,profileController.addNotification)
+router.get('/getNotification/:UID',authenticateToken,profileController.getNotificationByUid)
+
+router.post('/savePlan',authenticateToken,profileController.saveManagePlan)
+router.post('/saveBillingHistory',authenticateToken,profileController.saveBillingHistory)
+router.get('/getBillingDetails/:spid',authenticateToken,profileController.getBillingDetails)
+
+router.get('/pdf/:spid',authenticateToken,profileController.invoicePdf)
+router.get('/invoiceDetails/:spid',authenticateToken,profileController.invoiceDetails)
+
+router.get('/usesData/spid',authenticateToken,profileController.usesData)
+router.get('/usageInsight/:spid',authenticateToken,profileController.UsageInsightCon)
+router.get('/ApproximateCharges/:spid',authenticateToken,profileController.ApproximateCharges)
+router.get('/deletePaymentMethod/:spid',authenticateToken,profileController.deletePaymentMethod)
+router.get('/getAvailableAmout/:spid',authenticateToken,profileController.getAvailableAmout)
+router.post('/addfunds',authenticateToken,profileController.addfunds)
+router.get('/subFAQS/:id',authenticateToken,profileController.getSubFAQS)
+router.get('/FAQs',authenticateToken,profileController.getFAQs)
+router.get('/userGuideTopics',authenticateToken,profileController.UserGuideTopics)
+router.get('/userGuideSubTopics/:id',authenticateToken,profileController.UserGuideSubTopics)
+router.post('/SPTransations',authenticateToken,profileController.addSPTransations)
+router.get('/managePlan',authenticateToken,profileController.getmanagePlansandCharges)
+
+
+//________________________ Notification_____________________//
+
+router.get('/getNotifications/:spid/:uid',authenticateToken,notification.notification)
+router.post('/updateNotifications/:spid/:uid',authenticateToken,notification.update)
+
+//_________________________Campaign Settings__________________//
+
+router.post('/addCampaignTimings',authenticateToken,campaignController.addCampaignTimings)
+router.post('/updateCampaignTiming',authenticateToken,campaignController.updateCampaignTimings)//unused
+router.get('/selectCampaignTimings/:sid',authenticateToken,campaignController.selectCampaignTimings)
+router.get('/getCampaignAlertUserList/:sid',authenticateToken,campaignController.getUserList)
+router.post('/addAndUpdateCampaign',authenticateToken,campaignController.addAndUpdateCampaign)
+router.get('/selectCampaignAlerts/:sid',authenticateToken,campaignController.selectCampaignAlerts)
+router.post('/addCampaignTest',authenticateToken,campaignController.addCampaignTest)
+router.get('/selectCampaignTest/:sid',authenticateToken,campaignController.selectCampaignTest)
+router.post('/testCampaign',authenticateToken,campaignController.testCampaign)
+
+
+//______________________Contact Settings_______________________//
+
+router.post('/addupdateTag',authenticateToken,campaignController.addTag)
+router.get('/selectTag/:spid',authenticateToken,campaignController.gettags)
+router.post('/deleteTag',authenticateToken,campaignController.deleteTag)
+
+router.post('/addCustomField',authenticateToken,campaignController.addCustomField)
+router.post('/editCustomField',authenticateToken,campaignController.editCustomField)
+router.get('/getCustomField/:spid',authenticateToken,campaignController.getCustomField);
+router.get('/wrapperGetCustomField/:spid',campaignController.getCustomField) //wrapper 
+router.get('/getCustomFieldById/:id',authenticateToken,campaignController.getCustomFieldById)
+router.post('/deleteCustomField/:id/:spid',authenticateToken,campaignController.deleteCustomField)
+router.post('/enableMandatory',authenticateToken,campaignController.enableMandatoryfield)
+router.post('/enableStatus',authenticateToken,campaignController.enableStatusfield)
+
+//_______________________TEMPLATE_________________________//
+
+router.post('/addTemplate',authenticateToken,campaignController.addTemplate)  //  isTemplate  value 0 for quick response , 1 for template ,(2 for gallary and spid =0 )
+router.post('/addTemplateWrapper',campaignController.addTemplate)  // for Wrapper API Only
+
+router.get('/getTemplate/:spid/:isTemplate',authenticateToken,campaignController.getTemplate)
+router.get('/getTemplateForGallery/:spid/:isTemplate/:channel',authenticateToken,campaignController.getTemplateForGallery)
+router.get('/getApprovedTemplate/:spid/:isTemplate',authenticateToken,campaignController.getApprovedTemplate)
+router.post('/deleteTemplates',authenticateToken,campaignController.deleteTemplates)
+router.post('/addGallery',authenticateToken,campaignController.addGallery)//unused
+router.get('/getGallery/:spid/:isTemplate',authenticateToken,campaignController.getGallery)  // pass spid=0,isTemplate=2
+router.get('/exitTemplate/:spid/:isTemplate/:name',authenticateToken,campaignController.isExistTemplate);  // istemplate=1
+
+// -------------- WhatsApp Flows Start -------------------//
+router.get('/getFlows/:spid/:isPublished',authenticateToken,campaignController.getFlows);
+router.get('/getFlowDetail/:spid/:flowId',authenticateToken,campaignController.getFlowDetail);
+router.post('/saveFlowMapping',authenticateToken,campaignController.saveFlowMapping)  
+router.post('/exportFlowData',authenticateToken,campaignController.exportFlowData)  
+router.post('/flowPreviewurl',authenticateToken,campaignController.flowPreviewurl)  
+
+// -------------- WhatsApp Flows End -------------------//
+
+//------------------UPLOAD  MEDIA ON METS IMPLEMENTATIONS------------------------//
+const multer = require('multer');
+let fs = require('fs-extra');
+const awsHelper = require('../awsHelper');
+const path = require("path");
+// handle storage using multer
+var storage = multer.diskStorage({
+   destination: function (req, file, cb) {
+      //cb(null, '/var/www/api/uploads');
+     
+    let path = `./uploads`;
+    fs.mkdirsSync(path);
+    cb(null, path);
+    
+   },
+   filename: function (req, file, cb) {
+      cb(null, `${Date.now()}-${uuidv4()}-${file.originalname}`);
+   }
+});
+var upload = multer({ storage: storage });
+
+
+// handle single file upload
+router.post('/uploadfiletoMeta/:spid/:name',upload.single('dataFile'), async (req, res)=> {
+    try{   
+ const file = req.file;
+ console.log(file)
+ if (!file) {
+ res.send({message:'File no uplaoded...'})
+ }
+ else{
+ const uuidv = uuidv4()
+ const url =  path.join(__dirname, `/uploads/${file.filename}`)//`${req.protocol}://${req.get('host')}/uploads/${file.filename}`
+ 
+ // Get file stats to obtain file size
+ const stats = await fs.stat(url);
+ 
+ const fileSizeInBytes = stats?.size;
+ const fileSizeInKilobytes = fileSizeInBytes / 1024;
+ const fileSizeInMegabytes = fileSizeInKilobytes / 1024;
+ if(fileSizeInMegabytes <= 10){
+ 
+ console.log(url)
+ 
+
+
+ let file_length = stats?.size
+ let file_name = file.filename
+ let file_type = file.mimetype
+ let awsres = await awsHelper.uploadAttachment(`${req.params.spid}/${req.params.name}/${uuidv}/${file.filename}`, url,file.mimetype)
+
+ let uploadedURL = await campaignController.uploadMediaOnMeta(file_length,file_name,file_type,url);
+ res.send({status:200,awsUploadedId:awsres.value.Location,fileSize:awsres.size , metaUploadedId : uploadedURL})
+ 
+ }else{
+   
+   try {
+    await fs.unlink(url); 
+ } catch (unlinkErr) {
+    console.error("Error occurred while unlinking file:", unlinkErr);
+ }
+ res.status(413).send({ message: 'File size limit exceeds 10MB' });
+ }
+ }}catch(err){
+    console.log(err)
+    res.send({status:500,err:err})
+ }
+ });
+
+//====================================END=======================================//
+
+
+//__________________ACCOUNT API'S__________________________//
+
+router.post('/addWhatsAppDetails',authenticateToken,accountController.insertAndEditWhatsAppWeb)
+router.get('/getWhatsAppDetails/:spid',authenticateToken,accountController.selectDetails)
+router.get('/getChennelWhapiorWeb/:spid',authenticateToken,accountController.getChennelWhapiorWeb)
+router.post('/addWAapiDetails',authenticateToken,accountController.addWAAPIDetails)
+router.get('/getQualityRating/:phoneNo/:phone_number_id/:WABA_ID/:spid',authenticateToken,accountController.getQualityRating)
+router.post('/addGetAPIKeys',authenticateToken,accountController.addGetAPIKey)
+router.post('/APIkeysState',authenticateToken,accountController.APIkeysState)
+router.post('/saveWebhookUrl',authenticateToken,accountController.saveWebhookUrl)
+router.post('/Webhooks',authenticateToken,accountController.saveOrUpdateWebhook)
+router.get('/getWebhooks/:spid',authenticateToken,accountController.getWebhooks)
+router.get('/deleteWebhook/:id',authenticateToken,accountController.deleteWebhook)
+router.post('/exportLogs',authenticateToken,accountController.exportLogs)
+router.get('/getBrandConfig/:domain', accountController.getBrandConfig);
+
+//Messages (within service window)
+router.post('sendMessage' ,dynamicRateLimiter,accountController.sendMessage)
+router.post('/v1/whatsapp/text' , verifyAPIKeyAndToken, accountController.textMessage)
+router.post('/v1/whatsapp/media' ,verifyAPIKeyAndToken, accountController.mediaMessage)
+router.post('/v1/whatsapp/sendInteractive' ,verifyAPIKeyAndToken, accountController.SendInteractiveButtons) // Interactive Buttons.
+router.post('/v1/whatsapp/getMessages' , verifyAPIKeyAndToken, accountController.getMessages) 
+//Templates
+//Send.Template
+router.post('/v1/whatsapp/sendTemplates' ,verifyAPIKeyAndToken, accountController.sendTemplates)
+
+
+//Create.Template
+router.post('/v1/whatsapp/createTemplatesEK' ,verifyAPIKeyAndToken, accountController.createTemplatesAPI)
+router.post('/v1/whatsapp/createTemplatesWEB' ,verifyAPIKeyAndToken, accountController.createTemplatesWEB)
+router.post('/v1/whatsapp/createTemplatesBUTTON' ,verifyAPIKeyAndToken, accountController.createTemplatesWHAPI)
+
+router.post('/v1/whatsapp/getTemplates' ,verifyAPIKeyAndToken, accountController.getTemplate)
+router.post('/v1/whatsapp/getTemplateStatus' ,verifyAPIKeyAndToken, accountController.getTemplateStatus) //Get.Template.Status
+router.post('/v1/whatsapp/getSessionStatus' ,verifyAPIKeyAndToken, accountController.getSessionStatus) //Get.Session.status
+
+//Contacts
+router.post('/v1/whatsapp/createContact' ,verifyAPIKeyAndToken, accountController.createContact) //Create.Contact
+router.post('/v1/whatsapp/updateContact' ,verifyAPIKeyAndToken, accountController.updateContact) //Update.Contact
+router.post('/v1/whatsapp/getContacts' ,verifyAPIKeyAndToken, accountController.getContacts) //Get.Contacts
+router.post('/v1/whatsapp/deleteContacts' ,verifyAPIKeyAndToken, accountController.deleteContacts)   //Delete.Contact
+
+
+//Conversations
+router.post('/v1/whatsapp/getUsers' ,verifyAPIKeyAndToken, accountController.getUsers) //Get.Users
+router.post('/v1/whatsapp/getCustomFields' ,verifyAPIKeyAndToken, accountController.getCustomFields) //Get.CustomFields
+// Update.Conversation.Status (Mark open/resolve and Assign user)
+
+//making a new upload logic to upload image to meta directly from backend using existing url uploaded in blob
+router.post('/uploadImageToMetaWrapper' , accountController.uploadImageToMetaWrapperController) 
+
+
+
+
+
+router.post('/addToken',authenticateToken,accountController.addToken)//unused
+router.post('/editToken',authenticateToken,accountController.editToken)//unused
+//router.get('/deleteToken/:id',authenticateToken,accountController.deleteToken)//unused
+router.post('/isEnableToken',authenticateToken,accountController.enableToken)//unused
+router.get('/selectToken/:spid',authenticateToken,accountController.selectToken)//unused
+router.get('/createInstanceID',authenticateToken,accountController.createInstance)//unused
+router.post('/qrCodeData',authenticateToken,accountController.getQRcode)//unused
+router.post('/generateQRcode',authenticateToken,accountController.generateQRcode)//unused
+router.post('/testwebhook',authenticateToken,accountController.testWebhook)
+router.post('/testwebhooks',authenticateToken,accountController.testWebhooks)
+router.post('/deleteToken',authenticateToken,accountController.deleteAPIToken)
+
+//__________________________General Settings____________________________//
+
+router.post('/defaultaction',authenticateToken,generalcontroller.defaultaction)
+router.get('/generalcontroller/:spid',authenticateToken,generalcontroller.getdefaultaction)
+
+router.get('/getdefaultmessages/:spid',authenticateToken,generalcontroller.getdefaultmessages)
+router.post('/Abledisable',authenticateToken,generalcontroller.Abledisable)
+router.post('/savedefaultmessages',authenticateToken,generalcontroller.savedefaultmessages)
+router.post('/uploadimg',authenticateToken,generalcontroller.uploadimg)//unused
+router.post('/addAndUpdateDefaultMsg',authenticateToken,generalcontroller.addAndUpdateDefaultMsg)
+router.post('/deletedefaultactions',authenticateToken,generalcontroller.deletedefaultactions)
+
+
+router.post('/rotingsave',authenticateToken,generalcontroller.rotingsave)
+router.get('/getroutingrules/:spid',authenticateToken,generalcontroller.getroutingrules)
+
+router.post('/savemanagestorage',authenticateToken,generalcontroller.savemanagestorage)
+
+router.get('/getautodeletion/:spid',authenticateToken,generalcontroller.getautodeletion)
+
+//_______************_______________//
+router.post('/manualDelation',authenticateToken,generalcontroller.manualDelation)
+router.post('/getmanualDelation',authenticateToken,generalcontroller.deletedDetails)
+router.post('/healthCheck',generalcontroller.healthCheck)
+
+
+
+module.exports = router;

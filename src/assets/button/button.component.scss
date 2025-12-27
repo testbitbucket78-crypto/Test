@@ -1,0 +1,53 @@
+.button {
+    color: #7A86A1;
+    font-size: 14px;
+    padding: 8px 20px;
+    text-decoration: none;
+    margin-right: 12px;
+    cursor: pointer;
+    border: none;
+    background: transparent;
+    border-radius: 19px;
+    outline: none;
+    font-family: 'Manrope';
+}
+
+::ng-deep .button img {
+    height: 15px !important;
+    width: 15px !important;
+}  
+
+.button.active {
+    color: #FFFFFF !important;
+    background: #6149CD;
+    border: none;
+    outline: none;
+    box-shadow: none;
+}
+
+.button.secondary {
+    background: white !important;
+    color: #000000;
+    border: 1px solid #0000001e !important;
+    outline: none;
+}
+
+.button:disabled {
+    opacity: 0.5;
+    background: grey;
+    cursor: not-allowed;
+    border: none;
+    outline: none;
+}
+
+.button:focus {
+    outline: none;
+    box-shadow: none;
+    border: none;
+}
+.label-accent {
+  color: #6149cd;
+}
+.label-muted{
+color: #7A86A1;
+}

@@ -1,0 +1,1056 @@
+//********** Rishabh Singh **********//  
+
+        //  fix UI bugs //
+* {
+    font-family: 'Manrope';
+}
+
+.bs_stepper_header {
+    padding: 1.5% 3% 1% 3%;
+}
+
+.bs_stepper_header .btn-cross {
+    width: 40px;
+    height: 40px;
+    background: #FFFFFF;
+    border-radius: 16px;
+    color: #7A86A1;
+    font-weight: 500;
+    opacity: 1;
+    border: 1px solid #ebebeb;
+    font-family: "Manrope";
+    font-size: 13px;
+    outline: none;
+}
+
+.link {
+    color: skyblue;
+    font-size: 16px;
+}
+.bs_stepper_header h1 {
+    font-weight: bold;
+    font-size: 19px;
+    color: #000000;
+    letter-spacing: -0.55px;
+    margin: 0;
+
+}
+.active .bs-stepper-circle {
+    background: #6149cd;
+    box-shadow: 2px 13px 30px #6149cd42;
+    border-radius: 17px;
+    opacity: 1;
+    width: 36px;
+    height: 35px;
+    line-height: 20px;
+    color: #ffffff;
+    border-radius: 15px;
+}
+.bs-stepper-circle {
+    background: #ffffff;
+    border: 1px dashed #e1e1e1;
+    border-radius: 15px;
+    color: #7a86a1;
+    text-align: center;
+    opacity: 1;
+    line-height: 20px;
+    width: 36px;
+    height: 35px;
+}
+.active .bs-stepper-label {
+    display: inline-block;
+    margin: 0.25rem;
+    text-align: left;
+    letter-spacing: 0px;
+    color: #6149cd;
+    opacity: 1;
+}
+
+.bs-stepper-label {
+    display: inline-block;
+    margin: 0.25rem;
+    text-align: left;
+    letter-spacing: 0px;
+    color: #7a86a1;
+    opacity: 1;
+}
+
+.box1 {
+    background: #fff4f2 0% 0% no-repeat padding-box;
+    border: 2px dashed #ebebeb;
+    border-radius: 25px;
+    opacity: 1;
+    width: 100%;
+    text-align: center;
+}
+
+.download {
+    display: flex;
+    flex-direction: column;
+    width: 845px;
+  }
+
+
+.box1 h5 {
+    font-family: 'Manrope';
+    font-size: 13px;
+    font-weight: 600;
+    color: #000000;
+    text-align: center;
+}
+.or{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.box1 span {
+    color: #7a86a1;
+    opacity: 1;
+    font-weight: 400;
+    font-family: 'Manrope';
+    font-size: 14px;
+}
+
+
+.box .box1 input {
+    width: 208px;
+    background-color: #ffffff;
+    border-radius: 16px;
+    color: #7a86a1;
+}
+.box1 .btn1 {
+    background: #ffffff 0% 0% no-repeat padding-box;
+    border: 1px solid #ebebeb;
+    border-radius: 17px;
+    opacity: 1;
+    width: 150px;
+    height: 35px;
+    color: #7a86a1;
+}
+
+.bs-stepper-line{
+    min-height: 0px;
+    min-width: 9rem;
+    background: none;
+    border: 1px dashed #e1e1e1;
+}
+.btn1 img {
+    margin: 0;
+}
+.d-img{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 2rem;
+    margin-bottom: 1rem;
+}
+
+.d-img img {
+    width: 68px;
+    height: 68px;
+}
+
+.box3 {
+    background: #ffffff 0% 0% no-repeat padding-box;
+    box-shadow: 4px 22px 54px #695f971a;
+    border-radius: 30px;
+    opacity: 1;
+    padding: 18px 23px 24px 18px;
+    // padding: 17px;
+    // width: 265px;
+    .overflow-container {
+        max-height: 222px; 
+        overflow-y: auto;
+        padding-right: 15px; 
+      }
+}
+
+.box3 p {
+    font-size: 10px;
+    color: #7A86A1;
+    height: 222px;
+    // overflow: scroll;
+    // overflow-x: hidden;
+    font-weight: 400;
+    letter-spacing: 0.2px;
+}
+
+
+.box3 .box4 h6 {
+    font-family: 'Manrope';
+    font-size: 14px;
+    font-weight: 350;
+    color: #080808;
+}
+.box3 h5 {
+    font-family: 'Manrope';
+    font-size: 15px;
+    color: #7a86a1;
+}
+
+#read-more{
+    color: #6149cd;
+    font-size: 11px;
+
+}
+
+.row {
+    display: flex;
+    flex-wrap: wrap;
+}
+.row span {
+    color: #7a86a1;
+    opacity: 1;
+    font-size: 14px;
+    font-family: 'Manrope';
+}
+select {
+    word-wrap: normal;
+    background: #ffffff;
+    border: 1px solid #ebebeb;
+    border-radius: 19px;
+    opacity: 1;
+    font-family: "Manrope";
+    font-weight: 400;
+    font-size: 13px;
+    padding: 10px;
+    color: #000000;
+    width: 17rem;
+    height: 2.813rem;
+}
+#con{
+    font-size: 11px!important;
+}
+#worksa{
+    font-size: 11px!important;
+}
+
+input::file-selector-button {
+    font-weight: bold;
+    color: #7a86a1;
+    background-color: #ffffff;
+    font-family: 'Manrope';
+    font-size: 14px;
+    cursor: pointer;
+    padding: 0.5em;
+    border: 1px solid #EBEBEB;
+    border-radius: 17px;
+}
+
+.modal-content {
+    border: none;
+    border-radius: 30px;
+    outline: 0;
+    box-shadow: 4px 22px 54px #695F971A;
+}
+
+label {
+    display: inline-block;
+    font-family: 'Manrope';
+    font-size: 15px;
+    color: #000000;
+}
+
+
+.btn:not(:disabled):not(.disabled) {
+    cursor: pointer;
+    background: #6149cd 0% 0% no-repeat padding-box;
+    box-shadow: 1px 8px 29px #695f9724;
+    border-radius: 17px;
+    opacity: 1;
+    color: #ffffff;
+}
+
+
+// #upload-head-text {
+//    font-size: 18px;
+//     font-weight: 700;
+//     font-family: "Manrope";
+// }
+
+span {
+    font-family: 'Manrope';
+    font-size: 17px;
+    color: #7a86a1;
+}
+
+#upload-instructions {
+    font-size: 10px;
+    font-family: "Manrope";
+    font-weight: 600;
+    // width: 274px;
+    max-height: 140px;
+    line-height: 13px;
+    overflow-y: scroll;
+    padding-right: 17px;
+    box-sizing: content-box;
+    margin-top: 1rem;
+    margin-left: 2.5rem;
+}
+#upload-instructions::-webkit-scrollbar {
+    display: none;
+}
+
+.sq .ss {
+    background: #fff4f2 0% 0% no-repeat padding-box;
+    border-radius: 30px;
+    opacity: 1;
+}
+.body-con-2{
+    justify-content: space-between;
+    align-items: center;
+}
+#r-first{
+    margin-left: -16rem;
+}
+
+.ss1 {
+    background: #fff4f2 0% 0% no-repeat padding-box;
+    border-radius: 30px;
+    opacity: 1;
+}
+.ss1 .hh1 h5 {
+    font-family: 'Manrope';
+    font-size: 15px;
+    color: #000000;
+    font-weight: bold;
+}
+ .ss1 .hh1 select {
+    word-wrap: normal;
+    background: #ffffff 0% 0% no-repeat padding-box;
+    border: 1px solid #ebebeb;
+    border-radius: 19px;
+    opacity: 1;
+    font-family: 'Manrope';
+    font-size: 14px;
+    font-weight: 500;
+    color: #000000;
+}
+
+.ss1 .hh1 h4 {
+    font-size: 15px;
+    font-family: 'manrope';
+    color: #6236ff;
+    font-weight: 600;
+}
+.ss1 .hh1 h6 {
+    font-size: 14px;
+    font-family: 'manrope';
+}
+
+.hh1{
+    margin-top: 2.2rem;
+}
+.inp-2{
+    width: 12rem;
+    margin-left: 16px;
+}
+.inp-3{
+    width: 12rem;
+    margin-left: -9px;
+}
+.inp-4{
+    width: 12rem;
+    margin-right: -12px;
+}
+
+.incorrect-card-main {
+    width: 498px;
+    height: 196px;
+    box-shadow: 4px 22px 54px #695f971a;
+    border-radius: 30px;
+    font-family: 'Manrope';
+    font-size: 14px;
+    font-weight: 600;
+    opacity: 1;
+    .closeErrorModal{
+        margin-right: 0px;
+    }
+}
+
+.incorrect-card-main p {
+    text-align: center;
+    margin-top: 4rem;
+    margin-bottom: 2rem;
+    font-size: 1rem;
+}
+
+.incorrect-card-main button {
+    border: 1px solid #ebebeb;
+    border-radius: 17px;
+    opacity: 1;
+    width: 110px;
+    height: 40px;
+}
+.button-1{
+    float: right;
+    top: -1rem;
+}
+
+.dd{
+    background-color: #FFF4F2;
+    border-radius: 20px;
+    font-family: 'Manrope';
+    box-shadow: 4px 22px 54px #695F971A;
+}
+.dd h4{
+    padding-left: 54px;
+    font-weight: 700;
+    font-size: 22px;
+}
+.dd p{
+    text-align: center;
+    letter-spacing: 0px;
+    color: #7A86A1;
+    font-size: 14px;
+    font-weight: 500;
+    opacity: 1;
+}
+.dd .ss img{
+    padding: 0px;
+}
+
+.dd .btn{
+    width: 140px;
+    height: 40px;
+}
+.dd .btn1{
+    width: 140px;
+    height: 40px;
+}
+
+.idp {
+    font-size: 8px;
+    font-family: 'Manrope';
+    font-weight: 600;
+}
+
+//********** Rishabh Singh **********//  
+    // (Re-write CSS) //
+
+//Step 1 upload file //
+
+.upload-part-container .head h4 {
+    padding: 0% 22% 0% 23%;
+    font-size: 15px;
+    font-weight: 600;
+    display: flex;
+    justify-content: center;
+}
+
+.upload-part {
+    padding: 0% 22% 3% 23%;
+}
+
+.uploadFile input[type=file] {
+    display: none;
+}
+
+.uploadFile-btn {
+    background: #ffffff;
+    outline:none;
+    border: 1px solid #EBEBEB;
+    border-radius: 17px;
+    font-size: 12px;
+    font-weight: 350;
+    padding: 2% 6% 2% 6%;
+   
+}
+
+.uploadFile-btn img {
+    vertical-align: inherit;
+}
+
+.uploadFile-btn label {
+    color: #7A86A1;
+    cursor: pointer;
+    font-size: 13px;
+    font-weight: 500;
+  }
+
+  .remove-file {
+    height: 7px;
+    width: 8px;
+  }
+
+.download {
+    .form-floating {
+        select {
+            cursor: pointer;
+        }
+    }
+}
+
+.download .btn {
+    background: #fff4f2;
+    border-radius: 13px;
+    color: #000000;
+    float: left;
+    width: fit-content;
+    cursor: pointer;
+    font-size: 13px;
+    font-weight: 350;
+    box-shadow: none;
+}
+
+.download .btn img {
+    margin-right: 9px;
+    margin-left: 5px;
+    vertical-align: sub;
+  }
+
+.purpose-identifier {
+    padding: 0% 22% 3% 23%;
+    .form-floating {
+        select {
+            cursor: pointer;
+        }
+    }
+}
+
+  .purpose-identifier label {
+    font-weight: 400!important;
+  }
+
+
+// Step 2 column mapping rewrite code //
+
+.previous-btn {
+    border: none;
+    background: none;
+    outline: none;
+}
+
+.mapping-head {
+    padding: 0 10em;
+    font-weight: 400;
+    font-size: 12px!important;
+}
+.container-mapping .left-part span {
+    color: #000000;
+    font-weight: bold;
+    font-size: 11px;
+}
+
+.sample_csv_data {
+    height: 305px;
+    overflow: scroll;
+    overflow-x: hidden;
+}
+
+.sample_csv_data p {
+    color: #000000;
+    margin: 0;
+    padding: 11% 0 2% 0;
+    font-size: 11px;
+    font-weight: 350;
+
+}
+
+.sample_csv_data p.NA {
+    color: #7A86A1;
+}
+
+// .sample_csv_data::-webkit-scrollbar {
+//     display: none;
+// }
+
+.container-mapping .left-part, .container-mapping .right-part {
+    background: #fff4f2;
+    border-radius: 25px;
+    height: 386px;
+}
+
+.head-section span.heading {
+    padding: 0 3% 0 7%;
+    color: #000000;
+    font-size: 11px;
+    font-weight: bold;
+}
+
+.col-auto span.heading {
+    color: #000000;
+}
+
+
+.next_button_container {
+    padding: 1% 3% 0% 3%;
+  }
+
+.next-button {
+    background: #6149CD;
+    box-shadow: 1px 8px 29px #695F9724;
+    border-radius: 17px;
+    border: none;
+    padding: 0.8% 3.5% 0.8% 3.5%;
+    color: #ffffff;
+    text-align: center;
+    font-size: 13px;
+    outline: none;
+    font-weight: 500;
+}
+
+// bs-stepper active step  //
+
+.currentStep {
+    background: #6149cd;
+    border: none;
+    color: #ffffff!important;
+}
+.currentLabel {
+    color: #6149cd!important;
+}
+.trigger-active{
+    opacity: 1!important;
+}
+
+
+// toggle button
+
+.active-toggle {
+    padding: 2% 0% 2% 0%;
+}
+
+.active-toggle .switch {
+    position: relative;
+    display: inline-block;
+    width: 48px;
+    height: 20px;
+}
+.active-toggle .slider {
+    position: absolute;
+    cursor: pointer;
+    top: -1px;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: 20px;
+    width: 35px;
+    transition: 0.3s ease-out;
+    border-radius: 34px;
+}
+.active-toggle .switch input {
+    display: none;
+}
+
+.active-toggle .slider:before {
+    position: absolute;
+    content: '';
+    height: 16px;
+    width: 16px;
+    left: 3px;
+    bottom: 2px;
+    background-color: #FFFFFF;
+    transition: 0.3s ease-out;
+    border-radius: 50px;
+    box-shadow: 0.35px 2px 7px #6149cd30;
+}
+
+.active-toggle input:checked + .slider {
+    background-color: #6149CD !important;
+}
+
+.active-toggle input:checked + .slider::before {
+    transform: translateX(14px) translateY(0.1px);
+}
+
+.switch-text p {
+    font-weight: 600;
+    font-weight: 0.875rem;
+}
+
+.active-toggle p {
+    font-size: 11px;
+    font-weight: 300;
+}
+
+.toggle-disabled {
+    color: #7A86A1;
+    font-weight: 300!important;
+}
+
+.toggle-disabled-slider {
+     background-color: #F6EFFF !important;
+     cursor: default !important;
+}
+
+// input styling
+
+.body-section {
+    height: 305px;
+    overflow: scroll;
+    overflow-x: hidden;
+}
+
+.body-section .row {
+    padding: 0 5% 0 5%;
+}
+
+.body-section .row input[type="text"] {
+    background-image: url('../../../../assets/img/support/arrow-down.svg');
+    background-position: calc(100% - 0.9rem), 100% 0;
+    background-size: 8px;
+    background-repeat: no-repeat;
+    border: 1px solid #EBEBEB;
+    border-radius: 19px;
+    width: 260px;
+    height: 40px;
+    outline: 0;
+    padding: 0 30px 0 20px;
+    font-size: 12px;
+    font-weight: 500;
+    color: #000000;
+    cursor: pointer;
+
+}
+.body-section .row input[type="text"]::placeholder {
+    font-size: 11px;
+    font-weight: 300;
+    color: #7A86A1;
+} 
+
+
+.column_mapping_field {
+    gap: 25px;
+}
+
+.input-form {
+    height: 37px;
+    border-radius: 16px;
+    border: 1px solid #EBEBEB;
+    padding: 5px 13px;
+    background: #ffffff;
+    width: 255px;
+    outline: none;
+    cursor: pointer;
+    font-size: 12px;
+    box-sizing: border-box;
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+   }
+
+   select.input-form {
+    background-image: url('../../../../assets/img/support/arrow-down.svg');
+    background-position: calc(100% - 1.2rem), 100% 0;
+    background-size: 9px; 
+    height: 40px;
+    background-repeat: no-repeat;
+  }
+
+  .select-placeholder {
+    font-size: 11px;
+    font-weight: 300;
+    color: #000;
+  }
+
+  .column_mapping_field select::placeholder {
+    color: #7A86A1!important;
+  }
+
+
+// custom styling for checkbox and label //
+
+.form-check .form-check-label {
+    font-size: 11px;
+    color: #6236FF;
+    display: block;
+    position: relative;
+    padding-left: 35px;
+    cursor: pointer;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+
+// Hide the browser's default checkbox //
+.form-check .form-check-label input {
+    position: absolute;
+    cursor: pointer;
+    opacity: 0;
+    height: 0;
+    width: 0;
+  }
+
+.form-check .form-check-label .checkmark {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 19px;
+  height: 20px;
+  background-color: #ffffff;
+  }
+
+  .form-check .form-check-label:hover input ~ .checkmark {
+    background-color: #ccc;
+  }
+  
+  .form-check .form-check-label input:checked ~ .checkmark {
+    background-color: #6149CD;
+  }
+
+  .form-check .form-check-label .checkmark:after {
+    content: "";
+    position: absolute;
+    display: none;
+  }
+  
+  .form-check .form-check-label input:checked ~ .checkmark:after {
+    display: block;
+  }
+
+  .form-check .form-check-label .checkmark:after {
+    left: 7px;
+    top: 5px;
+    width: 4px;
+    border-radius: 1px;
+    height: 7px;
+    border: solid white;
+    border-width: 0px 1.5px 1.5px 0px;
+    transform: rotate(47deg);
+    -webkit-transform: rotate(47deg);
+    -ms-transform: rotate(47deg);
+  }
+
+// column mapping popup
+.popup-dialog {
+    background: #ffffff;
+    box-shadow: 4px 22px 54px rgba(105, 95, 151, 0.1882352941);
+    border-radius: 20px;
+    position: absolute;
+    width: 195px;
+    text-align: center;
+    margin-top: 10px;
+    height: 249px;
+    padding: 20px;
+    overflow: auto;
+    z-index: 9;
+    top: 78px;
+    left: 250px;
+}
+
+.popup-dialog::-webkit-scrollbar {
+    display: none;
+}
+
+.popup-dialog.ContactOption img {
+    width: 20px;
+    margin-right: 5px;
+}
+
+.popup-dialog.ContactOption p {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    font-size: 14px;
+    margin: 5px 0 5px 0;
+    height: 35px;
+    font-weight: 300;
+    word-break: break-word;
+    cursor: pointer;
+}
+
+.popup-dialog.ContactOption p:hover{
+    background-color: #FFF4F2;
+}
+
+// step 3 review part rewrite code
+
+.review-left-part .card {
+    background: #FFF4F2;
+    border-radius: 30px;
+    padding: 42px;
+    border: none;
+}
+
+.review-left-part .card .sub-card  {
+    padding: 10px 0 10px 0;
+}
+
+.review-left-part .card h4 {
+    color: #000000;
+    font-size: 16px;
+    font-weight: 600;
+    padding-bottom: 2em;
+}
+
+.review-left-part .card .sub-card h5 {
+    color: #6149CD;
+    font-size: 13px;
+    font-weight: 300;
+}
+
+.review-left-part .card .sub-card h6 {
+    color: #000000;
+    font-weight: 400;
+    font-size: 14px;
+}
+.review-right-part h5 {
+    color: #000000;
+    font-family: 'Manrope';
+    font-size: 24px;
+    font-weight: bold;
+    padding-bottom: 4.5px;
+}
+
+.review-right-part h6 {
+    color: #000000;
+    font-family: 'Manrope';
+    font-size: 14px;
+    font-weight: 350;
+}
+
+.review-right-part .review-right-part-sub1,
+.review-right-part .review-right-part-sub2, 
+.review-right-part .review-right-part-sub3 {
+    border-radius: 30px;
+    opacity: 1;
+    padding: 5% 10% 5% 12%;
+    width: 100%;
+}
+.review-right-part-sub1 {
+    background: #EBF9EC;
+}
+
+.review-right-part-sub2 {
+    background: #ECE4F5;
+}
+
+.review-right-part-sub3 {
+    background: #fddbdb;
+    float: right;
+}
+
+.review-right-part-sub3 .btn {
+    background: #fff4f2;
+    border-radius: 13px;
+    color: #000000;
+    float: left;
+    cursor: pointer;
+    font-size: 13px;
+    font-weight: 350;
+    box-shadow: none;
+}
+
+.review-right-part-sub3 .btn img {
+    margin-right: 9px;
+    margin-left: 5px;
+    vertical-align: sub;
+  }
+
+  .info span {
+    display: block;
+    font-size: 12px;
+    margin-bottom: 10px;
+    padding-left: 20px;
+    text-indent: -20px;
+}
+
+.import-body{
+    height: calc(100% - 140px);
+    .fs-15 {
+        font-size: 15px;
+      }
+      
+      .fw-600 {
+        font-weight: 600;
+      }
+
+}
+
+* ::-webkit-scrollbar-track{
+    display: none !important;
+}
+
+.h-100{
+    height: 100% !important;
+}
+
+* ::-webkit-scrollbar{
+    background-color: transparent;
+}
+
+.modal-title-p-0 {
+    padding-left: 0 !important;
+}
+
+.rotate-180deg{
+    transform: rotate(180deg);
+}
+
+.pos-inherit {
+    position: inherit;
+    z-index: 2;
+}
+
+.image-to-left {
+    position: absolute;
+    bottom: -60px;
+    left: -90px;
+    z-index: 0;
+}
+
+.hide-outer{
+    overflow: hidden;
+}
+
+.info-container {
+    position: relative;
+    display: inline-block;
+
+    .Info-Iconn {
+        cursor: pointer;
+    }
+
+    .identfierTooltip {
+        position: absolute;
+        bottom: 18px;
+        left: 100%;
+        width: 280px;
+        height: auto;
+        background: #ffffff 0% 0% no-repeat padding-box;
+        box-shadow: 4px 22px 54px rgba(105, 95, 151, 0.1019607843);
+        border-radius: 30px;
+        opacity: 1;
+        overflow: auto;
+
+
+        .p-body {
+            font-size: 12px;
+            font-weight: 500;
+            margin-top: 10%;
+            color: #7a86a1;
+            padding: 10%;
+        }
+
+        #radio-close-btn {
+            width: 36px;
+            height: 36px;
+            position: absolute;
+            top: 4%;
+            right: 6%;
+            background: #ffffff;
+            border-radius: 15px;
+            opacity: 1;
+            border: 1px solid #ebebeb;
+            font-family: 'Manrope';
+            font-size: 13px;
+        }
+    }
+ }
+ #worksa {
+    .note-text {
+        font-weight: bold;
+        font-size: 12px 
+    }
+    .bold-text {
+        font-weight: bold;
+        font-size: 12px  
+    }
+}
+
+.word-break{
+    word-wrap: break-word;
+}

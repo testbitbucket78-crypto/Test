@@ -1,0 +1,112 @@
+.setting-field {
+    display: flex;
+   }
+   
+   .setting-field .setting-field-link {
+       color: #7A86A1;
+       font-size: 15px;
+       padding: 0.5rem 1.2rem;
+       text-decoration: none;
+       margin-right: 8px;
+       cursor: pointer;
+   }
+   
+   .setting-field .active{
+       color: #FFFFFF !important;
+       background: #6149CD 0% 0% no-repeat padding-box;
+       border-radius: 19px;    
+   }
+
+   .setting-card {
+    border-radius: 30px;
+    padding: 20px 30px 0px 30px;
+    box-shadow: 2px 13px 54px #695F9714;    
+    min-height: 75vh;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    width: 65%;
+}
+
+.default-actions-heading{
+    font-size: 22px;
+    font-weight: bold;
+}
+
+.sub-heading{
+    font-size: 16px;
+    font-weight: 600;
+}
+
+.sub-contents{
+    padding: 5px 0px 0px 30px;
+}
+
+.custom-control-label {
+    cursor: pointer;
+}
+
+.sub-contents input.form-control {
+    width: 250px;
+    height: 37px;
+    border-radius: 16px;
+}
+
+.sub-contents input.form-control::placeholder {
+    color: #7A86A1;
+    font-size: 12px;
+    font-weight: 350;
+}
+
+.sub-contents p{
+    font-size: 13px;
+    margin: 0;
+    color: #7A86A1;
+}
+   .account-btn {
+    background: #6149CD 0% 0% no-repeat padding-box;
+    border-radius: 17px;
+    padding: 7px 30px;
+    border: 1px;    
+    color: white;
+    font-weight: 400;
+   }
+
+   .account-btn.disabled {
+    background: grey;
+   }
+
+   .default-footer{
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: flex-end;
+    padding: 0.75rem;
+   }
+
+   .custom-control-input:checked ~ .custom-control-label::before {
+    background-color: #6149CD;
+    border: none;
+   }
+
+.input-form {
+    height: 37px;
+    border-radius: 16px;
+    border: 1px solid #ced4da;
+    padding: 5px 15px;
+    width: 35%;
+}
+
+   .select-heading{
+    font-size: 14px;
+    font-weight: 600;
+   }
+.margin-heading {
+    .select-heading {
+        margin-left: 21px;
+    }
+
+    .input-form {
+        margin-left: 27px;
+    }
+}

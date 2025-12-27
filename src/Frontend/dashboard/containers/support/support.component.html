@@ -1,0 +1,206 @@
+<sb-layout-dashboard>
+    <sb-top-nav title="Support"></sb-top-nav>
+    <div *ngIf="selectedTab == 0">
+    <div class="row">
+        <div class="col-12"></div>
+    </div>
+    <div class="row my-5">
+        <div class="col-12 my-5 d-flex">
+            <div class="col-1"></div>
+            <div class="col-10">
+                <div class="heading-contianer">
+                    <div class="text-center mb-5 row-header">
+                        <h1>How can I help you?</h1>
+                    </div>
+                    <div class="row-body my-5">
+                        <div class="cards-container">
+                            <div class="d-flex flex-wrap justify-content-around align-content-center cards">
+                                <div class="pr-3 cards-common">
+                                    <div class="p-2  userguide">
+                                        <div class="content">
+                                            <img src="../../../../assets/img/support/user-guide.svg" />
+                                            <h6 class="title">
+                                                User Guide
+                                            </h6>
+                                            <p>Instructions and guidance on how to use a product or service.</p>
+                                           
+                                        </div>
+                                        <span class="d-flex justify-content-center arrow-btn">
+                                            <img src="../../../../assets/img/support/arrow.svg"  (click)="selectTab(1)" /></span>
+                                    </div>
+                                </div>
+                                <div class="pr-3 cards-common">
+                                    <div class="p-2  faqs">
+                                        <div class="content">
+                                            <img src="../../../../assets/img/support/faq.svg" />
+                                            <h6 class="title">
+                                                FAQs
+                                            </h6>
+                                            <p>Find answers related to a particular topic, product, or service</p>
+                                          
+                                        </div>
+                                        <span class="d-flex justify-content-center arrow-btn">
+                                        <img  src="../../../../assets/img/support/arrow.svg"  (click)="selectTab(2)" /></span>
+                                    </div>
+                                </div>
+                                <div class="pr-3 cards-common">
+                                    <div class="p-2 apidocs">
+                                        <div class="content">
+                                            <img src="../../../../assets/img/support/api.svg" />
+                                            <h6 class="title">
+                                                API Docs
+                                            </h6>
+                                            <p>instructions on how to use and integrate an API, including endpoints</p>
+                                           
+                                        </div>
+                                        <span class="d-flex justify-content-center arrow-btn">
+                                        <img src="../../../../assets/img/support/arrow.svg" /></span>
+                                    </div>
+                                </div>
+                                <div class="pr-3 cards-common">
+                                    <div class="p-2  raiseticket">
+                                        <div class="content">
+                                            <img src="../../../../assets/img/support/raise-ticket.svg" />
+                                            <h6 class="title">
+                                                Raise Ticket
+                                            </h6>
+                                            <p>Submitting a support request or issue report</p>
+                                
+                                        </div>
+                                        <span class="d-flex justify-content-center arrow-btn">
+                                         <img src="../../../../assets/img/support/arrow.svg" /></span>
+                                    </div>
+                                </div>
+                                
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-1"></div>
+        </div>
+    </div>
+</div>
+
+<div *ngIf="selectedTab == 2" class="">
+
+<div class="row my-4">
+
+    <div class="col-sm-12 my-2 faqs-header">
+        <div class="container-fluid p-0 d-flex justify-content-around align-items-center">
+            <div class="col-sm-6 text-left d-flex pl-0">
+                <div class="d-flex">
+                    <div class="back-btn" (click)="selectTab(0)">
+                        <img src="assets/img/profile/previous1.svg" />
+                    </div>
+                    <div class="main-title">
+                        <h4 class="m-0 px-4">FAQs</h4>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-6 text-right d-flex justify-content-end pr-0">
+                    <div class="search-field">
+                        <form class="d-none d-md-inline-block form-inline">
+                        <div class="input-group search">
+    
+                            <input class="form-control" type="text" placeholder="Search" name="search" [(ngModel)]="searchText" />
+    
+                            <img src="assets/img/search.png">
+                        </div>
+                        </form>
+                    </div>
+                  
+            </div>
+        </div>
+    
+    </div>
+
+
+</div>
+
+    <div class="row mt-3 faqs-card-container">
+        <div class="col-sm-12">
+            <div class="row" >
+                <div class="col-sm-4 pb-4" *ngFor="let list of FaqsTitle | searchfilter:searchText">
+                    <div class="p-4 card"(click)="selectTab(3)" >
+                        <h5 class="pb-4">{{list.FAQs}}<span class="px-1">(25)</span></h5>
+                        <div *ngFor="let sub of subFAQs | searchfilter:searchText" > 
+                        <p><span class="pr-2"><img src="../../../../assets/img/support/faq-q.svg"/></span>{{sub.FAQ_Ques}}</p>
+                        </div>
+                        <a (click)="selectTab(3)"><span>+19</span>More</a>
+                    </div>
+                    
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div *ngIf="selectedTab== 3">
+
+    <div class="row my-4">
+
+        <div class="col-sm-12 my-2 faqs-header">
+            <div class="container-fluid p-0 d-flex justify-content-start align-items-center">
+                <div class="col-sm-6 text-left d-flex pl-0">
+                    <div class="d-flex">
+                        <div class="back-btn" (click)="selectTab(2)">
+                            <img src="assets/img/profile/previous1.svg" />
+                        </div>
+                        <div class="main-title">
+                            <h4 class="m-0 px-4">Conversations Related</h4>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        
+        </div>
+    
+    
+    </div>
+
+    <div class="row mt-3 faqs-card-container">
+        <div class="col-sm-12">
+            <div class="row">
+                <div class="col-sm-4 pb-4">
+                    <div class="p-4 card">
+                        <h5 class="pb-4">Conversations Related<span class="px-1">(25)</span></h5>
+                        <!-- <div *ngFor="let ques of conversationRelatedQuestions"> 
+                        <p><span class="pr-2"><img src="../../../../assets/img/support/faq-q.svg"/></span>{{ques}}</p>
+                        </div> -->
+                    </div>
+                    
+                </div>
+
+                <div class="col-sm-7">
+                    <div class="card-q">
+                        <div class="d-flex cards-q-container">
+                            <span class="px-3"><img src="../../../../assets/img/support/faq-q.svg"/></span>
+                            <p>
+                                Why I’m not able to see the user in the assignment list? My user is not able to see new chat/ 
+                                I’m not able to see new chats in the unassigned bucket?
+                                 I’ve initiated a conversation but I’m not able to see it</p>
+                        </div>
+                        <div class="cards-a">
+                            <p>Check to see if the user is listed under the users list by: Settings>Users & Roles > Users 2. 
+                                If the user has not been added: To add the user in the whatsapp channel - 
+                                Settings>Whatsapp>Click on the number>Assign user> Assign to>Add user>Apply</p>
+                        </div>
+                       
+                    </div>
+                </div>
+
+                <div class="col-sm-1"></div>
+                
+        
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<div *ngIf="selectedTab== 1" >
+    <sb-userguide (selectab)="selectedTab=$event"></sb-userguide>
+</div>
+</sb-layout-dashboard>

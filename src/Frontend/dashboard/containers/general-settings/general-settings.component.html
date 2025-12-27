@@ -1,0 +1,127 @@
+   <div>
+    <div class="toaster" (click)="hideToaster()">
+        <p *ngIf="errorMessage" class="error">{{errorMessage}}</p>
+        <p *ngIf="successMessage" class="success">{{successMessage}}</p>
+        <p *ngIf="warningMessage" class="warning">{{warningMessage}}</p>
+    </div>
+    <sb-loader [isLoading]="isLoading"></sb-loader>
+    <div class="row">
+        <div class="col-sm-9 py-4 setting-field">
+            <a class="setting-field-link" [ngClass]="selectedTab==1 ? 'active' : ''" *ngIf="!settingsService.checkRoleExist('31')" (click)="selectedTab = 1">Default
+                Actions</a>
+            <a class="setting-field-link" [ngClass]="selectedTab==2 ? 'active' : ''"  *ngIf="!settingsService.checkRoleExist('32')" (click)="selectedTab = 2">Default
+                Messages</a>
+            <a class="setting-field-link" [ngClass]="selectedTab==3 ? 'active' : ''" (click)="selectedTab = 3" *ngIf="!settingsService.checkRoleExist('33')">Routing
+                Rules</a>
+            <a class="setting-field-link" [ngClass]="selectedTab==4 ? 'active' : ''"  *ngIf="!settingsService.checkRoleExist('34')" (click)="selectedTab = 4">Manage
+                Storage</a>
+        </div>
+    </div>
+    <div class="setting-card" *ngIf="selectedTab==1 && !settingsService.checkRoleExist('31')">
+      <form #defaultActionForm="ngForm" (ngSubmit)="saveDefaultAction()">
+        <div class="default-actions-heading pb-4">Default Actions</div>
+        <div class="pl-2 pr-5 ">
+            <div class="d-flex align-items-center custom-control custom-checkbox">
+                <input class="custom-control-input" type="checkbox" name="isAgentActive" id="isAgentActive" 
+                   (change)="defaultActionState('agentActiveTime', $event.target.checked)" 
+                    [(ngModel)]="isAgentActive">
+                <label class="custom-control-label" for="isAgentActive">
+                    <span class="sub-heading">Agent Inactive Timeout</span></label>
+            </div>
+            <div class="sub-contents">
+                <p>Configure the 'Agent Inactivity Timeout' duration if a conversation is assigned to an agent but no reply by him, 
+                    then his status is changed to Offline (timeout is applicable only for the first reply in the same conversation).</p>
+                <div class="select-heading pt-4 pb-2">
+                    <label class="form-label" for="agentActiveTime">Set Timeout Period</label>
+                </div>
+                <div class="d-flex align-items-baseline">
+                    <input class="form-control" name="pauseAgentActiveTime" type="text" 
+                    [pattern]="agentInactivePattern"
+                     onKeyPress="if(this.value.length==3) return false; return /^[0-9]$/.test(event.key)"
+                    [disabled]="!isAgentActive"
+                    (change)="agentInactiveTill(pauseAgentActiveTime)"
+                    [(ngModel)]="pauseAgentActiveTime"
+                    placeholder="Enter set timeout (1-500 minutes)"
+                    [ngClass]="{'is-invalid':defaultActionForm.controls['pauseAgentActiveTime']?.dirty &&
+                       (defaultActionForm.controls['pauseAgentActiveTime']?.hasError('pattern') ||  pauseAgentActiveTime === '')}">
+                </div>
+            </div>
+        </div>
+
+        <div class="pl-2 pr-5 pt-3">
+            <div class="d-flex align-items-center custom-control custom-checkbox">
+                <input class="custom-control-input" type="checkbox" name="isAutoReply" id="isAutoReply" 
+                  (change)="defaultActionState('autoReplyTime', $event.target.checked)" 
+                   [(ngModel)]="isAutoReply" >
+                <label class="custom-control-label" for="isAutoReply">
+                    <span class="sub-heading">Auto Replies Pause</span></label>
+            </div>
+            <div class="sub-contents">
+                <p>Configure the time for all auto replies to be paused when the chat is answered by an agent.</p>
+                <div class="select-heading pt-4 pb-2">
+                 <label class="form-label" for="autoReplyTime">Pause Auto Replies for</label>
+                </div>
+                <div class="d-flex align-items-baseline">
+                    <input class="form-control" name="pauseAutoReplyTime" type="text" 
+                    [pattern]="pauseAutoTimePattern"
+                     onKeyPress="if(this.value.length==4) return false; return /^[0-9]$/.test(event.key)"  
+                     [disabled]="!isAutoReply || isAutoReplyDisable"
+                     placeholder="Enter autoreply timeout (1-1440 minutes)"
+                     (change)="autoRepliesPausedTill(pauseAutoReplyTime)"
+                     [(ngModel)]="pauseAutoReplyTime"
+                     [ngClass]="{'is-invalid':defaultActionForm.controls['pauseAutoReplyTime']?.dirty &&
+                       (defaultActionForm.controls['pauseAutoReplyTime']?.hasError('pattern')|| pauseAutoReplyTime === '')}">
+                </div>
+                <div class="d-flex align-items-center w-40 py-3 custom-control custom-checkbox">
+                    <input class="custom-control-input" type="checkbox" name="isAutoReplyDisable" id="isAutoReplyDisable"
+                      (change)="defaultActionState('autoReplyDisable',$event.target.checked)"  [disabled]="!isAutoReply"
+                       [(ngModel)]="isAutoReplyDisable" >
+                   <label class="custom-control-label" for="isAutoReplyDisable">
+                    <p>Disable Auto Replies completely when a chat is assigned to an agent until resolved.</p>
+                   </label> 
+                </div>
+            </div>
+        </div>
+
+        <div class="pl-2 pr-5 pt-3">
+            <div class="d-flex align-items-center custom-control custom-checkbox">
+                <input class="custom-control-input" type="checkbox" name="isContactAdd" id="isContactAdd"
+                  (change)="defaultActionState('contactAdd',$event.target.checked)"
+                   [(ngModel)]="isContactAdd" >
+                <label class="custom-control-label" for="isContactAdd"><span class="sub-heading">Contact Auto Addition</span></label>
+            </div>
+            <div class="sub-contents">
+                <p>You can enable the auto addition of contacts when a user sends a message to your business for the
+                    first time or if it does not exist currently in your business’s contact database.</p>
+            </div>
+        </div>
+
+        <div class="margin-heading px-2">
+            <div class="sub-heading mt-3 ml-4">Assign a Default Admin </div>
+            <div class="sub-contents py-2">
+                <p class="margin-content">Select a Default Admin that will be assigned a Missed Chat for these cases - when Contact Owner is not defined for any Contact and Contact Owner is the default option for all Missed Chats, 
+                    or if there are multiple users with Admin role and Admin is configured as the default option for Missed Chats.</p>
+            </div>
+            <select class="input-form" [(ngModel)]="defaultAdminUid" [ngModelOptions]="{standalone: true}">
+                <option *ngFor="let item of initUserList" [value]="item.uid"><span class="text-capitalize">{{ item?.name }}</span></option>
+            </select>
+
+        </div>
+        <div class="default-footer">
+            <button type="submit" [disabled]="defaultActionForm.invalid || pauseAgentActiveTime===''|| pauseAutoReplyTime===''" [class.disabled]="defaultActionForm.invalid || pauseAgentActiveTime===''|| pauseAutoReplyTime===''" class="account-btn">Save</button>
+        </div>
+     </form>
+    </div>
+
+    <div *ngIf="selectedTab==2 && !settingsService.checkRoleExist('32')">
+        <sb-default-message-settings></sb-default-message-settings>
+    </div>
+
+    <div *ngIf="selectedTab==3 && !settingsService.checkRoleExist('33')">
+        <sb-routing-rules></sb-routing-rules>
+    </div>
+
+    <div *ngIf="selectedTab==4 && !settingsService.checkRoleExist('34')">
+        <sb-manage-storage></sb-manage-storage>
+    </div>
+</div>

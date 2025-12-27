@@ -1,0 +1,188 @@
+* {
+    font-family: 'Manrope';
+    box-sizing: border-box;
+
+}
+
+.row-header h1 {
+    font-weight: 800;
+    margin-bottom: 5rem;
+}
+
+.userguide, .apidocs, .raiseticket {
+    border: 2px solid #F0F0F0;
+    border-radius: 30px;
+}
+
+.faqs {
+    border: 2px solid #ffffff;
+    background: #FFF4F2;
+    border-radius: 30px;
+}
+
+.content {
+    padding: 10% 10% 10% 10%;
+}
+
+.content p {
+    margin: 0;
+}
+
+.content h6 { 
+    margin: 0;
+    font-size: 1.2rem;
+    padding: 8% 0 4% 0%;
+}
+
+.content p {
+    color: #7A86A1;
+    font-size: 0.875rem;
+    font-weight: 500;
+}
+
+span img {
+    cursor: pointer;
+
+}
+
+.title {
+    font-weight: 800;
+}
+
+.cards-common {
+    flex: 1 1;
+}
+
+.arrow-btn {
+    padding: 4% 0% 10% 0%;
+
+}
+
+.arrow-btn img{
+    margin-left: auto;
+    margin-right: auto;
+}
+
+
+
+/**** FAQs SECTION PAGE   ****/
+
+// Search input field styling 
+
+.search img {
+    position: absolute;
+    margin: 15px 0px 0px 13px;
+    width: 15px;
+    height: 15px;
+}
+
+
+.input-group>.form-control,
+.input-group>.form-control-plaintext,
+.input-group>.custom-select,
+.input-group>.custom-file {
+    position: relative;
+    border-radius: 19px;
+    border: 1px solid #EBEBEB;
+    background-color: #ffffff;
+    font-size: 0.875rem;
+    min-width: 350px;
+    padding: 20px 35px;
+}
+
+.search-field-text {
+    color: #7A86A1;
+}
+
+.faqs-header {
+    padding: 0% 5% 0% 5%;
+}
+
+
+.back-btn img {
+    cursor: pointer;
+    height: 15px;
+}
+
+.main-title h4 {
+    letter-spacing: -0.75px;
+    font-weight: 800;
+    cursor: default;
+    
+}
+
+//   FAQS CARDS STYLING   //
+
+.faqs-card-container {
+    padding: 0 4% 0 4%;
+}
+
+.faqs-card-container .card {
+    background: #FFF4F2 0% 0% no-repeat padding-box;
+    border-radius: 30px;
+    border: none;
+}
+
+.faqs-card-container h5 {
+    font-weight: 700;
+    color: #000000;
+    letter-spacing: -0.55px;
+
+}
+
+.faqs-card-container span {
+    font-weight: 400;
+    margin-top: 4px;
+}
+
+.faqs-card-container .card p {
+    color: #201B26;
+    font-weight: 400;
+    font-size: 0.875rem;
+    cursor: pointer;
+}
+
+.userguide, .faqs, .raiseticket, .apidocs  {
+    height: 265px;
+  
+}
+
+
+
+@media screen and (max-width: 576px) {
+    .userguide, .faqs, .raiseticket, .apidocs  {
+        width: 360px;
+        margin-bottom: 25px;
+    }
+
+    .row-header h1 {
+        font-size: 36px;
+    }
+}
+
+// Detail Faqs section
+
+
+.card-q {
+    background: #FFFFFF;
+    box-shadow: 2px 13px 54px #695F9714;
+    border-radius: 30px;
+    padding: 2% 8% 2% 8%;
+    height: 500px;
+}
+
+.card-q p {
+    font-size: 22px;
+    color: #201B26;
+    font-weight: 500;
+    line-height: inherit;
+}
+
+.cards-a p {
+    font-size: 19px;
+    color: #201B26;
+    font-weight: 400;
+    line-height: inherit;
+    padding: 2% 7% 0 7%;
+}
+

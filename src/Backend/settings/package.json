@@ -1,0 +1,31 @@
+{
+    "scripts": {
+    "start:preprod-settingsServer": "cross-env NODE_ENV=preprod node settingsServer.js",
+    "start:staging-settingsServer": "cross-env NODE_ENV=staging node settingsServer.js",
+    "start:prod-settingsServer": "cross-env NODE_ENV=prod node settingsServer.js"
+  },
+  "dependencies": {
+    "bcrypt": "^5.1.1",
+    "cors": "^2.8.5",
+    "express": "^4.18.2",
+    "express-rate-limit": "^7.5.0",
+    "form-data": "^4.0.0",
+    "fs": "^0.0.1-security",
+    "fs-extra": "^11.1.1",
+    "ioredis": "^5.4.2",
+    "moment": "^2.29.4",
+    "multer": "^1.4.5-lts.1",
+    "mysql": "^2.18.1",
+    "nodemailer": "^6.9.7",
+    "path": "^0.12.7",
+    "pdfmake": "^0.2.7",
+    "rate-limit-redis": "^4.2.0",
+    "swagger-jsdoc": "^6.2.8",
+    "swagger-ui-express": "^5.0.1",
+    "uuid": "^9.0.1",
+    "json2csv": "^6.0.0-alpha.2",
+    "jsonwebtoken": "^8.5.1",
+    "cross-env": "^7.0.3",
+    "xlsx": "^0.18.5"
+  }
+}

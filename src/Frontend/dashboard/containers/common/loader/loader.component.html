@@ -1,0 +1,24 @@
+<!-- <div *ngIf="isLoading" [ngClass]="{'loader-container': loaderType === 'standard', 
+        'loader-container-small': loaderType === 'small'}" 
+        [ngStyle]="customStyles">
+     <div [ngClass]="{'loader': loaderType === 'standard', 
+     'loader-small': loaderType === 'small'}"></div>
+    <p *ngIf="message">{{ message }}</p>
+</div> -->
+
+<div *ngIf="isLoading" 
+     [ngClass]="{
+        'loader-container': loaderType === 'standard',
+        'loader-container-small': loaderType === 'small',
+        'loader-container-mini': loaderType === 'mini'
+     }"
+     [ngStyle]="customStyles">
+     
+  <div [ngClass]="{
+        'loader': loaderType === 'standard',
+        'loader-small': loaderType === 'small',
+        'loader-mini': loaderType === 'mini'
+      }"></div>
+
+  <p *ngIf="loaderType === 'standard' && message">{{ message }}</p>
+</div>

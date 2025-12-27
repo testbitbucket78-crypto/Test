@@ -1,0 +1,437 @@
+
+.setting-card {
+    border-radius: 30px;
+    padding: 20px;
+    background: #FFF4F2 0% 0% no-repeat padding-box;
+    width: 45%;
+    word-wrap: break-word!important;
+}
+
+.setting-field {
+    display: flex;
+   }
+   
+   .setting-field .setting-field-link {
+       color: #7A86A1;
+       font-size: 15px;
+       padding: 0.5rem 1.2rem;
+       text-decoration: none;
+       margin-right: 8px;
+       cursor: pointer;
+       font-family: 'Manrope';
+   }
+   
+   .setting-field .active{
+       color: #FFFFFF !important;
+       background: #6149CD 0% 0% no-repeat padding-box;
+       border-radius: 19px;  
+       font-family: 'Manrope';  
+   }
+
+   .profile-img{
+    width: 6rem;
+    height: 6rem;
+    background: white;
+    opacity: 1;
+    border-radius: 50%;
+    box-shadow: 4px 11px 20px #1111122b;
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: cover;
+    color: #6149cd;
+    text-align: center;
+    justify-content: center;
+    display: flex;
+    align-items: center;
+    font-size: 28px;
+    font-weight: 800;
+   }
+
+   .companyimg{
+    width: fit-content;
+    height: fit-content;
+   }
+
+
+   .profile-margin-left{
+    margin-left: 43%;
+
+   }
+
+   .account-white-btn {
+    background: white;
+    border-radius: 18px;
+    padding: 10px 14px;
+    box-shadow: 1px 8px 29px #695F9724;
+    border: 1px;
+    height: fit-content;
+   }
+
+   .profile-heading{
+    font-size: 20px;
+    font-weight: 700;
+    font-family: "Manrope";
+   }
+
+   .profile-card{
+    width: 100%;
+    text-align: center;
+   }
+
+   .flex-row{
+    display: flex ;
+    justify-content: space-around;
+   }
+
+   .detail-card{
+    min-height: 100px;
+    background: white;
+    border-radius: 30px;
+    box-shadow: 2px 13px 54px #695F9714;
+    margin-top: 1.3rem;    
+    padding: 10px 10px 10px 20px;
+   }
+
+   .flex-header{
+    display: flex;
+    justify-content: space-between;
+   }
+
+   .left-col{
+    width: 55%;
+   }
+
+   .profile-sub-heading{
+    color: #6149CD;
+    font-size: 15px;
+    font-weight: 650;
+    font-family: "Manrope";
+   }
+
+   .profile-form-row{
+    display: flex;
+    padding-top: 10px;
+   } 
+
+   .account-modal{
+    width: 47rem;
+    height: 37rem;
+    border-radius: 1.5rem;
+    margin-left: -7rem;
+   }
+
+  .modal-footer{
+    border: none;
+   }
+
+   .modal-content .btn-close {
+    background: white;
+    margin: 2px;
+    border-radius: 15px;
+    padding: 6px 12px;
+    border: 1px solid #EBEBEB;
+   }
+
+   .account-btn {
+    background: #6149CD 0% 0% no-repeat padding-box;
+    border-radius: 17px;
+    padding:8px 40px;
+    border: 1px;    
+    color: white;
+    font-weight: 500;
+    font-family: "Manrope";
+   }
+
+   .modal-content .btn-close img{
+    width: 12px;
+   }
+
+   .input-form {
+    border-radius: 16px;
+    border: 1px solid #EBEBEB;
+    padding: -9px 12px;
+    margin-top: 7px;
+    font-family: "Manrope";
+    margin-right: 3rem;
+   }
+
+   .profile-form-left{
+    padding-right: 4px;
+   }
+   .profile-form-row span{
+    font-size: 16px;
+    font-weight: 650;
+    font-family: 'Manrope';
+   }
+
+   .modal-title {
+    letter-spacing: -0.45px;
+    font-weight: 900;
+   }
+
+   .billing-modal{
+    width: 54rem;
+    height: 40rem;
+    border-radius: 1.5rem;
+    margin-left: -9rem;
+    .modal-body{
+    overflow-y: auto;
+    overflow-x: hidden;
+    }
+    .modal-header{
+        position: sticky;
+    }
+    .modal-footer{
+        position: sticky;
+    }
+   }
+
+   .locale-modal{
+    width: 49rem;
+    height: 28rem;
+    border-radius: 1.5rem;
+   }
+
+   .billing-left-col{
+    width: 45%;
+    padding-top: 15px;
+    font-size: 16px;
+    font-weight: 600;
+   }
+
+   .billing-form-row{
+    display: flex;
+    margin-bottom: 6px;
+    margin-left: 3rem;
+   }
+
+
+   .industry-txt{
+    padding: 13px 0px 0px 6px;
+   }
+
+   .w-90{
+    width: 80%;
+   }
+
+   .margin-left{
+    margin-left: -30px;
+    margin-right: 30px;
+   }
+
+   .phoneinput.input-form{
+    width: 40px;
+   }
+   .numb-1{
+    padding-right: 2rem;
+    padding-top: 0.6rem;
+   }
+
+   select.input-form {
+    background-image: url('../../../../assets/img/support/arrow-down.svg');
+    background-position: calc(100% - 1.2rem), 100% 0;
+    background-size: 9px; 
+    height: 45px;
+    background-repeat: no-repeat;
+  }
+  select {
+	appearance: none;
+}
+
+.billing.input-form{
+width: 53rem;
+height: 47px;
+border-radius: 16px;
+border: 1px solid #EBEBEB;
+padding: -9px 12px;
+margin-top: 7px;
+font-family: "Manrope";
+margin-right: 6rem;
+}
+
+.billing-right-col{
+    width: 53rem;
+
+}
+
+.billing-right-col .billing.input-form{
+    width: 100%;
+}
+
+select.company,
+select#country_code {
+    cursor: pointer;
+}
+
+.company.input-form{
+    width: 19rem;
+    height: 47px;
+    border-radius: 16px;
+    border: 1px solid #EBEBEB;
+    padding: -9px 12px;
+    margin-top: 7px;
+    font-family: "Manrope";
+    margin-right: 1rem;
+    font-weight: 500;
+
+}
+.Add-company{
+    font-weight: 700;
+}
+.picture-crop-button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    width: 36px;
+    height: 36px;
+    right: 2.5rem;
+    top: 3.7rem;
+    background: #FFFFFF 0% 0% no-repeat padding-box;
+    box-shadow: 1px 8px 29px #695F972E;
+    border-radius: 15px;
+
+}
+
+.picture-crop-button img {
+    height: 11px;
+    cursor: pointer;
+}
+
+
+.pictureCropPopupModal {
+    width: 460px;
+    margin: auto;
+    min-height: 500px;
+    top: 40px;
+}
+
+.pic-cont {
+    border: 1px solid #7a86a1;
+}
+input[type=file] {
+    display: none;
+}
+.industry-txt{
+    padding: 13px 0px 0px 6px;
+    word-wrap: anywhere;
+}
+.billy-address{
+    font-family: 'Manrope';
+    font-weight: 500;
+    line-height: 22px;
+}
+.update-pass-btn {
+    border: none;
+    color: #FFFFFF;
+    background: #6149cd;
+    font-size: 0.7rem;
+    font-weight: 500;
+    padding: 2% 8%;
+    box-shadow: 1px 8px 29px #695F9724;
+    border-radius: 15px;
+}
+.companyimg{
+    width: 100%;
+    height: auto;
+}
+.select-industry{
+    color: gray;
+}
+
+
+  
+select option {
+    color: #000000;
+  }
+  
+  select option[value="Select Industry"] {
+    color: #7A86A1;
+  }
+  
+  select:invalid,
+  select option[value=""] {
+    color: #7A86A1;
+  }
+
+  .locale-detail.modal-dialog {
+    max-width: 800px;
+  }
+
+.locale-detail {
+    .locale-modal{
+        select.input-form{
+            cursor: pointer;
+        }
+    }
+}
+
+.input-formm {
+    position: absolute;
+    border: none;
+    width: 4.2rem;
+    top: 16.3rem;
+    right: 18.1rem;
+}
+.form-control.phone-no{
+    padding-left: 6.7rem;
+    width: 20rem;
+    padding-top: 0.3rem;
+}
+.form-control {
+    height: 45px;
+    background: #FFFFFF 0% 0% no-repeat padding-box;
+    border: 1px solid #EBEBEB;
+    border-radius: 19px;
+    opacity: 1;
+    margin: 0px 0px 15px 0px;
+    color: #000;
+    font-weight: 500;
+    font-size: 14px;
+}
+.toaster{
+	float:left;
+	width:auto;
+	position: fixed;
+	right: 50px;
+	top: 65px;
+	z-index: 9999;
+	}
+	.toaster p{
+	padding:8px;
+	font-size:14px;
+    font-weight: 400;
+	color:#ffffff;
+	margin: 0;
+	min-width: 250px;
+	text-align: center;
+	border-radius: 10px;
+
+	}
+	.toaster p.error{
+	background-color: #E02020;
+	}
+	.toaster p.success{
+	background-color: #6149cd;
+	}
+	.toaster p.warning{
+	background-color: orange;
+	}
+
+    .validation-margin{
+        margin-top: -0.75rem !important;
+    }
+
+    .aestric{
+        color: red !important;
+    }
+
+.modalHeight{
+    height: 425px!important;
+}
+.local-detail-note{
+    font-size: 12px !important;
+}
+.local-detail-note .note-heading{
+    font-weight: bold !important;
+}

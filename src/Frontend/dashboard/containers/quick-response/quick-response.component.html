@@ -1,0 +1,429 @@
+<sb-loader [isLoading]="isLoading"></sb-loader>
+	<div class="row">
+		<div class="col p-0">
+			<div class="col-12 d-flex px-0 pt-3 align-items-center main-header-container">
+			   <div class=" main-headiing-title">Quick Response</div>
+				<div class="col-3"></div>
+
+	
+			   <div class="input-group gf mx-3 ">
+	
+				<input class="form-control" type="text" placeholder="search" name="search" [(ngModel)]="searchText" />
+	
+				<img src="assets/img/search.png">
+			</div>
+	
+				<div class="drop-down-btn">
+					<div class="toggle-box" (click)="filterChannels(filterchannels)">
+						<img src="assets/img/teambox/filter-icon.svg">
+						<span>Filter</span>
+			  </div>
+			  
+			  <ng-template #filterchannels let-c="close" let-d="dismiss">
+				<div class="modal-content m-0 p-3 filterchannels">
+					<div class="modal-header align-items-center filterchannelsheader">
+						<div class="modal-header-left ">
+							<p class="m-0">Filter By Channels</p>
+						</div>
+						<div class="modal-header-right">
+							<p class="m-0 close-box" aria-label="Close" (click)="d('Cross click')"><img src="assets/img/teambox/icon-close.svg"></p>
+						</div>
+						</div>
+					<div class="modal-body px-3 filterchannelsbody">
+						<div *ngFor="let channel of channelOption">
+						<div *ngIf="channel?.label == 'WA API'" class="form-check  pb-4" class="py-2 custom-control custom-checkbox user-dropdown">
+							<input type="checkbox" class="custom-control-input" [(ngModel)]="isWhatsappOfficial" id="radio1" name="optradio"  value="option1" checked>
+							<img class="user-img ml-2">
+							<label class="custom-control-label" for="radio1"><span class="ml-2" [ngClass]="isWhatsappOfficial ? 'filter-selected':'filter-Unselected'" >WA API ({{channel?.connected_id}})</span></label>
+						  </div>
+						  <div *ngIf="channel?.label == 'WA Web'" class="form-check  pb-4" class="py-2 custom-control custom-checkbox user-dropdown">
+							<input type="checkbox" class="custom-control-input" id="radio2" [(ngModel)]="isWhatsappWeb"  name="optradio"  value="option2" >
+							<img class="user-img ml-2">
+							<label class="custom-control-label" for="radio2"><span class="ml-2" [ngClass]="isWhatsappWeb ? 'filter-selected':'filter-Unselected'" >WA Web ({{channel?.connected_id}})</span></label>
+							
+						  </div>
+						</div>
+
+				    </div>
+					<div class="modal-footer filterchannelsfooter">					  
+							<button type="button" class="submit-btn" aria-label="Close" (click)="filterQuickRes(); d('Cross click')">Apply</button>						  
+					</div>
+				</div>
+			</ng-template>
+			</div>
+		 <button class="new-message-btn mx-3" data-bs-toggle="modal" data-bs-target="#welcomGreeting" (click)="newQuickResponse()">
+			<img class="icoon" src="/assets/img/teambox/add.svg"/>&nbsp;&nbsp;New Quick Response</button>
+		 
+		
+		 <div class="modal quick-response-modal fade" tabindex="-1" id="welcomGreeting"  data-bs-backdrop="static" role="dialog">
+			<div class="modal-dialog" role="document">
+				<div class="modal-content welcomGreeting p-2">
+					<div class="btnclosee">
+						<div class="quick-heading">{{ID == 0 ? 'New Quick Response' : 'Edit Quick Response'}}</div>						
+						<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
+							<img src="../../../../assets/img/teambox/icon-close.svg">
+						</button>
+					</div>
+					<form [formGroup]="usertemplateForm" class="form-height">
+					<div class="modal-body px-5 pt-0 flex-column">
+						<div class="d-inline-block flex-column sel-type-link pb-2">
+							<label for="link" class="linkes mb-2" >Response Name<span class="text-danger font-weight-bold">*</span></label>
+							<input type="url" id="linkrespone" formControlName="Header" placeholder="Enter" (change)="checkQuickResponseName($event)">
+							<div *ngIf="usertemplateForm.get('Header')?.invalid && (usertemplateForm.get('Header')?.touched || usertemplateForm.get('Header')?.dirty)
+							" class="invalid-feedback">
+							<div *ngIf="usertemplateForm.get('Header')?.hasError('required')">
+								Response Name is required.
+							</div>
+							<div *ngIf="usertemplateForm.get('Header')?.hasError('pattern')">
+								Response Name should contain only alphabetic characters.
+							</div>
+							<div *ngIf="usertemplateForm.get('Header')?.hasError('minlength')">
+								Response Name should be at least 2 characters long.
+							</div>
+						  </div>
+						   </div>
+						   <div class="d-inline-block flex-column sel-type-link pb-2">
+							<label for="link" class="linkch" >Channel<span class="text-danger font-weight-bold">*</span></label>
+							<input class="input-form " type="text" placeholder="Select channel" name="Channel"
+								formControlName="Channel" id="linken" (click)="ShowChannelOption = !ShowChannelOption" readonly />
+								<div *ngIf="ShowChannelOption" (click)="stopPropagation($event)" class="popup-dialog ContactOption">
+									<p *ngFor="let channel of channelOption ;let i = index" class="label" (click)="selectChannel(channel)">
+										<span>
+											<img class="icon" src="/assets/img/teambox/whatsapp-icon-l.svg" />
+											{{
+												channel?.label === 'WhatsApp Official' ? 'WA API' : 
+												channel?.label === 'WhatsApp Web' ? 'WA Web' : 
+												channel?.label 
+											}} ({{channel?.connected_id}})
+										</span>
+									</p>
+								</div>
+							<!-- <select class="input-form" formControlName="Channel"  id="linken"   >
+								<option value=""  [disabled]="true" [selected]="true" [hidden]="true">Select channel</option>
+								<option value="WhatsApp Web">WhatsApp Web</option>
+								<option value="WhatsApp Official">WhatsApp Official</option>
+							</select> -->
+							<div *ngIf="usertemplateForm.get('Channel')?.invalid && (usertemplateForm.get('Channel')?.touched || usertemplateForm.get('Channel')?.dirty)
+                        " class="invalid-feedback">
+                        <div *ngIf="usertemplateForm.get('Channel')?.hasError('required')">
+                            Channel is required.
+                        </div>
+                      </div>
+						   </div>
+						<div class="d-flex justify-content-between align-items-center sel-type-btns">
+							<input type="radio" id="sel-text" class="d-none" name="sel-type" (change)="showMessageType('text')" [checked]="selectedType=='text'"><label class="m-0" for="sel-text">Text</label>
+							<input type="radio" id="sel-image" name="sel-type" class="d-none" (change)="showMessageType('image')" [checked]="selectedType=='image'"><label  class="m-0" for="sel-image">Image</label>
+							<input type="radio" id="sel-video" name="sel-type" class="d-none" (change)="showMessageType('video')" [checked]="selectedType=='video'"><label  class="m-0" for="sel-video">Video</label>
+							<input type="radio" id="sel-document" name="sel-type" class="d-none" (change)="showMessageType('document')" [checked]="selectedType=='document'"><label  class="m-0" for="sel-document">Document</label>
+						</div>
+	
+						<!-- <div class="sel-type-text-container">
+							<div *ngIf="selectedType === 'text'" class="d-flex justify-content-between align-items-center pt-3 pb-2 msg-head">
+								<h6>Message</h6> <span>{{numberCount}}/1024 Characters</span>
+							 </div>
+	
+							  <div *ngIf="selectedType === 'text'" class="sel-type-text">
+								 <textarea name="text-editor" (keyup)="getCharacterCount($event.target.value)" formControlName="BodyText" maxlength="1024" rows="14" placeholder="Enter"></textarea>
+							 </div> 
+						</div> -->
+				 
+						
+            
+						<div *ngIf="selectedType === 'image'" class="my-4 sel-type-image">
+							<input type="file" accept="image/jpeg, image/png" formControlName="Links" (change)="onFileChange($event)" id="sel-type-image">
+							<div *ngIf="usertemplateForm.get('Links')?.value == null" class="text-center py-4">
+							<label class="type_label text-center" for="sel-type-image"><img src="../../../../assets/img/teambox/add-white.svg" /></label>
+							<p class="m-0 p-0">Upload image</p></div> 
+							<div class="main-preview-type-image" *ngIf="usertemplateForm.get('Links')?.value !== null" [ngStyle]="{'background-image': 'url(' + selectedPreview + ')'}">
+								<span class="p-2 text-right" (click)="removeValue()"><img src="../../../../assets/img/settings/remove.svg" /></span>
+							</div>
+					</div>
+	
+					<div *ngIf="selectedType === 'video'" class="my-4 sel-type-video text-center">
+						<input type="file" accept="video/mp4"  formControlName="Links" name="video-upload" (change)="onFileChange($event)" id="sel-type-video">
+						<div class="vedio-add-btn" *ngIf="!selectedPreview">
+							<label  class="type_labels " for="sel-type-video"><img src="../../../../assets/img/teambox/add-white.svg" /></label> 
+						</div>
+						<div class="video-player">
+							<span *ngIf="selectedPreview" class="p-2 text-right main-preview-type-video" (click)="removeValue()">
+							  <img src="../../../../assets/img/settings/remove.svg" />
+							</span>
+							<div *ngIf="loadingVideo" class="spinner-main-div">
+								<div class="spinner-border" role="status">
+								  <span class="sr-only">Loading...</span>
+								</div>
+							  </div>
+						<video [src]="selectedPreview" type="video/mp4" controls #videoPlayer></video>
+						</div>
+						<div class="custom-play-button"></div>
+					</div>
+				
+					<div *ngIf="selectedType === 'document'" style="background-color: white;" class="my-4 sel-type-doc" [ngClass]="{'document-selected':usertemplateForm.get('Links')?.value !== null}">
+						<div class="main-preview-type-doc" *ngIf="usertemplateForm.get('Links')?.value !== null">
+							<span class="p-2" (click)="removeValue()"><img src="../../../../assets/img/settings/remove.svg" /></span>
+						</div>
+						<div class="center-div">
+							<div>
+								<div class="center-div"><img *ngIf="usertemplateForm.get('Links')?.value !== null" src="../../../../assets/img/settings/doc.svg" /></div>
+								<br>
+						<span class="document-preview" *ngIf="usertemplateForm.get('Links')?.value !== null" >{{ this.fileName }}</span>
+						<span class="document-preview" *ngIf="usertemplateForm.get('Links')?.value !== null && !this.fileName" >Doc Uploaded Through link</span>
+							<input type="file" accept=".doc, .docx, .pdf" formControlName="Links" (change)="onFileChange($event)" name="document-select" id="sel-type-document">
+							<div *ngIf="usertemplateForm.get('Links')?.value == null" class="pb-4 text-center">
+							<label class="type_label" for="sel-type-document"><img src="../../../../assets/img/teambox/add-white.svg" /></label>
+							<p class="m-0">Upload document</p>
+						   </div>
+						</div>
+					</div>
+					</div>
+<!-- 	
+					   <div *ngIf="selectedType === 'image'" class="my-2 sel-type-image">
+							<input type="file" accept="image/jpeg, image/png" formControlName="Links" name="image-select" id="sel-type-image">
+							<label class="type_label" for="sel-type-image"><img src="../../../../assets/img/teambox/add.svg" /></label>
+							<p class="m-0">Upload or enter link of image</p>
+							<div class="main-preview-type-image" *ngIf="usertemplateForm.get('Links')?.value !== null" [ngStyle]="{'background-image': 'url(' + selectedPreview + ')'}">
+								<span class="p-2 text-right" (click)="removeValue()"><img src="../../../../assets/img/settings/remove.svg" /></span>
+							</div>
+					   </div> -->
+	
+					   <!-- <div *ngIf="selectedType === 'video'" class="my-2 sel-type-video">
+						 <input type="file" accept="video/mp4"  formControlName="Links" name="video-upload" (change)="handleVideoUpload($event)" id="sel-type-video"> 
+						<label class="type_label" for="sel-type-video"><img src="../../../../assets/img/teambox/add.svg" /></label>
+						<div class="video-player">
+						  <video controls #videoPlayer>
+							Your browser does not support the video tag.
+						  </video>
+						</div>
+						<div class="custom-play-button"></div>
+					
+					</div>
+				 
+					<div *ngIf="selectedType === 'document'" class="my-2 sel-type-image">
+							<input type="file" accept=".doc, .docx, .pdf" formControlName="Links" name="document-select" id="sel-type-document">
+							<label class="type_label" for="sel-type-document"><img src="../../../../assets/img/teambox/add.svg" /></label>
+							<p class="m-0">Upload or enter link of document</p>
+					   </div> -->
+	
+	
+				 <div  class="rich-text-h-100">
+					<!-- <div class="d-inline-block flex-column sel-type-link">
+						<label for="link" id="link" >Link</label>
+						<input type="url" id="link" formControlName="Links" placeholder="Enter" >
+					   </div> -->
+					   <div class="d-flex justify-content-between align-items-center pt-3 pb-2 msg-head">
+						<h6>Body Text</h6> <span> Characters</span>
+					 </div>
+					 <div class="sel-type-text h-100">
+						<!-- <textarea name="text-editor" formControlName="BodyText" maxlength="1024"rows="8" placeholder="Enter" (input)="updateCharacterCount($event,4)"></textarea> -->
+						<!-- <ejs-richtexteditor class="h-100"
+						[(value)]="BodyText"
+						formControlName="BodyText"
+						id='defaultRTE'
+						#chatEditor
+						[toolbarSettings]='tools'
+						[height]="'200px'"
+						[maxLength]='1024'
+						[showCharCount]='true'
+						(valueChange)="onContentChange()"
+						placeholder="Enter"
+						[pasteCleanupSettings]="pasteCleanupSettings"
+						[saveInterval]="10"
+						>
+					  </ejs-richtexteditor> -->
+					<ejs-richtexteditor class="h-100"
+						[(value)]="BodyText"
+						formControlName="BodyText"
+						id='defaultRTE'
+						#chatEditor
+						[toolbarSettings]='tools2'
+						[height]="'200px'"
+						[maxLength]='1024'
+						[showCharCount]='true'
+						(valueChange)="onContentChange()"
+						(toolbarClick)="onToolbarClick($event)"
+						placeholder="Enter"
+						[pasteCleanupSettings]="pasteCleanupSettings"
+						[saveInterval]="10"
+						>
+					  </ejs-richtexteditor>
+					</div>
+					 <!-- <div class="sel-type-text">
+						<textarea name="text-editor" formControlName="BodyText" maxlength="1024"rows="6" placeholder="Enter"></textarea>
+					</div> -->
+				</div>
+				</div>
+					<div class="modal-footer">
+						<button type="button" class="account-btn" (click)="saveTemplate()"  >{{ID== 0 ? 'Save' : 'Update'}}</button>
+					</div>
+				</form>
+				</div>
+			</div>
+		</div>
+	
+			
+			</div>
+			
+	
+	 
+				<!-- <div class="template-empty-state">
+					<img src="../../../../assets/img/settings/image.png" />
+					<h5 class="mt-3">No Quick Response Message</h5>
+				</div> -->
+				
+				
+				 <div class="campaigns_section" *ngIf="templates"> 
+
+					<div>
+						<div class="campaigns_section_item" *ngFor="let temp of templates | searchfilter:searchText" (click)="toggleCampaign()"   (click)="gettemplateByID(temp)">
+							<div class="campaigns_section_item_header">
+								<div>
+
+							<p class="title ellipsis">{{temp?.Header}}</p>
+							<p class="start_time">Created On: <span>{{settingsService?.getDateTimeFormate(temp?.created_at)}}</span></p>
+							<p class="start_time" *ngIf="repliestemplateData?.updated_at">Modified On: <span>{{settingsService?.getDateTimeFormate(temp?.updated_at)}}</span></p>
+							<p><img  class="icon" src="../../../../assets/img/teambox/whatsapp-icon-l.svg" />{{temp?.Channel}}</p>
+							<div class="campaigns_section_item_statics">
+								<div>
+									<div class="d-flex user-img align-items-center">
+									<img [src]="profilePicture" *ngIf="profilePicture"/>
+									<div class="img" *ngIf="!profilePicture">{{apiService.getInitials(temp?.created_By)}}</div>
+									<p class="ellipsis w-170">{{temp?.created_By}}</p></div>
+									<p><span>Created By</span></p>
+								</div>
+							</div>
+						</div>
+					</div>
+					</div>
+					</div>
+					<div class="campdetails">
+					<div *ngIf="showCampaignDetail" class="campaign_detail">
+						<div class="modal-header filtercampaignheader">
+							<div class="modal-header-left">
+							</div>
+							<div class="modal-header-right">
+								<p class="close-box" (click)="toggleCampaign()"><img src="../../../../assets/img/teambox/icon-close.svg"></p>
+							</div>
+						</div>
+		
+						<div class="campaigns_section_item compaigns_section_scroll" >
+							<div class="campaigns_section_item_header">
+							<p class="start_time">Created on:<span class="mx-1">{{repliestemplateData?.created_at | date:'dd MMM yy, h:mm a'}}</span>
+								|<span class="mx-1" *ngIf="repliestemplateData?.updated_at"> Modified on:</span> <span>{{repliestemplateData?.updated_at  | date:'dd MMM yy, h:mm a'}}</span></p>
+							<div class="campaigns_section_user">
+								<div class="d-flex user-img  align-items-center"> 
+									<!-- <img [src]="profilePicture" /> -->
+									<div class="img" *ngIf="!profilePicture">{{apiService.getInitials(repliestemplateData?.created_By)}}</div>
+									<p class="mt-3">{{repliestemplateData?.created_By}}</p></div>
+								<p><span>Created By</span></p>
+							</div>
+							<p class="title" >{{repliestemplateData?.Header}}</p>
+							<p><img class="icon" src="../../../../assets/img/teambox/whatsapp-icon-l.svg" />{{repliestemplateData?.Channel}}</p>
+							<div class="body1">
+								<div class="Message-body">Message</div>
+								<div class="body2 mt-4">
+									<!-- <div class="message_type" [ngStyle]="{'background-image': 'url(' + messagemedia + ')'}"></div> -->
+									<div *ngIf="repliestemplateData.media_type == 'image'" class="message_type" [ngStyle]="{'background-image': 'url(' + repliestemplateData?.Links + ')'}"></div>
+            						<div *ngIf="repliestemplateData.media_type == 'video'" class="message_type">
+                						<video loop id="video-background" controls [src]="repliestemplateData?.Links" type="video/mp4"></video>
+           							</div>
+           							<div *ngIf="repliestemplateData?.media_type == 'document'" class="message_type">
+                						<div class="doc-preview" *ngIf="repliestemplateData?.Links" width="100%" height="150px">
+                  							<a [href]="repliestemplateData?.Links"><img src="../../../../assets/img/settings/doc.svg" /></a>
+                						</div>
+            						</div>
+            						<!-- <div class="message_data" [ngClass]="{'preview': repliestemplateData.media_type === 'text'}">
+                						<span [innerHTML]="galleryMessageData?.Header"></span><br /><br />
+                						<span [innerHTML]="galleryMessageData?.BodyText"></span><br /><br />
+                						<span [innerHTML]="galleryMessageData?.FooterText"></span><br />
+            						</div> -->
+								<div class="boxbody">									
+									<!-- <div class="descbody" [innerHTML]="repliestemplateData?.BodyText | sanitizeHtml"></div> -->
+								<app-whatsapp-message-preview
+										type="teambox"
+										[messageText]="repliestemplateData?.BodyText">
+								</app-whatsapp-message-preview>
+								</div>
+
+
+							</div>
+
+
+							</div>
+							</div>
+						</div>
+
+						<div class="action_section">
+							<button type="button" class="btn" (click)="copyCampaign()"><img src="../../../../assets/img/teambox/copy.svg"></button>
+							<button class="titleimg"  data-bs-toggle="modal" data-bs-target="#welcomGreeting" (click)="editQuickResponse()" ><img src="../../../../assets/img/edit.png"></button>
+							<button type="button" class="btn"  data-bs-toggle="modal" data-bs-target="#deleteModal" ><img src="../../../../assets/img/teambox/delete.svg">	</button>	
+						
+						</div>
+					</div>
+					</div>
+	
+	  </div> 
+	  
+	  <div *ngIf="templates?.length == 0">		
+		<div  class="template-empty-state">
+			<img src="../../../../assets/img/settings/template-empty.png" />
+			<h5 class="mt-3">No Quick Response Message</h5>
+		</div>
+	  </div>
+		</div>
+	
+	</div>
+
+	<div class="modal fade attr-popup-background" tabindex="-1" id="atrributemodal" #atrributemodal data-bs-backdrop="static" role="dialog">
+		<div class="modal-dialog" role="document">
+			<div class="attrmodal modal-content popup-background-none ">
+				<div class="modal-body">
+					<div class="custom_modal bg-pink sm attributes">
+						<div class="modal-header">
+							<div class="modal-header-left">
+								<h4 class="modal-title" id="modal-basic-title">Attributes</h4>
+							</div>
+							<div (click)="closeAtrrModal()" class="modal-header-right">
+								<p class="close-box" aria-label="Close"><img src="assets/img/teambox/icon-close.svg"></p>
+							</div>
+						</div>
+						<div class="modal-body quickResponse">
+							<input class="search-box" type="text" placeholder="Search" aria-label="Search"
+								aria-describedby="basic-addon2" [(ngModel)]="attributesearch" />
+							<div class="items_list">
+								<div (click)="selectAttributes(alist)" *ngFor="let alist of attributesList | searchfilter:attributesearch " class="attribute">
+									<p class="label"><img src="assets/img/teambox/attribute.svg"> {{alist}}</p>
+								</div>
+							</div>
+	
+							<div class="bottom_section">
+								<p class="text-box-readonly"><span><img class="setting_icon px-2" src="../../../../assets/img/profile/Info.svg">
+								</span>Add/edit new attributes from settings</p>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	
+	<div class="modal fade" tabindex="-1" id="deleteModal" role="dialog">
+		<div class="modal-dialog" role="document">
+			<div class="modal-content delete-modal">
+				<div class="modal-body alertmessage">
+					<p class="label pb-2">Do you really want to delete this Quick Response ?</p>
+					<div class="delete_group_button d-flex justify-content-center">
+						<button type="button" class="cancel-btn" aria-label="Close"
+							data-bs-dismiss="modal">Cancel</button>
+							<button type="button" class="delete-btn" aria-label="Close" (click)="deleteTemplate()">Yes, Delete</button>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	
+	<div class="toaster" (click)="hideToaster()">
+		<p *ngIf="errorMessage" class="error">{{errorMessage}}</p>
+		<p *ngIf="successMessage" class="success">{{successMessage}}</p>
+		<p *ngIf="warnMessage" class="warn">{{warnMessage}}</p>
+	  </div>

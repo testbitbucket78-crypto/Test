@@ -1,0 +1,190 @@
+<div class="toaster" (click)="hideToaster()">
+    <p *ngIf="errorMessage" class="error">{{errorMessage}}</p>
+    <p *ngIf="successMessage" class="success">{{successMessage}}</p>
+    <p *ngIf="warningMessage" class="warning">{{warningMessage}}</p>
+</div>
+<sb-loader [isLoading]="isLoading"></sb-loader>
+<div>
+    <div class="row">
+        <div class="col-sm-9 py-4 setting-field">
+            <a class="setting-field-link" [ngClass]="selectedTab==1 ? 'active' : ''" (click)="selectedTab = 1" *ngIf="!settingsService.checkRoleExist('39')">Custom Fields</a>
+            <a class="setting-field-link" [ngClass]="selectedTab==2 ? 'active' : ''" (click)="selectedTab = 2" *ngIf="!settingsService.checkRoleExist('40')">Tags</a>
+        </div>
+    </div>
+
+    <div *ngIf="selectedTab==1 && !settingsService.checkRoleExist('39')">
+        <sb-custom-fields></sb-custom-fields>
+    </div>
+ <div>
+    <div  class="setting-card" *ngIf="selectedTab==2 && !settingsService.checkRoleExist('40')">
+        <div class="flex-header">
+            <span class="working-hour-heading">Tags</span>    
+            <div class="d-flex">
+                <div class="input-group gf ">
+                    <input class="form-control" type="text" [(ngModel)]="searchText" placeholder="Search" aria-label="Search"
+                       (input)="onSearchFieldChange()" name="Name" id="Search-Ag" />
+                    <img src="assets/img/search.png">
+                </div>
+                <button class="new-token-btn" (click)="addTag()">
+                    <img src="../../../../assets/img/teambox/add.svg" class="pr-1">
+                    Add Tag</button>
+            </div>
+        </div>
+ 
+
+    
+<div class="modal fade" tabindex="-1" id="tagsModal" data-bs-backdrop="static" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content user-modal p-2 pl-3">
+            <div class="modal-header">
+                <h5 *ngIf="!selectedtagListData" class="modal-title">Add Tag</h5>
+                <h5 *ngIf="selectedtagListData" class="modal-title">Edit Tag</h5>
+                <button type="button" class="btn-close" aria-label="Close" (click)="closeTagsModal()">
+                    <img src="../../../../assets/img/teambox/icon-close.svg">
+                </button>
+            </div>
+            <div class="modal-body px-5 ml-2 pt-0">
+                    <div>
+                        <label>Tag Name</label> <br>
+                        <input *ngIf="!selectedtagListData" type="text" class="input-form" maxlength="20" (change)="istagChanges = true" required pattern="/^[a-zA-Z0-9][a-zA-Z0-9\s]*[a-zA-Z0-9]$/" [(ngModel)]="tagName" placeholder="Enter tag name in max 20 characters">
+                        <input *ngIf="selectedtagListData" type="text" class="input-form" maxlength="20" (change)="istagChanges = true" required pattern="/^[a-zA-Z0-9][a-zA-Z0-9\s]*[a-zA-Z0-9]$/" [(ngModel)]="selectedtagListData.TagName" placeholder="Enter tag name in max 20 characters">
+                    </div>
+                    <div class="pt-2">
+                        <label>Tag Colour</label> <br>
+                        <input *ngIf="!selectedtagListData" type="color" class="input-form" required (change)="istagChanges = true" [(ngModel)]="tagColor" placeholder="Pick colour">
+                        <input *ngIf="selectedtagListData" type="color" class="input-form" required (change)="istagChanges = true" [(ngModel)]="selectedtagListData.TagColour" placeholder="Pick colour">
+                    </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="account-btn" (click)="addEditTagData()" [disabled]="isSaveButtonDisabled() || !istagChanges" [class.disabled]="isSaveButtonDisabled() || !istagChanges">Save</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div *ngIf="tagListData.length>0" class="row mb-5">
+    <div class="col-sm-1"></div>
+    <div class="col-sm-10 notification-card">
+        <div class="container-fluid ">
+            <div class="row pb-3 justify-content-center">
+            <div class="col-sm-12 d-flex pt-5 pb-4 text-center notification-card-header">
+                <div class="header-col">
+                    Tag Colour
+                </div>
+                <div class="header-col">
+                    Tag Name
+                </div>
+                <div class="header-col">
+                    Tag<br /> Applied on
+                </div> 
+            </div>
+            </div>
+            <div class="notification-content-parent">
+                <ng-container *ngIf="(tagListData | searchfilter: searchText).length === 0; else showData">
+                    <div class="no-data-found">
+                        No records found.
+                    </div>
+                  </ng-container>
+                <ng-template #showData>
+                <div *ngFor="let taglist of tagListData | searchfilter:searchText | slice:pageSize*(currentPage-1):(pageSize*(currentPage-1))+pageSize" 
+                  class="row justify-content-center  notification-content" (click)="toggleSideBar(taglist)">
+                    <div class="col-sm-12 d-flex py-3 text-center border-bottom" role="button">
+
+                        <div class="header-col text-center"><p [ngClass]="{'color-dots': true}" [style.background]="taglist?.TagColour"></p></div>
+                        <div class="header-col font-weight-bolder">{{ taglist?.TagName }}</div>
+                        <div class="header-col">{{ taglist?.tag_count}}</div>
+                   </div>
+                </div>
+            </ng-template>
+            </div>
+        </div>
+    </div>
+   
+    <div class="col-sm-12 d-flex px-2 mt-4 mb-4 notification-footer">
+
+        <div class="col-sm-6 d-flex align-items-center text-left">
+            <p class="p-0 m-0">Showing:</p>
+            <select class="pl-2 m-0 select-pointer" (change)="getPaging()" [(ngModel)]="pageSize">
+                <option value="10">10</option>
+                <option value="15">15</option>
+                <option value="20">20</option>
+                <option value="25">25</option>
+                <option value="30">30</option>
+                <option value="45">35</option>
+                <option value="40">40</option>
+                <option value="45">45</option>
+                <option value="50">50</option>
+            </select>
+
+        </div>
+        <div class="col-sm-6 text-right">
+        <nav aria-label="navigation">
+            <ul class="justify-content-end align-items-center m-0 pagination">
+              <li class="btn-list">
+                <button class="pagination-btn" [disabled]="currentPage==1" (click)="currentPage= currentPage-1">
+                    <img src="assets/img/profile/previous.svg" />
+                </button>
+            </li>
+              <li *ngFor="let item of paging" class="pagination-num-container">
+                <a [ngClass]="{'pagination-disabled': currentPage !=item}" (click)="currentPage=item" class="pagination-num-body">{{item}}</a>
+             </li>
+              <li class="btn-list">
+                <button class="pagination-btn" [disabled]="currentPage==paging.length" (click)="currentPage= currentPage+1" >
+                    <img src="assets/img/profile/next.svg" />
+                </button>
+            </li>
+            </ul>
+          </nav>
+          </div>
+        </div> 
+       <div class="col-sm-1"></div>
+     </div>
+
+     <div class="sideBar" *ngIf="showSideBar">
+        <div class="sidebar-close">
+        <button type="button" class="btn-close" (click)="showSideBar = false">
+            <img src="../../../../assets/img/teambox/icon-close.svg">
+        </button>
+    </div>
+        <div class="sidebar-content">
+            <p class="m-0">Tag Id:<span>{{selectedtagListData?.ID}}</span></p>
+            <p>Created on: <span>{{settingsService?.getDateTimeFormate(selectedtagListData?.created_at)}}</span> </p>
+            <p>Last Modified: <span>{{settingsService?.getDateTimeFormate(selectedtagListData?.updated_at)}}</span></p>
+            <div class="sub-heading py-2">Tag Name</div>
+            <div class="description">
+                {{selectedtagListData?.TagName}}
+            </div>
+            <div class="sub-heading py-2">
+                Tag Color<br />
+                <span [ngClass]="{'color-dots': true}" [style.background]="selectedtagListData?.TagColour"></span>
+                <p></p>
+            </div>
+        </div>
+        <div class="sideBar-footer">
+            <button (click)="editTag()" type="button" class="account-white-btn">
+                <img class="p-0" src="../../../../assets/img/edit.png"></button>
+            <button type="button" class="account-white-btn ml-2" data-bs-toggle="modal" data-bs-target="#deleteModal">
+                <img class="p-0" src="../../../../assets/img/delete.png">
+            </button>
+        </div>
+    </div>
+
+    <div class="modal fade" tabindex="-1" id="deleteModal" data-bs-backdrop="static" role="dialog">
+        <div class="m-auto d-flex justify-content-center align-items-center h-100 modal-dialog" role="document">
+            <div class="m-0 modal-content delete-modal">
+                <div class="modal-body alertmessage">
+                    <p class="label pb-2">Do you really want to delete this Tag ?</p>
+                    <div class="delete_group_button d-flex justify-content-center">
+                        <button type="button" class="cancel-btn" aria-label="Close"
+                            data-bs-dismiss="modal">Cancel</button>
+                            <button type="button" class="delete-btn" aria-label="Close" (click)="deleteTagData()">Yes, Delete</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+      </div>
+    </div>
+</div>
+
+
+</div>

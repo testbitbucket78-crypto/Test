@@ -1,0 +1,263 @@
+<div class="toaster" (click)="hideToaster()">
+	<p *ngIf="errorMessage" class="error">{{errorMessage}}</p>
+	<!-- <p *ngIf="successMessage" class="success">{{successMessage}}</p>
+	<p *ngIf="warnMessage" class="warn">{{warnMessage}}</p> -->
+  </div>
+  <sb-loader [isLoading]="isLoading"></sb-loader>
+<div class="ml-0 mt-0 container">
+    <div class="custom-fields">
+        <div class="heading-container">
+            <h6>Custom Fields</h6>
+            <div class="d-flex align-items-center px-3 searchField">
+                <span><img src="../../../../assets/img/teambox/search-icon.svg" /></span>
+                <!-- (keyup)="searchCustomField($event)" -->
+                <input class="custom-field-search" type="text" placeholder="Search" aria-label="Search" [(ngModel)]="searchCustomField" (input)="onSearchFieldChange()" >        
+            </div>
+
+            <button (click)="addCustomFields()"><span><img src="../../../../assets/img/teambox/add.svg" alt="error" /></span>Add Field</button>
+        </div>
+        <span class="sub-head">Add and manage contacts fields to save additional information about your contacts</span>
+        <div class="main-part-container">
+            <div class="main-part-heading">
+                <!-- <div class="header-col">
+                    Field Id
+                </div> -->
+                <div class="header-col">
+                    Field Name
+                </div>
+                <div class="header-col">
+                    Data Type
+                </div>
+                <div class="header-col">
+                    Mandatory
+                </div>
+                <div class="header-col">
+                    Status
+                </div>
+            </div>
+
+            <div *ngIf="customFieldData" class="main-part-body">
+                <div class="scroll-custom">
+                <div *ngIf="currentPage==1">
+                    <ng-container *ngIf="(defaultFieldsData | searchfilter: searchCustomField).length === 0 && !paging.length; else showData">
+                        <div class="no-data-found">
+                            No records found.
+                        </div>
+                      </ng-container>
+                      <ng-template #showData>
+                <div *ngFor="let df of defaultFieldsData  | searchfilter:searchCustomField" class="column">
+                    <!-- <div class="body-col">
+                     {{df.ActuallName}}   
+                    </div> -->
+                    <div [style.color]="defaultFields" class="font-weight-bold body-col">
+                    {{df?.displayName}}
+                    </div>
+                    <div class="body-col">
+                        {{df?.type}}
+                    </div>
+                    <div class="body-col">
+                        <div class="active-toggle">
+                            <label class="m-0 switch">
+                                <input type="checkbox" class="m-0 form-control-checkbox" [(ngModel)]="df.mandatory"
+                                    [disabled]="true">
+                                <span [style.background]="defaultFieldsChecked" class="slider"></span>
+                            </label>
+                        </div>
+                    </div>
+                    <div class="body-col">
+                        <div class="active-toggle">
+                            <label class="m-0 switch">
+                                <input type="checkbox" class="m-0 form-control-checkbox" [ngModel]="df.status" 
+                                    [disabled]="true">
+                                <span [style.background]="defaultFieldsChecked" class="slider"></span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+               </ng-template>
+            </div>
+
+                <!-- <div class="dynamicFieldContainer" cdkDropList (cdkDropListDropped)="Drop($event)"> -->
+                    <div class="dynamicFieldContainer">
+                    <div *ngFor="let dynamic of dynamicFieldData | searchfilter:searchCustomField | slice:(currentPage!=1?((pageSize*(currentPage-1))-6):0):((pageSize*(currentPage-1))+pageSize)-6; let ith = index"
+                     class="dynamicField column" >
+                      <!-- | searchfilter:searchCustomField let ith = index" cdkDrag class="dynamicField column" cdkDragBoundary=".dynamicFieldContainer" > -->
+                        <!-- <div (click)="toggleSideBar(dynamic)" class="body-col">
+                             <div class="drag-btn">
+                                 <img cdkDragHandle class="pr-3" src="../../../../assets/img/settings/drag.svg" alt="" /> 
+                                <span class="m-0"> {{dynamic.ActuallName}}dynamic</span>
+                            </div> 
+
+                        </div> -->
+                        <div (click)="toggleSideBar(dynamic)" class="font-weight-bold body-col">
+                            {{dynamic?.displayName}}
+                        </div>
+                        <div class="body-col">
+                            {{dynamic?.type}}
+                        </div>
+                        <div class="body-col">
+                            <div class="active-toggle">
+                                <label class="m-0 switch">
+                                    <input type="checkbox" class="m-0 form-control-checkbox"
+                                    (click)="toggleMandatoryState($event.target.checked, dynamic.id)"                                        
+                                    [(ngModel)]="dynamic.mandatory" [disabled]="!dynamic.status">
+                                    <span class="slider"></span>
+                                </label>
+                            </div>
+                        </div>
+                        <div class="body-col">
+                            <div class="active-toggle"  >
+                                <label class="m-0 switch">
+                                    <input type="checkbox" class="m-0 form-control-checkbox"
+                                    (click)="toggleActiveState($event.target.checked, dynamic?.id)" 
+                                    [(ngModel)]="dynamic.status">
+                                    <span class="slider"></span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+                <div class="sideBar" *ngIf="showSideBar">
+                    <div class="sidebar-close">
+                    <button type="button" class="btn-close" (click)="showSideBar = false">
+                        <img src="../../../../assets/img/teambox/icon-close.svg">
+                    </button>
+                </div>
+                    <div class="sidebar-content">
+                        <p class="m-0 py-1">Field Id:<span>{{selectedCustomField?.id}}</span></p>
+                        <p class="m-0 py-1">Created on: <span>{{settingsService?.getDateTimeFormate(selectedCustomField?.created)}}</span> </p>
+                        <p class="m-0 py-1">Last Modified: <span>{{selectedCustomField?.updated ? settingsService?.getDateTimeFormate(selectedCustomField?.updated): 'NA'}}</span></p>
+                        <div class="text-capitalize py-2 displayName">{{selectedCustomField?.displayName}}</div>
+                        <div class="description">
+                            <p>{{selectedCustomField?.description}}</p>
+                        </div>
+                        <div class="py-3 type">
+                            <p class="sub-heading">Type</p>
+                            <span class="py-2 subtype">{{selectedCustomField?.type}}</span>
+                        </div>
+                        <div class="py-1 type"
+                            *ngFor="let options of selectedCustomField?.dataTypeValues; let i = index">
+                            <div *ngIf="options?.optionName != ''">
+                                <p class="sub-heading">Option {{ i + 1 }}</p>
+                                <span class="py-2 subtype">{{options?.optionName}}</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="sideBar-footer">
+                        <button (click)="editCustomField()" type="button" class="account-white-btn">
+                            <img class="p-0" src="../../../../assets/img/edit.png"></button>
+                        <button (click)="toggleDeletePopup()" type="button" class="account-white-btn ml-2">
+                            <img class="p-0" src="../../../../assets/img/delete.png">
+                        </button>
+                    </div>
+                </div>
+
+                <div class="col-sm-12 d-flex px-2 mt-4 mb-4 notification-footer">
+                    <div class="col-sm-6 d-flex align-items-center text-left">
+                        <p class="p-0 m-0">Showing:</p>
+                        <select class="pl-2 m-0" (change)="getPaging()" [(ngModel)]="pageSize">
+                            <option *ngFor="let option of pageSizeOptions" [value]="option">{{ option }}</option>
+                        </select>
+                    </div>
+                    
+                <div class="col-sm-6 text-right">
+                <nav aria-label="navigation">
+                    <ul class="justify-content-end align-items-center m-0 pagination">
+                    <li class="btn-list">
+                        <button class="pagination-btn" [disabled]="currentPage==1" (click)="currentPage= currentPage-1">
+                            <img src="assets/img/profile/previous.svg" />
+                        </button>
+                    </li>
+                    <li *ngFor="let item of paging" class="pagination-num-container">
+                        <a [ngClass]="{'pagination-disabled': currentPage !=item}" (click)="currentPage=item" class="pagination-num-body">{{item}}</a>
+                    </li>
+                    <li class="btn-list">
+                        <button class="pagination-btn" [disabled]="currentPage==paging.length" (click)="currentPage= currentPage+1" >
+                            <img src="assets/img/profile/next.svg" />
+                        </button>
+                    </li>
+                    </ul>
+                </nav>
+                </div>
+                </div>
+
+            </div>
+
+            <div class="modal fade" tabindex="-1" id="addCustomFieldModal" data-bs-backdrop="static" role="dialog">
+                <div class="m-auto modal-dialog" role="document">
+                    <div class="modal-content working-hour-modal ">
+                        <div class="px-4 modal-header align-items-center Sticky">
+                            <h5 *ngIf="!selectedCustomField" class="modal-title">Add Field</h5>
+                            <h5 *ngIf="selectedCustomField" class="modal-title">Edit Field</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" (click)="resetSelectedCustomField()" aria-label="Close">
+                                <img src="../../../../assets/img/teambox/icon-close.svg">
+                            </button>
+                        </div>
+                        <div [formGroup]="customFieldForm" class="modal-body addCustomFieldBody pt-0">
+                            <!-- <div *ngFor="let item of workingFormData;let idx=index"> -->
+                                <div class="d-flex flex-column billing-form-row">                         
+                                        <label for="displayName" >Field Name</label>
+                                        <input type="text" name="displayName" id="displayName"  (change)="onInputChange()" placeholder="Enter Name in max 50 Character" maxlength="50" formControlName="displayName">                              
+                                </div>
+                                    <div class="d-flex flex-column billing-form-row">
+                                        <label for="description">Description <span>(Optional)</span></label>
+                                       <textarea name="description" id="description" maxlength="80" (change)="onInputChange()" placeholder="Enter description in max 80 character" formControlName="description" cols="30" rows="5"></textarea>
+                                    </div>
+                                 
+                               
+                                <div class="d-flex flex-column billing-form-row">
+                                    <label>Field Type</label>
+                                    <select name="type" id="type" formControlName="type" (change)="onInputChange();fieldTypeChanged()" >
+                                        <option *ngFor="let type of types" [value]="type">
+                                            {{type}}
+                                        </option>
+                                    </select>
+                                    <div *ngIf="!selectedCustomField" class="error">Please Note: Field Type once selected cannot be edited later.</div>                                                       
+                                    <div *ngIf="selectedCustomField" class="error">Field Type is not editable once created.</div>                                                       
+                                </div>
+                                <div *ngIf="customFieldForm.get('type')?.value == 'Select' || customFieldForm.get('type')?.value == 'Multi Select'" class="select-options">
+                                    <div  *ngFor="let option of addCustomField; let ith = index" class="d-flex flex-column">
+                                        <div class="billing-form-row">
+                                        <label for="option{{ith}}" >Options {{ith + 1}}</label>
+                                        <input type="text" name="option{{ith}}" [(ngModel)]="addCustomField[ith].Option" (change)="onInputChange()" [ngModelOptions]="{standalone: true}" id="option{{ith}}">
+                                               
+                                  <div class="incoming-card">
+                                    <div>
+                                        <a class="add-btn" (click)="addCustomFieldsOption()">+Add</a>
+                                    </div>
+                                    <a class="remove-btn" (click)="removeCustomFieldsOption(ith)" *ngIf="ith>1">-Remove</a>
+                                </div>
+                              </div>
+                        
+                             </div>
+                            </div>
+                            <!-- </div> -->
+                        </div>
+                        <div class="px-4 modal-footer Sticky">
+                            <button type="button" class="account-btn" (click)="saveNewCustomField()" [disabled]="!isFormChanged">Save</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="modal fade" tabindex="-1" id="deleteModal" role="dialog">
+                <div class="m-auto d-flex justify-content-center align-items-center h-100 modal-dialog" role="document">
+                    <div class="m-0 modal-content delete-modal">
+                        <div class="modal-body alertmessage">
+                            <p class="label pb-2">Do you really want to delete this CustomField ? <br> Attention! Deleting a Custom Field may impact some already configured automation like Campaign Audience, etc.</p>
+                            <div class="delete_group_button d-flex justify-content-center">
+                                <button type="button" class="cancel-btn" aria-label="Close"
+                                    data-bs-dismiss="modal">Cancel</button>
+                                    <button type="button" class="delete-btn" aria-label="Close" (click)="deleteCustomField()">Yes, Delete</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>

@@ -1,0 +1,10 @@
+<span [ngClass]='{"sb-nav-fixed": !static}'>
+    <div id="layoutSidenav">
+        <div id="layoutSidenav_nav" [ngStyle]="{'width': navWidth}"><sb-side-nav (navWidth)="navWidth= $event" [sidenavStyle]="sidenavStyle" [sideNavItems]="sideNavItems" [sideNavSections]="sideNavSections"></sb-side-nav></div>
+        <div id="layoutSidenav_content" [ngStyle]="{'padding-left': navWidth}">
+            <main>
+                <div class="container-fluid"><ng-content></ng-content></div>
+            </main>
+            <sb-footer></sb-footer>
+        </div></div
+></span>

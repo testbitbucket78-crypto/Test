@@ -1,0 +1,13 @@
+<nav class="sb-sidenav accordion" id="sidenavAccordion" [ngClass]="sidenavStyle">
+    <div class="sb-sidenav-menu" id="sidenav-menu">
+        <div class="nav">
+            <button style="margin-bottom: -38px; margin-left: -143px;" class="btn btn-link btn-sm order-1 order-lg-0 shadow-none" id="sidebarToggle" data-cy="topNavToggleSideNav"><img class="hamburger-icon shadow-none" (click)="toggleHamburger()" [src]='["assets/img/side-nav/menu-up.svg"]'></button>
+            <ng-container *ngFor="let section of sideNavSections"> 
+                <div class="sb-sidenav-menu-heading" *ngIf="section.text">{{ section.text }}</div>
+                <ng-container *ngFor="let item of section.items">
+                    <sb-side-nav-item  *ngIf="showNavItem" [sideNavItem]="sideNavItems[item]"></sb-side-nav-item>
+                </ng-container>
+            </ng-container>
+        </div>
+    </div>
+</nav>

@@ -1,0 +1,15 @@
+@import 'styles/variables.scss';
+
+*{
+    font-family: "Manrope";
+ 
+}
+
+.sidenav-item {
+    font-size: 14px;
+}
+
+.submenu .sidenav-item {
+    font-size: 12px!important;
+    font-weight: 400;
+}

@@ -1,0 +1,439 @@
+
+
+.setting-card {
+  border-radius: 30px;
+  padding: 20px;
+  box-shadow: 2px 13px 54px #695F9714;    
+  min-height: 75vh;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+
+.working-hour-heading{
+font-size: 20px;
+font-weight: 800;
+color: #000000;
+font-family: Manrope;
+}
+
+.working-hour-img-card{
+  height: 38vh;
+  margin-top: 7rem;
+  text-align: center;
+}
+
+.setting-card p{
+  color: #7A86A1;
+  font-family: "Manrope";
+}
+
+.input-form {
+  height: 37px;
+  border-radius: 16px;
+  border: 1px solid #EBEBEB;
+  padding: 5px 15px;
+  width: 90%;
+ }
+
+.working-hour-btn{
+  color: #FFFFFF !important;
+  background: #6149CD 0% 0% no-repeat padding-box;
+  border-radius: 19px;
+  padding: 7px 12px;
+  border: none;
+  font-family: 'Manrope';
+  width: 15rem;
+}
+
+
+.modal-content .btn-close {
+  background: white;
+  margin: 2px;
+  border-radius: 15px;
+  padding: 6px 12px;
+  border: 1px solid #EBEBEB;
+ }
+
+ .working-hour-modal{
+  min-width: 650px;
+  height: 600px;
+  border-radius: 26px;
+ }
+
+ .modal-footer{
+  border: none;
+ }
+
+ .modal-title {
+  letter-spacing: -0.45px;
+  font-weight: bold;
+ }
+
+ .multiselect{
+  display: block;
+  height: 37px;
+  border-radius: 17px;
+  border: 1px solid #EBEBEB;
+  width: 100%;
+  padding: 1px 3px;
+  font-weight: 400;
+  line-height: 1.52857143;
+  text-align: left;
+  vertical-align: middle;
+  cursor: pointer;
+  font-family: 'Manrope';
+  color: #7A86A1;
+  background-color: #ffffff;
+  margin: -2px 0px 0px 0px;
+}
+.billing-form-row{
+  margin-top: 13px;
+}
+
+.billing-form-row label{
+  margin-bottom: 7px;
+  font-size: 15px;
+  font-weight: bold;
+}
+
+.account-btn {
+  background: #6149CD 0% 0% no-repeat padding-box;
+  border-radius: 17px;
+  padding: 8px 22px;
+  border: 1px;    
+  color: white;
+  font-weight: 400;
+  width: 7rem;
+ }
+
+ .incoming-card{
+  display: flex;
+  justify-content: space-between;
+ }
+
+ .remove-btn {
+  color: #FF3636;
+  font-size: 14px;
+  cursor: pointer; 
+ }
+
+ .add-btn {
+  color: #6236FF;
+  font-size: 14px;
+  cursor: pointer;
+ }
+
+ .flex-header{
+  display: flex;
+  justify-content: space-between;
+ }
+
+ .month-card{
+  background: #FFF4F2;
+  min-height: 170px;
+  max-height: 170px;
+  border-radius: 20px;
+ }
+
+ .months-view{
+  display: grid;
+  gap: 1.6vw;
+  grid-template-columns: repeat(auto-fill, minmax(142px, 1fr));
+ }
+
+ /* width */
+::-webkit-scrollbar {
+  width: 10px;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+  box-shadow: inset 0 0 5px grey;
+  border-radius: 10px;
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+    background: #888;
+    border-radius: 10px;
+}
+
+.month-date{
+  background: white;
+  height: 27px;
+  width: 27px;
+  border-radius: 10px;
+  text-align: center;
+}
+
+.dates-view{
+  display: grid;
+  gap: 0.4vw;
+  grid-template-columns: auto auto auto auto;
+}
+.additional-items {
+    color: #ffffff;
+    background-color: #6149CD !important;
+    border-radius: 40%;
+    padding: 4px 6px;
+    font-size: 12px;
+}
+.holiday-calender-modal{
+  width: 496px;
+  height: 639px;
+  border-radius: 30px;
+}
+
+.holiday-calender-modal .modal-title{
+  font-size: 16px;
+  font-weight: 900;
+  font-family: 'Manrope';
+}
+
+.month-heading{
+  font-size: 20px;
+  font-weight: 900;
+  font-family: 'Manrope';
+}
+
+.working-days{
+  font-weight: 600;
+    padding-bottom: 4px;
+    font-family: "Manrope";
+    width: 100%;
+    text-align: center;
+    word-wrap: break-word;
+}
+
+.working-time{
+  font-weight: 600;
+  color: #6149CD;
+  text-align: center;
+}
+.holiday-dropdown {
+  border: 1px solid #EBEBEB;
+  border-radius: 19px;
+  padding: 10px 25px;
+}
+
+.empty-working-time{
+  text-align: center;
+  height: 45vh;
+  align-items: center;
+  display: flex;
+}
+
+
+.holiday-dropdown option{
+  color: #6149CD;
+}
+
+.calender .calender-day{
+  color: #7A86A1;
+  flex: 1 1;
+  font-size: 14px;
+}
+
+.calender{
+  padding: 20px 10px 10px 10px;
+}
+
+.calender .calender-date{
+  color: #7A86A1;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+
+
+.input-form {
+  height: 37px;
+  border-radius: 16px;
+  border: 1px solid #EBEBEB;
+  padding: 5px 13px;
+  background: #ffffff;
+  width: 257px;
+  outline: none;
+  cursor: pointer;
+  font-size: 12px;
+  box-sizing: border-box;
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+ }
+
+ select.input-form {
+  background-image: url('../../../../assets/img/support/arrow-down.svg');
+  background-position: calc(100% - 1.2rem), 100% 0;
+  background-size: 9px; 
+  height: 45px;
+  // width: 45%;
+  background-repeat: no-repeat;
+}
+select {
+  appearance: none;
+}
+.date-time{
+  font-family: Manrope;
+  font-weight: 800;
+}
+.calen{
+  font-family: 'Manrope';
+}
+.multiselect.dropdown{
+  background-image: url('../../../../assets/img/support/arrow-down.svg');
+  background-position: calc(100% - 1.2rem), 100% 0;
+  background-size: 9px; 
+  height: 45px;
+  // width: 45%;
+  background-repeat: no-repeat;
+}
+
+.multiselect.dropdown span.dropdown-multiselect__caret {
+  display: none!important; 
+}  
+
+// .holiday-dropdown{
+//   background-image: url(arrow-down.svg);
+//   background-position: calc(100% - 0.6rem), 100% 0;
+//   background-size: 9px;
+//   height: 45px;
+//   background-repeat: no-repeat;
+//   cursor: pointer;
+// }
+
+.holiday-dropdown.multiselect {
+  display: inline-block;
+  /* height: 37px; */
+  border-radius: 17px;
+  border: 1px solid #EBEBEB;
+  width: 80px;
+  padding: 2px 11px;
+  font-weight: 400;
+  line-height: 1.52857143;
+  text-align: left;
+  vertical-align: middle;
+  cursor: pointer;
+  font-family: Manrope;
+  color: #6149cd!important;
+  background-color: #fff;
+  margin: -2px 0 7px;
+  background-image: url('../../../../assets/img/support/arrow-down.svg');
+  background-position: calc(100% - 0.8rem) calc(100% - 0.9rem);
+  height: 37px;
+  background-repeat: no-repeat;
+  position: sticky;
+}
+label {
+  display: block;
+  font:
+    1rem 'Fira Sans',
+    sans-serif;
+}
+
+input,
+label {
+  margin: 0.4rem 0;
+}
+.modal-body-scroll {
+    overflow-y: auto;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #555; 
+}
+
+.sticky-header {
+    position: sticky;
+}
+
+.sticky-footer {
+    position: sticky;
+}
+
+.billing-form-row {
+    input[type="time"] {
+        &::-webkit-calendar-picker-indicator {
+            cursor: pointer;
+        }
+    }
+}
+.setting-card{
+
+.Info-Iconn {
+    position: relative;
+    cursor: pointer;
+
+    .specific {
+        position: absolute;
+        top: -8.7rem;
+        right: -15.2rem;
+        width: 280px;
+        height: auto;
+        background: #ffffff 0% 0% no-repeat padding-box;
+        box-shadow: 4px 22px 54px rgba(105, 95, 151, 0.1019607843);
+        border-radius: 30px;
+        opacity: 1;
+        overflow: auto;
+        cursor: pointer;
+
+        .p-body {
+            font-size: 12px;
+            font-weight: 500;
+            margin-top: 10%;
+            color: #7a86a1;
+            padding: 10%;
+        }
+    }
+}
+}
+.overlay {
+    position: fixed;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+}
+
+
+.no-holidays{
+    font-size: 15px;
+    height: 115px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.focusable-span:focus {
+    box-shadow: 1px 1px 15px #dedede;
+    border-radius: 40%;
+    border: 1px solid #7A86A1de;
+}
+
+.date-grid {
+    display: grid;
+    gap: 10px;
+    grid-template-columns: repeat(7, auto);
+
+    & span {
+        width: 40px;
+        height: 40px;
+        display: flex;
+        align-items:center;
+        justify-content:center;
+    }
+}
+
+.date-grid .active {
+    color: #F23B3B
+}
+.confirmModal{
+  .modal-content{
+
+  width: auto !important;
+  .delete-btn{
+    background: #6149CD 0% 0% no-repeat padding-box;
+  }
+}
+}

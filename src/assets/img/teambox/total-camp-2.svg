@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="70" height="70" viewBox="0 0 70 70">
+  <defs>
+    <clipPath id="clip-path">
+      <rect id="your_image_here" data-name="your image here" width="70" height="70" rx="28" transform="translate(776 749)" fill="#ecdbea"/>
+    </clipPath>
+  </defs>
+  <g id="total-camp" transform="translate(-395 -789)">
+    <g id="project_1" data-name="project 1" transform="translate(-381 40)">
+      <g id="image">
+        <g id="your_image_here-2" data-name="your image here">
+          <rect id="your_image_here-3" data-name="your image here" width="70" height="70" rx="28" transform="translate(776 749)" fill="#d7f3e9"/>
+          <g id="tick" transform="translate(803.716 776.715)">
+            <g id="Time_Circle" data-name="Time Circle" transform="translate(-2.716 -2.716)">
+              <path id="Fill_1" data-name="Fill 1" d="M20,10A10,10,0,1,1,10,0,10,10,0,0,1,20,10" transform="translate(0 0)" fill="#33bf8f"/>
+            </g>
+            <path id="Union_7" data-name="Union 7" d="M2.929,5.645a.721.721,0,0,1-1.02,0l-1.7-1.7A.72.72,0,1,1,1.23,2.928L2.419,4.117,6.324.211A.72.72,0,1,1,7.343,1.23Z" transform="translate(3.436 4.428)" fill="#33bf8f"/>
+          </g>
+        </g>
+      </g>
+    </g>
+  </g>
+</svg>

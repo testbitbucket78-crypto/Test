@@ -1,0 +1,25 @@
+<div *ngIf="type == 'primary'" class="custom-dropdown">
+    <button class="custom-dropdown-btn" (click)="toggleAssignOption()" [ngStyle]="{ 'width': customWidth }">
+        <b class="left-content">
+            <!-- <img class="icon" src="/assets/img/teambox/whatsapp-icon-l.svg" /> -->
+            {{channelSelected}} {{ channelPhoneNumber ? '(' + channelPhoneNumber + ')' : '' }}
+            <img class="dropdown-arrow" src="../../../../assets/img/arrow-down.svg"/>
+        </b>
+    </button>
+    <div *ngIf="ShowAssignOption" class="custom-dropdown-menu p-15" [ngStyle]="{ 'width': customWidth }">
+        <p *ngFor="let channel of channelOption" class="dropdown-item d-flex align-items-center px-2 py-1" 
+        (click)="updateDropdown(channel?.connected_id)">
+            <img class="icon" src="/assets/img/teambox/whatsapp-icon-l.svg" />
+            <span class="text-capitalize dropdown-text">{{channel.label}} ({{channel.connected_id}})</span>
+        </p>
+    </div>
+</div>
+
+<!-- Secondary Dropdown -->
+<div *ngIf="type === 'secondary' && isOpen" class="custom-dropdown secondary" [ngStyle]="{ 'width': customWidth }">
+    <div class="custom-dropdown-menu p-15">
+      <p *ngFor="let item of channelOption" class="dropdown-item secondary-item px-2 py-1 m-1">
+        {{item}}
+      </p>
+    </div>
+</div>

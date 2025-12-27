@@ -1,0 +1,57 @@
+<sb-layout-dashboard>
+    <sb-top-nav title="Settings"></sb-top-nav>
+
+    <!-- <div class="row">
+        <div class="col-sm-3"></div>
+        <div class="col-sm-9 setting-field">
+            <a class="setting-field-link active" routerLink="/dashboard/generalsetting">custom Fields</a>
+            <a class="setting-field-link" routerLink="/dashboard/organization">Tags</a>
+        </div>
+    </div> -->
+    <div class="row">
+        <div class="col-sm-3 p-5 mt-5 setting-link-card">
+            <div class="pb-3">
+                <img src="../../../../assets/img/settings/genreral.svg" alt="" *ngIf="linkActive != 1">
+                <img src="../../../../assets/img/settings/genreral-s.svg" alt="" *ngIf="linkActive == 1">
+                <a class="setting-link " [ngClass]="linkActive==1 ? 'active' : ''" (click)="linkActive = 1">General Settings</a>
+            </div>
+            <div class="pb-3">
+                <img src="../../../../assets/img/settings/org-settings.svg" alt="" *ngIf="linkActive != 2">
+                <img src="../../../../assets/img/settings/org-settings-s.svg" alt="" *ngIf="linkActive == 2">
+                <a class="setting-link" [ngClass]="linkActive==2 ? 'active' : ''" (click)="linkActive = 2">Organizational Settings</a>
+            </div>
+            <div class="pb-3">
+                <img src="../../../../assets/img/settings/contacts.svg" alt="" *ngIf="linkActive != 3">
+                <img src="../../../../assets/img/settings/contacts-s.svg" alt="" *ngIf="linkActive == 3">
+                <a class="setting-link" [ngClass]="linkActive==3 ? 'active' : ''" (click)="linkActive = 3">Contact Settings</a>
+            </div>
+            <div class="pb-3">
+                <img src="../../../../assets/img/settings/campaign.svg" alt="" *ngIf="linkActive != 4">
+                <img src="../../../../assets/img/settings/campaign-s.svg" alt="" *ngIf="linkActive == 4">
+                <a class="setting-link" [ngClass]="linkActive==4 ? 'active' : ''" (click)="linkActive = 4">Campaigns Settings</a>
+            </div>
+            <div class="pb-3">
+                <img src="../../../../assets/img/settings/template.svg" alt="" *ngIf="linkActive != 5">
+                <img src="../../../../assets/img/settings/template-s.svg" alt="" *ngIf="linkActive == 5">
+                <a class="setting-link" [ngClass]="linkActive==5 ? 'active' : ''" (click)="linkActive = 5">Template Settings</a>
+            </div>
+            <div class="pb-3">
+                <img src="../../../../assets/img/settings/account.svg" alt="" *ngIf="linkActive != 6">
+                <img src="../../../../assets/img/settings/account-s.svg" alt="" *ngIf="linkActive == 6">
+                <a class="setting-link" [ngClass]="linkActive==6 ? 'active' : ''" (click)="linkActive = 6">Account Settings</a>
+            </div>
+        </div>
+        <div class="col-sm-9">
+            <sb-acoount-settings *ngIf="linkActive == 6"></sb-acoount-settings>
+            <sb-organisational-settings *ngIf="linkActive == 2"></sb-organisational-settings>
+            <sb-general-settings *ngIf="linkActive == 1"></sb-general-settings>
+            <sb-campaign-settings *ngIf="linkActive == 4"></sb-campaign-settings>
+            <sb-contact-settings  *ngIf="linkActive == 3"></sb-contact-settings>
+            <sb-template-settings *ngIf="linkActive == 5"></sb-template-settings>
+
+        </div>
+    </div>
+
+
+
+</sb-layout-dashboard>

@@ -1,0 +1,24 @@
+<button
+  class="button d-flex align-items-center justify-content-between text-center"
+  [class.active]="isActive"
+  [ngClass]="type"
+  [ngStyle]="{ width: customWidth }"
+  [disabled]="disabled"
+  (click)="handleClick()"
+>
+  <ng-container *ngIf="leftIcon">
+    <span *ngIf="!isLeftIconHtml" class="w-100 text-nowrap pr-2" [class.label-accent]="labelColor === 'accent'" [class.label-muted]="labelColor === 'muted'">
+      {{ leftIcon }}
+    </span>
+    <span *ngIf="isLeftIconHtml" class="w-100 text-nowrap pr-2" [innerHTML]="safeLeftIcon"></span>
+  </ng-container>
+
+  <span class="w-100 text-nowrap" [class.label-accent]="labelColor === 'accent'" [class.label-muted]="labelColor === 'muted'">{{ label }}</span>
+
+  <ng-container *ngIf="rightIcon">
+    <span *ngIf="!isRightIconHtml" class="w-100 text-nowrap pl-2" [class.label-accent]="labelColor === 'accent'" [class.label-muted]="labelColor === 'muted'">
+      {{ rightIcon }}
+    </span>
+    <span *ngIf="isRightIconHtml" class="w-100 text-nowrap pl-2" [innerHTML]="safeRightIcon"></span>
+  </ng-container>
+</button>
