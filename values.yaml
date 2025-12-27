@@ -2,10 +2,9 @@ replicaCount: 1
 
 image:
   repository: 514076760324.dkr.ecr.ap-south-1.amazonaws.com/test-nginx
-  tag: "5"              # Jenkins updates this
+  tag: "5"
   pullPolicy: Always
 
-service:
-  type: NodePort
-  port: 80
+serviceAccount:
+  create: false
 

@@ -2,8 +2,6 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: {{ include "testbitbucket78.fullname" . }}
-  labels:
-    app: {{ include "testbitbucket78.name" . }}
 spec:
   replicas: {{ .Values.replicaCount }}
   selector:
