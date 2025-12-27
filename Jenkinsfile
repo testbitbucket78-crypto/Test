@@ -3,8 +3,9 @@ pipeline {
 
   environment {
     AWS_REGION = "ap-south-1"
-    ECR_REPO   = "514076760324.dkr.ecr.ap-south-1.amazonaws.com/test-nginx"
-    IMAGE_TAG  = "${BUILD_NUMBER}"
+    ECR_REPO = "514076760324.dkr.ecr.ap-south-1.amazonaws.com/test-nginx"
+    IMAGE_TAG = "${BUILD_NUMBER}"
+    KUBECONFIG = "/var/lib/jenkins/.kube/config"
   }
 
   stages {
@@ -19,8 +20,8 @@ pipeline {
     stage('Build Docker Image') {
       steps {
         sh """
-        docker build --no-cache -t $ECR_REPO:$IMAGE_TAG .
-        docker tag $ECR_REPO:$IMAGE_TAG $ECR_REPO:latest
+          docker build --no-cache -t ${ECR_REPO}:${IMAGE_TAG} .
+          docker tag ${ECR_REPO}:${IMAGE_TAG} ${ECR_REPO}:latest
         """
       }
     }
@@ -28,8 +29,8 @@ pipeline {
     stage('Login to ECR') {
       steps {
         sh """
-        aws ecr get-login-password --region $AWS_REGION \
-        | docker login --username AWS --password-stdin $ECR_REPO
+          aws ecr get-login-password --region ${AWS_REGION} | \
+          docker login --username AWS --password-stdin ${ECR_REPO}
         """
       }
     }
@@ -37,8 +38,8 @@ pipeline {
     stage('Push Image') {
       steps {
         sh """
-        docker push $ECR_REPO:$IMAGE_TAG
-        docker push $ECR_REPO:latest
+          docker push ${ECR_REPO}:${IMAGE_TAG}
+          docker push ${ECR_REPO}:latest
         """
       }
     }
@@ -46,7 +47,7 @@ pipeline {
     stage('Update Helm values') {
       steps {
         sh """
-        sed -i 's/tag:.*/tag: "${IMAGE_TAG}"/' values.yaml
+          sed -i 's/tag:.*/tag: "${IMAGE_TAG}"/' values.yaml
         """
       }
     }
@@ -54,9 +55,9 @@ pipeline {
     stage('Deploy to EKS') {
       steps {
         sh """
-        helm upgrade --install testbitbucket78 . \
-        --namespace default \
-        --kubeconfig /var/lib/jenkins/.kube/config
+          helm upgrade --install testbitbucket78 . \
+            --namespace default \
+            --kubeconfig ${KUBECONFIG}
         """
       }
     }
