@@ -1,16 +1,21 @@
+# Docker image settings
 image:
   repository: 514076760324.dkr.ecr.ap-south-1.amazonaws.com/cip-frontend
   tag: "latest"
   pullPolicy: IfNotPresent
 
+# Number of pod replicas
 replicaCount: 1
 
+# Service configuration
 service:
-  type: ClusterIP   # Changed from LoadBalancer
+  type: ClusterIP  # <-- no ELB
   port: 80
 
+# Resources (optional)
 resources: {}
 
+# Ingress (disabled for now)
 ingress:
   enabled: false
 
