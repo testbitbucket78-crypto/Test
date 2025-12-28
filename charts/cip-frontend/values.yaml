@@ -1,12 +1,12 @@
 image:
-  repository: 123456789012.dkr.ecr.ap-south-1.amazonaws.com/cip-frontend
+  repository: 514076760324.dkr.ecr.ap-south-1.amazonaws.com/cip-frontend
   tag: "latest"
   pullPolicy: IfNotPresent
 
-replicaCount: 2
+replicaCount: 1
 
 service:
-  type: LoadBalancer
+  type: ClusterIP   # Changed from LoadBalancer
   port: 80
 
 resources: {}
