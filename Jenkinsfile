@@ -2,72 +2,56 @@ pipeline {
     agent any
 
     environment {
-        AWS_REGION    = 'ap-south-1'
-        ECR_REPO      = '123456789012.dkr.ecr.ap-south-1.amazonaws.com/cip-frontend'
-        APP_NAME      = 'cip-frontend'
-        CHART_DIR     = 'charts/cip-frontend'
-        K8S_NAMESPACE = 'cip-frontend'
+        AWS_REGION = "ap-south-1"
+        ECR_ACCOUNT = "514076760324"
+        IMAGE_NAME = "cip-frontend"
+        IMAGE_TAG = "latest"
+        HELM_RELEASE = "cip-frontend"
+        HELM_NAMESPACE = "default"
+        KUBE_CONFIG = "/home/jenkins/.kube/config"  // make sure Jenkins has access
     }
 
     stages {
-
         stage('Checkout') {
             steps {
-                checkout scm
+                git branch: 'my-feature-branch', url: 'https://github.com/testbitbucket78-crypto/Test.git'
             }
         }
 
         stage('Build Docker Image') {
             steps {
-                script {
-                    def tag = env.BUILD_NUMBER
-
-                    sh """
-                      aws ecr get-login-password --region ${AWS_REGION} \
-                        | docker login --username AWS --password-stdin ${ECR_REPO}
-
-                      docker build \
-                        -t ${ECR_REPO}:${tag} \
-                        -t ${ECR_REPO}:latest .
-                    """
-                }
+                sh """
+                aws ecr get-login-password --region $AWS_REGION | docker login --username AWS --password-stdin $ECR_ACCOUNT.dkr.ecr.$AWS_REGION.amazonaws.com
+                docker build -t $IMAGE_NAME:$IMAGE_TAG .
+                docker tag $IMAGE_NAME:$IMAGE_TAG $ECR_ACCOUNT.dkr.ecr.$AWS_REGION.amazonaws.com/$IMAGE_NAME:$IMAGE_TAG
+                """
             }
         }
 
-        stage('Push Docker Image to ECR') {
+        stage('Push Docker Image') {
             steps {
-                script {
-                    def tag = env.BUILD_NUMBER
-                    sh """
-                      docker push ${ECR_REPO}:${tag}
-                      docker push ${ECR_REPO}:latest
-                    """
-                }
+                sh """
+                docker push $ECR_ACCOUNT.dkr.ecr.$AWS_REGION.amazonaws.com/$IMAGE_NAME:$IMAGE_TAG
+                """
             }
         }
 
-        stage('Deploy to EKS using Helm') {
+        stage('Deploy to EKS with Helm') {
             steps {
-                script {
-                    def tag = env.BUILD_NUMBER
-                    sh """
-                      helm upgrade --install ${APP_NAME} ${CHART_DIR} \
-                        --namespace ${K8S_NAMESPACE} \
-                        --create-namespace \
-                        --set image.repository=${ECR_REPO} \
-                        --set image.tag=${tag} \
-                        --atomic \
-                        --wait \
-                        --timeout 5m
-                    """
-                }
+                sh """
+                export KUBECONFIG=$KUBE_CONFIG
+                helm upgrade --install $HELM_RELEASE ./charts/$IMAGE_NAME \
+                  --namespace $HELM_NAMESPACE \
+                  --set image.repository=$ECR_ACCOUNT.dkr.ecr.$AWS_REGION.amazonaws.com/$IMAGE_NAME \
+                  --set image.tag=$IMAGE_TAG
+                """
             }
         }
     }
 
     post {
         always {
-            sh 'docker system prune -f || true'
+            sh "docker system prune -f"
         }
     }
 }
