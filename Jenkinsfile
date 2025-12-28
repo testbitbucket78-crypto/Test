@@ -2,7 +2,7 @@ pipeline {
     agent any
 
     environment {
-        AWS_REGION    = 'ap-south-1'   // change
+        AWS_REGION    = 'ap-south-1'
         ECR_REPO      = '123456789012.dkr.ecr.ap-south-1.amazonaws.com/cip-frontend'
         APP_NAME      = 'cip-frontend'
         CHART_DIR     = 'charts/cip-frontend'
@@ -10,16 +10,10 @@ pipeline {
     }
 
     stages {
+
         stage('Checkout') {
             steps {
                 checkout scm
-            }
-        }
-
-        stage('Build Angular') {
-            steps {
-                sh 'npm ci'
-                sh 'ng build --configuration=production'
             }
         }
 
@@ -32,7 +26,9 @@ pipeline {
                       aws ecr get-login-password --region ${AWS_REGION} \
                         | docker login --username AWS --password-stdin ${ECR_REPO}
 
-                      docker build -t ${ECR_REPO}:${tag} -t ${ECR_REPO}:latest .
+                      docker build \
+                        -t ${ECR_REPO}:${tag} \
+                        -t ${ECR_REPO}:latest .
                     """
                 }
             }
@@ -50,15 +46,19 @@ pipeline {
             }
         }
 
-        stage('Helm upgrade/install to EKS') {
+        stage('Deploy to EKS using Helm') {
             steps {
                 script {
                     def tag = env.BUILD_NUMBER
                     sh """
                       helm upgrade --install ${APP_NAME} ${CHART_DIR} \
-                        --namespace ${K8S_NAMESPACE} --create-namespace \
+                        --namespace ${K8S_NAMESPACE} \
+                        --create-namespace \
                         --set image.repository=${ECR_REPO} \
-                        --set image.tag=${tag}
+                        --set image.tag=${tag} \
+                        --atomic \
+                        --wait \
+                        --timeout 5m
                     """
                 }
             }
