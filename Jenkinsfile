@@ -24,8 +24,8 @@ pipeline {
             steps {
                 script {
                     sh """
-                        docker build -t cip-frontend:${IMAGE_TAG} .
-                        docker tag cip-frontend:${IMAGE_TAG} ${ECR_ACCOUNT}.dkr.ecr.${AWS_REGION}.amazonaws.com/${ECR_REPO}:${IMAGE_TAG}
+                        docker build -t cip-frontend:\${IMAGE_TAG} .
+                        docker tag cip-frontend:\${IMAGE_TAG} \${ECR_ACCOUNT}.dkr.ecr.\${AWS_REGION}.amazonaws.com/\${ECR_REPO}:\${IMAGE_TAG}
                     """
                 }
             }
@@ -35,8 +35,8 @@ pipeline {
             steps {
                 script {
                     sh """
-                        aws ecr get-login-password --region ${AWS_REGION} | \
-                        docker login --username AWS --password-stdin ${ECR_ACCOUNT}.dkr.ecr.${AWS_REGION}.amazonaws.com
+                        aws ecr get-login-password --region \${AWS_REGION} | \
+                        docker login --username AWS --password-stdin \${ECR_ACCOUNT}.dkr.ecr.\${AWS_REGION}.amazonaws.com
                     """
                 }
             }
@@ -46,7 +46,7 @@ pipeline {
             steps {
                 script {
                     sh """
-                        docker push ${ECR_ACCOUNT}.dkr.ecr.${AWS_REGION}.amazonaws.com/${ECR_REPO}:${IMAGE_TAG}
+                        docker push \${ECR_ACCOUNT}.dkr.ecr.\${AWS_REGION}.amazonaws.com/\${ECR_REPO}:\${IMAGE_TAG}
                     """
                 }
             }
@@ -56,11 +56,11 @@ pipeline {
             steps {
                 script {
                     sh """
-                        mkdir -p $(dirname ${KUBE_CONFIG})
-                        aws eks update-kubeconfig --name cip-cluster --region ${AWS_REGION} --kubeconfig ${KUBE_CONFIG}
-                        helm upgrade --install ${ECR_REPO} ${HELM_CHART_PATH} \
-                            --namespace ${KUBE_NAMESPACE} \
-                            --values ${HELM_CHART_PATH}/values.yaml \
+                        mkdir -p \$(dirname \${KUBE_CONFIG})
+                        aws eks update-kubeconfig --name cip-cluster --region \${AWS_REGION} --kubeconfig \${KUBE_CONFIG}
+                        helm upgrade --install \${ECR_REPO} \${HELM_CHART_PATH} \
+                            --namespace \${KUBE_NAMESPACE} \
+                            --values \${HELM_CHART_PATH}/values.yaml \
                             --wait
                     """
                 }
