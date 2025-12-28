@@ -2,17 +2,17 @@ pipeline {
     agent any
 
     environment {
-        AWS_REGION = "ap-south-1"
-        ECR_ACCOUNT = "514076760324"
-        IMAGE_NAME = "cip-frontend"
-        IMAGE_TAG = "latest"
-        EKS_CLUSTER = "cip-cluster"
-        HELM_CHART_PATH = "./charts/cip-frontend"
-        KUBE_NAMESPACE = "default"
+        AWS_REGION = 'ap-south-1'
+        ECR_ACCOUNT = '514076760324'
+        ECR_REPO = 'cip-frontend'
+        IMAGE_TAG = 'latest'
+        KUBE_NAMESPACE = 'default'
+        HELM_CHART_PATH = './charts/cip-frontend'
+        KUBE_CONFIG = "${env.WORKSPACE}/.kube/config"
     }
 
     stages {
-        stage('Checkout SCM') {
+        stage('Checkout Code') {
             steps {
                 git branch: 'my-feature-branch',
                     url: 'https://github.com/testbitbucket78-crypto/Test.git',
@@ -22,53 +22,62 @@ pipeline {
 
         stage('Build Docker Image') {
             steps {
-                sh """
-                docker build -t ${IMAGE_NAME}:${IMAGE_TAG} .
-                """
+                script {
+                    sh """
+                        docker build -t cip-frontend:${IMAGE_TAG} .
+                        docker tag cip-frontend:${IMAGE_TAG} ${ECR_ACCOUNT}.dkr.ecr.${AWS_REGION}.amazonaws.com/${ECR_REPO}:${IMAGE_TAG}
+                    """
+                }
             }
         }
 
         stage('Login to ECR') {
             steps {
-                sh """
-                aws ecr get-login-password --region ${AWS_REGION} \
-                | docker login --username AWS --password-stdin ${ECR_ACCOUNT}.dkr.ecr.${AWS_REGION}.amazonaws.com
-                """
+                script {
+                    sh """
+                        aws ecr get-login-password --region ${AWS_REGION} | \
+                        docker login --username AWS --password-stdin ${ECR_ACCOUNT}.dkr.ecr.${AWS_REGION}.amazonaws.com
+                    """
+                }
             }
         }
 
-        stage('Tag and Push Docker Image') {
+        stage('Push Docker Image') {
             steps {
-                sh """
-                docker tag ${IMAGE_NAME}:${IMAGE_TAG} ${ECR_ACCOUNT}.dkr.ecr.${AWS_REGION}.amazonaws.com/${IMAGE_NAME}:${IMAGE_TAG}
-                docker push ${ECR_ACCOUNT}.dkr.ecr.${AWS_REGION}.amazonaws.com/${IMAGE_NAME}:${IMAGE_TAG}
-                """
+                script {
+                    sh """
+                        docker push ${ECR_ACCOUNT}.dkr.ecr.${AWS_REGION}.amazonaws.com/${ECR_REPO}:${IMAGE_TAG}
+                    """
+                }
             }
         }
 
-        stage('Deploy to EKS using Helm') {
+        stage('Deploy to EKS with Helm') {
             steps {
-                sh """
-                aws eks update-kubeconfig --name ${EKS_CLUSTER} --region ${AWS_REGION}
-                helm upgrade --install ${IMAGE_NAME} ${HELM_CHART_PATH} \
-                    --namespace ${KUBE_NAMESPACE} \
-                    --values ${HELM_CHART_PATH}/values.yaml \
-                    --wait
-                """
+                script {
+                    sh """
+                        mkdir -p $(dirname ${KUBE_CONFIG})
+                        aws eks update-kubeconfig --name cip-cluster --region ${AWS_REGION} --kubeconfig ${KUBE_CONFIG}
+                        helm upgrade --install ${ECR_REPO} ${HELM_CHART_PATH} \
+                            --namespace ${KUBE_NAMESPACE} \
+                            --values ${HELM_CHART_PATH}/values.yaml \
+                            --wait
+                    """
+                }
             }
         }
     }
 
     post {
         always {
-            echo 'Cleaning up unused Docker images...'
+            echo "Cleaning up unused Docker images..."
             sh 'docker system prune -f'
         }
         success {
-            echo 'Deployment succeeded!'
+            echo "Deployment successful!"
         }
         failure {
-            echo 'Deployment failed. Check logs above for errors.'
+            echo "Deployment failed. Check logs above."
         }
     }
 }
